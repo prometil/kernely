@@ -1,0 +1,54 @@
+dependsOn(':core')
+dependsOn(':user')
+
+dependencies {
+
+    compile project(':core')
+    compile project(':user')
+    compile project(':stream')
+    compile (
+    
+    	 //shiro
+	     "org.apache.shiro:shiro-spring:1.1.0",
+	     "org.apache.shiro:shiro-web:1.1.0",
+	     "org.apache.shiro:shiro-aspectj:1.1.0",
+	     
+	     //the jetty dependency
+	     "org.eclipse.jetty:jetty-jsp-2.1:7.2.2.v20101205",
+	     "org.eclipse.jetty:jetty-server:7.2.2.v20101205",
+	     "org.eclipse.jetty:jetty-servlet:7.2.2.v20101205",
+	     "org.eclipse.jetty:jetty-webapp:7.2.2.v20101205",
+	     "javax.servlet:servlet-api:2.5",
+	     
+	     
+	     "com.google.inject:guice:3.0",
+	     "com.google.inject.extensions:guice-servlet:3.0",
+	     
+	     "javax.ws.rs:jsr311-api:1.1.1",
+	     "com.sun.jersey:jersey-server:1.8",
+	     "com.sun.jersey.contribs:jersey-guice:1.8",
+	     "com.sun.jersey:jersey-json:1.8",
+	     "com.sun.jersey:jersey-core:1.8",
+	     "javax.mail:mail:1.4",
+	     "javax.validation:validation-api:1.0.0.GA",
+	     "org.codehaus.groovy:groovy-all:1.8.2",
+	     "com.google.javascript:closure-compiler:r1459",
+	     "ant-contrib:ant-contrib:1.0b3"
+    )
+   	
+}
+
+jar { 
+    manifest { 
+        def manifestClasspath = configurations.runtime.collect { '../libs/'+it.getName() }.join(' ') 
+        attributes 'Main-Class': 'org.kernely.bootstrap.KernelyBootstrap' 
+        attributes 'Class-Path': manifestClasspath     
+        
+    } 
+} 
+ 
+task('dist', type: Zip) {     
+    dependsOn 'jar'     
+    from jar.archivePath 
+    from configurations.runtime 
+}

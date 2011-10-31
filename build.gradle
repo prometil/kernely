@@ -1,0 +1,59 @@
+allprojects {
+    apply plugin: 'java'
+    group = 'org.kernely'
+    version = '1.0'
+}
+subprojects {
+
+	//properties 
+	group = 'org.kernely'
+   	version = '1.0'
+   	
+
+   	//plugins
+    apply plugin: 'java'
+    apply plugin: 'eclipse'
+    sourceCompatibility = 1.6
+    
+    
+  	//repositories
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        testCompile 'junit:junit:4.8.2'
+    }
+}
+sourceCompatibility = 1.6
+  task dist(dependsOn: assemble) << {
+    File explodedDist = new File(buildDir, 'plugins')
+    explodedDist.mkdirs()
+    subprojects.each {project ->
+        if(project.name.equals("bootstrap")){
+          project.tasks.withType(Jar).each {archiveTask ->
+            copy {
+                from archiveTask.archivePath
+                into "dist/kernely/bin"
+            }
+          }  
+        }
+        if(!project.name.equals("bootstrap") && !project.name.equals("core")){
+        
+          project.tasks.withType(Jar).each {archiveTask ->
+            copy {
+                from archiveTask.archivePath
+                into "dist/kernely/plugins"
+            }
+          }  
+        }
+        copy {
+          from project.configurations.default
+          into "dist/kernely/libs"
+        }
+        
+    }
+}  
+dependsOnChildren()
+
+

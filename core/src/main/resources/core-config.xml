@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<core>
+	<hibernate>
+		<driver_class>org.hsqldb.jdbcDriver</driver_class>
+		<dialect>org.hibernate.dialect.HSQLDialect</dialect>
+		<hbm2ddl.auto>update</hbm2ddl.auto>
+		<url>jdbc:hsqldb:mem:aname</url>
+		<username>sa</username>
+		<password></password>
+		<pool_size>10</pool_size>
+		<show_sql>true</show_sql>
+	</hibernate>
+	<mail>
+		<debug>true</debug>
+		<host>to_change</host>
+		<from>to_change</from>
+		<smtp>
+			<host>to_change</host>
+			<port>to_change</port>
+			<user>to_change</user>
+			<password>to_change</password>
+			<auth>true</auth>
+		</smtp>
+	</mail>
+</core>

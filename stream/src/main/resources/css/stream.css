@@ -1,0 +1,85 @@
+div#streams{
+}
+
+div#streams-sidebar{
+	float:right;
+	width:320px;
+}
+div#streams-main{
+   	width:635px;
+	float: left;
+}
+
+div#streams-footer{
+	clear:both;
+	}
+
+div#streams-messages{
+	margin-top:20px;
+}
+div#streams-footer{
+	clean:both;
+}
+div#streams textarea{
+	width: 630px;
+	height:60px;
+	border: 1px solid #DDD;
+	resize: none;
+}
+
+div#streams a.button{
+	border-radius: 15px;
+	-moz-border-radius: 5px;
+	-webkit-border-radius:5px;
+	padding:7px 20px;
+	text-decoration:none;
+	color:#FFF;
+	border: 1px solid #2D6200;
+	background-color:#3D9400;
+	
+}
+div#streams div.mess{
+	padding:10px 0px;
+}
+div#streams div.selected{
+	background-color:#eee;
+}
+
+div#streams div.messages{
+	
+	position: relative;
+	border-bottom: 1px solid #EBEBEB;
+	min-height: 60px;
+	clear: both;
+	display: block;
+	outline: none;
+	margin-top: -1px;
+	border-top: 1px solid transparent;	
+}
+
+div#streams div.message-image{
+	float: left;
+	height: 48px;
+	overflow: hidden;
+	width: 48px;
+	margin-top: 3px;
+}
+
+
+div#streams div.message-content{
+	margin-left: 58px;
+	min-height: 48px;
+}
+
+div#streams div.message-header{
+	
+}
+
+
+div#streams div.message-footer{
+	
+}
+
+div#streams div.message-comment{
+	
+}
