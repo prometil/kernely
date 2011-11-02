@@ -30,6 +30,7 @@ import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
+import org.kernely.core.hibernate.EntityManagerProvider;
 import org.kernely.core.hibernate.HibernateUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,7 +42,7 @@ public class SimpleShiroRealm extends AuthorizingRealm {
 	
 
 	@Inject
-	private HibernateUtil  hibernateUtil;
+	private EntityManagerProvider  entityManagerProvider;
 
 	protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
 		UsernamePasswordToken upToken = (UsernamePasswordToken) token;

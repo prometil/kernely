@@ -25,8 +25,8 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
-import org.kernely.core.hibernate.HibernateUtil;
-import org.kernely.core.service.mail.MailService;
+import org.kernely.core.hibernate.EntityManagerProvider;
+import org.kernely.core.service.mail.Mailer;
 import org.kernely.stream.dto.StreamMessageDTO;
 import org.kernely.stream.model.StreamMessage;
 import org.slf4j.Logger;
@@ -41,10 +41,10 @@ public class StreamService {
 	
 	//the hibernate util
 	@Inject
-	private HibernateUtil hibernateUtil;
+	private EntityManagerProvider entityManagerProvider;
 	
 	@Inject
-	private MailService mailService;
+	private Mailer mailService;
 	
 	private static final Logger log = LoggerFactory.getLogger(StreamService.class);
 	
@@ -56,12 +56,13 @@ public class StreamService {
 	public StreamMessageDTO addMessage(String pMessage) {
 		StreamMessage message = new StreamMessage();
 		message.setMessage(pMessage);
-		EntityManager em = hibernateUtil.getEM();
-		em.persist(message);
+		
+		EntityManager em = entityManagerProvider.getEM();
 		em.getTransaction().begin();
+		em.persist(message);
 		em.getTransaction().commit();
 		em.close();
-		mailService.make("/templates/gsp/mail.gsp").subject("This is a test mail").to("breton.gy@gmail.com").send();
+		mailService.create("/templates/gsp/mail.gsp").subject("This is a test mail").to("breton.gy@gmail.com").send();
 		return new StreamMessageDTO(message);
 	}
 
@@ -73,7 +74,7 @@ public class StreamService {
 	@SuppressWarnings("unchecked")
 	public List<StreamMessageDTO> getMessages() {
 		
-		EntityManager em = hibernateUtil.getEM();
+		EntityManager em = entityManagerProvider.getEM();
 		Query query = em.createQuery("SELECT m FROM StreamMessage m order by m.date");
 		List<StreamMessage> messages = (List<StreamMessage>) query.getResultList();
 		List<StreamMessageDTO> messageDtos = new ArrayList<StreamMessageDTO>();

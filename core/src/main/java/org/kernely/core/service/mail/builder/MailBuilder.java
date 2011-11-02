@@ -17,30 +17,19 @@ You should have received a copy of the GNU Affero General Public
 License along with Kernely.
 If not, see <http://www.gnu.org/licenses/>.
 */
-package org.kernely.core.guice;
-
-import groovy.text.SimpleTemplateEngine;
-
-import org.kernely.core.hibernate.HibernateUtil;
-import org.kernely.core.plugin.PluginsLoader;
-import org.kernely.core.service.mail.MailService;
-import org.kernely.core.template.TemplateRenderer;
-
-import com.google.inject.AbstractModule;
+package org.kernely.core.service.mail.builder;
 
 
 /**
- * The core module
+ * @author g.breton
  *
  */
-public class CoreModule extends AbstractModule {
+public interface MailBuilder {
+	public MailBuilder subject(String pSubject);
 
-	@Override
-	protected void configure() {
-		bind(PluginsLoader.class);
-		bind(TemplateRenderer.class);
-		bind(MailService.class);
-		bind(HibernateUtil.class);
-		bind(SimpleTemplateEngine.class);
-	}
+	public MailBuilder to(String addresses);
+
+	public MailBuilder cc(String addresses);
+
+	public void send();
 }

@@ -22,7 +22,20 @@ subprojects {
     }
 
     dependencies {
-        testCompile 'junit:junit:4.8.2'
+        testCompile ('junit:junit:4.8.2', 'com.google.guiceberry:guiceberry:3.1.0', "org.mockito:mockito-all:1.8.5")
+    }
+
+    task testJar(type: Jar, dependsOn: testClasses) {
+       baseName = "test-${project.archivesBaseName}"
+       from sourceSets.test.classes
+    }
+
+    configurations {
+        tests
+    }
+
+    artifacts {
+        tests testJar
     }
 }
 sourceCompatibility = 1.6

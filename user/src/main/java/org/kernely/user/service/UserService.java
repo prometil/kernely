@@ -16,7 +16,7 @@ GNU Affero General Public License for more details.
 You should have received a copy of the GNU Affero General Public
 License along with Kernely.
 If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 package org.kernely.user.service;
 
 import java.util.ArrayList;
@@ -25,7 +25,7 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
-import org.kernely.core.hibernate.HibernateUtil;
+import org.kernely.core.hibernate.EntityManagerProvider;
 import org.kernely.user.dto.UserCreationRequestDTO;
 import org.kernely.user.dto.UserDTO;
 import org.kernely.user.model.UserModel;
@@ -38,10 +38,10 @@ import com.google.inject.Inject;
 public class UserService {
 
 	@Inject
-	private HibernateUtil hibernateUtil;
+	private EntityManagerProvider entityManagerProvider;
 
 	public void createUser(UserCreationRequestDTO request) {
-		EntityManager em = hibernateUtil.getEM();
+		EntityManager em = entityManagerProvider.getEM();
 		em.getTransaction().begin();
 		UserModel user = new UserModel();
 		user.setPassword(request.password);
@@ -54,7 +54,7 @@ public class UserService {
 
 	@SuppressWarnings("unchecked")
 	public List<UserDTO> getAllUsers() {
-		EntityManager em = hibernateUtil.getEM();
+		EntityManager em = entityManagerProvider.getEM();
 		em.getTransaction().begin();
 		Query query = em.createQuery("SELECT e FROM UserModel e");
 		List<UserModel> collection = (List<UserModel>) query.getResultList();
