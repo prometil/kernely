@@ -3,7 +3,7 @@ bin
 .classpath
 .settings/*
 .DS_Store
-
+.gradle
 gradle-app.setting
 
 stream/.project

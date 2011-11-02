@@ -10,7 +10,7 @@ dependencies {
     compile "javax.ws.rs:jsr311-api:1.1.1"
     //mail
     compile "javax.mail:mail:1.4.4"
-    
+    compile "commons-io:commons-io:2.1"
     
     //jersey
     compile "com.sun.jersey:jersey-server:1.8"
