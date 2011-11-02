@@ -40,11 +40,6 @@ public class KernelyRealm extends AuthorizingRealm {
 	
 	private static final Logger log = LoggerFactory.getLogger(KernelyRealm.class);
 	
-	public KernelyRealm(){
-		super();
-		log.debug("#############");
-	}
-
 	@Inject
 	private EntityManagerProvider  entityManagerProvider;
 

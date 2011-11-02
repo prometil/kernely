@@ -134,13 +134,15 @@ public class GuiceServletConfig extends GuiceServletContextListener {
 			@SuppressWarnings("unused")
 			@Provides
 			@Singleton
-			public WebSecurityManager securityManager(Realm realm) {
+			public WebSecurityManager securityManager(KernelyRealm realm) {
 				log.debug("Create security manager");
-				KernelyRealm r = new KernelyRealm();
+			
 				CredentialsMatcher customMatcher = new SimpleCredentialsMatcher();
-				r.setCredentialsMatcher(customMatcher);
-				return new DefaultWebSecurityManager(r);
+				realm.setCredentialsMatcher(customMatcher);
+				return new DefaultWebSecurityManager(realm);
 			}
+			
+			
 
 		});
 
