@@ -1,7 +1,7 @@
 <script type="text/javascript" src="/js/user.js"></script>
-users
-
-<a href="#" class=".create">Create</a>
+This is the users page.
+<br/>
+<a href="#" class=".create">Create a new user</a>
 <div id="users">
 
 <ul>

@@ -1,2 +1,2 @@
-this is the sparrttaaaa!
+This is the core main page.
 
