@@ -34,8 +34,8 @@ import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 import org.apache.shiro.web.mgt.WebSecurityManager;
 import org.eclipse.jetty.servlet.DefaultServlet;
 import org.kernely.bootstrap.MediaServlet;
-import org.kernely.bootstrap.shiro.SimpleShiroFilter;
-import org.kernely.bootstrap.shiro.SimpleShiroRealm;
+import org.kernely.bootstrap.shiro.KernelyShiroFilter;
+import org.kernely.bootstrap.shiro.KernelyRealm;
 import org.kernely.core.plugin.AbstractPlugin;
 import org.kernely.core.resources.AbstractController;
 import org.kernely.core.template.TemplateRenderer;
@@ -117,7 +117,7 @@ public class GuiceServletConfig extends GuiceServletContextListener {
 				bind(Realm.class).to(SimpleAccountRealm.class).in(Singleton.class);
 
 				// Bind all path with shiro filter
-				filter("/*").through(SimpleShiroFilter.class);
+				filter("/*").through(KernelyShiroFilter.class);
 
 				// Allows to retrieve resources .js, .css, .png
 				bind(DefaultServlet.class).in(Singleton.class);
@@ -135,7 +135,7 @@ public class GuiceServletConfig extends GuiceServletContextListener {
 			@Singleton
 			public WebSecurityManager securityManager(Realm realm) {
 				log.debug("Create security manager");
-				SimpleShiroRealm r = new SimpleShiroRealm();
+				KernelyRealm r = new KernelyRealm();
 				CredentialsMatcher customMatcher = new SimpleCredentialsMatcher();
 				r.setCredentialsMatcher(customMatcher);
 				return new DefaultWebSecurityManager(r);
