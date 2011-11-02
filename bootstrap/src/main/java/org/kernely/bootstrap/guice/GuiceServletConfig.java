@@ -114,7 +114,8 @@ public class GuiceServletConfig extends GuiceServletContextListener {
 
 				
 				//TODO understand this
-				bind(Realm.class).to(SimpleAccountRealm.class).in(Singleton.class);
+				//bind(Realm.class).to(SimpleAccountRealm.class).in(Singleton.class);
+				bind(Realm.class).to(KernelyRealm.class).in(Singleton.class);
 
 				// Bind all path with shiro filter
 				filter("/*").through(KernelyShiroFilter.class);

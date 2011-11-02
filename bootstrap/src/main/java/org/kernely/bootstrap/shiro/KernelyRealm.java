@@ -37,8 +37,13 @@ import org.slf4j.LoggerFactory;
 import com.google.inject.Inject;
 
 public class KernelyRealm extends AuthorizingRealm {
+	
 	private static final Logger log = LoggerFactory.getLogger(KernelyRealm.class);
 	
+	public KernelyRealm(){
+		super();
+		log.debug("#############");
+	}
 
 	@Inject
 	private EntityManagerProvider  entityManagerProvider;
@@ -46,6 +51,8 @@ public class KernelyRealm extends AuthorizingRealm {
 	protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
 		UsernamePasswordToken upToken = (UsernamePasswordToken) token;
 
+		
+		log.debug("{}", entityManagerProvider);
 		String username = upToken.getUsername();
 		if (username == null) {
 			throw new AccountException("Null usernames are not allowed by this realm.");

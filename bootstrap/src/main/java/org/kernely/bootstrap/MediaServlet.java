@@ -34,7 +34,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * 
- *
+ * @author g.breton
  */
 public class MediaServlet extends HttpServlet {
 

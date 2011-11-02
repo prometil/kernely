@@ -10,7 +10,7 @@
   </appender>
  <logger name="org.eclipse" level="WARN"/>
 	<logger name="org.hibernate" level="WARN"/>
-	<logger name="org.apache.shiro" level="ALL"/>
+	<logger name="org.apache.shiro" level="WARN"/>
 	<logger name="org.kernely" level="ALL" />
   <root level="debug">
     <appender-ref ref="STDOUT" />

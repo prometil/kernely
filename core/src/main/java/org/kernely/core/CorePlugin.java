@@ -51,7 +51,7 @@ public class CorePlugin extends AbstractPlugin {
 		bind(PluginsLoader.class);
 		bind(TemplateRenderer.class);
 		bind(Mailer.class).to(MailService.class);
-		bind(EntityManagerProvider.class).to(HibernateUtil.class).in(RequestScoped.class);
+		bind(EntityManagerProvider.class).to(HibernateUtil.class);//.in(RequestScoped.class);
 		bind(SimpleTemplateEngine.class);
 	}
 	
