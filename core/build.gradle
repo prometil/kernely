@@ -1,7 +1,10 @@
 dependencies {
 	compile "joda-time:joda-time:2.0"
 	compile "commons-configuration:commons-configuration:1.7"
+	compile "javax.mail:mail:1.4.4"
+    compile "commons-io:commons-io:2.1"
 	compile "com.google.guava:guava:10.0.1"
+	
     compile "org.apache.shiro:shiro-core:1.1.0"
     compile "com.google.inject:guice:3.0"
     compile "com.google.inject.extensions:guice-servlet:3.0"
@@ -9,8 +12,7 @@ dependencies {
     compile "org.slf4j:slf4j-api:1.6.1"
     compile "javax.ws.rs:jsr311-api:1.1.1"
     //mail
-    compile "javax.mail:mail:1.4.4"
-    compile "commons-io:commons-io:2.1"
+    
     
 	
 	//junit4
@@ -31,5 +33,9 @@ dependencies {
     
     compile "org.antlr:antlr:3.4"
     compile "javax.servlet:servlet-api:2.5"
+    
+    compile "com.google.inject:guice:3.0"
+	compile "com.google.inject.extensions:guice-servlet:3.0"
+	     
 }
     

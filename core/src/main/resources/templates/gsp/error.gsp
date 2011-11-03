@@ -1,8 +1,8 @@
 <html>
 <head>
-<title>Ooops</title>
+<title>Error</title>
 </head>
 <body>
-oooops! something really bad happened!
+The requested page doesn't exists.
 </body>
 </html>

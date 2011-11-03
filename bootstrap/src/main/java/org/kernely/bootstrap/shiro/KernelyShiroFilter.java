@@ -25,7 +25,6 @@ import org.apache.shiro.config.Ini;
 import org.apache.shiro.web.config.WebIniSecurityManagerFactory;
 import org.apache.shiro.web.mgt.WebSecurityManager;
 import org.apache.shiro.web.servlet.IniShiroFilter;
-import org.kernely.bootstrap.error.KernelyErrorHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,8 +33,8 @@ import com.google.inject.Provider;
 import com.google.inject.Singleton;
 
 @Singleton
-public class SimpleShiroFilter extends IniShiroFilter {
-	private static final Logger log = LoggerFactory.getLogger(SimpleShiroFilter.class);
+public class KernelyShiroFilter extends IniShiroFilter {
+	private static final Logger log = LoggerFactory.getLogger(KernelyShiroFilter.class);
 
     static class SecurityManagerFactory extends WebIniSecurityManagerFactory {
 
@@ -59,7 +58,7 @@ public class SimpleShiroFilter extends IniShiroFilter {
     private final Provider<WebSecurityManager> securityManager;
 
     @Inject
-    SimpleShiroFilter(Provider<WebSecurityManager> securityManager) {
+    KernelyShiroFilter(Provider<WebSecurityManager> securityManager) {
       super();
       this.securityManager = securityManager;
     }

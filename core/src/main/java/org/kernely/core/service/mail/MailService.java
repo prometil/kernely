@@ -20,7 +20,6 @@ If not, see <http://www.gnu.org/licenses/>.
 package org.kernely.core.service.mail;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
@@ -34,6 +33,7 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
 import org.apache.commons.configuration.AbstractConfiguration;
+import org.kernely.core.service.mail.builder.MailBuilder;
 import org.kernely.core.template.TemplateRenderer;
 import org.kernely.core.template.TemplateRenderer.TemplateBuilder;
 import org.slf4j.Logger;
@@ -45,7 +45,7 @@ import com.google.inject.Inject;
  * The mail service
  * 
  */
-public class MailService {
+public class MailService  implements Mailer{
 
 	private static final Logger log = LoggerFactory.getLogger(MailService.class);
 
@@ -62,8 +62,8 @@ public class MailService {
 	 *            the template path
 	 * @return a mail builder
 	 */
-	public MailBuilder make(String templatePath) {
-		return new MailBuilder(templatePath, renderer.create(templatePath));
+	public MailBuilder create(String templatePath) {
+		return new JavaMailBuilder(templatePath, renderer.create(templatePath));
 	}
 
 	/**
@@ -71,7 +71,7 @@ public class MailService {
 	 * @author g.breton
 	 * 
 	 */
-	public class MailBuilder {
+	public class JavaMailBuilder implements MailBuilder{
 
 		// the recipients list
 		private List<String> recipients;
@@ -88,7 +88,7 @@ public class MailService {
 		 * @param templatePath
 		 *            the template
 		 */
-		public MailBuilder(String template, TemplateBuilder pBuilder) {
+		public JavaMailBuilder(String template, TemplateBuilder pBuilder) {
 			recipients = new ArrayList<String>();
 			ccs = new ArrayList<String>();
 			builder = pBuilder;
@@ -99,13 +99,13 @@ public class MailService {
 			return this;
 		}
 
-		public MailBuilder to(String... addresses) {
-			recipients.addAll(Arrays.asList(addresses));
+		public MailBuilder to(String addresses) {
+			recipients.add(addresses);
 			return this;
 		}
 
-		public MailBuilder cc(String... addresses) {
-			ccs.addAll(Arrays.asList(addresses));
+		public MailBuilder cc(String addresses) {
+			ccs.add(addresses);
 			return this;
 		}
 

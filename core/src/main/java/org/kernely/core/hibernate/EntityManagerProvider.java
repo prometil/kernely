@@ -16,36 +16,16 @@ GNU Affero General Public License for more details.
 You should have received a copy of the GNU Affero General Public
 License along with Kernely.
 If not, see <http://www.gnu.org/licenses/>.
-*/
-package org.kernely.stream.service;
+ */
 
-import static org.junit.Assert.assertNotNull;
+package org.kernely.core.hibernate;
 
-import org.junit.Rule;
-import org.junit.Test;
-import org.kernely.core.test.StreamTestModule;
+import javax.persistence.EntityManager;
 
-import com.google.guiceberry.junit4.GuiceBerryRule;
-import com.google.inject.Inject;
+import org.hibernate.ejb.Ejb3Configuration;
 
-
-public class StreamServiceTest {
-
-	@Rule
-	public final GuiceBerryRule guiceBerry = new GuiceBerryRule(StreamTestModule.class);
+public interface EntityManagerProvider {
 	
-	@Inject
-	private StreamService service;
-
-	@Test
-	public void testAddMessage() {
-		service.addMessage("test");
-		assertNotNull(service);
-	}
-
-	@Test
-	public void testGetMessages() {
-		
-	}
-
+	Ejb3Configuration getConfiguration();
+	public EntityManager getEM();
 }

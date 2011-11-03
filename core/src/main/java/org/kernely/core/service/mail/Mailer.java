@@ -17,20 +17,14 @@ You should have received a copy of the GNU Affero General Public
 License along with Kernely.
 If not, see <http://www.gnu.org/licenses/>.
 */
-package org.kernewly.core.service.security;
+package org.kernely.core.service.mail;
 
-import org.apache.shiro.SecurityUtils;
+import org.kernely.core.service.mail.builder.MailBuilder;
 
-public class SecurityServiceImpl implements SecurityService{
-
-	@Override
-	public void logout() {
-		SecurityUtils.getSubject().logout();
-	}
-
-	@Override
-	public String getCurrentUserName() {
-		return (String)SecurityUtils.getSubject().getPrincipal();
-	}
-
+/**
+ * @author g.breton
+ *
+ */
+public interface Mailer {
+	 MailBuilder create(String templatePath);
 }
