@@ -34,12 +34,16 @@ import org.apache.commons.io.filefilter.SuffixFileFilter;
 import org.eclipse.jetty.util.log.Log;
 
 /**
- *
+ * Update the classpath by adding plugins url.
  */
 public class ClasspathUpdater {
 	
 	String directory;
 	
+	/**
+	 * Constructor which needs the directory where plugins are.
+	 * @param pDirectory The directory where plugins are.
+	 */
 	public ClasspathUpdater(String pDirectory){
 		directory = pDirectory;
 	}

@@ -38,6 +38,10 @@ import org.kernely.user.service.UserService;
 
 import com.google.inject.Inject;
 
+/**
+ * Controler of the user plugin.
+ * @author jerome
+ */
 @Path("/user")
 public class UserController  extends AbstractController{
 	
@@ -48,7 +52,11 @@ public class UserController  extends AbstractController{
 	
 	@Inject
 	private UserService userService;
-	
+
+	/**
+	 * Display the list of users.
+	 * @return The html content to display the list.
+	 */
 	@GET
 	@Produces( { MediaType.TEXT_HTML })
 	public String getText()
@@ -57,7 +65,11 @@ public class UserController  extends AbstractController{
 		List<UserDTO> users = userService.getAllUsers();
 		return templateRenderer.create("/templates/gsp/users.gsp").with("users", users).render() ;
 	}
-	
+
+	/**
+	 * Create a new user with a random username and as password : "password".
+	 * @return "Ok", not useful.
+	 */
 	@GET
 	@Path("/create")
 	@Produces( { MediaType.TEXT_PLAIN })
@@ -70,14 +82,22 @@ public class UserController  extends AbstractController{
 		userService.createUser(request);
 		return "Ok";
 	}
-	
+
+	/**
+	 * Displays the login page.
+	 * @return The html content of the login page.
+	 */
 	@GET
 	@Path("/login")
 	@Produces( { MediaType.TEXT_HTML })
 	public String login() {
 		return templateRenderer.create("/templates/gsp/login.gsp").withoutLayout().render();
 	}
-	
+
+	/**
+	 * Displays the login page.
+	 * @return The html content of the login page.
+	 */
 	@POST
 	@Path("/login")
 	@Produces( { MediaType.TEXT_HTML })
@@ -87,6 +107,10 @@ public class UserController  extends AbstractController{
 		return templateRenderer.create("/templates/gsp/login.gsp").withoutLayout().render();
 	}
 	
+	/**
+	 * Logs out the user and redirect to the main page.
+	 * @return a redirection to the main page;
+	 */
 	@GET
 	@Path("/logout")
 	@Produces( { MediaType.TEXT_HTML })

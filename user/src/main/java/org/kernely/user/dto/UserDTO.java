@@ -22,10 +22,15 @@ package org.kernely.user.dto;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
- *
+ * DTO for user data, contains only his name.
  */
 @XmlRootElement
 public class UserDTO {
+	
+	/**
+	 * Constructor which set datas of the user.
+	 * @param pUsername The name of the user.
+	 */
 	public UserDTO(String pUsername) {
 		username = pUsername;
 	}

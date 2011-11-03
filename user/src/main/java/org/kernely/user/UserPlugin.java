@@ -30,7 +30,7 @@ public class UserPlugin extends AbstractPlugin {
 
 	
 	/**
-	 * Default constructor
+	 * Default constructor.
 	 */
 	public UserPlugin() {
 		super("User", "/user");

@@ -41,15 +41,27 @@ public class SimpleShiroFilter extends IniShiroFilter {
 
       private final WebSecurityManager securityManager;
 
+      /**
+       * Constructor with the security manager.
+       * @param securityManager The security manager.
+       */
       public SecurityManagerFactory(WebSecurityManager securityManager) {
         this.securityManager = securityManager;
       }
 
+      /**
+       * Constructor with the security manager and a configuration.
+       * @param securityManager The security manager.
+       * @param ini The apache ini text.
+       */
       public SecurityManagerFactory(WebSecurityManager securityManager, Ini ini) {
         super(ini);
         this.securityManager = securityManager;
       }
 
+      /**
+       * Returns the security manager passed in parameters at the {@link #SecurityManagerFactory(WebSecuritymanager) SecurityManagerFactory construction}.
+       */
       @Override
       protected WebSecurityManager createDefaultInstance() {
         return securityManager;
@@ -58,13 +70,20 @@ public class SimpleShiroFilter extends IniShiroFilter {
 
     private final Provider<WebSecurityManager> securityManager;
 
+    /**
+     * Constructor of the shiro filter, which intercepts requests.
+     * @param securityManager A provider of the web security manager.
+     */
     @Inject
     SimpleShiroFilter(Provider<WebSecurityManager> securityManager) {
       super();
       this.securityManager = securityManager;
     }
 
-
+    /**
+     * Apply the web security manager from the ini file if its exists.
+     * @param ini The ini text.
+     */
     protected Map<String, ?> applySecurityManager(Ini ini) {
       SecurityManagerFactory factory;
       if (ini == null || ini.isEmpty()) {

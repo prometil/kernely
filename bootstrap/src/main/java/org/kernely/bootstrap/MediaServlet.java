@@ -33,18 +33,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * 
- *
+ * MediaServlet is used to detect resources type : css, png...
  */
 public class MediaServlet extends HttpServlet {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 3840583598946361059L;
 
 	private static final Logger log = LoggerFactory.getLogger(MediaServlet.class);
 
+	/**
+	 * @see javax.servlet.http.HttpServlet#doGet(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
+	 */
 	public void doGet(HttpServletRequest request, HttpServletResponse response) {
 		
 		String servletPath = request.getServletPath();
