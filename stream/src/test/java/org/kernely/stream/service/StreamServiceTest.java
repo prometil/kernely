@@ -21,6 +21,10 @@ package org.kernely.stream.service;
 
 import static org.junit.Assert.assertNotNull;
 
+import static org.junit.Assert.assertThat;
+
+import org.hamcrest.core.IsNull;
+import org.junit.Assume;
 import org.junit.Rule;
 import org.junit.Test;
 import org.kernely.core.test.StreamTestModule;
@@ -37,15 +41,35 @@ public class StreamServiceTest {
 	@Inject
 	private StreamService service;
 
+	
+	
 	@Test
 	public void testAddMessage() {
 		service.addMessage("test");
 		assertNotNull(service);
 	}
-
+	
 	@Test
-	public void testGetMessages() {
+	public void testAddNullMessage(){
+		service.addMessage(null);
+		Assume.assumeNotNull(service); 
 		
 	}
 
-}
+	@Test
+	public void testGetMessages(){
+		service.addMessage("test");
+		assertNotNull(service.getMessages());
+		
+	}
+	
+	//not return even when there is no message because
+	//jquery must handle the data in the stream.js
+	@Test
+	public void testGetNullMessages() {
+		assertNotNull(service.getMessages());
+	}
+	
+
+
+} 

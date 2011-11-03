@@ -62,6 +62,13 @@ App = (function($){
 		},
 		send: function(){
 			var parent = this
+			if ($("#message-input").val()=="")
+			{
+				alert("You can't send an empty message ! ");
+				$("#message-input").val("");
+	    		$("#message-input").prop('disabled', false);
+			}
+			else {
 			var message = new Backbone.Model({
 				  message: $("#message-input").val()
 			});
@@ -76,14 +83,16 @@ App = (function($){
 			    		$("#message-input").val("");
 			    		$("#message-input").prop('disabled', false);
 			  		}
-			});
+			});}
 		},
 		getMore: function(){
 			var parent = this
 			$.getJSON('/streams', function(data){
-				$.each(data.streamMessageDTO, function(index, value){
-					parent.addMessage(value);
-				});
+				if (!data == null){
+					$.each(data.streamMessageDTO, function(index, value){
+						parent.addMessage(value);
+					});
+				}
 			})
 		},
 	})
