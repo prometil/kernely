@@ -96,4 +96,11 @@ public class UserController  extends AbstractController{
 		return redirect("/");
 	}
 	
+	
+	@GET
+	@Path("/profile")
+	@Produces( { MediaType.TEXT_HTML })
+	public String profil() {
+		return templateRenderer.create("/templates/gsp/profile.gsp").with("username",  SecurityUtils.getSubject().getPrincipal().toString()).render() ;
+	}
 }

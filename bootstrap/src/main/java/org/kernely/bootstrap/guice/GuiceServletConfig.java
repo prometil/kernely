@@ -27,15 +27,15 @@ import org.apache.commons.configuration.CombinedConfiguration;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.shiro.authc.credential.CredentialsMatcher;
-import org.apache.shiro.authc.credential.SimpleCredentialsMatcher;
+import org.apache.shiro.authc.credential.HashedCredentialsMatcher;
+import org.apache.shiro.crypto.hash.Sha256Hash;
 import org.apache.shiro.realm.Realm;
-import org.apache.shiro.realm.SimpleAccountRealm;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 import org.apache.shiro.web.mgt.WebSecurityManager;
 import org.eclipse.jetty.servlet.DefaultServlet;
 import org.kernely.bootstrap.MediaServlet;
-import org.kernely.bootstrap.shiro.KernelyShiroFilter;
 import org.kernely.bootstrap.shiro.KernelyRealm;
+import org.kernely.bootstrap.shiro.KernelyShiroFilter;
 import org.kernely.core.plugin.AbstractPlugin;
 import org.kernely.core.resources.AbstractController;
 import org.kernely.core.template.TemplateRenderer;
@@ -136,8 +136,8 @@ public class GuiceServletConfig extends GuiceServletContextListener {
 			@Singleton
 			public WebSecurityManager securityManager(KernelyRealm realm) {
 				log.debug("Create security manager");
-			
-				CredentialsMatcher customMatcher = new SimpleCredentialsMatcher();
+				//Configure encrypting password matcher
+				CredentialsMatcher customMatcher = new HashedCredentialsMatcher(Sha256Hash.ALGORITHM_NAME);
 				realm.setCredentialsMatcher(customMatcher);
 				return new DefaultWebSecurityManager(realm);
 			}

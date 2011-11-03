@@ -19,6 +19,8 @@ If not, see <http://www.gnu.org/licenses/>.
 */
 package org.kernely.bootstrap.shiro;
 
+import javax.persistence.Query;
+
 import org.apache.shiro.authc.AccountException;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;
@@ -31,6 +33,7 @@ import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.kernely.core.hibernate.EntityManagerProvider;
+import org.kernely.user.model.UserModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,8 +55,9 @@ public class KernelyRealm extends AuthorizingRealm {
 		if (username == null) {
 			throw new AccountException("Null usernames are not allowed by this realm.");
 		}
+		Query query = entityManagerProvider.getEM().createQuery("SELECT e FROM UserModel e where username='"+ username +"'");
+		String password = ((UserModel) query.getResultList().get(0)).getPassword();
 		
-		String password = "password";
 		return new SimpleAuthenticationInfo(username, password,getName());
 	}
 

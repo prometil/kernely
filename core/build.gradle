@@ -14,6 +14,9 @@ dependencies {
     //mail
     
     
+    //Postgres
+    compile "postgresql:postgresql:9.0-801.jdbc4"
+    
     //jersey
     compile "com.sun.jersey:jersey-server:1.8"
     compile "com.sun.jersey:jersey-json:1.8"

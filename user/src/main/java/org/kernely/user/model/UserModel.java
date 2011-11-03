@@ -32,7 +32,7 @@ import org.kernely.core.hibernate.AbstractEntity;
 
 //l'entité (LA table) dans la base de donnée en version java
 @Entity
-@Table(name = "user")
+@Table(name = "kernely_user")
 public class UserModel extends AbstractEntity{
 	
 	@Id
