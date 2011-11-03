@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import org.apache.shiro.SecurityUtils;
 import org.codehaus.groovy.control.CompilationFailedException;
 import org.kernely.core.plugin.AbstractPlugin;
 import org.kernely.core.plugin.PluginsLoader;
@@ -135,6 +136,11 @@ public class TemplateRenderer {
 				for (AbstractPlugin plugin : pluginsLoader.getPlugins()) {
 					menu.put(plugin.getName(), plugin.getPath());
 				}
+				
+				//===========TODO : Create an extension point ================//
+				menu.put(SecurityUtils.getSubject().getPrincipal().toString(),"user/profile");
+				//============================================================//
+				
 				layoutBinding.put("content", body);
 				layoutBinding.put("menu", menu);
 				layoutBinding.put("css", cssFiles);

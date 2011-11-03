@@ -14,6 +14,9 @@ dependencies {
     //mail
     
     
+    //Postgres
+    compile "postgresql:postgresql:9.0-801.jdbc4"
+    
 	
 	//junit4
 	compile "junit:junit:4.10"

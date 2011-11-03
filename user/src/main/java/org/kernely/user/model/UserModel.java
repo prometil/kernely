@@ -33,7 +33,7 @@ import org.kernely.core.hibernate.AbstractEntity;
  * Entity in database is in Java version
  */
 @Entity
-@Table(name = "user")
+@Table(name = "kernely_user")
 public class UserModel extends AbstractEntity{
 	
 	@Id
@@ -63,7 +63,7 @@ public class UserModel extends AbstractEntity{
 	 * Get the username of the user.
 	 * @return The username of the user.
 	 */
-	@Column(name = "Username")
+	@Column(name = "username")
 	public String getUsername() {
 		return username;
 	}
