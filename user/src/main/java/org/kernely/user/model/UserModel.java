@@ -63,7 +63,7 @@ public class UserModel extends AbstractEntity{
 	 * Get the username of the user.
 	 * @return The username of the user.
 	 */
-	@Column(name = "Username")
+	@Column(name = "username")
 	public String getUsername() {
 		return username;
 	}
