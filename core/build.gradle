@@ -12,6 +12,10 @@ dependencies {
     compile "javax.mail:mail:1.4.4"
     compile "commons-io:commons-io:2.1"
     
+	
+	//junit4
+	compile "junit:junit:4.10"
+	
     //jersey
     compile "com.sun.jersey:jersey-server:1.8"
     compile "com.sun.jersey:jersey-json:1.8"
