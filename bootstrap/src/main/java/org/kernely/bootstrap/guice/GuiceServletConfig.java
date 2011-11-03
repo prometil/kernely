@@ -57,10 +57,17 @@ public class GuiceServletConfig extends GuiceServletContextListener {
 	public static final Logger log = LoggerFactory.getLogger(TemplateRenderer.class);
 	private List<? extends AbstractPlugin> plugins;
 
+	/**
+	 * Constructor.
+	 * @param plugins The list of plugins to configure.
+	 */
 	public GuiceServletConfig(List<? extends AbstractPlugin> plugins) {
 		this.plugins = plugins;
 	}
 
+	/**
+	 * Creates a Guice injector with all the plugins modules, binding all jersey resource detected in plugins.
+	 */
 	@Override
 	protected Injector getInjector() {
 		List<Module> list = new ArrayList<Module>();

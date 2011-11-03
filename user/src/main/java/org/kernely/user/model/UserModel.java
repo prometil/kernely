@@ -29,8 +29,9 @@ import javax.persistence.Table;
 import org.kernely.core.hibernate.AbstractEntity;
 
 
-
-//l'entité (LA table) dans la base de donnée en version java
+/**
+ * Entity in database is in Java version
+ */
 @Entity
 @Table(name = "user")
 public class UserModel extends AbstractEntity{
@@ -38,10 +39,18 @@ public class UserModel extends AbstractEntity{
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private long id;
+	/**
+	 * Get the id of the user.
+	 * @return The id of the user.
+	 */
 	public long getId() {
 		return id;
 	}
 
+	/**
+	 * Set the id of the user
+	 * @param id The id of the user.
+	 */
 	public void setId(long id) {
 		this.id = id;
 	}
@@ -50,19 +59,36 @@ public class UserModel extends AbstractEntity{
 	private String username;
 	private String password;
 	
+	/**
+	 * Get the username of the user.
+	 * @return The username of the user.
+	 */
 	@Column(name = "Username")
 	public String getUsername() {
 		return username;
 	}
 	
+	/**
+	 * Get the password of the user.
+	 * return The password of the user.
+	 */
 	@Column(name = "password")
 	public String getPassword() {
 		return password;
 	}
 	
+	/**
+	 * Set or replace the username of the user.
+	 * @param newUsername The new username.
+	 */
 	public void setUsername(String newUsername) {
 		this.username = newUsername;
 	}
+	
+	/**
+	 * Set or replace the password of the user.
+	 * @param newPassword The new password.
+	 */
 	public void setPassword(String newPassword) {
 		this.password = newPassword;
 	}
