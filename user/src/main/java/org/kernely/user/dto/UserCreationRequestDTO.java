@@ -20,7 +20,9 @@ If not, see <http://www.gnu.org/licenses/>.
 package org.kernely.user.dto;
 
 
-
+/**
+ * DTO to stock data for the creation of a new user.
+ */
 public class UserCreationRequestDTO {
 	public String username;
 	public String password;

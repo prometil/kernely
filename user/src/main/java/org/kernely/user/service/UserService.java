@@ -33,13 +33,17 @@ import org.kernely.user.model.UserModel;
 import com.google.inject.Inject;
 
 /**
- * 
+ * Service provided by the user plugin.
  */
 public class UserService {
 
 	@Inject
 	private EntityManagerProvider entityManagerProvider;
 
+	/**
+	 * Create a new user in database.
+	 * @param request The request, containing user data : passwod, username...
+	 */
 	public void createUser(UserCreationRequestDTO request) {
 		EntityManager em = entityManagerProvider.getEM();
 		em.getTransaction().begin();
@@ -52,6 +56,10 @@ public class UserService {
 
 	}
 
+	/**
+	 * Gets the lists of all users contained in the database.
+	 * @return the list of all users contained in the database.
+	 */
 	@SuppressWarnings("unchecked")
 	public List<UserDTO> getAllUsers() {
 		EntityManager em = entityManagerProvider.getEM();

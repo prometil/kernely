@@ -27,6 +27,7 @@ import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.FilterHolder;
 import org.eclipse.jetty.servlet.FilterMapping;
 import org.eclipse.jetty.servlet.ServletHandler;
+import org.eclipse.jetty.util.log.Log;
 import org.eclipse.jetty.webapp.WebAppContext;
 import org.kernely.bootstrap.classpath.ClasspathUpdater;
 import org.kernely.bootstrap.error.KernelyErrorHandler;
@@ -50,7 +51,7 @@ public class KernelyBootstrap {
 	public static void main(String[] args) throws IOException {
 		log.info("Bootstrapping kernely");
 		
-		//update the class loader with the plugins directory
+		// Update the class loader with the plugins directory
 		ClasspathUpdater p = new ClasspathUpdater("plugins");
 		p.update();
 
@@ -81,7 +82,9 @@ public class KernelyBootstrap {
 	}
 
 	/**
-	 * Creates the servlet handler
+	 * Creates the servlet handler, with a guice filter holder which maps all pages.
+	 * @see #createGuiceFilterHolder()
+	 * @see #createFilterMapping(String, FilterHolder)
 	 * 
 	 * @return the servlet handler
 	 */
@@ -95,7 +98,7 @@ public class KernelyBootstrap {
 	}
 
 	/**
-	 * Creates the guice filter holder
+	 * Creates the guice filter holder.
 	 * 
 	 * @return the filter holder.
 	 */

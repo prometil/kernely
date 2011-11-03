@@ -60,6 +60,9 @@ public class HibernateUtil implements EntityManagerProvider {
 
 	}
 
+	/**
+	 * Search models in all detected plugins and persists all entities.
+	 */
 	public void addModels() {
 		List<? extends AbstractPlugin> plugins = pluginLoader.getPlugins();
 		for (AbstractPlugin plugin : plugins) {
@@ -79,6 +82,10 @@ public class HibernateUtil implements EntityManagerProvider {
 		refresh(PluginsLoader.class.getClassLoader());
 	}
 
+	/**
+	 * Refresh HibernateUtil by searching new annotated classes.
+	 * @param loader
+	 */
 	public void refresh(ClassLoader loader) {
 		log.debug("Configure");
 
@@ -90,11 +97,18 @@ public class HibernateUtil implements EntityManagerProvider {
 		factory = cfg.buildEntityManagerFactory();
 	}
 
+	/**
+	 * Get the Entity Manager.
+	 * @return the entity manageR.
+	 */
 	public EntityManager getEM() {
 		return factory.createEntityManager();
 
 	}
 
+	/**
+	 * Get the EJB configuration of HibernateUtil
+	 */
 	@Override
 	public Ejb3Configuration getConfiguration() {
 		Ejb3Configuration cfg = new Ejb3Configuration();

@@ -34,7 +34,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- *
+ * Error handler to trace error in logs instead of displaying it on screen.
  */
 public class KernelyErrorHandler extends ErrorHandler {
 	
@@ -43,6 +43,9 @@ public class KernelyErrorHandler extends ErrorHandler {
 	private static final Logger log = LoggerFactory.getLogger(KernelyErrorHandler.class);
 	
 
+	/**
+	 * When an error is detected, display a custom page instead of displaying stack trace on screen.
+	 */
 	@Override
 	protected void writeErrorPage(HttpServletRequest request, Writer writer, int code, String message, boolean showStacks) throws IOException {
 		

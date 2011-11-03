@@ -20,7 +20,9 @@ dependencies {
 	     "org.eclipse.jetty:jetty-webapp:7.2.2.v20101205",
 	     "javax.servlet:servlet-api:2.5",
 	     
-	     
+		 
+	     "com.google.inject:guice:3.0",
+	     "com.google.inject.extensions:guice-servlet:3.0",
 	     
 	     "javax.ws.rs:jsr311-api:1.1.1",
 	     "com.sun.jersey:jersey-server:1.8",
