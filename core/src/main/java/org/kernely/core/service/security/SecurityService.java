@@ -17,7 +17,7 @@ You should have received a copy of the GNU Affero General Public
 License along with Kernely.
 If not, see <http://www.gnu.org/licenses/>.
 */
-package org.kernewly.core.service.security;
+package org.kernely.core.service.security;
 
 public interface SecurityService {
 	public void logout();

@@ -17,20 +17,35 @@ You should have received a copy of the GNU Affero General Public
 License along with Kernely.
 If not, see <http://www.gnu.org/licenses/>.
 */
-package org.kernewly.core.service.security;
+package org.kernely.stream.service;
 
-import org.apache.shiro.SecurityUtils;
+import static org.junit.Assert.assertNotNull;
 
-public class SecurityServiceImpl implements SecurityService{
+import org.junit.Rule;
+import org.junit.Test;
+import org.kernely.core.test.StreamTestModule;
 
-	@Override
-	public void logout() {
-		SecurityUtils.getSubject().logout();
+import com.google.guiceberry.junit4.GuiceBerryRule;
+import com.google.inject.Inject;
+
+
+public class StreamServiceTest {
+
+	@Rule
+	public final GuiceBerryRule guiceBerry = new GuiceBerryRule(StreamTestModule.class);
+	
+	@Inject
+	private StreamService service;
+
+	@Test
+	public void testAddMessage() {
+		service.addMessage("test");
+		assertNotNull(service);
 	}
 
-	@Override
-	public String getCurrentUserName() {
-		return (String)SecurityUtils.getSubject().getPrincipal();
+	@Test
+	public void testGetMessages() {
+		
 	}
 
 }

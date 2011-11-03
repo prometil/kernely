@@ -21,12 +21,16 @@ package org.kernely.core;
 
 import groovy.text.SimpleTemplateEngine;
 
+import org.kernely.core.hibernate.EntityManagerProvider;
 import org.kernely.core.hibernate.HibernateUtil;
 import org.kernely.core.plugin.AbstractPlugin;
 import org.kernely.core.plugin.PluginsLoader;
 import org.kernely.core.resources.MainController;
 import org.kernely.core.service.mail.MailService;
+import org.kernely.core.service.mail.Mailer;
 import org.kernely.core.template.TemplateRenderer;
+
+import com.google.inject.servlet.RequestScoped;
 
 /**
  * The core kernely plugin
@@ -46,8 +50,8 @@ public class CorePlugin extends AbstractPlugin {
 	protected void configure() {
 		bind(PluginsLoader.class);
 		bind(TemplateRenderer.class);
-		bind(MailService.class);
-		bind(HibernateUtil.class);
+		bind(Mailer.class).to(MailService.class);
+		bind(EntityManagerProvider.class).to(HibernateUtil.class);//.in(RequestScoped.class);
 		bind(SimpleTemplateEngine.class);
 	}
 	

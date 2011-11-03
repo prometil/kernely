@@ -30,22 +30,24 @@ import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
-import org.kernely.core.hibernate.HibernateUtil;
+import org.kernely.core.hibernate.EntityManagerProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.inject.Inject;
 
-public class SimpleShiroRealm extends AuthorizingRealm {
-	private static final Logger log = LoggerFactory.getLogger(SimpleShiroRealm.class);
+public class KernelyRealm extends AuthorizingRealm {
 	
-
+	private static final Logger log = LoggerFactory.getLogger(KernelyRealm.class);
+	
 	@Inject
-	private HibernateUtil  hibernateUtil;
+	private EntityManagerProvider  entityManagerProvider;
 
 	protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
 		UsernamePasswordToken upToken = (UsernamePasswordToken) token;
 
+		
+		log.debug("{}", entityManagerProvider);
 		String username = upToken.getUsername();
 		if (username == null) {
 			throw new AccountException("Null usernames are not allowed by this realm.");

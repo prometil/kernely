@@ -5,7 +5,7 @@ bin
 .DS_Store
 .gradle
 gradle-app.setting
-
+*/build/*
 stream/.project
 
 */.settings/*
