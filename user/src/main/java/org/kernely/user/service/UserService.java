@@ -41,11 +41,17 @@ public class UserService {
 	private EntityManagerProvider entityManagerProvider;
 
 	public void createUser(UserCreationRequestDTO request) {
+		if("".equals(request.username) || "".equals(request.password))
+			throw new IllegalArgumentException("Username or/and password cannot be null ");
+		
+		if("".equals(request.username.trim()) || "".equals(request.password.trim()))
+			throw new IllegalArgumentException("Username or/and password cannot be space character only ");
+		
 		EntityManager em = entityManagerProvider.getEM();
 		em.getTransaction().begin();
 		UserModel user = new UserModel();
-		user.setPassword(request.password);
-		user.setUsername(request.username);
+		user.setPassword(request.password.trim());
+		user.setUsername(request.username.trim());
 		em.persist(user);
 		em.getTransaction().commit();
 		em.close();

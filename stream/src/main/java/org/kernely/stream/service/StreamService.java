@@ -54,6 +54,7 @@ public class StreamService {
 	 * @return the created message
 	 */
 	public StreamMessageDTO addMessage(String pMessage) {
+	
 		StreamMessage message = new StreamMessage();
 		message.setMessage(pMessage);
 		
@@ -79,7 +80,7 @@ public class StreamService {
 		List<StreamMessage> messages = (List<StreamMessage>) query.getResultList();
 		List<StreamMessageDTO> messageDtos = new ArrayList<StreamMessageDTO>();
 		log.debug("Found {} messages", messages.size());
-		for(StreamMessage message: messages){
+	  	for(StreamMessage message: messages){
 			
 			StreamMessageDTO streamMessageDTO = new StreamMessageDTO(message);
 			log.debug("Returned streamMessage <message: {}, date:{}>", streamMessageDTO.message, streamMessageDTO.date);
