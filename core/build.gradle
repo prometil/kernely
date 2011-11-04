@@ -15,11 +15,7 @@ dependencies {
     
     
     //Postgres
-    compile "postgresql:postgresql:9.0-801.jdbc4"
-    
-	
-	//junit4
-	compile "junit:junit:4.10"
+    compile "postgresql:postgresql:9.0-801.jdbc4" 
 	
     //jersey
     compile "com.sun.jersey:jersey-server:1.8"

@@ -13,15 +13,7 @@
 	</div>
 	
 	<div id="information">
-		blabla
-		blabaaùaù
-		oooooooooooooooo
-		oooooooooooooooooooo
-		kernely powaaaaaaaaaa
-		oooooooooo
-		ooooooooo
-		oo
-		Oo
+		you can put information about the gate here.
 	</div>
 	
 	<div id="login">
