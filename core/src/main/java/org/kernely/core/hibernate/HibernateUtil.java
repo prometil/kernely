@@ -34,7 +34,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.inject.Inject;
-
+import com.google.inject.servlet.RequestScoped;
 public class HibernateUtil implements EntityManagerProvider {
 
 	private static final Logger log = LoggerFactory.getLogger(HibernateUtil.class);
