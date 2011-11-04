@@ -19,13 +19,21 @@ If not, see <http://www.gnu.org/licenses/>.
 */
 package org.kernely.user.model;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Cascade;
 import org.kernely.core.hibernate.AbstractEntity;
 
 
@@ -92,4 +100,140 @@ public class UserModel extends AbstractEntity{
 	public void setPassword(String newPassword) {
 		this.password = newPassword;
 	}
+	
+	
+	
+	
+	@ManyToMany(
+            mappedBy = "users",
+            fetch=FetchType.LAZY
+        )
+        private Set<GroupModel> groups;
+    
+    /**
+         * Roles of the user
+         */
+    @ManyToMany(fetch=FetchType.LAZY)
+        @JoinTable( name="kernely_user_roles",
+                                joinColumns=@JoinColumn(name="fk_user"),
+                                inverseJoinColumns=@JoinColumn(name="fk_role"))
+    @Cascade( { org.hibernate.annotations.CascadeType.ALL})
+    private Set<RoleModel> roles;
+    
+    /**
+         * Permissions of the user
+         */
+    @ManyToMany(fetch=FetchType.LAZY)
+        @JoinTable( name="kernely_user_permissions",
+                                joinColumns=@JoinColumn(name="fk_user"),
+                                inverseJoinColumns=@JoinColumn(name="fk_permission"))
+    @Cascade( { org.hibernate.annotations.CascadeType.ALL})
+    private Set<PermissionModel> permissions;
+        
+
+    
+        /**
+         * @return the permissions
+         */
+        public final Set<PermissionModel> getPermissions() {
+                return permissions;
+        }
+
+        /**
+         * @param permissions the permissions to set
+         */
+        public final void setPermissions(Set<PermissionModel> permissions) {
+                this.permissions = permissions;
+        }
+
+        /**
+         * @return the roles
+         */
+        public final Set<RoleModel> getRoles() {
+                return roles;
+        }
+        
+        /**
+         * Return all user's roles, even his groups' roles
+         * @return : A set containing all his roles
+         */
+        public final Set<RoleModel> getAllRoles(){
+                Set<RoleModel> allRoles = new HashSet<RoleModel>();
+                allRoles.addAll(roles);
+                for(GroupModel g : groups){
+                        allRoles.addAll(g.getRoles());
+                }
+                return allRoles;
+        }
+        
+        /**
+         * Return all user's permissions, even his groups' permissions
+         * @return : A set containing all his permissions
+         */
+        public final Set<PermissionModel> getAllPermissions(){
+                Set<PermissionModel> allPermissions = new HashSet<PermissionModel>();
+                allPermissions.addAll(permissions);
+                for(GroupModel g : groups){
+                        allPermissions.addAll(g.getPermissions());
+                }
+                return allPermissions;
+        }
+
+        /**
+         * @param roles the roles to set
+         */
+        public final void setRoles(Set<RoleModel> roles) {
+                this.roles = roles;
+        }
+
+
+        
+        /**
+         * Gets the groups of the user
+         * @return the groups
+         */
+        public final Set<GroupModel> getGroups() {
+                return groups;
+        }
+
+        /**
+         * Sets the groups of the user
+         * @param groups the groups to set
+         */
+        public final void setGroups(Set<GroupModel> groups) {
+                this.groups = groups;
+        }
+        
+        /**
+         * Verify that the user has one of the role list
+         * @param : the list of roles
+         * @return boolean : true if the user has one of these roles
+         */
+        public final boolean hasOneOf(String ... rolesList){
+                for(RoleModel r : this.getAllRoles()){
+                        for(String s : rolesList){
+                                if(r.getName().equals(s)){
+                                        return true;
+                                }
+                        }
+                }
+                return false;
+        }
+        
+        /**
+         * Verify that the user has one of the roles in the set.
+         * @param the set of roles
+         * @return boolean true if the user has one of these roles
+         */
+        public final boolean hasOneOf(Set<String> rolesSet){
+                for(RoleModel r : this.getAllRoles()){
+                        for(String s : rolesSet){
+                                if(r.getName().equals(s)){
+                                        return true;
+                                }
+                        }
+                }
+                return false;
+        }
+
 }

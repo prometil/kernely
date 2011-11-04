@@ -20,7 +20,11 @@ If not, see <http://www.gnu.org/licenses/>.
 package org.kernely.user;
 
 import org.kernely.core.plugin.AbstractPlugin;
+import org.kernely.user.model.GroupModel;
+import org.kernely.user.model.PermissionModel;
+import org.kernely.user.model.RoleModel;
 import org.kernely.user.model.UserModel;
+import org.kernely.user.resources.GroupController;
 import org.kernely.user.resources.UserController;
 /**
  * The user plugin
@@ -35,6 +39,10 @@ public class UserPlugin extends AbstractPlugin {
 	public UserPlugin() {
 		super("User", "/user");
 		registerController(UserController.class);
+		registerController(GroupController.class);
 		registerModel(UserModel.class);
+		registerModel(RoleModel.class);
+		registerModel(PermissionModel.class);
+		registerModel(GroupModel.class);
 	}
 }

@@ -33,6 +33,8 @@ import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.kernely.core.hibernate.EntityManagerProvider;
+import org.kernely.user.model.PermissionModel;
+import org.kernely.user.model.RoleModel;
 import org.kernely.user.model.UserModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -65,7 +67,18 @@ public class KernelyRealm extends AuthorizingRealm {
 		if (principals == null) {
 			throw new AuthorizationException("PrincipalCollection method argument cannot be null.");
 		}
-		
-		return new SimpleAuthorizationInfo();
+        String username = (String)principals.fromRealm(getName()).iterator().next();
+        Query query = entityManagerProvider.getEM().createQuery("SELECT e FROM UserModel e where username='"+ username +"'");
+        UserModel user = ((UserModel) query.getResultList().get(0));
+        SimpleAuthorizationInfo info = new SimpleAuthorizationInfo();
+        if (user != null) {
+                for (RoleModel role : user.getAllRoles()) {
+                        info.addRole(role.getName());
+                }
+                for (PermissionModel perm : user.getAllPermissions()) {
+                        info.addStringPermission(perm.getName());
+                }
+        }
+        return info;
 	}
 }

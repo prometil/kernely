@@ -138,7 +138,8 @@ public class TemplateRenderer {
 				}
 				
 				//===========TODO : Create an extension point ================//
-				menu.put(SecurityUtils.getSubject().getPrincipal().toString(),"user/profile");
+				//menu.put(SecurityUtils.getSubject().getPrincipal().toString(),"user/profile");
+				menu.put("Groups","group");
 				//============================================================//
 				
 				layoutBinding.put("content", body);
