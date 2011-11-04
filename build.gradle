@@ -1,3 +1,5 @@
+File explodedDist = new File(buildDir, 'plugins')
+
 allprojects {
     apply plugin: 'java'
     group = 'org.kernely'
@@ -39,8 +41,9 @@ subprojects {
     }
 }
 sourceCompatibility = 1.6
-  task dist(dependsOn: assemble) << {
-    File explodedDist = new File(buildDir, 'plugins')
+
+task prepare(dependsOn: assemble) << {
+    
     explodedDist.mkdirs()
     subprojects.each {project ->
         if(project.name.equals("bootstrap")){
@@ -66,7 +69,26 @@ sourceCompatibility = 1.6
         }
         
     }
-}  
+}
+
+task tar(type: Tar, dependsOn: ['prepare']) {
+    compression = Compression.GZIP
+    extension = "tar.gz"
+    from("dist/kernely") {
+        into ""
+
+    }
+}
+
+task copyTar(type: Copy, dependsOn: ['tar']){
+	from "build/distributions"
+	into "dist"
+}
+
+task dist(type: Delete, dependsOn: ['copyTar']){
+	delete "build"
+}
+
 dependsOnChildren()
 
 
