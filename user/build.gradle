@@ -1,4 +1,0 @@
-dependsOn(':core')
-dependencies {
-    compile project(':core')
-}

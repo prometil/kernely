@@ -1,10 +1,8 @@
 dependsOn(':core')
-dependsOn(':user')
 
 dependencies {
 
     compile project(':core')
-    compile project(':user')
     compile project(':stream')
     compile (
     

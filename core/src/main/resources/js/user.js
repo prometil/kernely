@@ -1,8 +1,8 @@
 
 
 $(function(){
-		console.log("Init");
-		window.Todo = Backbone.Model.extend({
+	console.log("Init");
+	window.Todo = Backbone.Model.extend({
 	    defaults: function() {
 	      return {
 	        done:  false,
@@ -13,8 +13,8 @@ $(function(){
 	      this.save({done: !this.get("done")});
 	    }
 
-	  });
-		window.AppView = Backbone.View.extend({
+	});
+	window.AppView = Backbone.View.extend({
 			el: $("#users"),
 			events:{
 				"click .create" : "create"
@@ -24,9 +24,8 @@ $(function(){
 		    },
 		    render: function() {
 		    	console.log("Render");
-		      },
+		    }
 		
-		}
-		)
-		window.App = new AppView;
+	})
+	window.App = new AppView;
 });

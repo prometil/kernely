@@ -2,6 +2,5 @@ dependsOn(':core')
 dependencies {
 	testCompile project(path: ':core', configuration: 'tests')
     compile project(':core')
-    compile project(':user')
 }
     

@@ -20,11 +20,19 @@
 	<body>
 			<!-- display all applications in the menu -->
 			<div id="header">
-				<div id="title">Kernely</div>
-				<% menu.each() { key, value -> %>
-					<a href="${value}">${key}</a>
-				<% };%>
-				<a href="/user/logout">logout</a>
+				<div id="menu">
+					<div id="title">Kernely</div>
+					<% menu.each() { key, value -> %>
+						<a href="${value}">${key}</a>
+					<% };%>
+					<a href="/group">${groups}</a>
+					<a href="/user">${users}</a>
+				</div>
+				<div id="header_profile">
+					<a href="#">${currentUser}</a>
+					<a href="/user/logout">logout</a>
+				</div>
+				
 			</div>
 			<div id="container">
 				<%= content %>

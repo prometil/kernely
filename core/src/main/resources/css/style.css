@@ -49,6 +49,22 @@ div#header a {
 	text-decoration: none;
 }
 
+/* menu*/
+div#menu {
+	left:0;
+	height: 30px;
+    	position: absolute;
+    	top: 0;
+}
+
+/* header profile*/
+div#header_profile {
+	right:0;
+	height: 30px;
+   	position: absolute;
+   	top: 0;
+}
+
 /* content */
 div#content {
 	padding: 10px;

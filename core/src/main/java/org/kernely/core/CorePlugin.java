@@ -29,6 +29,12 @@ import org.kernely.core.resources.MainController;
 import org.kernely.core.service.mail.MailService;
 import org.kernely.core.service.mail.Mailer;
 import org.kernely.core.template.TemplateRenderer;
+import org.kernely.user.model.GroupModel;
+import org.kernely.user.model.PermissionModel;
+import org.kernely.user.model.RoleModel;
+import org.kernely.user.model.UserModel;
+import org.kernely.user.resources.GroupController;
+import org.kernely.user.resources.UserController;
 
 import com.google.common.eventbus.EventBus;
 import com.google.inject.Singleton;
@@ -46,6 +52,13 @@ public class CorePlugin extends AbstractPlugin {
 		super("Core", "/");
 		registerController(MainController.class);
 		registerConfigurationPath("core-config.xml");
+		
+		registerController(UserController.class);
+		registerController(GroupController.class);
+		registerModel(UserModel.class);
+		registerModel(RoleModel.class);
+		registerModel(PermissionModel.class);
+		registerModel(GroupModel.class);
 	}
 
 	@Override
