@@ -28,8 +28,10 @@ import javax.persistence.Query;
 import org.kernely.core.hibernate.EntityManagerProvider;
 import org.kernely.user.dto.UserCreationRequestDTO;
 import org.kernely.user.dto.UserDTO;
+import org.kernely.user.event.UserCreationEvent;
 import org.kernely.user.model.UserModel;
 
+import com.google.common.eventbus.EventBus;
 import com.google.inject.Inject;
 
 /**
@@ -39,6 +41,9 @@ public class UserService {
 
 	@Inject
 	private EntityManagerProvider entityManagerProvider;
+	
+	@Inject
+	private EventBus eventBus;
 
 	/**
 	 * Create a new user in database.
@@ -59,7 +64,7 @@ public class UserService {
 		em.persist(user);
 		em.getTransaction().commit();
 		em.close();
-
+		eventBus.post(new UserCreationEvent(user.getId(), user.getUsername()));
 	}
 
 	/**

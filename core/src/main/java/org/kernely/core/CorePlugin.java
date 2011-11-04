@@ -30,6 +30,8 @@ import org.kernely.core.service.mail.MailService;
 import org.kernely.core.service.mail.Mailer;
 import org.kernely.core.template.TemplateRenderer;
 
+import com.google.common.eventbus.EventBus;
+import com.google.inject.Singleton;
 import com.google.inject.servlet.RequestScoped;
 
 /**
@@ -51,8 +53,9 @@ public class CorePlugin extends AbstractPlugin {
 		bind(PluginsLoader.class);
 		bind(TemplateRenderer.class);
 		bind(Mailer.class).to(MailService.class);
-		bind(EntityManagerProvider.class).to(HibernateUtil.class);//.in(RequestScoped.class);
+		bind(EntityManagerProvider.class).to(HibernateUtil.class);
 		bind(SimpleTemplateEngine.class);
+		bind(EventBus.class).in(Singleton.class);
 	}
 	
 }

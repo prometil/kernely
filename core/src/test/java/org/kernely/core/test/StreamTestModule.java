@@ -30,6 +30,7 @@ import org.kernely.core.service.mail.builder.MailBuilder;
 import org.kernely.core.template.TemplateRenderer;
 import org.mockito.Mockito;
 
+import com.google.common.eventbus.EventBus;
 import com.google.guiceberry.GuiceBerryModule;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
@@ -57,7 +58,7 @@ public class StreamTestModule extends AbstractModule {
 		bind(Mailer.class).toInstance(mailerMock);
 		bind(EntityManagerProvider.class).to(HibernateTestUtil.class);
 		bind(SimpleTemplateEngine.class);
-	
+		bind(EventBus.class);
 
 	}
 	
