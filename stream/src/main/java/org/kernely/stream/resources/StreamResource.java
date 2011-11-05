@@ -16,11 +16,12 @@ GNU Affero General Public License for more details.
 You should have received a copy of the GNU Affero General Public
 License along with Kernely.
 If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 package org.kernely.stream.resources;
 
 import java.util.List;
 
+import javax.persistence.EntityManager;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -50,10 +51,13 @@ public class StreamResource extends AbstractController {
 	@Inject
 	private StreamService streamService;
 
+
+	
 	@GET
 	@Produces( { MediaType.TEXT_HTML })
 	public String display() {
 		log.debug("Call to GET on streams");
+		
 		return templateRenderer.create("/templates/gsp/streams.gsp").addCss("/css/stream.css").render();
 	}
 

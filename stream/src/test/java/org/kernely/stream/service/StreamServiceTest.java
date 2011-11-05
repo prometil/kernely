@@ -19,35 +19,35 @@ If not, see <http://www.gnu.org/licenses/>.
 */
 package org.kernely.stream.service;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-import static org.junit.Assert.assertThat;
-
-import org.hamcrest.core.IsNull;
 import org.junit.Assume;
-import org.junit.Rule;
 import org.junit.Test;
-import org.kernely.core.test.StreamTestModule;
+import org.kernely.core.common.AbstractServiceTest;
+import org.kernely.stream.dto.StreamMessageDTO;
 
-import com.google.guiceberry.junit4.GuiceBerryRule;
 import com.google.inject.Inject;
 
+/**
+ * 
+ * @author g.breton
+ *
+ */
+public class StreamServiceTest extends AbstractServiceTest {
 
-public class StreamServiceTest {
-
-	@Rule
-	public final GuiceBerryRule guiceBerry = new GuiceBerryRule(StreamTestModule.class);
-	
+	private static final String USERNAME = "USERNAME";
 	@Inject
 	private StreamService service;
-
-	
 	
 	@Test
 	public void testAddMessage() {
-		service.addMessage("test");
-		assertNotNull(service);
+		StreamMessageDTO message = service.addMessage(USERNAME);
+		assertNotNull(message);
+		assertEquals(USERNAME, message.message);
+		assertEquals(1, service.getMessages().size());
 	}
+	
 	
 	@Test
 	public void testAddNullMessage(){
@@ -58,13 +58,11 @@ public class StreamServiceTest {
 
 	@Test
 	public void testGetMessages(){
-		service.addMessage("test");
+		service.addMessage(USERNAME);
 		assertNotNull(service.getMessages());
 		
 	}
 	
-	//not return even when there is no message because
-	//jquery must handle the data in the stream.js
 	@Test
 	public void testGetNullMessages() {
 		assertNotNull(service.getMessages());

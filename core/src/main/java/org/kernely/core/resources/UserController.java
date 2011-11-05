@@ -17,7 +17,7 @@ You should have received a copy of the GNU Affero General Public
 License along with Kernely.
 If not, see <http://www.gnu.org/licenses/>.
 */
-package org.kernely.user.resources;
+package org.kernely.core.resources;
 
 import java.util.List;
 import java.util.UUID;
@@ -30,11 +30,10 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.apache.shiro.SecurityUtils;
-import org.kernely.core.resources.AbstractController;
+import org.kernely.core.dto.UserCreationRequestDTO;
+import org.kernely.core.dto.UserDTO;
+import org.kernely.core.service.user.UserService;
 import org.kernely.core.template.TemplateRenderer;
-import org.kernely.user.dto.UserCreationRequestDTO;
-import org.kernely.user.dto.UserDTO;
-import org.kernely.user.service.UserService;
 
 import com.google.inject.Inject;
 

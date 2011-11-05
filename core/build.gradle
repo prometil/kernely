@@ -35,7 +35,8 @@ dependencies {
     
     compile "com.google.inject:guice:3.0"
 	compile "com.google.inject.extensions:guice-servlet:3.0"
-	compile "com.google.inject:guice:3.0"
-	compile "com.google.inject.extensions:guice-servlet:3.0"    
+	compile "com.google.inject.extensions:guice-persist:3.0"
+	
+	  
 }
     

@@ -1,4 +1,4 @@
-package org.kernely.user.resources;
+package org.kernely.core.resources;
 
 import java.util.List;
 
@@ -7,10 +7,9 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-import org.kernely.core.resources.AbstractController;
+import org.kernely.core.dto.GroupDTO;
+import org.kernely.core.service.user.GroupService;
 import org.kernely.core.template.TemplateRenderer;
-import org.kernely.user.dto.GroupDTO;
-import org.kernely.user.service.GroupService;
 
 import com.google.inject.Inject;
 

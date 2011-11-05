@@ -32,18 +32,12 @@ import org.apache.commons.io.filefilter.DirectoryFileFilter;
 import org.apache.commons.io.filefilter.IOFileFilter;
 import org.apache.commons.io.filefilter.SuffixFileFilter;
 import org.eclipse.jetty.util.log.Log;
-import org.kernely.bootstrap.KernelyBootstrap;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Update the classpath by adding plugins url.
  */
 public class ClasspathUpdater {
 
-private static final Logger log = LoggerFactory.getLogger(KernelyBootstrap.class);
-	
-	
 
 	String directory;
 	

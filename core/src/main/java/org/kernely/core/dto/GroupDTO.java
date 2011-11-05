@@ -1,4 +1,4 @@
-package org.kernely.user.dto;
+package org.kernely.core.dto;
 
 import javax.xml.bind.annotation.XmlRootElement;
 

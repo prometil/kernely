@@ -25,7 +25,6 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
-import org.kernely.core.hibernate.EntityManagerProvider;
 import org.kernely.core.service.mail.Mailer;
 import org.kernely.stream.dto.StreamMessageDTO;
 import org.kernely.stream.model.StreamMessage;
@@ -33,15 +32,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.inject.Inject;
+import com.google.inject.persist.Transactional;
 
 /**
  * 
  */
 public class StreamService {
 	
-	//the hibernate util
 	@Inject
-	private EntityManagerProvider entityManagerProvider;
+	EntityManager em;
 	
 	@Inject
 	private Mailer mailService;
@@ -53,17 +52,14 @@ public class StreamService {
 	 * 
 	 * @return the created message
 	 */
+	@Transactional
 	public StreamMessageDTO addMessage(String pMessage) {
 	
 		StreamMessage message = new StreamMessage();
 		message.setMessage(pMessage);
 		
-		EntityManager em = entityManagerProvider.getEM();
-		em.getTransaction().begin();
 		em.persist(message);
-		em.getTransaction().commit();
-		em.close();
-		mailService.create("/templates/gsp/mail.gsp").subject("This is a test mail").to("breton.gy@gmail.com").send();
+		//mailService.create("/templates/gsp/mail.gsp").subject("This is a test mail").to("breton.gy@gmail.com").send();
 		return new StreamMessageDTO(message);
 	}
 
@@ -73,9 +69,9 @@ public class StreamService {
 	 * @return the list of messages
 	 */
 	@SuppressWarnings("unchecked")
+	@Transactional
 	public List<StreamMessageDTO> getMessages() {
 		
-		EntityManager em = entityManagerProvider.getEM();
 		Query query = em.createQuery("SELECT m FROM StreamMessage m order by m.date");
 		List<StreamMessage> messages = (List<StreamMessage>) query.getResultList();
 		List<StreamMessageDTO> messageDtos = new ArrayList<StreamMessageDTO>();
@@ -86,7 +82,6 @@ public class StreamService {
 			log.debug("Returned streamMessage <message: {}, date:{}>", streamMessageDTO.message, streamMessageDTO.date);
 			messageDtos.add(streamMessageDTO);
 		}
-		em.close();
 		return messageDtos;
 
 	}

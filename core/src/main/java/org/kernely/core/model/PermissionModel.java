@@ -17,7 +17,7 @@ You should have received a copy of the GNU Affero General Public
 License along with Kernely.
 If not, see <http://www.gnu.org/licenses/>.
 */
-package org.kernely.user.model;
+package org.kernely.core.model;
 
 import java.util.HashSet;
 import java.util.Set;

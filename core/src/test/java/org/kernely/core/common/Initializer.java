@@ -17,54 +17,22 @@ You should have received a copy of the GNU Affero General Public
 License along with Kernely.
 If not, see <http://www.gnu.org/licenses/>.
  */
-package org.kernely.user.event;
+package org.kernely.core.common;
+
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
+import com.google.inject.persist.PersistService;
 
 /**
+ * Initialize the persistence service
  * @author g.breton
  *
  */
-public class UserCreationEvent{
-	private long id;
-	private String username;
-	
-	
-	public UserCreationEvent(long id, String username) {
-		super();
-		this.id = id;
-		this.username = username;
-	}
+@Singleton
+public class Initializer {
 
-	/**
-	 * The method returns the id
-	 * @return
-	 */
-	public long getId() {
-		return id;
+	@Inject
+	Initializer(PersistService service) {
+		service.start();
 	}
-
-	/**
-	 * The method set the id
-	 * @param pId the new id to set
-	 */
-	public void setId(long pId) {
-		this.id = pId;
-	}
-
-	/** 
-	 * The method returns the username
-	 * @return the userrname
-	 */
-	public String getUsername() {
-		return username;
-	}
-
-	/**
-	 * The method set the username
-	 * @param username the username to set
-	 */
-	public void setUsername(String username) {
-		this.username = username;
-	}
-	
-	
 }
