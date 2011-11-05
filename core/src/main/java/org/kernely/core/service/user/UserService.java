@@ -28,7 +28,7 @@ import javax.persistence.Query;
 import org.kernely.core.dto.UserCreationRequestDTO;
 import org.kernely.core.dto.UserDTO;
 import org.kernely.core.event.UserCreationEvent;
-import org.kernely.core.model.UserModel;
+import org.kernely.core.model.User;
 
 import com.google.common.eventbus.EventBus;
 import com.google.inject.Inject;
@@ -61,7 +61,7 @@ public class UserService {
 		if ("".equals(request.username.trim()) || "".equals(request.password.trim()))
 			throw new IllegalArgumentException("Username or/and password cannot be space character only ");
 
-		UserModel user = new UserModel();
+		User user = new User();
 		user.setPassword(request.password.trim());
 		user.setUsername(request.username.trim());
 		em.persist(user);
@@ -77,9 +77,9 @@ public class UserService {
 	@Transactional
 	public List<UserDTO> getAllUsers() {
 		Query query = em.createQuery("SELECT e FROM UserModel e");
-		List<UserModel> collection = (List<UserModel>) query.getResultList();
+		List<User> collection = (List<User>) query.getResultList();
 		List<UserDTO> dtos = new ArrayList<UserDTO>();
-		for (UserModel user : collection) {
+		for (User user : collection) {
 			dtos.add(new UserDTO(user.getUsername()));
 		}
 		return dtos;

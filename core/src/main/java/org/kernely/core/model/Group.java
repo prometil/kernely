@@ -35,11 +35,11 @@ import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.Cascade;
-import org.kernely.core.hibernate.AbstractEntity;
+import org.kernely.core.hibernate.AbstractModel;
 
 @Entity
 @Table(name = "kernely_group")
-public class GroupModel extends AbstractEntity{
+public class Group extends AbstractModel{
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name="group_id")
@@ -60,7 +60,7 @@ public class GroupModel extends AbstractEntity{
 	@JoinTable( name="kernely_user_group",
 			joinColumns=@JoinColumn(name="fk_group_user_group"),
 			inverseJoinColumns=@JoinColumn(name="fk_user_user_group"))
-			private Set<UserModel> users;
+			private Set<User> users;
 
 	/**
 	 * Roles of the group
@@ -69,7 +69,7 @@ public class GroupModel extends AbstractEntity{
 	@JoinTable( name="kernely_group_roles",
 			joinColumns=@JoinColumn(name="fk_group"),
 			inverseJoinColumns=@JoinColumn(name="fk_role"))
-			private Set<RoleModel> roles;
+			private Set<Role> roles;
 
 	/**
 	 * Permissions of the group
@@ -79,44 +79,44 @@ public class GroupModel extends AbstractEntity{
 			joinColumns=@JoinColumn(name="fk_group"),
 			inverseJoinColumns=@JoinColumn(name="fk_permission"))
 			@Cascade( { org.hibernate.annotations.CascadeType.ALL})
-			private Set<PermissionModel> permissions;
+			private Set<Permission> permissions;
 
 	/**
 	 * Initialize a group with default values.
 	 */
-	public GroupModel(){
-		this.roles = new HashSet<RoleModel>();
+	public Group(){
+		this.roles = new HashSet<Role>();
 		this.id = 0;
 		this.name = "";
-		this.users = new HashSet<UserModel>();
-		this.permissions = new HashSet<PermissionModel>();
+		this.users = new HashSet<User>();
+		this.permissions = new HashSet<Permission>();
 	}
 
 	/**
 	 * @return the permissions
 	 */
-	public final Set<PermissionModel> getPermissions() {
+	public final Set<Permission> getPermissions() {
 		return permissions;
 	}
 
 	/**
 	 * @param permissions the permissions to set
 	 */
-	public final void setPermissions(Set<PermissionModel> permissions) {
+	public final void setPermissions(Set<Permission> permissions) {
 		this.permissions = permissions;
 	}
 
 	/**
 	 * @return the roles
 	 */
-	public final Set<RoleModel> getRoles() {
+	public final Set<Role> getRoles() {
 		return roles;
 	}
 
 	/**
 	 * @param roles the roles to set
 	 */
-	public final void setRoles(Set<RoleModel> roles) {
+	public final void setRoles(Set<Role> roles) {
 		this.roles = roles;
 	}
 
@@ -156,7 +156,7 @@ public class GroupModel extends AbstractEntity{
 	 * Gets the users in the group.
 	 * @return the users
 	 */
-	public final Set<UserModel> getUsers() {
+	public final Set<User> getUsers() {
 		return users;
 	}
 
@@ -164,7 +164,7 @@ public class GroupModel extends AbstractEntity{
 	 * Sets the users
 	 * @param users the users to set
 	 */
-	public final void setUsers(Set<UserModel> users) {
+	public final void setUsers(Set<User> users) {
 		this.users = users;
 	}
 }

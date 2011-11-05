@@ -7,7 +7,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
 import org.kernely.core.dto.PermissionDTO;
-import org.kernely.core.model.PermissionModel;
+import org.kernely.core.model.Permission;
 
 import com.google.inject.Inject;
 
@@ -24,9 +24,9 @@ public class PermissionService {
 	public List<PermissionDTO> getAllPermissions() {
 		em.getTransaction().begin();
 		Query query = em.createQuery("SELECT e FROM PermissionModel e");
-		List<PermissionModel> collection = (List<PermissionModel>) query.getResultList();
+		List<Permission> collection = (List<Permission>) query.getResultList();
 		List<PermissionDTO> dtos = new ArrayList<PermissionDTO>();
-		for (PermissionModel perm : collection) {
+		for (Permission perm : collection) {
 			dtos.add(new PermissionDTO(perm.getName()));
 		}
 		em.getTransaction().commit();

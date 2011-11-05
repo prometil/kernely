@@ -7,7 +7,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
 import org.kernely.core.dto.GroupDTO;
-import org.kernely.core.model.GroupModel;
+import org.kernely.core.model.Group;
 
 import com.google.inject.Inject;
 
@@ -24,9 +24,9 @@ public class GroupService {
 	public List<GroupDTO> getAllGroups() {
 		em.getTransaction().begin();
 		Query query = em.createQuery("SELECT e FROM GroupModel e");
-		List<GroupModel> collection = (List<GroupModel>) query.getResultList();
+		List<Group> collection = (List<Group>) query.getResultList();
 		List<GroupDTO> dtos = new ArrayList<GroupDTO>();
-		for (GroupModel group : collection) {
+		for (Group group : collection) {
 			dtos.add(new GroupDTO(group.getName()));
 		}
 		em.getTransaction().commit();

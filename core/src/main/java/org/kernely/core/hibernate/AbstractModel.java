@@ -22,6 +22,6 @@ package org.kernely.core.hibernate;
 /**
  *
  */
-public class AbstractEntity {
+public class AbstractModel {
 
 }

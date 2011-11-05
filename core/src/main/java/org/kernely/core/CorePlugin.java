@@ -21,10 +21,10 @@ package org.kernely.core;
 
 import groovy.text.SimpleTemplateEngine;
 
-import org.kernely.core.model.GroupModel;
-import org.kernely.core.model.PermissionModel;
-import org.kernely.core.model.RoleModel;
-import org.kernely.core.model.UserModel;
+import org.kernely.core.model.Group;
+import org.kernely.core.model.Permission;
+import org.kernely.core.model.Role;
+import org.kernely.core.model.User;
 import org.kernely.core.plugin.AbstractPlugin;
 import org.kernely.core.plugin.PluginsLoader;
 import org.kernely.core.resources.GroupController;
@@ -51,10 +51,10 @@ public class CorePlugin extends AbstractPlugin {
 		registerConfigurationPath("core-config.xml");
 		registerController(UserController.class);
 		registerController(GroupController.class);
-		registerModel(UserModel.class);
-		registerModel(RoleModel.class);
-		registerModel(PermissionModel.class);
-		registerModel(GroupModel.class);
+		registerModel(User.class);
+		registerModel(Role.class);
+		registerModel(Permission.class);
+		registerModel(Group.class);
 	}
 
 	@Override

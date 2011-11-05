@@ -49,11 +49,11 @@ import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
-import org.kernely.core.hibernate.AbstractEntity;
+import org.kernely.core.hibernate.AbstractModel;
 
 @Entity
 @Table(name="kernely_role")
-public class RoleModel extends AbstractEntity {
+public class Role extends AbstractModel {
 	public final static String ROLE_ADMINISTRATOR = "Administrator";
 
 	/**
@@ -76,7 +76,7 @@ public class RoleModel extends AbstractEntity {
 			mappedBy = "roles",
 			fetch=FetchType.LAZY
 	)
-	private Set<GroupModel> groups;
+	private Set<Group> groups;
 
 	/**
 	 * Users having this role
@@ -85,16 +85,16 @@ public class RoleModel extends AbstractEntity {
 			mappedBy = "roles",
 			fetch=FetchType.LAZY
 	)
-	private Set<UserModel> users;
+	private Set<User> users;
 
 	/**
 	 * Constructor, with default values
 	 */
-	public RoleModel(){
-		this.groups = new HashSet<GroupModel>();
+	public Role(){
+		this.groups = new HashSet<Group>();
 		this.id = 0;
 		this.name = "";
-		this.users = new HashSet<UserModel>();
+		this.users = new HashSet<User>();
 	}
 
 	/**
@@ -128,28 +128,28 @@ public class RoleModel extends AbstractEntity {
 	/**
 	 * @return the groups
 	 */
-	public final Set<GroupModel> getGroups() {
+	public final Set<Group> getGroups() {
 		return groups;
 	}
 
 	/**
 	 * @param groups the groups to set
 	 */
-	public final void setGroups(Set<GroupModel> groups) {
+	public final void setGroups(Set<Group> groups) {
 		this.groups = groups;
 	}
 
 	/**
 	 * @return the users
 	 */
-	public final Set<UserModel> getUsers() {
+	public final Set<User> getUsers() {
 		return users;
 	}
 
 	/**
 	 * @param users the users to set
 	 */
-	public final void setUsers(Set<UserModel> roleUsers) {
+	public final void setUsers(Set<User> roleUsers) {
 		this.users = roleUsers;
 	}
 

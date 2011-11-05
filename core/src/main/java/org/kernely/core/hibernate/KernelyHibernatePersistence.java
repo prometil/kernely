@@ -38,9 +38,6 @@ import org.slf4j.LoggerFactory;
 public class KernelyHibernatePersistence extends HibernatePersistence {
 	public static final Logger log = LoggerFactory.getLogger(KernelyHibernatePersistence.class);
 	
-	public KernelyHibernatePersistence(){
-		log.debug("Heeere");
-	}
 	@SuppressWarnings("unchecked")
 	@Override
 	public EntityManagerFactory createEntityManagerFactory(String persistenceUnitName, Map overridenProperties) {
@@ -58,7 +55,7 @@ public class KernelyHibernatePersistence extends HibernatePersistence {
 		while (it.hasNext()) {
 			AbstractPlugin plugin = it.next();
 			
-			for (Class<? extends AbstractEntity> entityClass: plugin.getModels()){
+			for (Class<? extends AbstractModel> entityClass: plugin.getModels()){
 				log.debug("Add annotated class : {}",entityClass);
 				cfg.addAnnotatedClass(entityClass);
 			}

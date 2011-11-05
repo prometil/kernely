@@ -35,9 +35,9 @@ import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
-import org.kernely.core.model.PermissionModel;
-import org.kernely.core.model.RoleModel;
-import org.kernely.core.model.UserModel;
+import org.kernely.core.model.Permission;
+import org.kernely.core.model.Role;
+import org.kernely.core.model.User;
 import org.kernely.stream.model.StreamMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -71,7 +71,7 @@ public class KernelyRealm extends AuthorizingRealm {
 			em.persist(m);
 			log.debug("{}",m.getId());
 			
-			UserModel userModel = (UserModel) query.getResultList().get(0);
+			User userModel = (User) query.getResultList().get(0);
 			String password = userModel.getPassword();
 			em.getTransaction().commit();
 					return new SimpleAuthenticationInfo(username, password, getName());
@@ -89,13 +89,13 @@ public class KernelyRealm extends AuthorizingRealm {
 		}
 		String username = (String) principals.fromRealm(getName()).iterator().next();
 		Query query = em.createQuery("SELECT e FROM UserModel e where username='" + username + "'");
-		UserModel user = ((UserModel) query.getResultList().get(0));
+		User user = ((User) query.getResultList().get(0));
 		SimpleAuthorizationInfo info = new SimpleAuthorizationInfo();
 		if (user != null) {
-			for (RoleModel role : user.getAllRoles()) {
+			for (Role role : user.getAllRoles()) {
 				info.addRole(role.getName());
 			}
-			for (PermissionModel perm : user.getAllPermissions()) {
+			for (Permission perm : user.getAllPermissions()) {
 				info.addStringPermission(perm.getName());
 			}
 		}
