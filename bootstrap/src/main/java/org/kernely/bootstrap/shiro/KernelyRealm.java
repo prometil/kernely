@@ -52,35 +52,29 @@ public class KernelyRealm extends AuthorizingRealm {
 	private EntityManager em;
 
 	protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
-		log.debug("HEREEEEE");
-		try{
-		UsernamePasswordToken upToken = (UsernamePasswordToken) token;
-		em.getTransaction().begin();
-		String username = upToken.getUsername();
-		if (username == null) {
-			log.debug("HEREEEEE");
-			throw new AccountException("Null usernames are not allowed by this realm.");
-		}
-		log.debug("HEREEEEE");
-		Query query = em.createQuery("SELECT e FROM UserModel e where username='" + username + "'");
-		
-			
-			log.debug("HEREEEEE");
+		try {
+			UsernamePasswordToken upToken = (UsernamePasswordToken) token;
+			em.getTransaction().begin();
+			String username = upToken.getUsername();
+			if (username == null) {
+				throw new AccountException("Null usernames are not allowed by this realm.");
+			}
+			Query query = em.createQuery("SELECT e FROM User e where username='" + username + "'");
+
 			StreamMessage m = new StreamMessage();
 			m.setMessage(UUID.randomUUID().toString());
 			em.persist(m);
-			log.debug("{}",m.getId());
-			
+
 			User userModel = (User) query.getResultList().get(0);
 			String password = userModel.getPassword();
 			em.getTransaction().commit();
-					return new SimpleAuthenticationInfo(username, password, getName());
-		}
-		catch(Exception e){
-			log.error("",e);
+			return new SimpleAuthenticationInfo(username, password, getName());
+		} catch (Exception e) {
+			//TODO we should log this 
+			log.error("", e);
 			return null;
 		}
-		
+
 	}
 
 	protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
