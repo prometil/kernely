@@ -16,9 +16,12 @@ GNU Affero General Public License for more details.
 You should have received a copy of the GNU Affero General Public
 License along with Kernely.
 If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 package org.kernely.bootstrap.shiro;
 
+import java.util.UUID;
+
+import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
 import org.apache.shiro.authc.AccountException;
@@ -32,53 +35,64 @@ import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
-import org.kernely.core.hibernate.EntityManagerProvider;
-import org.kernely.user.model.PermissionModel;
-import org.kernely.user.model.RoleModel;
-import org.kernely.user.model.UserModel;
+import org.kernely.core.model.Permission;
+import org.kernely.core.model.Role;
+import org.kernely.core.model.User;
+import org.kernely.stream.model.StreamMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.inject.Inject;
 
 public class KernelyRealm extends AuthorizingRealm {
-	
+
 	private static final Logger log = LoggerFactory.getLogger(KernelyRealm.class);
-	
+
 	@Inject
-	private EntityManagerProvider  entityManagerProvider;
+	private EntityManager em;
 
 	protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
-		UsernamePasswordToken upToken = (UsernamePasswordToken) token;
+		try {
+			UsernamePasswordToken upToken = (UsernamePasswordToken) token;
+			em.getTransaction().begin();
+			String username = upToken.getUsername();
+			if (username == null) {
+				throw new AccountException("Null usernames are not allowed by this realm.");
+			}
+			Query query = em.createQuery("SELECT e FROM User e where username='" + username + "'");
 
-		
-		log.debug("{}", entityManagerProvider);
-		String username = upToken.getUsername();
-		if (username == null) {
-			throw new AccountException("Null usernames are not allowed by this realm.");
+			StreamMessage m = new StreamMessage();
+			m.setMessage(UUID.randomUUID().toString());
+			em.persist(m);
+
+			User userModel = (User) query.getResultList().get(0);
+			String password = userModel.getPassword();
+			em.getTransaction().commit();
+			return new SimpleAuthenticationInfo(username, password, getName());
+		} catch (Exception e) {
+			//TODO we should log this 
+			log.error("", e);
+			return null;
 		}
-		Query query = entityManagerProvider.getEM().createQuery("SELECT e FROM UserModel e where username='"+ username +"'");
-		String password = ((UserModel) query.getResultList().get(0)).getPassword();
-		
-		return new SimpleAuthenticationInfo(username, password,getName());
+
 	}
 
 	protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
 		if (principals == null) {
 			throw new AuthorizationException("PrincipalCollection method argument cannot be null.");
 		}
-        String username = (String)principals.fromRealm(getName()).iterator().next();
-        Query query = entityManagerProvider.getEM().createQuery("SELECT e FROM UserModel e where username='"+ username +"'");
-        UserModel user = ((UserModel) query.getResultList().get(0));
-        SimpleAuthorizationInfo info = new SimpleAuthorizationInfo();
-        if (user != null) {
-                for (RoleModel role : user.getAllRoles()) {
-                        info.addRole(role.getName());
-                }
-                for (PermissionModel perm : user.getAllPermissions()) {
-                        info.addStringPermission(perm.getName());
-                }
-        }
-        return info;
+		String username = (String) principals.fromRealm(getName()).iterator().next();
+		Query query = em.createQuery("SELECT e FROM UserModel e where username='" + username + "'");
+		User user = ((User) query.getResultList().get(0));
+		SimpleAuthorizationInfo info = new SimpleAuthorizationInfo();
+		if (user != null) {
+			for (Role role : user.getAllRoles()) {
+				info.addRole(role.getName());
+			}
+			for (Permission perm : user.getAllPermissions()) {
+				info.addStringPermission(perm.getName());
+			}
+		}
+		return info;
 	}
 }

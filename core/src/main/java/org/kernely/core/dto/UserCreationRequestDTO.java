@@ -17,11 +17,13 @@ You should have received a copy of the GNU Affero General Public
 License along with Kernely.
 If not, see <http://www.gnu.org/licenses/>.
 */
-package org.kernely.core.hibernate;
+package org.kernely.core.dto;
+
 
 /**
- *
+ * DTO to stock data for the creation of a new user.
  */
-public class AbstractEntity {
-
+public class UserCreationRequestDTO {
+	public String username;
+	public String password;
 }

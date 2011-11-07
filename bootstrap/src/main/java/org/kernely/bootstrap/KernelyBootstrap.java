@@ -27,7 +27,6 @@ import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.FilterHolder;
 import org.eclipse.jetty.servlet.FilterMapping;
 import org.eclipse.jetty.servlet.ServletHandler;
-import org.eclipse.jetty.util.log.Log;
 import org.eclipse.jetty.webapp.WebAppContext;
 import org.kernely.bootstrap.classpath.ClasspathUpdater;
 import org.kernely.bootstrap.error.KernelyErrorHandler;

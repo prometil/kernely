@@ -16,16 +16,12 @@ GNU Affero General Public License for more details.
 You should have received a copy of the GNU Affero General Public
 License along with Kernely.
 If not, see <http://www.gnu.org/licenses/>.
- */
-
+*/
 package org.kernely.core.hibernate;
 
-import javax.persistence.EntityManager;
+/**
+ *
+ */
+public class AbstractModel {
 
-import org.hibernate.ejb.Ejb3Configuration;
-
-public interface EntityManagerProvider {
-	
-	Ejb3Configuration getConfiguration();
-	public EntityManager getEM();
 }

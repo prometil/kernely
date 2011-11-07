@@ -16,23 +16,24 @@ GNU Affero General Public License for more details.
 You should have received a copy of the GNU Affero General Public
 License along with Kernely.
 If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 package org.kernely.stream.service;
+
 import static org.junit.Assert.*;
-import org.junit.Rule;
 import org.junit.Test;
-import org.kernely.core.test.StreamTestModule;
+import org.kernely.core.common.AbstractServiceTest;
 import org.kernely.stream.dto.StreamMessageDTO;
 
-import com.google.guiceberry.junit4.GuiceBerryRule;
 import com.google.inject.Inject;
 
+/**
+ * 
+ * @author g.breton
+ * 
+ */
+public class StreamServiceTest extends AbstractServiceTest {
 
-public class StreamServiceTest {
-
-	@Rule
-	public final GuiceBerryRule guiceBerry = new GuiceBerryRule(StreamTestModule.class);
-	
+	private static final String USERNAME = "USERNAME";
 	@Inject
 	private StreamService service;
 
@@ -40,36 +41,28 @@ public class StreamServiceTest {
 	public void testGetNullMessages() {
 		assertEquals(0, service.getMessages().size());
 	}
-	
-	@Test(expected=IllegalArgumentException.class)
-	public void testAddVoidMessage(){
-		service.addMessage(""); 
+
+	@Test(expected = IllegalArgumentException.class)
+	public void testAddVoidMessage() {
+		service.addMessage("");
 	}
 
-	@Test(expected=IllegalArgumentException.class)
-	public void testAddNullMessage(){
-		service.addMessage(null); 
-	}
-	
 	@Test
 	public void testAddMessage() {
-		StreamMessageDTO message = service.addMessage("test");
-		assertEquals("test", message.message);
-	}	
-
-
-	@Test
-	public void testGetMessages(){
-		service.addMessage("test");
-		StreamMessageDTO message =service.getMessages().get(0);
-		assertEquals("test", message.message );		
+		StreamMessageDTO message = service.addMessage(USERNAME);
+		assertNotNull(message);
+		assertEquals(USERNAME, message.message);
+		assertEquals(1, service.getMessages().size());
 	}
-	
+
+	@Test(expected = IllegalArgumentException.class)
+	public void testAddNullMessage() {
+		service.addMessage(null);
+	}
+
 	@Test
 	public void testGetNullMessages2() {
 		assertEquals(0, service.getMessages().size());
 	}
-	
 
-
-}  
+}

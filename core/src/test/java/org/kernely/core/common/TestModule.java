@@ -17,13 +17,14 @@ You should have received a copy of the GNU Affero General Public
 License along with Kernely.
 If not, see <http://www.gnu.org/licenses/>.
 */
-package org.kernely.core.test;
+package org.kernely.core.common;
+
+import java.util.Properties;
 
 import groovy.text.SimpleTemplateEngine;
 
 import org.apache.commons.configuration.AbstractConfiguration;
 import org.apache.commons.configuration.BaseConfiguration;
-import org.kernely.core.hibernate.EntityManagerProvider;
 import org.kernely.core.plugin.PluginsLoader;
 import org.kernely.core.service.mail.Mailer;
 import org.kernely.core.service.mail.builder.MailBuilder;
@@ -34,12 +35,13 @@ import com.google.common.eventbus.EventBus;
 import com.google.guiceberry.GuiceBerryModule;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
+import com.google.inject.persist.jpa.JpaPersistModule;
 
 /**
  * @author g.breton
  *
  */
-public class StreamTestModule extends AbstractModule {
+public class TestModule extends AbstractModule {
 
 	/**
 	 * 
@@ -47,8 +49,26 @@ public class StreamTestModule extends AbstractModule {
 	@Override
 	protected void configure() {
 		install(new GuiceBerryModule());
+		
+		//creates the hibernate util
+		Properties properties = new Properties();
+		properties.put("hibernate.connection.driver_class", "org.hsqldb.jdbcDriver");
+		properties.put("hibernate.connection.url", "jdbc:hsqldb:mem:aname");
+		properties.put("hibernate.connection.username", "sa");
+		properties.put("hibernate.connection.password",  "");
+		properties.put("hibernate.connection.pool_size", "10");
+		properties.put("show_sql", "true");
+		properties.put("hibernate.dialect", "org.hibernate.dialect.HSQLDialect");
+		properties.put("hibernate.hbm2ddl.auto",  "update");
+		
+		install(new JpaPersistModule("kernelyUnit").properties(properties));
+
+		bind(Initializer.class);
+		
 		bind(PluginsLoader.class);
 		bind(TemplateRenderer.class);
+		
+		//creates a mail moker
 		Mailer mailerMock = Mockito.mock(Mailer.class);
 		MailBuilder mailBuilderMock = Mockito.mock(MailBuilder.class);
 		Mockito.when(mailBuilderMock.cc(Mockito.anyString())).thenReturn(mailBuilderMock);
@@ -56,10 +76,12 @@ public class StreamTestModule extends AbstractModule {
 		Mockito.when(mailBuilderMock.subject(Mockito.anyString())).thenReturn(mailBuilderMock);
 		Mockito.when(mailerMock.create(Mockito.anyString())).thenReturn(mailBuilderMock);
 		bind(Mailer.class).toInstance(mailerMock);
-		bind(EntityManagerProvider.class).to(HibernateTestUtil.class);
+		
+		//create the template engine
 		bind(SimpleTemplateEngine.class);
 		bind(EventBus.class);
-
+		
+		
 	}
 	
 	@Provides

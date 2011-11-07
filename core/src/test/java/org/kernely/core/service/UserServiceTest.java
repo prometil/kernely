@@ -1,20 +1,17 @@
-package org.kernely.user.service;
+package org.kernely.core.service;
 
 import static org.junit.Assert.assertEquals;
 
-import org.junit.Rule;
 import org.junit.Test;
-import org.kernely.core.test.StreamTestModule;
-import org.kernely.user.dto.UserCreationRequestDTO;
-import org.kernely.user.dto.UserDTO;
+import org.kernely.core.common.AbstractServiceTest;
+import org.kernely.core.dto.UserCreationRequestDTO;
+import org.kernely.core.dto.UserDTO;
+import org.kernely.core.service.user.UserService;
 
-import com.google.guiceberry.junit4.GuiceBerryRule;
 import com.google.inject.Inject;
 
-public class UserServiceTest {
+public class UserServiceTest extends AbstractServiceTest{
 
-	@Rule
-	public final GuiceBerryRule guiceBerry = new GuiceBerryRule(StreamTestModule.class);
 	
 	@Inject
 	private UserService service;

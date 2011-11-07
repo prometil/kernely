@@ -1,4 +1,4 @@
-package org.kernely.user.service;
+package org.kernely.core.service.user;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,16 +6,15 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
-import org.kernely.core.hibernate.EntityManagerProvider;
-import org.kernely.user.dto.GroupDTO;
-import org.kernely.user.model.GroupModel;
+import org.kernely.core.dto.GroupDTO;
+import org.kernely.core.model.Group;
 
 import com.google.inject.Inject;
 
 public class GroupService {
 
 	@Inject
-	private EntityManagerProvider entityManagerProvider;
+	private EntityManager em;
 	
 	/**
 	 * Gets the lists of all groups contained in the database.
@@ -23,17 +22,14 @@ public class GroupService {
 	 */
 	@SuppressWarnings("unchecked")
 	public List<GroupDTO> getAllGroups() {
-		EntityManager em = entityManagerProvider.getEM();
 		em.getTransaction().begin();
 		Query query = em.createQuery("SELECT e FROM GroupModel e");
-		List<GroupModel> collection = (List<GroupModel>) query.getResultList();
+		List<Group> collection = (List<Group>) query.getResultList();
 		List<GroupDTO> dtos = new ArrayList<GroupDTO>();
-		for (GroupModel group : collection) {
+		for (Group group : collection) {
 			dtos.add(new GroupDTO(group.getName()));
 		}
 		em.getTransaction().commit();
-		em.close();
-
 		return dtos;
 
 	}

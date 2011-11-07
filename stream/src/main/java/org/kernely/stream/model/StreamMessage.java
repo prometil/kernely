@@ -32,14 +32,14 @@ import javax.persistence.TemporalType;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
-import org.kernely.core.hibernate.AbstractEntity;
+import org.kernely.core.hibernate.AbstractModel;
 
 /**
  *
  */
 @Entity
 @Table(name = "stream_messages")
-public class StreamMessage extends AbstractEntity {
+public class StreamMessage extends AbstractModel {
 	
 	
 	public StreamMessage() {

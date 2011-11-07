@@ -19,7 +19,7 @@ If not, see <http://www.gnu.org/licenses/>.
 */
 package org.kernely.stream;
 
-import org.kernely.user.event.UserCreationEvent;
+import org.kernely.core.event.UserCreationEvent;
 
 import com.google.common.eventbus.Subscribe;
 

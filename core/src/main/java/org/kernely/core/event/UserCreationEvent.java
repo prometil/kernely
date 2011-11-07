@@ -17,7 +17,7 @@ You should have received a copy of the GNU Affero General Public
 License along with Kernely.
 If not, see <http://www.gnu.org/licenses/>.
  */
-package org.kernely.user.event;
+package org.kernely.core.event;
 
 /**
  * @author g.breton

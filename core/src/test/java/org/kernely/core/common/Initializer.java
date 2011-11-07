@@ -16,24 +16,23 @@ GNU Affero General Public License for more details.
 You should have received a copy of the GNU Affero General Public
 License along with Kernely.
 If not, see <http://www.gnu.org/licenses/>.
-*/
-package org.kernely.user.dto;
+ */
+package org.kernely.core.common;
 
-import javax.xml.bind.annotation.XmlRootElement;
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
+import com.google.inject.persist.PersistService;
 
 /**
- * DTO for user data, contains only his name.
+ * Initialize the persistence service
+ * @author g.breton
+ *
  */
-@XmlRootElement
-public class UserDTO {
-	
-	/**
-	 * Constructor which set datas of the user.
-	 * @param pUsername The name of the user.
-	 */
-	public UserDTO(String pUsername) {
-		username = pUsername;
-	}
+@Singleton
+public class Initializer {
 
-	public String username;
+	@Inject
+	Initializer(PersistService service) {
+		service.start();
+	}
 }

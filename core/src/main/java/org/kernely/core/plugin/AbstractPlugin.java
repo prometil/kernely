@@ -22,7 +22,7 @@ package org.kernely.core.plugin;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.kernely.core.hibernate.AbstractEntity;
+import org.kernely.core.hibernate.AbstractModel;
 import org.kernely.core.resources.AbstractController;
 
 import com.google.inject.AbstractModule;
@@ -32,7 +32,7 @@ public abstract class AbstractPlugin extends AbstractModule {
 	
 	private List<Class<? extends AbstractController>> controllers;
 	
-	private List<Class<? extends AbstractEntity>> models;
+	private List<Class<? extends AbstractModel>> models;
 	
 	private String name;
 	
@@ -44,10 +44,10 @@ public abstract class AbstractPlugin extends AbstractModule {
 		name = pName;
 		path = pPath;
 		controllers = new  ArrayList<Class<? extends AbstractController>>();
-		models = new ArrayList<Class<? extends AbstractEntity>>();
+		models = new ArrayList<Class<? extends AbstractModel>>();
 	}
 	
-	protected void registerModel(Class<? extends AbstractEntity> model){
+	protected void registerModel(Class<? extends AbstractModel> model){
 		models.add(model);
 		
 	}
@@ -100,7 +100,7 @@ public abstract class AbstractPlugin extends AbstractModule {
 	 * The methods returns the models
 	 * @return the method returns the model
 	 */
-	public List<Class<? extends AbstractEntity>> getModels(){
+	public List<Class<? extends AbstractModel>> getModels(){
 		return models;
 	}
 

@@ -1,4 +1,4 @@
-package org.kernely.user.service;
+package org.kernely.core.service.user;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,15 +6,14 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
-import org.kernely.core.hibernate.EntityManagerProvider;
-import org.kernely.user.dto.RoleDTO;
-import org.kernely.user.model.RoleModel;
+import org.kernely.core.dto.RoleDTO;
+import org.kernely.core.model.Role;
 
 import com.google.inject.Inject;
 
 public class RoleService {
 	@Inject
-	private EntityManagerProvider entityManagerProvider;
+	private EntityManager em;
 	
 	/**
 	 * Gets the lists of all roles contained in the database.
@@ -22,17 +21,14 @@ public class RoleService {
 	 */
 	@SuppressWarnings("unchecked")
 	public List<RoleDTO> getAllRoles() {
-		EntityManager em = entityManagerProvider.getEM();
 		em.getTransaction().begin();
 		Query query = em.createQuery("SELECT e FROM RoleModel e");
-		List<RoleModel> collection = (List<RoleModel>) query.getResultList();
+		List<Role> collection = (List<Role>) query.getResultList();
 		List<RoleDTO> dtos = new ArrayList<RoleDTO>();
-		for (RoleModel role : collection) {
+		for (Role role : collection) {
 			dtos.add(new RoleDTO(role.getName()));
 		}
 		em.getTransaction().commit();
-		em.close();
-
 		return dtos;
 
 	}
