@@ -1,12 +1,12 @@
 package org.kernely.user.service;
 
-import static org.junit.Assert.*;
-import junit.framework.Assert;
+import static org.junit.Assert.assertEquals;
 
 import org.junit.Rule;
 import org.junit.Test;
 import org.kernely.core.test.StreamTestModule;
 import org.kernely.user.dto.UserCreationRequestDTO;
+import org.kernely.user.dto.UserDTO;
 
 import com.google.guiceberry.junit4.GuiceBerryRule;
 import com.google.inject.Inject;
@@ -25,7 +25,14 @@ public class UserServiceTest {
 		request.username="toto";
 		request.password="tata";
 		service.createUser(request);
-		Assert.assertNotNull(service);
+		UserDTO dto = new UserDTO("") ;
+		dto = service.getAllUsers().get(0);
+		assertEquals("toto", dto.username);
+	}
+	
+	@Test(expected=IllegalArgumentException.class)
+	public void createUserWithNullRequest(){
+		service.createUser(null);		
 	}
 	
 	@Test(expected=IllegalArgumentException.class)
@@ -66,14 +73,12 @@ public class UserServiceTest {
 		request.username="toto";
 		request.password="tata";
 		service.createUser(request);
-		assertNotNull(service.getAllUsers());
+		assertEquals(1,service.getAllUsers().size());
 	}
 	
 	@Test
 	public void getNullUser(){
-		assertNotNull(service.getAllUsers());
+		assertEquals(0, service.getAllUsers().size());
 	}
 	
-	
-
 }

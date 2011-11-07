@@ -34,6 +34,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.inject.Inject;
 
+
 /**
  * 
  */
@@ -54,7 +55,12 @@ public class StreamService {
 	 * @return the created message
 	 */
 	public StreamMessageDTO addMessage(String pMessage) {
-	
+		if (pMessage==null){
+			throw new IllegalArgumentException("Message cannot be null ");
+		}
+		if ("".equals(pMessage)){
+			throw new IllegalArgumentException("Message cannot be empty ");
+		}
 		StreamMessage message = new StreamMessage();
 		message.setMessage(pMessage);
 		

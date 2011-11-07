@@ -18,16 +18,11 @@ License along with Kernely.
 If not, see <http://www.gnu.org/licenses/>.
 */
 package org.kernely.stream.service;
-
-import static org.junit.Assert.assertNotNull;
-
-import static org.junit.Assert.assertThat;
-
-import org.hamcrest.core.IsNull;
-import org.junit.Assume;
+import static org.junit.Assert.*;
 import org.junit.Rule;
 import org.junit.Test;
 import org.kernely.core.test.StreamTestModule;
+import org.kernely.stream.dto.StreamMessageDTO;
 
 import com.google.guiceberry.junit4.GuiceBerryRule;
 import com.google.inject.Inject;
@@ -41,35 +36,40 @@ public class StreamServiceTest {
 	@Inject
 	private StreamService service;
 
+	@Test
+	public void testGetNullMessages() {
+		assertEquals(0, service.getMessages().size());
+	}
 	
+	@Test(expected=IllegalArgumentException.class)
+	public void testAddVoidMessage(){
+		service.addMessage(""); 
+	}
+
+	@Test(expected=IllegalArgumentException.class)
+	public void testAddNullMessage(){
+		service.addMessage(null); 
+	}
 	
 	@Test
 	public void testAddMessage() {
-		service.addMessage("test");
-		assertNotNull(service);
-	}
-	
-	@Test
-	public void testAddNullMessage(){
-		service.addMessage(null);
-		Assume.assumeNotNull(service); 
-		
-	}
+		StreamMessageDTO message = service.addMessage("test");
+		assertEquals("test", message.message);
+	}	
+
 
 	@Test
 	public void testGetMessages(){
 		service.addMessage("test");
-		assertNotNull(service.getMessages());
-		
+		StreamMessageDTO message =service.getMessages().get(0);
+		assertEquals("test", message.message );		
 	}
 	
-	//not return even when there is no message because
-	//jquery must handle the data in the stream.js
 	@Test
-	public void testGetNullMessages() {
-		assertNotNull(service.getMessages());
+	public void testGetNullMessages2() {
+		assertEquals(0, service.getMessages().size());
 	}
 	
 
 
-} 
+}  

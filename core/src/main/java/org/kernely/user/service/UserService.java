@@ -28,12 +28,9 @@ import javax.persistence.Query;
 import org.kernely.core.hibernate.EntityManagerProvider;
 import org.kernely.user.dto.UserCreationRequestDTO;
 import org.kernely.user.dto.UserDTO;
-import org.kernely.user.event.UserCreationEvent;
 import org.kernely.user.model.UserModel;
 
-import com.google.common.eventbus.EventBus;
 import com.google.inject.Inject;
-
 /**
  * Service provided by the user plugin.
  */
@@ -41,21 +38,23 @@ public class UserService {
 
 	@Inject
 	private EntityManagerProvider entityManagerProvider;
-	
-	@Inject
-	private EventBus eventBus;
 
 	/**
 	 * Create a new user in database.
 	 * @param request The request, containing user data : passwod, username...
 	 */
 	public void createUser(UserCreationRequestDTO request) {
-		if("".equals(request.username) || "".equals(request.password))
+		if(request==null){
+			throw new IllegalArgumentException("Request cannot be null ");
+		}
+		
+		if("".equals(request.username) || "".equals(request.password)){
 			throw new IllegalArgumentException("Username or/and password cannot be null ");
+		}
 		
-		if("".equals(request.username.trim()) || "".equals(request.password.trim()))
+		if("".equals(request.username.trim()) || "".equals(request.password.trim())){
 			throw new IllegalArgumentException("Username or/and password cannot be space character only ");
-		
+		}
 		EntityManager em = entityManagerProvider.getEM();
 		em.getTransaction().begin();
 		UserModel user = new UserModel();
@@ -64,7 +63,7 @@ public class UserService {
 		em.persist(user);
 		em.getTransaction().commit();
 		em.close();
-		eventBus.post(new UserCreationEvent(user.getId(), user.getUsername()));
+
 	}
 
 	/**

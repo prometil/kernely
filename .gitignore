@@ -9,3 +9,4 @@ gradle-app.setting
 stream/.project
 build
 */.settings/*
+dist
