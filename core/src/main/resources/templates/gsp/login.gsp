@@ -11,7 +11,6 @@
 	<div id="space">
 	
 	</div>
-	
 	<div id="information">
 		you can put information about the gate here.
 	</div>
@@ -29,5 +28,6 @@
 			</div>
 		</form>
 	</div>
+ 
 	</body>
 </html>
