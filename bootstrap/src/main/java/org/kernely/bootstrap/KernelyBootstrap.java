@@ -70,7 +70,7 @@ public class KernelyBootstrap {
 		webApp.setServletHandler(handler);
 		webApp.setErrorHandler(new KernelyErrorHandler());
 		server.setHandler(webApp);
-
+		
 		try {
 			server.start();
 			server.join();

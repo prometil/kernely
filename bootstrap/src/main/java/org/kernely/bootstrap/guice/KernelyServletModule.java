@@ -38,6 +38,7 @@ import org.kernely.bootstrap.MediaServlet;
 import org.kernely.bootstrap.shiro.KernelyRealm;
 import org.kernely.bootstrap.shiro.KernelyShiroFilter;
 import org.kernely.core.plugin.AbstractPlugin;
+import org.kernely.core.resourceLocator.ResourceLocator;
 import org.kernely.core.resources.AbstractController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -96,6 +97,9 @@ public class KernelyServletModule extends JerseyServletModule {
 
 		}
 		bind(AbstractConfiguration.class).toInstance(combinedConfiguration);
+		
+		//Todo basile ?
+		bind(ResourceLocator.class);
 
 		// persistence
 		Iterator<String> keys = combinedConfiguration.getKeys("hibernate");

@@ -10,3 +10,5 @@ stream/.project
 build
 */.settings/*
 dist
+media
+

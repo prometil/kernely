@@ -67,7 +67,7 @@ task prepare(dependsOn: assemble) << {
           from project.configurations.default
           into "dist/kernely/libs"
         }
-        
+        mkdir("dist/kernely/media")
     }
 }
 

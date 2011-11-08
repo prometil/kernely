@@ -23,6 +23,7 @@ import groovy.text.SimpleTemplateEngine;
 import groovy.text.Template;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -32,6 +33,7 @@ import org.apache.shiro.SecurityUtils;
 import org.codehaus.groovy.control.CompilationFailedException;
 import org.kernely.core.plugin.AbstractPlugin;
 import org.kernely.core.plugin.PluginsLoader;
+import org.kernely.core.resourceLocator.ResourceLocator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,7 +52,9 @@ public class TemplateRenderer {
 	@Inject
 	private SimpleTemplateEngine engine;
 
-
+	@Inject
+	private ResourceLocator resourceLocator;
+	
 	public static final Logger log = LoggerFactory.getLogger(TemplateRenderer.class);
 
 	/**
@@ -96,19 +100,26 @@ public class TemplateRenderer {
 			cssFiles = new ArrayList<String>();
 			binding = new HashMap<String, Object>();
 			engine = pEngine;
-			URL resource = TemplateRenderer.class.getResource(pTemplate);
-			if(resource == null){
-				log.error("Cannot find template {}", pTemplate);
-			}
+			URL resource;
 			try {
-				template = engine.createTemplate(resource);
-			} catch (CompilationFailedException e) {
-				log.error("Compilation error on {}", pTemplate, e);
-			} catch (ClassNotFoundException e) {
-				log.error("Compilation error on {}", pTemplate, e);
-			} catch (IOException e) {
-				log.error("Cannot find file {}", pTemplate);
+				resource = resourceLocator.getResource(pTemplate);
+				if(resource == null){
+					log.error("Cannot find template {}", pTemplate);
+				}
+				try {
+					template = engine.createTemplate(resource);
+				} catch (CompilationFailedException e) {
+					log.error("Compilation error on {}", pTemplate, e);
+				} catch (ClassNotFoundException e) {
+					log.error("Compilation error on {}", pTemplate, e);
+				} catch (IOException e) {
+					log.error("Cannot find file {}", pTemplate);
+				}
+			} catch (MalformedURLException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
 			}
+		
 		}
 
 		public TemplateBuilder with(String key, Object value) {

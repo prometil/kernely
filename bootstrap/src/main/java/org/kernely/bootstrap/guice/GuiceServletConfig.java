@@ -31,7 +31,6 @@ import com.google.inject.Injector;
 import com.google.inject.Module;
 import com.google.inject.servlet.GuiceServletContextListener;
 import com.google.inject.servlet.ServletModule;
-import com.sun.jersey.guice.JerseyServletModule;
 
 public class GuiceServletConfig extends GuiceServletContextListener {
 
