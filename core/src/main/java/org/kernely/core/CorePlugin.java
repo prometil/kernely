@@ -25,6 +25,7 @@ import org.kernely.core.model.Group;
 import org.kernely.core.model.Permission;
 import org.kernely.core.model.Role;
 import org.kernely.core.model.User;
+import org.kernely.core.model.UserDetails;
 import org.kernely.core.plugin.AbstractPlugin;
 import org.kernely.core.plugin.PluginsLoader;
 import org.kernely.core.resources.GroupController;
@@ -55,6 +56,7 @@ public class CorePlugin extends AbstractPlugin {
 		registerModel(Role.class);
 		registerModel(Permission.class);
 		registerModel(Group.class);
+		registerModel(UserDetails.class);
 	}
 
 	@Override

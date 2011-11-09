@@ -25,6 +25,7 @@ import java.util.UUID;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -32,6 +33,7 @@ import javax.ws.rs.core.Response;
 import org.apache.shiro.SecurityUtils;
 import org.kernely.core.dto.UserCreationRequestDTO;
 import org.kernely.core.dto.UserDTO;
+import org.kernely.core.dto.UserDetailsDTO;
 import org.kernely.core.service.user.UserService;
 import org.kernely.core.template.TemplateRenderer;
 
@@ -125,5 +127,20 @@ public class UserController  extends AbstractController{
 	@Produces( { MediaType.TEXT_HTML })
 	public String profil() {
 		return templateRenderer.create("/templates/gsp/profile.gsp").with("username",  SecurityUtils.getSubject().getPrincipal()).render() ;
+	}
+	
+	@GET
+	@Path("/current")
+	@Produces({"application/json"})
+	public UserDTO getCurrent(){
+		return userService.getCurrentUser();
+	}
+	
+	@GET
+	@Path("/{login}/profile")
+	@Produces({"application/json"})
+	public UserDetailsDTO getDetails(@PathParam("login")String userLogin){
+		return userService.getUserDetails(userLogin);
+		
 	}
 }

@@ -27,6 +27,10 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 public class UserDTO {
 	
+	public UserDTO(){
+		
+	}
+	
 	/**
 	 * Constructor which set datas of the user.
 	 * @param pUsername The name of the user.

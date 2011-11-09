@@ -34,6 +34,7 @@ import com.google.inject.Inject;
 public class StreamServiceTest extends AbstractServiceTest {
 
 	private static final String USERNAME = "USERNAME";
+	
 	@Inject
 	private StreamService service;
 

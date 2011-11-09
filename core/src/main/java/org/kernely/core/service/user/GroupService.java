@@ -27,7 +27,7 @@ public class GroupService {
 	@Transactional
 	@SuppressWarnings("unchecked")
 	public List<GroupDTO> getAllGroups() {
-		Query query = em.get().createQuery("SELECT e FROM GroupModel e");
+		Query query = em.get().createQuery("SELECT e FROM Group e");
 		List<Group> collection = (List<Group>) query.getResultList();
 		List<GroupDTO> dtos = new ArrayList<GroupDTO>();
 		for (Group group : collection) {
