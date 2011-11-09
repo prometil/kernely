@@ -25,6 +25,7 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
+import org.apache.commons.configuration.AbstractConfiguration;
 import org.kernely.core.service.mail.Mailer;
 import org.kernely.stream.dto.StreamMessageDTO;
 import org.kernely.stream.model.StreamMessage;

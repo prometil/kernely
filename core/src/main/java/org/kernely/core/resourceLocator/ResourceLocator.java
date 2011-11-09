@@ -46,7 +46,6 @@ public class ResourceLocator extends AbstractModule {
 			 }				 
 		 }	
 		 URL url=file.toURI().toURL();
-		 System.out.println(url.toString());
 	     return url;
 	}
 	

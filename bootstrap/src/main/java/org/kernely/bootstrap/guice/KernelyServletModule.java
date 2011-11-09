@@ -25,8 +25,6 @@ import java.util.Properties;
 
 import org.apache.commons.configuration.AbstractConfiguration;
 import org.apache.commons.configuration.CombinedConfiguration;
-import org.apache.commons.configuration.ConfigurationException;
-import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.shiro.authc.credential.CredentialsMatcher;
 import org.apache.shiro.authc.credential.HashedCredentialsMatcher;
 import org.apache.shiro.crypto.hash.Sha256Hash;
@@ -59,15 +57,16 @@ public class KernelyServletModule extends JerseyServletModule {
 	public static final Logger log = LoggerFactory.getLogger(KernelyServletModule.class);
 
 	private List<? extends AbstractPlugin> plugins;
-
+	private final CombinedConfiguration combinedConfiguration;
 	/**
 	 * Constructor.
 	 * 
 	 * @param plugins
 	 *            The list of plugins to configure.
 	 */
-	public KernelyServletModule(List<? extends AbstractPlugin> plugins) {
+	public KernelyServletModule(List<? extends AbstractPlugin> plugins, CombinedConfiguration combinedConfiguration) {
 		this.plugins = plugins;
+		this.combinedConfiguration = combinedConfiguration;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -75,26 +74,13 @@ public class KernelyServletModule extends JerseyServletModule {
 	protected void configureServlets() {
 
 		// configuration
-		final CombinedConfiguration combinedConfiguration = new CombinedConfiguration();
+		
 		// Bind all Jersey resources detected in plugins
 		for (AbstractPlugin plugin : plugins) {
 			for (Class<? extends AbstractController> controllerClass : plugin.getControllers()) {
 				log.debug("Register controller {}", controllerClass);
 				bind(controllerClass);
 			}
-
-			String filepath = plugin.getConfigurationFilepath();
-			if (filepath != null) {
-				try {
-					AbstractConfiguration configuration = new XMLConfiguration(filepath);
-					log.info("Found configuration file {} for plugin {}", filepath, plugin.getName());
-					combinedConfiguration.addConfiguration(configuration);
-				} catch (ConfigurationException e) {
-					log.error("Cannot find configuration file {} for plugin {}", filepath, plugin.getName());
-				}
-
-			}
-
 		}
 		bind(AbstractConfiguration.class).toInstance(combinedConfiguration);
 		
@@ -112,6 +98,7 @@ public class KernelyServletModule extends JerseyServletModule {
 		JpaPersistModule module = new JpaPersistModule("kernelyUnit").properties(properties);
 		install(module);
 
+	
 		filter("/*").through(PersistFilter.class);
 		/*
 		 * bind(MessageBodyReader.class).to(JacksonJsonProvider.class);

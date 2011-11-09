@@ -23,6 +23,10 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.List;
 
+import org.apache.commons.configuration.AbstractConfiguration;
+import org.apache.commons.configuration.CombinedConfiguration;
+import org.apache.commons.configuration.ConfigurationException;
+import org.apache.commons.configuration.XMLConfiguration;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.FilterHolder;
 import org.eclipse.jetty.servlet.FilterMapping;
@@ -47,6 +51,8 @@ public class KernelyBootstrap {
 	// Root of web content directory (jsp, css, js...)
 	private static final Logger log = LoggerFactory.getLogger(KernelyBootstrap.class);
 
+	private static final CombinedConfiguration combinedConfiguration = new CombinedConfiguration();
+	
 	public static void main(String[] args) throws IOException {
 		log.info("Bootstrapping kernely");
 		
@@ -58,15 +64,18 @@ public class KernelyBootstrap {
 		PluginsLoader pluginLoad = new PluginsLoader();
 		List<AbstractPlugin> plugins = pluginLoad.getPlugins();
 
+		//configure
+		setTheConfiguration(plugins);
+		
 		// Create the server
-		Server server = new Server(8080);
+		Server server = new Server(combinedConfiguration.getInt("server.port"));
 
 		// Retrieve resources located at the web content directory
 		final String warUrlString = new URL("file://.").toExternalForm();
 		// Register a listener
 		ServletHandler handler = createServletHandler();
 		WebAppContext webApp = new WebAppContext(warUrlString, "/");
-		webApp.addEventListener(new GuiceServletConfig(plugins));
+		webApp.addEventListener(new GuiceServletConfig(plugins, combinedConfiguration));
 		webApp.setServletHandler(handler);
 		webApp.setErrorHandler(new KernelyErrorHandler());
 		server.setHandler(webApp);
@@ -121,5 +130,22 @@ public class KernelyBootstrap {
 		filterMapping.setPathSpec(pathSpec);
 		filterMapping.setFilterName(filterHolder.getName());
 		return filterMapping;
+	}
+	
+	
+	private static void setTheConfiguration(List<AbstractPlugin> plugins){ 
+		// Bind all Jersey resources detected in plugins
+		for (AbstractPlugin plugin : plugins) {
+			String filepath = plugin.getConfigurationFilepath();
+			if (filepath != null) {
+				try {
+					AbstractConfiguration configuration = new XMLConfiguration(filepath);
+					log.info("Found configuration file {} for plugin {}", filepath, plugin.getName());
+					combinedConfiguration.addConfiguration(configuration);
+				} catch (ConfigurationException e) {
+					log.error("Cannot find configuration file {} for plugin {}", filepath, plugin.getName());
+				}
+			}
+		}	
 	}
 }
