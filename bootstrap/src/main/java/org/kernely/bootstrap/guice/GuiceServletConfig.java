@@ -35,16 +35,19 @@ import com.google.inject.servlet.ServletModule;
 
 public class GuiceServletConfig extends GuiceServletContextListener {
 
-	public static final Logger log = LoggerFactory.getLogger(GuiceServletConfig.class);
+	public static final Logger log = LoggerFactory
+			.getLogger(GuiceServletConfig.class);
 	private List<? extends AbstractPlugin> plugins;
 	private final CombinedConfiguration combinedConfiguration;
+
 	/**
 	 * Constructor.
 	 * 
 	 * @param plugins
 	 *            The list of plugins to configure.
 	 */
-	public GuiceServletConfig(List<? extends AbstractPlugin> plugins, CombinedConfiguration combinedConfiguration) {
+	public GuiceServletConfig(List<? extends AbstractPlugin> plugins,
+			CombinedConfiguration combinedConfiguration) {
 		this.plugins = plugins;
 		this.combinedConfiguration = combinedConfiguration;
 	}
