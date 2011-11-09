@@ -111,7 +111,6 @@ public class KernelyServletModule extends JerseyServletModule {
 
 		JpaPersistModule module = new JpaPersistModule("kernelyUnit").properties(properties);
 		install(module);
-
 		filter("/*").through(PersistFilter.class);
 		/*
 		 * bind(MessageBodyReader.class).to(JacksonJsonProvider.class);

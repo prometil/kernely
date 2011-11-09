@@ -32,6 +32,7 @@ import org.kernely.core.model.User;
 
 import com.google.common.eventbus.EventBus;
 import com.google.inject.Inject;
+import com.google.inject.Provider;
 import com.google.inject.Singleton;
 import com.google.inject.persist.Transactional;
 
@@ -42,7 +43,7 @@ import com.google.inject.persist.Transactional;
 public class UserService {
 
 	@Inject
-	private EntityManager em;
+	private Provider<EntityManager> em;
 
 	@Inject
 	private EventBus eventBus;
@@ -69,7 +70,7 @@ public class UserService {
 		User user = new User();
 		user.setPassword(request.password.trim());
 		user.setUsername(request.username.trim());
-		em.persist(user);
+		em.get().persist(user);
 		eventBus.post(new UserCreationEvent(user.getId(), user.getUsername()));
 
 	}
@@ -82,7 +83,7 @@ public class UserService {
 	@SuppressWarnings("unchecked")
 	@Transactional
 	public List<UserDTO> getAllUsers() {
-		Query query = em.createQuery("SELECT e FROM User e");
+		Query query = em.get().createQuery("SELECT e FROM User e");
 		List<User> collection = (List<User>) query.getResultList();
 		List<UserDTO> dtos = new ArrayList<UserDTO>();
 		for (User user : collection) {
