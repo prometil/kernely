@@ -25,7 +25,6 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
-import org.apache.commons.configuration.AbstractConfiguration;
 import org.kernely.core.service.mail.Mailer;
 import org.kernely.stream.dto.StreamMessageDTO;
 import org.kernely.stream.model.StreamMessage;
@@ -33,6 +32,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.inject.Inject;
+import com.google.inject.Provider;
 import com.google.inject.Singleton;
 import com.google.inject.persist.Transactional;
 
@@ -44,7 +44,7 @@ import com.google.inject.persist.Transactional;
 public class StreamService {
 	
 	@Inject
-	EntityManager em;
+	Provider<EntityManager> em;
 	
 	@Inject
 	private Mailer mailService;
@@ -64,9 +64,10 @@ public class StreamService {
 		if ("".equals(pMessage)){
 			throw new IllegalArgumentException("Message cannot be empty ");
 		}
+		
 		StreamMessage message = new StreamMessage();
 		message.setMessage(pMessage);
-		em.persist(message);
+		em.get().persist(message);
 		//mailService.create("/templates/gsp/mail.gsp").subject("This is a test mail").to("breton.gy@gmail.com").send();
 		return new StreamMessageDTO(message);
 	}
@@ -80,7 +81,7 @@ public class StreamService {
 	@Transactional
 	public List<StreamMessageDTO> getMessages() {
 		
-		Query query = em.createQuery("SELECT m FROM StreamMessage m order by m.date");
+		Query query = em.get().createQuery("SELECT m FROM StreamMessage m order by m.date");
 		List<StreamMessage> messages = (List<StreamMessage>) query.getResultList();
 		List<StreamMessageDTO> messageDtos = new ArrayList<StreamMessageDTO>();
 		log.debug("Found {} messages", messages.size());

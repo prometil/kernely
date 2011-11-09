@@ -10,25 +10,27 @@ import org.kernely.core.dto.RoleDTO;
 import org.kernely.core.model.Role;
 
 import com.google.inject.Inject;
+import com.google.inject.Provider;
+import com.google.inject.Singleton;
 
+@Singleton
 public class RoleService {
 	@Inject
-	private EntityManager em;
-	
+	private Provider<EntityManager> em;
+
 	/**
 	 * Gets the lists of all roles contained in the database.
+	 * 
 	 * @return the list of all roles contained in the database.
 	 */
 	@SuppressWarnings("unchecked")
 	public List<RoleDTO> getAllRoles() {
-		em.getTransaction().begin();
-		Query query = em.createQuery("SELECT e FROM RoleModel e");
+		Query query = em.get().createQuery("SELECT e FROM RoleModel e");
 		List<Role> collection = (List<Role>) query.getResultList();
 		List<RoleDTO> dtos = new ArrayList<RoleDTO>();
 		for (Role role : collection) {
 			dtos.add(new RoleDTO(role.getName()));
 		}
-		em.getTransaction().commit();
 		return dtos;
 
 	}
