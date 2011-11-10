@@ -22,6 +22,7 @@ package org.kernely.bootstrap.guice;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.configuration.CombinedConfiguration;
 import org.kernely.core.plugin.AbstractPlugin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,8 +35,10 @@ import com.google.inject.servlet.ServletModule;
 
 public class GuiceServletConfig extends GuiceServletContextListener {
 
-	public static final Logger log = LoggerFactory.getLogger(GuiceServletConfig.class);
+	public static final Logger log = LoggerFactory
+			.getLogger(GuiceServletConfig.class);
 	private List<? extends AbstractPlugin> plugins;
+	private final CombinedConfiguration combinedConfiguration;
 
 	/**
 	 * Constructor.
@@ -43,8 +46,10 @@ public class GuiceServletConfig extends GuiceServletContextListener {
 	 * @param plugins
 	 *            The list of plugins to configure.
 	 */
-	public GuiceServletConfig(List<? extends AbstractPlugin> plugins) {
+	public GuiceServletConfig(List<? extends AbstractPlugin> plugins,
+			CombinedConfiguration combinedConfiguration) {
 		this.plugins = plugins;
+		this.combinedConfiguration = combinedConfiguration;
 	}
 
 	/**
@@ -62,7 +67,7 @@ public class GuiceServletConfig extends GuiceServletContextListener {
 				list.add(module);
 			}
 		}
-		list.add(new KernelyServletModule(plugins));
+		list.add(new KernelyServletModule(plugins, combinedConfiguration));
 		list.add(new ServletModule());
 		Injector injector = Guice.createInjector(list);
 		for (AbstractPlugin plugin : plugins) {

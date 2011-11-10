@@ -11,9 +11,10 @@ dependencies {
     compile "ch.qos.logback:logback-classic:0.9.29"
     compile "org.slf4j:slf4j-api:1.6.1"
     compile "javax.ws.rs:jsr311-api:1.1.1"
-    //mail
-    
-    
+  
+  
+  //quartz
+  compile "org.quartz-scheduler:quartz:2.1.0"
     //Postgres
     compile "postgresql:postgresql:9.0-801.jdbc4" 
 	

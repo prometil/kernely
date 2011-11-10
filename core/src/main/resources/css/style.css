@@ -59,11 +59,54 @@ div#menu {
 
 /* header profile*/
 div#header_profile {
-	right:0;
+	right:5px;
 	height: 30px;
    	position: absolute;
    	top: 0;
+
 }
+
+img.img_miniprofile{
+	width:28px;
+	height:28px;
+}
+
+/* mini-profile pop up */
+div#profile_popup{
+	right:5px;
+	position:absolute;
+	top:29px;
+	width:300px;
+	height:200px;
+	background-color:#FFFFFF;
+	display:none;
+}
+
+div#profile-content{
+	border:1px solid black;
+}
+
+div#profilePU-main{
+	height:150px;
+}
+
+div#profilePU-image{
+	height:150px;
+	width:125px;
+	float:left;
+}
+
+div#profilePU-information{
+	height:150px;
+	width:173px;
+	float:left;
+}
+
+div#profilePU-footer{
+	height:50px;
+}
+
+
 
 /* content */
 div#content {

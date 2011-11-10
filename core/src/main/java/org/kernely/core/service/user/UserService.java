@@ -25,13 +25,17 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
+import org.apache.shiro.SecurityUtils;
 import org.kernely.core.dto.UserCreationRequestDTO;
 import org.kernely.core.dto.UserDTO;
+import org.kernely.core.dto.UserDetailsDTO;
 import org.kernely.core.event.UserCreationEvent;
 import org.kernely.core.model.User;
+import org.kernely.core.model.UserDetails;
 
 import com.google.common.eventbus.EventBus;
 import com.google.inject.Inject;
+import com.google.inject.Provider;
 import com.google.inject.Singleton;
 import com.google.inject.persist.Transactional;
 
@@ -42,7 +46,7 @@ import com.google.inject.persist.Transactional;
 public class UserService {
 
 	@Inject
-	private EntityManager em;
+	private Provider<EntityManager> em;
 
 	@Inject
 	private EventBus eventBus;
@@ -69,7 +73,7 @@ public class UserService {
 		User user = new User();
 		user.setPassword(request.password.trim());
 		user.setUsername(request.username.trim());
-		em.persist(user);
+		em.get().persist(user);
 		eventBus.post(new UserCreationEvent(user.getId(), user.getUsername()));
 
 	}
@@ -82,7 +86,7 @@ public class UserService {
 	@SuppressWarnings("unchecked")
 	@Transactional
 	public List<UserDTO> getAllUsers() {
-		Query query = em.createQuery("SELECT e FROM User e");
+		Query query = em.get().createQuery("SELECT e FROM User e");
 		List<User> collection = (List<User>) query.getResultList();
 		List<UserDTO> dtos = new ArrayList<UserDTO>();
 		for (User user : collection) {
@@ -90,5 +94,33 @@ public class UserService {
 		}
 		return dtos;
 
+	}
+	
+	@Transactional
+	public UserDetailsDTO getUserDetails(User u) {
+		Query query = em.get().createQuery("SELECT e FROM UserDetails, User WHERE User.id =" + u.getId());
+		UserDetails ud = (UserDetails)query.getResultList().get(0);
+		
+		UserDetailsDTO dto = new UserDetailsDTO(ud.getFirstname(), ud.getName(), ud.getImage(), ud.getMail());
+		return dto;
+
+	}
+	
+	@Transactional
+	public UserDetailsDTO getUserDetails(String login) {
+		Query query = em.get().createQuery("SELECT e FROM User  e WHERE username ='" + login + "'");
+		User u = (User)query.getSingleResult();
+		query = em.get().createQuery("SELECT e FROM UserDetails e , User u WHERE e.user = u AND u.id =" + u.getId());
+		UserDetails ud = (UserDetails)query.getSingleResult();
+		
+		UserDetailsDTO dto = new UserDetailsDTO(ud.getFirstname(), ud.getName(), ud.getImage(), ud.getMail());
+		return dto;
+
+	}
+	
+	@Transactional
+	public UserDTO getCurrentUser(){
+		Query query = em.get().createQuery("SELECT e FROM User e WHERE username ='"+ SecurityUtils.getSubject().getPrincipal() +"'");
+		return new UserDTO(((User)query.getSingleResult()).getUsername());
 	}
 }

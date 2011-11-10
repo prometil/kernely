@@ -50,10 +50,10 @@ import com.google.inject.persist.Transactional;
 public class StreamService {
 	
 	private static final Logger log = LoggerFactory.getLogger(StreamService.class);
-	
-	@Inject
-    private Provider<EntityManager> em;
 
+	@Inject
+	Provider<EntityManager> em;
+	
 	@Inject
 	private Mailer mailService;
 	
@@ -94,6 +94,7 @@ public class StreamService {
 		
 		Query query = em.get().createQuery("SELECT m FROM Message m order by m.date");
 		List<Message> messages = (List<Message>) query.getResultList();
+
 		List<StreamMessageDTO> messageDtos = new ArrayList<StreamMessageDTO>();
 		log.debug("Found {} messages", messages.size());
 	  	for(Message message: messages){

@@ -10,10 +10,13 @@ import org.kernely.core.dto.PermissionDTO;
 import org.kernely.core.model.Permission;
 
 import com.google.inject.Inject;
+import com.google.inject.Provider;
+import com.google.inject.Singleton;
 
+@Singleton
 public class PermissionService {
 	@Inject
-	private EntityManager em;
+	private Provider<EntityManager> em;
 
 	/**
 	 * Gets the lists of all permissions contained in the database.
@@ -22,14 +25,12 @@ public class PermissionService {
 	 */
 	@SuppressWarnings("unchecked")
 	public List<PermissionDTO> getAllPermissions() {
-		em.getTransaction().begin();
-		Query query = em.createQuery("SELECT e FROM PermissionModel e");
+		Query query = em.get().createQuery("SELECT e FROM PermissionModel e");
 		List<Permission> collection = (List<Permission>) query.getResultList();
 		List<PermissionDTO> dtos = new ArrayList<PermissionDTO>();
 		for (Permission perm : collection) {
 			dtos.add(new PermissionDTO(perm.getName()));
 		}
-		em.getTransaction().commit();
 
 		return dtos;
 

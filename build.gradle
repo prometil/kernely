@@ -63,11 +63,30 @@ task prepare(dependsOn: assemble) << {
             }
           }  
         }
+
         copy {
           from project.configurations.default
           into "dist/kernely/libs"
         }
         mkdir("dist/kernely/media")
+        mkdir("dist/kernely/config")
+	
+    	copy{
+           from "core/src/main/resources"
+           from "stream/src/main/resources"
+   	   into "dist/kernely/media"
+	   include '**/*.gsp'
+           include '**/*.js'
+	   include '**/*.css'
+	   includeEmptyDirs = false
+	}	
+
+    	copy{
+           from "core/src/main/resources/core-config.xml"
+           from "stream/src/main/resources/stream-config.xml"
+   	   into "dist/kernely/config"
+	}	
+	
     }
 }
 

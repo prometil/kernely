@@ -16,7 +16,7 @@ GNU Affero General Public License for more details.
 You should have received a copy of the GNU Affero General Public
 License along with Kernely.
 If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 package org.kernely.core.resourceLocator;
 
@@ -24,39 +24,59 @@ import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import com.google.inject.AbstractModule;
+/**
+ * Allows to retrieve resource in a media folder if they exist or in the jar by
+ * default
+ * 
+ * @author b.grandperret
+ * 
+ */
+public class ResourceLocator {
 
-public class ResourceLocator extends AbstractModule {
-	public URL getResource(String resource) throws MalformedURLException{ 
-		if (resource==null || "".equals(resource)){
+	/**
+	 * Find the resource in the folder with a specific path
+	 * 
+	 * @param prefix
+	 *            the folder like "../media"
+	 * @param resource
+	 *            the resource like /gsp/login.gsp
+	 * @return the URL if the file is found
+	 * @throws MalformedURLException
+	 */
+	public URL getResource(String prefix, String resource) throws MalformedURLException {
+		if (resource == null || "".equals(resource)) {
 			throw new IllegalArgumentException("file path cannot be null or empty");
 		}
-		
-		//add media directory to the url of the ressource
 
-		String fullURL="../media" + resource;
-		
-		File file=new File(fullURL);
-		 if(!file.exists()){
-			 if(ResourceLocator.class.getResource(resource)==null){
-				 throw new IllegalArgumentException("file doesn't exist");
-			 }
-			 else{
-				 return ResourceLocator.class.getResource(resource);	 
-			 }
-		 }
-		 URL url=file.toURI().toURL();
+		// handle if the first character is a / or not
+		if (resource.charAt(0) != '/') {
+			resource = '/' + resource;
+		}
 
-	     return url;
-	}
-	
-	public ResourceLocator(){
-		
+		// add media directory to the url of the ressource
+
+		String fullURL = prefix + resource;
+		File file = new File(fullURL);
+		if (!file.exists()) {
+			if (ResourceLocator.class.getResource(resource) == null) {
+				throw new IllegalArgumentException("file doesn't exist");
+			} else {
+				return ResourceLocator.class.getResource(resource);
+			}
+		}
+		URL url = file.toURI().toURL();
+		return url;
 	}
 
-	@Override
-	protected void configure() {
-		// TODO Auto-generated method stub
-		
-	}	
+	/**
+	 * find a resource in media
+	 * 
+	 * @param resource
+	 *            the path of the resource
+	 * @return the url if the file exist
+	 * @throws MalformedURLException
+	 */
+	public URL getResource(String resource) throws MalformedURLException {
+		return getResource("../media", resource);
+	}
 }
