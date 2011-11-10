@@ -42,6 +42,7 @@ public class StreamPlugin  extends AbstractPlugin {
 	public StreamPlugin() {
 		super("Stream", "/streams");
 		registerController(StreamResource.class);
+<<<<<<< HEAD
 		registerModel(Message.class);
 		registerModel(Stream.class);
 	}
@@ -49,6 +50,10 @@ public class StreamPlugin  extends AbstractPlugin {
 	@Override
 	public void start(){
 		eventBus.register(UserEventHandler.class);
+=======
+		registerModel(StreamMessage.class);
+
+>>>>>>> b32140e8f60de95b42a4067311d87bbc122ecaa3
 	}
 	
 	@Override
