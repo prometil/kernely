@@ -40,11 +40,19 @@ public abstract class AbstractPlugin extends AbstractModule {
 	
 	private String configurationFilepath;
 	
+	
 	public AbstractPlugin(String pName, String pPath){
 		name = pName;
 		path = pPath;
 		controllers = new  ArrayList<Class<? extends AbstractController>>();
 		models = new ArrayList<Class<? extends AbstractModel>>();
+	}
+	
+	/**
+	 * The plugin is injected just before this method.
+	 */
+	public void start(){
+
 	}
 	
 	protected void registerModel(Class<? extends AbstractModel> model){

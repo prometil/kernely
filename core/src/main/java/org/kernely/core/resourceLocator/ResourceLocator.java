@@ -43,10 +43,10 @@ public class ResourceLocator extends AbstractModule {
 			 }
 			 else{
 				 return ResourceLocator.class.getResource(resource);	 
-			 }				 
-		 }	
+			 }
+		 }
 		 URL url=file.toURI().toURL();
-		 System.out.println(url.toString());
+
 	     return url;
 	}
 	

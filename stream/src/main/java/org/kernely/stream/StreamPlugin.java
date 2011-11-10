@@ -20,27 +20,40 @@ If not, see <http://www.gnu.org/licenses/>.
 package org.kernely.stream;
 
 import org.kernely.core.plugin.AbstractPlugin;
-import org.kernely.stream.model.StreamMessage;
+import org.kernely.stream.model.Message;
+import org.kernely.stream.model.Stream;
 import org.kernely.stream.resources.StreamResource;
 import org.kernely.stream.service.StreamService;
+
+import com.google.common.eventbus.EventBus;
+import com.google.inject.Inject;
 /**
  * The user plugin
  *
  */
 public class StreamPlugin  extends AbstractPlugin {
 
+	@Inject
+	EventBus eventBus;
+	
 	/**
 	 * Default constructor
 	 */
 	public StreamPlugin() {
 		super("Stream", "/streams");
 		registerController(StreamResource.class);
-		registerModel(StreamMessage.class);
+		registerModel(Message.class);
+		registerModel(Stream.class);
+	}
+	
+	@Override
+	public void start(){
+		eventBus.register(UserEventHandler.class);
 	}
 	
 	@Override
 	protected void configure() {
 		bind(StreamService.class);
-		bind(UserEvenHandler.class);
+		bind(UserEventHandler.class);
 	}
 }

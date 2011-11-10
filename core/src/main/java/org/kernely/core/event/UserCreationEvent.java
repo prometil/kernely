@@ -19,10 +19,6 @@ If not, see <http://www.gnu.org/licenses/>.
  */
 package org.kernely.core.event;
 
-/**
- * @author g.breton
- *
- */
 public class UserCreationEvent{
 	private long id;
 	private String username;

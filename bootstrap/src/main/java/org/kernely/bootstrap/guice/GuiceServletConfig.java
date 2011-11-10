@@ -56,6 +56,7 @@ public class GuiceServletConfig extends GuiceServletContextListener {
 		List<Module> list = new ArrayList<Module>();
 
 		for (AbstractPlugin plugin : plugins) {
+
 			Module module = plugin.getModule();
 			if (module != null) {
 				list.add(module);
@@ -63,6 +64,12 @@ public class GuiceServletConfig extends GuiceServletContextListener {
 		}
 		list.add(new KernelyServletModule(plugins));
 		list.add(new ServletModule());
-		return Guice.createInjector(list);
+		Injector injector = Guice.createInjector(list);
+		for (AbstractPlugin plugin : plugins) {
+			injector.injectMembers(plugin);
+			plugin.start();
+
+		}
+		return injector;
 	}
 }
