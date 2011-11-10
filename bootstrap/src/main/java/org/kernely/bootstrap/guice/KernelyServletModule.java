@@ -38,6 +38,10 @@ import org.kernely.bootstrap.shiro.KernelyShiroFilter;
 import org.kernely.core.plugin.AbstractPlugin;
 import org.kernely.core.resourceLocator.ResourceLocator;
 import org.kernely.core.resources.AbstractController;
+import org.quartz.Scheduler;
+import org.quartz.SchedulerException;
+import org.quartz.SchedulerFactory;
+import org.quartz.impl.StdSchedulerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -58,6 +62,7 @@ public class KernelyServletModule extends JerseyServletModule {
 
 	private List<? extends AbstractPlugin> plugins;
 	private final CombinedConfiguration combinedConfiguration;
+
 	/**
 	 * Constructor.
 	 * 
@@ -74,7 +79,7 @@ public class KernelyServletModule extends JerseyServletModule {
 	protected void configureServlets() {
 
 		// configuration
-		
+
 		// Bind all Jersey resources detected in plugins
 		for (AbstractPlugin plugin : plugins) {
 			for (Class<? extends AbstractController> controllerClass : plugin.getControllers()) {
@@ -83,8 +88,8 @@ public class KernelyServletModule extends JerseyServletModule {
 			}
 		}
 		bind(AbstractConfiguration.class).toInstance(combinedConfiguration);
-		
-		//Todo basile ?
+
+		// Todo basile ?
 		bind(ResourceLocator.class);
 
 		// persistence
@@ -95,10 +100,13 @@ public class KernelyServletModule extends JerseyServletModule {
 			properties.put(key, combinedConfiguration.getProperty(key));
 		}
 
+		// the jpa persiste modul
 		JpaPersistModule module = new JpaPersistModule("kernelyUnit").properties(properties);
 		install(module);
-
 		filter("/*").through(PersistFilter.class);
+
+		bind(SchedulerFactory.class).to(StdSchedulerFactory.class);
+
 		/*
 		 * bind(MessageBodyReader.class).to(JacksonJsonProvider.class);
 		 * bind(MessageBodyWriter.class).to(JacksonJsonProvider.class);
@@ -131,7 +139,6 @@ public class KernelyServletModule extends JerseyServletModule {
 		serve("*.png").with(MediaServlet.class);
 		serve("*.jpg").with(MediaServlet.class);
 		serve("/*").with(GuiceContainer.class);
-
 	}
 
 	@Provides

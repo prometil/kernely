@@ -28,6 +28,7 @@ import javax.persistence.Query;
 import org.kernely.core.service.mail.Mailer;
 import org.kernely.stream.dto.StreamMessageDTO;
 import org.kernely.stream.model.StreamMessage;
+import org.quartz.Scheduler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,6 +43,7 @@ import com.google.inject.persist.Transactional;
  */
 @Singleton
 public class StreamService {
+	
 	
 	@Inject
 	Provider<EntityManager> em;
@@ -80,7 +82,6 @@ public class StreamService {
 	@SuppressWarnings("unchecked")
 	@Transactional
 	public List<StreamMessageDTO> getMessages() {
-		
 		Query query = em.get().createQuery("SELECT m FROM StreamMessage m order by m.date");
 		List<StreamMessage> messages = (List<StreamMessage>) query.getResultList();
 		List<StreamMessageDTO> messageDtos = new ArrayList<StreamMessageDTO>();

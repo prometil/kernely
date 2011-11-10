@@ -19,11 +19,20 @@ If not, see <http://www.gnu.org/licenses/>.
  */
 package org.kernely.bootstrap.guice;
 
+import static org.quartz.JobBuilder.newJob;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.configuration.CombinedConfiguration;
+import org.kernely.core.job.GuiceSchedulerFactory;
 import org.kernely.core.plugin.AbstractPlugin;
+import org.quartz.Job;
+import org.quartz.JobDetail;
+import org.quartz.Scheduler;
+import org.quartz.SchedulerException;
+import org.quartz.Trigger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,10 +42,15 @@ import com.google.inject.Module;
 import com.google.inject.servlet.GuiceServletContextListener;
 import com.google.inject.servlet.ServletModule;
 
+/**
+ * The Guice servlet container
+ * 
+ * @author g.breton
+ * 
+ */
 public class GuiceServletConfig extends GuiceServletContextListener {
 
-	public static final Logger log = LoggerFactory
-			.getLogger(GuiceServletConfig.class);
+	public static final Logger log = LoggerFactory.getLogger(GuiceServletConfig.class);
 	private List<? extends AbstractPlugin> plugins;
 	private final CombinedConfiguration combinedConfiguration;
 
@@ -46,8 +60,7 @@ public class GuiceServletConfig extends GuiceServletContextListener {
 	 * @param plugins
 	 *            The list of plugins to configure.
 	 */
-	public GuiceServletConfig(List<? extends AbstractPlugin> plugins,
-			CombinedConfiguration combinedConfiguration) {
+	public GuiceServletConfig(List<? extends AbstractPlugin> plugins, CombinedConfiguration combinedConfiguration) {
 		this.plugins = plugins;
 		this.combinedConfiguration = combinedConfiguration;
 	}
@@ -68,6 +81,23 @@ public class GuiceServletConfig extends GuiceServletContextListener {
 		}
 		list.add(new KernelyServletModule(plugins, combinedConfiguration));
 		list.add(new ServletModule());
-		return Guice.createInjector(list);
+		Injector injector = Guice.createInjector(list);
+
+		Scheduler scheduler = injector.getInstance(Scheduler.class);
+		GuiceSchedulerFactory guiceSchedulerFactory = injector.getInstance(GuiceSchedulerFactory.class);
+		try {
+			scheduler.setJobFactory(guiceSchedulerFactory);
+
+			for (AbstractPlugin plugin : plugins) {
+				for (Map.Entry<Class<? extends Job>, Trigger> entry : plugin.getJobs().entrySet()) {
+					JobDetail job = newJob(entry.getKey()).build();
+					scheduler.scheduleJob(job, entry.getValue());
+				}
+			}
+			scheduler.start();
+		} catch (SchedulerException e) {
+			log.error("Scheduler exception {}", e);
+		}
+		return injector;
 	}
 }

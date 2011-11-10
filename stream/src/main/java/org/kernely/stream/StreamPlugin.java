@@ -36,6 +36,7 @@ public class StreamPlugin  extends AbstractPlugin {
 		super("Stream", "/streams");
 		registerController(StreamResource.class);
 		registerModel(StreamMessage.class);
+
 	}
 	
 	@Override

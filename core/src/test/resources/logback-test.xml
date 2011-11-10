@@ -1,12 +1,13 @@
 
 <configuration>
-  <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
-    <encoder>
-      <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder>
+			<pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
     </encoder>
    
   </appender>
  <logger name="org.eclipse" level="ERROR"/>
+ <logger name="org.quartz" level="ERROR"/>
 	<logger name="org.hibernate" level="ERROR"/>
 	<logger name="org.apache.shiro" level="ERROR"/>
 	<logger name="org.kernely" level="ALL" />
