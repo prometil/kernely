@@ -71,7 +71,7 @@ create table kernely_group_permissions(
 
 drop table IF EXISTS kernely_user_details;
 create table kernely_user_details (
-        id_user_detail int primary key auto_increment,
+        id_user_detail int primary key,
         name varchar(50),
         firstname varchar(50),
         mail varchar(50),
@@ -94,6 +94,6 @@ insert into kernely_user_group values (2,1);
 insert into kernely_user_roles values (2,1);
 insert into kernely_user_roles values (2,2);
 
-
-
+insert into kernely_user_details (id_user_detail, name, firstname, mail, image, fk_user_id) values (1, Joe, Bobby, bobby.joe@mail.com, null, 1);
+insert into kernely_user_details (id_user_detail, name, firstname, mail, image, fk_user_id) values (2, Doe, John, john.doe@mail.com, null, 2);
 

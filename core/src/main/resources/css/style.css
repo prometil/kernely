@@ -32,7 +32,7 @@ div#header div#title {
 	display: block;
 	color: #FFF;
 	font-size: 24px;
-	font-wieght: bold;
+	font-weight: bold;
 	float: left;
 	padding-right: 30px;
 }
@@ -58,7 +58,7 @@ div#menu {
 }
 
 /* header profile*/
-div#header_profile {
+div#menu_header_profile {
 	right:5px;
 	height: 30px;
    	position: absolute;
@@ -76,34 +76,41 @@ div#profile_popup{
 	right:5px;
 	position:absolute;
 	top:29px;
-	width:300px;
-	height:200px;
+	width:310px;
+	height:135px;
 	background-color:#FFFFFF;
 	display:none;
 }
 
 div#profile-content{
 	border:1px solid black;
+	margin:5px;
 }
 
 div#profilePU-main{
-	height:150px;
+	height:80px;
 }
 
 div#profilePU-image{
-	height:150px;
+	height:80px;
 	width:125px;
 	float:left;
 }
 
+img#profilePU-img{
+	max-width:120px;
+	max-height:80px;
+}
+
 div#profilePU-information{
-	height:150px;
+	height:80px;
 	width:173px;
 	float:left;
 }
 
 div#profilePU-footer{
-	height:50px;
+	height:30px;
+	text-align:center;
 }
 
 
