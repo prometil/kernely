@@ -16,22 +16,34 @@ GNU Affero General Public License for more details.
 You should have received a copy of the GNU Affero General Public
 License along with Kernely.
 If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 package org.kernely.stream;
 
 import org.kernely.core.event.UserCreationEvent;
+import org.kernely.stream.model.Stream;
+import org.kernely.stream.service.StreamService;
 
+import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
+import com.google.inject.Inject;
 
 /**
  * @author g.breton
  */
-public class UserEvenHandler {
+public class UserEventHandler {
 
+	@Inject
+	StreamService streamService;
+
+	@Inject
+	EventBus e;
+	/**
+	 * Detect the creation of an user and create his stream.
+	 * 
+	 * @param e   The event, containing user data : id and username...
+	 */
 	@Subscribe
 	public void onUserCreation(UserCreationEvent event){
-		
-	
-		
+		streamService.createStream("Stream of "+event.getUsername(), Stream.CATEGORY_USERS);
 	}
 }

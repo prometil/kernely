@@ -16,7 +16,7 @@ GNU Affero General Public License for more details.
 You should have received a copy of the GNU Affero General Public
 License along with Kernely.
 If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 package org.kernely.core;
 
 import groovy.text.SimpleTemplateEngine;
@@ -34,13 +34,18 @@ import org.kernely.core.resources.UserController;
 import org.kernely.core.service.mail.MailService;
 import org.kernely.core.service.mail.Mailer;
 import org.kernely.core.template.TemplateRenderer;
+import org.quartz.Scheduler;
+import org.quartz.SchedulerException;
+import org.quartz.SchedulerFactory;
+import org.quartz.impl.StdSchedulerFactory;
 
 import com.google.common.eventbus.EventBus;
+import com.google.inject.Provides;
 import com.google.inject.Singleton;
 
 /**
  * The core kernely plugin
- *
+ * 
  */
 public class CorePlugin extends AbstractPlugin {
 	/**
@@ -66,7 +71,21 @@ public class CorePlugin extends AbstractPlugin {
 		bind(Mailer.class).to(MailService.class);
 		bind(SimpleTemplateEngine.class);
 		bind(EventBus.class).in(Singleton.class);
-		
+
 	}
-	
+
+	@Provides
+	@Singleton
+	public Scheduler getScheduler() {
+		SchedulerFactory schedFact = new StdSchedulerFactory();
+		Scheduler sched = null;
+		try {
+			sched = schedFact.getScheduler();
+			return sched;
+		} catch (SchedulerException e) {
+			return null;
+		}
+
+	}
+
 }
