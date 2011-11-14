@@ -33,8 +33,10 @@ import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.authz.AuthorizationException;
 import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
+import org.apache.shiro.codec.Base64;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
+import org.apache.shiro.util.SimpleByteSource;
 import org.kernely.core.model.Permission;
 import org.kernely.core.model.Role;
 import org.kernely.core.model.User;
@@ -66,9 +68,11 @@ public class KernelyRealm extends AuthorizingRealm {
 			em.persist(m);
 
 			User userModel = (User) query.getResultList().get(0);
-			String password = userModel.getPassword();
+			byte[] password = Base64.decode(userModel.getPassword());
+			SimpleByteSource salt = new SimpleByteSource(Base64.decode(userModel.getSalt()));  
+			
 			em.getTransaction().commit();
-			return new SimpleAuthenticationInfo(username, password, getName());
+			return new SimpleAuthenticationInfo(username, password, salt, getName());
 		} catch (Exception e) {
 			//TODO we should log this 
 			log.error("", e);

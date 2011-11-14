@@ -6,7 +6,8 @@ drop table IF EXISTS kernely_user;
 create table kernely_user(
 	id int primary key,
 	username varchar(30),
-	password varchar(80)
+	password varchar(80),
+	salt varchar(80)
 );
 
 drop table IF EXISTS stream_messages;
@@ -71,7 +72,7 @@ create table kernely_group_permissions(
 
 drop table IF EXISTS kernely_user_details;
 create table kernely_user_details (
-        id_user_detail int primary key auto_increment,
+        id_user_detail int primary key,
         name varchar(50),
         firstname varchar(50),
         mail varchar(50),

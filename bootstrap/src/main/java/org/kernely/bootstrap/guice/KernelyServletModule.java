@@ -27,6 +27,8 @@ import org.apache.commons.configuration.AbstractConfiguration;
 import org.apache.commons.configuration.CombinedConfiguration;
 import org.apache.shiro.authc.credential.CredentialsMatcher;
 import org.apache.shiro.authc.credential.HashedCredentialsMatcher;
+import org.apache.shiro.crypto.RandomNumberGenerator;
+import org.apache.shiro.crypto.SecureRandomNumberGenerator;
 import org.apache.shiro.crypto.hash.Sha256Hash;
 import org.apache.shiro.realm.Realm;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
@@ -137,9 +139,10 @@ public class KernelyServletModule extends JerseyServletModule {
 	@Provides
 	@Singleton
 	public WebSecurityManager securityManager(KernelyRealm realm) {
-		log.debug("Create security manager");
+		log.debug("Create security manager");  
 		// Configure encrypting password matcher
-		CredentialsMatcher customMatcher = new HashedCredentialsMatcher(Sha256Hash.ALGORITHM_NAME);
+		HashedCredentialsMatcher customMatcher = new HashedCredentialsMatcher(Sha256Hash.ALGORITHM_NAME);
+		customMatcher.setHashIterations(1024);
 		realm.setCredentialsMatcher(customMatcher);
 		return new DefaultWebSecurityManager(realm);
 	}

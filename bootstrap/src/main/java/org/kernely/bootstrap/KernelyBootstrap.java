@@ -36,9 +36,12 @@ import org.eclipse.jetty.webapp.WebAppContext;
 import org.kernely.bootstrap.classpath.ClasspathUpdater;
 import org.kernely.bootstrap.error.KernelyErrorHandler;
 import org.kernely.bootstrap.guice.GuiceServletConfig;
+import org.kernely.core.dto.UserCreationRequestDTO;
+import org.kernely.core.dto.UserDTO;
 import org.kernely.core.plugin.AbstractPlugin;
 import org.kernely.core.plugin.PluginsLoader;
 import org.kernely.core.resourceLocator.ResourceLocator;
+import org.kernely.core.service.user.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -79,7 +82,7 @@ public class KernelyBootstrap {
 		webApp.setServletHandler(handler);
 		webApp.setErrorHandler(new KernelyErrorHandler());
 		server.setHandler(webApp);
-
+		
 		try {
 			server.start();
 			server.join();
@@ -87,6 +90,7 @@ public class KernelyBootstrap {
 			log.error("Error at start {}", e);
 		}
 
+		
 	}
 
 	/**

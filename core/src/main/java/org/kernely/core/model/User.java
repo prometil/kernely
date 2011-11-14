@@ -66,6 +66,7 @@ public class User extends AbstractModel{
 	
 	private String username;
 	private String password;
+	private String salt;
 	
 	/**
 	 * Get the username of the user.
@@ -86,6 +87,15 @@ public class User extends AbstractModel{
 	}
 	
 	/**
+	 * get the salt of the user 
+	 * @return the salt of the user
+	 */
+	@Column(name = "salt")
+	public String getSalt(){
+		return salt;
+	}
+	
+	/**
 	 * Set or replace the username of the user.
 	 * @param newUsername The new username.
 	 */
@@ -101,6 +111,9 @@ public class User extends AbstractModel{
 		this.password = newPassword;
 	}
 	
+	public void setSalt(String newSalt){
+		this.salt = newSalt;
+	}
 	
 	
 	

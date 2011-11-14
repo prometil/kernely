@@ -78,8 +78,8 @@ public class UserController  extends AbstractController{
 	{
 		log.debug("Create a user");
 		UserCreationRequestDTO request = new UserCreationRequestDTO();
-		request.username = UUID.randomUUID().toString();
-		request.password = "password";
+		request.username ="bobby";
+		request.password = "coucou";
 		userService.createUser(request);
 		return "Ok";
 	}

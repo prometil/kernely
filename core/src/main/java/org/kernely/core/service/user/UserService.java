@@ -26,6 +26,10 @@ import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
 import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.crypto.RandomNumberGenerator;
+import org.apache.shiro.crypto.SecureRandomNumberGenerator;
+import org.apache.shiro.crypto.hash.Sha256Hash;
+import org.apache.shiro.util.ByteSource;
 import org.kernely.core.dto.UserCreationRequestDTO;
 import org.kernely.core.dto.UserDTO;
 import org.kernely.core.dto.UserDetailsDTO;
@@ -71,8 +75,19 @@ public class UserService {
 			throw new IllegalArgumentException("Username or/and password cannot be space character only ");
 		}
 		User user = new User();
-		user.setPassword(request.password.trim());
+		//user.setPassword(request.password.trim());
 		user.setUsername(request.username.trim());
+		
+		RandomNumberGenerator rng = new SecureRandomNumberGenerator();
+		Object salt = rng.nextBytes();
+		
+		//Now hash the plain-text password with the random salt and multiple
+		//iterations and then Base64-encode the value (requires less space than Hex):
+		String hashedPasswordBase64 = new Sha256Hash(request.password.trim(), salt, 1024).toBase64();
+
+		user.setPassword(hashedPasswordBase64);
+		user.setSalt(salt.toString()); 
+		
 		em.get().persist(user);
 		eventBus.post(new UserCreationEvent(user.getId(), user.getUsername()));
 
