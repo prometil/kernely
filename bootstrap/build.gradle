@@ -10,6 +10,7 @@ dependencies {
 	     "org.apache.shiro:shiro-spring:1.1.0",
 	     "org.apache.shiro:shiro-web:1.1.0",
 	     "org.apache.shiro:shiro-aspectj:1.1.0",
+	     "org.quartz-scheduler:quartz:2.1.0",
 	     
 	     //the jetty dependency
 	     "org.eclipse.jetty:jetty-jsp-2.1:7.2.2.v20101205",

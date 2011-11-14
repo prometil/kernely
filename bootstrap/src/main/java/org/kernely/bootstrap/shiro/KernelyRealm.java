@@ -40,7 +40,7 @@ import org.apache.shiro.util.SimpleByteSource;
 import org.kernely.core.model.Permission;
 import org.kernely.core.model.Role;
 import org.kernely.core.model.User;
-import org.kernely.stream.model.StreamMessage;
+import org.kernely.stream.model.Message;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -62,11 +62,7 @@ public class KernelyRealm extends AuthorizingRealm {
 				throw new AccountException("Null usernames are not allowed by this realm.");
 			}
 			Query query = em.createQuery("SELECT e FROM User e where username='" + username + "'");
-
-			StreamMessage m = new StreamMessage();
-			m.setMessage(UUID.randomUUID().toString());
-			em.persist(m);
-
+			
 			User userModel = (User) query.getResultList().get(0);
 			byte[] password = Base64.decode(userModel.getPassword());
 			SimpleByteSource salt = new SimpleByteSource(Base64.decode(userModel.getSalt()));  

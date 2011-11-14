@@ -123,10 +123,20 @@ public class UserController  extends AbstractController{
 	
 	
 	@GET
-	@Path("/profile")
+	@Path("/{login}/profile")
 	@Produces( { MediaType.TEXT_HTML })
-	public String profil() {
-		return templateRenderer.create("/templates/gsp/profile.gsp").with("username",  SecurityUtils.getSubject().getPrincipal()).render() ;
+	public String profil(@PathParam("login")String userLogin) {
+		String template = "/templates/gsp/profile.gsp";
+		UserDTO usercurrent = this.getCurrent();
+		if(usercurrent.username.equals(userLogin)){
+			template = "/templates/gsp/profile_editable.gsp";
+		}
+		UserDetailsDTO uddto = userService.getUserDetails(userLogin);
+		String imagePath = "/images/default_user.png";
+		if(uddto.image != null){
+			imagePath = uddto.image;
+		}
+		return templateRenderer.create(template).with("username",  uddto.firstname + " " + uddto.lastname).with("mail", uddto.email).with("image", imagePath).with("description", "Some text about you. *** Not in DB ***").render() ;
 	}
 	
 	@GET
@@ -137,7 +147,7 @@ public class UserController  extends AbstractController{
 	}
 	
 	@GET
-	@Path("/{login}/profile")
+	@Path("/{login}")
 	@Produces({"application/json"})
 	public UserDetailsDTO getDetails(@PathParam("login")String userLogin){
 		return userService.getUserDetails(userLogin);

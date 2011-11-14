@@ -72,6 +72,6 @@ public class StreamResource extends AbstractController {
 	public StreamMessageDTO addMessage(StreamMessageCreationRequestDTO message) {
 
 		log.debug("{} create a new message : {}", SecurityUtils.getSubject().getPrincipal(), message.message);
-		return streamService.addMessage(message.message);
+		return streamService.addMessage(message.message,1);
 	}
 }

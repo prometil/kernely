@@ -23,12 +23,8 @@ import java.util.Date;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.kernely.stream.model.StreamMessage;
+import org.kernely.stream.model.Message;
 
-/**
- * @author yak
- * 
- */
 @XmlRootElement
 public class StreamMessageDTO {
 
@@ -43,11 +39,15 @@ public class StreamMessageDTO {
 	 * The message stream 
 	 * @param pMessage the message
 	 */
-	public StreamMessageDTO(StreamMessage pMessage) {
-		message = pMessage.getMessage();
+	public StreamMessageDTO(Message pMessage) {
+		message = pMessage.getContent();
 		date = pMessage.getDate();
+		streamId = pMessage.getStream().getId();
 	}
 
+	//the id of the stream containing this message
+	private long streamId;
+	
 	//the stream message DTO
 	public String message;
 

@@ -19,11 +19,21 @@ If not, see <http://www.gnu.org/licenses/>.
  */
 package org.kernely.stream.service;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
+import org.junit.Rule;
 import org.junit.Test;
 import org.kernely.core.common.AbstractServiceTest;
+import org.kernely.core.common.TestModule;
+import org.kernely.core.event.UserCreationEvent;
+import org.kernely.stream.UserEventHandler;
+import org.kernely.stream.dto.StreamDTO;
 import org.kernely.stream.dto.StreamMessageDTO;
+import org.kernely.stream.model.Stream;
 
+import com.google.common.eventbus.EventBus;
+import com.google.guiceberry.junit4.GuiceBerryRule;
 import com.google.inject.Inject;
 
 /**
@@ -33,10 +43,17 @@ import com.google.inject.Inject;
  */
 public class StreamServiceTest extends AbstractServiceTest {
 
-	private static final String USERNAME = "USERNAME";
+	private static final String USERNAME = "TEST_USERNAME";
+	private static final String STREAM = "TEST_STREAM";
 	
 	@Inject
 	private StreamService service;
+	
+	@Inject
+	private EventBus bus;
+	
+	@Inject
+	private UserEventHandler handler;
 
 	@Test
 	public void testGetNullMessages() {
@@ -45,25 +62,43 @@ public class StreamServiceTest extends AbstractServiceTest {
 
 	@Test(expected = IllegalArgumentException.class)
 	public void testAddVoidMessage() {
-		service.addMessage("");
+		service.addMessage("",0);
+	}
+	
+	@Test
+	public void testCreateStream(){
+		service.createStream(STREAM, Stream.CATEGORY_USERS);
+		
+		assertNotNull(service.getStream(STREAM, Stream.CATEGORY_USERS));
 	}
 
 	@Test
 	public void testAddMessage() {
-		StreamMessageDTO message = service.addMessage(USERNAME);
+		service.createStream(STREAM, Stream.CATEGORY_USERS);
+		StreamDTO createdStream = service.getStream(STREAM, Stream.CATEGORY_USERS);
+		StreamMessageDTO message = service.addMessage(USERNAME,createdStream.getId());
 		assertNotNull(message);
 		assertEquals(USERNAME, message.message);
-		assertEquals(1, service.getMessages().size());
+		assertEquals(service.getMessages().size(),1);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void testAddNullMessage() {
-		service.addMessage(null);
+		service.addMessage(null,0);
 	}
 
 	@Test
 	public void testGetNullMessages2() {
 		assertEquals(0, service.getMessages().size());
+	}
+	
+	@Test
+	public void testHandlingEvent() {
+		bus.register(handler);
+		bus.post(new UserCreationEvent(1, USERNAME));
+		
+		StreamDTO dto = service.getStream("Stream of "+USERNAME, Stream.CATEGORY_USERS);
+		assertNotNull(dto);
 	}
 
 }

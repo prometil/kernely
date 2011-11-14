@@ -2,7 +2,7 @@ drop database IF EXISTS kernely_db;
 
 create database kernely_db;
 
-drop table IF EXISTS kernely_user;
+drop table IF EXISTS kernely_user CASCADE;
 create table kernely_user(
 	id int primary key,
 	username varchar(30),
@@ -10,11 +10,38 @@ create table kernely_user(
 	salt varchar(80)
 );
 
-drop table IF EXISTS stream_messages;
-create table stream_messages (
+
+drop table IF EXISTS kernely_stream CASCADE;
+create table kernely_stream (
 	id int primary key,
-	message text,
+	title varchar(50),
+	locked boolean DEFAULT false,
+	category varchar(50),
+	user_id int references kernely_user(id)
+);
+
+
+drop table IF EXISTS kernely_message CASCADE;
+create table kernely_message (
+	id int primary key,
+	content text,
+	message_parent int references kernely_message(id),
+        stream int references kernely_stream(id),
 	date date
+);
+
+drop table IF EXISTS kernely_favorites c;
+create table kernely_favorites (
+	user_id int references kernely_user(id),
+	message_id int references kernely_message(id),
+	primary key(user_id, message_id)
+);
+
+drop table IF EXISTS kernely_stream_subscriptions;
+create table kernely_stream_subscriptions (
+	user_id int references kernely_user(id),
+	stream_id int references kernely_stream(id),
+	primary key(user_id, stream_id)
 );
 
 drop table IF EXISTS kernely_group;
@@ -84,6 +111,10 @@ create table kernely_user_details (
 insert into kernely_user (id, username, password) values (1, 'bobby', '110812f67fa1e1f0117f6f3d70241c1a42a7b07711a93c2477cc516d9042f9db');
 insert into kernely_user (id, username, password) values (2, 'john', '799ef92a11af918e3fb741df42934f3b568ed2d93ac1df74f1b8d41a27932a6f');
 
+
+insert into kernely_stream (id, title, locked, category, user_id) values (1, 'Stream of bobby', false,'STREAM_USERS',1);
+insert into kernely_stream (id, title, locked, category, user_id) values (2, 'Stream of john', false,'STREAM_USERS',1);
+
 insert into kernely_role (role_id, name) values (1, 'User');
 insert into kernely_role (role_id, name) values (2, 'Administrator');
 
@@ -95,6 +126,6 @@ insert into kernely_user_group values (2,1);
 insert into kernely_user_roles values (2,1);
 insert into kernely_user_roles values (2,2);
 
-
-
+insert into kernely_user_details (id_user_detail, name, firstname, mail, image, fk_user_id) values (1, Joe, Bobby, bobby.joe@mail.com, null, 1);
+insert into kernely_user_details (id_user_detail, name, firstname, mail, image, fk_user_id) values (2, Doe, John, john.doe@mail.com, null, 2);
 
