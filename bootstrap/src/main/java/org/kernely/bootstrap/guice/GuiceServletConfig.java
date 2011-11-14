@@ -83,12 +83,6 @@ public class GuiceServletConfig extends GuiceServletContextListener {
 		list.add(new KernelyServletModule(plugins, combinedConfiguration));
 		list.add(new ServletModule());
 		Injector injector = Guice.createInjector(list);
-<<<<<<< HEAD
-		for (AbstractPlugin plugin : plugins) {
-			injector.injectMembers(plugin);
-			plugin.start();
-
-=======
 
 		Scheduler scheduler = injector.getInstance(Scheduler.class);
 		GuiceSchedulerFactory guiceSchedulerFactory = injector.getInstance(GuiceSchedulerFactory.class);
@@ -104,7 +98,6 @@ public class GuiceServletConfig extends GuiceServletContextListener {
 			scheduler.start();
 		} catch (SchedulerException e) {
 			log.error("Scheduler exception {}", e);
->>>>>>> b32140e8f60de95b42a4067311d87bbc122ecaa3
 		}
 		return injector;
 	}

@@ -21,27 +21,18 @@ package org.kernely.stream.service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
-import org.kernely.core.event.UserCreationEvent;
 import org.kernely.core.service.mail.Mailer;
 import org.kernely.stream.dto.StreamDTO;
 import org.kernely.stream.dto.StreamMessageDTO;
-<<<<<<< HEAD
 import org.kernely.stream.model.Message;
 import org.kernely.stream.model.Stream;
-=======
-import org.kernely.stream.model.StreamMessage;
-import org.quartz.Scheduler;
->>>>>>> b32140e8f60de95b42a4067311d87bbc122ecaa3
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.eventbus.EventBus;
-import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.Singleton;
@@ -54,12 +45,9 @@ import com.google.inject.persist.Transactional;
 @Singleton
 public class StreamService {
 	
-<<<<<<< HEAD
+
 	private static final Logger log = LoggerFactory.getLogger(StreamService.class);
 
-=======
-	
->>>>>>> b32140e8f60de95b42a4067311d87bbc122ecaa3
 	@Inject
 	Provider<EntityManager> em;
 	
@@ -100,15 +88,9 @@ public class StreamService {
 	@SuppressWarnings("unchecked")
 	@Transactional
 	public List<StreamMessageDTO> getMessages() {
-<<<<<<< HEAD
-		
 		Query query = em.get().createQuery("SELECT m FROM Message m order by m.date");
 		List<Message> messages = (List<Message>) query.getResultList();
 
-=======
-		Query query = em.get().createQuery("SELECT m FROM StreamMessage m order by m.date");
-		List<StreamMessage> messages = (List<StreamMessage>) query.getResultList();
->>>>>>> b32140e8f60de95b42a4067311d87bbc122ecaa3
 		List<StreamMessageDTO> messageDtos = new ArrayList<StreamMessageDTO>();
 		log.debug("Found {} messages", messages.size());
 	  	for(Message message: messages){
