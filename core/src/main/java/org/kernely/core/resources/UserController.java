@@ -20,7 +20,6 @@ If not, see <http://www.gnu.org/licenses/>.
 package org.kernely.core.resources;
 
 import java.util.List;
-import java.util.UUID;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;

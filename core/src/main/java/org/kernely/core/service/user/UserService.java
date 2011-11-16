@@ -34,6 +34,7 @@ import org.kernely.core.dto.UserCreationRequestDTO;
 import org.kernely.core.dto.UserDTO;
 import org.kernely.core.dto.UserDetailsDTO;
 import org.kernely.core.event.UserCreationEvent;
+import org.kernely.core.model.Role;
 import org.kernely.core.model.User;
 import org.kernely.core.model.UserDetails;
 
@@ -137,5 +138,14 @@ public class UserService {
 	public UserDTO getCurrentUser(){
 		Query query = em.get().createQuery("SELECT e FROM User e WHERE username ='"+ SecurityUtils.getSubject().getPrincipal() +"'");
 		return new UserDTO(((User)query.getSingleResult()).getUsername());
+	}
+	
+	/**
+	 * Verify if the current user has the role of administrator.
+	 * @return true if the current user has the role of administrator, false otherwise.
+	 */
+	@Transactional
+	public boolean currentUserIsAdministrator(){
+		return SecurityUtils.getSubject().hasRole(Role.ROLE_ADMINISTRATOR);
 	}
 }

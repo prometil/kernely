@@ -7,7 +7,7 @@ create table kernely_user(
 	id int primary key,
 	username varchar(30),
 	password varchar(80),
-	salt varchar(80)
+	salt varchar(300)
 );
 
 
@@ -30,21 +30,21 @@ create table kernely_message (
 	date date
 );
 
-drop table IF EXISTS kernely_favorites c;
+drop table IF EXISTS kernely_favorites CASCADE;
 create table kernely_favorites (
 	user_id int references kernely_user(id),
 	message_id int references kernely_message(id),
 	primary key(user_id, message_id)
 );
 
-drop table IF EXISTS kernely_stream_subscriptions;
+drop table IF EXISTS kernely_stream_subscriptions CASCADE;
 create table kernely_stream_subscriptions (
 	user_id int references kernely_user(id),
 	stream_id int references kernely_stream(id),
 	primary key(user_id, stream_id)
 );
 
-drop table IF EXISTS kernely_group;
+drop table IF EXISTS kernely_group CASCADE;
 create table kernely_group (
         group_id int primary key,
         name varchar(50)
@@ -57,7 +57,7 @@ create table kernely_user_group(
 	primary key(fk_user_user_group, fk_group_user_group)
 );
 
-drop table IF EXISTS kernely_role;
+drop table IF EXISTS kernely_role CASCADE;
 create table kernely_role(
         role_id int primary key,
         name varchar(50)
@@ -77,7 +77,7 @@ create table kernely_group_roles(
 	primary key(fk_group, fk_role)
 );
 
-drop table IF EXISTS kernely_permission;
+drop table IF EXISTS kernely_permission CASCADE;
 create table kernely_permission(
         permission_id int primary key,
         name varchar(100)
@@ -108,8 +108,8 @@ create table kernely_user_details (
 );
 
 
-insert into kernely_user (id, username, password) values (1, 'bobby', '110812f67fa1e1f0117f6f3d70241c1a42a7b07711a93c2477cc516d9042f9db');
-insert into kernely_user (id, username, password) values (2, 'john', '799ef92a11af918e3fb741df42934f3b568ed2d93ac1df74f1b8d41a27932a6f');
+insert into kernely_user (id, username, password, salt) values (1, 'bobby', '2ty4LmflO9cRBKi1liWj3WvSrmtf2EnL67SoTa0bNuM=','gNc1mOUoQxGmCzoV2W7YP3CJj9oDML/SfABujWDrBmvx9xN5if4Y0jMckDNK1we/kMRGR75uQggRgr5dKgnd6ZGIVxG0Zr3EiYxiXBU9aDyZkYvBqy9ffwZ9JScQ5Wke1NarH/lZevTgOUMaLMYVV7q/QvzH42rYek3mF0F1ykM=');
+insert into kernely_user (id, username, password, salt) values (2, 'john', 'vAT9Kr/2bSbWoxFj3iinD783xrTez+lE2G/HSGaDzVk=','8EiKXghisVxqZ74Nwen+/5NanikCV0DRB9J31tC0jWGip79G1ZCrkwsFYOkD/aw1ggYA8r/nsYHnWXofR7x0nFU8CK87aiZ3BzXyzH4AEu9pzV/YWfWhq1d0W3gAB36gHsVQ6mZubI5UYforzdATLAAGOlQAa4BXF7Cwxs8wuf0=');
 
 
 insert into kernely_stream (id, title, locked, category, user_id) values (1, 'Stream of bobby', false,'STREAM_USERS',1);
@@ -126,6 +126,6 @@ insert into kernely_user_group values (2,1);
 insert into kernely_user_roles values (2,1);
 insert into kernely_user_roles values (2,2);
 
-insert into kernely_user_details (id_user_detail, name, firstname, mail, image, fk_user_id) values (1, Joe, Bobby, bobby.joe@mail.com, null, 1);
-insert into kernely_user_details (id_user_detail, name, firstname, mail, image, fk_user_id) values (2, Doe, John, john.doe@mail.com, null, 2);
+insert into kernely_user_details (id_user_detail, name, firstname, mail, image, fk_user_id) values (1, 'Joe', 'Bobby', 'bobby.joe@mail.com', null, 1);
+insert into kernely_user_details (id_user_detail, name, firstname, mail, image, fk_user_id) values (2, 'Doe', 'John', 'john.doe@mail.com', null, 2);
 

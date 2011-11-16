@@ -48,6 +48,9 @@
 					<% };%>
 					<a href="/group">${groups}</a>
 					<a href="/user">${users}</a>
+					<% if (admin != ""){ %>
+						<a href="/admin">${admin}</a>
+					<% } %>
 				</div>
 				<div id="menu_header_profile" style="right:5px;	height: 30px; position: absolute;top: 0;">
 					<a id="username_menu" href="javascript:void(0)" class="button displayProfilePU"></a>

@@ -34,6 +34,7 @@ import org.codehaus.groovy.control.CompilationFailedException;
 import org.kernely.core.plugin.AbstractPlugin;
 import org.kernely.core.plugin.PluginsLoader;
 import org.kernely.core.resourceLocator.ResourceLocator;
+import org.kernely.core.service.user.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -51,6 +52,9 @@ public class TemplateRenderer {
 
 	@Inject
 	private SimpleTemplateEngine engine;
+	
+	@Inject
+	private UserService userService;
 
 	@Inject
 	private ResourceLocator resourceLocator;
@@ -149,6 +153,12 @@ public class TemplateRenderer {
 				}
 				
 				//===========TODO : Create an extension point ================//
+
+				if (userService.currentUserIsAdministrator()){
+					layoutBinding.put("admin","Administration");
+				} else {
+					layoutBinding.put("admin","");
+				}
 				layoutBinding.put("groups","Groups");
 				layoutBinding.put("users","Users");
 				layoutBinding.put("currentUser",SecurityUtils.getSubject().getPrincipal().toString());

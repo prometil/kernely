@@ -82,7 +82,7 @@ public class KernelyRealm extends AuthorizingRealm {
 			throw new AuthorizationException("PrincipalCollection method argument cannot be null.");
 		}
 		String username = (String) principals.fromRealm(getName()).iterator().next();
-		Query query = em.createQuery("SELECT e FROM UserModel e where username='" + username + "'");
+		Query query = em.createQuery("SELECT e FROM User e where username='" + username + "'");
 		User user = ((User) query.getResultList().get(0));
 		SimpleAuthorizationInfo info = new SimpleAuthorizationInfo();
 		if (user != null) {

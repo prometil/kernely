@@ -28,6 +28,7 @@ import org.kernely.core.model.User;
 import org.kernely.core.model.UserDetails;
 import org.kernely.core.plugin.AbstractPlugin;
 import org.kernely.core.plugin.PluginsLoader;
+import org.kernely.core.resources.AdminController;
 import org.kernely.core.resources.GroupController;
 import org.kernely.core.resources.MainController;
 import org.kernely.core.resources.UserController;
@@ -57,6 +58,7 @@ public class CorePlugin extends AbstractPlugin {
 		registerConfigurationPath("core-config.xml");
 		registerController(UserController.class);
 		registerController(GroupController.class);
+		registerController(AdminController.class);
 		registerModel(User.class);
 		registerModel(Role.class);
 		registerModel(Permission.class);
