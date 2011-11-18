@@ -95,6 +95,9 @@ public class TemplateRenderer {
 		//the css files
 		List<String> cssFiles;
 		
+		//the body
+		String body;
+		
 		boolean withLayout =true;
 		
 
@@ -130,6 +133,7 @@ public class TemplateRenderer {
 			binding.put(key, value);
 			return this;
 		}
+
 		
 		public TemplateBuilder addCss(String file){
 			cssFiles.add(file);
@@ -142,9 +146,15 @@ public class TemplateRenderer {
 		}
 		
 
+		/**
+		 * Render the page with the default layout.
+		 * @return The html content.
+		 */
 		public String render() {
 			URL layout = TemplateRenderer.class.getResource("/templates/gsp/layout.gsp");
-			String body = template.make(binding).toString();
+			if (body == null){
+				body = template.make(binding).toString();
+			}
 			if(withLayout){
 				HashMap<String, Object> layoutBinding = new HashMap<String, Object>();
 				HashMap<String, String> menu = new HashMap<String, String>();

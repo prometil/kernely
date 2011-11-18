@@ -41,6 +41,10 @@ public abstract class AbstractPlugin extends AbstractModule {
 	//the model list
 	private List<Class<? extends AbstractModel>> models;
 	
+	//the admin page
+	private String adminPage;
+	private String adminPagePath;
+	
 	//the job map
 	private Map<Class<? extends Job>, Trigger> jobs;
 	
@@ -59,6 +63,7 @@ public abstract class AbstractPlugin extends AbstractModule {
 		path = pPath;
 		controllers = new  ArrayList<Class<? extends AbstractController>>();
 		models = new ArrayList<Class<? extends AbstractModel>>();
+		adminPage = "";
 		jobs = new HashMap<Class<? extends Job>, Trigger>();
 	}
 	
@@ -67,6 +72,16 @@ public abstract class AbstractPlugin extends AbstractModule {
 	 */
 	public void start(){
 
+	}
+	
+	/**
+	 * Register a new admin page. Don't forget to also register admin pages controllers.
+	 * @param name The displayed name of the admin page.
+	 * @param filename The name of the file, without extension (for instance "streamsAdmin").
+	 */
+	protected void registerAdminPage(String name, String filename){
+		adminPage = name;
+		adminPagePath = this.path + "/" + filename;
 	}
 	
 	protected void registerModel(Class<? extends AbstractModel> model){
@@ -101,6 +116,23 @@ public abstract class AbstractPlugin extends AbstractModule {
 	public String getPath(){
 		return path;
 	}
+	
+	/**
+	 * Return the admin page, displayed in the administration panel.
+	 * @return the admin page.
+	 */
+	public String getAdminPage(){
+		return adminPage;
+	}
+
+	/**
+	 * Return the admin page path.
+	 * @return the admin page path.
+	 */
+	public String getAdminPagePath(){
+		return adminPagePath;
+	}
+
 	/**
 	 * Add a job to the list of jobs
 	 * @param job the job to add

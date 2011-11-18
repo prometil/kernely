@@ -59,7 +59,7 @@ public class ResourceLocator {
 		File file = new File(fullURL);
 		if (!file.exists()) {
 			if (ResourceLocator.class.getResource(resource) == null) {
-				throw new IllegalArgumentException("file doesn't exist");
+				throw new IllegalArgumentException("file "+fullURL+"doesn't exist");
 			} else {
 				return ResourceLocator.class.getResource(resource);
 			}

@@ -77,10 +77,10 @@ public class UserController  extends AbstractController{
 	{
 		log.debug("Create a user");
 		UserCreationRequestDTO request = new UserCreationRequestDTO();
-		request.username ="bobby";
-		request.password = "coucou";
+		request.username ="user";
+		request.password = "password";
 		userService.createUser(request);
-		return "Ok";
+		return "User created";
 	}
 
 	/**

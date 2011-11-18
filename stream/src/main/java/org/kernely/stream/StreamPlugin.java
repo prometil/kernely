@@ -44,6 +44,7 @@ public class StreamPlugin  extends AbstractPlugin {
 		registerController(StreamResource.class);
 		registerModel(Message.class);
 		registerModel(Stream.class);
+		registerAdminPage("Stream admin", "streamsAdmin");
 	}
 	
 	@Override
