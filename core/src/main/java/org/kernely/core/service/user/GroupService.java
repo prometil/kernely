@@ -31,7 +31,7 @@ public class GroupService {
 		List<Group> collection = (List<Group>) query.getResultList();
 		List<GroupDTO> dtos = new ArrayList<GroupDTO>();
 		for (Group group : collection) {
-			dtos.add(new GroupDTO(group.getName()));
+			dtos.add(new GroupDTO(group.getName(), group.getId()));
 		}
 		return dtos;
 

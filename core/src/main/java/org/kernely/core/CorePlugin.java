@@ -29,6 +29,7 @@ import org.kernely.core.model.UserDetails;
 import org.kernely.core.plugin.AbstractPlugin;
 import org.kernely.core.plugin.PluginsLoader;
 import org.kernely.core.resources.AdminController;
+import org.kernely.core.resources.GroupAdminController;
 import org.kernely.core.resources.GroupController;
 import org.kernely.core.resources.MainController;
 import org.kernely.core.resources.UserAdminController;
@@ -61,7 +62,9 @@ public class CorePlugin extends AbstractPlugin {
 		registerController(GroupController.class);
 		registerController(AdminController.class);
 		registerController(UserAdminController.class);
+		registerController(GroupAdminController.class);
 		registerAdminPage("User admin", "/admin/users");
+		registerAdminPage("Group admin", "/admin/groups");
 		registerModel(User.class);
 		registerModel(Role.class);
 		registerModel(Permission.class);
