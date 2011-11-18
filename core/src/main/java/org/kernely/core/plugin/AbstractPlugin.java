@@ -77,11 +77,11 @@ public abstract class AbstractPlugin extends AbstractModule {
 	/**
 	 * Register a new admin page. Don't forget to also register admin pages controllers.
 	 * @param name The displayed name of the admin page.
-	 * @param filename The name of the file, without extension (for instance "streamsAdmin").
+	 * @param path The path to the admin page. This path must be mapped by a controller to display the page.
 	 */
-	protected void registerAdminPage(String name, String filename){
+	protected void registerAdminPage(String name, String path){
 		adminPage = name;
-		adminPagePath = this.path + "/" + filename;
+		adminPagePath = path;
 	}
 	
 	protected void registerModel(Class<? extends AbstractModel> model){

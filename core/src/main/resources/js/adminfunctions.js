@@ -31,6 +31,8 @@ AppAdmin = (function($){
 		vadminpath: null,
 		
 		events: {
+			"mouseover" : "overAdmin",
+			"mouseout" : "outAdmin",
 			"click" : "showAdmin",
 		},
 		initialize:function(admin, adminpath){
@@ -38,12 +40,20 @@ AppAdmin = (function($){
 			this.vadminpath = adminpath;
 		},
 		render: function(){
-			var template = "{{admin}}";
+			var template = "{{admin}}<br/>";
 			var view = {admin : this.vadmin};
 			var html = Mustache.to_html(template, view);
 			$(this.el).html(html);
             $(this.el).appendTo($("#admin_sidebar_container"));
 			return this;			
+		},
+		overAdmin: function(){
+			 $(this.el).css("color", "#00BB55");
+			 $(this.el).css("cursor", "pointer");
+		},
+		outAdmin: function(){
+			 $(this.el).css("color", "#000000");
+			 $(this.el).css("cursor", "default");
 		},
 		showAdmin: function(){
 			 $("#admin_panel_container").load(this.vadminpath);

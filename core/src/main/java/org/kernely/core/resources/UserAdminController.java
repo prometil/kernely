@@ -28,7 +28,7 @@ public class UserAdminController extends AbstractController{
 	@Produces( { MediaType.TEXT_HTML })
 	public String displayPage()
 	{
-		return templateRenderer.create("/templates/gsp/administration/user_admin.gsp").render() ;
+		return templateRenderer.create("/templates/gsp/administration/user_admin.gsp").withoutLayout().render() ;
 	}
 	
 	@GET
