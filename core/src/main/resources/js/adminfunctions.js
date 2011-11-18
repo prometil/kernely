@@ -10,10 +10,17 @@ AppAdmin = (function($){
                    dataType:"json",
                    success: function(data){
                             $.each(data.pluginDTO, function() {
-                                  var view = new PluginAdminLinkView(this.admin, this.adminpath);
-                                  var html = view.render();
+                            	if (this.adminPages.length > 1){
+                            		$.each(this.adminPages, function() {
+                            			var view = new PluginAdminLinkView(this.name, this.path);
+                            			var html = view.render();
+                            		});
+                            	} else {
+                        			var view = new PluginAdminLinkView(this.adminPages.name, this.adminPages.path);
+                        			var html = view.render();
+                            	}
                             });
-                   }
+					}
             });
 			
 		},

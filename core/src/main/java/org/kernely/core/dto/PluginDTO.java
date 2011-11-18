@@ -1,5 +1,7 @@
 package org.kernely.core.dto;
 
+import java.util.List;
+
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
@@ -8,16 +10,14 @@ public class PluginDTO {
 		
 	}
 	
-	public PluginDTO(String name, String path, String img, String admin, String adminpath) {
+	public PluginDTO(String name, String path, String img, List<AdminPageDTO> adminPages) {
 		this.name = name ;
 		this.path = path;
 		this.img = img;
-		this.admin = admin;
-		this.adminpath = adminpath;
+		this.adminPages = adminPages;
 	}
 
-	public String adminpath;
-	public String admin;
+	public List<AdminPageDTO> adminPages;
 	public String name;
 	public String path;
 	public String img;
