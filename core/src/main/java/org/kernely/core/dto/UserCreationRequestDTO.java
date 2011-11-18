@@ -32,12 +32,13 @@ public class UserCreationRequestDTO {
 
 	}
 
-	public UserCreationRequestDTO(int id, String fName, String lName, String username, String password) {
+	public UserCreationRequestDTO(int id, String fName, String lName, String username, String password, boolean locked) {
 		this.id = id;
 		this.firstname = fName;
 		this.lastname = lName;
 		this.username= username;
 		this.password = password;
+		this.locked = locked;
 	}
 
 	public int id;
@@ -46,4 +47,5 @@ public class UserCreationRequestDTO {
 
 	public String username;
 	public String password;
+	public boolean locked;
 }

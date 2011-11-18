@@ -35,9 +35,11 @@ public class UserDTO {
 	 * Constructor which set datas of the user.
 	 * @param pUsername The name of the user.
 	 */
-	public UserDTO(String pUsername) {
+	public UserDTO(String pUsername, boolean pLocked) {
 		username = pUsername;
+		locked = pLocked;
 	}
 
 	public String username;
+	public boolean locked;
 }

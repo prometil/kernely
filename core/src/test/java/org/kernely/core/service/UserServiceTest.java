@@ -45,7 +45,7 @@ public class UserServiceTest extends AbstractServiceTest{
 		request.firstname="toto";
 		request.lastname="tata";
 		service.createUser(request);
-		UserDTO userdto = new UserDTO("") ;
+		UserDTO userdto = new UserDTO("", false) ;
 		userdto = service.getAllUsers().get(0);
 		UserDetailsDTO uddto = new UserDetailsDTO();
 		uddto = service.getUserDetails(userdto.username);

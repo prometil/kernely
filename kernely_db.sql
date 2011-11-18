@@ -7,7 +7,8 @@ create table kernely_user(
 	id int primary key,
 	username varchar(30),
 	password varchar(80),
-	salt varchar(300)
+	salt varchar(300),
+	locked boolean default false
 );
 
 

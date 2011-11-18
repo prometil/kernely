@@ -101,6 +101,13 @@ public class UserService {
 	}
 	
 	@Transactional
+	public void lockUser(int id){
+		UserDetails ud = em.get().find(UserDetails.class, id);
+		User u = em.get().find(User.class, ud.getUser().getId());
+		u.setLocked(!u.isLocked());
+	}
+	
+	@Transactional
 	public void updateUser(UserCreationRequestDTO request) {
 		if(request==null){
 			throw new IllegalArgumentException("Request cannot be null ");
@@ -133,7 +140,7 @@ public class UserService {
 		List<User> collection = (List<User>) query.getResultList();
 		List<UserDTO> dtos = new ArrayList<UserDTO>();
 		for (User user : collection) {
-			dtos.add(new UserDTO(user.getUsername()));
+			dtos.add(new UserDTO(user.getUsername(), user.isLocked()));
 		}
 		return dtos;
 
@@ -144,7 +151,7 @@ public class UserService {
 		Query query = em.get().createQuery("SELECT e FROM UserDetails, User WHERE User.id =" + u.getId());
 		UserDetails ud = (UserDetails)query.getResultList().get(0);
 		
-		UserDetailsDTO dto = new UserDetailsDTO(ud.getId_user_detail(), ud.getFirstname(), ud.getName(), ud.getImage(), ud.getMail(), new UserDTO(u.getUsername()));
+		UserDetailsDTO dto = new UserDetailsDTO(ud.getId_user_detail(), ud.getFirstname(), ud.getName(), ud.getImage(), ud.getMail(), new UserDTO(u.getUsername(), u.isLocked()));
 		return dto;
 
 	}
@@ -156,7 +163,7 @@ public class UserService {
 		query = em.get().createQuery("SELECT e FROM UserDetails e , User u WHERE e.user = u AND u.id =" + u.getId());
 		UserDetails ud = (UserDetails)query.getSingleResult();
 		
-		UserDetailsDTO dto = new UserDetailsDTO(ud.getId_user_detail(), ud.getFirstname(), ud.getName(), ud.getImage(), ud.getMail(), new UserDTO(u.getUsername()));
+		UserDetailsDTO dto = new UserDetailsDTO(ud.getId_user_detail(), ud.getFirstname(), ud.getName(), ud.getImage(), ud.getMail(), new UserDTO(u.getUsername(), u.isLocked()));
 		return dto;
 
 	}
@@ -164,7 +171,8 @@ public class UserService {
 	@Transactional
 	public UserDTO getCurrentUser(){
 		Query query = em.get().createQuery("SELECT e FROM User e WHERE username ='"+ SecurityUtils.getSubject().getPrincipal() +"'");
-		return new UserDTO(((User)query.getSingleResult()).getUsername());
+		User u = (User)query.getSingleResult();
+		return new UserDTO(u.getUsername(), u.isLocked());
 	}
 	
 	@Transactional
@@ -174,7 +182,7 @@ public class UserService {
 		List<UserDetails> collection = (List<UserDetails>) query.getResultList();
 		List<UserDetailsDTO> dtos = new ArrayList<UserDetailsDTO>();
 		for (UserDetails user : collection) {
-			dtos.add(new UserDetailsDTO(user.getId_user_detail(), user.getFirstname(), user.getName(), user.getImage(), user.getMail(), new UserDTO(user.getUser().getUsername())));
+			dtos.add(new UserDetailsDTO(user.getId_user_detail(), user.getFirstname(), user.getName(), user.getImage(), user.getMail(), new UserDTO(user.getUser().getUsername(), user.getUser().isLocked())));
 		}
 		return dtos;
 	}

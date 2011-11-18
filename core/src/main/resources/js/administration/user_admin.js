@@ -11,6 +11,7 @@ AppUserAdmin = (function($){
 		vlogin: null,
 		vfirstname: null,
 		vlastname: null,
+		vlocked: null,
 		vmail:null,
 		
 		events: {
@@ -19,15 +20,17 @@ AppUserAdmin = (function($){
 			"mouseout" : "outLine"
 		},
 		
-		initialize: function(id, lastname, firstname, login, mail){
+		initialize: function(id, lastname, firstname, login, mail, locked){
 			this.vid = id;
 			this.vlogin = login;
 			this.vfirstname = firstname;
 			this.vlastname = lastname;
 			this.vmail = mail;
+			this.vlocked = locked;
 		},
 		selectLine : function(){
 			$(".editButton").removeAttr('disabled');
+			$(".lockButton").removeAttr('disabled');
 			$(this.el).css("background-color", "#8AA5A1");
 			if(typeof(lineSelected) != "undefined"){
 				if(lineSelected != this && lineSelected != null){
@@ -35,6 +38,12 @@ AppUserAdmin = (function($){
 				}
 			}
 			lineSelected = this;
+			if(this.vlocked == "true"){
+				$(".lockButton").val('Unlock');
+			}
+			else{
+				$(".lockButton").val('Lock');
+			}
 		},
 		overLine : function(){
 			if(lineSelected != this){
@@ -47,8 +56,15 @@ AppUserAdmin = (function($){
 			}
 		},
 		render:function(){
-			var template = '<td><img src="/images/icons/user.png"/></td><td>{{lastname}}</td><td>{{firstname}}</td><td>{{username}}</td><td>{{email}}</td>';
-			var view = {id : this.vid, lastname: this.vlastname, firstname: this.vfirstname, username: this.vlogin, email: this.vmail};
+			var template = '<td><img src="{{icon}}"/></td><td>{{lastname}}</td><td>{{firstname}}</td><td>{{username}}</td><td>{{email}}</td>';
+			var image;
+			if(this.vlocked == "true"){
+				image = "/images/icons/user_locked.png";
+			}
+			else{
+				image = "/images/icons/user.png";
+			}
+			var view = {icon : image, lastname: this.vlastname, firstname: this.vfirstname, username: this.vlogin, email: this.vmail};
 			var html = Mustache.to_html(template, view);
 			
 			$(this.el).html(html);
@@ -71,7 +87,7 @@ AppUserAdmin = (function($){
 				dataType:"json",
 				success: function(data){
 		    		$.each(data.userDetailsDTO, function() {
-		    			var view = new UserAdminTableLineView(this.id, this.lastname, this.firstname, this.user.username, this.email);
+		    			var view = new UserAdminTableLineView(this.id, this.lastname, this.firstname, this.user.username, this.email, this.user.locked);
 		    			view.render();
 		    		});
 				}
@@ -139,7 +155,17 @@ AppUserAdmin = (function($){
 		},
 		
 		lockuser: function(){
-		
+			var answer = confirm(lineSelected.vlastname + " " + lineSelected.vfirstname + " (" + lineSelected.vlogin + ") will be disabled. Do you want to continue ?");
+			if (answer){
+				$.ajax({
+					url:"/admin/users/lock/" + lineSelected.vid,
+					success: function(){
+						$("#users_notifications").text("Operation completed successfully !");
+						$("#users_notifications").fadeIn(1000);
+						$("#users_notifications").fadeOut(3000);
+					}
+				});
+			}
 		},
 		
 		render:function(){
