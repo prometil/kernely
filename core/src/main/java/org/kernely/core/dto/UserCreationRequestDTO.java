@@ -16,14 +16,34 @@ GNU Affero General Public License for more details.
 You should have received a copy of the GNU Affero General Public
 License along with Kernely.
 If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 package org.kernely.core.dto;
+
+import javax.xml.bind.annotation.XmlRootElement;
 
 
 /**
  * DTO to stock data for the creation of a new user.
  */
+@XmlRootElement
 public class UserCreationRequestDTO {
+
+	public UserCreationRequestDTO(){
+
+	}
+
+	public UserCreationRequestDTO(int id, String fName, String lName, String username, String password) {
+		this.id = id;
+		this.firstname = fName;
+		this.lastname = lName;
+		this.username= username;
+		this.password = password;
+	}
+
+	public int id;
+	public String firstname;
+	public String lastname;
+
 	public String username;
 	public String password;
 }
