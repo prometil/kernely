@@ -69,7 +69,7 @@ public class AdminController  extends AbstractController{
 	{
 		List<PluginDTO> plugins = new ArrayList<PluginDTO>();
 		for (AbstractPlugin plugin : pluginsLoader.getPlugins()) {
-			PluginDTO dto = new PluginDTO(plugin.getName(), plugin.getPath(), "",plugin.getAdminPage(),plugin.getAdminPagePath());
+			PluginDTO dto = new PluginDTO(plugin.getName(), plugin.getPath(), "",plugin.getAdminPages());
 			plugins.add(dto);
 		}
 		return plugins;
