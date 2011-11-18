@@ -26,6 +26,7 @@ import org.junit.Test;
 import org.kernely.core.common.AbstractServiceTest;
 import org.kernely.core.dto.UserCreationRequestDTO;
 import org.kernely.core.dto.UserDTO;
+import org.kernely.core.dto.UserDetailsDTO;
 import org.kernely.core.service.user.UserService;
 
 import com.google.inject.Inject;
@@ -41,10 +42,16 @@ public class UserServiceTest extends AbstractServiceTest{
 		UserCreationRequestDTO request = new UserCreationRequestDTO();
 		request.username="toto";
 		request.password="tata";
+		request.firstname="toto";
+		request.lastname="tata";
 		service.createUser(request);
-		UserDTO dto = new UserDTO("") ;
-		dto = service.getAllUsers().get(0);
-		assertEquals("toto", dto.username);
+		UserDTO userdto = new UserDTO("") ;
+		userdto = service.getAllUsers().get(0);
+		UserDetailsDTO uddto = new UserDetailsDTO();
+		uddto = service.getUserDetails(userdto.username);
+		assertEquals("toto", userdto.username);
+		assertEquals("toto", uddto.firstname);
+		assertEquals("tata", uddto.lastname);
 	}
 	
 	@Test(expected=IllegalArgumentException.class)
@@ -89,8 +96,11 @@ public class UserServiceTest extends AbstractServiceTest{
 		UserCreationRequestDTO request = new UserCreationRequestDTO();
 		request.username="toto";
 		request.password="tata";
+		request.firstname="toto";
+		request.lastname="tata";
 		service.createUser(request);
 		assertEquals(1,service.getAllUsers().size());
+		assertEquals(1,service.getAllUserDetails().size());
 	}
 	
 	@Test

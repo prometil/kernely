@@ -29,7 +29,6 @@ import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.crypto.RandomNumberGenerator;
 import org.apache.shiro.crypto.SecureRandomNumberGenerator;
 import org.apache.shiro.crypto.hash.Sha256Hash;
-import org.apache.shiro.util.ByteSource;
 import org.kernely.core.dto.UserCreationRequestDTO;
 import org.kernely.core.dto.UserDTO;
 import org.kernely.core.dto.UserDetailsDTO;
@@ -90,8 +89,36 @@ public class UserService {
 		user.setSalt(salt.toString()); 
 		
 		em.get().persist(user);
+		
+		UserDetails userdetails = new UserDetails();
+		userdetails.setName(request.lastname);
+		userdetails.setFirstname(request.firstname);
+		userdetails.setUser(user);
+		
+		em.get().persist(userdetails);
 		eventBus.post(new UserCreationEvent(user.getId(), user.getUsername()));
 
+	}
+	
+	@Transactional
+	public void updateUser(UserCreationRequestDTO request) {
+		if(request==null){
+			throw new IllegalArgumentException("Request cannot be null ");
+		}
+		
+		if("".equals(request.username)){
+			throw new IllegalArgumentException("Username cannot be null ");
+		}
+		
+		if("".equals(request.username.trim())){
+			throw new IllegalArgumentException("Username cannot be space character only ");
+		}
+		
+		UserDetails ud = em.get().find(UserDetails.class, request.id);
+		ud.setFirstname(request.firstname);
+		ud.setName(request.lastname);
+		User u = em.get().find(User.class, ud.getUser().getId());
+		u.setUsername(request.username);
 	}
 
 	/**
@@ -117,7 +144,7 @@ public class UserService {
 		Query query = em.get().createQuery("SELECT e FROM UserDetails, User WHERE User.id =" + u.getId());
 		UserDetails ud = (UserDetails)query.getResultList().get(0);
 		
-		UserDetailsDTO dto = new UserDetailsDTO(ud.getFirstname(), ud.getName(), ud.getImage(), ud.getMail());
+		UserDetailsDTO dto = new UserDetailsDTO(ud.getId_user_detail(), ud.getFirstname(), ud.getName(), ud.getImage(), ud.getMail(), new UserDTO(u.getUsername()));
 		return dto;
 
 	}
@@ -129,7 +156,7 @@ public class UserService {
 		query = em.get().createQuery("SELECT e FROM UserDetails e , User u WHERE e.user = u AND u.id =" + u.getId());
 		UserDetails ud = (UserDetails)query.getSingleResult();
 		
-		UserDetailsDTO dto = new UserDetailsDTO(ud.getFirstname(), ud.getName(), ud.getImage(), ud.getMail());
+		UserDetailsDTO dto = new UserDetailsDTO(ud.getId_user_detail(), ud.getFirstname(), ud.getName(), ud.getImage(), ud.getMail(), new UserDTO(u.getUsername()));
 		return dto;
 
 	}
@@ -138,6 +165,18 @@ public class UserService {
 	public UserDTO getCurrentUser(){
 		Query query = em.get().createQuery("SELECT e FROM User e WHERE username ='"+ SecurityUtils.getSubject().getPrincipal() +"'");
 		return new UserDTO(((User)query.getSingleResult()).getUsername());
+	}
+	
+	@Transactional
+	@SuppressWarnings("unchecked")
+	public List<UserDetailsDTO> getAllUserDetails(){
+		Query query = em.get().createQuery("SELECT e FROM UserDetails e");
+		List<UserDetails> collection = (List<UserDetails>) query.getResultList();
+		List<UserDetailsDTO> dtos = new ArrayList<UserDetailsDTO>();
+		for (UserDetails user : collection) {
+			dtos.add(new UserDetailsDTO(user.getId_user_detail(), user.getFirstname(), user.getName(), user.getImage(), user.getMail(), new UserDTO(user.getUser().getUsername())));
+		}
+		return dtos;
 	}
 	
 	/**

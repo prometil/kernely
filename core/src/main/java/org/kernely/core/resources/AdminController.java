@@ -22,12 +22,10 @@ package org.kernely.core.resources;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
-
 import org.kernely.core.dto.PluginDTO;
 import org.kernely.core.plugin.AbstractPlugin;
 import org.kernely.core.plugin.PluginsLoader;

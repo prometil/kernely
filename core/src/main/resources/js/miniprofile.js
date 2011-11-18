@@ -50,6 +50,7 @@ AppMiniProfile = (function($){
 				
 				var view = new ProfilePopUpView(vfullname, vuser, vimage, vmail);
 				view.render();
+				
 			}
 			else{
 				//$("#profile_popup").slideUp(200)
