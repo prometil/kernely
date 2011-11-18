@@ -29,6 +29,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import org.apache.shiro.SecurityUtils;
+import org.kernely.core.dto.UserCreationRequestDTO;
 import org.kernely.core.resources.AbstractController;
 import org.kernely.core.template.TemplateRenderer;
 import org.kernely.stream.dto.StreamMessageCreationRequestDTO;
@@ -50,8 +51,6 @@ public class StreamResource extends AbstractController {
 	@Inject
 	private StreamService streamService;
 
-
-	
 	@GET
 	@Produces( { MediaType.TEXT_HTML })
 	public String display() {
@@ -74,4 +73,12 @@ public class StreamResource extends AbstractController {
 		log.debug("{} create a new message : {}", SecurityUtils.getSubject().getPrincipal(), message.message);
 		return streamService.addMessage(message.message,1);
 	}
+	
+	@GET
+	@Path("/streamsAdmin")
+	@Produces( { MediaType.TEXT_HTML })
+	public String getPluginAdminPanel(){
+		return templateRenderer.create("/templates/gsp/streamsAdmin.gsp").withoutLayout().render();
+	}
+
 }

@@ -30,6 +30,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.apache.shiro.SecurityUtils;
+import org.kernely.core.dto.UserCreationRequestDTO;
 import org.kernely.core.dto.UserDTO;
 import org.kernely.core.dto.UserDetailsDTO;
 import org.kernely.core.service.user.UserService;
@@ -63,6 +64,23 @@ public class UserController  extends AbstractController{
 		log.debug("Call to GET on all users");
 		List<UserDTO> users = userService.getAllUsers();
 		return templateRenderer.create("/templates/gsp/users.gsp").with("users", users).render() ;
+	}
+
+	/**
+	 * Create a new user with a random username and as password : "password".
+	 * @return "Ok", not useful.
+	 */
+	@GET
+	@Path("/create")
+	@Produces( { MediaType.TEXT_PLAIN })
+	public String create()
+	{
+		log.debug("Create a user");
+		UserCreationRequestDTO request = new UserCreationRequestDTO();
+		request.username ="user";
+		request.password = "password";
+		userService.createUser(request);
+		return "User created";
 	}
 
 	/**

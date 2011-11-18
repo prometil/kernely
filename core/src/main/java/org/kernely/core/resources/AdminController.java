@@ -19,13 +19,14 @@ If not, see <http://www.gnu.org/licenses/>.
 */
 package org.kernely.core.resources;
 
+import java.util.ArrayList;
 import java.util.HashMap;
-
+import java.util.List;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
-
+import org.kernely.core.dto.PluginDTO;
 import org.kernely.core.plugin.AbstractPlugin;
 import org.kernely.core.plugin.PluginsLoader;
 import org.kernely.core.service.user.UserService;
@@ -56,20 +57,41 @@ public class AdminController  extends AbstractController{
 	 */
 	@GET
 	@Produces( { MediaType.TEXT_HTML })
-	public String getText()
+	public String getAdmin()
 	{
-		HashMap<String, String> plugins = new HashMap<String, String>();
+		return getAdmin(null);
+	}
+	
+	@GET
+	@Path("/plugins")
+	@Produces( { MediaType.APPLICATION_JSON })
+	public List<PluginDTO> getAdminList()
+	{
+		List<PluginDTO> plugins = new ArrayList<PluginDTO>();
 		for (AbstractPlugin plugin : pluginsLoader.getPlugins()) {
-			plugins.put(plugin.getName(), "");
+			PluginDTO dto = new PluginDTO(plugin.getName(), plugin.getPath(), "",plugin.getAdminPage(),plugin.getAdminPagePath());
+			plugins.add(dto);
 		}
+		return plugins;
+	}
+	
+	
+	private String getAdmin(String adminPanel){
+		
+		String displayedPanel = adminPanel;
+		if (adminPanel == null){
+			displayedPanel = "Please click on an administration title on the left sidebar.";
+		}
+		
 		String page;
 		// Display the admin page only if the user is admin.
 		if (userService.currentUserIsAdministrator()){
-			page = templateRenderer.create("/templates/gsp/admin.gsp").with("plugins",plugins).render();
+			page = templateRenderer.create("/templates/gsp/admin.gsp").with("pluginadmin",displayedPanel).addCss("/css/admin.css").render();
 		} else{
 			page = templateRenderer.create("/templates/gsp/home.gsp").render();
 		}
 		return page;
+
 	}
 
 }

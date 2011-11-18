@@ -61,6 +61,7 @@ public class CorePlugin extends AbstractPlugin {
 		registerController(GroupController.class);
 		registerController(AdminController.class);
 		registerController(UserAdminController.class);
+		registerAdminPage("User admin", "/admin/users");
 		registerModel(User.class);
 		registerModel(Role.class);
 		registerModel(Permission.class);
