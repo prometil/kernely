@@ -1,7 +1,9 @@
 <script type="text/javascript" src="/js/administration/group_admin.js"></script>
 
 <div id="group_header" style=""></div>
+
 <div id="mask" style="position:absolute;z-index:9000;background-color:#000;display:none;top:0;left:0;"></div>
+
 <div id="modal_window" style=" position:absolute;width:440px;height:120px;display:none;z-index:9999;padding:20px;top:0;left:0;">
 </div>
 

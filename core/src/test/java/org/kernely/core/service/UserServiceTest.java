@@ -104,6 +104,49 @@ public class UserServiceTest extends AbstractServiceTest{
 	}
 	
 	@Test
+	public void lockedUser(){
+		UserCreationRequestDTO request = new UserCreationRequestDTO();
+		request.username="test";
+		request.password="test";
+		request.firstname="test";
+		request.lastname="test";
+		service.createUser(request);
+		UserDTO userdto = new UserDTO() ;
+		userdto = service.getAllUsers().get(0);
+		assertEquals(false, userdto.locked);
+		UserDetailsDTO uddto = new UserDetailsDTO();
+		uddto = service.getUserDetails(userdto.username);
+		service.lockUser(uddto.id);
+		userdto = service.getAllUsers().get(0);
+		assertEquals(true, userdto.locked);
+	}
+	
+	@Test
+	public void updateUser(){
+		UserCreationRequestDTO request = new UserCreationRequestDTO();
+		request.username="test";
+		request.password="test";
+		request.firstname="test";
+		request.lastname="test";
+		service.createUser(request);
+		UserDTO userdto = new UserDTO() ;
+		userdto = service.getAllUsers().get(0);
+		UserDetailsDTO uddto = new UserDetailsDTO();
+		uddto = service.getUserDetails(userdto.username);
+		UserCreationRequestDTO ucr = new UserCreationRequestDTO();
+		ucr.id = uddto.id;
+		ucr.username = "test MODIFIED 1";
+		ucr.firstname = "test MODIFIED 2";
+		ucr.lastname = "test MODIFIED 3";
+		service.updateUser(ucr);
+		userdto = service.getAllUsers().get(0);
+		uddto = service.getUserDetails(userdto.username);
+		assertEquals("test MODIFIED 1", userdto.username);
+		assertEquals("test MODIFIED 2", uddto.firstname);
+		assertEquals("test MODIFIED 3", uddto.lastname);
+	}
+	
+	@Test
 	public void getNullUser(){
 		assertEquals(0, service.getAllUsers().size());
 	}

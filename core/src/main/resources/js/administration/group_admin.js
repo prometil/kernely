@@ -22,7 +22,7 @@ AppGroupAdmin = (function($){
 		},
 		selectLine : function(){
 			$(".editButton").removeAttr('disabled');
-			$(".lockButton").removeAttr('disabled');
+			$(".deleteButton").removeAttr('disabled');
 			$(this.el).css("background-color", "#8AA5A1");
 			if(typeof(lineSelected) != "undefined"){
 				if(lineSelected != this && lineSelected != null){
@@ -91,7 +91,7 @@ AppGroupAdmin = (function($){
 		events: {
 			"click .createButton" : "creategroup",
 			"click .editButton" : "editgroup",
-			"click .lockButton" : "deletegroup"
+			"click .deleteButton" : "deletegroup"
 		},
 		
 		viewCreate:null,
@@ -180,7 +180,7 @@ AppGroupAdmin = (function($){
 		},
 		
 		render : function(){
-			var template = $("#popup-groupe-admin-template").html();
+			var template = $("#popup-group-admin-template").html();
 			
 			var view = {name : this.vname};
 			var html = Mustache.to_html(template, view);

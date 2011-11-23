@@ -6,6 +6,7 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
+import org.kernely.core.dto.GroupCreationRequestDTO;
 import org.kernely.core.dto.GroupDTO;
 import org.kernely.core.model.Group;
 
@@ -35,5 +36,63 @@ public class GroupService {
 		}
 		return dtos;
 
+	}
+	
+	/**
+	 * Create a new Group in database
+	 * @param request
+	 * 			The request, containing group name
+	 */
+	@Transactional
+	public void createGroup(GroupCreationRequestDTO request) {
+		if(request==null){
+			throw new IllegalArgumentException("Request cannot be null ");
+		}
+		
+		if("".equals(request.name)){
+			throw new IllegalArgumentException("Group name cannot be null ");
+		}
+		
+		if("".equals(request.name.trim())){
+			throw new IllegalArgumentException("Group name cannot be space character only ");
+		}
+		
+		Group group = new Group();
+		group.setName(request.name.trim());
+		em.get().persist(group);
+	}
+	
+	/**
+	 * Update an existing group in database
+	 * @param request
+	 * 			The request, containing group name and id of the needed group
+	 */
+	@Transactional
+	public void updateGroup(GroupCreationRequestDTO request) {
+		if(request==null){
+			throw new IllegalArgumentException("Request cannot be null ");
+		}
+		
+		if("".equals(request.name)){
+			throw new IllegalArgumentException("Group name cannot be null ");
+		}
+		
+		if("".equals(request.name.trim())){
+			throw new IllegalArgumentException("Group name cannot be space character only ");
+		}
+		
+		Group group = em.get().find(Group.class, request.id);
+		group.setName(request.name);
+	}
+	
+	/**
+	 * Delete an existing Group in database
+	 * @param id
+	 * 			The id of the group to delete
+	 */
+	@Transactional
+	public void deleteGroup(int id) {
+		Group group = em.get().find(Group.class, id);
+		em.get().remove(group);
 	}
 }
