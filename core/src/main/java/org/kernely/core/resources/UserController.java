@@ -19,8 +19,18 @@ If not, see <http://www.gnu.org/licenses/>.
 */
 package org.kernely.core.resources;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.math.BigInteger;
+import java.net.MalformedURLException;
+import java.security.SecureRandom;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
+import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -29,14 +39,22 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.shiro.SecurityUtils;
 import org.kernely.core.dto.UserCreationRequestDTO;
 import org.kernely.core.dto.UserDTO;
 import org.kernely.core.dto.UserDetailsDTO;
+import org.kernely.core.dto.UserDetailsUpdateRequestDTO;
+import org.kernely.core.model.UserDetails;
+import org.kernely.core.resourceLocator.ResourceLocator;
 import org.kernely.core.service.user.UserService;
 import org.kernely.core.template.TemplateRenderer;
 
 import com.google.inject.Inject;
+import com.sun.jersey.core.header.FormDataContentDisposition;
+import com.sun.jersey.multipart.FormDataParam;
+import com.sun.xml.internal.ws.api.ResourceLoader;
+
 
 /**
  * Controler of the user plugin.
@@ -45,7 +63,7 @@ import com.google.inject.Inject;
 @Path("/user")
 public class UserController  extends AbstractController{
 	
-	
+	@Inject ResourceLocator resourceLocator;
 
 	@Inject
 	private TemplateRenderer templateRenderer;
@@ -133,9 +151,55 @@ public class UserController  extends AbstractController{
 		UserDetailsDTO uddto = userService.getUserDetails(userLogin);
 		String imagePath = "/images/default_user.png";
 		if(uddto.image != null){
-			imagePath = uddto.image;
+			imagePath = "/images/" + uddto.image;
 		}
-		return templateRenderer.create(template).with("username",  uddto.firstname + " " + uddto.lastname).with("mail", uddto.email).with("image", imagePath).with("description", "Some text about you. *** Not in DB ***").render() ;
+		return templateRenderer.create(template).with("username", uddto.firstname + " " + uddto.name).with("name", uddto.name).with("firstname", uddto.firstname).with("mail", uddto.mail).with("image", imagePath).with("imagename", uddto.image).with("description", "Some text about you. *** Not in DB ***").with("adress", uddto.adress).with("zip", uddto.zip).with("city", uddto.city).with("homephone", uddto.homephone).with("mobilephone", uddto.mobilephone).with("businessphone", uddto.businessphone).with("birth", uddto.birth).with("nationality", uddto.nationality).with("ssn", uddto.ssn).with("civility", uddto.civility).render();
+	}
+	
+
+	@POST
+	@Path("/{login}/profile/update")
+	public UserDetailsDTO editProfil(UserDetailsUpdateRequestDTO user) {
+			
+		UserDetailsDTO ud = userService.getUserDetails(userService.getCurrentUser().username);
+		UserDetailsDTO uddto = new UserDetailsDTO(user.firstname, user.name, user.image,user.mail, user.adress,user.zip, user.city, user.homephone, user.mobilephone,user.businessphone, user.birth, user.nationality, user.ssn,user.civility,ud.id, new UserDTO()); 
+		
+		//Match the user id (foreign key) with the userdetailid
+		user.id=ud.id;
+		// Call UserService to update informations
+		userService.updateUserProfile(user);
+		return uddto;
+	}
+	
+	@POST
+	@Path("/upload")
+	@Consumes(MediaType.MULTIPART_FORM_DATA)
+	public void uploadFile(
+			@FormDataParam("file") InputStream uploadedInputStream,
+			@FormDataParam("file") FormDataContentDisposition fileDetail) {
+
+		//get extension
+		String[] extension= fileDetail.getFileName().split("\\.");
+		if (extension.length<2) {
+			throw new IllegalArgumentException("the file need an extansion");
+		}
+		
+		SecureRandom random = new SecureRandom();
+		String fileName = new BigInteger(130, random).toString(32)+ "." + extension[extension.length - 1];
+		String uploadedFileLocation = "../core/src/main/resources/images/" + fileName ;
+		try {
+			FileUtils.copyInputStreamToFile(uploadedInputStream, new File(uploadedFileLocation));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		// up to date the database		
+		UserDetailsDTO user= userService.getUserDetails(userService.getCurrentUser().username);
+		
+		UserDetailsUpdateRequestDTO ud = new UserDetailsUpdateRequestDTO(user.firstname, user.name, fileName,user.mail, user.adress,user.zip, user.city, user.homephone, user.mobilephone,user.businessphone, user.birth, user.nationality, user.ssn, user.id ,user.civility);
+		userService.updateUserProfile(ud);
+	
 	}
 	
 	@GET

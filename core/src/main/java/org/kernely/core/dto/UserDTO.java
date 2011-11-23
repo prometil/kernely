@@ -33,11 +33,23 @@ public class UserDTO {
 	
 	/**
 	 * Constructor which set datas of the user.
+	 * @param pUsername The name of the user, the id of the user.
+	 */
+	public UserDTO(String pUsername, long id) {
+		this.username = pUsername;
+		this.id=id;
+	}
+
+	/**
+	 * Constructor which set datas of the user.
 	 * @param pUsername The name of the user.
 	 */
 	public UserDTO(String pUsername) {
-		username = pUsername;
+		this.username = pUsername;
 	}
+	
 
 	public String username;
+	
+	public long id;
 }

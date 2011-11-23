@@ -10,7 +10,7 @@ AppUserAdmin = (function($){
 		vid: null,
 		vlogin: null,
 		vfirstname: null,
-		vlastname: null,
+		vname: null,
 		vmail:null,
 		
 		events: {
@@ -19,11 +19,11 @@ AppUserAdmin = (function($){
 			"mouseout" : "outLine"
 		},
 		
-		initialize: function(id, lastname, firstname, login, mail){
+		initialize: function(id, name, firstname, login, mail){
 			this.vid = id;
 			this.vlogin = login;
 			this.vfirstname = firstname;
-			this.vlastname = lastname;
+			this.vname = name;
 			this.vmail = mail;
 		},
 		selectLine : function(){
@@ -47,8 +47,8 @@ AppUserAdmin = (function($){
 			}
 		},
 		render:function(){
-			var template = '<td><img src="/images/icons/user.png"/></td><td>{{lastname}}</td><td>{{firstname}}</td><td>{{username}}</td><td>{{email}}</td>';
-			var view = {id : this.vid, lastname: this.vlastname, firstname: this.vfirstname, username: this.vlogin, email: this.vmail};
+			var template = '<td><img src="/images/icons/user.png"/></td><td>{{name}}</td><td>{{firstname}}</td><td>{{username}}</td><td>{{mail}}</td>';
+			var view = {id : this.vid, name: this.vname, firstname: this.vfirstname, username: this.vlogin, mail: this.vmail};
 			var html = Mustache.to_html(template, view);
 			
 			$(this.el).html(html);
@@ -71,7 +71,7 @@ AppUserAdmin = (function($){
 				dataType:"json",
 				success: function(data){
 		    		$.each(data.userDetailsDTO, function() {
-		    			var view = new UserAdminTableLineView(this.id, this.lastname, this.firstname, this.user.username, this.email);
+		    			var view = new UserAdminTableLineView(this.id, this.name, this.firstname, this.user.username, this.mail);
 		    			view.render();
 		    		});
 				}
@@ -134,7 +134,7 @@ AppUserAdmin = (function($){
 		edituser: function(){
 			this.showModalWindow();
 			console.log(lineSelected.vlogin);
-			this.viewCreateUpdate.setFields(lineSelected.vlogin,lineSelected.vfirstname,lineSelected.vlastname,lineSelected.vid);
+			this.viewCreateUpdate.setFields(lineSelected.vlogin,lineSelected.vfirstname,lineSelected.vname,lineSelected.vid);
 			this.viewCreateUpdate.render();
 		},
 		
@@ -153,31 +153,31 @@ AppUserAdmin = (function($){
 		vid: null,
 		vlogin: null,
 		vfirstname: null,
-		vlastname: null,
+		vname: null,
 		
 		events:{
 			"click .closeModal" : "closemodal",
 			"click .sendUser" : "registeruser"
 		},
 		
-		initialize:function(login, firstname, lastname, id){
+		initialize:function(login, firstname, name, id){
 			this.vid = id;
 			this.vlogin = login;
 			this.vfirstname = firstname;
-			this.vlastname = lastname;
+			this.vname = name;
 		},
 		
-		setFields: function(login, firstname, lastname, id){
+		setFields: function(login, firstname, name, id){
 			this.vid = id;
 			this.vlogin = login;
 			this.vfirstname = firstname;
-			this.vlastname = lastname;
+			this.vname = name;
 		},
 		
 		render : function(){
 			var template = $("#popup-user-admin-template").html();
 			
-			var view = {login : this.vlogin, firstname: this.vfirstname, lastname: this.vlastname};
+			var view = {login : this.vlogin, firstname: this.vfirstname, name: this.vname};
 			var html = Mustache.to_html(template, view);
 			$(this.el).html(html);
 			return this;
@@ -189,7 +189,7 @@ AppUserAdmin = (function($){
 		},
 		
 		registeruser: function(){
-			var json = '{"id":"'+this.vid+'", "firstname":"'+$('input[name*="firstname"]').val()+'","lastname":"'+$('input[name*="lastname"]').val()+'", "username":"'+$('input[name*="login"]').val()+'", "password":"'+$('input[name*="password"]').val()+'"}';
+			var json = '{"id":"'+this.vid+'", "firstname":"'+$('input[name*="firstname"]').val()+'","name":"'+$('input[name*="name"]').val()+'", "username":"'+$('input[name*="login"]').val()+'", "password":"'+$('input[name*="password"]').val()+'"}';
 			$.ajax({
 				url:"/admin/users/create",
 				data: json,

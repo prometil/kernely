@@ -21,9 +21,9 @@ AppMiniProfile = (function($){
 					$.ajax({
 						url:"/user/" + data.username,
 						success:function(data){
-							vfullname = data.firstname + " " + data.lastname;
-							vimage = data.image;
-							vmail = data.email;
+							vfullname = data.firstname + " " + data.name;
+							vimage ="/images/" + data.image;
+							vmail = data.mail;
 							
 							if(vimage == null){
 								vimage = "/images/default_user.png"
@@ -50,7 +50,6 @@ AppMiniProfile = (function($){
 				
 				var view = new ProfilePopUpView(vfullname, vuser, vimage, vmail);
 				view.render();
-				
 			}
 			else{
 				//$("#profile_popup").slideUp(200)

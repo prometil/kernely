@@ -45,13 +45,13 @@ public class UserServiceTest extends AbstractServiceTest{
 		request.firstname="toto";
 		request.lastname="tata";
 		service.createUser(request);
-		UserDTO userdto = new UserDTO("") ;
+		UserDTO userdto = new UserDTO("",1) ;
 		userdto = service.getAllUsers().get(0);
 		UserDetailsDTO uddto = new UserDetailsDTO();
 		uddto = service.getUserDetails(userdto.username);
 		assertEquals("toto", userdto.username);
 		assertEquals("toto", uddto.firstname);
-		assertEquals("tata", uddto.lastname);
+		assertEquals("tata", uddto.name);
 	}
 	
 	@Test(expected=IllegalArgumentException.class)

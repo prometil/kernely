@@ -19,7 +19,11 @@ If not, see <http://www.gnu.org/licenses/>.
  */
 package org.kernely.core.service.user;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -32,6 +36,7 @@ import org.apache.shiro.crypto.hash.Sha256Hash;
 import org.kernely.core.dto.UserCreationRequestDTO;
 import org.kernely.core.dto.UserDTO;
 import org.kernely.core.dto.UserDetailsDTO;
+import org.kernely.core.dto.UserDetailsUpdateRequestDTO;
 import org.kernely.core.event.UserCreationEvent;
 import org.kernely.core.model.Role;
 import org.kernely.core.model.User;
@@ -101,6 +106,43 @@ public class UserService {
 	}
 	
 	@Transactional
+	public void updateUserProfile(UserDetailsUpdateRequestDTO u)
+	{ 
+		if(u==null){
+			throw new IllegalArgumentException("Request cannot be null ");
+		}
+		
+		// parse the string date in class Date
+		String date =u.birth;
+		if (u.birth==null){
+			date = "00/00/0000";
+		}
+		DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+		Date birth;
+		try {
+			birth = (Date)formatter.parse(date);
+			UserDetails uDetails =  em.get().find(UserDetails.class, u.id);
+			uDetails.setMail(u.mail);
+			uDetails.setAdress(u.adress);
+			uDetails.setBirth(birth);
+			uDetails.setBusinessphone(u.businessphone);
+			uDetails.setCity(u.city);
+			uDetails.setFirstname(u.firstname);
+			uDetails.setHomephone(u.homephone);
+			uDetails.setMobilephone(u.mobilephone);
+			uDetails.setName(u.name);
+			uDetails.setNationality(u.nationality);
+			uDetails.setSsn(u.ssn);
+			uDetails.setZip(u.zip);
+			uDetails.setCivility(u.civility);
+			uDetails.setImage(u.image);
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} 
+	}
+	
+	@Transactional
 	public void updateUser(UserCreationRequestDTO request) {
 		if(request==null){
 			throw new IllegalArgumentException("Request cannot be null ");
@@ -143,8 +185,17 @@ public class UserService {
 	public UserDetailsDTO getUserDetails(User u) {
 		Query query = em.get().createQuery("SELECT e FROM UserDetails, User WHERE User.id =" + u.getId());
 		UserDetails ud = (UserDetails)query.getResultList().get(0);
-		
-		UserDetailsDTO dto = new UserDetailsDTO(ud.getId_user_detail(), ud.getFirstname(), ud.getName(), ud.getImage(), ud.getMail(), new UserDTO(u.getUsername()));
+		/// handle date
+		String newDateString;
+		if (ud.getBirth()!=null){
+			Date date =ud.getBirth();
+			String newPattern = "dd/MM/yyyy" ; 
+			newDateString = (new SimpleDateFormat( newPattern )).format( date ) ; 
+		}
+		else{
+			newDateString="00/00/0000"; 
+		}
+		UserDetailsDTO dto = new UserDetailsDTO(ud.getFirstname(), ud.getName(), ud.getImage(), ud.getMail(), ud.getAdress(), ud.getZip(), ud.getCity(), ud.getHomephone(), ud.getMobilephone(), ud.getBusinessphone(), newDateString, ud.getNationality(), ud.getSsn(),ud.getCivility(),ud.getId_user_detail(), new UserDTO(u.getUsername()));
 		return dto;
 
 	}
@@ -155,8 +206,17 @@ public class UserService {
 		User u = (User)query.getSingleResult();
 		query = em.get().createQuery("SELECT e FROM UserDetails e , User u WHERE e.user = u AND u.id =" + u.getId());
 		UserDetails ud = (UserDetails)query.getSingleResult();
-		
-		UserDetailsDTO dto = new UserDetailsDTO(ud.getId_user_detail(), ud.getFirstname(), ud.getName(), ud.getImage(), ud.getMail(), new UserDTO(u.getUsername()));
+		/// handle date
+		String newDateString;
+		if (ud.getBirth()!=null){
+			Date date =ud.getBirth();
+			String newPattern = "dd/MM/yyyy" ; 
+			newDateString = (new SimpleDateFormat( newPattern )).format( date ) ; 
+		}
+		else{
+			newDateString="00/00/0000"; 
+		}
+		UserDetailsDTO dto = new UserDetailsDTO( ud.getFirstname(), ud.getName(), ud.getImage(), ud.getMail(), ud.getAdress(), ud.getZip(), ud.getCity(), ud.getHomephone(), ud.getMobilephone(), ud.getBusinessphone(), newDateString, ud.getNationality(), ud.getSsn(),ud.getCivility(),ud.getId_user_detail(),new UserDTO(u.getUsername()));
 		return dto;
 
 	}
@@ -174,7 +234,8 @@ public class UserService {
 		List<UserDetails> collection = (List<UserDetails>) query.getResultList();
 		List<UserDetailsDTO> dtos = new ArrayList<UserDetailsDTO>();
 		for (UserDetails user : collection) {
-			dtos.add(new UserDetailsDTO(user.getId_user_detail(), user.getFirstname(), user.getName(), user.getImage(), user.getMail(), new UserDTO(user.getUser().getUsername())));
+
+			dtos.add(new UserDetailsDTO( user.getFirstname(), user.getName(), user.getImage(), user.getMail(), user.getAdress(), user.getZip(), user.getCity(), user.getHomephone(), user.getMobilephone(), user.getBusinessphone(), null, user.getNationality(), user.getSsn(),user.getCivility(),user.getId_user_detail(),new UserDTO(user.getUser().getUsername())));
 		}
 		return dtos;
 	}

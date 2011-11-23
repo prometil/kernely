@@ -104,7 +104,17 @@ create table kernely_user_details (
         firstname varchar(50),
         mail varchar(50),
         image varchar(100),
-        fk_user_id int
+        fk_user_id int,
+	adress varchar(100),
+	zip varchar(5),
+	city varchar(30),
+	nationality varchar(30), 
+	homephone varchar(10),
+	mobilephone varchar(10),
+	businessphone varchar(10),
+	ssn varchar(20),
+	civility int,
+	birth date
 );
 
 

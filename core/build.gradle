@@ -20,8 +20,10 @@ dependencies {
 	
     //jersey
     compile "com.sun.jersey:jersey-server:1.8"
+    compile "com.sun.jersey.contribs:jersey-multipart:1.8"
     compile "com.sun.jersey:jersey-json:1.8"
-    
+    compile  "com.sun.jersey:jersey-core:1.8"
+     
     //hibernate
     compile "org.hibernate:hibernate-core:3.6.1.Final"
     compile "org.hibernate:hibernate-commons-annotations:3.2.0.Final"
