@@ -93,11 +93,10 @@ public class GroupService {
 		for(UserDTO u: request.users){
 			users.add(em.get().find(User.class, u.id));
 		}
-		
 		Group group = em.get().find(Group.class, request.id);
 		group.setName(request.name);
 		
-		group.setUsers(users);
+		group.getUsers().clear();
 		
 	}
 	

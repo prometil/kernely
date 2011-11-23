@@ -71,7 +71,12 @@ AppGroupAdmin = (function($){
 			    		$.each(data.groupDTO, function() {
 			    			var users = 0;
 			    			if(this.users != null && typeof(this.users) != "undefined"){
-			    				users = this.users.length;
+			    				if(typeof(this.users.length) != "undefined"){
+			    					users = this.users.length;
+			    				}
+			    				else{
+			    					users = 1;
+			    				}
 			    			}
 			    			var view = new GroupAdminTableLineView(this.id, this.name, users);
 			    			view.render();
@@ -247,15 +252,22 @@ AppGroupAdmin = (function($){
 		updategroup: function(){
 			var usersCB = $("input:checked");
 			var count = 0;
-			var users = '"users":[';
-			$.each(usersCB, function(){
-				users += '{"id":"'+ $(this).attr('id') +'", "username":"null", "locked":"false"}';
-				count++;
-				if(count<usersCB.length){
-					users += ',';
-				}
-			});
-			users += "]";
+			
+			if(usersCB.length > 0){
+				var users = '"users":[';
+				
+				$.each(usersCB, function(){
+					users += '{"id":"'+ $(this).attr('id') +'", "username":"null", "locked":"false"}';
+					count++;
+					if(count<usersCB.length){
+						users += ',';
+					}
+				});
+				users += "]";
+			}
+			else{
+				users = '"users":{}';
+			}
 			var json = '{"id":"'+this.vid+'", "name":"'+$('input[name*="name"]').val() + '", '+ users +'}';
 			$.ajax({
 				url:"/admin/groups/create",
@@ -317,7 +329,7 @@ AppGroupAdmin = (function($){
 								}
 								// In the case when there is only one user.
 								else{
-									$(data.userDTO.id).attr("checked", "checked");
+									$('#' + data.userDTO.id).attr("checked", "checked");
 								}
 							}
 						}
