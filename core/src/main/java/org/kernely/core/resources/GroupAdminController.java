@@ -11,6 +11,7 @@ import javax.ws.rs.core.MediaType;
 
 import org.kernely.core.dto.GroupCreationRequestDTO;
 import org.kernely.core.dto.GroupDTO;
+import org.kernely.core.dto.UserDTO;
 import org.kernely.core.service.user.GroupService;
 import org.kernely.core.template.TemplateRenderer;
 
@@ -68,4 +69,12 @@ public class GroupAdminController extends AbstractController {
 		groupService.deleteGroup(id);
 		return "Ok";
 	}
+	
+	@GET
+	@Path("/{id}/users")
+	@Produces({"application/json"})
+	public List<UserDTO> getGroupUsers(@PathParam("id") int id){
+		return groupService.getGroupUsers(id);
+	}
+
 }

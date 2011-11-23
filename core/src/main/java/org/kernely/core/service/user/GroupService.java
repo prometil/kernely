@@ -1,14 +1,18 @@
 package org.kernely.core.service.user;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
 import org.kernely.core.dto.GroupCreationRequestDTO;
 import org.kernely.core.dto.GroupDTO;
+import org.kernely.core.dto.UserDTO;
 import org.kernely.core.model.Group;
+import org.kernely.core.model.User;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;
@@ -32,7 +36,11 @@ public class GroupService {
 		List<Group> collection = (List<Group>) query.getResultList();
 		List<GroupDTO> dtos = new ArrayList<GroupDTO>();
 		for (Group group : collection) {
-			dtos.add(new GroupDTO(group.getName(), group.getId()));
+			List<UserDTO> users = new ArrayList<UserDTO>();
+			for(User u : group.getUsers()){
+				users.add(new UserDTO(u.getUsername(), u.isLocked(), u.getId()));
+			}
+			dtos.add(new GroupDTO(group.getName(), group.getId(), users));
 		}
 		return dtos;
 
@@ -81,8 +89,16 @@ public class GroupService {
 			throw new IllegalArgumentException("Group name cannot be space character only ");
 		}
 		
+		Set<User> users = new HashSet<User>();
+		for(UserDTO u: request.users){
+			users.add(em.get().find(User.class, u.id));
+		}
+		
 		Group group = em.get().find(Group.class, request.id);
 		group.setName(request.name);
+		
+		group.setUsers(users);
+		
 	}
 	
 	/**
@@ -94,5 +110,16 @@ public class GroupService {
 	public void deleteGroup(int id) {
 		Group group = em.get().find(Group.class, id);
 		em.get().remove(group);
+	}
+	
+	@Transactional
+	public List<UserDTO> getGroupUsers(int id){
+		Query query = em.get().createQuery("SELECT g FROM Group g WHERE group_id =" + id);
+		Group g = (Group)query.getSingleResult();
+		List<UserDTO> dtos = new ArrayList<UserDTO>();
+		for (User user : g.getUsers()) {
+			dtos.add(new UserDTO(user.getUsername(), user.isLocked(), user.getId()));
+		}
+		return dtos;
 	}
 }

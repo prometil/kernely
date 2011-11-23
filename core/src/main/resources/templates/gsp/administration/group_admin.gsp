@@ -4,17 +4,36 @@
 
 <div id="mask" style="position:absolute;z-index:9000;background-color:#000;display:none;top:0;left:0;"></div>
 
-<div id="modal_window" style=" position:absolute;width:440px;height:120px;display:none;z-index:9999;padding:20px;top:0;left:0;">
+<div id="modal_window" style=" position:absolute;width:440px;height:300px;display:none;z-index:9999;padding:20px;top:0;left:0;">
 </div>
 
-<script type="text/html" id="popup-group-admin-template">
+<!-- Template for the create view  -->
+<script type="text/html" id="popup-group-admin-create-template">
+	<input type="button" value="Close" class="closeModal" style="right:0;"/><br/>
+	<fieldset>
+	<legend>Group informations</legend>
+	Name : <input type="text" name="name"/><br/>
+	</fieldset>
+	<br/>
+	<input type="button" value="Send" class="createGroup"/>
+</script>
+
+<!-- Template for the edit view  -->
+<script type="text/html" id="popup-group-admin-update-template">
 	<input type="button" value="Close" class="closeModal" style="right:0;"/><br/>
 	<fieldset>
 	<legend>Group informations</legend>
 	Name : <input type="text" name="name" value="{{name}}"/><br/>
 	</fieldset>
+	
+	<fieldset>
+	<legend>Group users</legend>
+		<div id="usersToLink" style="height:150px;overflow-y:auto;">
+			<!-- Filled by ajax  -->
+		</div>
+	</fieldset>
 	<br/>
-	<input type="button" value="Send" class="sendGroup"/>
+	<input type="button" value="Send" class="updateGroup"/>
 </script>
 
 <div id="group_admin_container">
