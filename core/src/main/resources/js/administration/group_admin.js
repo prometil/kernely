@@ -65,15 +65,17 @@ AppGroupAdmin = (function($){
 				url:"/admin/groups/all",
 				dataType:"json",
 				success: function(data){
-					//if(data.groupDTO.length > 1){
+					if(data.groupDTO.length > 1){
 			    		$.each(data.groupDTO, function() {
 			    			var view = new GroupAdminTableLineView(this.id, this.name);
 			    			view.render();
 			    		});
-		    		/*else{
+					}
+			    	// In the case when there is only one element
+		    		else{
 						var view = new GroupAdminTableLineView(data.groupDTO.id, data.groupDTO.name);
 		    			view.render();
-					}*/
+					}
 				}
 			});
 		},
