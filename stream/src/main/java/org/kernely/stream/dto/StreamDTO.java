@@ -44,6 +44,7 @@ public class StreamDTO {
 		this.title = stream.getTitle();
 		this.id = stream.getId();
 		this.category = stream.getCategory();
+		this.locked = stream.isLocked();
 	}
 
 	/**
@@ -80,6 +81,15 @@ public class StreamDTO {
 
 	
 	
+	
+	public boolean isLocked() {
+		return locked;
+	}
+
+	public void setLocked(boolean locked) {
+		this.locked = locked;
+	}
+
 	public String getCategory() {
 		return category;
 	}
@@ -101,5 +111,8 @@ public class StreamDTO {
 	
 	//the category of the stream
 	private String category;
+	
+	//is the stream locked ?
+	private boolean locked;
 
 }

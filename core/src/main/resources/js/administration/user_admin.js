@@ -59,7 +59,7 @@ AppUserAdmin = (function($){
 			var template = '<td><img src="{{icon}}"/></td><td>{{lastname}}</td><td>{{firstname}}</td><td>{{username}}</td><td>{{email}}</td>';
 			var image;
 			if(this.vlocked == "true"){
-				image = "/images/icons/user_locked.png";
+				image = "./images/icons/user_locked.png";
 			}
 			else{
 				image = "/images/icons/user.png";

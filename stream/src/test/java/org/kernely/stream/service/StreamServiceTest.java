@@ -93,6 +93,43 @@ public class StreamServiceTest extends AbstractServiceTest {
 	}
 	
 	@Test
+	public void testGetAllStreams() {
+		service.createStream("test0001", "none");
+		service.createStream("test0002", "none");
+		service.createStream("test0003", "none");
+		assertEquals(service.getAllStreams().size(),3);
+		assertNotNull(service.getStream("test0001", "none"));
+		assertNotNull(service.getStream("test0002", "none"));
+		assertNotNull(service.getStream("test0003", "none"));
+	}
+	
+	@Test
+	public void testStreamLock() {
+		service.createStream("testLockStream", "none");
+		StreamDTO stream = service.getStream("testLockStream", "none");
+		assertEquals(false, stream.isLocked());
+		service.lockStream(stream.getId());
+		stream = service.getStream("testLockStream", "none");
+		assertEquals(true, stream.isLocked());
+	}
+	
+	@Test
+	public void testStreamUnlock() {
+		service.createStream("testUnlockStream", "none");
+		StreamDTO stream = service.getStream("testUnlockStream", "none");
+		assertEquals(false, stream.isLocked());
+		service.lockStream(stream.getId());
+		service.unlockStream(stream.getId());
+		stream = service.getStream("testUnlockStream", "none");
+		assertEquals(false, stream.isLocked());
+	}
+
+	@Test
+	public void testNoMessages() {
+		assertEquals(0, service.getMessages().size());
+	}
+	
+	@Test
 	public void testHandlingEvent() {
 		bus.register(handler);
 		bus.post(new UserCreationEvent(1, USERNAME));

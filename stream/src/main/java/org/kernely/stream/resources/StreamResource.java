@@ -25,13 +25,16 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import org.apache.shiro.SecurityUtils;
-import org.kernely.core.dto.UserCreationRequestDTO;
 import org.kernely.core.resources.AbstractController;
+import org.kernely.core.service.user.UserService;
 import org.kernely.core.template.TemplateRenderer;
+import org.kernely.stream.dto.StreamCreationRequestDTO;
+import org.kernely.stream.dto.StreamDTO;
 import org.kernely.stream.dto.StreamMessageCreationRequestDTO;
 import org.kernely.stream.dto.StreamMessageDTO;
 import org.kernely.stream.service.StreamService;
@@ -50,6 +53,9 @@ public class StreamResource extends AbstractController {
 
 	@Inject
 	private StreamService streamService;
+	
+	@Inject
+	private UserService userService;
 
 	@GET
 	@Produces( { MediaType.TEXT_HTML })
@@ -75,10 +81,71 @@ public class StreamResource extends AbstractController {
 	}
 	
 	@GET
-	@Path("/streamsAdmin")
+	@Path("/admin")
 	@Produces( { MediaType.TEXT_HTML })
 	public String getPluginAdminPanel(){
-		return templateRenderer.create("/templates/gsp/streamsAdmin.gsp").withoutLayout().render();
+		String page;
+		if (userService.currentUserIsAdministrator()){
+			page = templateRenderer.create("/templates/gsp/streams_admin.gsp").withoutLayout().render();
+		} else{
+			page = templateRenderer.create("/templates/gsp/home.gsp").render();
+		}
+		return page;
+	}
+	
+	@GET
+	@Path("/admin/all")
+	@Produces({"application/json"})
+	public List<StreamDTO> displayAllStreams()
+	{
+		if (userService.currentUserIsAdministrator()){
+			log.debug("Call to GET on all streams");
+			List<StreamDTO> streams= streamService.getAllStreams();
+			return streams;
+		} else {
+			return null;
+		}
+	}
+	
+	/**
+	 * Create a new group with the given informations
+	 * @return "Ok", not useful.
+	 */
+	@POST
+	@Path("/admin/create")
+	public String create(StreamCreationRequestDTO stream)
+	{
+		log.debug("Create a user");
+		
+		if(stream.id == 0){
+			streamService.createStream(stream.name,stream.category);
+		}
+		else{
+			streamService.updateStream(stream);
+		}
+		return "Ok";
+	}
+	
+	@GET
+	@Path("/admin/lock/{id}")
+	@Produces( { MediaType.TEXT_HTML })
+	public String lock(@PathParam("id") int id){
+		if (userService.currentUserIsAdministrator()){
+			streamService.lockStream(id);
+			return "Ok";
+		}
+		return "";
 	}
 
+	@GET
+	@Path("/admin/unlock/{id}")
+	@Produces( { MediaType.TEXT_HTML })
+	public String unlock(@PathParam("id") int id){
+		if (userService.currentUserIsAdministrator()){
+		streamService.unlockStream(id);
+		return "Ok";
+		}
+		return "";
+	}
+	
 }

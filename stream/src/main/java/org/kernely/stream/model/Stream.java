@@ -54,13 +54,13 @@ public class Stream extends AbstractModel {
 		this.user_id = 1;
 	}
 	
-	private long user_id;
+	private int user_id;
 
-	public long getUserId() {
+	public int getUserId() {
 		return user_id;
 	}
 
-	public void setUserId(long userId) {
+	public void setUserId(int userId) {
 		this.user_id = userId;
 	}
 
@@ -100,7 +100,7 @@ public class Stream extends AbstractModel {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	private long id;
+	private int id;
 	
 	/**
 	 * The method return the id.
@@ -114,7 +114,7 @@ public class Stream extends AbstractModel {
 	 * The method set the id.
 	 * @param id
 	 */
-	public void setId(long id) {
+	public void setId(int id) {
 		this.id = id;
 	}
 
