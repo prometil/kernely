@@ -114,17 +114,23 @@ public class StreamResource extends AbstractController {
 	 */
 	@POST
 	@Path("/admin/create")
+	@Produces( { MediaType.APPLICATION_JSON })
 	public String create(StreamCreationRequestDTO stream)
 	{
 		log.debug("Create a user");
 		
 		if(stream.id == 0){
-			streamService.createStream(stream.name,stream.category);
+			try {
+				streamService.createStream(stream.name,stream.category);
+			} catch (IllegalArgumentException iae) {
+				log.debug(iae.getMessage());
+			    return "{\"result\":\""+iae.getMessage()+"\"}";
+			}
 		}
 		else{
 			streamService.updateStream(stream);
 		}
-		return "Ok";
+		return "{\"result\":\"ok\"}";
 	}
 	
 	@GET

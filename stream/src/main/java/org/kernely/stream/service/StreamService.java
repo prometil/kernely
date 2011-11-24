@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
 import org.kernely.core.service.mail.Mailer;
@@ -143,6 +144,10 @@ public class StreamService {
 	@SuppressWarnings("unchecked")
 	@Transactional
 	public void createStream(String title, String category) {
+		StreamDTO dto;
+		if ( this.getStream(title, category) != null){
+			throw new IllegalArgumentException("Stream with the same title and the same category already exists.");
+		}
 		Stream newStream = new Stream();
 		newStream.setTitle(title);
 		newStream.setCategory(category);
@@ -206,9 +211,16 @@ public class StreamService {
 	@Transactional
 	public StreamDTO getStream(String title, String category) {
 		Query query = em.get().createQuery("SELECT s FROM Stream s WHERE title='"+title+"' AND category='"+category+"'");
-		Stream stream = (Stream) query.getSingleResult();
-		log.debug("Found stream: {}", stream.getTitle());
-		StreamDTO dto = new StreamDTO(stream);
+		Stream result;
+		try {
+			result = (Stream) query.getSingleResult();
+		}
+		catch(NoResultException nre) {
+			log.debug(nre.getMessage());
+			return null;
+		}
+		log.debug("Found stream: {}", result.getTitle());
+		StreamDTO dto = new StreamDTO(result);
 		return dto;
 	}
 

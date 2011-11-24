@@ -26,6 +26,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
 import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authz.AuthorizationException;
 import org.apache.shiro.crypto.RandomNumberGenerator;
 import org.apache.shiro.crypto.SecureRandomNumberGenerator;
 import org.apache.shiro.crypto.hash.Sha256Hash;
@@ -191,8 +192,20 @@ public class UserService {
 	 * Verify if the current user has the role of administrator.
 	 * @return true if the current user has the role of administrator, false otherwise.
 	 */
-	@Transactional
 	public boolean currentUserIsAdministrator(){
 		return SecurityUtils.getSubject().hasRole(Role.ROLE_ADMINISTRATOR);
 	}
+	
+	/**
+	 * Verify if the current user has a specific permission.
+	 * @return true if the current user has the permission.
+	 */
+	 public boolean currentUserHasPermission(String permission){
+		 try {
+			 SecurityUtils.getSubject().checkPermission(permission);
+		 } catch (AuthorizationException ae) {
+			 return false;
+		 }
+		 return true;
+	 }
 }

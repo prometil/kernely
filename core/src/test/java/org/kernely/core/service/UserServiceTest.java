@@ -22,6 +22,7 @@ package org.kernely.core.service;
 
 import static org.junit.Assert.assertEquals;
 
+import org.apache.shiro.authz.AuthorizationException;
 import org.junit.Test;
 import org.kernely.core.common.AbstractServiceTest;
 import org.kernely.core.dto.UserCreationRequestDTO;
@@ -150,5 +151,4 @@ public class UserServiceTest extends AbstractServiceTest{
 	public void getNullUser(){
 		assertEquals(0, service.getAllUsers().size());
 	}
-	
 }

@@ -75,7 +75,7 @@ public class Stream extends AbstractModel {
 	/**
 	 * Category for bundles' streams
 	 */
-	public static final String CATEGORY_BUNDLES = "streams/plugins";
+	public static final String CATEGORY_PLUGINS = "streams/plugins";
 	/**
 	 * Category for other streams
 	 */

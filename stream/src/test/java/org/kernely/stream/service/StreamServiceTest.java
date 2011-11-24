@@ -22,10 +22,10 @@ package org.kernely.stream.service;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-import org.junit.Rule;
+import java.util.List;
+
 import org.junit.Test;
 import org.kernely.core.common.AbstractServiceTest;
-import org.kernely.core.common.TestModule;
 import org.kernely.core.event.UserCreationEvent;
 import org.kernely.stream.UserEventHandler;
 import org.kernely.stream.dto.StreamDTO;
@@ -33,7 +33,6 @@ import org.kernely.stream.dto.StreamMessageDTO;
 import org.kernely.stream.model.Stream;
 
 import com.google.common.eventbus.EventBus;
-import com.google.guiceberry.junit4.GuiceBerryRule;
 import com.google.inject.Inject;
 
 /**
@@ -64,13 +63,6 @@ public class StreamServiceTest extends AbstractServiceTest {
 	public void testAddVoidMessage() {
 		service.addMessage("",0);
 	}
-	
-	@Test
-	public void testCreateStream(){
-		service.createStream(STREAM, Stream.CATEGORY_USERS);
-		
-		assertNotNull(service.getStream(STREAM, Stream.CATEGORY_USERS));
-	}
 
 	@Test
 	public void testAddMessage() {
@@ -92,37 +84,7 @@ public class StreamServiceTest extends AbstractServiceTest {
 		assertEquals(0, service.getMessages().size());
 	}
 	
-	@Test
-	public void testGetAllStreams() {
-		service.createStream("test0001", "none");
-		service.createStream("test0002", "none");
-		service.createStream("test0003", "none");
-		assertEquals(service.getAllStreams().size(),3);
-		assertNotNull(service.getStream("test0001", "none"));
-		assertNotNull(service.getStream("test0002", "none"));
-		assertNotNull(service.getStream("test0003", "none"));
-	}
-	
-	@Test
-	public void testStreamLock() {
-		service.createStream("testLockStream", "none");
-		StreamDTO stream = service.getStream("testLockStream", "none");
-		assertEquals(false, stream.isLocked());
-		service.lockStream(stream.getId());
-		stream = service.getStream("testLockStream", "none");
-		assertEquals(true, stream.isLocked());
-	}
-	
-	@Test
-	public void testStreamUnlock() {
-		service.createStream("testUnlockStream", "none");
-		StreamDTO stream = service.getStream("testUnlockStream", "none");
-		assertEquals(false, stream.isLocked());
-		service.lockStream(stream.getId());
-		service.unlockStream(stream.getId());
-		stream = service.getStream("testUnlockStream", "none");
-		assertEquals(false, stream.isLocked());
-	}
+
 
 	@Test
 	public void testNoMessages() {
@@ -137,5 +99,76 @@ public class StreamServiceTest extends AbstractServiceTest {
 		StreamDTO dto = service.getStream("Stream of "+USERNAME, Stream.CATEGORY_USERS);
 		assertNotNull(dto);
 	}
+	
+	// Tests on streams
+	
+	@Test
+	public void testGetAllStreams() {
+		service.createStream(STREAM+"1", "none");
+		service.createStream(STREAM+"2", "none");
+		service.createStream(STREAM+"3", "none");
+		assertEquals(service.getAllStreams().size(),3);
+		assertNotNull(service.getStream(STREAM+"1", "none"));
+		assertNotNull(service.getStream(STREAM+"2", "none"));
+		assertNotNull(service.getStream(STREAM+"3", "none"));
+	}
+	
+	@Test
+	public void testStreamLock() {
+		service.createStream(STREAM, "none");
+		StreamDTO stream = service.getStream(STREAM, "none");
+		assertEquals(false, stream.isLocked());
+		service.lockStream(stream.getId());
+		stream = service.getStream(STREAM, "none");
+		assertEquals(true, stream.isLocked());
+	}
+	
+	@Test
+	public void testStreamUnlock() {
+		service.createStream(STREAM, "none");
+		StreamDTO stream = service.getStream(STREAM, "none");
+		assertEquals(false, stream.isLocked());
+		service.lockStream(stream.getId());
+		service.unlockStream(stream.getId());
+		stream = service.getStream(STREAM, "none");
+		assertEquals(false, stream.isLocked());
+	}
+	
+	@Test
+	public void testCreateStream(){
+		service.createStream(STREAM, Stream.CATEGORY_USERS);
+		
+		assertNotNull(service.getStream(STREAM, Stream.CATEGORY_USERS));
+	}
+	
+	@Test(expected = IllegalArgumentException.class)
+	public void testCreateExistingString(){
+		service.createStream(STREAM, Stream.CATEGORY_OTHERS);
+		service.createStream(STREAM, Stream.CATEGORY_OTHERS);
+	}
+	
+	@Test
+	public void testCreateDifferentCategory(){
+		service.createStream(STREAM, Stream.CATEGORY_OTHERS);
+		service.createStream(STREAM, Stream.CATEGORY_PLUGINS);
+		service.createStream(STREAM, Stream.CATEGORY_USERS);
+		assertNotNull(service.getStream(STREAM,Stream.CATEGORY_OTHERS));
+		assertNotNull(service.getStream(STREAM,Stream.CATEGORY_USERS));
+		assertNotNull(service.getStream(STREAM,Stream.CATEGORY_PLUGINS));
+	}
+	
+	@Test
+	public void testWriteOnPluginStream(){
+		//Create the stream
+		service.createStream(STREAM, Stream.CATEGORY_PLUGINS);
+		assertNotNull(service.getStream(STREAM, Stream.CATEGORY_PLUGINS));
+		StreamDTO stream = service.getStream(STREAM, Stream.CATEGORY_PLUGINS);
+		assertEquals(0, service.getMessages().size());
 
+		//Adds a message
+		service.addMessage(STREAM, stream.getId());
+		List<StreamMessageDTO> messages = service.getMessages();
+		StreamMessageDTO message = messages.get(0);
+		assertEquals(message.message,STREAM);
+	}
 }
