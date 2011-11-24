@@ -15,7 +15,7 @@
 	<br/>
 	<fieldset>
 	<legend>User informations</legend>
-	Lastname : <input type="text" name="lastname" value="{{lastname}}"/><br/>
+	name : <input type="text" name="name" value="{{name}}"/><br/>
 	Firstname : <input type="text" name="firstname" value="{{firstname}}"/>
 	</fieldset>
 	<br/>
@@ -26,7 +26,7 @@
 	<div id="user_admin_buttons">
 		<input type="button" class="createButton" value="Create"/>
 		<input type="button" class="editButton" value="Edit" disabled="disabled"/>
-		<input type="button" class="lockButton" value="Lock"/>
+		<input type="button" class="lockButton" value="Lock" disabled="disabled"/>
 		<span id="users_notifications" style="display:none;color:green;"></span>
 	</div>
 	<table id="user_admin_table" style="cursor:pointer;width:100%">

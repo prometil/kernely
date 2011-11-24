@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.kernely.core.dto.AdminPageDTO;
 import org.kernely.core.hibernate.AbstractModel;
 import org.kernely.core.resources.AbstractController;
 import org.quartz.Job;
@@ -42,8 +43,7 @@ public abstract class AbstractPlugin extends AbstractModule {
 	private List<Class<? extends AbstractModel>> models;
 	
 	//the admin page
-	private String adminPage;
-	private String adminPagePath;
+	private List<AdminPageDTO> adminPages;
 	
 	//the job map
 	private Map<Class<? extends Job>, Trigger> jobs;
@@ -63,7 +63,7 @@ public abstract class AbstractPlugin extends AbstractModule {
 		path = pPath;
 		controllers = new  ArrayList<Class<? extends AbstractController>>();
 		models = new ArrayList<Class<? extends AbstractModel>>();
-		adminPage = "";
+		adminPages = new ArrayList<AdminPageDTO>();
 		jobs = new HashMap<Class<? extends Job>, Trigger>();
 	}
 	
@@ -80,8 +80,7 @@ public abstract class AbstractPlugin extends AbstractModule {
 	 * @param path The path to the admin page. This path must be mapped by a controller to display the page.
 	 */
 	protected void registerAdminPage(String name, String path){
-		adminPage = name;
-		adminPagePath = path;
+		this.adminPages.add(new AdminPageDTO(name, path));
 	}
 	
 	protected void registerModel(Class<? extends AbstractModel> model){
@@ -118,19 +117,11 @@ public abstract class AbstractPlugin extends AbstractModule {
 	}
 	
 	/**
-	 * Return the admin page, displayed in the administration panel.
-	 * @return the admin page.
+	 * Return admin pages, displayed in the administration panel.
+	 * @return admin pages.
 	 */
-	public String getAdminPage(){
-		return adminPage;
-	}
-
-	/**
-	 * Return the admin page path.
-	 * @return the admin page path.
-	 */
-	public String getAdminPagePath(){
-		return adminPagePath;
+	public List<AdminPageDTO> getAdminPages(){
+		return this.adminPages;
 	}
 
 	/**

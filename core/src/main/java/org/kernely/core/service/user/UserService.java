@@ -111,6 +111,9 @@ public class UserService {
 		if(u==null){
 			throw new IllegalArgumentException("Request cannot be null ");
 		}
+		if(u.birth.equals("")){
+			throw new IllegalArgumentException("A birth date must be like dd/MM/yyyy ");
+		}
 		
 		// parse the string date in class Date
 		String date =u.birth;
@@ -139,7 +142,14 @@ public class UserService {
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} 
+		}
+	}
+	
+	@Transactional 
+	public void lockUser(int id){
+		UserDetails ud = em.get().find(UserDetails.class, id);
+		User u = em.get().find(User.class, ud.getUser().getId());
+		u.setLocked(!u.isLocked());
 	}
 	
 	@Transactional
@@ -175,7 +185,7 @@ public class UserService {
 		List<User> collection = (List<User>) query.getResultList();
 		List<UserDTO> dtos = new ArrayList<UserDTO>();
 		for (User user : collection) {
-			dtos.add(new UserDTO(user.getUsername()));
+			dtos.add(new UserDTO(user.getUsername(), user.isLocked()));
 		}
 		return dtos;
 
@@ -185,6 +195,7 @@ public class UserService {
 	public UserDetailsDTO getUserDetails(User u) {
 		Query query = em.get().createQuery("SELECT e FROM UserDetails, User WHERE User.id =" + u.getId());
 		UserDetails ud = (UserDetails)query.getResultList().get(0);
+
 		/// handle date
 		String newDateString;
 		if (ud.getBirth()!=null){
@@ -195,7 +206,7 @@ public class UserService {
 		else{
 			newDateString="00/00/0000"; 
 		}
-		UserDetailsDTO dto = new UserDetailsDTO(ud.getFirstname(), ud.getName(), ud.getImage(), ud.getMail(), ud.getAdress(), ud.getZip(), ud.getCity(), ud.getHomephone(), ud.getMobilephone(), ud.getBusinessphone(), newDateString, ud.getNationality(), ud.getSsn(),ud.getCivility(),ud.getId_user_detail(), new UserDTO(u.getUsername()));
+		UserDetailsDTO dto = new UserDetailsDTO(ud.getFirstname(), ud.getName(), ud.getImage(), ud.getMail(), ud.getAdress(), ud.getZip(), ud.getCity(), ud.getHomephone(), ud.getMobilephone(), ud.getBusinessphone(), newDateString, ud.getNationality(), ud.getSsn(),ud.getCivility(),ud.getId_user_detail(), new UserDTO(u.getUsername(), u.isLocked()));
 		return dto;
 
 	}
@@ -206,6 +217,7 @@ public class UserService {
 		User u = (User)query.getSingleResult();
 		query = em.get().createQuery("SELECT e FROM UserDetails e , User u WHERE e.user = u AND u.id =" + u.getId());
 		UserDetails ud = (UserDetails)query.getSingleResult();
+
 		/// handle date
 		String newDateString;
 		if (ud.getBirth()!=null){
@@ -216,7 +228,8 @@ public class UserService {
 		else{
 			newDateString="00/00/0000"; 
 		}
-		UserDetailsDTO dto = new UserDetailsDTO( ud.getFirstname(), ud.getName(), ud.getImage(), ud.getMail(), ud.getAdress(), ud.getZip(), ud.getCity(), ud.getHomephone(), ud.getMobilephone(), ud.getBusinessphone(), newDateString, ud.getNationality(), ud.getSsn(),ud.getCivility(),ud.getId_user_detail(),new UserDTO(u.getUsername()));
+		UserDetailsDTO dto = new UserDetailsDTO( ud.getFirstname(), ud.getName(), ud.getImage(), ud.getMail(), ud.getAdress(), ud.getZip(), ud.getCity(), ud.getHomephone(), ud.getMobilephone(), ud.getBusinessphone(), newDateString, ud.getNationality(), ud.getSsn(),ud.getCivility(),ud.getId_user_detail(),new UserDTO(u.getUsername(), u.isLocked()));
+
 		return dto;
 
 	}
@@ -224,7 +237,8 @@ public class UserService {
 	@Transactional
 	public UserDTO getCurrentUser(){
 		Query query = em.get().createQuery("SELECT e FROM User e WHERE username ='"+ SecurityUtils.getSubject().getPrincipal() +"'");
-		return new UserDTO(((User)query.getSingleResult()).getUsername());
+		User u = (User)query.getSingleResult();
+		return new UserDTO(u.getUsername(), u.isLocked());
 	}
 	
 	@Transactional
@@ -234,8 +248,8 @@ public class UserService {
 		List<UserDetails> collection = (List<UserDetails>) query.getResultList();
 		List<UserDetailsDTO> dtos = new ArrayList<UserDetailsDTO>();
 		for (UserDetails user : collection) {
+			dtos.add(new UserDetailsDTO( user.getFirstname(), user.getName(), user.getImage(), user.getMail(), user.getAdress(), user.getZip(), user.getCity(), user.getHomephone(), user.getMobilephone(), user.getBusinessphone(), null, user.getNationality(), user.getSsn(),user.getCivility(),user.getId_user_detail(),new UserDTO(user.getUser().getUsername(), user.getUser().isLocked())));
 
-			dtos.add(new UserDetailsDTO( user.getFirstname(), user.getName(), user.getImage(), user.getMail(), user.getAdress(), user.getZip(), user.getCity(), user.getHomephone(), user.getMobilephone(), user.getBusinessphone(), null, user.getNationality(), user.getSsn(),user.getCivility(),user.getId_user_detail(),new UserDTO(user.getUser().getUsername())));
 		}
 		return dtos;
 	}

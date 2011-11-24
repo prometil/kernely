@@ -67,6 +67,16 @@ public class User extends AbstractModel{
 	private String username;
 	private String password;
 	private String salt;
+	private boolean locked;
+	
+	@Column(name = "locked")
+	public boolean isLocked() {
+		return locked;
+	}
+	
+	public void setLocked(boolean lock) {
+		this.locked = lock;
+	}
 	
 	/**
 	 * Get the username of the user.

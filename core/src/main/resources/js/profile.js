@@ -97,7 +97,7 @@ AppProfile= (function($){
 		},
 		editMail: function(){
 			$('#button_mail').html("<img class='button valid_button_mail' src='/images/icons/save.png' style='margin-left : 15px;'/>");
-			$('#profile_mail').html("<input id='edit_mail_field' name='mail' type='text' value='" + $('#profile_mail').text() + "'/>");
+			$('#profile_mail').html("<input id='edit_mail_field' name='mail' type='text' MAXLENGTH=50 value='" + $('#profile_mail').text() + "'/>");
 			console.log(userd.mail);
 		
 		},
@@ -129,7 +129,7 @@ AppProfile= (function($){
 		
 		editName: function(){
 			$('#button_name').html("<img class='button valid_button_name' src='/images/icons/save.png' style='margin-left : 15px;'/>");
-			$('#profile_name').html("<input id='edit_name_field' name='name' type='text' value='" + $('#profile_name').text() + "'/>");
+			$('#profile_name').html("<input id='edit_name_field' name='name' type='text' MAXLENGTH=50 value='" + $('#profile_name').text() + "'/>");
 		
 		},
 		saveName: function(){
@@ -160,7 +160,7 @@ AppProfile= (function($){
 		
 		editFirstname: function(){
 			$('#button_firstname').html("<img class='button valid_button_firstname' src='/images/icons/save.png' style='margin-left : 15px;'/>");
-			$('#profile_firstname').html("<input id='edit_firstname_field' name='firstname' type='text' value='" + $('#profile_firstname').text() + "'/>");
+			$('#profile_firstname').html("<input id='edit_firstname_field' name='firstname' type='text' MAXLENGTH=50 value='" + $('#profile_firstname').text() + "'/>");
 		
 		},
 		saveFirstname: function(){
@@ -191,7 +191,7 @@ AppProfile= (function($){
 		
 		editAdress: function(){
 			$('#button_adress').html("<img class='button valid_button_adress' src='/images/icons/save.png' style='margin-left : 15px;'/>");
-			$('#profile_adress').html("<input id='edit_adress_field' name='adress' type='text' value='" + $('#profile_adress').text() + "'/>");
+			$('#profile_adress').html("<input id='edit_adress_field' name='adress' type='text' MAXLENGTH=100 value='" + $('#profile_adress').text() + "'/>");
 		
 		},
 		saveAdress: function(){
@@ -222,7 +222,7 @@ AppProfile= (function($){
 		
 		editZip: function(){
 			$('#button_zip').html("<img class='button valid_button_zip' src='/images/icons/save.png' style='margin-left : 15px;'/>");
-			$('#profile_zip').html("<input id='edit_zip_field' name='zip' type='text' value='" + $('#profile_zip').text() + "'/>");
+			$('#profile_zip').html("<input id='edit_zip_field' name='zip' type='text' MAXLENGTH=5 value='" + $('#profile_zip').text() + "'/>");
 		
 		},
 		saveZip: function(){
@@ -253,7 +253,7 @@ AppProfile= (function($){
 		
 		editCity: function(){
 			$('#button_city').html("<img class='button valid_button_city' src='/images/icons/save.png' style='margin-left : 15px;'/>");
-			$('#profile_city').html("<input id='edit_city_field' name='city' type='text' value='" + $('#profile_city').text() + "'/>");
+			$('#profile_city').html("<input id='edit_city_field' name='city' type='text' MAXLENGTH=30 value='" + $('#profile_city').text() + "'/>");
 		
 		},
 		saveCity: function(){
@@ -284,7 +284,7 @@ AppProfile= (function($){
 		
 		editHomephone: function(){
 			$('#button_homephone').html("<img class='button valid_button_homephone' src='/images/icons/save.png' style='margin-left : 15px;'/>");
-			$('#profile_homephone').html("<input id='edit_homephone_field' name='homephone' type='text' value='" + $('#profile_homephone').text() + "'/>");
+			$('#profile_homephone').html("<input id='edit_homephone_field' name='homephone' type='text' MAXLENGTH=10 value='" + $('#profile_homephone').text() + "'/>");
 		
 		},
 		saveHomephone: function(){
@@ -315,7 +315,7 @@ AppProfile= (function($){
 		
 		editMobilephone: function(){
 			$('#button_mobilephone').html("<img class='button valid_button_mobilephone' src='/images/icons/save.png' style='margin-left : 15px;'/>");
-			$('#profile_mobilephone').html("<input id='edit_mobilephone_field' name='mobilephone' type='text' value='" + $('#profile_mobilephone').text() + "'/>");
+			$('#profile_mobilephone').html("<input id='edit_mobilephone_field' name='mobilephone' type='text' MAXLENGTH=10 value='" + $('#profile_mobilephone').text() + "'/>");
 		
 		},
 		saveMobilephone: function(){
@@ -346,7 +346,7 @@ AppProfile= (function($){
 		
 		editBusinessphone: function(){
 			$('#button_businessphone').html("<img class='button valid_button_businessphone' src='/images/icons/save.png' style='margin-left : 15px;'/>");
-			$('#profile_businessphone').html("<input id='edit_businessphone_field' name='businessphone' type='text' value='" + $('#profile_businessphone').text() + "'/>");
+			$('#profile_businessphone').html("<input id='edit_businessphone_field' name='businessphone' type='text' MAXLENGTH=10 value='" + $('#profile_businessphone').text() + "'/>");
 		
 		},
 		saveBusinessphone: function(){
@@ -377,7 +377,7 @@ AppProfile= (function($){
 		
 		editBirth: function(){
 			$('#button_birth').html("<img class='button valid_button_birth' src='/images/icons/save.png' style='margin-left : 15px;'/>");
-			$('#profile_birth').html("<input id='edit_birth_field' name='birth' type='text' value='" + $('#profile_birth').text() + "'/>");
+			$('#profile_birth').html("<input id='edit_birth_field' name='birth' type='text' MAXLENGTH=10 value='" + $('#profile_birth').text() + "'/>");
 		
 		},
 		saveBirth: function(){
@@ -408,7 +408,7 @@ AppProfile= (function($){
 		
 		editNationality: function(){
 			$('#button_nationality').html("<img class='button valid_button_nationality' src='/images/icons/save.png' style='margin-left : 15px;'/>");
-			$('#profile_nationality').html("<input id='edit_nationality_field' name='nationality' type='text' value='" + $('#profile_nationality').text() + "'/>");
+			$('#profile_nationality').html("<input id='edit_nationality_field' name='nationality' type='text' MAXLENGTH=30 value='" + $('#profile_nationality').text() + "'/>");
 		
 		},
 		saveNationality: function(){
@@ -439,7 +439,7 @@ AppProfile= (function($){
 		
 		editSsn: function(){
 			$('#button_ssn').html("<img class='button valid_button_ssn' src='/images/icons/save.png' style='margin-left : 15px;'/>");
-			$('#profile_ssn').html("<input id='edit_ssn_field' name='ssn' type='text' value='" + $('#profile_ssn').text() + "'/>");
+			$('#profile_ssn').html("<input id='edit_ssn_field' name='ssn' type='text' MAXLENGTH=20 value='" + $('#profile_ssn').text() + "'/>");
 		
 		},
 		saveSsn: function(){

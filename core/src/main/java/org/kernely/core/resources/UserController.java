@@ -39,6 +39,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.apache.commons.configuration.AbstractConfiguration;
 import org.apache.commons.io.FileUtils;
 import org.apache.shiro.SecurityUtils;
 import org.kernely.core.dto.UserCreationRequestDTO;
@@ -63,7 +64,12 @@ import com.sun.xml.internal.ws.api.ResourceLoader;
 @Path("/user")
 public class UserController  extends AbstractController{
 	
-	@Inject ResourceLocator resourceLocator;
+	@Inject 
+	private ResourceLocator resourceLocator;
+	
+	@Inject
+	private AbstractConfiguration configuration;
+	
 
 	@Inject
 	private TemplateRenderer templateRenderer;
@@ -186,7 +192,8 @@ public class UserController  extends AbstractController{
 		
 		SecureRandom random = new SecureRandom();
 		String fileName = new BigInteger(130, random).toString(32)+ "." + extension[extension.length - 1];
-		String uploadedFileLocation = "../core/src/main/resources/images/" + fileName ;
+		String prefix = configuration.getString("workpath.url");
+		String uploadedFileLocation = prefix + "/images/" + fileName ; ///core/src/main/resources
 		try {
 			FileUtils.copyInputStreamToFile(uploadedInputStream, new File(uploadedFileLocation));
 		} catch (IOException e) {

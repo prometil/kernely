@@ -27,6 +27,7 @@ import org.kernely.core.common.AbstractServiceTest;
 import org.kernely.core.dto.UserCreationRequestDTO;
 import org.kernely.core.dto.UserDTO;
 import org.kernely.core.dto.UserDetailsDTO;
+import org.kernely.core.dto.UserDetailsUpdateRequestDTO;
 import org.kernely.core.service.user.UserService;
 
 import com.google.inject.Inject;
@@ -46,12 +47,46 @@ public class UserServiceTest extends AbstractServiceTest{
 		request.lastname="tata";
 		service.createUser(request);
 		UserDTO userdto = new UserDTO("",1) ;
+
 		userdto = service.getAllUsers().get(0);
 		UserDetailsDTO uddto = new UserDetailsDTO();
 		uddto = service.getUserDetails(userdto.username);
 		assertEquals("toto", userdto.username);
 		assertEquals("toto", uddto.firstname);
 		assertEquals("tata", uddto.name);
+	}
+	
+	@Test(expected=IllegalArgumentException.class)
+	public void updateUserWithNullRequest(){
+		service.updateUserProfile(null);		
+	}
+	
+	@Test(expected=IllegalArgumentException.class)
+	public void updateUserWithErrorDate(){
+		UserDetailsUpdateRequestDTO request = new UserDetailsUpdateRequestDTO();
+		request.birth="";
+		service.updateUserProfile(request);		
+	}
+	
+
+	public void updateUserDetails(){
+		UserDetailsUpdateRequestDTO request = new UserDetailsUpdateRequestDTO();
+		request.birth="18/12/1990";
+		request.adress="a";
+		request.businessphone="05";
+		request.city="5555";
+		request.civility=1;
+		request.firstname="blabla";
+		request.homephone="252";
+		request.id=1;
+		request.image="LLll.jpg";
+		request.mail="papa";
+		request.mobilephone="06";
+		request.name="a";
+		request.nationality="nla";
+		request.ssn="232";
+		request.zip="45544";
+		service.updateUserProfile(request);		
 	}
 	
 	@Test(expected=IllegalArgumentException.class)
@@ -101,6 +136,49 @@ public class UserServiceTest extends AbstractServiceTest{
 		service.createUser(request);
 		assertEquals(1,service.getAllUsers().size());
 		assertEquals(1,service.getAllUserDetails().size());
+	}
+	
+	@Test
+	public void lockedUser(){
+		UserCreationRequestDTO request = new UserCreationRequestDTO();
+		request.username="test";
+		request.password="test";
+		request.firstname="test";
+		request.lastname="test";
+		service.createUser(request);
+		UserDTO userdto = new UserDTO() ;
+		userdto = service.getAllUsers().get(0);
+		assertEquals(false, userdto.locked);
+		UserDetailsDTO uddto = new UserDetailsDTO();
+		uddto = service.getUserDetails(userdto.username);
+		service.lockUser(uddto.id);
+		userdto = service.getAllUsers().get(0);
+		assertEquals(true, userdto.locked);
+	}
+	
+	@Test
+	public void updateUser(){
+		UserCreationRequestDTO request = new UserCreationRequestDTO();
+		request.username="test";
+		request.password="test";
+		request.firstname="test";
+		request.lastname="test";
+		service.createUser(request);
+		UserDTO userdto = new UserDTO() ;
+		userdto = service.getAllUsers().get(0);
+		UserDetailsDTO uddto = new UserDetailsDTO();
+		uddto = service.getUserDetails(userdto.username);
+		UserCreationRequestDTO ucr = new UserCreationRequestDTO();
+		ucr.id = uddto.id;
+		ucr.username = "test MODIFIED 1";
+		ucr.firstname = "test MODIFIED 2";
+		ucr.lastname = "test MODIFIED 3";
+		service.updateUser(ucr);
+		userdto = service.getAllUsers().get(0);
+		uddto = service.getUserDetails(userdto.username);
+		assertEquals("test MODIFIED 1", userdto.username);
+		assertEquals("test MODIFIED 2", uddto.firstname);
+		assertEquals("test MODIFIED 3", uddto.name);
 	}
 	
 	@Test

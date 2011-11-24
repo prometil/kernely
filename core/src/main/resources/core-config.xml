@@ -29,4 +29,7 @@
 	<server>
 		<port>8080</port>
 	</server>
+	<workpath>
+		<url>../works</url>
+	</workpath>
 </core>
