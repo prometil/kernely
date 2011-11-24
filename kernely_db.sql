@@ -105,7 +105,17 @@ create table kernely_user_details (
         firstname varchar(50),
         mail varchar(50),
         image varchar(100),
-        fk_user_id int
+        fk_user_id int,
+	adress varchar(100),
+	zip varchar(5),
+	city varchar(30),
+	nationality varchar(30), 
+	homephone varchar(10),
+	mobilephone varchar(10),
+	businessphone varchar(10),
+	ssn varchar(20),
+	civility int,
+	birth date
 );
 
 
@@ -113,19 +123,24 @@ insert into kernely_user (id, username, password, salt) values (1, 'bobby', '2ty
 insert into kernely_user (id, username, password, salt) values (2, 'john', 'vAT9Kr/2bSbWoxFj3iinD783xrTez+lE2G/HSGaDzVk=','8EiKXghisVxqZ74Nwen+/5NanikCV0DRB9J31tC0jWGip79G1ZCrkwsFYOkD/aw1ggYA8r/nsYHnWXofR7x0nFU8CK87aiZ3BzXyzH4AEu9pzV/YWfWhq1d0W3gAB36gHsVQ6mZubI5UYforzdATLAAGOlQAa4BXF7Cwxs8wuf0=');
 
 
-insert into kernely_stream (id, title, locked, category, user_id) values (1, 'Stream of bobby', false,'Streams/Users',1);
-insert into kernely_stream (id, title, locked, category, user_id) values (2, 'Stream of john', false,'Streams/Users',1);
+insert into kernely_stream (id, title, locked, category, user_id) values (1, 'Stream of bobby', false,'streams/users',1);
+insert into kernely_stream (id, title, locked, category, user_id) values (2, 'Stream of john', false,'streams/users',2);
 
 insert into kernely_role (role_id, name) values (1, 'User');
 insert into kernely_role (role_id, name) values (2, 'Administrator');
 
 insert into kernely_group (group_id, name) values (1, 'Kernely team');
 
+insert into kernely_permission values (1,'write,read:streams/users/1');
+insert into kernely_permission values (1,'read:streams/users/2');
+
 insert into kernely_user_group values (1,1);
 insert into kernely_user_group values (2,1);
 
 insert into kernely_user_roles values (2,1);
 insert into kernely_user_roles values (2,2);
+
+insert into kernely_user_permissions values (1,1);
 
 insert into kernely_user_details (id_user_detail, name, firstname, mail, image, fk_user_id) values (1, 'Joe', 'Bobby', 'bobby.joe@mail.com', null, 1);
 insert into kernely_user_details (id_user_detail, name, firstname, mail, image, fk_user_id) values (2, 'Doe', 'John', 'john.doe@mail.com', null, 2);

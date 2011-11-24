@@ -58,8 +58,10 @@ AppStreamAdmin = (function($){
 			if(this.vlocked == "true"){
 				image = "/img/stream_locked.png";
 			}
-			else if (this.vcategory == "Streams/Users") {
+			else if (this.vcategory == "streams/users") {
 				image = "/images/icons/user.png";
+			} else if (this.vcategory == "streams/plugins"){
+				image = "/img/plugin.png";
 			} else {
 				image = "";
 			}
@@ -237,15 +239,20 @@ AppStreamAdmin = (function($){
 				url:"/streams/admin/create",
 				data: json,
 				type: "POST",
-				//dataType:"json",
 				processData: false,
 				contentType: "application/json; charset=utf-8",
 				success: function(data){
-					$('#modal_window').hide();
-       				$('#mask').hide();
-					$("#streams_notifications").text("Operation completed successfully !");
-					$("#streams_notifications").fadeIn(1000);
-					$("#streams_notifications").fadeOut(3000);
+					if (data.result == "ok"){
+						$('#modal_window').hide();
+	       				$('#mask').hide();
+						$("#streams_notifications").text("Operation completed successfully!");
+						$("#streams_notifications").fadeIn(1000);
+						$("#streams_notifications").fadeOut(3000);
+					} else {
+						$("#streams_errors").text(data.result);
+						$("#streams_errors").fadeIn(1000);
+						$("#streams_errors").fadeOut(3000);
+					}
 				}
 			});
 		}

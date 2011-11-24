@@ -1,78 +1,78 @@
-AppUserAdmin = (function($){
-	var lineSelected = null;
-	var tableView = null;
-	
-	
-	UserAdminTableLineView = Backbone.View.extend({
-		tagName: "tr",
-		className: 'user_list_line',
-		
-		vid: null,
-		vlogin: null,
-		vfirstname: null,
-		vlastname: null,
-		vlocked: null,
-		vmail:null,
-		
-		events: {
-			"click" : "selectLine",
-			"mouseover" : "overLine",
-			"mouseout" : "outLine"
-		},
-		
-		initialize: function(id, lastname, firstname, login, mail, locked){
-			this.vid = id;
-			this.vlogin = login;
-			this.vfirstname = firstname;
-			this.vlastname = lastname;
-			this.vmail = mail;
-			this.vlocked = locked;
-		},
-		selectLine : function(){
-			$(".editButton").removeAttr('disabled');
-			$(".lockButton").removeAttr('disabled');
-			$(this.el).css("background-color", "#8AA5A1");
-			if(typeof(lineSelected) != "undefined"){
-				if(lineSelected != this && lineSelected != null){
-					$(lineSelected.el).css("background-color", "transparent");
-				}
-			}
-			lineSelected = this;
-			if(this.vlocked == "true"){
-				$(".lockButton").val('Unlock');
-			}
-			else{
-				$(".lockButton").val('Lock');
-			}
-		},
-		overLine : function(){
-			if(lineSelected != this){
-				$(this.el).css("background-color", "#EEEEEE");
-			}
-		},
-		outLine : function(){
-			if(lineSelected != this){
-				$(this.el).css("background-color", "transparent");
-			}
-		},
-		render:function(){
-			var template = '<td><img src="{{icon}}"/></td><td>{{lastname}}</td><td>{{firstname}}</td><td>{{username}}</td><td>{{email}}</td>';
-			var image;
-			if(this.vlocked == "true"){
-				image = "./images/icons/user_locked.png";
-			}
-			else{
-				image = "/images/icons/user.png";
-			}
-			var view = {icon : image, lastname: this.vlastname, firstname: this.vfirstname, username: this.vlogin, email: this.vmail};
-			var html = Mustache.to_html(template, view);
-			
-			$(this.el).html(html);
-			$(this.el).appendTo($("#user_admin_table"));
-			return this;
-		}
-		
-	})
+ AppUserAdmin = (function($){
+        var lineSelected = null;
+        var tableView = null;
+        
+        
+        UserAdminTableLineView = Backbone.View.extend({
+                tagName: "tr",
+                className: 'user_list_line',
+                
+                vid: null,
+                vlogin: null,
+                vfirstname: null,
+                vlastname: null,
+                vlocked: null,
+                vmail:null,
+                
+                events: {
+                        "click" : "selectLine",
+                        "mouseover" : "overLine",
+                        "mouseout" : "outLine"
+                },
+                
+                initialize: function(id, lastname, firstname, login, mail, locked){
+                        this.vid = id;
+                        this.vlogin = login;
+                        this.vfirstname = firstname;
+                        this.vlastname = lastname;
+                        this.vmail = mail;
+                        this.vlocked = locked;
+                },
+                selectLine : function(){
+                        $(".editButton").removeAttr('disabled');
+                        $(".lockButton").removeAttr('disabled');
+                        $(this.el).css("background-color", "#8AA5A1");
+                        if(typeof(lineSelected) != "undefined"){
+                                if(lineSelected != this && lineSelected != null){
+                                        $(lineSelected.el).css("background-color", "transparent");
+                                }
+                        }
+                        lineSelected = this;
+                        if(this.vlocked == "true"){
+                                $(".lockButton").val('Unlock');
+                        }
+                        else{
+                                $(".lockButton").val('Lock');
+                        }
+                },
+                overLine : function(){
+                        if(lineSelected != this){
+                                $(this.el).css("background-color", "#EEEEEE");
+                        }
+                },
+                outLine : function(){
+                        if(lineSelected != this){
+                                $(this.el).css("background-color", "transparent");
+                        }
+                },
+                render:function(){
+                        var template = '<td><img src="{{icon}}"/></td><td>{{lastname}}</td><td>{{firstname}}</td><td>{{username}}</td><td>{{email}}</td>';
+                        var image;
+                        if(this.vlocked == "true"){
+                                image = "./images/icons/user_locked.png";
+                        }
+                        else{
+                                image = "/images/icons/user.png";
+                        }
+                        var view = {icon : image, lastname: this.vlastname, firstname: this.vfirstname, username: this.vlogin, email: this.vmail};
+                        var html = Mustache.to_html(template, view);
+                        
+                        $(this.el).html(html);
+                        $(this.el).appendTo($("#user_admin_table"));
+                        return this;
+                }
+                
+        })
 
 	UserAdminTableView = Backbone.View.extend({
 		el:"user_admin_table",
@@ -127,16 +127,18 @@ AppUserAdmin = (function($){
        		var maskHeight = $(window).height();
        		var maskWidth = $(window).width();
 
-       		//Set height and width to mask to fill up the whole screen
-       		$('#mask').css({'width':maskWidth,'height':maskHeight});
 
-       		//transition effect    
-       		$('#mask').fadeIn(500);   
-       		$('#mask').fadeTo("fast",0.7); 
+            //Set height and width to mask to fill up the whole screen
+            $('#mask').css({'width':maskWidth,'height':maskHeight});
 
-       		//Get the window height and width
-       		var winH = $(window).height();
-      		var winW = $(window).width();
+            //transition effect    
+            $('#mask').fadeIn(500);   
+            $('#mask').fadeTo("fast",0.7); 
+
+            //Get the window height and width
+            var winH = $(window).height();
+            var winW = $(window).width();
+
 
         	//Set the popup window to center
        		$("#modal_window").css('top',  winH/2-$("#modal_window").height()/2);
@@ -380,6 +382,6 @@ AppUserAdmin = (function($){
 })
 
 $( function() {
-	console.log("Starting user administration application")
-	new AppUserAdmin(jQuery).start();
+        console.log("Starting user administration application")
+        new AppUserAdmin(jQuery).start();
 })

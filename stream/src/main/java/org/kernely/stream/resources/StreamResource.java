@@ -37,6 +37,7 @@ import org.kernely.stream.dto.StreamCreationRequestDTO;
 import org.kernely.stream.dto.StreamDTO;
 import org.kernely.stream.dto.StreamMessageCreationRequestDTO;
 import org.kernely.stream.dto.StreamMessageDTO;
+import org.kernely.stream.model.Stream;
 import org.kernely.stream.service.StreamService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -113,17 +114,23 @@ public class StreamResource extends AbstractController {
 	 */
 	@POST
 	@Path("/admin/create")
+	@Produces( { MediaType.APPLICATION_JSON })
 	public String create(StreamCreationRequestDTO stream)
 	{
 		log.debug("Create a user");
 		
 		if(stream.id == 0){
-			streamService.createStream(stream.name,stream.category);
+			try {
+				streamService.createStream(stream.name,stream.category);
+			} catch (IllegalArgumentException iae) {
+				log.debug(iae.getMessage());
+			    return "{\"result\":\""+iae.getMessage()+"\"}";
+			}
 		}
 		else{
 			streamService.updateStream(stream);
 		}
-		return "Ok";
+		return "{\"result\":\"ok\"}";
 	}
 	
 	@GET
@@ -142,7 +149,7 @@ public class StreamResource extends AbstractController {
 	@Produces( { MediaType.TEXT_HTML })
 	public String unlock(@PathParam("id") int id){
 		if (userService.currentUserIsAdministrator()){
-		streamService.unlockStream(id);
+			streamService.unlockStream(id);
 		return "Ok";
 		}
 		return "";

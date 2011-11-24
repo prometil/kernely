@@ -30,6 +30,7 @@ import org.kernely.core.dto.RoleDTO;
 import org.kernely.core.dto.UserCreationRequestDTO;
 import org.kernely.core.dto.UserDTO;
 import org.kernely.core.dto.UserDetailsDTO;
+import org.kernely.core.dto.UserDetailsUpdateRequestDTO;
 import org.kernely.core.model.Role;
 import org.kernely.core.service.user.RoleService;
 import org.kernely.core.service.user.UserService;
@@ -56,13 +57,46 @@ public class UserServiceTest extends AbstractServiceTest{
 		request.firstname="toto";
 		request.lastname="tata";
 		service.createUser(request);
-		UserDTO userdto = new UserDTO() ;
+		UserDTO userdto = new UserDTO("",1) ;
 		userdto = service.getAllUsers().get(0);
 		UserDetailsDTO uddto = new UserDetailsDTO();
 		uddto = service.getUserDetails(userdto.username);
 		assertEquals("toto", userdto.username);
 		assertEquals("toto", uddto.firstname);
 		assertEquals("tata", uddto.lastname);
+	}
+	
+	@Test(expected=IllegalArgumentException.class)
+	public void updateUserWithNullRequest(){
+		service.updateUserProfile(null);		
+	}
+	
+	@Test(expected=IllegalArgumentException.class)
+	public void updateUserWithErrorDate(){
+		UserDetailsUpdateRequestDTO request = new UserDetailsUpdateRequestDTO();
+		request.birth="";
+		service.updateUserProfile(request);		
+	}
+	
+
+	public void updateUserDetails(){
+		UserDetailsUpdateRequestDTO request = new UserDetailsUpdateRequestDTO();
+		request.birth="18/12/1990";
+		request.adress="a";
+		request.businessphone="05";
+		request.city="5555";
+		request.civility=1;
+		request.firstname="blabla";
+		request.homephone="252";
+		request.id=1;
+		request.image="LLll.jpg";
+		request.email="papa";
+		request.mobilephone="06";
+		request.lastname="a";
+		request.nationality="nla";
+		request.ssn="232";
+		request.zip="45544";
+		service.updateUserProfile(request);		
 	}
 	
 	@Test(expected=IllegalArgumentException.class)
@@ -171,5 +205,4 @@ public class UserServiceTest extends AbstractServiceTest{
 	public void getNullUser(){
 		assertEquals(0, service.getAllUsers().size());
 	}
-	
 }

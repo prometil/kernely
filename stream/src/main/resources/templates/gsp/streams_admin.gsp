@@ -2,7 +2,7 @@
 
 <div id="group_header" style=""></div>
 <div id="mask" style="position:absolute;z-index:9000;background-color:#000;display:none;top:0;left:0;"></div>
-<div id="modal_window" style=" position:absolute;width:440px;height:150px;display:none;z-index:9999;padding:20px;top:0;left:0;">
+<div id="modal_window" style=" position:absolute;width:440px;height:160px;display:none;z-index:9999;padding:20px;top:0;left:0;">
 </div>
 
 <script type="text/html" id="popup-stream-admin-template">
@@ -13,7 +13,8 @@
 	Category : <input type="text" name="category" value="{{category}}"/><br/>
 	</fieldset>
 	<br/>
-	<input type="button" value="Send" class="sendStream"/>
+	<input type="button" value="Send" class="sendStream"/><br/>
+	<span id="streams_errors" style="display:none;font-weight:bold;color:red;"></span>
 </script>
 
 <div id="stream_admin_container">
