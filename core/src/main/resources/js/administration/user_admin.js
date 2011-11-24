@@ -118,7 +118,8 @@ AppUserAdmin = (function($){
 		viewUpdate:null,
 		
 		initialize: function(){
-			this.viewCreateUpdate =  new UserAdminCreateUpdateView("","","", 0);
+			this.viewCreate =  new UserAdminCreateView();
+			this.viewUpdate = new UserAdminUpdateView("","","",0);
 		},
 		
 		showModalWindow: function(){
@@ -148,15 +149,13 @@ AppUserAdmin = (function($){
 		
 		createuser: function(){
 			this.showModalWindow();
-			// We set 0 for the id to create
-			this.viewCreateUpdate.setFields("","","",0);
-			this.viewCreateUpdate.render();
+			this.viewCreate.render();
 		},
 		
 		edituser: function(){
 			this.showModalWindow();
-			this.viewCreateUpdate.setFields(lineSelected.vlogin,lineSelected.vfirstname,lineSelected.vlastname,lineSelected.vid);
-			this.viewCreateUpdate.render();
+			this.viewUpdate.setFields(lineSelected.vlogin,lineSelected.vfirstname,lineSelected.vlastname,lineSelected.vid);
+			this.viewUpdate.render();
 		},
 		
 		lockuser: function(){
@@ -178,7 +177,58 @@ AppUserAdmin = (function($){
 		}
 	})
 	
-	UserAdminCreateUpdateView = Backbone.View.extend({
+	UserAdminCreateView = Backbone.View.extend({
+		el: "#modal_window",
+		
+		events:{
+			"click .closeModal" : "closemodal",
+			"click .createUser" : "registeruser"
+		},
+		
+		initialize:function(){
+		},
+		
+		render : function(){
+			var template = $("#popup-user-admin-create-template").html();
+			
+			var view = {};
+			var html = Mustache.to_html(template, view);
+			$(this.el).html(html);
+			return this;
+		},
+		
+		closemodal: function(){
+			$('#modal_window').hide();
+       		$('#mask').hide();
+		},
+		
+		registeruser: function(){
+			var json = '{"id":"0", "firstname":"'+$('input[name*="firstname"]').val()+'","lastname":"'+$('input[name*="lastname"]').val()+'", "username":"'+$('input[name*="login"]').val()+'", "password":"'+$('input[name*="password"]').val()+'"}';
+			$.ajax({
+				url:"/admin/users/create",
+				data: json,
+				type: "POST",
+				dataType:"json",
+				processData: false,
+				contentType: "application/json; charset=utf-8",
+				success: function(data){
+				  if (data.result == "ok"){
+					$('#modal_window').hide();
+	       			$('#mask').hide();
+					$("#users_notifications").text("Operation completed successfully !");
+					$("#users_notifications").fadeIn(1000);
+					$("#users_notifications").fadeOut(3000);
+				  } else {
+                    $("#users_errors_create").text(data.result);
+                    $("#users_errors_create").fadeIn(1000);
+                    $("#users_errors_create").fadeOut(3000);
+				  }
+				}
+			});
+		}
+	}) 
+	
+	UserAdminUpdateView = Backbone.View.extend({
 		el: "#modal_window",
 		
 		vid: null,
@@ -188,7 +238,7 @@ AppUserAdmin = (function($){
 		
 		events:{
 			"click .closeModal" : "closemodal",
-			"click .sendUser" : "registeruser"
+			"click .updateUser" : "updateuser"
 		},
 		
 		initialize:function(login, firstname, lastname, id){
@@ -206,11 +256,13 @@ AppUserAdmin = (function($){
 		},
 		
 		render : function(){
-			var template = $("#popup-user-admin-template").html();
+			var template = $("#popup-user-admin-update-template").html();
 			
 			var view = {login : this.vlogin, firstname: this.vfirstname, lastname: this.vlastname};
 			var html = Mustache.to_html(template, view);
 			$(this.el).html(html);
+			
+			new RolesCBListView(this.vid).render();
 			return this;
 		},
 		
@@ -219,25 +271,104 @@ AppUserAdmin = (function($){
        		$('#mask').hide();
 		},
 		
-		registeruser: function(){
-			var json = '{"id":"'+this.vid+'", "firstname":"'+$('input[name*="firstname"]').val()+'","lastname":"'+$('input[name*="lastname"]').val()+'", "username":"'+$('input[name*="login"]').val()+'", "password":"'+$('input[name*="password"]').val()+'"}';
+		updateuser: function(){
+			var rolesCB = $("input:checked");
+			var count = 0;
+			var roles = "";
+			if(rolesCB.length > 0){
+				roles = '"roles":[';
+				
+				$.each(rolesCB, function(){
+					// Just the id is useful, name is here just for the DTO
+					roles += '{"id":"'+ $(this).attr('id') +'", "name":"null"}';
+					count++;
+					if(count<rolesCB.length){
+						roles += ',';
+					}
+				});
+				roles += "]";
+			}
+			else{
+				roles = '"roles":{}';
+			}
+			var json = '{"id":"'+this.vid+'", "firstname":"'+$('input[name*="firstname"]').val()+'","lastname":"'+$('input[name*="lastname"]').val()+'", "username":"'+$('input[name*="login"]').val()+'", "password":"'+$('input[name*="password"]').val()+'", ' + roles + '}';
 			$.ajax({
 				url:"/admin/users/create",
 				data: json,
 				type: "POST",
-				//dataType:"json",
+				dataType:"json",
 				processData: false,
 				contentType: "application/json; charset=utf-8",
 				success: function(data){
-					$('#modal_window').hide();
-       				$('#mask').hide();
-					$("#users_notifications").text("Operation completed successfully !");
-					$("#users_notifications").fadeIn(1000);
-					$("#users_notifications").fadeOut(3000);
+					if (data.result == "ok"){
+						$('#modal_window').hide();
+						$('#mask').hide();
+						$("#users_notifications").text("Operation completed successfully !");
+						$("#users_notifications").fadeIn(1000);
+						$("#users_notifications").fadeOut(3000);
+					} else {
+						$("#users_errors_update").text(data.result);
+						$("#users_errors_update").fadeIn(1000);
+						$("#users_errors_update").fadeOut(3000);
+					}
 				}
 			});
 		}
-	}) 
+	})
+	
+	RolesCBListView = Backbone.View.extend({
+		el:"#rolesToLink",
+		
+		userId: null,
+		
+		events:{
+		
+		},
+		
+		initialize:function(userid){
+			this.userId = userid;
+		},
+		
+		render: function(){
+			var parent = this;
+			$.ajax({
+				type: "GET",
+				url:"/roles/all",
+				dataType:"json",
+				success: function(data){
+					if(data.roleDTO.length > 1){
+			    		$.each(data.roleDTO, function() {
+			    			$(parent.el).append('<input type="checkbox" id="'+ this.id +'">'+ this.name + '</input><br/>');
+			    		});
+					}
+					// In the case when there is only one user.
+					else{
+						$(parent.el).append('<input type="checkbox" id="'+ data.roleDTO.id +'">'+ data.roleDTO.name +'</input><br/>');
+					}
+					
+					$.ajax({
+						type: "GET",
+						url:"/admin/users/" + parent.userId + "/roles",
+						dataType:"json",
+						success: function(data){
+							if(data != null && typeof(data) != "undefined"){
+								if(data.roleDTO.length > 1){
+						    		$.each(data.roleDTO, function() {
+						    			$('#' + this.id).attr("checked", "checked");
+						    		});
+								}
+								// In the case when there is only one user.
+								else{
+									$('#' + data.roleDTO.id).attr("checked", "checked");
+								}
+							}
+						}
+					});
+				}
+			});
+			return this;
+		}
+	})
 	
 	// define the application initialization
 	var self = {};

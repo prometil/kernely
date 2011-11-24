@@ -13,6 +13,7 @@ import org.kernely.core.dto.GroupCreationRequestDTO;
 import org.kernely.core.dto.GroupDTO;
 import org.kernely.core.dto.UserDTO;
 import org.kernely.core.service.user.GroupService;
+import org.kernely.core.service.user.UserService;
 import org.kernely.core.template.TemplateRenderer;
 
 import com.google.inject.Inject;
@@ -26,21 +27,30 @@ public class GroupAdminController extends AbstractController {
 	@Inject
 	private GroupService groupService;
 	
+	@Inject
+	private UserService userService;
+	
 	@GET
 	@Path("/all")
 	@Produces({"application/json"})
 	public List<GroupDTO> displayAllGroups()
 	{
-		log.debug("Call to GET on all users");
-		List<GroupDTO> groups = groupService.getAllGroups();
-		return groups;
+		if (userService.currentUserIsAdministrator()){
+			log.debug("Call to GET on all users");
+			List<GroupDTO> groups = groupService.getAllGroups();
+			return groups;
+		}
+		return null;
 	}
 	
 	@GET
 	@Produces( { MediaType.TEXT_HTML })
 	public String displayPage()
 	{
-		return templateRenderer.create("/templates/gsp/administration/group_admin.gsp").withoutLayout().render() ;
+		if (userService.currentUserIsAdministrator()){
+			return templateRenderer.create("/templates/gsp/administration/group_admin.gsp").withoutLayout().render() ;
+		}
+		return templateRenderer.create("/templates/gsp/home.gsp").render();
 	}
 	
 	/**
@@ -49,32 +59,47 @@ public class GroupAdminController extends AbstractController {
 	 */
 	@POST
 	@Path("/create")
+	@Produces({"application/json"})
 	public String create(GroupCreationRequestDTO group)
 	{
-		log.debug("Create a user");
 		
-		if(group.id == 0){
-			groupService.createGroup(group);
+		if (userService.currentUserIsAdministrator()){
+			try{
+				log.debug("Create a user");
+				if(group.id == 0){
+					groupService.createGroup(group);
+				}
+				else{
+					groupService.updateGroup(group);
+				}
+				return "{\"result\":\"ok\"}";
+			} catch (IllegalArgumentException iae) {
+				log.debug(iae.getMessage());
+				return "{\"result\":\""+iae.getMessage()+"\"}";
+			}
 		}
-		else{
-			groupService.updateGroup(group);
-		}
-		return "Ok";
+		return null;
 	}
 	
 	@GET
 	@Path("/delete/{id}")
 	@Produces( { MediaType.TEXT_HTML })
 	public String lock(@PathParam("id") int id){
-		groupService.deleteGroup(id);
-		return "Ok";
+		if (userService.currentUserIsAdministrator()){
+			groupService.deleteGroup(id);
+			return "Ok";
+		}
+		return null;
 	}
 	
 	@GET
 	@Path("/{id}/users")
 	@Produces({"application/json"})
 	public List<UserDTO> getGroupUsers(@PathParam("id") int id){
-		return groupService.getGroupUsers(id);
+		if (userService.currentUserIsAdministrator()){
+			return groupService.getGroupUsers(id);
+		}
+		return null;
 	}
 
 }

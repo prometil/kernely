@@ -32,6 +32,7 @@ import org.kernely.core.resources.AdminController;
 import org.kernely.core.resources.GroupAdminController;
 import org.kernely.core.resources.GroupController;
 import org.kernely.core.resources.MainController;
+import org.kernely.core.resources.RoleController;
 import org.kernely.core.resources.UserAdminController;
 import org.kernely.core.resources.UserController;
 import org.kernely.core.service.mail.MailService;
@@ -60,6 +61,7 @@ public class CorePlugin extends AbstractPlugin {
 		registerConfigurationPath("core-config.xml");
 		registerController(UserController.class);
 		registerController(GroupController.class);
+		registerController(RoleController.class);
 		registerController(AdminController.class);
 		registerController(UserAdminController.class);
 		registerController(GroupAdminController.class);

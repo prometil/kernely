@@ -5,7 +5,7 @@
 <div id="modal_window" style=" position:absolute;width:440px;height:250px;display:none;z-index:9999;padding:20px;top:0;left:0;">
 </div>
 
-<script type="text/html" id="popup-user-admin-template">
+<script type="text/html" id="popup-user-admin-create-template">
 	<input type="button" value="Close" class="closeModal" style="right:0;"/><br/>
 	<fieldset>
 	<legend>Connection informations</legend>
@@ -19,7 +19,33 @@
 	Firstname : <input type="text" name="firstname" value="{{firstname}}"/>
 	</fieldset>
 	<br/>
-	<input type="button" value="Send" class="sendUser"/>
+	
+	<input type="button" value="Send" class="createUser"/>
+	<span id="users_errors_create" style="display:none;font-weight:bold;color:red;"></span>
+</script>
+
+<script type="text/html" id="popup-user-admin-update-template">
+	<input type="button" value="Close" class="closeModal" style="right:0;"/><br/>
+	<fieldset>
+	<legend>Connection informations</legend>
+	Login : <input type="text" name="login" value="{{login}}"/><br/>
+	Password : <input type="text" name="password"/>
+	</fieldset>
+	<br/>
+	<fieldset>
+	<legend>User informations</legend>
+	Lastname : <input type="text" name="lastname" value="{{lastname}}"/><br/>
+	Firstname : <input type="text" name="firstname" value="{{firstname}}"/>
+	</fieldset>
+	<fieldset>
+	<legend>User roles</legend>
+		<div id="rolesToLink" style="height:150px;overflow-y:auto;">
+			<!-- Filled by ajax  -->
+		</div>
+	</fieldset>
+	<br/>
+	<input type="button" value="Send" class="updateUser"/>
+	<span id="users_errors_update" style="display:none;font-weight:bold;color:red;"></span>
 </script>
 
 <div id="user_admin_container">

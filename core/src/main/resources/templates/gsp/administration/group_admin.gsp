@@ -16,6 +16,7 @@
 	</fieldset>
 	<br/>
 	<input type="button" value="Send" class="createGroup"/>
+	<span id="users_errors_create" style="display:none;font-weight:bold;color:red;"></span>
 </script>
 
 <!-- Template for the edit view  -->
@@ -34,6 +35,7 @@
 	</fieldset>
 	<br/>
 	<input type="button" value="Send" class="updateGroup"/>
+	<span id="users_errors_update" style="display:none;font-weight:bold;color:red;"></span>
 </script>
 
 <div id="group_admin_container">

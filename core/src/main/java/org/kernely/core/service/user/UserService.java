@@ -20,7 +20,9 @@ If not, see <http://www.gnu.org/licenses/>.
 package org.kernely.core.service.user;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
@@ -29,6 +31,7 @@ import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.crypto.RandomNumberGenerator;
 import org.apache.shiro.crypto.SecureRandomNumberGenerator;
 import org.apache.shiro.crypto.hash.Sha256Hash;
+import org.kernely.core.dto.RoleDTO;
 import org.kernely.core.dto.UserCreationRequestDTO;
 import org.kernely.core.dto.UserDTO;
 import org.kernely.core.dto.UserDetailsDTO;
@@ -61,6 +64,7 @@ public class UserService {
 	 * @param request
 	 *            The request, containing user data : passwod, username...
 	 */
+	@SuppressWarnings("unchecked")
 	@Transactional
 	public void createUser(UserCreationRequestDTO request) {
 		if(request==null){
@@ -74,6 +78,13 @@ public class UserService {
 		if("".equals(request.username.trim()) || "".equals(request.password.trim())){
 			throw new IllegalArgumentException("Username or/and password cannot be space character only ");
 		}
+		
+		Query verifExist = em.get().createQuery("SELECT u FROM User u WHERE username='"+ request.username +"'");
+		List<User> list = (List<User>)verifExist.getResultList();
+		if(!list.isEmpty()){
+			throw new IllegalArgumentException("Another user with this username already exists");
+		}
+				
 		User user = new User();
 		//user.setPassword(request.password.trim());
 		user.setUsername(request.username.trim());
@@ -85,8 +96,15 @@ public class UserService {
 		//iterations and then Base64-encode the value (requires less space than Hex):
 		String hashedPasswordBase64 = new Sha256Hash(request.password.trim(), salt, 1024).toBase64();
 
+		// Retrieve the role User, automaticaly given to a user.
+		Query query = em.get().createQuery("SELECT r FROM Role r WHERE name='"+ Role.ROLE_USER +"'");
+		Role roleUser = (Role)query.getSingleResult();
+		
 		user.setPassword(hashedPasswordBase64);
-		user.setSalt(salt.toString()); 
+		user.setSalt(salt.toString());
+		Set<Role> roles = new HashSet<Role>();
+		roles.add(roleUser);
+		user.setRoles(roles);
 		
 		em.get().persist(user);
 		
@@ -96,6 +114,7 @@ public class UserService {
 		userdetails.setUser(user);
 		
 		em.get().persist(userdetails);
+		
 		eventBus.post(new UserCreationEvent(user.getId(), user.getUsername()));
 
 	}
@@ -107,6 +126,7 @@ public class UserService {
 		u.setLocked(!u.isLocked());
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Transactional
 	public void updateUser(UserCreationRequestDTO request) {
 		if(request==null){
@@ -121,11 +141,36 @@ public class UserService {
 			throw new IllegalArgumentException("Username cannot be space character only ");
 		}
 		
+		// Retrieve the updated user
 		UserDetails ud = em.get().find(UserDetails.class, request.id);
+		
+		Query verifExist = em.get().createQuery("SELECT u FROM User u WHERE username='"+ request.username +"' AND id != "+ ud.getUser().getId() );
+		List<User> list = (List<User>)verifExist.getResultList();
+		if(!list.isEmpty()){
+			throw new IllegalArgumentException("Another user with this username already exists");
+		}
+		
+		// Retrieve the role User, automaticaly given to a user.
+		Query query = em.get().createQuery("SELECT r FROM Role r WHERE name='"+ Role.ROLE_USER +"'");
+		Role roleUser = (Role)query.getSingleResult();
+
+		Set<Role> roles = new HashSet<Role>();
+		if(!request.roles.isEmpty()){
+			if(!(request.roles.get(0).name == null)){
+				for(RoleDTO r: request.roles){
+					roles.add(em.get().find(Role.class, r.id));
+				}
+			}
+		}
+		// Add the user Role.
+		roles.add(roleUser);
+		
 		ud.setFirstname(request.firstname);
 		ud.setName(request.lastname);
 		User u = em.get().find(User.class, ud.getUser().getId());
 		u.setUsername(request.username);
+		
+		u.setRoles(roles);
 	}
 
 	/**
@@ -194,5 +239,23 @@ public class UserService {
 	@Transactional
 	public boolean currentUserIsAdministrator(){
 		return SecurityUtils.getSubject().hasRole(Role.ROLE_ADMINISTRATOR);
+	}
+	
+	@Transactional
+	public List<RoleDTO> getUserRoles(int id){
+		UserDetails ud = em.get().find(UserDetails.class, id);
+		
+		Query query = em.get().createQuery("SELECT r FROM Role r WHERE name='"+ Role.ROLE_USER +"'");
+		Role roleUser = (Role)query.getSingleResult();
+		
+		List<RoleDTO> dtos = new ArrayList<RoleDTO>();
+		Set<Role> userRoles = ud.getUser().getRoles();
+		userRoles.remove(roleUser);
+		
+		for (Role role : userRoles) {
+			dtos.add(new RoleDTO(role.getId(), role.getName()));
+		}
+		
+		return dtos;
 	}
 }

@@ -22,11 +22,16 @@ package org.kernely.core.service;
 
 import static org.junit.Assert.assertEquals;
 
+import java.util.ArrayList;
+
 import org.junit.Test;
 import org.kernely.core.common.AbstractServiceTest;
+import org.kernely.core.dto.RoleDTO;
 import org.kernely.core.dto.UserCreationRequestDTO;
 import org.kernely.core.dto.UserDTO;
 import org.kernely.core.dto.UserDetailsDTO;
+import org.kernely.core.model.Role;
+import org.kernely.core.service.user.RoleService;
 import org.kernely.core.service.user.UserService;
 
 import com.google.inject.Inject;
@@ -36,9 +41,15 @@ public class UserServiceTest extends AbstractServiceTest{
 	
 	@Inject
 	private UserService service;
+	
+	@Inject
+	private RoleService roleService;
 		
 	@Test
 	public void  createUser(){
+		RoleDTO requestRole = new RoleDTO(1, Role.ROLE_USER);
+		roleService.createRole(requestRole);
+		
 		UserCreationRequestDTO request = new UserCreationRequestDTO();
 		request.username="toto";
 		request.password="tata";
@@ -93,6 +104,9 @@ public class UserServiceTest extends AbstractServiceTest{
 	
 	@Test
 	public void  getUser(){
+		RoleDTO requestRole = new RoleDTO(1, Role.ROLE_USER);
+		roleService.createRole(requestRole);
+		
 		UserCreationRequestDTO request = new UserCreationRequestDTO();
 		request.username="toto";
 		request.password="tata";
@@ -105,6 +119,9 @@ public class UserServiceTest extends AbstractServiceTest{
 	
 	@Test
 	public void lockedUser(){
+		RoleDTO requestRole = new RoleDTO(1, Role.ROLE_USER);
+		roleService.createRole(requestRole);
+		
 		UserCreationRequestDTO request = new UserCreationRequestDTO();
 		request.username="test";
 		request.password="test";
@@ -123,6 +140,9 @@ public class UserServiceTest extends AbstractServiceTest{
 	
 	@Test
 	public void updateUser(){
+		RoleDTO requestRole = new RoleDTO(1, Role.ROLE_USER);
+		roleService.createRole(requestRole);
+		
 		UserCreationRequestDTO request = new UserCreationRequestDTO();
 		request.username="test";
 		request.password="test";
@@ -138,6 +158,7 @@ public class UserServiceTest extends AbstractServiceTest{
 		ucr.username = "test MODIFIED 1";
 		ucr.firstname = "test MODIFIED 2";
 		ucr.lastname = "test MODIFIED 3";
+		ucr.roles = new ArrayList<RoleDTO>();
 		service.updateUser(ucr);
 		userdto = service.getAllUsers().get(0);
 		uddto = service.getUserDetails(userdto.username);
