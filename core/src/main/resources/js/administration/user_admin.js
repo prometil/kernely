@@ -1,4 +1,4 @@
-AppUserAdmin = (function($){
+ AppUserAdmin = (function($){
         var lineSelected = null;
         var tableView = null;
         
@@ -10,7 +10,7 @@ AppUserAdmin = (function($){
                 vid: null,
                 vlogin: null,
                 vfirstname: null,
-                vname: null,
+                vlastname: null,
                 vlocked: null,
                 vmail:null,
                 
@@ -20,11 +20,11 @@ AppUserAdmin = (function($){
                         "mouseout" : "outLine"
                 },
                 
-                initialize: function(id, name, firstname, login, mail, locked){
+                initialize: function(id, lastname, firstname, login, mail, locked){
                         this.vid = id;
                         this.vlogin = login;
                         this.vfirstname = firstname;
-                        this.vname = name;
+                        this.vlastname = lastname;
                         this.vmail = mail;
                         this.vlocked = locked;
                 },
@@ -56,15 +56,15 @@ AppUserAdmin = (function($){
                         }
                 },
                 render:function(){
-                        var template = '<td><img src="{{icon}}"/></td><td>{{name}}</td><td>{{firstname}}</td><td>{{username}}</td><td>{{mail}}</td>';
+                        var template = '<td><img src="{{icon}}"/></td><td>{{lastname}}</td><td>{{firstname}}</td><td>{{username}}</td><td>{{email}}</td>';
                         var image;
                         if(this.vlocked == "true"){
-                                image = "/images/icons/user_locked.png";
+                                image = "./images/icons/user_locked.png";
                         }
                         else{
                                 image = "/images/icons/user.png";
                         }
-                        var view = {icon : image, name: this.vname, firstname: this.vfirstname, username: this.vlogin, mail: this.vmail};
+                        var view = {icon : image, lastname: this.vlastname, firstname: this.vfirstname, username: this.vlogin, email: this.vmail};
                         var html = Mustache.to_html(template, view);
                         
                         $(this.el).html(html);
@@ -88,12 +88,12 @@ AppUserAdmin = (function($){
                                 success: function(data){
                                         if(data.userDetailsDTO.length > 1){
                                             $.each(data.userDetailsDTO, function() {
-                                                    var view = new UserAdminTableLineView(this.id, this.name, this.firstname, this.user.username, this.mail, this.user.locked);
+                                                    var view = new UserAdminTableLineView(this.id, this.lastname, this.firstname, this.user.username, this.email, this.user.locked);
                                                     view.render();
                                             });
                                         }
                                         else{
-                                                var view = new UserAdminTableLineView(data.userDetailsDTO.id, data.userDetailsDTO.name, data.userDetailsDTO.firstname, data.userDetailsDTO.user.username, data.userDetailsDTO.mail, data.userDetailsDTO.user.locked);
+                                                var view = new UserAdminTableLineView(data.userDetailsDTO.id, data.userDetailsDTO.lastname, data.userDetailsDTO.firstname, data.userDetailsDTO.user.username, data.userDetailsDTO.email, data.userDetailsDTO.user.locked);
                                             view.render();
                                         }
                                 }
@@ -138,7 +138,7 @@ AppUserAdmin = (function($){
                       var winW = $(window).width();
 
                 //Set the popup window to center
-                     $("#modal_window").css('top',  winH/2-$("#modal_window").height()/2);
+                       $("#modal_window").css('top',  winH/2-$("#modal_window").height()/2);
                      $("#modal_window").css('left', winW/2-$("#modal_window").width()/2);
                      $("#modal_window").css('background-color', "#EEEEEE");
                      $("input:text").each(function(){this.value="";});
@@ -155,13 +155,12 @@ AppUserAdmin = (function($){
                 
                 edituser: function(){
                         this.showModalWindow();
-                        this.viewCreateUpdate.setFields(lineSelected.vlogin,lineSelected.vfirstname,lineSelected.vname,lineSelected.vid);
+                        this.viewCreateUpdate.setFields(lineSelected.vlogin,lineSelected.vfirstname,lineSelected.vlastname,lineSelected.vid);
                         this.viewCreateUpdate.render();
                 },
                 
                 lockuser: function(){
-                	console.log("jjjj");
-                        var answer = confirm(lineSelected.vname + " " + lineSelected.vfirstname + " (" + lineSelected.vlogin + ") will be disabled. Do you want to continue ?");
+                        var answer = confirm(lineSelected.vlastname + " " + lineSelected.vfirstname + " (" + lineSelected.vlogin + ") will be disabled. Do you want to continue ?");
                         if (answer){
                                 $.ajax({
                                         url:"/admin/users/lock/" + lineSelected.vid,
@@ -185,31 +184,31 @@ AppUserAdmin = (function($){
                 vid: null,
                 vlogin: null,
                 vfirstname: null,
-                vname: null,
+                vlastname: null,
                 
                 events:{
                         "click .closeModal" : "closemodal",
                         "click .sendUser" : "registeruser"
                 },
                 
-                initialize:function(login, firstname, name, id){
+                initialize:function(login, firstname, lastname, id){
                         this.vid = id;
                         this.vlogin = login;
                         this.vfirstname = firstname;
-                        this.vname = name;
+                        this.vlastname = lastname;
                 },
                 
-                setFields: function(login, firstname, name, id){
+                setFields: function(login, firstname, lastname, id){
                         this.vid = id;
                         this.vlogin = login;
                         this.vfirstname = firstname;
-                        this.vname = name;
+                        this.vlastname = lastname;
                 },
                 
                 render : function(){
                         var template = $("#popup-user-admin-template").html();
                         
-                        var view = {login : this.vlogin, firstname: this.vfirstname, name: this.vname};
+                        var view = {login : this.vlogin, firstname: this.vfirstname, lastname: this.vlastname};
                         var html = Mustache.to_html(template, view);
                         $(this.el).html(html);
                         return this;
@@ -221,7 +220,7 @@ AppUserAdmin = (function($){
                 },
                 
                 registeruser: function(){
-                        var json = '{"id":"'+this.vid+'", "firstname":"'+$('input[name*="firstname"]').val()+'","name":"'+$('input[name*="name"]').val()+'", "username":"'+$('input[name*="login"]').val()+'", "password":"'+$('input[name*="password"]').val()+'"}';
+                        var json = '{"id":"'+this.vid+'", "firstname":"'+$('input[name*="firstname"]').val()+'","lastname":"'+$('input[name*="lastname"]').val()+'", "username":"'+$('input[name*="login"]').val()+'", "password":"'+$('input[name*="password"]').val()+'"}';
                         $.ajax({
                                 url:"/admin/users/create",
                                 data: json,

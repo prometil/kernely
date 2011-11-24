@@ -47,13 +47,12 @@ public class UserServiceTest extends AbstractServiceTest{
 		request.lastname="tata";
 		service.createUser(request);
 		UserDTO userdto = new UserDTO("",1) ;
-
 		userdto = service.getAllUsers().get(0);
 		UserDetailsDTO uddto = new UserDetailsDTO();
 		uddto = service.getUserDetails(userdto.username);
 		assertEquals("toto", userdto.username);
 		assertEquals("toto", uddto.firstname);
-		assertEquals("tata", uddto.name);
+		assertEquals("tata", uddto.lastname);
 	}
 	
 	@Test(expected=IllegalArgumentException.class)
@@ -80,9 +79,9 @@ public class UserServiceTest extends AbstractServiceTest{
 		request.homephone="252";
 		request.id=1;
 		request.image="LLll.jpg";
-		request.mail="papa";
+		request.email="papa";
 		request.mobilephone="06";
-		request.name="a";
+		request.lastname="a";
 		request.nationality="nla";
 		request.ssn="232";
 		request.zip="45544";
@@ -178,7 +177,7 @@ public class UserServiceTest extends AbstractServiceTest{
 		uddto = service.getUserDetails(userdto.username);
 		assertEquals("test MODIFIED 1", userdto.username);
 		assertEquals("test MODIFIED 2", uddto.firstname);
-		assertEquals("test MODIFIED 3", uddto.name);
+		assertEquals("test MODIFIED 3", uddto.lastname);
 	}
 	
 	@Test

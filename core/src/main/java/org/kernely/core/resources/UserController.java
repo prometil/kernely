@@ -23,11 +23,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigInteger;
-import java.net.MalformedURLException;
 import java.security.SecureRandom;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 
 import javax.ws.rs.Consumes;
@@ -46,7 +42,6 @@ import org.kernely.core.dto.UserCreationRequestDTO;
 import org.kernely.core.dto.UserDTO;
 import org.kernely.core.dto.UserDetailsDTO;
 import org.kernely.core.dto.UserDetailsUpdateRequestDTO;
-import org.kernely.core.model.UserDetails;
 import org.kernely.core.resourceLocator.ResourceLocator;
 import org.kernely.core.service.user.UserService;
 import org.kernely.core.template.TemplateRenderer;
@@ -54,7 +49,6 @@ import org.kernely.core.template.TemplateRenderer;
 import com.google.inject.Inject;
 import com.sun.jersey.core.header.FormDataContentDisposition;
 import com.sun.jersey.multipart.FormDataParam;
-import com.sun.xml.internal.ws.api.ResourceLoader;
 
 
 /**
@@ -159,7 +153,7 @@ public class UserController  extends AbstractController{
 		if(uddto.image != null){
 			imagePath = "/images/" + uddto.image;
 		}
-		return templateRenderer.create(template).with("username", uddto.firstname + " " + uddto.name).with("name", uddto.name).with("firstname", uddto.firstname).with("mail", uddto.mail).with("image", imagePath).with("imagename", uddto.image).with("description", "Some text about you. *** Not in DB ***").with("adress", uddto.adress).with("zip", uddto.zip).with("city", uddto.city).with("homephone", uddto.homephone).with("mobilephone", uddto.mobilephone).with("businessphone", uddto.businessphone).with("birth", uddto.birth).with("nationality", uddto.nationality).with("ssn", uddto.ssn).with("civility", uddto.civility).render();
+		return templateRenderer.create(template).with("username", uddto.firstname + " " + uddto.lastname).with("lastname", uddto.lastname).with("firstname", uddto.firstname).with("email", uddto.email).with("image", imagePath).with("imagename", uddto.image).with("description", "Some text about you. *** Not in DB ***").with("adress", uddto.adress).with("zip", uddto.zip).with("city", uddto.city).with("homephone", uddto.homephone).with("mobilephone", uddto.mobilephone).with("businessphone", uddto.businessphone).with("birth", uddto.birth).with("nationality", uddto.nationality).with("ssn", uddto.ssn).with("civility", uddto.civility).render();
 	}
 	
 
@@ -168,7 +162,7 @@ public class UserController  extends AbstractController{
 	public UserDetailsDTO editProfil(UserDetailsUpdateRequestDTO user) {
 			
 		UserDetailsDTO ud = userService.getUserDetails(userService.getCurrentUser().username);
-		UserDetailsDTO uddto = new UserDetailsDTO(user.firstname, user.name, user.image,user.mail, user.adress,user.zip, user.city, user.homephone, user.mobilephone,user.businessphone, user.birth, user.nationality, user.ssn,user.civility,ud.id, new UserDTO()); 
+		UserDetailsDTO uddto = new UserDetailsDTO(user.firstname, user.lastname, user.image,user.email, user.adress,user.zip, user.city, user.homephone, user.mobilephone,user.businessphone, user.birth, user.nationality, user.ssn,user.civility,ud.id, new UserDTO()); 
 		
 		//Match the user id (foreign key) with the userdetailid
 		user.id=ud.id;
@@ -204,7 +198,7 @@ public class UserController  extends AbstractController{
 		// up to date the database		
 		UserDetailsDTO user= userService.getUserDetails(userService.getCurrentUser().username);
 		
-		UserDetailsUpdateRequestDTO ud = new UserDetailsUpdateRequestDTO(user.firstname, user.name, fileName,user.mail, user.adress,user.zip, user.city, user.homephone, user.mobilephone,user.businessphone, user.birth, user.nationality, user.ssn, user.id ,user.civility);
+		UserDetailsUpdateRequestDTO ud = new UserDetailsUpdateRequestDTO(user.firstname, user.lastname, fileName,user.email, user.adress,user.zip, user.city, user.homephone, user.mobilephone,user.businessphone, user.birth, user.nationality, user.ssn, user.id ,user.civility);
 		userService.updateUserProfile(ud);
 	
 	}

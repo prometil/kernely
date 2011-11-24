@@ -26,6 +26,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
 import org.kernely.core.service.mail.Mailer;
+import org.kernely.stream.dto.StreamCreationRequestDTO;
 import org.kernely.stream.dto.StreamDTO;
 import org.kernely.stream.dto.StreamMessageDTO;
 import org.kernely.stream.model.Message;
@@ -148,6 +149,53 @@ public class StreamService {
 		em.get().persist(newStream);
 	}
 	
+	
+	/**
+	 * Update an existing stream in database
+	 * @param request
+	 * 			The request, containing title, category, and id of the stream
+	 */
+	@Transactional
+	public void updateStream(StreamCreationRequestDTO request) {
+		if(request==null){
+			throw new IllegalArgumentException("Request cannot be null ");
+		}
+		
+		if("".equals(request.name)){
+			throw new IllegalArgumentException("Stream title cannot be null ");
+		}
+		
+		if("".equals(request.name.trim())){
+			throw new IllegalArgumentException("Stream title cannot be space character only ");
+		}
+		
+		Stream stream = em.get().find(Stream.class, request.id);
+		stream.setTitle(request.name);
+		stream.setCategory(request.category);
+	}
+	
+	
+	/**
+	 * Lock an existing stream in database
+	 * @param id The id of the stream to lock.
+	 */
+	@Transactional
+	public void lockStream(long stream_id) {
+		Stream stream = getStreamModel(stream_id);
+		stream.setLocked(true);
+	}
+
+	/**
+	 * Lock an existing stream in database
+	 * @param id The id of the stream to lock.
+	 */
+	@Transactional
+	public void unlockStream(long stream_id) {
+		Stream stream = getStreamModel(stream_id);
+		stream.setLocked(false);
+	}
+
+	
 	/**
 	 * Get a stream by it's name and categry.
 	 * @param title The title of this stream.
@@ -162,5 +210,23 @@ public class StreamService {
 		log.debug("Found stream: {}", stream.getTitle());
 		StreamDTO dto = new StreamDTO(stream);
 		return dto;
+	}
+
+	/**
+	 * Gets the list of all streams contained in the database.
+	 * @return the list of all streams contained in the database.
+	 */
+	@Transactional
+	@SuppressWarnings("unchecked")
+	public List<StreamDTO> getAllStreams() {
+		Query query = em.get().createQuery("SELECT e FROM Stream e");
+		List<Stream> collection = (List<Stream>) query.getResultList();
+		List<StreamDTO> dtos = new ArrayList<StreamDTO>();
+		for (Stream stream: collection) {
+			dtos.add(new StreamDTO(stream));
+		}
+		log.debug("Found {} stream(s)", dtos.size());
+		return dtos;
+
 	}
 }

@@ -4,7 +4,7 @@
 		<img src="${image}" style="max-width:295px; max-height: 245px;"/>
 	</div>
 	<div id="profile_information" style="height:249px;width:655px;float:left;">
-		<span>Mail address : <a href="mailto:${mail}">${mail}</a></span><br/>
+		<span>Mail address : <a href="mailto:${email}">${email}</a></span><br/>
 		<br/>
 		<textarea readonly="readonly" style="width:650px;">${description}</textarea>
 	</div>

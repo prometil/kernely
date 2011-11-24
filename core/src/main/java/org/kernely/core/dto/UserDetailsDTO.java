@@ -12,9 +12,9 @@ public class UserDetailsDTO {
 			, String city, String homephone, String mobilephone, String businessphone, String birth, String nationality,
 			String ssn, Integer civility,int id, UserDTO u) {
 		this.firstname = fName;
-		this.name = lName;
+		this.lastname = lName;
 		this.image = img;
-		this.mail = mail;
+		this.email = mail;
 		this.adress = adress;
 		this.zip=zip;
 		this.city=city;
@@ -31,9 +31,9 @@ public class UserDetailsDTO {
 
 	public int id;
 	public String firstname;
-	public String name;
+	public String lastname;
 	public String image;
-	public String mail;
+	public String email;
 	public String adress;
 	public String zip;
 	public String city;

@@ -16,11 +16,11 @@
 	<div id="profile_information" style="height:249px;width:575px;float:right;">
 		Civility : <span id="profile_civility" style="display: none;">${civility}</span><input type="radio" class="edit_button_civility" name="civility" value="1"> Mister <input type="radio" class="edit_button_civility" name="civility" value="2"> Madam <input type="radio" class="edit_button_civility" name="civility" value="3"> Miss
 		<br/>
-		Name : <span id="profile_name">${name}</span><span id="button_name"><img class="button edit_button_name" src="/images/icons/edit.png" style="margin-left : 15px;"/></span><br/>
+		Name : <span id="profile_name">${lastname}</span><span id="button_name"><img class="button edit_button_name" src="/images/icons/edit.png" style="margin-left : 15px;"/></span><br/>
 		<br/>
 		First name : <span id="profile_firstname">${firstname}</span><span id="button_firstname"><img class="button edit_button_firstname" src="/images/icons/edit.png" style="margin-left : 15px;"/></span><br/>
 		<br/>
-		Mail address : <span id="profile_mail"><a href="mailto:${mail}">${mail}</a></span><span id="button_mail"><img class="button edit_button_mail" src="/images/icons/edit.png" style="margin-left : 15px;"/></span><br/>
+		Mail address : <span id="profile_mail"><a href="mailto:${email}">${email}</a></span><span id="button_mail"><img class="button edit_button_mail" src="/images/icons/edit.png" style="margin-left : 15px;"/></span><br/>
 		<br/>
 		<textarea readonly="readonly" style="width:650px;">${description}</textarea>
 

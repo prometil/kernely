@@ -28,8 +28,6 @@ import java.net.URL;
  * Allows to retrieve resource in a media folder if they exist or in the jar by
  * default
  * 
- * @author b.grandperret
- * 
  */
 public class ResourceLocator {
 

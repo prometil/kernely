@@ -125,7 +125,7 @@ public class UserService {
 		try {
 			birth = (Date)formatter.parse(date);
 			UserDetails uDetails =  em.get().find(UserDetails.class, u.id);
-			uDetails.setMail(u.mail);
+			uDetails.setMail(u.email);
 			uDetails.setAdress(u.adress);
 			uDetails.setBirth(birth);
 			uDetails.setBusinessphone(u.businessphone);
@@ -133,7 +133,7 @@ public class UserService {
 			uDetails.setFirstname(u.firstname);
 			uDetails.setHomephone(u.homephone);
 			uDetails.setMobilephone(u.mobilephone);
-			uDetails.setName(u.name);
+			uDetails.setName(u.lastname);
 			uDetails.setNationality(u.nationality);
 			uDetails.setSsn(u.ssn);
 			uDetails.setZip(u.zip);
@@ -185,7 +185,7 @@ public class UserService {
 		List<User> collection = (List<User>) query.getResultList();
 		List<UserDTO> dtos = new ArrayList<UserDTO>();
 		for (User user : collection) {
-			dtos.add(new UserDTO(user.getUsername(), user.isLocked()));
+			dtos.add(new UserDTO(user.getUsername(), user.isLocked(), user.getId()));
 		}
 		return dtos;
 
@@ -206,7 +206,8 @@ public class UserService {
 		else{
 			newDateString="00/00/0000"; 
 		}
-		UserDetailsDTO dto = new UserDetailsDTO(ud.getFirstname(), ud.getName(), ud.getImage(), ud.getMail(), ud.getAdress(), ud.getZip(), ud.getCity(), ud.getHomephone(), ud.getMobilephone(), ud.getBusinessphone(), newDateString, ud.getNationality(), ud.getSsn(),ud.getCivility(),ud.getId_user_detail(), new UserDTO(u.getUsername(), u.isLocked()));
+		UserDetailsDTO dto = new UserDetailsDTO(ud.getFirstname(), ud.getName(), ud.getImage(), ud.getMail(), ud.getAdress(), ud.getZip(), ud.getCity(), ud.getHomephone(), ud.getMobilephone(), ud.getBusinessphone(), newDateString, ud.getNationality(), ud.getSsn(),ud.getCivility(),ud.getId_user_detail(), new UserDTO(u.getUsername(), u.isLocked(), u.getId()));
+
 		return dto;
 
 	}
@@ -228,8 +229,7 @@ public class UserService {
 		else{
 			newDateString="00/00/0000"; 
 		}
-		UserDetailsDTO dto = new UserDetailsDTO( ud.getFirstname(), ud.getName(), ud.getImage(), ud.getMail(), ud.getAdress(), ud.getZip(), ud.getCity(), ud.getHomephone(), ud.getMobilephone(), ud.getBusinessphone(), newDateString, ud.getNationality(), ud.getSsn(),ud.getCivility(),ud.getId_user_detail(),new UserDTO(u.getUsername(), u.isLocked()));
-
+		UserDetailsDTO dto = new UserDetailsDTO( ud.getFirstname(), ud.getName(), ud.getImage(), ud.getMail(), ud.getAdress(), ud.getZip(), ud.getCity(), ud.getHomephone(), ud.getMobilephone(), ud.getBusinessphone(), newDateString, ud.getNationality(), ud.getSsn(),ud.getCivility(),ud.getId_user_detail(),new UserDTO(u.getUsername(), u.isLocked(), u.getId()));
 		return dto;
 
 	}
@@ -238,7 +238,7 @@ public class UserService {
 	public UserDTO getCurrentUser(){
 		Query query = em.get().createQuery("SELECT e FROM User e WHERE username ='"+ SecurityUtils.getSubject().getPrincipal() +"'");
 		User u = (User)query.getSingleResult();
-		return new UserDTO(u.getUsername(), u.isLocked());
+		return new UserDTO(u.getUsername(), u.isLocked(), u.getId());
 	}
 	
 	@Transactional
@@ -248,8 +248,7 @@ public class UserService {
 		List<UserDetails> collection = (List<UserDetails>) query.getResultList();
 		List<UserDetailsDTO> dtos = new ArrayList<UserDetailsDTO>();
 		for (UserDetails user : collection) {
-			dtos.add(new UserDetailsDTO( user.getFirstname(), user.getName(), user.getImage(), user.getMail(), user.getAdress(), user.getZip(), user.getCity(), user.getHomephone(), user.getMobilephone(), user.getBusinessphone(), null, user.getNationality(), user.getSsn(),user.getCivility(),user.getId_user_detail(),new UserDTO(user.getUser().getUsername(), user.getUser().isLocked())));
-
+			dtos.add(new UserDetailsDTO( user.getFirstname(), user.getName(), user.getImage(), user.getMail(), user.getAdress(), user.getZip(), user.getCity(), user.getHomephone(), user.getMobilephone(), user.getBusinessphone(), null, user.getNationality(), user.getSsn(),user.getCivility(),user.getId_user_detail(),new UserDTO(user.getUser().getUsername(), user.getUser().isLocked(), user.getUser().getId())));
 		}
 		return dtos;
 	}

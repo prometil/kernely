@@ -2,8 +2,8 @@
 
 AppProfile= (function($){
 	function userdetails(){
-		this.mail= null,
-		this.name=  null,
+		this.email= null,
+		this.lastname=  null,
 		this.firstname = null,
 		this.image=null,
 		this.adress=  null,
@@ -53,8 +53,8 @@ AppProfile= (function($){
 		initialize:function(){
 			$("input[name=civility]").filter("[value="+$('#profile_civility').text()+"]").attr("checked","checked");
 			userd = new userdetails();
-			userd.mail= $('#profile_mail').text();
-			userd.name=  $('#profile_name').text();
+			userd.email= $('#profile_mail').text();
+			userd.lastname=  $('#profile_name').text();
 			userd.firstname = $('#profile_firstname').text();
 			userd.adress=  $('#profile_adress').text();
 			userd.zip=  $('#profile_zip').text();
@@ -102,7 +102,7 @@ AppProfile= (function($){
 		
 		},
 		saveMail: function(){
-			userd.mail=$("#edit_mail_field").val();
+			userd.email=$("#edit_mail_field").val();
 			var json = JSON.stringify(userd);
 			var save = $("#edit_mail_field").val();
 			$.ajax({
@@ -117,7 +117,7 @@ AppProfile= (function($){
                         processData: false,
                         contentType: "application/json; charset=utf-8",
 						success:function(data){
-							vmail = data.mail;
+							vmail = data.email;
 							$('#profile_mail').html("<a href='mailto:'"+ $('#edit_mail_field').text() +"'>"+ vmail +"</a>");
 						}
 					});
@@ -133,7 +133,7 @@ AppProfile= (function($){
 		
 		},
 		saveName: function(){
-			userd.name=$("#edit_name_field").val();
+			userd.lastname=$("#edit_name_field").val();
 			var json = JSON.stringify(userd);
 			var save = $("#edit_name_field").val();
 			$.ajax({
@@ -148,7 +148,7 @@ AppProfile= (function($){
                         processData: false,
                         contentType: "application/json; charset=utf-8",
 						success:function(data){
-							vname = data.name;
+							vname = data.lastname;
 							$('#profile_name').html(""+vname);
 						}
 					});

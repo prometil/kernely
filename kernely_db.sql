@@ -123,8 +123,8 @@ insert into kernely_user (id, username, password, salt) values (1, 'bobby', '2ty
 insert into kernely_user (id, username, password, salt) values (2, 'john', 'vAT9Kr/2bSbWoxFj3iinD783xrTez+lE2G/HSGaDzVk=','8EiKXghisVxqZ74Nwen+/5NanikCV0DRB9J31tC0jWGip79G1ZCrkwsFYOkD/aw1ggYA8r/nsYHnWXofR7x0nFU8CK87aiZ3BzXyzH4AEu9pzV/YWfWhq1d0W3gAB36gHsVQ6mZubI5UYforzdATLAAGOlQAa4BXF7Cwxs8wuf0=');
 
 
-insert into kernely_stream (id, title, locked, category, user_id) values (1, 'Stream of bobby', false,'STREAM_USERS',1);
-insert into kernely_stream (id, title, locked, category, user_id) values (2, 'Stream of john', false,'STREAM_USERS',1);
+insert into kernely_stream (id, title, locked, category, user_id) values (1, 'Stream of bobby', false,'Streams/Users',1);
+insert into kernely_stream (id, title, locked, category, user_id) values (2, 'Stream of john', false,'Streams/Users',1);
 
 insert into kernely_role (role_id, name) values (1, 'User');
 insert into kernely_role (role_id, name) values (2, 'Administrator');
