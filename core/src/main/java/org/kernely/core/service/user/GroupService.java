@@ -89,14 +89,27 @@ public class GroupService {
 			throw new IllegalArgumentException("Group name cannot be space character only ");
 		}
 		
-		Set<User> users = new HashSet<User>();
-		for(UserDTO u: request.users){
-			users.add(em.get().find(User.class, u.id));
+		
+		Set<User> users = null;
+		if(!request.users.isEmpty()){
+			if(!(request.users.get(0).username == null)){
+				users = new HashSet<User>();
+				for(UserDTO u: request.users){
+					users.add(em.get().find(User.class, u.id));
+				}
+			}
 		}
 		Group group = em.get().find(Group.class, request.id);
 		group.setName(request.name);
 		
-		group.getUsers().clear();
+		
+		if(users == null){
+			group.getUsers().clear();
+		}
+		else{
+			group.setUsers(users);
+		}
+			
 		
 	}
 	
