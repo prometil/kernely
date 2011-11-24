@@ -58,8 +58,10 @@ AppStreamAdmin = (function($){
 			if(this.vlocked == "true"){
 				image = "/img/stream_locked.png";
 			}
-			else if (this.vcategory == "Streams/Users") {
+			else if (this.vcategory == "streams/users") {
 				image = "/images/icons/user.png";
+			} else if (this.vcategory == "streams/plugins"){
+				image = "/img/plugin.png";
 			} else {
 				image = "";
 			}

@@ -37,6 +37,7 @@ import org.kernely.stream.dto.StreamCreationRequestDTO;
 import org.kernely.stream.dto.StreamDTO;
 import org.kernely.stream.dto.StreamMessageCreationRequestDTO;
 import org.kernely.stream.dto.StreamMessageDTO;
+import org.kernely.stream.model.Stream;
 import org.kernely.stream.service.StreamService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -142,7 +143,7 @@ public class StreamResource extends AbstractController {
 	@Produces( { MediaType.TEXT_HTML })
 	public String unlock(@PathParam("id") int id){
 		if (userService.currentUserIsAdministrator()){
-		streamService.unlockStream(id);
+			streamService.unlockStream(id);
 		return "Ok";
 		}
 		return "";

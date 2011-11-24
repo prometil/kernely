@@ -71,15 +71,15 @@ public class Stream extends AbstractModel {
 	/**
 	 * Category for users' streams
 	 */
-	public static final String CATEGORY_USERS = "Streams/Users";
+	public static final String CATEGORY_USERS = "streams/users";
 	/**
 	 * Category for bundles' streams
 	 */
-	public static final String CATEGORY_BUNDLES = "Streams/Bundles";
+	public static final String CATEGORY_BUNDLES = "streams/plugins";
 	/**
 	 * Category for other streams
 	 */
-	public static final String CATEGORY_OTHERS = "Streams/Others";
+	public static final String CATEGORY_OTHERS = "streams/others";
 
 	/**
 	 * The category of the stream.
