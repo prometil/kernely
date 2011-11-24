@@ -16,21 +16,29 @@ GNU Affero General Public License for more details.
 You should have received a copy of the GNU Affero General Public
 License along with Kernely.
 If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 package org.kernely.bootstrap;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.MalformedURLException;
 import java.net.URL;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.configuration.AbstractConfiguration;
 import org.apache.commons.io.IOUtils;
+import org.kernely.core.resourceLocator.ResourceLocator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.inject.Inject;
 
 /**
  * MediaServlet is used to detect resources type : css, png...
@@ -39,34 +47,55 @@ public class MediaServlet extends HttpServlet {
 
 	private static final long serialVersionUID = 3840583598946361059L;
 
-	private static final Logger log = LoggerFactory.getLogger(MediaServlet.class);
+	private static final Logger log = LoggerFactory
+			.getLogger(MediaServlet.class);
 
+	@Inject
+	private ResourceLocator resourceLocator;
+	
+	@Inject
+	private AbstractConfiguration configuration;
+	
 	/**
-	 * @see javax.servlet.http.HttpServlet#doGet(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
+	 * @see javax.servlet.http.HttpServlet#doGet(javax.servlet.http.HttpServletRequest,
+	 *      javax.servlet.http.HttpServletResponse)
 	 */
 	public void doGet(HttpServletRequest request, HttpServletResponse response) {
-		
 		String servletPath = request.getServletPath();
-		URL url = MediaServlet.class.getResource(servletPath);
-		if (url == null) {
-			log.error("Cannot find url {}", servletPath);
-		} else {
-			//String extension = servletPath.substring(servletPath.lastIndexOf(".")) ;
-			
-			String type = this.getServletContext().getMimeType(servletPath);
-			response.setContentType(type);
-			InputStream input = MediaServlet.class.getResourceAsStream(servletPath);
-			OutputStream pw;
-			try {
-				pw = response.getOutputStream();
-				IOUtils.copy(input, pw);
-				input.close();
-				pw.flush();
-			} catch (IOException e) {
-				log.error("Cannot write file {}", servletPath);
+		URL url;
+		try {
+			//retrieve the path in the config file.
+			String prefix=configuration.getString("workpath.url");
+			url = resourceLocator.getResource(prefix, servletPath);
+			if (url == null) {
+				log.error("Cannot find url {}", servletPath);
+			} else {
+					String type = this.getServletContext().getMimeType(servletPath);
+					response.setContentType(type);
+
+					InputStream input;
+					try {
+						input = url.openStream();
+						OutputStream pw;
+						try {
+							pw = response.getOutputStream();
+							IOUtils.copy(input, pw);
+							input.close();
+							pw.flush();
+						} catch (IOException e) {
+							log.error("Cannot write file {}", servletPath);
+						}
+						 
+					} catch (IOException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+				
 			}
 
-			
+		} catch (MalformedURLException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
 		}
 
 	}

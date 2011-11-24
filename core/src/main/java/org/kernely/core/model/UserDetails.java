@@ -1,5 +1,7 @@
 package org.kernely.core.model;
 
+import java.util.Date;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -15,15 +17,24 @@ import org.kernely.core.hibernate.AbstractModel;
 public class UserDetails extends AbstractModel{
 	 @Id
      @GeneratedValue(strategy = GenerationType.AUTO)
-     private int id_user_detail;
+	 private int id_user_detail;
+		private String name;
+		private String firstname;
+		private String mail;
+		private String image;
+		private String adress;
+		private String zip;
+		private String city;
+		private String homephone;
+		private String mobilephone;
+		private String businessphone;
+		private Date birth;
+		private String nationality;
+		private String ssn;
+		private Integer civility;
+
      
-     private String name;
      
-     private String firstname;
-     
-     private String mail;
-     
-     private String image;
      
      /**
       * Retrieve the user's image
@@ -125,4 +136,84 @@ public class UserDetails extends AbstractModel{
      public final void setUser(User user) {
              this.user = user;
      }
+     
+ 	public final String getAdress() {
+		return adress;
+	}
+
+	public final void setAdress(String adress) {
+		this.adress = adress;
+	}
+
+	public final String getZip() {
+		return zip;
+	}
+
+	public final void setZip(String zip) {
+		this.zip = zip;
+	}
+
+	public final String getCity() {
+		return city;
+	}
+
+	public final void setCity(String city) {
+		this.city = city;
+	}
+
+	public final String getHomephone() {
+		return homephone;
+	}
+
+	public final void setHomephone(String homephone) {
+		this.homephone = homephone;
+	}
+
+	public final String getMobilephone() {
+		return mobilephone;
+	}
+
+	public final void setMobilephone(String mobilephone) {
+		this.mobilephone = mobilephone;
+	}
+
+	public final String getBusinessphone() {
+		return businessphone;
+	}
+
+	public final void setBusinessphone(String businessphone) {
+		this.businessphone = businessphone;
+	}
+
+	public final Date getBirth() {
+		return birth;
+	}
+
+	public final void setBirth(Date birth) {
+		this.birth = birth;
+	}
+
+	public final String getNationality() {
+		return nationality;
+	}
+
+	public final void setNationality(String nationality) {
+		this.nationality = nationality;
+	}
+
+	public final String getSsn() {
+		return ssn;
+	}
+
+	public final void setSsn(String ssn) {
+		this.ssn = ssn;
+	}
+
+	public final Integer getCivility(){
+		return this.civility;
+	}
+	
+	public final void setCivility(Integer civility){
+		this.civility=civility;
+	}
 }
