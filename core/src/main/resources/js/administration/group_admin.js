@@ -134,12 +134,12 @@ AppGroupAdmin = (function($){
       		var winW = $(window).width();
 
         	//Set the popup window to center
-       		$("#modal_window").css('top',  winH/2-$("#modal_window").height()/2);
-     		$("#modal_window").css('left', winW/2-$("#modal_window").width()/2);
-     		$("#modal_window").css('background-color', "#EEEEEE");
+       		$("#modal_window_group").css('top',  winH/2-$("#modal_window_group").height()/2);
+     		$("#modal_window_group").css('left', winW/2-$("#modal_window_group").width()/2);
+     		$("#modal_window_group").css('background-color', "#EEEEEE");
      		$("input:text").each(function(){this.value="";});
      		//transition effect
-     		$("#modal_window").fadeIn(500);
+     		$("#modal_window_group").fadeIn(500);
 		},
 		
 		creategroup: function(){
@@ -173,7 +173,7 @@ AppGroupAdmin = (function($){
 	})
 	
 	GroupAdminCreateView = Backbone.View.extend({
-		el: "#modal_window",
+		el: "#modal_window_group",
 		
 		events:{
 			"click .closeModal" : "closemodal",
@@ -193,7 +193,7 @@ AppGroupAdmin = (function($){
 		},
 		
 		closemodal: function(){
-			$('#modal_window').hide();
+			$('#modal_window_group').hide();
        		$('#mask').hide();
 		},
 		
@@ -208,7 +208,7 @@ AppGroupAdmin = (function($){
 				contentType: "application/json; charset=utf-8",
 				success: function(data){
 					if (data.result == "ok"){
-						$('#modal_window').hide();
+						$('#modal_window_group').hide();
 						$('#mask').hide();
 						$("#groups_notifications").text("Operation completed successfully !");
 						$("#groups_notifications").fadeIn(1000);
@@ -224,7 +224,7 @@ AppGroupAdmin = (function($){
 	}) 
 	
 	GroupAdminUpdateView = Backbone.View.extend({
-		el: "#modal_window",
+		el: "#modal_window_group",
 		
 		events:{
 			"click .closeModal" : "closemodal",
@@ -252,7 +252,7 @@ AppGroupAdmin = (function($){
 		},
 		
 		closemodal: function(){
-			$('#modal_window').hide();
+			$('#modal_window_group').hide();
        		$('#mask').hide();
 		},
 		
@@ -286,7 +286,7 @@ AppGroupAdmin = (function($){
 				contentType: "application/json; charset=utf-8",
 				success: function(data){
 					if (data.result == "ok"){
-						$('#modal_window').hide();
+						$('#modal_window_group').hide();
 						$('#mask').hide();
 						$("#groups_notifications").text("Operation completed successfully !");
 						$("#groups_notifications").fadeIn(1000);

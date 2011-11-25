@@ -2,3 +2,58 @@ a.loader{
   color:#008888;
   cursor:pointer;
 }
+
+
+/* Common */
+#mask{
+	position:absolute;
+	z-index:9000;
+	background-color:#000;
+	display:none;top:0;
+	left:0;
+}
+
+/* User page*/
+#modal_window_user{
+	position:absolute;
+	width:440px;
+	height:440px;
+	display:none;	
+	z-index:9999;
+	padding:20px;
+	top:0;
+	left:0;
+}
+
+#users_errors_create, #users_errors_update{
+	display:none;
+	font-weight:bold;
+	color:red;
+}
+
+#user_admin_table{
+	cursor:pointer;
+	width:100%;
+}
+/* Group page*/
+#modal_window_group{
+	position:absolute;
+	width:440px;
+	height:300px;
+	display:none;
+	z-index:9999;
+	padding:20px;
+	top:0;
+	left:0;
+}
+
+#groups_errors_create , #groups_errors_update{
+	display:none;
+	font-weight:bold;
+	color:red;
+}
+
+#group_admin_table{
+	cursor:pointer;
+	width:100%;
+}

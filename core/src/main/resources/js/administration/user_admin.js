@@ -141,12 +141,12 @@
 
 
         	//Set the popup window to center
-       		$("#modal_window").css('top',  winH/2-$("#modal_window").height()/2);
-     		$("#modal_window").css('left', winW/2-$("#modal_window").width()/2);
-     		$("#modal_window").css('background-color', "#EEEEEE");
+       		$("#modal_window_user").css('top',  winH/2-$("#modal_window_user").height()/2);
+     		$("#modal_window_user").css('left', winW/2-$("#modal_window_user").width()/2);
+     		$("#modal_window_user").css('background-color', "#EEEEEE");
      		$("input:text").each(function(){this.value="";});
      		//transition effect
-     		$("#modal_window").fadeIn(500);
+     		$("#modal_window_user").fadeIn(500);
 		},
 		
 		createuser: function(){
@@ -180,7 +180,7 @@
 	})
 	
 	UserAdminCreateView = Backbone.View.extend({
-		el: "#modal_window",
+		el: "#modal_window_user",
 		
 		events:{
 			"click .closeModal" : "closemodal",
@@ -200,7 +200,7 @@
 		},
 		
 		closemodal: function(){
-			$('#modal_window').hide();
+			$('#modal_window_user').hide();
        		$('#mask').hide();
 		},
 		
@@ -215,7 +215,7 @@
 				contentType: "application/json; charset=utf-8",
 				success: function(data){
 				  if (data.result == "ok"){
-					$('#modal_window').hide();
+					$('#modal_window_user').hide();
 	       			$('#mask').hide();
 					$("#users_notifications").text("Operation completed successfully !");
 					$("#users_notifications").fadeIn(1000);
@@ -231,7 +231,7 @@
 	}) 
 	
 	UserAdminUpdateView = Backbone.View.extend({
-		el: "#modal_window",
+		el: "#modal_window_user",
 		
 		vid: null,
 		vlogin: null,
@@ -269,7 +269,7 @@
 		},
 		
 		closemodal: function(){
-			$('#modal_window').hide();
+			$('#modal_window_user').hide();
        		$('#mask').hide();
 		},
 		
@@ -303,7 +303,7 @@
 				contentType: "application/json; charset=utf-8",
 				success: function(data){
 					if (data.result == "ok"){
-						$('#modal_window').hide();
+						$('#modal_window_user').hide();
 						$('#mask').hide();
 						$("#users_notifications").text("Operation completed successfully !");
 						$("#users_notifications").fadeIn(1000);
