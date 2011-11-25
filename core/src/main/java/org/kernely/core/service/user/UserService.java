@@ -68,7 +68,7 @@ public class UserService {
 	 * Create a new user in database.
 	 * 
 	 * @param request
-	 *            The request, containing user data : passwod, username...
+	 *            The request, containing user data : password, username...
 	 */
 	@SuppressWarnings("unchecked")
 	@Transactional
@@ -125,6 +125,10 @@ public class UserService {
 
 	}
 	
+	/**
+	 * Update the profile of the specific user with the informations contained in the DTO
+	 * @param u The DTO containing all informations about the user to update
+	 */
 	@Transactional
 	public void updateUserProfile(UserDetailsUpdateRequestDTO u)
 	{ 
@@ -165,6 +169,10 @@ public class UserService {
 		}
 	}
 	
+	/**
+	 * Lock the user who has the id 'id'
+	 * @param id The id of the user to lock
+	 */
 	@Transactional 
 	public void lockUser(int id){
 		UserDetails ud = em.get().find(UserDetails.class, id);
@@ -172,6 +180,10 @@ public class UserService {
 		u.setLocked(!u.isLocked());
 	}
 	
+	/**
+	 * Update an user from the administration
+	 * @param request The DTO containing all informations about the user to update
+	 */
 	@SuppressWarnings("unchecked")
 	@Transactional
 	public void updateUser(UserCreationRequestDTO request) {
@@ -237,6 +249,11 @@ public class UserService {
 
 	}
 	
+	/**
+	 * Get the details about the user specified
+	 * @param u The User that details are needed
+	 * @return The DTO associated to the details of this user
+	 */
 	@Transactional
 	public UserDetailsDTO getUserDetails(User u) {
 		Query query = em.get().createQuery("SELECT e FROM UserDetails, User WHERE User.id =" + u.getId());
@@ -258,6 +275,11 @@ public class UserService {
 
 	}
 	
+	/**
+	 * Get the details about the user who has the specified login
+	 * @param login The login of the user that details are needed
+	 * @return The DTO associated to the details of this user
+	 */
 	@Transactional
 	public UserDetailsDTO getUserDetails(String login) {
 		Query query = em.get().createQuery("SELECT e FROM User  e WHERE username ='" + login + "'");
@@ -280,6 +302,10 @@ public class UserService {
 
 	}
 	
+	/**
+	 * Get the current user authenticated in the application
+	 * @return The DTO associated to the current user
+	 */
 	@Transactional
 	public UserDTO getCurrentUser(){
 		Query query = em.get().createQuery("SELECT e FROM User e WHERE username ='"+ SecurityUtils.getSubject().getPrincipal() +"'");
@@ -287,6 +313,10 @@ public class UserService {
 		return new UserDTO(u.getUsername(), u.isLocked(), u.getId());
 	}
 	
+	/**
+	 * Get all Details about all users in the database
+	 * @return A list of DTO associated to all details stored in the database
+	 */
 	@Transactional
 	@SuppressWarnings("unchecked")
 	public List<UserDetailsDTO> getAllUserDetails(){

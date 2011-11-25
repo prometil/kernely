@@ -30,6 +30,10 @@ public class GroupAdminController extends AbstractController {
 	@Inject
 	private UserService userService;
 	
+	/**
+	 * Get all existing groups in the database
+	 * @return A list of all DTO associated to the existing groups in the database
+	 */
 	@GET
 	@Path("/all")
 	@Produces({"application/json"})
@@ -43,6 +47,10 @@ public class GroupAdminController extends AbstractController {
 		return null;
 	}
 	
+	/**
+	 * Display the group administration page
+	 * @return the group administration page
+	 */
 	@GET
 	@Produces( { MediaType.TEXT_HTML })
 	public String displayPage()
@@ -55,7 +63,8 @@ public class GroupAdminController extends AbstractController {
 	
 	/**
 	 * Create a new group with the given informations
-	 * @return "Ok", not useful.
+	 * @param group The DTO containing all informations about the new group
+	 * @return A JSON string containing the result of the operation
 	 */
 	@POST
 	@Path("/create")
@@ -81,6 +90,11 @@ public class GroupAdminController extends AbstractController {
 		return null;
 	}
 	
+	/**
+	 * Delete the group which has the id 'id'
+	 * @param id The id of the group to delete
+	 * @return The result of the operation
+	 */
 	@GET
 	@Path("/delete/{id}")
 	@Produces( { MediaType.TEXT_HTML })
@@ -92,6 +106,11 @@ public class GroupAdminController extends AbstractController {
 		return null;
 	}
 	
+	/**
+	 * Get all users associated to the group which has the id 'id'
+	 * @param id The id of the group
+	 * @return A list of all DTO associated to the users contained in this group
+	 */
 	@GET
 	@Path("/{id}/users")
 	@Produces({"application/json"})
