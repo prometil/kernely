@@ -22,8 +22,6 @@
 		<br/>
 		Mail address : <span id="profile_mail"><a href="mailto:${email}">${email}</a></span><span id="button_mail"><img class="button edit_button_mail" src="/images/icons/edit.png" style="margin-left : 15px;"/></span><br/>
 		<br/>
-		<textarea readonly="readonly" style="width:650px;">${description}</textarea>
-
 		Adress : <span id="profile_adress">${adress}</span><span id="button_adress"><img class="button edit_button_adress" src="/images/icons/edit.png" style="margin-left : 15px;"/></span><br/>
 		<br/>
 		Zip code : <span id="profile_zip">${zip}</span><span id="button_zip"><img class="button edit_button_zip" src="/images/icons/edit.png" style="margin-left : 15px;"/></span><br/>

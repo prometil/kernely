@@ -42,7 +42,6 @@ import org.kernely.core.dto.UserCreationRequestDTO;
 import org.kernely.core.dto.UserDTO;
 import org.kernely.core.dto.UserDetailsDTO;
 import org.kernely.core.dto.UserDetailsUpdateRequestDTO;
-import org.kernely.core.resourceLocator.ResourceLocator;
 import org.kernely.core.service.user.UserService;
 import org.kernely.core.template.TemplateRenderer;
 
@@ -57,9 +56,6 @@ import com.sun.jersey.multipart.FormDataParam;
  */
 @Path("/user")
 public class UserController  extends AbstractController{
-	
-	@Inject 
-	private ResourceLocator resourceLocator;
 	
 	@Inject
 	private AbstractConfiguration configuration;
@@ -150,10 +146,15 @@ public class UserController  extends AbstractController{
 		}
 		UserDetailsDTO uddto = userService.getUserDetails(userLogin);
 		String imagePath = "/images/default_user.png";
+		if(uddto.image != null && uddto.image.equals("null"))
+		{
+			uddto.image=null;
+		}
 		if(uddto.image != null){
 			imagePath = "/images/" + uddto.image;
 		}
-		return templateRenderer.create(template).with("username", uddto.firstname + " " + uddto.lastname).with("lastname", uddto.lastname).with("firstname", uddto.firstname).with("email", uddto.email).with("image", imagePath).with("imagename", uddto.image).with("description", "Some text about you. *** Not in DB ***").with("adress", uddto.adress).with("zip", uddto.zip).with("city", uddto.city).with("homephone", uddto.homephone).with("mobilephone", uddto.mobilephone).with("businessphone", uddto.businessphone).with("birth", uddto.birth).with("nationality", uddto.nationality).with("ssn", uddto.ssn).with("civility", uddto.civility).render();
+		
+		return templateRenderer.create(template).with("username", uddto.firstname + " " + uddto.lastname).with("lastname", uddto.lastname).with("firstname", uddto.firstname).with("email", uddto.email).with("image", imagePath).with("imagename", uddto.image).with("adress", uddto.adress).with("zip", uddto.zip).with("city", uddto.city).with("homephone", uddto.homephone).with("mobilephone", uddto.mobilephone).with("businessphone", uddto.businessphone).with("birth", uddto.birth).with("nationality", uddto.nationality).with("ssn", uddto.ssn).with("civility", uddto.civility).render();
 	}
 	
 
@@ -177,7 +178,9 @@ public class UserController  extends AbstractController{
 	public void uploadFile(
 			@FormDataParam("file") InputStream uploadedInputStream,
 			@FormDataParam("file") FormDataContentDisposition fileDetail) {
-
+		if (fileDetail.getFileName().equals("")){
+			return ; 
+		}
 		//get extension
 		String[] extension= fileDetail.getFileName().split("\\.");
 		if (extension.length<2) {
