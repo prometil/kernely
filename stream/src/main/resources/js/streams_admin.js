@@ -300,15 +300,23 @@ AppStreamAdmin = (function($){
 		
 		render: function(){
 			var parent = this;
+
+			// Build the table
 			$.ajax({
 				type: "GET",
 				url:"/admin/users/all",
 				dataType:"json",
 				success: function(data){
 					if(data.userDetailsDTO.length > 1){
+						
+						$(parent.el).append("<table>")
 			    		$.each(data.userDetailsDTO, function() {
-			    			$(parent.el).append(this.lastname + ' ' + this.firstname +
-			    			'<select id="'+ this.user.id +'"><option value="nothing">No right</option><option value="read">Read</option><option value="write">Read / Write</option><option value="delete">Read / Write / Delete</option></select><br/>');
+			    			$(parent.el).append(
+			    					
+			    					
+			    					'<tr><td>'+ this.lastname + ' ' + this.firstname +'</td><td>'+
+			    			'<select id="'+ this.user.id +'"><option value="nothing">No right</option><option value="read">Read</option><option value="write">Read / Write</option><option value="delete">Read / Write / Delete</option></select><br/>'
+			    			+'</td></tr>');
 			    		});
 					}
 					// In the case when there is only one user.
@@ -316,6 +324,9 @@ AppStreamAdmin = (function($){
 		    			$(parent.el).append(data.userDetailsDTO.lastname+ ' ' + data.userDetailsDTO.firstname +
 				    			'<select id="'+ data.userDetailsDTO.user.id +'"><option value="nothing">No right</option><option value="read">Read</option><option value="write">Read / Write</option><option value="delete">Read / Write / Delete</option></select><br/>');
 					}
+					$(parent.el).append("</table>");
+
+					// Select existing rights
 					$.ajax({
 						type: "GET",
 						url:"/streams/admin/rights/"+parent.streamId,
