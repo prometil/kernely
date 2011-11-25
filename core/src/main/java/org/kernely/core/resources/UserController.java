@@ -50,10 +50,6 @@ import com.sun.jersey.core.header.FormDataContentDisposition;
 import com.sun.jersey.multipart.FormDataParam;
 
 
-/**
- * Controler of the user plugin.
- * @author jerome
- */
 @Path("/user")
 public class UserController  extends AbstractController{
 	
@@ -135,6 +131,11 @@ public class UserController  extends AbstractController{
 	}
 	
 	
+	/**
+	 * Display the profile of the user who has the specified login
+	 * @param userLogin The login of the user that profile is needed
+	 * @return the profile page fill with associated informations
+	 */
 	@GET
 	@Path("/{login}/profile")
 	@Produces( { MediaType.TEXT_HTML })
@@ -158,6 +159,11 @@ public class UserController  extends AbstractController{
 	}
 	
 
+	/**
+	 * Edit the profile of the current user with the new informations contained in the UserDetailsUpdateRequestDTO user
+	 * @param user the DTO which contained all new informations about the user to update
+	 * @return the DTO associated to the user updated
+	 */
 	@POST
 	@Path("/{login}/profile/update")
 	public UserDetailsDTO editProfil(UserDetailsUpdateRequestDTO user) {
@@ -172,6 +178,11 @@ public class UserController  extends AbstractController{
 		return uddto;
 	}
 	
+	/**
+	 * Upload a specified file
+	 * @param uploadedInputStream the InputStream corresponding to the file uploaded
+	 * @param fileDetail the informations about file uploaded
+	 */
 	@POST
 	@Path("/upload")
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
@@ -194,8 +205,7 @@ public class UserController  extends AbstractController{
 		try {
 			FileUtils.copyInputStreamToFile(uploadedInputStream, new File(uploadedFileLocation));
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.debug(e.getMessage());
 		}
 		
 		// up to date the database		
@@ -206,6 +216,10 @@ public class UserController  extends AbstractController{
 	
 	}
 	
+	/**
+	 * Get the DTO associated to the current user
+	 * @return the DTO associated to the current user
+	 */
 	@GET
 	@Path("/current")
 	@Produces({"application/json"})
@@ -213,6 +227,11 @@ public class UserController  extends AbstractController{
 		return userService.getCurrentUser();
 	}
 	
+	/**
+	 * Get the DTO associated to the specified user who has the login 'login'
+	 * @param userLogin the login of the needed user
+	 * @return the DTO associated to the specified user
+	 */
 	@GET
 	@Path("/{login}")
 	@Produces({"application/json"})

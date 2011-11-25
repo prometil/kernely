@@ -51,6 +51,7 @@ public class GroupService {
 	 * @param request
 	 * 			The request, containing group name
 	 */
+	@SuppressWarnings("unchecked")
 	@Transactional
 	public void createGroup(GroupCreationRequestDTO request) {
 		if(request==null){
@@ -65,6 +66,12 @@ public class GroupService {
 			throw new IllegalArgumentException("Group name cannot be space character only ");
 		}
 		
+		Query verifExist = em.get().createQuery("SELECT g FROM Group g WHERE name='"+ request.name +"'");
+		List<Group> list = (List<Group>)verifExist.getResultList();
+		if(!list.isEmpty()){
+			throw new IllegalArgumentException("Another group with this name already exists");
+		}
+		
 		Group group = new Group();
 		group.setName(request.name.trim());
 		em.get().persist(group);
@@ -75,6 +82,7 @@ public class GroupService {
 	 * @param request
 	 * 			The request, containing group name and id of the needed group
 	 */
+	@SuppressWarnings("unchecked")
 	@Transactional
 	public void updateGroup(GroupCreationRequestDTO request) {
 		if(request==null){
@@ -89,6 +97,11 @@ public class GroupService {
 			throw new IllegalArgumentException("Group name cannot be space character only ");
 		}
 		
+		Query verifExist = em.get().createQuery("SELECT g FROM Group g WHERE name='"+ request.name +"'AND group_id != "+ request.id);
+		List<Group> list = (List<Group>)verifExist.getResultList();
+		if(!list.isEmpty()){
+			throw new IllegalArgumentException("Another group with this name already exists");
+		}
 		
 		Set<User> users = null;
 		if(!request.users.isEmpty()){
@@ -126,8 +139,7 @@ public class GroupService {
 	
 	@Transactional
 	public List<UserDTO> getGroupUsers(int id){
-		Query query = em.get().createQuery("SELECT g FROM Group g WHERE group_id =" + id);
-		Group g = (Group)query.getSingleResult();
+		Group g = em.get().find(Group.class, id);
 		List<UserDTO> dtos = new ArrayList<UserDTO>();
 		for (User user : g.getUsers()) {
 			dtos.add(new UserDTO(user.getUsername(), user.isLocked(), user.getId()));

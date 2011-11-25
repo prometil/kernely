@@ -9,9 +9,12 @@ import org.junit.Test;
 import org.kernely.core.common.AbstractServiceTest;
 import org.kernely.core.dto.GroupCreationRequestDTO;
 import org.kernely.core.dto.GroupDTO;
+import org.kernely.core.dto.RoleDTO;
 import org.kernely.core.dto.UserCreationRequestDTO;
 import org.kernely.core.dto.UserDTO;
+import org.kernely.core.model.Role;
 import org.kernely.core.service.user.GroupService;
+import org.kernely.core.service.user.RoleService;
 import org.kernely.core.service.user.UserService;
 
 import com.google.inject.Inject;
@@ -22,6 +25,9 @@ public class GroupServiceTest extends AbstractServiceTest{
 	
 	@Inject
 	private UserService serviceUser;
+	
+	@Inject
+	private RoleService roleService;
 	
 	@Test
 	public void  createGroup(){
@@ -55,6 +61,9 @@ public class GroupServiceTest extends AbstractServiceTest{
 		GroupDTO groupdto = new GroupDTO() ;
 		groupdto = serviceGroup.getAllGroups().get(0);
 
+		RoleDTO requestRole = new RoleDTO(1, Role.ROLE_USER);
+		roleService.createRole(requestRole);
+		
 		UserCreationRequestDTO requestUser = new UserCreationRequestDTO();
 		requestUser.username="toto";
 		requestUser.password="tata";

@@ -203,14 +203,21 @@ AppGroupAdmin = (function($){
 				url:"/admin/groups/create",
 				data: json,
 				type: "POST",
+				dataType : "json",
 				processData: false,
 				contentType: "application/json; charset=utf-8",
 				success: function(data){
-					$('#modal_window').hide();
-       				$('#mask').hide();
-					$("#groups_notifications").text("Operation completed successfully !");
-					$("#groups_notifications").fadeIn(1000);
-					$("#groups_notifications").fadeOut(3000);
+					if (data.result == "ok"){
+						$('#modal_window').hide();
+						$('#mask').hide();
+						$("#groups_notifications").text("Operation completed successfully !");
+						$("#groups_notifications").fadeIn(1000);
+						$("#groups_notifications").fadeOut(3000);
+					} else {
+						$("#groups_errors_create").text(data.result);
+						$("#groups_errors_create").fadeIn(1000);
+						$("#groups_errors_create").fadeOut(3000);
+					}
 				}
 			});
 		}
@@ -252,9 +259,10 @@ AppGroupAdmin = (function($){
 		updategroup: function(){
 			var usersCB = $("input:checked");
 			var count = 0;
-			
+			var users = "";
+				
 			if(usersCB.length > 0){
-				var users = '"users":[';
+				users = '"users":[';
 				
 				$.each(usersCB, function(){
 					users += '{"id":"'+ $(this).attr('id') +'", "username":"null", "locked":"false"}';
@@ -273,14 +281,21 @@ AppGroupAdmin = (function($){
 				url:"/admin/groups/create",
 				data: json,
 				type: "POST",
+				dataType: "json",
 				processData: false,
 				contentType: "application/json; charset=utf-8",
 				success: function(data){
-					$('#modal_window').hide();
-       				$('#mask').hide();
-					$("#groups_notifications").text("Operation completed successfully !");
-					$("#groups_notifications").fadeIn(1000);
-					$("#groups_notifications").fadeOut(3000);
+					if (data.result == "ok"){
+						$('#modal_window').hide();
+						$('#mask').hide();
+						$("#groups_notifications").text("Operation completed successfully !");
+						$("#groups_notifications").fadeIn(1000);
+						$("#groups_notifications").fadeOut(3000);
+					} else {
+						$("#groups_errors_update").text(data.result);
+						$("#groups_errors_update").fadeIn(1000);
+						$("#groups_errors_update").fadeOut(3000);
+					}
 				}
 			});
 		}

@@ -19,6 +19,8 @@ If not, see <http://www.gnu.org/licenses/>.
  */
 package org.kernely.core.dto;
 
+import java.util.List;
+
 import javax.xml.bind.annotation.XmlRootElement;
 
 
@@ -32,13 +34,14 @@ public class UserCreationRequestDTO {
 
 	}
 
-	public UserCreationRequestDTO(int id, String fName, String lName, String username, String password, boolean locked) {
+	public UserCreationRequestDTO(int id, String fName, String lName, String username, String password, boolean locked, List<RoleDTO> roles) {
 		this.id = id;
 		this.firstname = fName;
 		this.lastname = lName;
 		this.username= username;
 		this.password = password;
 		this.locked = locked;
+		this.roles = roles;
 	}
 
 	public int id;
@@ -48,4 +51,5 @@ public class UserCreationRequestDTO {
 	public String username;
 	public String password;
 	public boolean locked;
+	public List<RoleDTO> roles;
 }

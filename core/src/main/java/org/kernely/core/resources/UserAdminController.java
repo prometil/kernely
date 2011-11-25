@@ -9,6 +9,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
+import org.kernely.core.dto.RoleDTO;
 import org.kernely.core.dto.UserCreationRequestDTO;
 import org.kernely.core.dto.UserDetailsDTO;
 import org.kernely.core.service.user.UserService;
@@ -18,54 +19,99 @@ import com.google.inject.Inject;
 
 @Path("/admin/users")
 public class UserAdminController extends AbstractController{
-	
+
 	@Inject
 	private TemplateRenderer templateRenderer;
-	
+
 	@Inject
 	private UserService userService;
-	
+
+	/**
+	 * Display the user page administration
+	 * @return the user administration page
+	 */
 	@GET
 	@Produces( { MediaType.TEXT_HTML })
 	public String displayPage()
 	{
-		return templateRenderer.create("/templates/gsp/administration/user_admin.gsp").withoutLayout().render() ;
+		if (userService.currentUserIsAdministrator()){
+			return templateRenderer.create("/templates/gsp/administration/user_admin.gsp").withoutLayout().render() ;
+		}
+		return templateRenderer.create("/templates/gsp/home.gsp").render();
 	}
-	
+
+	/**
+	 * Get all users stored in database in order to display them
+	 * @return A list of all DTO associated to the users stored in the database
+	 */
 	@GET
 	@Path("/all")
 	@Produces({"application/json"})
 	public List<UserDetailsDTO> displayAllUsers()
 	{
-		log.debug("Call to GET on all users");
-		List<UserDetailsDTO> users = userService.getAllUserDetails();
-		return users;
+		if (userService.currentUserIsAdministrator()){
+			log.debug("Call to GET on all users");
+			List<UserDetailsDTO> users = userService.getAllUserDetails();
+			return users;
+		}
+		return null;
 	}
 
 	/**
-	 * Create a new user with a random username and as password : "password".
-	 * @return "Ok", not useful.
+	 * Create a new user with the informations contained in the DTO
+	 * @return A JSON string contained the result of the operation
 	 */
 	@POST
 	@Path("/create")
+	@Produces({"application/json"})
 	public String create(UserCreationRequestDTO user)
 	{
-		log.debug("Create a user");
-		
-		if(user.id == 0){
-			userService.createUser(user);
+		if (userService.currentUserIsAdministrator()){
+			try{
+				log.debug("Create a user");
+				if(user.id == 0){
+					userService.createUser(user);
+				}
+				else{
+					userService.updateUser(user);
+				}
+				return "{\"result\":\"ok\"}";
+			} catch (IllegalArgumentException iae) {
+				log.debug(iae.getMessage());
+				return "{\"result\":\""+iae.getMessage()+"\"}";
+			}
 		}
-		else{
-			userService.updateUser(user);
-		}
-		return "Ok";
+		return null;
 	}
-	
+
+	/**
+	 * Locks the user who has the id 'id'
+	 * @param id The id of the user locked
+	 * @return The result of the operation
+	 */
 	@GET
 	@Path("/lock/{id}")
-	@Produces( { MediaType.TEXT_HTML })
+	@Produces({"application/json"})
 	public String lock(@PathParam("id") int id){
-		userService.lockUser(id);
-		return "Ok";
+		if (userService.currentUserIsAdministrator()){
+			userService.lockUser(id);
+			return "{\"result\":\"ok\"}";
+		}
+		return null;
+	}
+
+	/**
+	 * Get all roles associated to the user who has the id 'id'
+	 * @param id the id of the needed user
+	 * @return A list of all DTO associated to the roles of this user
+	 */
+	@GET
+	@Path("/{id}/roles")
+	@Produces({"application/json"})
+	public List<RoleDTO> getUserRoles(@PathParam("id") int id){
+		if (userService.currentUserIsAdministrator()){
+			return userService.getUserRoles(id);
+		}
+		return null;
 	}
 }
