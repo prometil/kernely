@@ -30,13 +30,17 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import org.apache.shiro.SecurityUtils;
+import org.kernely.core.dto.UserDTO;
 import org.kernely.core.resources.AbstractController;
+import org.kernely.core.service.user.PermissionService;
 import org.kernely.core.service.user.UserService;
 import org.kernely.core.template.TemplateRenderer;
+import org.kernely.stream.dto.RightOnStreamDTO;
 import org.kernely.stream.dto.StreamCreationRequestDTO;
 import org.kernely.stream.dto.StreamDTO;
 import org.kernely.stream.dto.StreamMessageCreationRequestDTO;
 import org.kernely.stream.dto.StreamMessageDTO;
+import org.kernely.stream.dto.StreamRightsUpdateRequestDTO;
 import org.kernely.stream.model.Stream;
 import org.kernely.stream.service.StreamService;
 import org.slf4j.Logger;
@@ -57,6 +61,9 @@ public class StreamResource extends AbstractController {
 	
 	@Inject
 	private UserService userService;
+
+	@Inject
+	private PermissionService permissionService;
 
 	@GET
 	@Produces( { MediaType.TEXT_HTML })
@@ -153,6 +160,63 @@ public class StreamResource extends AbstractController {
 		return "Ok";
 		}
 		return "";
+	}
+	
+
+	/**
+	 * Gets rights associated to a stream.
+	 */
+	@GET
+	@Path("/admin/rights/{id}")
+	@Produces({MediaType.APPLICATION_JSON})
+	public String getStreamRights(@PathParam("id") int id){
+		log.debug("JSON IN CONSTRUCTION FOR THE STREAM " + id);
+		String json = "{\"permission\":[";
+		List<UserDTO> allUsers = userService.getAllUsers();
+		
+		for (UserDTO user : allUsers){
+			boolean read = permissionService.userHasPermission((int) user.id, Stream.RIGHT_READ+":streams:"+id);
+			boolean write = permissionService.userHasPermission((int) user.id, Stream.RIGHT_WRITE+":streams:"+id);
+			boolean delete = permissionService.userHasPermission((int) user.id, Stream.RIGHT_DELETE+":streams:"+id);
+			
+			if (delete){
+				json += "{\"user\":"+user.id+",\"right\":\"delete\"},";
+			} else if (write) {
+				json += "{\"user\":"+user.id+",\"right\":\"write\"},";
+			} else if (read) {
+				json += "{\"user\":"+user.id+",\"right\":\"read\"},";
+			}
+		}
+		json = json.substring(0, json.length() -1);
+		json += "]}";
+		return json;
+	}
+	
+	@POST
+	@Path("/admin/updaterights")
+	@Produces( { MediaType.APPLICATION_JSON })
+	public String updateRights(StreamRightsUpdateRequestDTO request) {
+		log.debug("{} udate rights of the stream : {}", request.streamid);
+		for (RightOnStreamDTO right : request.rights){
+			boolean correct = permissionService.userHasPermission(right.userid,right.permission+":streams:"+request.streamid);
+			if (!correct){
+				// The right requested is not the same than the existing right : delete permissions on the stream for the user
+				if (permissionService.userHasPermission((int) right.userid, Stream.RIGHT_READ+":streams:"+request.streamid)){
+					permissionService.ungrantPermission(right.userid, Stream.RIGHT_READ+":streams:"+request.streamid);
+				}
+				if (permissionService.userHasPermission((int) right.userid, Stream.RIGHT_WRITE+":streams:"+request.streamid)){
+					permissionService.ungrantPermission(right.userid, Stream.RIGHT_WRITE+":streams:"+request.streamid);
+				}
+				if (permissionService.userHasPermission((int) right.userid, Stream.RIGHT_DELETE+":streams:"+request.streamid)){
+					permissionService.ungrantPermission(right.userid, Stream.RIGHT_DELETE+":streams:"+request.streamid);
+				}
+				if (! right.permission.equals("nothing")){
+					// Add the requested permission
+					permissionService.grantPermission(right.userid, right.permission +":streams:"+request.streamid);
+				}
+			}
+		}
+		return "{\"result\":\"ok\"}";
 	}
 	
 }

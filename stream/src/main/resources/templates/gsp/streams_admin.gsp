@@ -17,12 +17,26 @@
 	<span id="streams_errors" style="display:none;font-weight:bold;color:red;"></span>
 </script>
 
+<!-- Template for the rights view  -->
+<script type="text/html" id="popup-stream-rights-update-template">
+	<input type="button" value="Close" class="closeModal" style="right:0;"/><br/>
+	<fieldset>
+	<legend>Rights for the stream {{title}}</legend>
+		<div id="usersToRight" style="height:150px;overflow-y:auto;">
+			<!-- Filled by ajax  -->
+		</div>
+	</fieldset>
+	<br/>
+	<input type="button" value="Send" class="updateStream"/>
+</script>
+
 <div id="stream_admin_container">
 	<div id="stream_admin_buttons">
 		<input type="button" class="createButton" value="Create"/>
 		<input type="button" class="editButton" value="Edit" disabled="disabled"/>
 		<input type="button" class="lockButton" value="Lock" disabled="disabled"/>
 		<input type="button" class="unlockButton" value="Unlock" disabled="disabled"/>
+		<input type="button" class="rightsButton" value="Rights" disabled="disabled"/>
 		<span id="streams_notifications" style="display:none;color:green;"></span>
 	</div>
 	<table id="stream_admin_table" style="cursor:pointer;width:100%">

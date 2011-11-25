@@ -26,6 +26,7 @@ AppStreamAdmin = (function($){
 		},
 		selectLine : function(){
 			$(".editButton").removeAttr('disabled');
+			$(".rightsButton").removeAttr('disabled');
 			if (this.vlocked=="true"){
 				$(".unlockButton").removeAttr('disabled');
 				$(".lockButton").attr('disabled','disabled');
@@ -114,14 +115,16 @@ AppStreamAdmin = (function($){
 			"click .createButton" : "createstream",
 			"click .editButton" : "editstream",
 			"click .lockButton" : "lockstream",
-			"click .unlockButton" : "unlockstream"
+			"click .unlockButton" : "unlockstream",
+			"click .rightsButton" : "changestreamrights"
 		},
 		
-		viewCreate:null,
-		viewUpdate:null,
+
+		viewRightsUpdate:null,
 		
 		initialize: function(){
 			this.viewCreateUpdate =  new StreamAdminCreateUpdateView("", 0,"");
+			this.viewRightsUpdate = new StreamRightsUpdateView("",0);
 		},
 		
 		showModalWindow: function(){
@@ -190,7 +193,143 @@ AppStreamAdmin = (function($){
 			}
 		},
 		
+		changestreamrights:function (){
+			this.showModalWindow();
+			this.viewRightsUpdate.setFields(lineSelected.vname, lineSelected.vid);
+			this.viewRightsUpdate.render();
+		},
+		
 		render:function(){
+			return this;
+		}
+	})
+	
+	StreamRightsUpdateView = Backbone.View.extend({
+		el: "#modal_window",
+		events:{
+			"click .closeModal" : "closemodal",
+			"click .updateStream" : "updatestreamrights",
+		},
+		vid: null,
+		vname: null,
+		vcategory: null,
+		initialize:function(name, id,category){
+			this.vid = id;
+			this.vname = name;
+			this.vcategory = category;
+		},
+		setFields: function(name, id,category){
+			this.vid = id;
+			this.vname = name;
+			this.vcategory = category;
+		},
+		render : function(){
+			var template = $("#popup-stream-rights-update-template").html();
+			
+			var view = {title : this.vname};
+			var html = Mustache.to_html(template, view);
+			$(this.el).html(html);
+			
+			new UserSelectView(this.vid).render();
+			
+			return this;
+		},
+		
+		closemodal: function(){
+			$('#modal_window').hide();
+       		$('#mask').hide();
+		},
+		updatestreamrights: function(){
+			var usersSelect = $("select");
+			var count = 0;
+			var users = "";
+				
+			if(usersSelect.length > 0){
+				rights = '"rights":[';
+				
+				$.each(usersSelect, function(){
+					rights += '{"userid":'+this.id+',"permission":"'+$("#"+this.id+" :selected").val()+'"}';
+					count++;
+					if(count<usersSelect.length){
+						rights += ',';
+					}
+				});
+				rights += "]";
+			}
+			else{
+				rights = '"rights":{}';
+			}
+			var json = '{"streamid":"'+this.vid+'",'+ rights +'}';
+
+			$.ajax({
+				url:"/streams/admin/updaterights",
+				data: json,
+				type: "POST",
+				dataType: "json",
+				processData: false,
+				contentType: "application/json; charset=utf-8",
+				success: function(data){
+					if (data.result == "ok"){
+						$('#modal_window').hide();
+						$('#mask').hide();
+						$("#groups_notifications").text("Operation completed successfully !");
+						$("#groups_notifications").fadeIn(1000);
+						$("#groups_notifications").fadeOut(3000);
+					} else {
+						$("#groups_errors_update").text(data.result);
+						$("#groups_errors_update").fadeIn(1000);
+						$("#groups_errors_update").fadeOut(3000);
+					}
+				}
+			});
+		}
+	})
+	
+	UserSelectView = Backbone.View.extend({
+		el:"#usersToRight",
+		
+		streamId: null,
+		
+		events:{
+		
+		},
+		
+		initialize:function(streamid){
+			this.streamId = streamid;
+		},
+		
+		render: function(){
+			var parent = this;
+			$.ajax({
+				type: "GET",
+				url:"/admin/users/all",
+				dataType:"json",
+				success: function(data){
+					if(data.userDetailsDTO.length > 1){
+			    		$.each(data.userDetailsDTO, function() {
+			    			$(parent.el).append(this.lastname + ' ' + this.firstname +
+			    			'<select id="'+ this.user.id +'"><option value="nothing">No right</option><option value="read">Read</option><option value="write">Read / Write</option><option value="delete">Read / Write / Delete</option></select><br/>');
+			    		});
+					}
+					// In the case when there is only one user.
+					else{
+		    			$(parent.el).append(data.userDetailsDTO.lastname+ ' ' + data.userDetailsDTO.firstname +
+				    			'<select id="'+ data.userDetailsDTO.user.id +'"><option value="nothing">No right</option><option value="read">Read</option><option value="write">Read / Write</option><option value="delete">Read / Write / Delete</option></select><br/>');
+					}
+					$.ajax({
+						type: "GET",
+						url:"/streams/admin/rights/"+parent.streamId,
+						dataType:"json",
+						success: function(data){
+							if(data != null && typeof(data) != "undefined"){
+					    		$.each(data.permission, function() {
+									$('#' + this.user+" option[value='"+this.right+"']").attr("selected", "selected");
+					    		});
+							}
+						}
+					});
+				}
+			});
 			return this;
 		}
 	})
@@ -202,6 +341,7 @@ AppStreamAdmin = (function($){
 		vname: null,
 		vcategory : null,
 		
+
 		events:{
 			"click .closeModal" : "closemodal",
 			"click .sendStream" : "registerstream"

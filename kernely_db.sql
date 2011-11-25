@@ -131,8 +131,8 @@ insert into kernely_role (role_id, name) values (2, 'Administrator');
 
 insert into kernely_group (group_id, name) values (1, 'Kernely team');
 
-insert into kernely_permission values (1,'write,read:streams/users/1');
-insert into kernely_permission values (1,'read:streams/users/2');
+insert into kernely_permission values (1,'write:streams:1');
+insert into kernely_permission values (2,'read:streams:2');
 
 insert into kernely_user_group values (1,1);
 insert into kernely_user_group values (2,1);
@@ -141,7 +141,7 @@ insert into kernely_user_roles values (2,1);
 insert into kernely_user_roles values (2,2);
 
 insert into kernely_user_permissions values (1,1);
+insert into kernely_user_permissions values (2,2);
 
 insert into kernely_user_details (id_user_detail, name, firstname, mail, image, fk_user_id) values (1, 'Joe', 'Bobby', 'bobby.joe@mail.com', null, 1);
 insert into kernely_user_details (id_user_detail, name, firstname, mail, image, fk_user_id) values (2, 'Doe', 'John', 'john.doe@mail.com', null, 2);
-

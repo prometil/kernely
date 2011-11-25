@@ -45,7 +45,7 @@ public class Permission extends AbstractModel {
 	private int id;
 
 	/**
-	 * Permission's Name (resourceType:rights:resourceID)
+	 * Permission's Name (rights:resourceType:resourceID)
 	 */
 	private String name;
 
@@ -54,7 +54,7 @@ public class Permission extends AbstractModel {
 	 */
 	@ManyToMany(
 			mappedBy = "permissions",
-			fetch=FetchType.LAZY
+			fetch=FetchType.EAGER
 	)
 	private Set<Group> groups;
 
@@ -63,7 +63,7 @@ public class Permission extends AbstractModel {
 	 */
 	@ManyToMany(
 			mappedBy = "permissions",
-			fetch=FetchType.LAZY
+			fetch=FetchType.EAGER
 	)
 	private Set<User> users;
 
@@ -138,7 +138,7 @@ public class Permission extends AbstractModel {
 	 * @return The type of the resource.
 	 */
 	public final String getResourceType(){
-		return this.name.substring(0, this.name.indexOf(":"));
+		return this.name.substring(this.name.indexOf(":") + 1 , this.name.lastIndexOf(":"));
 	}
 
 	/**
@@ -146,7 +146,7 @@ public class Permission extends AbstractModel {
 	 * @return The rights.
 	 */
 	public final String getRights(){
-		return this.name.substring(this.name.indexOf(":") + 1 , this.name.lastIndexOf(":"));
+		return this.name.substring(0, this.name.indexOf(":"));
 	}
 
 	/**

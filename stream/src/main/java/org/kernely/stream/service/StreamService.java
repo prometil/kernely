@@ -202,7 +202,7 @@ public class StreamService {
 
 	
 	/**
-	 * Get a stream by it's name and categry.
+	 * Get a stream by it's name and category.
 	 * @param title The title of this stream.
 	 * @param category The category of this stream (use Stream class constants).
 	 * @return the Stream DTO.
@@ -239,6 +239,5 @@ public class StreamService {
 		}
 		log.debug("Found {} stream(s)", dtos.size());
 		return dtos;
-
 	}
 }
