@@ -2,7 +2,7 @@
 
 <div id="user_header" style=""></div>
 <div id="mask" style="position:absolute;z-index:9000;background-color:#000;display:none;top:0;left:0;"></div>
-<div id="modal_window" style=" position:absolute;width:440px;height:250px;display:none;z-index:9999;padding:20px;top:0;left:0;">
+<div id="modal_window_user" style=" position:absolute;width:440px;height:440px;display:none;z-index:9999;padding:20px;top:0;left:0;">
 </div>
 
 <script type="text/html" id="popup-user-admin-create-template">

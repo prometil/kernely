@@ -78,8 +78,12 @@ public class UserServiceTest extends AbstractServiceTest{
 		service.updateUserProfile(request);		
 	}
 	
-
+/*	@Test
 	public void updateUserDetails(){
+		UserDTO userdto = new UserDTO("",1) ;
+		UserDetails ud = new UserDetails();
+		ud.setId_user_detail(1);
+		UserDetailsDTO uddto = new UserDetailsDTO("kk","ll","","mail","add","12","ar","3","2", "1", "18/12/1998", "nn","55",1,1,userdto);
 		UserDetailsUpdateRequestDTO request = new UserDetailsUpdateRequestDTO();
 		request.birth="18/12/1990";
 		request.adress="a";
@@ -96,8 +100,22 @@ public class UserServiceTest extends AbstractServiceTest{
 		request.nationality="nla";
 		request.ssn="232";
 		request.zip="45544";
-		service.updateUserProfile(request);		
-	}
+		service.updateUserProfile(request);
+		assertEquals("18/12/1990", uddto.birth);
+		assertEquals("a",uddto.adress);
+		assertEquals("05",uddto.businessphone);
+		assertEquals("5555" , uddto.city);
+		assertEquals("blabla", uddto.firstname);
+		assertEquals("252", uddto.homephone);
+		assertEquals("LLll.jpg", uddto.image);
+		assertEquals("papa", uddto.email);
+		assertEquals("06", uddto.mobilephone); 
+		assertEquals("a", uddto.lastname);
+		assertEquals("nla",uddto.nationality);
+		assertEquals("232", uddto.ssn);
+		assertEquals("45544", uddto.zip);		
+		
+	}*/
 	
 	@Test(expected=IllegalArgumentException.class)
 	public void createUserWithNullRequest(){

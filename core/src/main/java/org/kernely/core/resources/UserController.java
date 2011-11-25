@@ -42,7 +42,6 @@ import org.kernely.core.dto.UserCreationRequestDTO;
 import org.kernely.core.dto.UserDTO;
 import org.kernely.core.dto.UserDetailsDTO;
 import org.kernely.core.dto.UserDetailsUpdateRequestDTO;
-import org.kernely.core.resourceLocator.ResourceLocator;
 import org.kernely.core.service.user.UserService;
 import org.kernely.core.template.TemplateRenderer;
 
@@ -51,15 +50,8 @@ import com.sun.jersey.core.header.FormDataContentDisposition;
 import com.sun.jersey.multipart.FormDataParam;
 
 
-/**
- * Controler of the user plugin.
- * @author jerome
- */
 @Path("/user")
 public class UserController  extends AbstractController{
-	
-	@Inject 
-	private ResourceLocator resourceLocator;
 	
 	@Inject
 	private AbstractConfiguration configuration;
@@ -139,6 +131,11 @@ public class UserController  extends AbstractController{
 	}
 	
 	
+	/**
+	 * Display the profile of the user who has the specified login
+	 * @param userLogin The login of the user that profile is needed
+	 * @return the profile page fill with associated informations
+	 */
 	@GET
 	@Path("/{login}/profile")
 	@Produces( { MediaType.TEXT_HTML })
@@ -150,13 +147,23 @@ public class UserController  extends AbstractController{
 		}
 		UserDetailsDTO uddto = userService.getUserDetails(userLogin);
 		String imagePath = "/images/default_user.png";
+		if(uddto.image != null && uddto.image.equals("null"))
+		{
+			uddto.image=null;
+		}
 		if(uddto.image != null){
 			imagePath = "/images/" + uddto.image;
 		}
-		return templateRenderer.create(template).with("username", uddto.firstname + " " + uddto.lastname).with("lastname", uddto.lastname).with("firstname", uddto.firstname).with("email", uddto.email).with("image", imagePath).with("imagename", uddto.image).with("description", "Some text about you. *** Not in DB ***").with("adress", uddto.adress).with("zip", uddto.zip).with("city", uddto.city).with("homephone", uddto.homephone).with("mobilephone", uddto.mobilephone).with("businessphone", uddto.businessphone).with("birth", uddto.birth).with("nationality", uddto.nationality).with("ssn", uddto.ssn).with("civility", uddto.civility).render();
+		
+		return templateRenderer.create(template).with("username", uddto.firstname + " " + uddto.lastname).with("lastname", uddto.lastname).with("firstname", uddto.firstname).with("email", uddto.email).with("image", imagePath).with("imagename", uddto.image).with("adress", uddto.adress).with("zip", uddto.zip).with("city", uddto.city).with("homephone", uddto.homephone).with("mobilephone", uddto.mobilephone).with("businessphone", uddto.businessphone).with("birth", uddto.birth).with("nationality", uddto.nationality).with("ssn", uddto.ssn).with("civility", uddto.civility).render();
 	}
 	
 
+	/**
+	 * Edit the profile of the current user with the new informations contained in the UserDetailsUpdateRequestDTO user
+	 * @param user the DTO which contained all new informations about the user to update
+	 * @return the DTO associated to the user updated
+	 */
 	@POST
 	@Path("/{login}/profile/update")
 	public UserDetailsDTO editProfil(UserDetailsUpdateRequestDTO user) {
@@ -171,13 +178,20 @@ public class UserController  extends AbstractController{
 		return uddto;
 	}
 	
+	/**
+	 * Upload a specified file
+	 * @param uploadedInputStream the InputStream corresponding to the file uploaded
+	 * @param fileDetail the informations about file uploaded
+	 */
 	@POST
 	@Path("/upload")
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	public void uploadFile(
 			@FormDataParam("file") InputStream uploadedInputStream,
 			@FormDataParam("file") FormDataContentDisposition fileDetail) {
-
+		if (fileDetail.getFileName().equals("")){
+			return ; 
+		}
 		//get extension
 		String[] extension= fileDetail.getFileName().split("\\.");
 		if (extension.length<2) {
@@ -191,8 +205,7 @@ public class UserController  extends AbstractController{
 		try {
 			FileUtils.copyInputStreamToFile(uploadedInputStream, new File(uploadedFileLocation));
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.debug(e.getMessage());
 		}
 		
 		// up to date the database		
@@ -203,6 +216,10 @@ public class UserController  extends AbstractController{
 	
 	}
 	
+	/**
+	 * Get the DTO associated to the current user
+	 * @return the DTO associated to the current user
+	 */
 	@GET
 	@Path("/current")
 	@Produces({"application/json"})
@@ -210,6 +227,11 @@ public class UserController  extends AbstractController{
 		return userService.getCurrentUser();
 	}
 	
+	/**
+	 * Get the DTO associated to the specified user who has the login 'login'
+	 * @param userLogin the login of the needed user
+	 * @return the DTO associated to the specified user
+	 */
 	@GET
 	@Path("/{login}")
 	@Produces({"application/json"})

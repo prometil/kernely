@@ -25,7 +25,7 @@ AppMiniProfile = (function($){
                                                         vimage = "/images/"+data.image;
                                                         vmail = data.email;
                                                         
-                                                        if(data.image == null || data.image =='undefined' || data.image == ''){
+                                                        if(data.image == null || data.image =='undefined' || data.image == '' || data.image=='null'){
                                                                 vimage = "/images/default_user.png"
                                                         }
                                                         $("#username_menu").text(vfullname + " (" + vuser + ")");

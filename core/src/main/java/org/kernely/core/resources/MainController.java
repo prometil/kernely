@@ -40,6 +40,10 @@ public class MainController extends AbstractController {
 	@Inject
 	private TemplateRenderer templateRenderer;
 
+	/**
+	 * Get the main page of the application
+	 * @return The HTML corresponding to the main page of the application
+	 */
 	@GET
 	@Produces( { MediaType.TEXT_HTML })
 	public String getUI() {

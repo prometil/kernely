@@ -22,6 +22,10 @@ public class RoleController extends AbstractController {
 	@Inject
 	private UserService userService;
 	
+	/**
+	 * Get all roles contained in the database
+	 * @return A list of all DTO associated to the roles contained in the database
+	 */
 	@GET
 	@Path("/all")
 	@Produces({"application/json"})

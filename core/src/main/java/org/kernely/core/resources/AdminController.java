@@ -63,6 +63,10 @@ public class AdminController  extends AbstractController{
 		return getAdmin(null);
 	}
 	
+	/**
+	 * Get a list of all plugins detected by the application
+	 * @return A list of all DTO associated to detected plugins
+	 */
 	@GET
 	@Path("/plugins")
 	@Produces( { MediaType.APPLICATION_JSON })
@@ -76,7 +80,11 @@ public class AdminController  extends AbstractController{
 		return plugins;
 	}
 	
-	
+	/**
+	 * Display administration page with a specific sub page.
+	 * @param adminPanel The sub page needed
+	 * @return The complete administration page
+	 */
 	private String getAdmin(String adminPanel){
 		
 		String displayedPanel = adminPanel;
