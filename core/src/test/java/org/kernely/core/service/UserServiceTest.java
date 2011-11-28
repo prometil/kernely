@@ -24,6 +24,8 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.ArrayList;
 
+import javax.persistence.Query;
+
 import org.junit.Test;
 import org.kernely.core.common.AbstractServiceTest;
 import org.kernely.core.dto.RoleDTO;
@@ -32,6 +34,7 @@ import org.kernely.core.dto.UserDTO;
 import org.kernely.core.dto.UserDetailsDTO;
 import org.kernely.core.dto.UserDetailsUpdateRequestDTO;
 import org.kernely.core.model.Role;
+import org.kernely.core.model.UserDetails;
 import org.kernely.core.service.user.RoleService;
 import org.kernely.core.service.user.UserService;
 
@@ -78,12 +81,23 @@ public class UserServiceTest extends AbstractServiceTest{
 		service.updateUserProfile(request);		
 	}
 	
-/*	@Test
+	@Test
 	public void updateUserDetails(){
-		UserDTO userdto = new UserDTO("",1) ;
-		UserDetails ud = new UserDetails();
-		ud.setId_user_detail(1);
-		UserDetailsDTO uddto = new UserDetailsDTO("kk","ll","","mail","add","12","ar","3","2", "1", "18/12/1998", "nn","55",1,1,userdto);
+
+		RoleDTO requestRole = new RoleDTO(1, Role.ROLE_USER);
+		roleService.createRole(requestRole);
+		
+		UserCreationRequestDTO requestcreation = new UserCreationRequestDTO();
+		requestcreation.username="test";
+		requestcreation.password="test";
+		requestcreation.firstname="test";
+		requestcreation.lastname="test";
+		service.createUser(requestcreation);
+		UserDTO userdto = new UserDTO();
+		userdto = service.getAllUsers().get(0);
+		UserDetailsDTO uddto = new UserDetailsDTO();
+	
+	//	UserDetailsDTO uddto = new UserDetailsDTO("kk","ll","","mail","add","12","ar","3","2", "1", "18/12/1998", "nn","55",1,1,userdto);
 		UserDetailsUpdateRequestDTO request = new UserDetailsUpdateRequestDTO();
 		request.birth="18/12/1990";
 		request.adress="a";
@@ -92,7 +106,7 @@ public class UserServiceTest extends AbstractServiceTest{
 		request.civility=1;
 		request.firstname="blabla";
 		request.homephone="252";
-		request.id=1;
+		request.id=2;
 		request.image="LLll.jpg";
 		request.email="papa";
 		request.mobilephone="06";
@@ -101,6 +115,7 @@ public class UserServiceTest extends AbstractServiceTest{
 		request.ssn="232";
 		request.zip="45544";
 		service.updateUserProfile(request);
+		uddto = service.getUserDetails(userdto.username);	
 		assertEquals("18/12/1990", uddto.birth);
 		assertEquals("a",uddto.adress);
 		assertEquals("05",uddto.businessphone);
@@ -113,9 +128,8 @@ public class UserServiceTest extends AbstractServiceTest{
 		assertEquals("a", uddto.lastname);
 		assertEquals("nla",uddto.nationality);
 		assertEquals("232", uddto.ssn);
-		assertEquals("45544", uddto.zip);		
-		
-	}*/
+		assertEquals("45544", uddto.zip);			
+	}
 	
 	@Test(expected=IllegalArgumentException.class)
 	public void createUserWithNullRequest(){
