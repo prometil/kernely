@@ -4,7 +4,7 @@
 
 <div id="mask" style="position:absolute;z-index:9000;background-color:#000;display:none;top:0;left:0;"></div>
 
-<div id="modal_window" style=" position:absolute;width:440px;height:300px;display:none;z-index:9999;padding:20px;top:0;left:0;">
+<div id="modal_window_group" style=" position:absolute;width:440px;height:300px;display:none;z-index:9999;padding:20px;top:0;left:0;">
 </div>
 
 <!-- Template for the create view  -->
@@ -16,7 +16,7 @@
 	</fieldset>
 	<br/>
 	<input type="button" value="Send" class="createGroup"/>
-	<span id="users_errors_create" style="display:none;font-weight:bold;color:red;"></span>
+	<span id="groups_errors_create" style="display:none;font-weight:bold;color:red;"></span>
 </script>
 
 <!-- Template for the edit view  -->
@@ -35,7 +35,7 @@
 	</fieldset>
 	<br/>
 	<input type="button" value="Send" class="updateGroup"/>
-	<span id="users_errors_update" style="display:none;font-weight:bold;color:red;"></span>
+	<span id="groups_errors_update" style="display:none;font-weight:bold;color:red;"></span>
 </script>
 
 <div id="group_admin_container">

@@ -1,17 +1,31 @@
 #profile_header{
-
+	height:50px;
+	text-align:center;
+	font-size:20px;
+	font-weight:bold;
 }
 
 #profile_top_container{
-
+	height:560px;
 }
 
 #profile_image{
-
+	padding-top:10px;
+	height:550px;
+	width:380px;
+	float:left;
+	text-align:center;
+	border-top:1px solid black;
 }
 
 #profile_information{
-
+	height:550px;
+	width:545px;
+	float:left;
+	text-align:left;
+	border-left:1px solid black; 
+	border-top:1px solid black; 
+	padding:15px;
 }
 
 #profile_bottom_container{

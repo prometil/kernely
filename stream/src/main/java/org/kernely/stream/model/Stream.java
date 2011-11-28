@@ -82,6 +82,24 @@ public class Stream extends AbstractModel {
 	public static final String CATEGORY_OTHERS = "streams/others";
 
 	/**
+	 * The right for an user to see the stream, and to subscribe to it.
+	 */
+	public static final String RIGHT_READ = "read";
+
+	/**
+	 * The right for an user to write messages on the stream.
+	 * This right includes the right to see the stream.
+	 */
+	public static final String RIGHT_WRITE = "write";
+
+	/**
+	 * The right for an user to delete messages of the stream.
+	 * This right includes the right to write on the stream.
+	 */
+	public static final String RIGHT_DELETE = "delete";
+
+	
+	/**
 	 * The category of the stream.
 	 */
 	private String category;
