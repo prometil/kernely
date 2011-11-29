@@ -13,7 +13,7 @@ App = (function($){
 		initialize: function(message){
 			this.message = message
 		},
-		render:function(){
+		render:function(){			
 			var template = $("#message-template").html();
 			
 			var view = {message : this.message.message, date: this.message.date};
@@ -70,23 +70,46 @@ App = (function($){
 			}
 			else {
 			var message = new Backbone.Model({
-				  message: $("#message-input").val()
-			});
+				  message: $("#message-input").val(),
+				  idStream : $("#combobox").val()				  
+			}); 
 			$("#message-input").prop('disabled', true)
+			console.log(JSON.stringify(message));
+
 			$.ajax({
 					type:"POST",
 					contentType: "application/json; charset=utf-8",
-					url:"/streams", data:JSON.stringify(message.toJSON()), 
+					url:"/streams", 
+					data:JSON.stringify(message), 
 					dataType:"json",
 					success: function(data){
 			    		parent.addMessage(data, true)
 			    		$("#message-input").val("");
 			    		$("#message-input").prop('disabled', false);
 			  		}
-			});}
+			});
+			
+			}
 		},
 		getMore: function(){
 			var parent = this
+			
+			$.ajax({
+				type: "GET",
+				url:"/streams/combobox",
+				dataType:"json",
+				success: function(data){
+					if(data != null){
+						var option = "";
+						$.each(data.streamDTO, function(index, value){
+							option = option + '<option value="' + this.id + '">'+ this.title +'</option>' ;
+						});
+						$("#combo").append('<select name="stream-choice" id="combobox">' + option + '</select>');
+						$("#combo").append('<a id="share-message"  class="button share-message" href="javascript:void(0)" >Share</a>');
+					}
+				}
+			});
+			
 			$.getJSON('/streams', function(data){
 				if (!data == null){
 					$.each(data.streamMessageDTO, function(index, value){
