@@ -23,6 +23,9 @@ import javax.persistence.EntityManager;
 
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.UnavailableSecurityManagerException;
+import org.apache.shiro.mgt.SecurityManager;
+import org.apache.shiro.subject.Subject;
+import org.apache.shiro.subject.support.SubjectThreadState;
 import org.apache.shiro.util.LifecycleUtils;
 import org.apache.shiro.util.ThreadState;
 import org.junit.After;
@@ -30,13 +33,8 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.Rule;
 import org.kernely.core.model.User;
+import org.mockito.Mockito;
 
-import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.mgt.SecurityManager;
-import org.apache.shiro.subject.Subject;
-import org.apache.shiro.subject.support.SubjectThreadState;
-import org.apache.shiro.util.LifecycleUtils;
-import org.apache.shiro.util.ThreadState;
 import com.google.guiceberry.junit4.GuiceBerryRule;
 import com.google.inject.Inject;
 import com.google.inject.persist.PersistService;
@@ -134,7 +132,11 @@ public abstract class AbstractServiceTest {
 		setSecurityManager(null);
 	}
 
-	public void authenticatedAs(User user) {
-
+	public void authenticateAs(String username) {
+		doClearSubject();
+		Subject s = Mockito.mock(Subject.class);
+		Mockito.when(s.isAuthenticated()).thenReturn(true);
+		Mockito.when(s.getPrincipal()).thenReturn(username);
+		setSubject(s);
 	}
 }

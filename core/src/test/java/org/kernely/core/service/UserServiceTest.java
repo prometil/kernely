@@ -24,8 +24,6 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.ArrayList;
 
-import javax.persistence.Query;
-
 import org.junit.Test;
 import org.kernely.core.common.AbstractServiceTest;
 import org.kernely.core.dto.RoleDTO;
@@ -34,7 +32,6 @@ import org.kernely.core.dto.UserDTO;
 import org.kernely.core.dto.UserDetailsDTO;
 import org.kernely.core.dto.UserDetailsUpdateRequestDTO;
 import org.kernely.core.model.Role;
-import org.kernely.core.model.UserDetails;
 import org.kernely.core.service.user.RoleService;
 import org.kernely.core.service.user.UserService;
 
@@ -236,5 +233,21 @@ public class UserServiceTest extends AbstractServiceTest{
 	@Test
 	public void getNullUser(){
 		assertEquals(0, service.getAllUsers().size());
+	}
+	
+	@Test
+	public void getAuthenticatedUser() {
+		RoleDTO requestRole = new RoleDTO(1, Role.ROLE_USER);
+		roleService.createRole(requestRole);
+		
+		UserCreationRequestDTO request = new UserCreationRequestDTO();
+		request.username = "username";
+		request.password = "password";
+		request.firstname = "firstname";
+		request.lastname = "lastname";
+		service.createUser(request);
+		authenticateAs("username");
+		UserDTO currentUser = service.getAuthenticatedUser();
+		assertEquals("username", currentUser.username);
 	}
 }
