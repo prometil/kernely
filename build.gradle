@@ -2,6 +2,7 @@ File explodedDist = new File(buildDir, 'plugins')
 
 allprojects {
     apply plugin: 'java'
+    apply plugin: 'project-report'
     group = 'org.kernely'
     version = '1.0'
 }
