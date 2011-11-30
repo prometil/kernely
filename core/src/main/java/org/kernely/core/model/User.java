@@ -146,7 +146,7 @@ public class User extends AbstractModel{
     /**
          * Permissions of the user
          */
-    @ManyToMany(fetch=FetchType.LAZY)
+    @ManyToMany(fetch=FetchType.EAGER)
         @JoinTable( name="kernely_user_permissions",
                                 joinColumns=@JoinColumn(name="fk_user"),
                                 inverseJoinColumns=@JoinColumn(name="fk_permission"))

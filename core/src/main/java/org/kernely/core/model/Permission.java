@@ -16,7 +16,7 @@ GNU Affero General Public License for more details.
 You should have received a copy of the GNU Affero General Public
 License along with Kernely.
 If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 package org.kernely.core.model;
 
 import java.util.HashSet;
@@ -34,11 +34,12 @@ import javax.persistence.Table;
 import org.kernely.core.hibernate.AbstractModel;
 
 @Entity
-@Table(name="kernely_permission")
+@Table(name = "kernely_permission")
 public class Permission extends AbstractModel {
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	@Column(name="permission_id")
+	@Column(name = "permission_id")
 	/**
 	 * Permission's id
 	 */
@@ -52,25 +53,19 @@ public class Permission extends AbstractModel {
 	/**
 	 * Groups having the permission
 	 */
-	@ManyToMany(
-			mappedBy = "permissions",
-			fetch=FetchType.EAGER
-	)
+	@ManyToMany(mappedBy = "permissions", fetch = FetchType.EAGER)
 	private Set<Group> groups;
 
 	/**
 	 * Users having the permission
 	 */
-	@ManyToMany(
-			mappedBy = "permissions",
-			fetch=FetchType.EAGER
-	)
+	@ManyToMany(mappedBy = "permissions", fetch = FetchType.EAGER)
 	private Set<User> users;
 
 	/**
 	 * Default constructor.
 	 */
-	public Permission(){
+	public Permission() {
 		this.groups = new HashSet<Group>();
 		this.id = 0;
 		this.name = "";
@@ -85,7 +80,8 @@ public class Permission extends AbstractModel {
 	}
 
 	/**
-	 * @param groups the groups to set
+	 * @param groups
+	 *            the groups to set
 	 */
 	public final void setGroups(Set<Group> groups) {
 		this.groups = groups;
@@ -99,7 +95,8 @@ public class Permission extends AbstractModel {
 	}
 
 	/**
-	 * @param users the users to set
+	 * @param users
+	 *            the users to set
 	 */
 	public final void setUsers(Set<User> users) {
 		this.users = users;
@@ -113,7 +110,8 @@ public class Permission extends AbstractModel {
 	}
 
 	/**
-	 * @param id the id to set
+	 * @param id
+	 *            the id to set
 	 */
 	public final void setId(int id) {
 		this.id = id;
@@ -127,7 +125,8 @@ public class Permission extends AbstractModel {
 	}
 
 	/**
-	 * @param name the name to set
+	 * @param name
+	 *            the name to set
 	 */
 	public final void setName(String name) {
 		this.name = name;
@@ -135,25 +134,29 @@ public class Permission extends AbstractModel {
 
 	/**
 	 * Get the type of the resource concerned by the permission.
+	 * 
 	 * @return The type of the resource.
 	 */
-	public final String getResourceType(){
-		return this.name.substring(this.name.indexOf(":") + 1 , this.name.lastIndexOf(":"));
+	public final String getResourceType() {
+		return this.name.substring(this.name.indexOf(":") + 1, this.name
+				.lastIndexOf(":"));
 	}
 
 	/**
 	 * Get the rights of the permission.
+	 * 
 	 * @return The rights.
 	 */
-	public final String getRights(){
+	public final String getRights() {
 		return this.name.substring(0, this.name.indexOf(":"));
 	}
 
 	/**
 	 * Gets the resource ID concerned by the permission.
+	 * 
 	 * @return The resource ID
 	 */
-	public final String getResourceID(){
+	public final String getResourceID() {
 		return this.name.substring(this.name.lastIndexOf(":"));
 	}
 

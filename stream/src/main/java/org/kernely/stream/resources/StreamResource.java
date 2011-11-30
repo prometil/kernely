@@ -98,6 +98,7 @@ public class StreamResource extends AbstractController {
 		} else{
 			page = templateRenderer.create("/templates/gsp/home.gsp").render();
 		}
+
 		return page;
 	}
 	
@@ -170,7 +171,6 @@ public class StreamResource extends AbstractController {
 	@Path("/admin/rights/{id}")
 	@Produces({MediaType.APPLICATION_JSON})
 	public String getStreamRights(@PathParam("id") int id){
-		log.debug("JSON IN CONSTRUCTION FOR THE STREAM " + id);
 		String json = "{\"permission\":[";
 		List<UserDTO> allUsers = userService.getAllUsers();
 		
@@ -196,7 +196,7 @@ public class StreamResource extends AbstractController {
 	@Path("/admin/updaterights")
 	@Produces( { MediaType.APPLICATION_JSON })
 	public String updateRights(StreamRightsUpdateRequestDTO request) {
-		log.debug("{} udate rights of the stream : {}", request.streamid);
+		log.debug("Update rights of the stream : {}", request.streamid);
 		for (RightOnStreamDTO right : request.rights){
 			boolean correct = permissionService.userHasPermission(right.userid,right.permission+":streams:"+request.streamid);
 			if (!correct){
@@ -212,11 +212,11 @@ public class StreamResource extends AbstractController {
 				}
 				if (! right.permission.equals("nothing")){
 					// Add the requested permission
-					permissionService.grantPermission(right.userid, right.permission +":streams:"+request.streamid);
+					String permission = right.permission +":streams:"+request.streamid;
+					permissionService.grantPermission(right.userid, permission);
 				}
 			}
 		}
 		return "{\"result\":\"ok\"}";
 	}
-	
 }

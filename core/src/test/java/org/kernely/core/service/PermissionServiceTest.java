@@ -37,6 +37,8 @@ import com.google.inject.Inject;
 public class PermissionServiceTest extends AbstractServiceTest{
 
 	
+	private static final String TEST_STRING = "test";
+
 	@Inject
 	private UserService userService;
 
@@ -46,19 +48,19 @@ public class PermissionServiceTest extends AbstractServiceTest{
 	@Inject
 	private RoleService roleService;
 
-	private final String PERMISSION_STRING = "test";
+	private final String PERMISSION_STRING = TEST_STRING;
 	
 	@Test
 	public void grantPermission(){
 		RoleDTO requestRole = new RoleDTO(1, Role.ROLE_USER);
 		roleService.createRole(requestRole);
 		
-		userService.createUser(new UserCreationRequestDTO(1,"test","test","test","test",false,null));
-		UserDetailsDTO details = userService.getUserDetails("test");
+		userService.createUser(new UserCreationRequestDTO((int)1,TEST_STRING,TEST_STRING,TEST_STRING,TEST_STRING,false,null));
+
+		assertEquals(false,permissionService.userHasPermission((int)1,PERMISSION_STRING));
+		permissionService.grantPermission(1, PERMISSION_STRING);
 		
-		assertEquals(false,permissionService.userHasPermission(details.id,PERMISSION_STRING));
-		permissionService.grantPermission(details.id, PERMISSION_STRING);
-//		assertEquals(true,permissionService.userHasPermission(details.id,PERMISSION_STRING));
+		assertEquals(true,permissionService.userHasPermission((int)1,PERMISSION_STRING));
 	}
 	
 	@Test
@@ -66,12 +68,12 @@ public class PermissionServiceTest extends AbstractServiceTest{
 		RoleDTO requestRole = new RoleDTO(1, Role.ROLE_USER);
 		roleService.createRole(requestRole);
 		
-		userService.createUser(new UserCreationRequestDTO(31,"test","test","test","test",false,null));
-		UserDetailsDTO details = userService.getUserDetails("test");
-		assertEquals(false,permissionService.userHasPermission(details.id,PERMISSION_STRING));
-		permissionService.grantPermission(details.id, PERMISSION_STRING);
-		permissionService.ungrantPermission(details.id, PERMISSION_STRING);
-		assertEquals(false,permissionService.userHasPermission(details.id,PERMISSION_STRING));
+		userService.createUser(new UserCreationRequestDTO(2,TEST_STRING,TEST_STRING,TEST_STRING,TEST_STRING,false,null));
+
+		assertEquals(false,permissionService.userHasPermission(2,PERMISSION_STRING));
+		permissionService.grantPermission(2, PERMISSION_STRING);
+		permissionService.ungrantPermission(2, PERMISSION_STRING);
+		assertEquals(false,permissionService.userHasPermission(2,PERMISSION_STRING));
 	}
 	
 }
