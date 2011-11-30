@@ -46,7 +46,7 @@ public class StreamMessageDTO {
 	}
 
 	//the id of the stream containing this message
-	private long streamId;
+	public long streamId;
 	
 	//the stream message DTO
 	public String message;

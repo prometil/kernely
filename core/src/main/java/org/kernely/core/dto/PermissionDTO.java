@@ -33,7 +33,15 @@ public class PermissionDTO {
 	 */
 	public PermissionDTO(String pName) {
 		name = pName;
+		String[] splitted = pName.split(":");
+		this.right = splitted[0];
+		this.type = splitted[1];
+		this.resourceId = splitted[2];
 	}
 
 	public String name;
+	
+	public String right;
+	public String type;
+	public String resourceId;
 }

@@ -26,7 +26,11 @@ import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
+import org.kernely.core.dto.PermissionDTO;
+import org.kernely.core.dto.UserDTO;
 import org.kernely.core.service.mail.Mailer;
+import org.kernely.core.service.user.PermissionService;
+import org.kernely.core.service.user.UserService;
 import org.kernely.stream.dto.StreamCreationRequestDTO;
 import org.kernely.stream.dto.StreamDTO;
 import org.kernely.stream.dto.StreamMessageDTO;
@@ -56,6 +60,11 @@ public class StreamService {
 	@Inject
 	private Mailer mailService;
 	
+	@Inject
+	private UserService userService;
+	
+	@Inject
+	private PermissionService permissionService;
 
 
 	
@@ -110,7 +119,6 @@ public class StreamService {
 	 * 
 	 * @return the stream
 	 */
-	@SuppressWarnings("unchecked")
 	@Transactional
 	public StreamDTO getStream(long stream_id) {
 		Stream stream = getStreamModel(stream_id);
@@ -126,7 +134,6 @@ public class StreamService {
 	 * 
 	 * @return the stream
 	 */
-	@SuppressWarnings("unchecked")
 	@Transactional
 	private Stream getStreamModel(long stream_id) {
 		Query query = em.get().createQuery("SELECT s FROM Stream s WHERE id="+stream_id);
@@ -141,10 +148,8 @@ public class StreamService {
 	 * @param category The category of this stream (use Stream class constants).
 	 * @return the unique id of the stream.
 	 */
-	@SuppressWarnings("unchecked")
 	@Transactional
 	public void createStream(String title, String category) {
-		StreamDTO dto;
 		if ( this.getStream(title, category) != null){
 			throw new IllegalArgumentException("Stream with the same title and the same category already exists.");
 		}
@@ -207,7 +212,6 @@ public class StreamService {
 	 * @param category The category of this stream (use Stream class constants).
 	 * @return the Stream DTO.
 	 */
-	@SuppressWarnings("unchecked")
 	@Transactional
 	public StreamDTO getStream(String title, String category) {
 		Query query = em.get().createQuery("SELECT s FROM Stream s WHERE title='"+title+"' AND category='"+category+"'");
@@ -239,5 +243,38 @@ public class StreamService {
 		}
 		log.debug("Found {} stream(s)", dtos.size());
 		return dtos;
+	}
+	
+	private List<Stream> getCurrentUserStreamModel(){
+		UserDTO currentUser = userService.getCurrentUser();
+		List<PermissionDTO> permissions = permissionService.getTypeOfPermissionForOneUser(currentUser.id, "streams");
+		List<Stream> streams = new ArrayList<Stream>();
+		for(PermissionDTO p : permissions){
+			streams.add(em.get().find(Stream.class, Integer.parseInt(p.resourceId)));
+		}
+		return streams;
+	}
+	
+	@Transactional
+	public List<StreamDTO> getCurrentUserStreams(){
+		List<Stream> streams = this.getCurrentUserStreamModel();
+		List<StreamDTO> streamsdto = new ArrayList<StreamDTO>();
+		for(Stream s : streams){
+			streamsdto.add(new StreamDTO(s));
+		}
+		return streamsdto;
+	}
+	
+	public List<StreamMessageDTO> getAllMessagesForCurrentUser(){
+		List<Stream> streams = this.getCurrentUserStreamModel();
+		List<Message> messages = new ArrayList<Message>();
+		for(Stream s : streams){
+			messages.addAll(s.getMessages());
+		}
+		List<StreamMessageDTO> messagesdto = new ArrayList<StreamMessageDTO>();
+		for(Message m : messages){
+			messagesdto.add(new StreamMessageDTO(m));
+		}
+		return messagesdto;
 	}
 }

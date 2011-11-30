@@ -24,7 +24,6 @@
 		</div>
 	</div>
 	<div id="streams-sidebar">
-		This is the streams sidebar.
 	</div>
 	<div id="streams-footer">
 	</div>

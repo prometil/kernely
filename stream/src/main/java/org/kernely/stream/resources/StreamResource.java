@@ -219,4 +219,17 @@ public class StreamResource extends AbstractController {
 		return "{\"result\":\"ok\"}";
 	}
 	
+	@GET
+	@Path("/current/all")
+	@Produces( { MediaType.APPLICATION_JSON })
+	public List<StreamDTO> getCurrentUserStreams(){
+		return streamService.getCurrentUserStreams();
+	}
+	
+	@GET
+	@Path("/current/messages")
+	@Produces( { MediaType.APPLICATION_JSON })
+	public List<StreamMessageDTO> getAllMessagesForCurrentUser(){
+		return streamService.getAllMessagesForCurrentUser();
+	}
 }

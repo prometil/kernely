@@ -33,16 +33,17 @@ App = (function($){
 	// the global view
 	StreamView = Backbone.View.extend({
 		el: "#streams-main",
+		
 		events: {
 			"click .share-message" : "send"
 		},
 		initialize:function(){
-			var parent = this
-			$(window).scroll(function(){
-		        if  ($(window).scrollTop() == $(document).height() - $(window).height()){
-		        	parent.getMore();
-		        }
-			});
+			//var parent = this
+//			$(window).scroll(function(){
+//		        if  ($(window).scrollTop() == $(document).height() - $(window).height()){
+//		        	parent.getMore();
+//		        }
+//			});
 		},
 	
 		//add a message with the given element
@@ -60,6 +61,7 @@ App = (function($){
 			this.getMore();
 			return this;
 		},
+		
 		send: function(){
 			var parent = this
 			if ($("#message-input").val()=="")
@@ -87,14 +89,23 @@ App = (function($){
 		},
 		getMore: function(){
 			var parent = this
-			$.getJSON('/streams', function(data){
-				if (!data == null){
-					$.each(data.streamMessageDTO, function(index, value){
-						parent.addMessage(value);
+//			$.getJSON('/streams/current/messages', function(data){
+//				if (!data == null){
+//					$.each(data.streamMessageDTO, function(index, value){
+//						parent.addMessage(value);
+//					});
+//				}
+//			})
+			$.ajax({
+				url:"/streams/current/messages",
+				dataType:"json",
+				success: function(data){
+					$.each(data.streamMessageDTO, function(){
+						parent.addMessage(this);
 					});
 				}
-			})
-		},
+			});
+		}
 	})
 	 
 	// define the application initialization

@@ -1,6 +1,7 @@
 package org.kernely.core.service.user;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -121,5 +122,27 @@ public class PermissionService {
 		} catch (NoResultException nre){
 			// If there is no such permission, there is nothing to do : the user has already not the permission.
 		}
+	}
+	
+	public List<PermissionDTO> getTypeOfPermissionForOneUser(long userId, String permissionType){
+		User user = em.get().find(User.class, userId);
+		Set<Permission> permissions = user.getPermissions();
+		Set<Permission> filteredPermissions = this.filterPermissionByType(permissions, permissionType);
+		List<PermissionDTO> list = new ArrayList<PermissionDTO>();
+		for(Permission p : filteredPermissions){
+			list.add(new PermissionDTO(p.getName()));
+		}
+		return list;
+		
+	}
+	
+	private Set<Permission> filterPermissionByType(Collection<Permission> collection, String type){
+		Set<Permission> filteredPermissions = new HashSet<Permission>();
+		for(Permission p : collection){
+			if(p.getResourceType().equals(type)){
+				filteredPermissions.add(p);
+			}
+		}
+		return filteredPermissions;
 	}
 }
