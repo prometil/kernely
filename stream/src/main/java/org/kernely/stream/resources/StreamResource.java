@@ -87,7 +87,7 @@ public class StreamResource extends AbstractController {
 		List<StreamDTO> allStreams = streamService.getAllStreams();
 		ArrayList<StreamDTO> authStreams = new ArrayList();
 		for(StreamDTO streams : allStreams){
-			if (permissionService.userHasPermission((int) userService.getCurrentUser().id, Stream.RIGHT_WRITE+":streams:"+(int)streams.getId()) || permissionService.userHasPermission((int) userService.getCurrentUser().id, Stream.RIGHT_DELETE+":streams:"+(int)streams.getId())) {
+			if (permissionService.userHasPermission((int) userService.getAuthenticatedUser().id, Stream.RIGHT_WRITE+":streams:"+(int)streams.getId()) || permissionService.userHasPermission((int) userService.getAuthenticatedUser().id, Stream.RIGHT_DELETE+":streams:"+(int)streams.getId())) {
 				authStreams.add(streams);
 			}
 		}

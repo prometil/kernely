@@ -234,4 +234,20 @@ public class UserServiceTest extends AbstractServiceTest{
 	public void getNullUser(){
 		assertEquals(0, service.getAllUsers().size());
 	}
+	
+	@Test
+	public void getAuthenticatedUser() {
+		RoleDTO requestRole = new RoleDTO(1, Role.ROLE_USER);
+		roleService.createRole(requestRole);
+		
+		UserCreationRequestDTO request = new UserCreationRequestDTO();
+		request.username = "username";
+		request.password = "password";
+		request.firstname = "firstname";
+		request.lastname = "lastname";
+		service.createUser(request);
+		authenticateAs("username");
+		UserDTO currentUser = service.getAuthenticatedUser();
+		assertEquals("username", currentUser.username);
+	}
 }
