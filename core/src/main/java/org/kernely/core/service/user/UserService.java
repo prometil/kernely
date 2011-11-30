@@ -29,11 +29,9 @@ import java.util.List;
 import java.util.Set;
 
 import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
 import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.authz.AuthorizationException;
 import org.apache.shiro.crypto.RandomNumberGenerator;
 import org.apache.shiro.crypto.SecureRandomNumberGenerator;
 import org.apache.shiro.crypto.hash.Sha256Hash;
@@ -43,7 +41,6 @@ import org.kernely.core.dto.UserDTO;
 import org.kernely.core.dto.UserDetailsDTO;
 import org.kernely.core.dto.UserDetailsUpdateRequestDTO;
 import org.kernely.core.event.UserCreationEvent;
-import org.kernely.core.model.Permission;
 import org.kernely.core.model.Role;
 import org.kernely.core.model.User;
 import org.kernely.core.model.UserDetails;
@@ -306,7 +303,7 @@ public class UserService {
 	 * @return The DTO associated to the current user
 	 */
 	@Transactional
-	public UserDTO getCurrentUser(){
+	public UserDTO getAuthenticatedUser(){
 		Query query = em.get().createQuery("SELECT e FROM User e WHERE username ='"+ SecurityUtils.getSubject().getPrincipal() +"'");
 		User u = (User)query.getSingleResult();
 		return new UserDTO(u.getUsername(), u.isLocked(), u.getId());
@@ -353,6 +350,5 @@ public class UserService {
 
 		return dtos;
 	}
-
-
+	
 }

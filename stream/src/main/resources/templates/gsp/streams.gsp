@@ -15,9 +15,9 @@
 	<div id="streams-main">
 		<h1>Streams</h1>
 		<div>
-			<textarea id="message-input"></textarea>
-			<div class="button-bar">
-				<a id="share-message"  class="button share-message" href="javascript:void(0)" >Share</a>
+			<textarea id="message-input"></textarea>		
+			<div class="button-bar" id="combo">
+			
 			</div>
 		</div>
 		<div id="streams-messages">

@@ -129,7 +129,8 @@ public class StreamService {
 	@SuppressWarnings("unchecked")
 	@Transactional
 	private Stream getStreamModel(long stream_id) {
-		Query query = em.get().createQuery("SELECT s FROM Stream s WHERE id="+stream_id);
+		Query query = em.get().createQuery("SELECT s FROM Stream s WHERE id= :stream_id");
+		query.setParameter("stream_id", (int) stream_id);
 		Stream stream = (Stream) query.getSingleResult();
 		log.debug("Found stream titled: {}", stream.getTitle());
 		return stream;
@@ -210,7 +211,9 @@ public class StreamService {
 	@SuppressWarnings("unchecked")
 	@Transactional
 	public StreamDTO getStream(String title, String category) {
-		Query query = em.get().createQuery("SELECT s FROM Stream s WHERE title='"+title+"' AND category='"+category+"'");
+		Query query = em.get().createQuery("SELECT s FROM Stream s WHERE title= :title AND category= :category");
+		query.setParameter("title", title);
+		query.setParameter("category", category);
 		Stream result;
 		try {
 			result = (Stream) query.getSingleResult();

@@ -52,7 +52,8 @@ public class PermissionService {
 	 */
 	@Transactional
 	public boolean userHasPermission(int id, String permission){
-		Query query = em.get().createQuery("SELECT p FROM Permission p WHERE name ='"+ permission +"'");
+		Query query = em.get().createQuery("SELECT p FROM Permission p WHERE name = :permission");
+		query.setParameter("permission", permission);
 		try {
 			Permission p = (Permission) query.getSingleResult();
 
@@ -94,8 +95,10 @@ public class PermissionService {
 	@Transactional
 	public void grantPermission(int userId, String permission){
 		// Verify if the permission already exists
-		Query permissionQuery = em.get().createQuery("SELECT e FROM Permission e WHERE name='"+permission+"'");
+		Query permissionQuery = em.get().createQuery("SELECT p FROM Permission p WHERE name = :permission");
+		permissionQuery.setParameter("permission", permission);
 		User user = em.get().find(User.class, (long) userId);
+		System.out.println(user+" "+userId);
 		log.debug("Grant permission {} to user id : {}",permission,userId);
 		Permission p;
 		try {
@@ -125,7 +128,8 @@ public class PermissionService {
 	@Transactional
 	public void ungrantPermission(int userId, String permission){
 		// verify if the permission already exists
-		Query permissionQuery = em.get().createQuery("SELECT e FROM Permission e WHERE name='"+permission+"'");
+		Query permissionQuery = em.get().createQuery("SELECT p FROM Permission p WHERE name = :permission");
+		permissionQuery.setParameter("permission", permission);
 		Permission p;
 		User user = em.get().find(User.class, (long) userId);
 		try {

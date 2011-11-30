@@ -19,6 +19,7 @@ If not, see <http://www.gnu.org/licenses/>.
  */
 package org.kernely.stream.resources;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.ws.rs.Consumes;
@@ -78,6 +79,21 @@ public class StreamResource extends AbstractController {
 	public List<StreamMessageDTO> getMessages() {
 		return streamService.getMessages();
 	}
+	
+	@GET
+	@Path("/combobox")
+	@Produces({MediaType.APPLICATION_JSON})
+	public List<StreamDTO> getAuthorizedStreams(){
+		List<StreamDTO> allStreams = streamService.getAllStreams();
+		ArrayList<StreamDTO> authStreams = new ArrayList();
+		for(StreamDTO streams : allStreams){
+			if (permissionService.userHasPermission((int) userService.getAuthenticatedUser().id, Stream.RIGHT_WRITE+":streams:"+(int)streams.getId()) || permissionService.userHasPermission((int) userService.getAuthenticatedUser().id, Stream.RIGHT_DELETE+":streams:"+(int)streams.getId())) {
+				authStreams.add(streams);
+			}
+		}
+		return authStreams;
+	}
+
 
 	@POST
 	@Consumes( { MediaType.APPLICATION_JSON })
@@ -85,7 +101,9 @@ public class StreamResource extends AbstractController {
 	public StreamMessageDTO addMessage(StreamMessageCreationRequestDTO message) {
 
 		log.debug("{} create a new message : {}", SecurityUtils.getSubject().getPrincipal(), message.message);
-		return streamService.addMessage(message.message,1);
+		log.debug("{} post in the stream with the id : {}", SecurityUtils.getSubject().getPrincipal(), message.idStream);
+
+		return streamService.addMessage(message.message,message.idStream);
 	}
 	
 	@GET

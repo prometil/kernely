@@ -26,7 +26,7 @@ import org.junit.Test;
 import org.kernely.core.common.AbstractServiceTest;
 import org.kernely.core.dto.RoleDTO;
 import org.kernely.core.dto.UserCreationRequestDTO;
-import org.kernely.core.dto.UserDetailsDTO;
+import org.kernely.core.dto.UserDTO;
 import org.kernely.core.model.Role;
 import org.kernely.core.service.user.PermissionService;
 import org.kernely.core.service.user.RoleService;
@@ -55,12 +55,18 @@ public class PermissionServiceTest extends AbstractServiceTest{
 		RoleDTO requestRole = new RoleDTO(1, Role.ROLE_USER);
 		roleService.createRole(requestRole);
 		
-		userService.createUser(new UserCreationRequestDTO((int)1,TEST_STRING,TEST_STRING,TEST_STRING,TEST_STRING,false,null));
+		UserCreationRequestDTO request = new UserCreationRequestDTO();
+		request.username=TEST_STRING;
+		request.password=TEST_STRING;
+		request.firstname=TEST_STRING;
+		request.lastname=TEST_STRING;
 
-		assertEquals(false,permissionService.userHasPermission((int)1,PERMISSION_STRING));
-		permissionService.grantPermission(1, PERMISSION_STRING);
+		userService.createUser(request);
+		UserDTO user = userService.getAllUsers().get(0);
+		assertEquals(false,permissionService.userHasPermission((int) user.id,PERMISSION_STRING));
+		permissionService.grantPermission((int) user.id, PERMISSION_STRING);
 		
-		assertEquals(true,permissionService.userHasPermission((int)1,PERMISSION_STRING));
+		assertEquals(true,permissionService.userHasPermission((int) user.id,PERMISSION_STRING));
 	}
 	
 	@Test
@@ -68,12 +74,18 @@ public class PermissionServiceTest extends AbstractServiceTest{
 		RoleDTO requestRole = new RoleDTO(1, Role.ROLE_USER);
 		roleService.createRole(requestRole);
 		
-		userService.createUser(new UserCreationRequestDTO(2,TEST_STRING,TEST_STRING,TEST_STRING,TEST_STRING,false,null));
+		UserCreationRequestDTO request = new UserCreationRequestDTO();
+		request.username=TEST_STRING;
+		request.password=TEST_STRING;
+		request.firstname=TEST_STRING;
+		request.lastname=TEST_STRING;
 
-		assertEquals(false,permissionService.userHasPermission(2,PERMISSION_STRING));
-		permissionService.grantPermission(2, PERMISSION_STRING);
-		permissionService.ungrantPermission(2, PERMISSION_STRING);
-		assertEquals(false,permissionService.userHasPermission(2,PERMISSION_STRING));
+		userService.createUser(request);
+		UserDTO user = userService.getAllUsers().get(0);
+		assertEquals(false,permissionService.userHasPermission((int) user.id,PERMISSION_STRING));
+		permissionService.grantPermission((int) user.id, PERMISSION_STRING);
+		permissionService.ungrantPermission((int) user.id, PERMISSION_STRING);
+		assertEquals(false,permissionService.userHasPermission((int) user.id,PERMISSION_STRING));
 	}
 	
 }
