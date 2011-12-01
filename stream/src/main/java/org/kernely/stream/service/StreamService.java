@@ -69,7 +69,8 @@ public class StreamService extends AbstractService {
 		if ("".equals(pMessage)) {
 			throw new IllegalArgumentException("Message cannot be empty ");
 		}
-		if (! currentUserHasRightsOnStream(Stream.RIGHT_WRITE, (int) streamId)){
+		if (! (currentUserHasRightsOnStream(Stream.RIGHT_WRITE, (int) streamId) ||
+				currentUserHasRightsOnStream(Stream.RIGHT_DELETE, (int) streamId))){
 			return null;
 		}
 		Message message = new Message();
