@@ -6,7 +6,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
@@ -15,18 +14,13 @@ import org.apache.shiro.authz.AuthorizationException;
 import org.kernely.core.dto.PermissionDTO;
 import org.kernely.core.model.Permission;
 import org.kernely.core.model.User;
+import org.kernely.core.service.AbstractService;
 
-import com.google.inject.Inject;
-import com.google.inject.Provider;
 import com.google.inject.Singleton;
 import com.google.inject.persist.Transactional;
 
 @Singleton
-public class PermissionService {
-	@Inject
-	private Provider<EntityManager> em;
-
-	
+public class PermissionService extends AbstractService{
 
 	/**
 	 * Verify if the current user has a specific permission.

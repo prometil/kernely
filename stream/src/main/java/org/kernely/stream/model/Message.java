@@ -57,12 +57,22 @@ public class Message extends AbstractModel {
 		DateTimeZone zoneUTC = DateTimeZone.UTC;
 		date = new DateTime().withZone(zoneUTC).toDate();
 		this.commentable = true;
-		this.commentable = true;
 		this.content ="";
 		this.id=0;
 		this.stream = new Stream();
 	}
 
+	@ManyToOne
+    @JoinColumn(name="fk_user_id")
+    private User user;
+
+	public User getUser(){
+		return this.user;
+	}
+	
+	public void setUser(User u){
+		this.user = u;
+	}
 
 	private String content;
 	

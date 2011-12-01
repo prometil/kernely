@@ -21,26 +21,25 @@ package org.kernely.stream.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.TreeSet;
 
-import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
 import org.kernely.core.dto.PermissionDTO;
-import org.kernely.core.dto.UserDTO;
-import org.kernely.core.service.mail.Mailer;
+import org.kernely.core.model.User;
+import org.kernely.core.service.AbstractService;
 import org.kernely.core.service.user.PermissionService;
-import org.kernely.core.service.user.UserService;
 import org.kernely.stream.dto.StreamCreationRequestDTO;
 import org.kernely.stream.dto.StreamDTO;
 import org.kernely.stream.dto.StreamMessageDTO;
 import org.kernely.stream.model.Message;
 import org.kernely.stream.model.Stream;
+import org.kernely.stream.utils.MessageComparator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.inject.Inject;
-import com.google.inject.Provider;
 import com.google.inject.Singleton;
 import com.google.inject.persist.Transactional;
 
@@ -49,19 +48,14 @@ import com.google.inject.persist.Transactional;
  * 
  */
 @Singleton
-public class StreamService {
+public class StreamService extends AbstractService {
 	
 
 	private static final Logger log = LoggerFactory.getLogger(StreamService.class);
 
-	@Inject
-	Provider<EntityManager> em;
 	
-	@Inject
-	private Mailer mailService;
-	
-	@Inject
-	private UserService userService;
+//	@Inject
+//	private Mailer mailService;
 	
 	@Inject
 	private PermissionService permissionService;
@@ -84,8 +78,9 @@ public class StreamService {
 		Message message = new Message();
 		
 		message.setStream(getStreamModel(streamId));
-		
 		message.setContent(pMessage);
+		message.setUser(getAuthenticatedUserModel());
+		
 		em.get().persist(message);
 		//mailService.create("/templates/gsp/mail.gsp").subject("This is a test mail").to("breton.gy@gmail.com").send();
 		return new StreamMessageDTO(message);
@@ -246,8 +241,8 @@ public class StreamService {
 	}
 	
 	private List<Stream> getCurrentUserStreamModel(){
-		UserDTO currentUser = userService.getCurrentUser();
-		List<PermissionDTO> permissions = permissionService.getTypeOfPermissionForOneUser(currentUser.id, "streams");
+		User current = this.getAuthenticatedUserModel();
+		List<PermissionDTO> permissions = permissionService.getTypeOfPermissionForOneUser(current.getId(), "streams");
 		List<Stream> streams = new ArrayList<Stream>();
 		for(PermissionDTO p : permissions){
 			streams.add(em.get().find(Stream.class, Integer.parseInt(p.resourceId)));
@@ -265,16 +260,30 @@ public class StreamService {
 		return streamsdto;
 	}
 	
-	public List<StreamMessageDTO> getAllMessagesForCurrentUser(){
-		List<Stream> streams = this.getCurrentUserStreamModel();
-		List<Message> messages = new ArrayList<Message>();
-		for(Stream s : streams){
-			messages.addAll(s.getMessages());
+	@SuppressWarnings("unchecked")
+	public List<StreamMessageDTO> getAllMessagesForCurrentUser(long flag){
+		if(flag == 0){
+			flag = (Long)em.get().createQuery("SELECT max(id) FROM Message m").getSingleResult();
+			// We add 1 to flag to consider the last id too in the request with '<'
+			flag ++;
 		}
+		List<Stream> streams = this.getCurrentUserStreamModel();
+		TreeSet<Message> messages = new TreeSet<Message>(new MessageComparator());
+		Query query = em.get().createQuery("SELECT m FROM Message m  WHERE stream in (:streamSet) AND id < :flag ORDER BY id DESC");
+		query.setParameter("streamSet", streams);
+		query.setParameter("flag", flag);
+		query.setMaxResults(9);
+		
+		messages.addAll((List<Message>)query.getResultList());
 		List<StreamMessageDTO> messagesdto = new ArrayList<StreamMessageDTO>();
 		for(Message m : messages){
 			messagesdto.add(new StreamMessageDTO(m));
 		}
 		return messagesdto;
+	}
+	
+	public boolean currentUserHasRightsOnStream(String right, int streamId){
+		User current = this.getAuthenticatedUserModel();
+		return permissionService.userHasPermission((int)current.getId(), right +":streams:" +streamId);
 	}
 }

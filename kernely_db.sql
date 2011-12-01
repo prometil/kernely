@@ -28,7 +28,9 @@ create table kernely_message (
 	content text,
 	message_parent int references kernely_message(id),
         stream int references kernely_stream(id),
-	date date
+	date timestamp,
+	fk_user_id int
+
 );
 
 drop table IF EXISTS kernely_favorites CASCADE;

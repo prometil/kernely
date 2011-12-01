@@ -26,5 +26,16 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @XmlRootElement
 public class StreamMessageCreationRequestDTO {
+	
+	public StreamMessageCreationRequestDTO(String message, long idStream){
+		this.message = message;
+		this.idStream = idStream;			
+	}
+	
+	public StreamMessageCreationRequestDTO(){
+		
+	}
+	
 	public String message;
+	public long idStream;
 }

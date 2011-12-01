@@ -31,6 +31,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.Cascade;
@@ -63,7 +64,19 @@ public class User extends AbstractModel{
 		this.id = id;
 	}
 
+	@OneToOne(fetch=FetchType.LAZY, mappedBy="user")
+	private UserDetails userDetails;
 	
+	
+	
+	public UserDetails getUserDetails() {
+		return userDetails;
+	}
+
+	public void setUserDetails(UserDetails userDetails) {
+		this.userDetails = userDetails;
+	}
+
 	private String username;
 	private String password;
 	private String salt;

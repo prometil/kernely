@@ -19,6 +19,7 @@ If not, see <http://www.gnu.org/licenses/>.
  */
 package org.kernely.stream.resources;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.ws.rs.Consumes;
@@ -27,6 +28,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import org.apache.shiro.SecurityUtils;
@@ -78,6 +80,21 @@ public class StreamResource extends AbstractController {
 	public List<StreamMessageDTO> getMessages() {
 		return streamService.getMessages();
 	}
+	
+	@GET
+	@Path("/combobox")
+	@Produces({MediaType.APPLICATION_JSON})
+	public List<StreamDTO> getAuthorizedStreams(){
+		List<StreamDTO> allStreams = streamService.getAllStreams();
+		ArrayList<StreamDTO> authStreams = new ArrayList<StreamDTO>();
+		for(StreamDTO streams : allStreams){
+			if (streamService.currentUserHasRightsOnStream(Stream.RIGHT_WRITE, (int)streams.getId()) || streamService.currentUserHasRightsOnStream(Stream.RIGHT_DELETE, (int)streams.getId())){
+				authStreams.add(streams);
+			}
+		}
+		return authStreams;
+	}
+
 
 	@POST
 	@Consumes( { MediaType.APPLICATION_JSON })
@@ -85,7 +102,9 @@ public class StreamResource extends AbstractController {
 	public StreamMessageDTO addMessage(StreamMessageCreationRequestDTO message) {
 
 		log.debug("{} create a new message : {}", SecurityUtils.getSubject().getPrincipal(), message.message);
-		return streamService.addMessage(message.message,1);
+		log.debug("{} post in the stream with the id : {}", SecurityUtils.getSubject().getPrincipal(), message.idStream);
+
+		return streamService.addMessage(message.message,message.idStream);
 	}
 	
 	@GET
@@ -229,7 +248,7 @@ public class StreamResource extends AbstractController {
 	@GET
 	@Path("/current/messages")
 	@Produces( { MediaType.APPLICATION_JSON })
-	public List<StreamMessageDTO> getAllMessagesForCurrentUser(){
-		return streamService.getAllMessagesForCurrentUser();
+	public List<StreamMessageDTO> getAllMessagesForCurrentUser(@QueryParam("last") long flag){
+		return streamService.getAllMessagesForCurrentUser(flag);
 	}
 }

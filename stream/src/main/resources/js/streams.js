@@ -13,10 +13,10 @@ App = (function($){
 		initialize: function(message){
 			this.message = message
 		},
-		render:function(){
+		render:function(){			
 			var template = $("#message-template").html();
 			
-			var view = {message : this.message.message, date: this.message.date};
+			var view = {message : this.message.message, date: this.message.date, stream: this.message.streamName, author: this.message.author, date: this.message.timeToDisplay};
 			var html = Mustache.to_html(template, view);
 			$(this.el).html(html);
 			return this;
@@ -32,18 +32,19 @@ App = (function($){
 	
 	// the global view
 	StreamView = Backbone.View.extend({
+		flag: 0,
 		el: "#streams-main",
 		
 		events: {
 			"click .share-message" : "send"
 		},
 		initialize:function(){
-			//var parent = this
-//			$(window).scroll(function(){
-//		        if  ($(window).scrollTop() == $(document).height() - $(window).height()){
-//		        	parent.getMore();
-//		        }
-//			});
+			var parent = this
+			$(window).scroll(function(){
+		        if  ($(window).scrollTop() == $(document).height() - $(window).height()){
+		        	parent.getMore();
+		        }
+			});
 		},
 	
 		//add a message with the given element
@@ -58,6 +59,7 @@ App = (function($){
 		},
 		
 		render: function(){
+			this.initComboBox();
 			this.getMore();
 			return this;
 		},
@@ -72,37 +74,75 @@ App = (function($){
 			}
 			else {
 			var message = new Backbone.Model({
-				  message: $("#message-input").val()
-			});
+				  message: $("#message-input").val(),
+				  idStream : $("#combobox").val()				  
+			}); 
 			$("#message-input").prop('disabled', true)
+
 			$.ajax({
 					type:"POST",
 					contentType: "application/json; charset=utf-8",
-					url:"/streams", data:JSON.stringify(message.toJSON()), 
+					url:"/streams", 
+					data:JSON.stringify(message), 
 					dataType:"json",
 					success: function(data){
 			    		parent.addMessage(data, true)
 			    		$("#message-input").val("");
 			    		$("#message-input").prop('disabled', false);
 			  		}
-			});}
+			});
+			
+			}
 		},
 		getMore: function(){
 			var parent = this
-//			$.getJSON('/streams/current/messages', function(data){
-//				if (!data == null){
-//					$.each(data.streamMessageDTO, function(index, value){
-//						parent.addMessage(value);
-//					});
-//				}
-//			})
+			var url = "";
+			console.log(this.flag);
+			if(this.flag == 0){
+				url = "/streams/current/messages";
+			}
+			else{
+				url = "/streams/current/messages?last=" + this.flag;
+			}
 			$.ajax({
-				url:"/streams/current/messages",
+				url: url,
 				dataType:"json",
 				success: function(data){
-					$.each(data.streamMessageDTO, function(){
-						parent.addMessage(this);
-					});
+					if(data != null){
+						if(data.streamMessageDTO.length > 1){
+							$.each(data.streamMessageDTO, function(){
+								parent.addMessage(this);
+								parent.flag = this.id;
+							});
+						}
+						else{
+							parent.addMessage(data.streamMessageDTO);
+							parent.flag = data.streamMessageDTO.id;
+						}
+					}
+				}
+			});
+		},
+		
+		initComboBox: function(){
+			$.ajax({
+				type: "GET",
+				url:"/streams/combobox",
+				dataType:"json",
+				success: function(data){
+					if(data != null){
+						var option = "";
+						if(data.streamDTO.length > 1){
+							$.each(data.streamDTO, function(index, value){
+								option = option + '<option value="' + this.id + '">'+ this.title +'</option>' ;
+							});
+						}
+						else{
+							option = '<option value="' + data.streamDTO.id + '">'+ data.streamDTO.title +'</option>' ;
+						}
+						$("#combo").append('<select name="stream-choice" id="combobox">' + option + '</select>');
+						$("#combo").append('<a id="share-message"  class="button share-message" href="javascript:void(0)" >Share</a>');
+					}
 				}
 			});
 		}
