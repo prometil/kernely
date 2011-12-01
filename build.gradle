@@ -3,7 +3,7 @@ File explodedDist = new File(buildDir, 'plugins')
 allprojects {
     apply plugin: 'java'
     apply plugin: 'project-report'
-    apply plugin: 'code-quality'
+    //apply plugin: 'code-quality'
     apply plugin: 'eclipse'
     group = 'org.kernely'
     version = '1.0'
@@ -12,100 +12,35 @@ subprojects {
 
 	//properties 
 	group = 'org.kernely'
-   	version = '1.0'
+  version = '1.0'
 
-    sourceCompatibility = 1.6
-    
+  sourceCompatibility = 1.6
+  //checkstyleConfigFileName = '../config/checkstyle/checkstyle.xml'
     
   	//repositories
-    repositories {
-        mavenCentral()
-    }
+  repositories {
+    mavenCentral()
+  }
 
-    dependencies {
-        testCompile ('junit:junit:4.8.2', 'com.google.guiceberry:guiceberry:3.1.0', "org.mockito:mockito-all:1.8.5")
-    }
+  dependencies {
+    testCompile ('junit:junit:4.8.2', 'com.google.guiceberry:guiceberry:3.1.0', "org.mockito:mockito-all:1.8.5")
+  }
+  task testJar(type: Jar, dependsOn: testClasses) {
+    baseName = "test-${project.archivesBaseName}"
+    from sourceSets.test.classes
+  }
 
-    task testJar(type: Jar, dependsOn: testClasses) {
-       baseName = "test-${project.archivesBaseName}"
-       from sourceSets.test.classes
-    }
+  configurations {
+    tests
+  }
 
-    configurations {
-        tests
-    }
-
-    artifacts {
-        tests testJar
-    }
+  artifacts {
+    tests testJar
+  }
 }
 sourceCompatibility = 1.6
 
-task prepare(dependsOn: assemble) << {
-    
-    explodedDist.mkdirs()
-    subprojects.each {project ->
-        if(project.name.equals("bootstrap")){
-          project.tasks.withType(Jar).each {archiveTask ->
-            copy {
-                from archiveTask.archivePath
-                into "dist/kernely/bin"
-            }
-          }  
-        }
-        if(!project.name.equals("bootstrap") && !project.name.equals("core")){
-        
-          project.tasks.withType(Jar).each {archiveTask ->
-            copy {
-                from archiveTask.archivePath
-                into "dist/kernely/plugins"
-            }
-          }  
-        }
 
-        copy {
-          from project.configurations.default
-          into "dist/kernely/libs"
-        }
-        mkdir("dist/kernely/media")
-        mkdir("dist/kernely/config")
-	
-    	copy{
-           from "core/src/main/resources"
-           from "stream/src/main/resources"
-   	   into "dist/kernely/media"
-	   include '**/*.gsp'
-           include '**/*.js'
-	   include '**/*.css'
-	   includeEmptyDirs = false
-	}	
-
-    	copy{
-           from "core/src/main/resources/core-config.xml"
-           from "stream/src/main/resources/stream-config.xml"
-   	   into "dist/kernely/config"
-	}	
-	
-    }
-}
-
-task tar(type: Tar, dependsOn: ['prepare']) {
-    compression = Compression.GZIP
-    extension = "tar.gz"
-    from("dist/kernely") {
-        into ""
-
-    }
-}
-
-task copyTar(type: Copy, dependsOn: ['tar']){
-	from "build/distributions"
-	into "dist"
-}
-
-task dist(type: Delete, dependsOn: ['copyTar']){
-	delete "build"
-}
 
 dependsOnChildren()
 

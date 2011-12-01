@@ -40,10 +40,7 @@ dependencies {
 	compile "com.google.inject.extensions:guice-servlet:3.0"
 	compile "com.google.inject.extensions:guice-persist:3.0"
 	
-	
 	//liquibase
 	compile 'org.liquibase:liquibase-parent:2.0.3'
-	
-	  
 }
     
