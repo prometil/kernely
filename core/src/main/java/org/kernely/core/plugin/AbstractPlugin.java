@@ -109,8 +109,10 @@ public abstract class AbstractPlugin extends AbstractModule {
 	}
 	
 	/**
-	 * Return the plugin path
-	 * @return the plugin path
+	 * Return the path for the plugin main page.
+	 * If not null, the plugin name will appear in Kernely menu, and clicking on it display the page targetted by this path.
+	 * If null, the plugin name will not appear in Kernely menu.
+	 * @return the path to the plugin main page, or null if the plugin does'nt have a main page.
 	 */
 	public String getPath(){
 		return path;

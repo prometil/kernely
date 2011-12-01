@@ -26,7 +26,7 @@ import org.junit.Test;
 import org.kernely.core.common.AbstractServiceTest;
 import org.kernely.core.dto.RoleDTO;
 import org.kernely.core.dto.UserCreationRequestDTO;
-import org.kernely.core.dto.UserDetailsDTO;
+import org.kernely.core.dto.UserDTO;
 import org.kernely.core.model.Role;
 import org.kernely.core.service.user.PermissionService;
 import org.kernely.core.service.user.RoleService;
@@ -37,6 +37,8 @@ import com.google.inject.Inject;
 public class PermissionServiceTest extends AbstractServiceTest{
 
 	
+	private static final String TEST_STRING = "test";
+
 	@Inject
 	private UserService userService;
 
@@ -46,19 +48,25 @@ public class PermissionServiceTest extends AbstractServiceTest{
 	@Inject
 	private RoleService roleService;
 
-	private final String PERMISSION_STRING = "test";
+	private final String PERMISSION_STRING = TEST_STRING;
 	
 	@Test
 	public void grantPermission(){
 		RoleDTO requestRole = new RoleDTO(1, Role.ROLE_USER);
 		roleService.createRole(requestRole);
 		
-		userService.createUser(new UserCreationRequestDTO(1,"test","test","test","test",false,null));
-		UserDetailsDTO details = userService.getUserDetails("test");
+		UserCreationRequestDTO request = new UserCreationRequestDTO();
+		request.username=TEST_STRING;
+		request.password=TEST_STRING;
+		request.firstname=TEST_STRING;
+		request.lastname=TEST_STRING;
+
+		userService.createUser(request);
+		UserDTO user = userService.getAllUsers().get(0);
+		assertEquals(false,permissionService.userHasPermission((int) user.id,PERMISSION_STRING));
+		permissionService.grantPermission((int) user.id, PERMISSION_STRING);
 		
-		assertEquals(false,permissionService.userHasPermission(details.id,PERMISSION_STRING));
-		permissionService.grantPermission(details.id, PERMISSION_STRING);
-//		assertEquals(true,permissionService.userHasPermission(details.id,PERMISSION_STRING));
+		assertEquals(true,permissionService.userHasPermission((int) user.id,PERMISSION_STRING));
 	}
 	
 	@Test
@@ -66,12 +74,18 @@ public class PermissionServiceTest extends AbstractServiceTest{
 		RoleDTO requestRole = new RoleDTO(1, Role.ROLE_USER);
 		roleService.createRole(requestRole);
 		
-		userService.createUser(new UserCreationRequestDTO(31,"test","test","test","test",false,null));
-		UserDetailsDTO details = userService.getUserDetails("test");
-		assertEquals(false,permissionService.userHasPermission(details.id,PERMISSION_STRING));
-		permissionService.grantPermission(details.id, PERMISSION_STRING);
-		permissionService.ungrantPermission(details.id, PERMISSION_STRING);
-		assertEquals(false,permissionService.userHasPermission(details.id,PERMISSION_STRING));
+		UserCreationRequestDTO request = new UserCreationRequestDTO();
+		request.username=TEST_STRING;
+		request.password=TEST_STRING;
+		request.firstname=TEST_STRING;
+		request.lastname=TEST_STRING;
+
+		userService.createUser(request);
+		UserDTO user = userService.getAllUsers().get(0);
+		assertEquals(false,permissionService.userHasPermission((int) user.id,PERMISSION_STRING));
+		permissionService.grantPermission((int) user.id, PERMISSION_STRING);
+		permissionService.ungrantPermission((int) user.id, PERMISSION_STRING);
+		assertEquals(false,permissionService.userHasPermission((int) user.id,PERMISSION_STRING));
 	}
 	
 }

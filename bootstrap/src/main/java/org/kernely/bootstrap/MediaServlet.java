@@ -19,9 +19,6 @@ If not, see <http://www.gnu.org/licenses/>.
  */
 package org.kernely.bootstrap;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;

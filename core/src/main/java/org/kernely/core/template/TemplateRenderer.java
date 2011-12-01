@@ -159,7 +159,10 @@ public class TemplateRenderer {
 				HashMap<String, Object> layoutBinding = new HashMap<String, Object>();
 				HashMap<String, String> menu = new HashMap<String, String>();
 				for (AbstractPlugin plugin : pluginsLoader.getPlugins()) {
-					menu.put(plugin.getName(), plugin.getPath());
+					String path = plugin.getPath();
+					if (path != null){
+						menu.put(plugin.getName(), path);
+					}
 				}
 				
 				//===========TODO : Create an extension point ================//
