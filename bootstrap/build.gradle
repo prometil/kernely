@@ -19,9 +19,6 @@ dependencies {
 	     "org.eclipse.jetty:jetty-webapp:7.2.2.v20101205",
 	     "javax.servlet:servlet-api:2.5",
 	     
-		 
-	     
-	     
 	     "javax.ws.rs:jsr311-api:1.1.1",
 	     "com.sun.jersey:jersey-server:1.8",
 	     "com.sun.jersey.contribs:jersey-guice:1.8",

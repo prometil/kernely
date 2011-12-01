@@ -52,8 +52,7 @@ import com.google.inject.servlet.GuiceFilter;
  */
 public class KernelyBootstrap {
 	// Root of web content directory (jsp, css, js...)
-	private static final Logger log = LoggerFactory
-			.getLogger(KernelyBootstrap.class);
+	private static final Logger log = LoggerFactory.getLogger(KernelyBootstrap.class);
 
 	public static void main(String[] args) throws IOException {
 		log.info("Bootstrapping kernely");
@@ -65,7 +64,9 @@ public class KernelyBootstrap {
 		// Load all detected plugins
 		PluginsLoader pluginLoad = new PluginsLoader();
 		List<AbstractPlugin> plugins = pluginLoad.getPlugins();
-
+		
+		//update database using configuration
+		
 		// configure
 		CombinedConfiguration combinedConfiguration = setTheConfiguration(plugins);
 
@@ -89,8 +90,7 @@ public class KernelyBootstrap {
 		// Register a listener
 		ServletHandler handler = createServletHandler();
 		WebAppContext webApp = new WebAppContext(warUrlString, "/");
-		webApp.addEventListener(new GuiceServletConfig(plugins,
-				setTheConfiguration(plugins)));
+		webApp.addEventListener(new GuiceServletConfig(plugins, setTheConfiguration(plugins)));
 		webApp.setServletHandler(handler);
 		webApp.setErrorHandler(new KernelyErrorHandler());
 		server.setHandler(webApp);
@@ -117,8 +117,7 @@ public class KernelyBootstrap {
 		ServletHandler servletHandler = new ServletHandler();
 
 		FilterHolder guiceFilterHolder = createGuiceFilterHolder();
-		servletHandler.addFilter(guiceFilterHolder,
-				createFilterMapping("/*", guiceFilterHolder));
+		servletHandler.addFilter(guiceFilterHolder, createFilterMapping("/*", guiceFilterHolder));
 
 		return servletHandler;
 	}
@@ -143,8 +142,7 @@ public class KernelyBootstrap {
 	 *            the filter holder
 	 * @return the filter mapping.
 	 */
-	private static FilterMapping createFilterMapping(String pathSpec,
-			FilterHolder filterHolder) {
+	private static FilterMapping createFilterMapping(String pathSpec, FilterHolder filterHolder) {
 		FilterMapping filterMapping = new FilterMapping();
 		filterMapping.setPathSpec(pathSpec);
 		filterMapping.setFilterName(filterHolder.getName());
@@ -158,10 +156,8 @@ public class KernelyBootstrap {
 	 *            list of plugins
 	 * @return the combinedconfiguration set
 	 */
-	private static CombinedConfiguration setTheConfiguration(
-			List<AbstractPlugin> plugins) {
+	private static CombinedConfiguration setTheConfiguration(List<AbstractPlugin> plugins) {
 		ResourceLocator resourceLocator = new ResourceLocator();
-
 		CombinedConfiguration combinedConfiguration = new CombinedConfiguration();
 		// Bind all Jersey resources detected in plugins
 		for (AbstractPlugin plugin : plugins) {
@@ -170,11 +166,8 @@ public class KernelyBootstrap {
 				try {
 					AbstractConfiguration configuration;
 					try {
-						configuration = new XMLConfiguration(
-								resourceLocator.getResource("../config",
-										filepath));
-						log.info("Found configuration file {} for plugin {}",
-								filepath, plugin.getName());
+						configuration = new XMLConfiguration(resourceLocator.getResource("../config", filepath));
+						log.info("Found configuration file {} for plugin {}", filepath, plugin.getName());
 						combinedConfiguration.addConfiguration(configuration);
 					} catch (MalformedURLException e) {
 						// TODO Auto-generated catch block
@@ -182,9 +175,7 @@ public class KernelyBootstrap {
 					}
 
 				} catch (ConfigurationException e) {
-					log.error(
-							"Cannot find configuration file {} for plugin {}",
-							filepath, plugin.getName());
+					log.error("Cannot find configuration file {} for plugin {}", filepath, plugin.getName());
 				}
 			}
 		}

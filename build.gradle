@@ -3,6 +3,8 @@ File explodedDist = new File(buildDir, 'plugins')
 allprojects {
     apply plugin: 'java'
     apply plugin: 'project-report'
+    apply plugin: 'code-quality'
+    apply plugin: 'eclipse'
     group = 'org.kernely'
     version = '1.0'
 }
@@ -11,11 +13,7 @@ subprojects {
 	//properties 
 	group = 'org.kernely'
    	version = '1.0'
-   	
 
-   	//plugins
-    apply plugin: 'java'
-    apply plugin: 'eclipse'
     sourceCompatibility = 1.6
     
     

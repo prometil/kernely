@@ -1,2 +1,2 @@
-include 'bootstrap', 'core', 'user', 'stream'
+include 'bootstrap', 'core', 'stream'
 
