@@ -16,7 +16,7 @@ GNU Affero General Public License for more details.
 You should have received a copy of the GNU Affero General Public
 License along with Kernely.
 If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 package org.kernely.core.service;
 
@@ -34,9 +34,8 @@ import org.kernely.core.service.user.UserService;
 
 import com.google.inject.Inject;
 
-public class PermissionServiceTest extends AbstractServiceTest{
+public class PermissionServiceTest extends AbstractServiceTest {
 
-	
 	private static final String TEST_STRING = "test";
 
 	@Inject
@@ -44,48 +43,52 @@ public class PermissionServiceTest extends AbstractServiceTest{
 
 	@Inject
 	private PermissionService permissionService;
-	
+
 	@Inject
 	private RoleService roleService;
 
-	private final String PERMISSION_STRING = TEST_STRING;
-	
+	private final String PERMISSION_STRING = "1:test:1";
+
 	@Test
-	public void grantPermission(){
+	public void grantPermission() {
 		RoleDTO requestRole = new RoleDTO(1, Role.ROLE_USER);
 		roleService.createRole(requestRole);
-		
+
 		UserCreationRequestDTO request = new UserCreationRequestDTO();
-		request.username=TEST_STRING;
-		request.password=TEST_STRING;
-		request.firstname=TEST_STRING;
-		request.lastname=TEST_STRING;
+		request.username = TEST_STRING;
+		request.password = TEST_STRING;
+		request.firstname = TEST_STRING;
+		request.lastname = TEST_STRING;
 
 		userService.createUser(request);
 		UserDTO user = userService.getAllUsers().get(0);
-		assertEquals(false,permissionService.userHasPermission((int) user.id,PERMISSION_STRING));
+		assertEquals(false, permissionService.userHasPermission((int) user.id, PERMISSION_STRING));
 		permissionService.grantPermission((int) user.id, PERMISSION_STRING);
-		
-		assertEquals(true,permissionService.userHasPermission((int) user.id,PERMISSION_STRING));
+
+		assertEquals(true, permissionService.userHasPermission((int) user.id, PERMISSION_STRING));
 	}
-	
+
 	@Test
-	public void ungrantPermission(){
+	public void ungrantPermission() {
 		RoleDTO requestRole = new RoleDTO(1, Role.ROLE_USER);
 		roleService.createRole(requestRole);
-		
+
 		UserCreationRequestDTO request = new UserCreationRequestDTO();
-		request.username=TEST_STRING;
-		request.password=TEST_STRING;
-		request.firstname=TEST_STRING;
-		request.lastname=TEST_STRING;
+		request.username = TEST_STRING;
+		request.password = TEST_STRING;
+		request.firstname = TEST_STRING;
+		request.lastname = TEST_STRING;
 
 		userService.createUser(request);
 		UserDTO user = userService.getAllUsers().get(0);
-		assertEquals(false,permissionService.userHasPermission((int) user.id,PERMISSION_STRING));
+		assertEquals(false, permissionService.userHasPermission((int) user.id, PERMISSION_STRING));
 		permissionService.grantPermission((int) user.id, PERMISSION_STRING);
 		permissionService.ungrantPermission((int) user.id, PERMISSION_STRING);
-		assertEquals(false,permissionService.userHasPermission((int) user.id,PERMISSION_STRING));
+		assertEquals(false, permissionService.userHasPermission((int) user.id, PERMISSION_STRING));
 	}
-	
+
+	@Test(expected=IllegalArgumentException.class)
+	public void illegalPermission(){
+		permissionService.grantPermission(1, "this_is_a_wrong_permission");
+	}
 }

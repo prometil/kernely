@@ -16,7 +16,7 @@ GNU Affero General Public License for more details.
 You should have received a copy of the GNU Affero General Public
 License along with Kernely.
 If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 package org.kernely.stream.service;
 
 import java.util.ArrayList;
@@ -26,6 +26,7 @@ import java.util.TreeSet;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
+import org.apache.shiro.ShiroException;
 import org.kernely.core.dto.PermissionDTO;
 import org.kernely.core.model.User;
 import org.kernely.core.service.AbstractService;
@@ -43,49 +44,44 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.google.inject.persist.Transactional;
 
-
 /**
  * 
  */
 @Singleton
 public class StreamService extends AbstractService {
-	
 
 	private static final Logger log = LoggerFactory.getLogger(StreamService.class);
 
-	
-//	@Inject
-//	private Mailer mailService;
-	
 	@Inject
 	private PermissionService permissionService;
 
-
-	
 	/**
-	 * Add a message to the database in a stream.
+	 * Add a message to the database in a stream, the current user is the author.
 	 * 
-	 * @return the created message
+	 * @return the created message if the user can write on the stream, null otherwise
+	 * @throws IllegalAccessException 
 	 */
 	@Transactional
 	public StreamMessageDTO addMessage(String pMessage, long streamId) {
-		if (pMessage==null){
+		if (pMessage == null) {
 			throw new IllegalArgumentException("Message cannot be null ");
 		}
-		if ("".equals(pMessage)){
+		if ("".equals(pMessage)) {
 			throw new IllegalArgumentException("Message cannot be empty ");
 		}
+		if (! currentUserHasRightsOnStream(Stream.RIGHT_WRITE, (int) streamId)){
+			return null;
+		}
 		Message message = new Message();
-		
+
 		message.setStream(getStreamModel(streamId));
 		message.setContent(pMessage);
 		message.setUser(getAuthenticatedUserModel());
-		
+
 		em.get().persist(message);
-		//mailService.create("/templates/gsp/mail.gsp").subject("This is a test mail").to("breton.gy@gmail.com").send();
 		return new StreamMessageDTO(message);
 	}
-	
+
 	/**
 	 * Returns the list of messages
 	 * 
@@ -99,15 +95,14 @@ public class StreamService extends AbstractService {
 
 		List<StreamMessageDTO> messageDtos = new ArrayList<StreamMessageDTO>();
 		log.debug("Found {} messages", messages.size());
-	  	for(Message message: messages){
-			
+		for (Message message : messages) {
+
 			StreamMessageDTO streamMessageDTO = new StreamMessageDTO(message);
 			log.debug("Returned message <message: {}, date:{}>", streamMessageDTO.message, streamMessageDTO.date);
 			messageDtos.add(streamMessageDTO);
 		}
 		return messageDtos;
 	}
-	
 
 	/**
 	 * Returns a stream DTO by its id.
@@ -123,7 +118,7 @@ public class StreamService extends AbstractService {
 		dto.setMessages(getMessages());
 		return dto;
 	}
-	
+
 	/**
 	 * Returns a stream by its id.
 	 * 
@@ -140,13 +135,16 @@ public class StreamService extends AbstractService {
 
 	/**
 	 * Create a new stream.
-	 * @param title The title of this stream.
-	 * @param category The category of this stream (use Stream class constants).
+	 * 
+	 * @param title
+	 *            The title of this stream.
+	 * @param category
+	 *            The category of this stream (use Stream class constants).
 	 * @return the unique id of the stream.
 	 */
 	@Transactional
 	public void createStream(String title, String category) {
-		if ( this.getStream(title, category) != null){
+		if (this.getStream(title, category) != null) {
 			throw new IllegalArgumentException("Stream with the same title and the same category already exists.");
 		}
 		Stream newStream = new Stream();
@@ -154,36 +152,37 @@ public class StreamService extends AbstractService {
 		newStream.setCategory(category);
 		em.get().persist(newStream);
 	}
-	
-	
+
 	/**
 	 * Update an existing stream in database
+	 * 
 	 * @param request
-	 * 			The request, containing title, category, and id of the stream
+	 *            The request, containing title, category, and id of the stream
 	 */
 	@Transactional
 	public void updateStream(StreamCreationRequestDTO request) {
-		if(request==null){
+		if (request == null) {
 			throw new IllegalArgumentException("Request cannot be null ");
 		}
-		
-		if("".equals(request.name)){
+
+		if ("".equals(request.name)) {
 			throw new IllegalArgumentException("Stream title cannot be null ");
 		}
-		
-		if("".equals(request.name.trim())){
+
+		if ("".equals(request.name.trim())) {
 			throw new IllegalArgumentException("Stream title cannot be space character only ");
 		}
-		
+
 		Stream stream = em.get().find(Stream.class, request.id);
 		stream.setTitle(request.name);
 		stream.setCategory(request.category);
 	}
-	
-	
+
 	/**
 	 * Lock an existing stream in database
-	 * @param id The id of the stream to lock.
+	 * 
+	 * @param id
+	 *            The id of the stream to lock.
 	 */
 	@Transactional
 	public void lockStream(long stream_id) {
@@ -193,7 +192,9 @@ public class StreamService extends AbstractService {
 
 	/**
 	 * Lock an existing stream in database
-	 * @param id The id of the stream to lock.
+	 * 
+	 * @param id
+	 *            The id of the stream to lock.
 	 */
 	@Transactional
 	public void unlockStream(long stream_id) {
@@ -201,11 +202,13 @@ public class StreamService extends AbstractService {
 		stream.setLocked(false);
 	}
 
-	
 	/**
 	 * Get a stream by it's name and category.
-	 * @param title The title of this stream.
-	 * @param category The category of this stream (use Stream class constants).
+	 * 
+	 * @param title
+	 *            The title of this stream.
+	 * @param category
+	 *            The category of this stream (use Stream class constants).
 	 * @return the Stream DTO.
 	 */
 	@Transactional
@@ -216,8 +219,7 @@ public class StreamService extends AbstractService {
 		Stream result;
 		try {
 			result = (Stream) query.getSingleResult();
-		}
-		catch(NoResultException nre) {
+		} catch (NoResultException nre) {
 			log.debug(nre.getMessage());
 			return null;
 		}
@@ -228,6 +230,7 @@ public class StreamService extends AbstractService {
 
 	/**
 	 * Gets the list of all streams contained in the database.
+	 * 
 	 * @return the list of all streams contained in the database.
 	 */
 	@Transactional
@@ -236,39 +239,49 @@ public class StreamService extends AbstractService {
 		Query query = em.get().createQuery("SELECT e FROM Stream e");
 		List<Stream> collection = (List<Stream>) query.getResultList();
 		List<StreamDTO> dtos = new ArrayList<StreamDTO>();
-		for (Stream stream: collection) {
+		for (Stream stream : collection) {
 			dtos.add(new StreamDTO(stream));
 		}
 		log.debug("Found {} stream(s)", dtos.size());
 		return dtos;
 	}
-	
-	private List<Stream> getCurrentUserStreamModel(){
+
+	private List<Stream> getCurrentUserStreamModel() {
 		User current = this.getAuthenticatedUserModel();
 		List<PermissionDTO> permissions = permissionService.getTypeOfPermissionForOneUser(current.getId(), "streams");
 		List<Stream> streams = new ArrayList<Stream>();
-		for(PermissionDTO p : permissions){
+		for (PermissionDTO p : permissions) {
 			streams.add(em.get().find(Stream.class, Integer.parseInt(p.resourceId)));
 		}
 		return streams;
 	}
-	
+
+	/**
+	 * Get all streams DTO for which the current user has one permission (read, write or delete).
+	 * 
+	 * @return a list of stream DTO. If the user has right to read, or write, or delete on a stream, the stream will be returned.
+	 */
 	@Transactional
-	public List<StreamDTO> getCurrentUserStreams(){
+	public List<StreamDTO> getCurrentUserStreams() {
 		List<Stream> streams = this.getCurrentUserStreamModel();
 		List<StreamDTO> streamsdto = new ArrayList<StreamDTO>();
-		for(Stream s : streams){
+		for (Stream s : streams) {
 			streamsdto.add(new StreamDTO(s));
 		}
 		return streamsdto;
 	}
-	
+
+	/**
+	 * Get all messages which id in database is inferior to the flag.
+	 * @param flag The max id of messages returned.
+	 * @return 9 messages, which id is inferior to the flag passed in parameter. Messages are ordered by descendant id.
+	 */
 	@SuppressWarnings("unchecked")
-	public List<StreamMessageDTO> getAllMessagesForCurrentUser(long flag){
-		if(flag == 0){
-			flag = (Long)em.get().createQuery("SELECT max(id) FROM Message m").getSingleResult();
+	public List<StreamMessageDTO> getAllMessagesForCurrentUser(long flag) {
+		if (flag == 0) {
+			flag = (Long) em.get().createQuery("SELECT max(id) FROM Message m").getSingleResult();
 			// We add 1 to flag to consider the last id too in the request with '<'
-			flag ++;
+			flag++;
 		}
 		List<Stream> streams = this.getCurrentUserStreamModel();
 		TreeSet<Message> messages = new TreeSet<Message>(new MessageComparator());
@@ -276,17 +289,23 @@ public class StreamService extends AbstractService {
 		query.setParameter("streamSet", streams);
 		query.setParameter("flag", flag);
 		query.setMaxResults(9);
-		
-		messages.addAll((List<Message>)query.getResultList());
+
+		messages.addAll((List<Message>) query.getResultList());
 		List<StreamMessageDTO> messagesdto = new ArrayList<StreamMessageDTO>();
-		for(Message m : messages){
+		for (Message m : messages) {
 			messagesdto.add(new StreamMessageDTO(m));
 		}
 		return messagesdto;
 	}
-	
-	public boolean currentUserHasRightsOnStream(String right, int streamId){
+
+	/**
+	 * Check if the current user has a specfic right on a stream.
+	 * @param right The right : use Stream constants.
+	 * @param streamId : The id of the stream.
+	 * @return true if the user has this right, false otherwise.
+	 */
+	public boolean currentUserHasRightsOnStream(String right, int streamId) {
 		User current = this.getAuthenticatedUserModel();
-		return permissionService.userHasPermission((int)current.getId(), right +":streams:" +streamId);
+		return permissionService.userHasPermission((int) current.getId(), right + ":"+Stream.STREAM_RIGHT+":" + streamId);
 	}
 }

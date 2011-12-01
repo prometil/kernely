@@ -98,7 +98,8 @@ public class UserService extends AbstractService{
 		String hashedPasswordBase64 = new Sha256Hash(request.password.trim(), salt, 1024).toBase64();
 
 		// Retrieve the role User, automatically given to a user.
-		Query query = em.get().createQuery("SELECT r FROM Role r WHERE name='"+ Role.ROLE_USER +"'");
+		Query query = em.get().createQuery("SELECT r FROM Role r WHERE name=:role_user");
+		query.setParameter("role_user", Role.ROLE_USER );
 		Role roleUser = (Role)query.getSingleResult();
 
 		user.setPassword(hashedPasswordBase64);
@@ -107,14 +108,15 @@ public class UserService extends AbstractService{
 		roles.add(roleUser);
 		user.setRoles(roles);
 
-		em.get().persist(user);
-
 		UserDetails userdetails = new UserDetails();
 		userdetails.setName(request.lastname);
 		userdetails.setFirstname(request.firstname);
 		userdetails.setUser(user);
 
+		user.setUserDetails(userdetails);
+
 		em.get().persist(userdetails);
+		em.get().persist(user);
 
 		eventBus.post(new UserCreationEvent(user.getId(), user.getUsername()));
 
