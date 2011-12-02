@@ -12,9 +12,9 @@ dependencies {
     compile "org.slf4j:slf4j-api:1.6.1"
     compile "javax.ws.rs:jsr311-api:1.1.1"
   
-  
-  //quartz
-  compile "org.quartz-scheduler:quartz:2.1.0"
+  	//quartz
+  	compile "org.quartz-scheduler:quartz:2.1.0"
+  	
     //Postgres
     compile "postgresql:postgresql:9.0-801.jdbc4" 
 	
@@ -40,6 +40,7 @@ dependencies {
 	compile "com.google.inject.extensions:guice-servlet:3.0"
 	compile "com.google.inject.extensions:guice-persist:3.0"
 	
-	  
+	//liquibase
+//	compile 'org.liquibase:liquibase-parent:2.0.3'
 }
     

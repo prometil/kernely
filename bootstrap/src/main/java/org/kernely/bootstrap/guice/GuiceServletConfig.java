@@ -72,9 +72,7 @@ public class GuiceServletConfig extends GuiceServletContextListener {
 	@Override
 	protected Injector getInjector() {
 		List<Module> list = new ArrayList<Module>();
-
 		for (AbstractPlugin plugin : plugins) {
-
 			Module module = plugin.getModule();
 			if (module != null) {
 				list.add(module);
@@ -82,8 +80,11 @@ public class GuiceServletConfig extends GuiceServletContextListener {
 		}
 		list.add(new KernelyServletModule(plugins, combinedConfiguration));
 		list.add(new ServletModule());
+		
+		//create injector
 		Injector injector = Guice.createInjector(list);
 
+		//get all jobs
 		Scheduler scheduler = injector.getInstance(Scheduler.class);
 		GuiceSchedulerFactory guiceSchedulerFactory = injector.getInstance(GuiceSchedulerFactory.class);
 		try {
