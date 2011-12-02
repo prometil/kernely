@@ -31,7 +31,7 @@ import org.slf4j.LoggerFactory;
  * 
  */
 public abstract class Migration implements Comparable<Migration> {
-	
+
 	private static Logger log = LoggerFactory.getLogger(Migration.class);
 
 	private Version version;
@@ -54,6 +54,9 @@ public abstract class Migration implements Comparable<Migration> {
 	 * @throws SQLException
 	 */
 	public boolean apply(Connection conn) throws SQLException {
+		if (getList().size() == 0) {
+			return true;
+		}
 		conn.setAutoCommit(false);
 		for (Command command : getList()) {
 			try {
@@ -61,17 +64,15 @@ public abstract class Migration implements Comparable<Migration> {
 				conn.commit();
 				return true;
 			} catch (SQLException e) {
-				log.error("Cannot execute command",e);
+				log.error("Cannot execute command", e);
 				conn.rollback();
 				break;
-				
-			}
-			finally{
+
+			} finally {
 				conn.setAutoCommit(true);
 			}
 		}
-		
-		
+
 		return false;
 	}
 
