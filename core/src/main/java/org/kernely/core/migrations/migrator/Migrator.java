@@ -100,7 +100,7 @@ public class Migrator {
 			Class.forName(configuration.getString("hibernate.connection.driver_class"));
 			connectionProps.put("user", configuration.getString("hibernate.connection.username"));
 			connectionProps.put("password", configuration.getString("hibernate.connection.password"));
-			conn = DriverManager.getConnection(configuration.getString("hibernate.connection.url"));
+			conn = DriverManager.getConnection(configuration.getString("hibernate.connection.url"),connectionProps);
 
 			// initialise the database
 			DatabaseMetaData metaData = conn.getMetaData();
