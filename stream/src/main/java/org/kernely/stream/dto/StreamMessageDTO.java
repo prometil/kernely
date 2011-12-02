@@ -51,8 +51,14 @@ public class StreamMessageDTO {
 		String fullname = pMessage.getUser().getUserDetails().getFirstname() + " " + pMessage.getUser().getUserDetails().getName() + " (" + pMessage.getUser().getUsername() +")";
 
 		this.author = fullname;
-
-		determinateTime();
+		if(pMessage.getComments() != null){
+			this.nbComments = pMessage.getComments().size();
+		}
+		else{
+			this.nbComments = 0;
+		}
+		
+		this.determinateTime();
 	}
 
 	private void determinateTime(){
@@ -97,7 +103,7 @@ public class StreamMessageDTO {
 		}
 
 	}
-
+	
 	public long id;
 	
 	//the id of the stream containing this message
@@ -114,4 +120,6 @@ public class StreamMessageDTO {
 	public Date date;
 
 	public String timeToDisplay;
+
+	public int nbComments;
 }

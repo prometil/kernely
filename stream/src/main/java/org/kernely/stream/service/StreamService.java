@@ -87,6 +87,31 @@ public class StreamService extends AbstractService {
 	}
 	
 	/**
+	 * Add a comment to the database in a message.
+	 * 
+	 * @return the created comment
+	 */
+	@Transactional
+	public StreamMessageDTO addComment(String pMessage, long streamId, long idMessageParent) {
+		if (pMessage==null){
+			throw new IllegalArgumentException("Comment cannot be null ");
+		}
+		if ("".equals(pMessage)){
+			throw new IllegalArgumentException("Comment cannot be empty ");
+		}
+		Message message = new Message();
+		
+		message.setStream(getStreamModel(streamId));
+		message.setContent(pMessage);
+		message.setUser(getAuthenticatedUserModel());
+		message.setMessage(em.get().find(Message.class, idMessageParent));
+		
+		em.get().persist(message);
+		//mailService.create("/templates/gsp/mail.gsp").subject("This is a test mail").to("breton.gy@gmail.com").send();
+		return new StreamMessageDTO(message);
+	}
+	
+	/**
 	 * Returns the list of messages
 	 * 
 	 * @return the list of messages
@@ -272,15 +297,15 @@ public class StreamService extends AbstractService {
 		}
 		List<Stream> streams = this.getCurrentUserStreamModel();
 		TreeSet<Message> messages = new TreeSet<Message>(new MessageComparator());
-		Query query = em.get().createQuery("SELECT m FROM Message m  WHERE stream in (:streamSet) AND id < :flag ORDER BY id DESC");
+		Query query = em.get().createQuery("SELECT m FROM Message m  WHERE message is null AND stream in (:streamSet) AND id < :flag ORDER BY id DESC");
 		query.setParameter("streamSet", streams);
 		query.setParameter("flag", flag);
 		query.setMaxResults(9);
-		
 		messages.addAll((List<Message>)query.getResultList());
 		List<StreamMessageDTO> messagesdto = new ArrayList<StreamMessageDTO>();
 		for(Message m : messages){
-			messagesdto.add(new StreamMessageDTO(m));
+			StreamMessageDTO messageDTO = new StreamMessageDTO(m);
+			messagesdto.add(messageDTO);
 		}
 		return messagesdto;
 	}
@@ -288,5 +313,16 @@ public class StreamService extends AbstractService {
 	public boolean currentUserHasRightsOnStream(String right, int streamId){
 		User current = this.getAuthenticatedUserModel();
 		return permissionService.userHasPermission((int)current.getId(), right +":streams:" +streamId);
+	}
+	
+	public List<StreamMessageDTO> getAllCommentsForMessage(long id){
+		Message message = em.get().find(Message.class, id);
+		TreeSet<Message> commentsModel = new TreeSet<Message>(new MessageComparator());
+		commentsModel.addAll(message.getComments());
+		List<StreamMessageDTO> comments = new ArrayList<StreamMessageDTO>();
+		for(Message comment: commentsModel.descendingSet()){
+			comments.add(new StreamMessageDTO(comment));
+		}
+		return comments;
 	}
 }

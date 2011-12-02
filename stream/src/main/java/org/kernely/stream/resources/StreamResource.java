@@ -38,6 +38,7 @@ import org.kernely.core.service.user.PermissionService;
 import org.kernely.core.service.user.UserService;
 import org.kernely.core.template.TemplateRenderer;
 import org.kernely.stream.dto.RightOnStreamDTO;
+import org.kernely.stream.dto.StreamCommentCreationRequestDTO;
 import org.kernely.stream.dto.StreamCreationRequestDTO;
 import org.kernely.stream.dto.StreamDTO;
 import org.kernely.stream.dto.StreamMessageCreationRequestDTO;
@@ -105,6 +106,18 @@ public class StreamResource extends AbstractController {
 		log.debug("{} post in the stream with the id : {}", SecurityUtils.getSubject().getPrincipal(), message.idStream);
 
 		return streamService.addMessage(message.message,message.idStream);
+	}
+	
+	@POST
+	@Path("/comment")
+	@Consumes( { MediaType.APPLICATION_JSON })
+	@Produces( { MediaType.APPLICATION_JSON })
+	public StreamMessageDTO addComment(StreamCommentCreationRequestDTO comment) {
+
+		log.debug("{} create a new comment : {}", SecurityUtils.getSubject().getPrincipal(), comment.message);
+		log.debug("{} post in the message with the id : {}", SecurityUtils.getSubject().getPrincipal(), comment.idMessageParent);
+
+		return streamService.addComment(comment.message,comment.idStream, comment.idMessageParent);
 	}
 	
 	@GET
@@ -251,5 +264,12 @@ public class StreamResource extends AbstractController {
 	@Produces( { MediaType.APPLICATION_JSON })
 	public List<StreamMessageDTO> getAllMessagesForCurrentUser(@QueryParam("last") long flag){
 		return streamService.getAllMessagesForCurrentUser(flag);
+	}
+	
+	@GET
+	@Path("/{id}/comments")
+	@Produces( { MediaType.APPLICATION_JSON })
+	public List<StreamMessageDTO> getAllCommentsForMessage(@PathParam("id") long id){
+		return streamService.getAllCommentsForMessage(id);
 	}
 }
