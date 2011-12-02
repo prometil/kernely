@@ -75,35 +75,34 @@ public class KernelyBootstrap {
 
 		// create the upload directory (you can modify the url in core-conf.xml
 		String directoryUrl = combinedConfiguration.getString("workpath.url");
-		File work = new File(directoryUrl);
+		File workDirectory = new File(directoryUrl);
 		try {
-			if (work.mkdir())
-				log.info("Directory Created");
-			else
-				log.info("Directory is not created");
+			if (workDirectory.mkdir()) {
+				log.info("Working directory \"{}\"", workDirectory);
+			}
+			// Create the server
+			Server server = new Server(combinedConfiguration.getInt("server.port"));
+
+			// Retrieve resources located at the web content directory
+			final String warUrlString = new URL("file://.").toExternalForm();
+			// Register a listener
+			ServletHandler handler = createServletHandler();
+			WebAppContext webApp = new WebAppContext(warUrlString, "/");
+			webApp.addEventListener(new GuiceServletConfig(plugins, setTheConfiguration(plugins)));
+			webApp.setServletHandler(handler);
+			webApp.setErrorHandler(new KernelyErrorHandler());
+			server.setHandler(webApp);
+
+			try {
+				server.start();
+				server.join();
+			} catch (Exception e) {
+				log.error("Error at start {}", e);
+			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.error("Cannot create working directory {}", workDirectory, e);
 		}
 
-		// Create the server
-		Server server = new Server(combinedConfiguration.getInt("server.port"));
-
-		// Retrieve resources located at the web content directory
-		final String warUrlString = new URL("file://.").toExternalForm();
-		// Register a listener
-		ServletHandler handler = createServletHandler();
-		WebAppContext webApp = new WebAppContext(warUrlString, "/");
-		webApp.addEventListener(new GuiceServletConfig(plugins, setTheConfiguration(plugins)));
-		webApp.setServletHandler(handler);
-		webApp.setErrorHandler(new KernelyErrorHandler());
-		server.setHandler(webApp);
-
-		try {
-			server.start();
-			server.join();
-		} catch (Exception e) {
-			log.error("Error at start {}", e);
-		}
 
 	}
 
