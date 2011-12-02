@@ -73,7 +73,6 @@ public class KernelyBootstrap {
 		Migrator m = new Migrator(combinedConfiguration, plugins);
 		m.migrate();
 
-		System.exit(0);
 		// create the upload directory (you can modify the url in core-conf.xml
 		String directoryUrl = combinedConfiguration.getString("workpath.url");
 		File work = new File(directoryUrl);
