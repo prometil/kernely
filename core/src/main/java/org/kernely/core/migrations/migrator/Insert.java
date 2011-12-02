@@ -29,23 +29,28 @@ import com.google.common.base.Joiner;
  * 
  */
 public class Insert extends Command {
-	
-	//the name of the table in which data will be inserted
+
+	// the name of the table in which data will be inserted
 	private String name;
 
-	private Map<String, String> values;
+	private Map<String, Object> values;
 
 	/**
 	 * Constructs a new insert command for a given table name
-	 * @param tableName the given table name
+	 * 
+	 * @param tableName
+	 *            the given table name
 	 */
 	private Insert(String tableName) {
 		name = tableName;
-		values = new HashMap<String, String>();
+		values = new HashMap<String, Object>();
 	}
+
 	/**
 	 * Constructs a new Insert command for a new table name
-	 * @param tableName the table name in which the insert will be perform
+	 * 
+	 * @param tableName
+	 *            the table name in which the insert will be perform
 	 * @return a new Insert.
 	 */
 	public static Insert into(String tableName) {
@@ -54,14 +59,18 @@ public class Insert extends Command {
 
 	/**
 	 * Set a column value for the insert
-	 * @param name the name of the column
-	 * @param value the value to give to the column
+	 * 
+	 * @param name
+	 *            the name of the column
+	 * @param value
+	 *            the value to give to the column
 	 * @return the insert value
 	 */
 	public Insert set(String name, Object value) {
-		if(value instanceof String){
-			
-			values.put(name, "'"+value+"'");
+		if (value instanceof String) {
+			values.put(name, "'" + value + "'");
+		} else {
+			values.put(name, value);
 		}
 		return this;
 	}
