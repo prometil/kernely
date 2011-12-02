@@ -105,7 +105,7 @@ public class StreamServiceTest extends AbstractServiceTest {
 		
 		// Give rights to the current user
 		int userId = (int) userService.getAllUsers().get(0).id;
-		permissionService.grantPermission(userId, Stream.RIGHT_WRITE + ":" + Stream.STREAM_RIGHT + ":" + createdStream.getId());
+		permissionService.grantPermission(userId, Stream.RIGHT_WRITE, Stream.STREAM_RESOURCE, createdStream.getId());
 		
 		StreamMessageDTO message = streamService.addMessage(MESSAGE, createdStream.getId());
 		assertNotNull(message);
@@ -207,7 +207,7 @@ public class StreamServiceTest extends AbstractServiceTest {
 
 		// Give rights to the current user
 		int userId = (int) userService.getAllUsers().get(0).id;
-		permissionService.grantPermission(userId, Stream.RIGHT_WRITE + ":" + Stream.STREAM_RIGHT + ":" + stream.getId());
+		permissionService.grantPermission(userId, Stream.RIGHT_WRITE, Stream.STREAM_RESOURCE, stream.getId());
 
 		// Adds a message as the current user
 		streamService.addMessage(STREAM, stream.getId());
@@ -227,7 +227,7 @@ public class StreamServiceTest extends AbstractServiceTest {
 		int userId = (int) userService.getAllUsers().get(0).id;
 		int streamId = (int) streamService.getStream(STREAM, Stream.CATEGORY_USERS).getId();
 
-		permissionService.grantPermission(userId, Stream.RIGHT_WRITE + ":" + Stream.STREAM_RIGHT + ":" + streamId);
+		permissionService.grantPermission(userId, Stream.RIGHT_WRITE, Stream.STREAM_RESOURCE, streamId);
 
 		List<StreamDTO> list = streamService.getCurrentUserStreams();
 		StreamDTO stream = list.get(0);
@@ -249,8 +249,8 @@ public class StreamServiceTest extends AbstractServiceTest {
 		int streamId = (int) streamService.getStream(STREAM, Stream.CATEGORY_USERS).getId();
 		int stream2Id = (int) streamService.getStream(STREAM2, Stream.CATEGORY_USERS).getId();
 
-		permissionService.grantPermission(userId, Stream.RIGHT_WRITE + ":" + Stream.STREAM_RIGHT + ":" + streamId);
-		permissionService.grantPermission(userId, Stream.RIGHT_WRITE + ":" + Stream.STREAM_RIGHT + ":" + stream2Id);
+		permissionService.grantPermission(userId, Stream.RIGHT_WRITE, Stream.STREAM_RESOURCE, streamId);
+		permissionService.grantPermission(userId, Stream.RIGHT_WRITE, Stream.STREAM_RESOURCE, stream2Id);
 
 		// Add some messages to the stream
 		streamService.addMessage(MESSAGE, streamId);
@@ -285,8 +285,8 @@ public class StreamServiceTest extends AbstractServiceTest {
 		int streamId = (int) streamService.getStream(STREAM, Stream.CATEGORY_USERS).getId();
 		int stream2Id = (int) streamService.getStream(STREAM2, Stream.CATEGORY_USERS).getId();
 
-		permissionService.grantPermission(userId, Stream.RIGHT_DELETE + ":" + Stream.STREAM_RIGHT + ":" + streamId);
-		permissionService.grantPermission(userId, Stream.RIGHT_READ + ":" + Stream.STREAM_RIGHT + ":" + stream2Id);
+		permissionService.grantPermission(userId, Stream.RIGHT_DELETE, Stream.STREAM_RESOURCE, streamId);
+		permissionService.grantPermission(userId, Stream.RIGHT_READ, Stream.STREAM_RESOURCE, stream2Id);
 
 		assertEquals(true, streamService.currentUserHasRightsOnStream(Stream.RIGHT_DELETE, streamId));
 		assertEquals(true, streamService.currentUserHasRightsOnStream(Stream.RIGHT_READ, stream2Id));
@@ -303,9 +303,27 @@ public class StreamServiceTest extends AbstractServiceTest {
 		int userId = (int) userService.getAllUsers().get(0).id;
 		int streamId = (int) streamService.getStream(STREAM, Stream.CATEGORY_USERS).getId();
 
-		permissionService.grantPermission(userId, Stream.RIGHT_READ + ":" + Stream.STREAM_RIGHT + ":" + streamId);
+		permissionService.grantPermission(userId, Stream.RIGHT_READ, Stream.STREAM_RESOURCE, streamId);
 
 		assertEquals(null, streamService.addMessage(MESSAGE, streamId));
+	}
+	
+	@Test
+	public void testMessageDeletion(){
+		this.creationOfTestUser();
+		authenticateAs(USERNAME);
 
+		// Create stream
+		streamService.createStream(STREAM, Stream.CATEGORY_USERS);
+
+		int userId = (int) userService.getAllUsers().get(0).id;
+		int streamId = (int) streamService.getStream(STREAM, Stream.CATEGORY_USERS).getId();
+
+		permissionService.grantPermission(userId, Stream.RIGHT_WRITE, Stream.STREAM_RESOURCE, streamId);
+		
+		StreamMessageDTO message = streamService.addMessage(MESSAGE, streamId);
+		assertEquals(1, streamService.getMessages().size());
+		streamService.deleteMessage(message.id);
+		assertEquals(0, streamService.getMessages().size());
 	}
 }

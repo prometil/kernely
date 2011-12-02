@@ -26,7 +26,6 @@ import java.util.TreeSet;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
-import org.apache.shiro.ShiroException;
 import org.kernely.core.dto.PermissionDTO;
 import org.kernely.core.model.User;
 import org.kernely.core.service.AbstractService;
@@ -59,7 +58,7 @@ public class StreamService extends AbstractService {
 	 * Add a message to the database in a stream, the current user is the author.
 	 * 
 	 * @return the created message if the user can write on the stream, null otherwise
-	 * @throws IllegalAccessException 
+	 * @throws IllegalAccessException
 	 */
 	@Transactional
 	public StreamMessageDTO addMessage(String pMessage, long streamId) {
@@ -69,8 +68,7 @@ public class StreamService extends AbstractService {
 		if ("".equals(pMessage)) {
 			throw new IllegalArgumentException("Message cannot be empty ");
 		}
-		if (! (currentUserHasRightsOnStream(Stream.RIGHT_WRITE, (int) streamId) ||
-				currentUserHasRightsOnStream(Stream.RIGHT_DELETE, (int) streamId))){
+		if (!(currentUserHasRightsOnStream(Stream.RIGHT_WRITE, (int) streamId) || currentUserHasRightsOnStream(Stream.RIGHT_DELETE, (int) streamId))) {
 			return null;
 		}
 		Message message = new Message();
@@ -274,7 +272,9 @@ public class StreamService extends AbstractService {
 
 	/**
 	 * Get all messages which id in database is inferior to the flag.
-	 * @param flag The max id of messages returned.
+	 * 
+	 * @param flag
+	 *            The max id of messages returned.
 	 * @return 9 messages, which id is inferior to the flag passed in parameter. Messages are ordered by descendant id.
 	 */
 	@SuppressWarnings("unchecked")
@@ -300,13 +300,28 @@ public class StreamService extends AbstractService {
 	}
 
 	/**
-	 * Check if the current user has a specfic right on a stream.
-	 * @param right The right : use Stream constants.
-	 * @param streamId : The id of the stream.
+	 * Check if the current user has a specific right on a stream.
+	 * 
+	 * @param right
+	 *            The right : use Stream constants.
+	 * @param streamId
+	 *            : The id of the stream.
 	 * @return true if the user has this right, false otherwise.
 	 */
 	public boolean currentUserHasRightsOnStream(String right, int streamId) {
 		User current = this.getAuthenticatedUserModel();
-		return permissionService.userHasPermission((int) current.getId(), right + ":"+Stream.STREAM_RIGHT+":" + streamId);
+		return permissionService.userHasPermission((int) current.getId(), right, Stream.STREAM_RESOURCE, streamId);
+	}
+
+	/**
+	 * Delete an existing Message in database
+	 * 
+	 * @param id
+	 *            The id of the message to delete
+	 */
+	@Transactional
+	public void deleteMessage(long messageId) {
+		Message message = em.get().find(Message.class, messageId);
+		em.get().remove(message);
 	}
 }

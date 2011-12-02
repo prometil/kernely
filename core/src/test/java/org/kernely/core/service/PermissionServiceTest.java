@@ -36,8 +36,6 @@ import com.google.inject.Inject;
 
 public class PermissionServiceTest extends AbstractServiceTest {
 
-	private static final String TEST_STRING = "test";
-
 	@Inject
 	private UserService userService;
 
@@ -47,10 +45,12 @@ public class PermissionServiceTest extends AbstractServiceTest {
 	@Inject
 	private RoleService roleService;
 
-	private final String PERMISSION_STRING = "1:test:1";
+	private final String TEST_STRING = "test_string";
+	private final String FAKE_RESOURCE_TYPE1 = "firstresource";
+	private final String FAKE_RESOURCE_TYPE2 = "secondresource";
+	private final String FAKE_RIGHT = "doing";
 
-	@Test
-	public void grantPermission() {
+	private long creationOfTestUser() {
 		RoleDTO requestRole = new RoleDTO(1, Role.ROLE_USER);
 		roleService.createRole(requestRole);
 
@@ -59,36 +59,53 @@ public class PermissionServiceTest extends AbstractServiceTest {
 		request.password = TEST_STRING;
 		request.firstname = TEST_STRING;
 		request.lastname = TEST_STRING;
-
 		userService.createUser(request);
-		UserDTO user = userService.getAllUsers().get(0);
-		assertEquals(false, permissionService.userHasPermission((int) user.id, PERMISSION_STRING));
-		permissionService.grantPermission((int) user.id, PERMISSION_STRING);
+		return userService.getAllUsers().get(0).id;
+	}
 
-		assertEquals(true, permissionService.userHasPermission((int) user.id, PERMISSION_STRING));
+	@Test
+	public void grantPermission() {
+		long userId = this.creationOfTestUser();
+
+		assertEquals(false, permissionService.userHasPermission((int) userId, FAKE_RIGHT,FAKE_RESOURCE_TYPE1,1));
+		permissionService.grantPermission((int) userId, FAKE_RIGHT,FAKE_RESOURCE_TYPE1,1);
+
+		assertEquals(true, permissionService.userHasPermission((int) userId, FAKE_RIGHT,FAKE_RESOURCE_TYPE1,1));
 	}
 
 	@Test
 	public void ungrantPermission() {
-		RoleDTO requestRole = new RoleDTO(1, Role.ROLE_USER);
-		roleService.createRole(requestRole);
+		long userId = this.creationOfTestUser();
 
-		UserCreationRequestDTO request = new UserCreationRequestDTO();
-		request.username = TEST_STRING;
-		request.password = TEST_STRING;
-		request.firstname = TEST_STRING;
-		request.lastname = TEST_STRING;
-
-		userService.createUser(request);
-		UserDTO user = userService.getAllUsers().get(0);
-		assertEquals(false, permissionService.userHasPermission((int) user.id, PERMISSION_STRING));
-		permissionService.grantPermission((int) user.id, PERMISSION_STRING);
-		permissionService.ungrantPermission((int) user.id, PERMISSION_STRING);
-		assertEquals(false, permissionService.userHasPermission((int) user.id, PERMISSION_STRING));
+		assertEquals(false, permissionService.userHasPermission((int) userId, FAKE_RIGHT,FAKE_RESOURCE_TYPE1,1));
+		permissionService.grantPermission((int) userId, FAKE_RIGHT,FAKE_RESOURCE_TYPE1,1);
+		permissionService.ungrantPermission((int) userId, FAKE_RIGHT,FAKE_RESOURCE_TYPE1,1);
+		assertEquals(false, permissionService.userHasPermission((int) userId, FAKE_RIGHT,FAKE_RESOURCE_TYPE1,1));
 	}
 
-	@Test(expected=IllegalArgumentException.class)
+	@Test
+	public void typeOfPermissionForOneUser() {
+		long userId = this.creationOfTestUser();
+		permissionService.grantPermission((int) userId, FAKE_RIGHT, FAKE_RESOURCE_TYPE1, 1);
+		permissionService.grantPermission((int) userId, FAKE_RIGHT, FAKE_RESOURCE_TYPE2, 1);
+		permissionService.grantPermission((int) userId, FAKE_RIGHT, FAKE_RESOURCE_TYPE2, 2);
+		permissionService.grantPermission((int) userId, FAKE_RIGHT, FAKE_RESOURCE_TYPE2, 3);
+		permissionService.grantPermission((int) userId, FAKE_RIGHT, FAKE_RESOURCE_TYPE2, 4);
+		permissionService.grantPermission((int) userId, FAKE_RIGHT, FAKE_RESOURCE_TYPE2, 5);
+
+		int nbFirstPermissions = permissionService.getTypeOfPermissionForOneUser(userId, FAKE_RESOURCE_TYPE1).size();
+		int nbSecondPermissions = permissionService.getTypeOfPermissionForOneUser(userId, FAKE_RESOURCE_TYPE2).size();
+		int nbOtherPermissions = permissionService.getTypeOfPermissionForOneUser(userId, "something_else").size();
+
+		assertEquals(1, nbFirstPermissions);
+		assertEquals(5, nbSecondPermissions);
+		assertEquals(0, nbOtherPermissions);
+	}
+	
+	@Test(expected = IllegalArgumentException.class)
 	public void illegalPermission(){
-		permissionService.grantPermission(1, "this_is_a_wrong_permission");
+		permissionService.grantPermission(1, "test:test", "resource", "else");
 	}
+	
+
 }
