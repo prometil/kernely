@@ -37,6 +37,7 @@ import org.eclipse.jetty.webapp.WebAppContext;
 import org.kernely.bootstrap.classpath.ClasspathUpdater;
 import org.kernely.bootstrap.error.KernelyErrorHandler;
 import org.kernely.bootstrap.guice.GuiceServletConfig;
+import org.kernely.core.migrations.migrator.Migrator;
 import org.kernely.core.plugin.AbstractPlugin;
 import org.kernely.core.plugin.PluginsLoader;
 import org.kernely.core.resourceLocator.ResourceLocator;
@@ -64,12 +65,15 @@ public class KernelyBootstrap {
 		// Load all detected plugins
 		PluginsLoader pluginLoad = new PluginsLoader();
 		List<AbstractPlugin> plugins = pluginLoad.getPlugins();
-		
-		//update database using configuration
-		
+
 		// configure
 		CombinedConfiguration combinedConfiguration = setTheConfiguration(plugins);
 
+		// update database using configuration
+		Migrator m = new Migrator(combinedConfiguration, plugins);
+		m.migrate();
+
+		System.exit(0);
 		// create the upload directory (you can modify the url in core-conf.xml
 		String directoryUrl = combinedConfiguration.getString("workpath.url");
 		File work = new File(directoryUrl);
@@ -170,8 +174,7 @@ public class KernelyBootstrap {
 						log.info("Found configuration file {} for plugin {}", filepath, plugin.getName());
 						combinedConfiguration.addConfiguration(configuration);
 					} catch (MalformedURLException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
+						log.error("Cannot find configuration file : {}", filepath);
 					}
 
 				} catch (ConfigurationException e) {
@@ -181,4 +184,5 @@ public class KernelyBootstrap {
 		}
 		return combinedConfiguration;
 	}
+
 }
