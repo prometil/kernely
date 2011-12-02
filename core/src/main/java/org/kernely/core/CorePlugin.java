@@ -21,6 +21,7 @@ package org.kernely.core;
 
 import groovy.text.SimpleTemplateEngine;
 
+import org.kernely.core.migrations.Migration01;
 import org.kernely.core.model.Group;
 import org.kernely.core.model.Permission;
 import org.kernely.core.model.Role;
@@ -52,6 +53,8 @@ import com.google.inject.Singleton;
  * 
  */
 public class CorePlugin extends AbstractPlugin {
+	
+	public static final String NAME = "core";
 	/**
 	 * Default constructor
 	 */
@@ -72,6 +75,7 @@ public class CorePlugin extends AbstractPlugin {
 		registerModel(Permission.class);
 		registerModel(Group.class);
 		registerModel(UserDetails.class);
+		registerMigration(new Migration01());
 	}
 
 	@Override

@@ -16,16 +16,19 @@ GNU Affero General Public License for more details.
 You should have received a copy of the GNU Affero General Public
 License along with Kernely.
 If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 package org.kernely.core.plugin;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import org.kernely.core.dto.AdminPageDTO;
 import org.kernely.core.hibernate.AbstractModel;
+import org.kernely.core.migrations.migrator.Migration;
 import org.kernely.core.resources.AbstractController;
 import org.quartz.Job;
 import org.quartz.Trigger;
@@ -34,146 +37,169 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Module;
 
 public abstract class AbstractPlugin extends AbstractModule {
-	
-	
-	//the controller list
+
+	// the controller list
 	private List<Class<? extends AbstractController>> controllers;
-	
-	//the model list
+
+	// the model list
 	private List<Class<? extends AbstractModel>> models;
-	
-	//the admin page
+
+	// the migration list
+	private SortedSet<Migration> migrations;
+
+	// the admin page
 	private List<AdminPageDTO> adminPages;
-	
-	//the job map
+
+	// the job map
 	private Map<Class<? extends Job>, Trigger> jobs;
-	
-	//the name of the abstract plugin
+
+	// the name of the abstract plugin
 	private String name;
-	
-	//the path of the plugin
+
+	// the path of the plugin
 	private String path;
-	
-	//the configuration path
+
+	// the configuration path
 	private String configurationFilepath;
-	
-	
-	public AbstractPlugin(String pName, String pPath){
+
+	public AbstractPlugin(String pName, String pPath) {
 		name = pName;
 		path = pPath;
-		controllers = new  ArrayList<Class<? extends AbstractController>>();
+		controllers = new ArrayList<Class<? extends AbstractController>>();
 		models = new ArrayList<Class<? extends AbstractModel>>();
 		adminPages = new ArrayList<AdminPageDTO>();
 		jobs = new HashMap<Class<? extends Job>, Trigger>();
+		migrations = new TreeSet<Migration>();
 	}
-	
+
 	/**
 	 * The plugin is injected just before this method.
 	 */
-	public void start(){
+	public void start() {
 
 	}
-	
+
 	/**
-	 * Register a new admin page. Don't forget to also register admin pages controllers.
-	 * @param name The displayed name of the admin page.
-	 * @param path The path to the admin page. This path must be mapped by a controller to display the page.
+	 * Register a new admin page. Don't forget to also register admin pages
+	 * controllers.
+	 * 
+	 * @param name
+	 *            The displayed name of the admin page.
+	 * @param path
+	 *            The path to the admin page. This path must be mapped by a
+	 *            controller to display the page.
 	 */
-	protected void registerAdminPage(String name, String path){
+	protected void registerAdminPage(String name, String path) {
 		this.adminPages.add(new AdminPageDTO(name, path));
 	}
-	
-	protected void registerModel(Class<? extends AbstractModel> model){
+
+	protected void registerModel(Class<? extends AbstractModel> model) {
 		models.add(model);
-		
+
 	}
-	
-	protected void registerController(Class<? extends AbstractController> controller){
+
+	protected void registerController(Class<? extends AbstractController> controller) {
 		controllers.add(controller);
 	}
-	
-	protected void registerConfigurationPath(String pFilepath){
+
+	protected void registerConfigurationPath(String pFilepath) {
 		configurationFilepath = pFilepath;
 	}
-	public Module getModule(){
+
+	public Module getModule() {
 		return this;
 	}
-	
-	
+
 	/**
 	 * Returns the name of the plugin
+	 * 
 	 * @return the name of the plugin
 	 */
-	public String getName(){
+	public String getName() {
 		return name;
 	}
-	
+
 	/**
-	 * Return the path for the plugin main page.
-	 * If not null, the plugin name will appear in Kernely menu, and clicking on it display the page targetted by this path.
-	 * If null, the plugin name will not appear in Kernely menu.
-	 * @return the path to the plugin main page, or null if the plugin does'nt have a main page.
+	 * Return the path for the plugin main page. If not null, the plugin name
+	 * will appear in Kernely menu, and clicking on it display the page
+	 * targetted by this path. If null, the plugin name will not appear in
+	 * Kernely menu.
+	 * 
+	 * @return the path to the plugin main page, or null if the plugin does'nt
+	 *         have a main page.
 	 */
-	public String getPath(){
+	public String getPath() {
 		return path;
 	}
-	
+
 	/**
 	 * Return admin pages, displayed in the administration panel.
+	 * 
 	 * @return admin pages.
 	 */
-	public List<AdminPageDTO> getAdminPages(){
+	public List<AdminPageDTO> getAdminPages() {
 		return this.adminPages;
 	}
 
 	/**
 	 * Add a job to the list of jobs
-	 * @param job the job to add
-	 * @param trigger the trigger
+	 * 
+	 * @param job
+	 *            the job to add
+	 * @param trigger
+	 *            the trigger
 	 */
-	protected void registerJob(Class <? extends Job> job, Trigger trigger){
+	protected void registerJob(Class<? extends Job> job, Trigger trigger) {
 		jobs.put(job, trigger);
 	}
-	
+
 	/**
 	 * Return the configuration filepath
+	 * 
 	 * @return the configuration file path
 	 */
-	public String getConfigurationFilepath(){
+	public String getConfigurationFilepath() {
 		return configurationFilepath;
 	}
-	
+
 	/**
 	 * Returns the controller list
-	 * @return the resources list 
+	 * 
+	 * @return the resources list
 	 */
-	public List<Class<? extends AbstractController>> getControllers(){
+	public List<Class<? extends AbstractController>> getControllers() {
 		return controllers;
 	}
-	
+
 	/**
 	 * The methods returns the models
+	 * 
 	 * @return the method returns the model
 	 */
-	public List<Class<? extends AbstractModel>> getModels(){
+	public List<Class<? extends AbstractModel>> getModels() {
 		return models;
 	}
-	
+
 	/**
 	 * The method returns the list of job with there associated trigger
+	 * 
 	 * @return the map of job and trigger
 	 */
 	public Map<Class<? extends Job>, Trigger> getJobs() {
 		return jobs;
 	}
 
-
 	@Override
 	protected void configure() {
-		//do nothing
+		// do nothing
 	}
-	
-	
-	
-	
+
+	protected void registerMigration(Migration migration) {
+		migrations.add(migration);
+	}
+
+	public SortedSet<Migration> getMigrations() {
+		return migrations;
+	}
+
 }
