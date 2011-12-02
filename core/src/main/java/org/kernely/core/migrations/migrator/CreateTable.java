@@ -30,14 +30,17 @@ import com.google.common.base.Joiner;
  */
 public class CreateTable extends Command {
 
-	
-
 	// the name of the table
 	String name;
 
 	// the column
 	List<String> columns;
 
+	
+	/**
+	 * Create a new command with the table name.
+	 * @param tableName the table name.
+	 */
 	public CreateTable(String tableName) {
 		name = tableName;
 		columns = new ArrayList<String>();
@@ -69,7 +72,6 @@ public class CreateTable extends Command {
 
 	}
 
-	
 	@Override
 	public String build() {
 		StringBuilder b = new StringBuilder();
