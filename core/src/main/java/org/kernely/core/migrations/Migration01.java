@@ -23,8 +23,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.kernely.core.migrations.migrator.Command;
-import org.kernely.core.migrations.migrator.CreateTable;
-import org.kernely.core.migrations.migrator.Insert;
 import org.kernely.core.migrations.migrator.Migration;
 
 /**
@@ -47,31 +45,34 @@ public class Migration01 extends Migration {
 	@Override
 	public List<Command> getList() {
 		ArrayList<Command> commands = new ArrayList<Command>();
-		CreateTable table = CreateTable.name("kernely_user");
+		/*CreateTable table = CreateTable.name("kernely_user");
 		table.column("id", "int primary key");
 		table.column("username", "varchar(30)");
 		table.column("password", "varchar(80)");
 		table.column("salt", "varchar(300)");
 		table.column("locked", "boolean default false");
 		table.column("fk_manager", "int");
+		
+		
+		
 
-		Insert into = Insert.into("kernely_user");
-		into.set("id", "1");
-		into.set("username", "bobby");
-		into.set("password", "2ty4LmflO9cRBKi1liWj3WvSrmtf2EnL67SoTa0bNuM=");
-		into.set("salt", "gNc1mOUoQxGmCzoV2W7YP3CJj9oDML/SfABujWDrBmvx9xN5if4Y0jMckDNK1we/kMRGR75uQggRgr5dKgnd6ZGIVxG0Zr3EiYxiXBU9aDyZkYvBqy9ffwZ9JScQ5Wke1NarH/lZevTgOUMaLMYVV7q/QvzH42rYek3mF0F1ykM=");
-		into.set("locked", "false");
+		Insert insertBoby = Insert.into("kernely_user");
+		insertBoby.set("id", "1");
+		insertBoby.set("username", "bobby");
+		insertBoby.set("password", "2ty4LmflO9cRBKi1liWj3WvSrmtf2EnL67SoTa0bNuM=");
+		insertBoby.set("salt", "gNc1mOUoQxGmCzoV2W7YP3CJj9oDML/SfABujWDrBmvx9xN5if4Y0jMckDNK1we/kMRGR75uQggRgr5dKgnd6ZGIVxG0Zr3EiYxiXBU9aDyZkYvBqy9ffwZ9JScQ5Wke1NarH/lZevTgOUMaLMYVV7q/QvzH42rYek3mF0F1ykM=");
+		insertBoby.set("locked", "false");
 
-		Insert into2 = Insert.into("kernely_user");
-		into2.set("id", "2");
-		into2.set("username", "john");
-		into2.set("password", "vAT9Kr/2bSbWoxFj3iinD783xrTez+lE2G/HSGaDzVk=");
-		into2.set("salt", "8EiKXghisVxqZ74Nwen+/5NanikCV0DRB9J31tC0jWGip79G1ZCrkwsFYOkD/aw1ggYA8r/nsYHnWXofR7x0nFU8CK87aiZ3BzXyzH4AEu9pzV/YWfWhq1d0W3gAB36gHsVQ6mZubI5UYforzdATLAAGOlQAa4BXF7Cwxs8wuf0=");
-		into2.set("locked", "false");
+		Insert insertJohn = Insert.into("kernely_user");
+		insertJohn.set("id", "2");
+		insertJohn.set("username", "john");
+		insertJohn.set("password", "vAT9Kr/2bSbWoxFj3iinD783xrTez+lE2G/HSGaDzVk=");
+		insertJohn.set("salt", "8EiKXghisVxqZ74Nwen+/5NanikCV0DRB9J31tC0jWGip79G1ZCrkwsFYOkD/aw1ggYA8r/nsYHnWXofR7x0nFU8CK87aiZ3BzXyzH4AEu9pzV/YWfWhq1d0W3gAB36gHsVQ6mZubI5UYforzdATLAAGOlQAa4BXF7Cwxs8wuf0=");
+		insertJohn.set("locked", "false");
 
 		commands.add(table);
-		commands.add(into);
-		commands.add(into2);
+		commands.add(insertBoby);
+		commands.add(insertJohn);*/
 		return commands;
 
 	}
