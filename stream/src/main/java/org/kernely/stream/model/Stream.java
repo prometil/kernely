@@ -82,9 +82,9 @@ public class Stream extends AbstractModel {
 	public static final String CATEGORY_OTHERS = "streams/others";
 
 	/**
-	 * The right String for giving rights on the streams.
+	 * The resource for streams to give rights on the streams.
 	 */
-	public static final String STREAM_RIGHT = "streams";
+	public static final String STREAM_RESOURCE = "streams";
 
 	/**
 	 * The right for an user to see the stream, and to subscribe to it.

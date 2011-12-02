@@ -20,7 +20,9 @@ If not, see <http://www.gnu.org/licenses/>.
 package org.kernely.stream.service;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.TreeSet;
 
 import javax.persistence.NoResultException;
@@ -58,7 +60,7 @@ public class StreamService extends AbstractService {
 	 * Add a message to the database in a stream, the current user is the author.
 	 * 
 	 * @return the created message if the user can write on the stream, null otherwise
-	 * @throws IllegalAccessException 
+	 * @throws IllegalAccessException
 	 */
 	@Transactional
 	public StreamMessageDTO addMessage(String pMessage, long streamId) {
@@ -68,8 +70,7 @@ public class StreamService extends AbstractService {
 		if ("".equals(pMessage)) {
 			throw new IllegalArgumentException("Message cannot be empty ");
 		}
-		if (! (currentUserHasRightsOnStream(Stream.RIGHT_WRITE, (int) streamId) ||
-				currentUserHasRightsOnStream(Stream.RIGHT_DELETE, (int) streamId))){
+		if (!(currentUserHasRightsOnStream(Stream.RIGHT_WRITE, (int) streamId) || currentUserHasRightsOnStream(Stream.RIGHT_DELETE, (int) streamId))) {
 			return null;
 		}
 		Message message = new Message();
@@ -95,16 +96,24 @@ public class StreamService extends AbstractService {
 		if ("".equals(pMessage)){
 			throw new IllegalArgumentException("Comment cannot be empty ");
 		}
-		Message message = new Message();
+		Message messageParent = em.get().find(Message.class, idMessageParent);
+		Message comment = new Message();
 		
-		message.setStream(getStreamModel(streamId));
-		message.setContent(pMessage);
-		message.setUser(getAuthenticatedUserModel());
-		message.setMessage(em.get().find(Message.class, idMessageParent));
+		comment.setStream(getStreamModel(streamId));
+		comment.setContent(pMessage);
+		comment.setUser(getAuthenticatedUserModel());
+		comment.setMessage(messageParent);
 		
-		em.get().persist(message);
+		em.get().persist(comment);
+		
+		Set<Message> comments = new HashSet<Message>();
+		if(messageParent.getComments() != null){
+			comments.addAll(messageParent.getComments());
+		}
+		comments.add(comment);
+		messageParent.setComments(comments);
 		//mailService.create("/templates/gsp/mail.gsp").subject("This is a test mail").to("breton.gy@gmail.com").send();
-		return new StreamMessageDTO(message);
+		return new StreamMessageDTO(comment);
 	}
 	
 	/**
@@ -298,7 +307,9 @@ public class StreamService extends AbstractService {
 
 	/**
 	 * Get all messages which id in database is inferior to the flag.
-	 * @param flag The max id of messages returned.
+	 * 
+	 * @param flag
+	 *            The max id of messages returned.
 	 * @return 9 messages, which id is inferior to the flag passed in parameter. Messages are ordered by descendant id.
 	 */
 	@SuppressWarnings("unchecked")
@@ -324,20 +335,37 @@ public class StreamService extends AbstractService {
 	}
 
 	/**
-	 * Check if the current user has a specfic right on a stream.
-	 * @param right The right : use Stream constants.
-	 * @param streamId : The id of the stream.
+	 * Check if the current user has a specific right on a stream.
+	 * 
+	 * @param right
+	 *            The right : use Stream constants.
+	 * @param streamId
+	 *            : The id of the stream.
 	 * @return true if the user has this right, false otherwise.
 	 */
 	public boolean currentUserHasRightsOnStream(String right, int streamId) {
 		User current = this.getAuthenticatedUserModel();
-		return permissionService.userHasPermission((int) current.getId(), right + ":"+Stream.STREAM_RIGHT+":" + streamId);
+		return permissionService.userHasPermission((int) current.getId(), right, Stream.STREAM_RESOURCE, streamId);
+	}
+
+	/**
+	 * Delete an existing Message in database
+	 * 
+	 * @param id
+	 *            The id of the message to delete
+	 */
+	@Transactional
+	public void deleteMessage(long messageId) {
+		Message message = em.get().find(Message.class, messageId);
+		em.get().remove(message);
 	}
 	
 	public List<StreamMessageDTO> getAllCommentsForMessage(long id){
 		Message message = em.get().find(Message.class, id);
 		TreeSet<Message> commentsModel = new TreeSet<Message>(new MessageComparator());
-		commentsModel.addAll(message.getComments());
+		if(message.getComments() != null){
+			commentsModel.addAll(message.getComments());
+		}
 		List<StreamMessageDTO> comments = new ArrayList<StreamMessageDTO>();
 		for(Message comment: commentsModel.descendingSet()){
 			comments.add(new StreamMessageDTO(comment));

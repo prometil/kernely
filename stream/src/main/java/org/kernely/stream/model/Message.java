@@ -114,7 +114,7 @@ public class Message extends AbstractModel {
 	private Stream stream;
 	
 	@OneToMany(fetch=FetchType.LAZY, mappedBy="message")
-	@Cascade( { org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN })
+	@Cascade( { org.hibernate.annotations.CascadeType.ALL})
 	private Set<Message> comments;
 	
 	@ManyToOne

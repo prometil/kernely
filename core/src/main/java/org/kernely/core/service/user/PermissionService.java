@@ -30,9 +30,19 @@ public class PermissionService extends AbstractService {
 	/**
 	 * Verify if the current user has a specific permission.
 	 * 
+	 * @param userId
+	 *            The id of the user.
+	 * @param right
+	 *            The right on the resource for example "write", or "delete".
+	 * @param resourceType
+	 *            The type of the resource, for example "user" or "stream"
+	 * @param resourceId
+	 *            The unique identifier for the resource
+	 * 
 	 * @return true if the current user has the permission.
 	 */
-	public boolean currentUserHasPermission(String permission) {
+	public boolean currentUserHasPermission(String right, String resourceType, Object resourceId) {
+		String permission = this.createPermissionString(right, resourceType, resourceId.toString());
 		try {
 			SecurityUtils.getSubject().checkPermission(permission);
 		} catch (AuthorizationException ae) {
@@ -44,10 +54,22 @@ public class PermissionService extends AbstractService {
 	/**
 	 * Verify if a specific user has a specific permission.
 	 * 
+	 * @param userId
+	 *            The id of the user.
+	 * @param right
+	 *            The right on the resource for example "write", or "delete".
+	 * @param resourceType
+	 *            The type of the resource, for example "user" or "stream"
+	 * @param resourceId
+	 *            The unique identifier for the resource
+	 * 
 	 * @return true if the user has the permission.
 	 */
+
 	@Transactional
-	public boolean userHasPermission(int id, String permission) {
+	public boolean userHasPermission(int id, String right, String resourceType, Object resourceId) {
+		String permission = this.createPermissionString(right, resourceType, resourceId.toString());
+
 		Query query = em.get().createQuery("SELECT p FROM Permission p WHERE name = :permission");
 		query.setParameter("permission", permission);
 		try {
@@ -85,17 +107,22 @@ public class PermissionService extends AbstractService {
 	}
 
 	/**
-	 * Grant a specific permission for a specific user.
+	 * Grant a right on a resource to a specific user.
 	 * 
 	 * @param userId
 	 *            The id of the user which has this permission.
-	 * @param permission
-	 *            The permission String. Must be typeOfPermission:element:element_id (for example : "write:streams:3" is the right to write on the
-	 *            stream which id is 3).
+	 * @param right
+	 *            The right on the resource for example "write", or "delete".
+	 * @param resourceType
+	 *            The type of the resource, for example "user" or "stream"
+	 * @param resourceId
+	 *            The unique identifier for the resource
 	 */
 	@Transactional
-	public void grantPermission(int userId, String permission) {
+	public void grantPermission(int userId, String right, String resourceType, Object resourceId) {
 		// Verify if the permission already exists
+		String permission = this.createPermissionString(right, resourceType, resourceId.toString());
+
 		Query permissionQuery = em.get().createQuery("SELECT p FROM Permission p WHERE name = :permission");
 		permissionQuery.setParameter("permission", permission);
 		User user = em.get().find(User.class, (long) userId);
@@ -105,19 +132,15 @@ public class PermissionService extends AbstractService {
 			p = (Permission) permissionQuery.getSingleResult();
 		} catch (NoResultException nre) {
 			// If there is no permission, we create it
+			String[] result = permission.split(":");
+			if (result.length > 3){
+				throw new IllegalArgumentException("The permission " + permission + " is malformed");
+			}
+
 			p = new Permission();
 			p.setName(permission);
-			
-			try {
-				p.getResourceID();
-				p.getResourceType();
-				p.getRights();
-			} catch (StringIndexOutOfBoundsException exception){
-				throw new IllegalArgumentException("The permission "+permission+" is malformed");
-			}
-			
-			log.debug("Creation of the permission {}", permission);
 			em.get().persist(p);
+			log.debug("Creation of the permission {}", permission);
 		}
 		Set<Permission> userPermissions = user.getPermissions();
 		if (userPermissions == null) {
@@ -133,10 +156,21 @@ public class PermissionService extends AbstractService {
 
 	/**
 	 * Ungrant a specific permission for a specific user.
+	 * 
+	 * @param userId
+	 *            The id of the user which has this permission.
+	 * @param right
+	 *            The right on the resource for example "write", or "delete".
+	 * @param resourceType
+	 *            The type of the resource, for example "user" or "stream"
+	 * @param resourceId
+	 *            The unique identifier for the resource
 	 */
 	@Transactional
-	public void ungrantPermission(int userId, String permission) {
-		// verify if the permission already exists
+	public void ungrantPermission(int userId, String right, String resourceType, Object resourceId) {
+		String permission = this.createPermissionString(right, resourceType, resourceId.toString());
+		
+		// Verify if the permission already exists
 		Query permissionQuery = em.get().createQuery("SELECT p FROM Permission p WHERE name = :permission");
 		permissionQuery.setParameter("permission", permission);
 		Permission p;
@@ -157,11 +191,22 @@ public class PermissionService extends AbstractService {
 			// If there is no such permission, there is nothing to do : the user has already not the permission.
 		}
 	}
+	
+	
 
-	public List<PermissionDTO> getTypeOfPermissionForOneUser(long userId, String permissionType) {
+	/**
+	 * Get all permissions matching a permission type, for a specific user.
+	 * 
+	 * @param userId
+	 *            The id of the user.
+	 * @param resourceType
+	 *            The type of the resource, for example "streams".
+	 * @return
+	 */
+	public List<PermissionDTO> getTypeOfPermissionForOneUser(long userId, String resourceType) {
 		User user = em.get().find(User.class, userId);
 		Set<Permission> permissions = user.getPermissions();
-		Set<Permission> filteredPermissions = this.filterPermissionByType(permissions, permissionType);
+		Set<Permission> filteredPermissions = this.filterPermissionByType(permissions, resourceType);
 		List<PermissionDTO> list = new ArrayList<PermissionDTO>();
 		for (Permission p : filteredPermissions) {
 			list.add(new PermissionDTO(p.getName()));
@@ -178,5 +223,9 @@ public class PermissionService extends AbstractService {
 			}
 		}
 		return filteredPermissions;
+	}
+
+	private String createPermissionString(String right, String resourceType, String resourceId) {
+		return right + ":" + resourceType + ":" + resourceId;
 	}
 }

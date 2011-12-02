@@ -222,7 +222,6 @@ App = (function($){
 		getMore: function(){
 			var parent = this
 			var url = "";
-			console.log(this.flag);
 			if(this.flag == 0){
 				url = "/streams/current/messages";
 			}

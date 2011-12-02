@@ -120,6 +120,14 @@ public class StreamResource extends AbstractController {
 		return streamService.addComment(comment.message,comment.idStream, comment.idMessageParent);
 	}
 	
+	@Path("/delete/{id}")
+	@Consumes( { MediaType.APPLICATION_JSON })
+	@Produces( { MediaType.APPLICATION_JSON })
+	public String deleteMessage(@PathParam("id") int id) {
+		streamService.deleteMessage((long) id);
+		return "{'result': 'ok'}";
+	}
+	
 	@GET
 	@Path("/admin")
 	@Produces( { MediaType.TEXT_HTML })
@@ -207,9 +215,9 @@ public class StreamResource extends AbstractController {
 		List<UserDTO> allUsers = userService.getAllUsers();
 		
 		for (UserDTO user : allUsers){
-			boolean read = permissionService.userHasPermission((int) user.id, Stream.RIGHT_READ+":streams:"+id);
-			boolean write = permissionService.userHasPermission((int) user.id, Stream.RIGHT_WRITE+":streams:"+id);
-			boolean delete = permissionService.userHasPermission((int) user.id, Stream.RIGHT_DELETE+":streams:"+id);
+			boolean read = permissionService.userHasPermission((int) user.id, Stream.RIGHT_READ, Stream.STREAM_RESOURCE,id);
+			boolean write = permissionService.userHasPermission((int) user.id, Stream.RIGHT_WRITE, Stream.STREAM_RESOURCE,id);
+			boolean delete = permissionService.userHasPermission((int) user.id, Stream.RIGHT_DELETE, Stream.STREAM_RESOURCE,id);
 			
 			if (delete){
 				json += "{\"user\":"+user.id+",\"right\":\"delete\"},";
@@ -230,22 +238,21 @@ public class StreamResource extends AbstractController {
 	public String updateRights(StreamRightsUpdateRequestDTO request) {
 		log.debug("Update rights of the stream : {}", request.streamid);
 		for (RightOnStreamDTO right : request.rights){
-			boolean correct = permissionService.userHasPermission(right.userid,right.permission+":streams:"+request.streamid);
+			boolean correct = permissionService.userHasPermission(right.userid,right.permission,Stream.STREAM_RESOURCE,request.streamid);
 			if (!correct){
 				// The right requested is not the same than the existing right : delete permissions on the stream for the user
-				if (permissionService.userHasPermission((int) right.userid, Stream.RIGHT_READ+":streams:"+request.streamid)){
-					permissionService.ungrantPermission(right.userid, Stream.RIGHT_READ+":streams:"+request.streamid);
+				if (permissionService.userHasPermission((int) right.userid, Stream.RIGHT_READ,Stream.STREAM_RESOURCE,request.streamid)){
+					permissionService.ungrantPermission(right.userid, Stream.RIGHT_READ,Stream.STREAM_RESOURCE,request.streamid);
 				}
-				if (permissionService.userHasPermission((int) right.userid, Stream.RIGHT_WRITE+":streams:"+request.streamid)){
-					permissionService.ungrantPermission(right.userid, Stream.RIGHT_WRITE+":streams:"+request.streamid);
+				if (permissionService.userHasPermission((int) right.userid, Stream.RIGHT_WRITE,Stream.STREAM_RESOURCE,request.streamid)){
+					permissionService.ungrantPermission(right.userid, Stream.RIGHT_WRITE,Stream.STREAM_RESOURCE,request.streamid);
 				}
-				if (permissionService.userHasPermission((int) right.userid, Stream.RIGHT_DELETE+":streams:"+request.streamid)){
-					permissionService.ungrantPermission(right.userid, Stream.RIGHT_DELETE+":streams:"+request.streamid);
+				if (permissionService.userHasPermission((int) right.userid, Stream.RIGHT_DELETE,Stream.STREAM_RESOURCE,request.streamid)){
+					permissionService.ungrantPermission(right.userid, Stream.RIGHT_DELETE,Stream.STREAM_RESOURCE,request.streamid);
 				}
 				if (! right.permission.equals("nothing")){
 					// Add the requested permission
-					String permission = right.permission +":streams:"+request.streamid;
-					permissionService.grantPermission(right.userid, permission);
+					permissionService.grantPermission(right.userid, right.permission, Stream.STREAM_RESOURCE, request.streamid);
 				}
 			}
 		}
