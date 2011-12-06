@@ -16,7 +16,7 @@ GNU Affero General Public License for more details.
 You should have received a copy of the GNU Affero General Public
 License along with Kernely.
 If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 package org.kernely.core.dto;
 
 import javax.xml.bind.annotation.XmlRootElement;
@@ -26,32 +26,46 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @XmlRootElement
 public class UserDTO {
-	
-	public UserDTO(){
-		
-	}
-	
-	/**
-	 * Constructor which set datas of the user.
-	 * @param pUsername The name of the user, the id of the user.
-	 */
-	public UserDTO(String pUsername, long id) {
-		this.username = pUsername;
-		this.id=id;
+
+	public long id;
+	public String username;
+	public boolean locked;
+
+	public UserDTO() {
+
 	}
 
 	/**
 	 * Constructor which set datas of the user.
-	 * @param pUsername The name of the user.
+	 * 
+	 * @param pUsername
+	 *            The name of the user, the id of the user.
+	 */
+	public UserDTO(String pUsername, long id) {
+		this.username = pUsername;
+		this.id = id;
+	}
+
+	/**
+	 * Constructor which set datas of the user.
+	 * 
+	 * @param pUsername
+	 *            The name of the user.
 	 */
 	public UserDTO(String pUsername, boolean pLocked, long id) {
 		username = pUsername;
 		locked = pLocked;
 		this.id = id;
 	}
-	
 
-	public long id;
-	public String username;
-	public boolean locked;
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + (int) (id ^ (id >>> 32));
+		result = prime * result
+				+ ((username == null) ? 0 : username.hashCode());
+		return result;
+	}
+
 }

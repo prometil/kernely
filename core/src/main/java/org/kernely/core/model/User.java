@@ -55,7 +55,7 @@ public class User extends AbstractModel {
 	private boolean locked;
 
 	@ManyToOne
-	@JoinTable(name = "kernely_user", joinColumns = @JoinColumn(name = "fk_manager", nullable = true))
+    @JoinColumn(name = "fk_manager_id", nullable = true)
 	private User manager;
 	
 	@OneToMany(mappedBy = "manager")
