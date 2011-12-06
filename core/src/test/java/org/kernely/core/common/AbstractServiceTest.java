@@ -32,7 +32,6 @@ import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.Rule;
-import org.kernely.core.model.User;
 import org.mockito.Mockito;
 
 import com.google.guiceberry.junit4.GuiceBerryRule;

@@ -19,8 +19,6 @@ If not, see <http://www.gnu.org/licenses/>.
  */
 package org.kernely.bootstrap.shiro;
 
-import java.util.UUID;
-
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
@@ -40,7 +38,6 @@ import org.apache.shiro.util.SimpleByteSource;
 import org.kernely.core.model.Permission;
 import org.kernely.core.model.Role;
 import org.kernely.core.model.User;
-import org.kernely.stream.model.Message;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

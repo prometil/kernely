@@ -57,12 +57,22 @@ public class Message extends AbstractModel {
 		DateTimeZone zoneUTC = DateTimeZone.UTC;
 		date = new DateTime().withZone(zoneUTC).toDate();
 		this.commentable = true;
-		this.commentable = true;
 		this.content ="";
 		this.id=0;
 		this.stream = new Stream();
 	}
 
+	@ManyToOne
+    @JoinColumn(name="fk_user_id")
+    private User user;
+
+	public User getUser(){
+		return this.user;
+	}
+	
+	public void setUser(User u){
+		this.user = u;
+	}
 
 	private String content;
 	
@@ -104,7 +114,7 @@ public class Message extends AbstractModel {
 	private Stream stream;
 	
 	@OneToMany(fetch=FetchType.LAZY, mappedBy="message")
-	@Cascade( { org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN })
+	@Cascade( { org.hibernate.annotations.CascadeType.ALL})
 	private Set<Message> comments;
 	
 	@ManyToOne

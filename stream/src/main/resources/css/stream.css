@@ -20,7 +20,7 @@ div#streams-messages{
 div#streams-footer{
 	clean:both;
 }
-div#streams textarea{
+div#streams textarea#message-input{
 	width: 630px;
 	height:60px;
 	border: 1px solid #DDD;
@@ -42,7 +42,7 @@ div#streams div.mess{
 	padding:10px 0px;
 }
 div#streams div.selected{
-	background-color:#eee;
+	background-color:#FEFEFE;
 }
 
 div#streams div.messages{
@@ -66,8 +66,9 @@ div#streams div.message-image{
 }
 
 
+
 div#streams div.message-content{
-	margin-left: 58px;
+	/*margin-left: 58px;*/
 	min-height: 48px;
 }
 

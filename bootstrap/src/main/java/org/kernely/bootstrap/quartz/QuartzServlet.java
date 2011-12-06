@@ -16,6 +16,7 @@ import org.hsqldb.Servlet;
  * @author g.breton
  *
  */
+@SuppressWarnings("serial")
 public class QuartzServlet extends Servlet{
 
 	@Override

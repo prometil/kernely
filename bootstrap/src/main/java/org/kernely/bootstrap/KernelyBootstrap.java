@@ -37,6 +37,7 @@ import org.eclipse.jetty.webapp.WebAppContext;
 import org.kernely.bootstrap.classpath.ClasspathUpdater;
 import org.kernely.bootstrap.error.KernelyErrorHandler;
 import org.kernely.bootstrap.guice.GuiceServletConfig;
+import org.kernely.core.migrations.migrator.Migrator;
 import org.kernely.core.plugin.AbstractPlugin;
 import org.kernely.core.plugin.PluginsLoader;
 import org.kernely.core.resourceLocator.ResourceLocator;
@@ -52,8 +53,7 @@ import com.google.inject.servlet.GuiceFilter;
  */
 public class KernelyBootstrap {
 	// Root of web content directory (jsp, css, js...)
-	private static final Logger log = LoggerFactory
-			.getLogger(KernelyBootstrap.class);
+	private static final Logger log = LoggerFactory.getLogger(KernelyBootstrap.class);
 
 	public static void main(String[] args) throws IOException {
 		log.info("Bootstrapping kernely");
@@ -69,38 +69,40 @@ public class KernelyBootstrap {
 		// configure
 		CombinedConfiguration combinedConfiguration = setTheConfiguration(plugins);
 
+		// update database using configuration
+		Migrator m = new Migrator(combinedConfiguration, plugins);
+		m.migrate();
+
 		// create the upload directory (you can modify the url in core-conf.xml
 		String directoryUrl = combinedConfiguration.getString("workpath.url");
-		File work = new File(directoryUrl);
+		File workDirectory = new File(directoryUrl);
 		try {
-			if (work.mkdir())
-				log.info("Directory Created");
-			else
-				log.info("Directory is not created");
+			if (workDirectory.mkdir()) {
+				log.info("Working directory \"{}\"", workDirectory);
+			}
+			// Create the server
+			Server server = new Server(combinedConfiguration.getInt("server.port"));
+
+			// Retrieve resources located at the web content directory
+			final String warUrlString = new URL("file://.").toExternalForm();
+			// Register a listener
+			ServletHandler handler = createServletHandler();
+			WebAppContext webApp = new WebAppContext(warUrlString, "/");
+			webApp.addEventListener(new GuiceServletConfig(plugins, setTheConfiguration(plugins)));
+			webApp.setServletHandler(handler);
+			webApp.setErrorHandler(new KernelyErrorHandler());
+			server.setHandler(webApp);
+
+			try {
+				server.start();
+				server.join();
+			} catch (Exception e) {
+				log.error("Error at start {}", e);
+			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.error("Cannot create working directory {}", workDirectory, e);
 		}
 
-		// Create the server
-		Server server = new Server(combinedConfiguration.getInt("server.port"));
-
-		// Retrieve resources located at the web content directory
-		final String warUrlString = new URL("file://.").toExternalForm();
-		// Register a listener
-		ServletHandler handler = createServletHandler();
-		WebAppContext webApp = new WebAppContext(warUrlString, "/");
-		webApp.addEventListener(new GuiceServletConfig(plugins,
-				setTheConfiguration(plugins)));
-		webApp.setServletHandler(handler);
-		webApp.setErrorHandler(new KernelyErrorHandler());
-		server.setHandler(webApp);
-
-		try {
-			server.start();
-			server.join();
-		} catch (Exception e) {
-			log.error("Error at start {}", e);
-		}
 
 	}
 
@@ -117,8 +119,7 @@ public class KernelyBootstrap {
 		ServletHandler servletHandler = new ServletHandler();
 
 		FilterHolder guiceFilterHolder = createGuiceFilterHolder();
-		servletHandler.addFilter(guiceFilterHolder,
-				createFilterMapping("/*", guiceFilterHolder));
+		servletHandler.addFilter(guiceFilterHolder, createFilterMapping("/*", guiceFilterHolder));
 
 		return servletHandler;
 	}
@@ -143,8 +144,7 @@ public class KernelyBootstrap {
 	 *            the filter holder
 	 * @return the filter mapping.
 	 */
-	private static FilterMapping createFilterMapping(String pathSpec,
-			FilterHolder filterHolder) {
+	private static FilterMapping createFilterMapping(String pathSpec, FilterHolder filterHolder) {
 		FilterMapping filterMapping = new FilterMapping();
 		filterMapping.setPathSpec(pathSpec);
 		filterMapping.setFilterName(filterHolder.getName());
@@ -158,10 +158,8 @@ public class KernelyBootstrap {
 	 *            list of plugins
 	 * @return the combinedconfiguration set
 	 */
-	private static CombinedConfiguration setTheConfiguration(
-			List<AbstractPlugin> plugins) {
+	private static CombinedConfiguration setTheConfiguration(List<AbstractPlugin> plugins) {
 		ResourceLocator resourceLocator = new ResourceLocator();
-
 		CombinedConfiguration combinedConfiguration = new CombinedConfiguration();
 		// Bind all Jersey resources detected in plugins
 		for (AbstractPlugin plugin : plugins) {
@@ -170,24 +168,19 @@ public class KernelyBootstrap {
 				try {
 					AbstractConfiguration configuration;
 					try {
-						configuration = new XMLConfiguration(
-								resourceLocator.getResource("../config",
-										filepath));
-						log.info("Found configuration file {} for plugin {}",
-								filepath, plugin.getName());
+						configuration = new XMLConfiguration(resourceLocator.getResource("../config", filepath));
+						log.info("Found configuration file {} for plugin {}", filepath, plugin.getName());
 						combinedConfiguration.addConfiguration(configuration);
 					} catch (MalformedURLException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
+						log.error("Cannot find configuration file : {}", filepath);
 					}
 
 				} catch (ConfigurationException e) {
-					log.error(
-							"Cannot find configuration file {} for plugin {}",
-							filepath, plugin.getName());
+					log.error("Cannot find configuration file {} for plugin {}", filepath, plugin.getName());
 				}
 			}
 		}
 		return combinedConfiguration;
 	}
+
 }

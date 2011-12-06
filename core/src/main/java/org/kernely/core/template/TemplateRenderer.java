@@ -28,6 +28,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.shiro.SecurityUtils;
 import org.codehaus.groovy.control.CompilationFailedException;
@@ -123,23 +124,45 @@ public class TemplateRenderer {
 					log.error("Cannot find file {}", pTemplate);
 				}
 			} catch (MalformedURLException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
+				log.error("Cannot get the template {}", pTemplate );
 			}
 		
 		}
-
+		
+		/**
+		 * Adds a variable and its definition to the template
+		 * @param key the name of the variable 
+		 * @param value the value of the variable
+		 * @return the template builder
+		 */
 		public TemplateBuilder with(String key, Object value) {
 			binding.put(key, value);
 			return this;
 		}
+		/**
+		 * Add a set of values to the bindings.
+		 * @param values the value 
+		 * @return the template renderer.
+		 */
+		public TemplateBuilder with(Map<String, Object> values){
+			binding.putAll(values);
+				return this;
+		}
 
-		
+		/**
+		 * Adds a css file to the renderering
+		 * @param file the css file
+		 * @return the template builder
+		 */
 		public TemplateBuilder addCss(String file){
 			cssFiles.add(file);
 			return this;
 		}
 		
+		/**
+		 * Remove the layout system from the renderered template
+		 * @return the template builder
+		 */
 		public TemplateBuilder withoutLayout(){
 			withLayout = false;
 			return this;
@@ -159,7 +182,10 @@ public class TemplateRenderer {
 				HashMap<String, Object> layoutBinding = new HashMap<String, Object>();
 				HashMap<String, String> menu = new HashMap<String, String>();
 				for (AbstractPlugin plugin : pluginsLoader.getPlugins()) {
-					menu.put(plugin.getName(), plugin.getPath());
+					String path = plugin.getPath();
+					if (path != null){
+						menu.put(plugin.getName(), path);
+					}
 				}
 				
 				//===========TODO : Create an extension point ================//

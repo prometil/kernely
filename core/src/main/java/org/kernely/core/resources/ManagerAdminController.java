@@ -116,10 +116,10 @@ public class ManagerAdminController extends AbstractController {
 	@GET
 	@Path("/users/{username}")
 	@Produces({"application/json"})
-	public List<UserDTO> getListManaged(@PathParam("username") String idManager)
+	public List<UserDTO> getListManaged(@PathParam("username") String manager)
 	{
 		if (userService.currentUserIsAdministrator()){
-			return userService.getUsers(idManager);
+			return userService.getUsers(manager);
 		}
 		return null;
 		

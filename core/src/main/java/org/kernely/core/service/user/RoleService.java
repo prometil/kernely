@@ -3,22 +3,18 @@ package org.kernely.core.service.user;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
 import org.kernely.core.dto.RoleDTO;
 import org.kernely.core.model.Role;
+import org.kernely.core.service.AbstractService;
 
-import com.google.inject.Inject;
-import com.google.inject.Provider;
 import com.google.inject.Singleton;
 import com.google.inject.persist.Transactional;
 
 @Singleton
-public class RoleService {
-	@Inject
-	private Provider<EntityManager> em;
-
+public class RoleService extends AbstractService{
+	
 	/**
 	 * Gets the lists of all roles contained in the database.
 	 * 

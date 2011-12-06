@@ -28,7 +28,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
 import org.apache.shiro.SecurityUtils;
@@ -45,10 +44,10 @@ import org.kernely.core.event.UserCreationEvent;
 import org.kernely.core.model.Role;
 import org.kernely.core.model.User;
 import org.kernely.core.model.UserDetails;
+import org.kernely.core.service.AbstractService;
 
 import com.google.common.eventbus.EventBus;
 import com.google.inject.Inject;
-import com.google.inject.Provider;
 import com.google.inject.Singleton;
 import com.google.inject.persist.Transactional;
 
@@ -56,10 +55,7 @@ import com.google.inject.persist.Transactional;
  * Service provided by the user plugin.
  */
 @Singleton
-public class UserService {
-
-	@Inject
-	private Provider<EntityManager> em;
+public class UserService extends AbstractService{
 
 	@Inject
 	private EventBus eventBus;
@@ -104,8 +100,10 @@ public class UserService {
 		String hashedPasswordBase64 = new Sha256Hash(request.password.trim(), salt, 1024).toBase64();
 
 		// Retrieve the role User, automatically given to a user.
-		Query query = em.get().createQuery("SELECT r FROM Role r WHERE name='" + Role.ROLE_USER + "'");
-		Role roleUser = (Role) query.getSingleResult();
+
+		Query query = em.get().createQuery("SELECT r FROM Role r WHERE name=:role_user");
+		query.setParameter("role_user", Role.ROLE_USER );
+		Role roleUser = (Role)query.getSingleResult();
 
 		user.setPassword(hashedPasswordBase64);
 		user.setSalt(salt.toString());
@@ -113,14 +111,15 @@ public class UserService {
 		roles.add(roleUser);
 		user.setRoles(roles);
 
-		em.get().persist(user);
-
 		UserDetails userdetails = new UserDetails();
 		userdetails.setName(request.lastname);
 		userdetails.setFirstname(request.firstname);
 		userdetails.setUser(user);
 
+		user.setUserDetails(userdetails);
+
 		em.get().persist(userdetails);
+		em.get().persist(user);
 
 		eventBus.post(new UserCreationEvent(user.getId(), user.getUsername()));
 
@@ -317,9 +316,10 @@ public class UserService {
 	 * @return The DTO associated to the current user
 	 */
 	@Transactional
-	public UserDTO getAuthenticatedUser() {
-		Query query = em.get().createQuery("SELECT e FROM User e WHERE username ='" + SecurityUtils.getSubject().getPrincipal() + "'");
-		User u = (User) query.getSingleResult();
+
+	public UserDTO getAuthenticatedUserDTO(){
+		Query query = em.get().createQuery("SELECT e FROM User e WHERE username ='"+ SecurityUtils.getSubject().getPrincipal() +"'");
+		User u = (User)query.getSingleResult();
 		return new UserDTO(u.getUsername(), u.isLocked(), u.getId());
 	}
 

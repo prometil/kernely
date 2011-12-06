@@ -28,6 +28,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import org.apache.shiro.SecurityUtils;
@@ -37,6 +38,7 @@ import org.kernely.core.service.user.PermissionService;
 import org.kernely.core.service.user.UserService;
 import org.kernely.core.template.TemplateRenderer;
 import org.kernely.stream.dto.RightOnStreamDTO;
+import org.kernely.stream.dto.StreamCommentCreationRequestDTO;
 import org.kernely.stream.dto.StreamCreationRequestDTO;
 import org.kernely.stream.dto.StreamDTO;
 import org.kernely.stream.dto.StreamMessageCreationRequestDTO;
@@ -85,9 +87,9 @@ public class StreamResource extends AbstractController {
 	@Produces({MediaType.APPLICATION_JSON})
 	public List<StreamDTO> getAuthorizedStreams(){
 		List<StreamDTO> allStreams = streamService.getAllStreams();
-		ArrayList<StreamDTO> authStreams = new ArrayList();
+		ArrayList<StreamDTO> authStreams = new ArrayList<StreamDTO>();
 		for(StreamDTO streams : allStreams){
-			if (permissionService.userHasPermission((int) userService.getAuthenticatedUser().id, Stream.RIGHT_WRITE+":streams:"+(int)streams.getId()) || permissionService.userHasPermission((int) userService.getAuthenticatedUser().id, Stream.RIGHT_DELETE+":streams:"+(int)streams.getId())) {
+			if (streamService.currentUserHasRightsOnStream(Stream.RIGHT_WRITE, (int)streams.getId()) || streamService.currentUserHasRightsOnStream(Stream.RIGHT_DELETE, (int)streams.getId())){
 				authStreams.add(streams);
 			}
 		}
@@ -106,6 +108,26 @@ public class StreamResource extends AbstractController {
 		return streamService.addMessage(message.message,message.idStream);
 	}
 	
+	@POST
+	@Path("/comment")
+	@Consumes( { MediaType.APPLICATION_JSON })
+	@Produces( { MediaType.APPLICATION_JSON })
+	public StreamMessageDTO addComment(StreamCommentCreationRequestDTO comment) {
+
+		log.debug("{} create a new comment : {}", SecurityUtils.getSubject().getPrincipal(), comment.message);
+		log.debug("{} post in the message with the id : {}", SecurityUtils.getSubject().getPrincipal(), comment.idMessageParent);
+
+		return streamService.addComment(comment.message,comment.idStream, comment.idMessageParent);
+	}
+	
+	@Path("/delete/{id}")
+	@Consumes( { MediaType.APPLICATION_JSON })
+	@Produces( { MediaType.APPLICATION_JSON })
+	public String deleteMessage(@PathParam("id") int id) {
+		streamService.deleteMessage((long) id);
+		return "{'result': 'ok'}";
+	}
+	
 	@GET
 	@Path("/admin")
 	@Produces( { MediaType.TEXT_HTML })
@@ -116,6 +138,7 @@ public class StreamResource extends AbstractController {
 		} else{
 			page = templateRenderer.create("/templates/gsp/home.gsp").render();
 		}
+
 		return page;
 	}
 	
@@ -188,14 +211,13 @@ public class StreamResource extends AbstractController {
 	@Path("/admin/rights/{id}")
 	@Produces({MediaType.APPLICATION_JSON})
 	public String getStreamRights(@PathParam("id") int id){
-		log.debug("JSON IN CONSTRUCTION FOR THE STREAM " + id);
 		String json = "{\"permission\":[";
 		List<UserDTO> allUsers = userService.getAllUsers();
 		
 		for (UserDTO user : allUsers){
-			boolean read = permissionService.userHasPermission((int) user.id, Stream.RIGHT_READ+":streams:"+id);
-			boolean write = permissionService.userHasPermission((int) user.id, Stream.RIGHT_WRITE+":streams:"+id);
-			boolean delete = permissionService.userHasPermission((int) user.id, Stream.RIGHT_DELETE+":streams:"+id);
+			boolean read = permissionService.userHasPermission((int) user.id, Stream.RIGHT_READ, Stream.STREAM_RESOURCE,id);
+			boolean write = permissionService.userHasPermission((int) user.id, Stream.RIGHT_WRITE, Stream.STREAM_RESOURCE,id);
+			boolean delete = permissionService.userHasPermission((int) user.id, Stream.RIGHT_DELETE, Stream.STREAM_RESOURCE,id);
 			
 			if (delete){
 				json += "{\"user\":"+user.id+",\"right\":\"delete\"},";
@@ -214,27 +236,47 @@ public class StreamResource extends AbstractController {
 	@Path("/admin/updaterights")
 	@Produces( { MediaType.APPLICATION_JSON })
 	public String updateRights(StreamRightsUpdateRequestDTO request) {
-		log.debug("{} udate rights of the stream : {}", request.streamid);
+		log.debug("Update rights of the stream : {}", request.streamid);
 		for (RightOnStreamDTO right : request.rights){
-			boolean correct = permissionService.userHasPermission(right.userid,right.permission+":streams:"+request.streamid);
+			boolean correct = permissionService.userHasPermission(right.userid,right.permission,Stream.STREAM_RESOURCE,request.streamid);
 			if (!correct){
 				// The right requested is not the same than the existing right : delete permissions on the stream for the user
-				if (permissionService.userHasPermission((int) right.userid, Stream.RIGHT_READ+":streams:"+request.streamid)){
-					permissionService.ungrantPermission(right.userid, Stream.RIGHT_READ+":streams:"+request.streamid);
+				if (permissionService.userHasPermission((int) right.userid, Stream.RIGHT_READ,Stream.STREAM_RESOURCE,request.streamid)){
+					permissionService.ungrantPermission(right.userid, Stream.RIGHT_READ,Stream.STREAM_RESOURCE,request.streamid);
 				}
-				if (permissionService.userHasPermission((int) right.userid, Stream.RIGHT_WRITE+":streams:"+request.streamid)){
-					permissionService.ungrantPermission(right.userid, Stream.RIGHT_WRITE+":streams:"+request.streamid);
+				if (permissionService.userHasPermission((int) right.userid, Stream.RIGHT_WRITE,Stream.STREAM_RESOURCE,request.streamid)){
+					permissionService.ungrantPermission(right.userid, Stream.RIGHT_WRITE,Stream.STREAM_RESOURCE,request.streamid);
 				}
-				if (permissionService.userHasPermission((int) right.userid, Stream.RIGHT_DELETE+":streams:"+request.streamid)){
-					permissionService.ungrantPermission(right.userid, Stream.RIGHT_DELETE+":streams:"+request.streamid);
+				if (permissionService.userHasPermission((int) right.userid, Stream.RIGHT_DELETE,Stream.STREAM_RESOURCE,request.streamid)){
+					permissionService.ungrantPermission(right.userid, Stream.RIGHT_DELETE,Stream.STREAM_RESOURCE,request.streamid);
 				}
 				if (! right.permission.equals("nothing")){
 					// Add the requested permission
-					permissionService.grantPermission(right.userid, right.permission +":streams:"+request.streamid);
+					permissionService.grantPermission(right.userid, right.permission, Stream.STREAM_RESOURCE, request.streamid);
 				}
 			}
 		}
 		return "{\"result\":\"ok\"}";
 	}
 	
+	@GET
+	@Path("/current/all")
+	@Produces( { MediaType.APPLICATION_JSON })
+	public List<StreamDTO> getCurrentUserStreams(){
+		return streamService.getCurrentUserStreams();
+	}
+	
+	@GET
+	@Path("/current/messages")
+	@Produces( { MediaType.APPLICATION_JSON })
+	public List<StreamMessageDTO> getAllMessagesForCurrentUser(@QueryParam("last") long flag){
+		return streamService.getAllMessagesForCurrentUser(flag);
+	}
+	
+	@GET
+	@Path("/{id}/comments")
+	@Produces( { MediaType.APPLICATION_JSON })
+	public List<StreamMessageDTO> getAllCommentsForMessage(@PathParam("id") long id){
+		return streamService.getAllCommentsForMessage(id);
+	}
 }

@@ -16,32 +16,28 @@ GNU Affero General Public License for more details.
 You should have received a copy of the GNU Affero General Public
 License along with Kernely.
 If not, see <http://www.gnu.org/licenses/>.
- */
-package org.kernely.core.dto;
+*/
+package org.kernely.stream.dto;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
- * DTO for permission data, contains only his name.
+ *
  */
 @XmlRootElement
-public class PermissionDTO {
+public class StreamCommentCreationRequestDTO {
 	
-	/**
-	 * Constructor which set datas of the permission.
-	 * @param pName The name of the permission.
-	 */
-	public PermissionDTO(String pName) {
-		name = pName;
-		String[] splitted = pName.split(":");
-		this.right = splitted[0];
-		this.type = splitted[1];
-		this.resourceId = splitted[2];
+	public StreamCommentCreationRequestDTO(String message, long idStream, long idMessageParent){
+		this.message = message;
+		this.idStream = idStream;
+		this.idMessageParent = idMessageParent;
 	}
-
-	public String name;
 	
-	public String right;
-	public String type;
-	public String resourceId;
+	public StreamCommentCreationRequestDTO(){
+		
+	}
+	
+	public String message;
+	public long idStream;
+	public long idMessageParent;
 }

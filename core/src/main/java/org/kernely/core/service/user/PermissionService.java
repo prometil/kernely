@@ -1,12 +1,13 @@
 package org.kernely.core.service.user;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
+import javax.persistence.NonUniqueResultException;
 import javax.persistence.Query;
 
 import org.apache.shiro.SecurityUtils;
@@ -14,24 +15,34 @@ import org.apache.shiro.authz.AuthorizationException;
 import org.kernely.core.dto.PermissionDTO;
 import org.kernely.core.model.Permission;
 import org.kernely.core.model.User;
+import org.kernely.core.service.AbstractService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import com.google.inject.Inject;
-import com.google.inject.Provider;
 import com.google.inject.Singleton;
 import com.google.inject.persist.Transactional;
 
 @Singleton
-public class PermissionService {
-	@Inject
-	private Provider<EntityManager> em;
+public class PermissionService extends AbstractService {
 
-	
+	private static final Logger log = LoggerFactory.getLogger(PermissionService.class);
 
 	/**
 	 * Verify if the current user has a specific permission.
+	 * 
+	 * @param userId
+	 *            The id of the user.
+	 * @param right
+	 *            The right on the resource for example "write", or "delete".
+	 * @param resourceType
+	 *            The type of the resource, for example "user" or "stream"
+	 * @param resourceId
+	 *            The unique identifier for the resource
+	 * 
 	 * @return true if the current user has the permission.
 	 */
-	public boolean currentUserHasPermission(String permission){
+	public boolean currentUserHasPermission(String right, String resourceType, Object resourceId) {
+		String permission = this.createPermissionString(right, resourceType, resourceId.toString());
 		try {
 			SecurityUtils.getSubject().checkPermission(permission);
 		} catch (AuthorizationException ae) {
@@ -42,26 +53,42 @@ public class PermissionService {
 
 	/**
 	 * Verify if a specific user has a specific permission.
+	 * 
+	 * @param userId
+	 *            The id of the user.
+	 * @param right
+	 *            The right on the resource for example "write", or "delete".
+	 * @param resourceType
+	 *            The type of the resource, for example "user" or "stream"
+	 * @param resourceId
+	 *            The unique identifier for the resource
+	 * 
 	 * @return true if the user has the permission.
 	 */
+
 	@Transactional
-	public boolean userHasPermission(int id, String permission){
-		Query query = em.get().createQuery("SELECT p FROM Permission p WHERE name='"+ permission +"'");
+	public boolean userHasPermission(int id, String right, String resourceType, Object resourceId) {
+		String permission = this.createPermissionString(right, resourceType, resourceId.toString());
+
+		Query query = em.get().createQuery("SELECT p FROM Permission p WHERE name = :permission");
+		query.setParameter("permission", permission);
 		try {
 			Permission p = (Permission) query.getSingleResult();
-			for (User u : p.getUsers()){
-				if (u.getId() == id){
-					System.out.println("ID TROUVE "+id);
+
+			for (User u : p.getUsers()) {
+				if (u.getId() == id) {
 					return true;
 				}
 			}
 			return false;
 		} catch (NoResultException nre) {
 			return false;
+		} catch (NonUniqueResultException nure) {
+			log.error(nure.getMessage());
+			return false;
 		}
 	}
-	
-	
+
 	/**
 	 * Gets the lists of all permissions contained in the database.
 	 * 
@@ -78,48 +105,127 @@ public class PermissionService {
 
 		return dtos;
 	}
-	
+
 	/**
-	 * Grant a specific permission for a specific user.
+	 * Grant a right on a resource to a specific user.
+	 * 
+	 * @param userId
+	 *            The id of the user which has this permission.
+	 * @param right
+	 *            The right on the resource for example "write", or "delete".
+	 * @param resourceType
+	 *            The type of the resource, for example "user" or "stream"
+	 * @param resourceId
+	 *            The unique identifier for the resource
 	 */
 	@Transactional
-	public void grantPermission(int userId, String permission){
-		// verify if the permission already exists
-		Query permissionQuery = em.get().createQuery("SELECT e FROM Permission e WHERE name='"+permission+"'");
+	public void grantPermission(int userId, String right, String resourceType, Object resourceId) {
+		// Verify if the permission already exists
+		String permission = this.createPermissionString(right, resourceType, resourceId.toString());
+
+		Query permissionQuery = em.get().createQuery("SELECT p FROM Permission p WHERE name = :permission");
+		permissionQuery.setParameter("permission", permission);
 		User user = em.get().find(User.class, (long) userId);
+		log.debug("Grant permission {} to user id : {}", permission, userId);
 		Permission p;
 		try {
 			p = (Permission) permissionQuery.getSingleResult();
-		} catch (NoResultException nre){
+		} catch (NoResultException nre) {
 			// If there is no permission, we create it
+			String[] result = permission.split(":");
+			if (result.length > 3){
+				throw new IllegalArgumentException("The permission " + permission + " is malformed");
+			}
+
 			p = new Permission();
 			p.setName(permission);
 			em.get().persist(p);
+			log.debug("Creation of the permission {}", permission);
 		}
 		Set<Permission> userPermissions = user.getPermissions();
-		if (userPermissions == null){
+		if (userPermissions == null) {
 			userPermissions = new HashSet<Permission>();
 		}
 		userPermissions.add(p);
 		user.setPermissions(userPermissions);
+		p.getUsers().add(user);
+
+		em.get().merge(user);
+		em.get().merge(p);
 	}
-	
-	
+
 	/**
 	 * Ungrant a specific permission for a specific user.
+	 * 
+	 * @param userId
+	 *            The id of the user which has this permission.
+	 * @param right
+	 *            The right on the resource for example "write", or "delete".
+	 * @param resourceType
+	 *            The type of the resource, for example "user" or "stream"
+	 * @param resourceId
+	 *            The unique identifier for the resource
 	 */
 	@Transactional
-	public void ungrantPermission(int userId, String permission){
-		// verify if the permission already exists
-		Query permissionQuery = em.get().createQuery("SELECT e FROM Permission e WHERE name='"+permission+"'");
+	public void ungrantPermission(int userId, String right, String resourceType, Object resourceId) {
+		String permission = this.createPermissionString(right, resourceType, resourceId.toString());
+		
+		// Verify if the permission already exists
+		Query permissionQuery = em.get().createQuery("SELECT p FROM Permission p WHERE name = :permission");
+		permissionQuery.setParameter("permission", permission);
 		Permission p;
 		User user = em.get().find(User.class, (long) userId);
 		try {
+			log.debug("Ungrant permission {} to user id : {}", permission, userId);
 			p = (Permission) permissionQuery.getSingleResult();
+
+			// Remove the permission from the user
 			Set<Permission> permissions = user.getPermissions();
 			permissions.remove(p);
-		} catch (NoResultException nre){
+			em.get().merge(user);
+
+			// Remove the user from the permission
+			p.getUsers().remove(user);
+			em.get().merge(p);
+		} catch (NoResultException nre) {
 			// If there is no such permission, there is nothing to do : the user has already not the permission.
 		}
+	}
+	
+	
+
+	/**
+	 * Get all permissions matching a permission type, for a specific user.
+	 * 
+	 * @param userId
+	 *            The id of the user.
+	 * @param resourceType
+	 *            The type of the resource, for example "streams".
+	 * @return
+	 */
+	public List<PermissionDTO> getTypeOfPermissionForOneUser(long userId, String resourceType) {
+		User user = em.get().find(User.class, userId);
+		Set<Permission> permissions = user.getPermissions();
+		Set<Permission> filteredPermissions = this.filterPermissionByType(permissions, resourceType);
+		List<PermissionDTO> list = new ArrayList<PermissionDTO>();
+		for (Permission p : filteredPermissions) {
+			list.add(new PermissionDTO(p.getName()));
+		}
+		return list;
+
+	}
+
+	private Set<Permission> filterPermissionByType(Collection<Permission> collection, String type) {
+		Set<Permission> filteredPermissions = new HashSet<Permission>();
+		for (Permission p : collection) {
+			if (p.getResourceType().equals(type)) {
+				filteredPermissions.add(p);
+			}
+		}
+		return filteredPermissions;
+	}
+
+	private String createPermissionString(String right, String resourceType, String resourceId) {
+		return right + ":" + resourceType + ":" + resourceId;
 	}
 }

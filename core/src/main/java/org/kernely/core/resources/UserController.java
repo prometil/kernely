@@ -173,7 +173,7 @@ public class UserController extends AbstractController {
 	@Path("/{login}/profile/update")
 	public UserDetailsDTO editProfil(UserDetailsUpdateRequestDTO user) {
 
-		UserDetailsDTO ud = userService.getUserDetails(userService.getAuthenticatedUser().username);
+		UserDetailsDTO ud = userService.getUserDetails(userService.getAuthenticatedUserDTO().username);
 		UserDetailsDTO uddto = new UserDetailsDTO(user.firstname, user.lastname, user.image, user.email, user.adress, user.zip, user.city, user.homephone, user.mobilephone, user.businessphone, user.birth, user.nationality, user.ssn, user.civility, ud.id, new UserDTO());
 
 		// Match the user id (foreign key) with the userdetailid
@@ -215,7 +215,7 @@ public class UserController extends AbstractController {
 		}
 
 		// up to date the database
-		UserDetailsDTO user = userService.getUserDetails(userService.getAuthenticatedUser().username);
+		UserDetailsDTO user = userService.getUserDetails(userService.getAuthenticatedUserDTO().username);
 
 		UserDetailsUpdateRequestDTO ud = new UserDetailsUpdateRequestDTO(user.firstname, user.lastname, fileName, user.email, user.adress, user.zip, user.city, user.homephone, user.mobilephone, user.businessphone, user.birth, user.nationality, user.ssn, user.id, user.civility);
 		userService.updateUserProfile(ud);
@@ -231,7 +231,7 @@ public class UserController extends AbstractController {
 	@Path("/current")
 	@Produces( { "application/json" })
 	public UserDTO getCurrent() {
-		return userService.getAuthenticatedUser();
+		return userService.getAuthenticatedUserDTO();
 	}
 
 	/**

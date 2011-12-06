@@ -20,7 +20,6 @@ If not, see <http://www.gnu.org/licenses/>.
 package org.kernely.stream.dto;
 
 import java.util.List;
-import java.util.Set;
 
 import javax.xml.bind.annotation.XmlRootElement;
 

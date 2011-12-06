@@ -31,6 +31,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -57,19 +58,19 @@ public class User extends AbstractModel {
 	@ManyToOne
     @JoinColumn(name = "fk_manager_id", nullable = true)
 	private User manager;
-	
+
 	@OneToMany(mappedBy = "manager")
-	private Set<User> users; 
+	private Set<User> users;
 
 	@ManyToMany(mappedBy = "users", fetch = FetchType.LAZY)
 	private Set<Group> groups;
-	
+
 	/**
 	 * Roles of the user
 	 */
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(name = "kernely_user_roles", joinColumns = @JoinColumn(name = "fk_user"), inverseJoinColumns = @JoinColumn(name = "fk_role"))
-	@Cascade({ org.hibernate.annotations.CascadeType.ALL })
+	@Cascade( { org.hibernate.annotations.CascadeType.ALL })
 	private Set<Role> roles;
 
 	/**
@@ -77,9 +78,12 @@ public class User extends AbstractModel {
 	 */
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(name = "kernely_user_permissions", joinColumns = @JoinColumn(name = "fk_user"), inverseJoinColumns = @JoinColumn(name = "fk_permission"))
-	@Cascade({ org.hibernate.annotations.CascadeType.ALL })
+	@Cascade( { org.hibernate.annotations.CascadeType.ALL })
 	private Set<Permission> permissions;
+	
 
+	@OneToOne(fetch=FetchType.LAZY, mappedBy="user")
+	private UserDetails userDetails;
 
 	/**
 	 * Get the id of the user.
@@ -89,7 +93,15 @@ public class User extends AbstractModel {
 	public long getId() {
 		return id;
 	}
+	
+	
+	public UserDetails getUserDetails() {
+		return userDetails;
+	}
 
+	public void setUserDetails(UserDetails userDetails) {
+		this.userDetails = userDetails;
+	}
 	@Column(name = "locked")
 	public boolean isLocked() {
 		return locked;
@@ -169,7 +181,6 @@ public class User extends AbstractModel {
 		return manager;
 	}
 
-	
 	/**
 	 * Set or replace the username of the user.
 	 * 
@@ -200,11 +211,19 @@ public class User extends AbstractModel {
 		this.salt = newSalt;
 	}
 
-
 	public void setLocked(boolean lock) {
 		this.locked = lock;
 	}
 
+	/**
+	 * Set the id of the user
+	 * 
+	 * @param id
+	 *            The id of the user.
+	 */
+	public void setId(long id) {
+		this.id = id;
+	}
 
 	/**
 	 * @return the permissions
@@ -248,21 +267,9 @@ public class User extends AbstractModel {
 		this.groups = groups;
 	}
 
-	/**
-	 * Set the id of the user
-	 * 
-	 * @param id
-	 *            The id of the user.
-	 */
-	public void setId(long id) {
-		this.id = id;
+	public void setManager(User newManager) {
+		this.manager = newManager;
 	}
-	
-	public void setManager(User newManager)
-	{
-		this.manager=newManager;
-	}
-
 
 	public void setUsers(Set<User> users) {
 		this.users = users;

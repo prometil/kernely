@@ -5,7 +5,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
 import org.kernely.core.dto.GroupCreationRequestDTO;
@@ -13,17 +12,13 @@ import org.kernely.core.dto.GroupDTO;
 import org.kernely.core.dto.UserDTO;
 import org.kernely.core.model.Group;
 import org.kernely.core.model.User;
+import org.kernely.core.service.AbstractService;
 
-import com.google.inject.Inject;
-import com.google.inject.Provider;
 import com.google.inject.Singleton;
 import com.google.inject.persist.Transactional;
 
 @Singleton
-public class GroupService {
-
-	@Inject
-	private Provider<EntityManager> em;
+public class GroupService extends AbstractService {
 	
 	/**
 	 * Gets the lists of all groups contained in the database.

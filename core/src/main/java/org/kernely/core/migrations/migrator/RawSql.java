@@ -17,31 +17,34 @@ You should have received a copy of the GNU Affero General Public
 License along with Kernely.
 If not, see <http://www.gnu.org/licenses/>.
  */
-package org.kernely.core.dto;
-
-import javax.xml.bind.annotation.XmlRootElement;
+package org.kernely.core.migrations.migrator;
 
 /**
- * DTO for permission data, contains only his name.
+ * Executes a raw sql command.
+ * @author g.breton
+ * 
  */
-@XmlRootElement
-public class PermissionDTO {
-	
+public class RawSql extends Command {
+
+	public String request;
+
 	/**
-	 * Constructor which set datas of the permission.
-	 * @param pName The name of the permission.
+	 * Construct a Raw sql request
+	 * @param pRequest the request
 	 */
-	public PermissionDTO(String pName) {
-		name = pName;
-		String[] splitted = pName.split(":");
-		this.right = splitted[0];
-		this.type = splitted[1];
-		this.resourceId = splitted[2];
+	public RawSql(String pRequest) {
+		request = pRequest;
+
 	}
 
-	public String name;
-	
-	public String right;
-	public String type;
-	public String resourceId;
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.kernely.core.migrations.migrator.Command#build()
+	 */
+	@Override
+	protected String build() {
+		return request;
+	}
+
 }
