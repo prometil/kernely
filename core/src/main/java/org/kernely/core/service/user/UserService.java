@@ -376,6 +376,12 @@ public class UserService extends AbstractService{
 	 */
 	@Transactional
 	public List<UserDTO> getUsers(String manager) {
+		if (manager==null){
+			throw new IllegalArgumentException("The manager cannot be null");
+		}
+		if (manager.equals("")){
+			throw new IllegalArgumentException("Manager cannot be an empty string");
+		}
 		Query query = em.get().createQuery("Select u FROM User u WHERE u.username=:manager");
 		query.setParameter("manager", manager);
 		User userManager = (User) query.getSingleResult();
@@ -395,9 +401,17 @@ public class UserService extends AbstractService{
 	 */
 	@Transactional 
 	public void updateManager(String manager, List<UserDTO> list){
+		if (manager==null){
+			throw new IllegalArgumentException("The manager cannot be null");
+		}
+		if (list==null){
+			throw new IllegalArgumentException("The list cannot be null");
+		}
+		if (manager.equals("")){
+			throw new IllegalArgumentException("Manager cannot be an empty string");
+		}
 		
 		Set<User> users  =new HashSet<User>();  
-		
 		Query query = em.get().createQuery("Select u FROM User u WHERE u.username=:manager");
 		query.setParameter("manager", manager);
 		User userManager = (User) query.getSingleResult();
@@ -427,10 +441,17 @@ public class UserService extends AbstractService{
 	 */
 	@Transactional
 	public void deleteManager(String username) {
+		if (username==null){
+			throw new IllegalArgumentException("The manager cannot be null");
+		}
+		if (username.equals("")){
+			throw new IllegalArgumentException("Manager cannot be an empty string");
+		}
 		Query query = em.get().createQuery("Select u FROM User u WHERE u.username=:username");
 		query.setParameter("username", username);
 		User userManager = (User) query.getSingleResult();
 		Set<User> managed= userManager.getUsers();
+		userManager.setUsers(new HashSet<User>());
 		for (User user : managed){
 			user.setManager(null);
 			em.get().merge(user);
