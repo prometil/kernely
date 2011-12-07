@@ -110,12 +110,12 @@ public class MailService  implements Mailer{
 			return this;
 		}
 		
-		public MailBuilder fillMail(Map<String, Object> content){
+		public MailBuilder with(Map<String, Object> content){
 			builder.with(content);
 			return this;
 		}
 		
-		public MailBuilder fillMail(String key, String value){
+		public MailBuilder with(String key, String value){
 			builder.with(key, value);
 			return this;
 		}
@@ -125,7 +125,7 @@ public class MailService  implements Mailer{
 		 * specified via the to() method.
 		 */
 		@SuppressWarnings("unchecked")
-		public void send() {
+		public boolean send() {
 			String body = builder.withoutLayout().render();
 			Properties props = new Properties();
 
@@ -155,8 +155,10 @@ public class MailService  implements Mailer{
 				message.setContent(body, "text/html");
 
 				Transport.send(message);
+				return true;
 			} catch (MessagingException ex) {
 				log.error("Cannot send mail", ex);
+				return false;
 			}
 
 		}

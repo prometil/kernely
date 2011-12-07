@@ -32,7 +32,7 @@ import org.kernely.core.dto.PermissionDTO;
 import org.kernely.core.dto.UserDTO;
 import org.kernely.core.model.User;
 import org.kernely.core.service.AbstractService;
-import org.kernely.core.service.mail.MailService;
+import org.kernely.core.service.mail.Mailer;
 import org.kernely.core.service.user.PermissionService;
 import org.kernely.core.service.user.UserService;
 import org.kernely.stream.dto.StreamCreationRequestDTO;
@@ -60,7 +60,7 @@ public class StreamService extends AbstractService {
 	private PermissionService permissionService;
 	
 	@Inject
-	private MailService mailService;
+	private Mailer mailService;
 	
 	@Inject
 	private UserService userService;
@@ -101,7 +101,7 @@ public class StreamService extends AbstractService {
 			subscribers.remove(userService.getAuthenticatedUserDTO());
 			
 			for(UserDTO u : subscribers){
-				mailService.create("/templates/gsp/mail.gsp").fillMail("content", contentString).subject("[Kernely] Someone posted on " + parent.getTitle()).to(u.userDetails.email).send();
+				mailService.create("/templates/gsp/mail.gsp").with("content", contentString).subject("[Kernely] Someone posted on " + parent.getTitle()).to(u.userDetails.email).send();
 			}
 		}
 		
@@ -139,7 +139,7 @@ public class StreamService extends AbstractService {
 		messageParent.setComments(comments);
 		
 		String contentString = "Your message <br/><p style='font-style:italic;'>"+messageParent.getContent()+"</p><br/> has been commented with <br/><p style='font-style:italic;'>"+comment.getContent()+"</p>";
-		mailService.create("/templates/gsp/mail.gsp").fillMail("content", contentString).subject("[Kernely] Your message has been commented.").to(messageParent.getUser().getUserDetails().getMail()).send();
+		mailService.create("/templates/gsp/mail.gsp").with("content", contentString).subject("[Kernely] Your message has been commented.").to(messageParent.getUser().getUserDetails().getMail()).send();
 			
 		return new StreamMessageDTO(comment);
 	}

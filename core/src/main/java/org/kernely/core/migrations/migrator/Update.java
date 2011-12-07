@@ -25,63 +25,82 @@ import java.util.List;
 import com.google.common.base.Joiner;
 
 /**
+ * Update command
+ * 
  * @author g.breton
  * 
  */
-public class CreateTable extends Command {
+public class Update extends Command {
 
-	// the name of the table
-	String name;
+	// the name of the table to update
+	private String name;
+
+	// the where condition
+	private String where;
 
 	// the column
 	List<String> columns;
 
-	
 	/**
-	 * Create a new command with the table name.
-	 * @param tableName the table name.
+	 * Creates an update command for the table name
+	 * 
+	 * @param tableName
+	 *            the table name
 	 */
-	public CreateTable(String tableName) {
+	private Update(String tableName) {
 		name = tableName;
 		columns = new ArrayList<String>();
 	}
 
 	/**
-	 * add a column to the command
 	 * 
-	 * @param pName
-	 *            the name of the column
-	 * @param attributes
-	 *            the attributes of the commandes (type, size etc)
+	 * @param tableName
 	 * @return
 	 */
-	public CreateTable column(String pName, String attributes) {
-		columns.add(pName + " " + attributes);
+	public static Update table(String tableName) {
+		return new Update(tableName);
+	}
+
+	/**
+	 * The method set the a column value
+	 * 
+	 * @param columnName
+	 *            the column to update
+	 * @param columnValue
+	 *            the value to set
+	 * @return the update
+	 */
+	public Update set(String columnName, Object columnValue) {
+		if (columnValue instanceof String) {
+			columns.add(name + " '" + columnValue + "'");
+		} else {
+			columns.add(columnName + " " + columnValue);
+		}
 		return this;
 	}
 
 	/**
+	 * The method set the where condition
 	 * 
-	 * @param tableName
-	 *            the table name
-	 * @return the table creation
+	 * @param pWhere
+	 *            the condition
+	 * @return the update
 	 */
-	public static CreateTable name(String tableName) {
-		CreateTable createTable = new CreateTable(tableName);
-		return createTable;
-
+	public Update where(String pWhere) {
+		where = pWhere;
+		return this;
 	}
 
 	@Override
-	public String build() {
+	protected String build() {
 		StringBuilder b = new StringBuilder();
-		b.append("CREATE TABLE");
-		b.append(" ");
-		b.append(name);
-		b.append("(");
+		b.append("UPDATE ");
+		b.append(" SET ");
 		b.append(Joiner.on(",").join(columns));
-		b.append(");");
+		b.append(" WHERE ");
+		b.append(where);
 		return b.toString();
 
 	}
+
 }

@@ -9,7 +9,7 @@ create table kernely_user(
 	password varchar(80),
 	salt varchar(300),
 	locked boolean default false,
-	fk_manager int 
+	fk_manager_id int 
 );
 
 

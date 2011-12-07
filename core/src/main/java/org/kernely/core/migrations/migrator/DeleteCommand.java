@@ -20,21 +20,39 @@ If not, see <http://www.gnu.org/licenses/>.
 package org.kernely.core.migrations.migrator;
 
 /**
- * Executes a raw sql command.
+ * A delete sql command
+ * 
  * @author g.breton
  * 
  */
-public class RawSql extends Command {
+public class DeleteCommand extends Command {
 
-	public String request;
+	// the table name
+	protected String name;
+
+	// the delete where clause
+	protected String where;
 
 	/**
-	 * Construct a Raw sql request
-	 * @param pRequest the request
+	 * Construcor
+	 * 
+	 * @param tableName
+	 *            the table name to delete from
 	 */
-	public RawSql(String pRequest) {
-		request = pRequest;
+	private DeleteCommand(String tableName) {
+		name = tableName;
 
+	}
+
+	/**
+	 * Create a new delete command for the given table name
+	 * 
+	 * @param name
+	 *            the name of the table to delete from
+	 * @return a new delete command
+	 */
+	public static DeleteCommand from(String name) {
+		return new DeleteCommand(name);
 	}
 
 	/*
@@ -44,7 +62,14 @@ public class RawSql extends Command {
 	 */
 	@Override
 	protected String build() {
-		return request;
+		StringBuilder b = new StringBuilder();
+		b.append("DELETE FROM ");
+		b.append(name);
+		if (where != "" && where != null) {
+			b.append("WHERE ");
+			b.append(where);
+			b.append(";");
+		}
+		return b.toString();
 	}
-
 }

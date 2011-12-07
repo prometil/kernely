@@ -33,9 +33,9 @@ public interface MailBuilder {
 
 	public MailBuilder cc(String addresses);
 
-	public MailBuilder fillMail(Map<String, Object> content);
+	public MailBuilder with(Map<String, Object> content);
 	
-	public MailBuilder fillMail(String key, String value);
+	public MailBuilder with(String key, String value);
 	
-	public void send();
+	public boolean send();
 }

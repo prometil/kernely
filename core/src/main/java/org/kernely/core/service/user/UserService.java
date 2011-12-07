@@ -34,6 +34,7 @@ import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.crypto.RandomNumberGenerator;
 import org.apache.shiro.crypto.SecureRandomNumberGenerator;
 import org.apache.shiro.crypto.hash.Sha256Hash;
+import org.kernely.core.dto.ManagerDTO;
 import org.kernely.core.dto.RoleDTO;
 import org.kernely.core.dto.UserCreationRequestDTO;
 import org.kernely.core.dto.UserDTO;
@@ -68,36 +69,38 @@ public class UserService extends AbstractService{
 	@SuppressWarnings("unchecked")
 	@Transactional
 	public void createUser(UserCreationRequestDTO request) {
-		if(request==null){
+		if (request == null) {
 			throw new IllegalArgumentException("Request cannot be null ");
 		}
 
-		if("".equals(request.username) || "".equals(request.password)){
+		if ("".equals(request.username) || "".equals(request.password)) {
 			throw new IllegalArgumentException("Username or/and password cannot be null ");
 		}
 
-		if("".equals(request.username.trim()) || "".equals(request.password.trim())){
+		if ("".equals(request.username.trim()) || "".equals(request.password.trim())) {
 			throw new IllegalArgumentException("Username or/and password cannot be space character only ");
 		}
 
-		Query verifExist = em.get().createQuery("SELECT u FROM User u WHERE username='"+ request.username +"'");
-		List<User> list = (List<User>)verifExist.getResultList();
-		if(!list.isEmpty()){
+		Query verifExist = em.get().createQuery("SELECT u FROM User u WHERE username='" + request.username + "'");
+		List<User> list = (List<User>) verifExist.getResultList();
+		if (!list.isEmpty()) {
 			throw new IllegalArgumentException("Another user with this username already exists");
 		}
 
 		User user = new User();
-		//user.setPassword(request.password.trim());
+		// user.setPassword(request.password.trim());
 		user.setUsername(request.username.trim());
 
 		RandomNumberGenerator rng = new SecureRandomNumberGenerator();
 		Object salt = rng.nextBytes();
 
-		//Now hash the plain-text password with the random salt and multiple
-		//iterations and then Base64-encode the value (requires less space than Hex):
+		// Now hash the plain-text password with the random salt and multiple
+		// iterations and then Base64-encode the value (requires less space than
+		// Hex):
 		String hashedPasswordBase64 = new Sha256Hash(request.password.trim(), salt, 1024).toBase64();
 
 		// Retrieve the role User, automatically given to a user.
+
 		Query query = em.get().createQuery("SELECT r FROM Role r WHERE name=:role_user");
 		query.setParameter("role_user", Role.ROLE_USER );
 		Role roleUser = (Role)query.getSingleResult();
@@ -121,31 +124,33 @@ public class UserService extends AbstractService{
 		eventBus.post(new UserCreationEvent(user.getId(), user.getUsername()));
 
 	}
-	
+
 	/**
-	 * Update the profile of the specific user with the informations contained in the DTO
-	 * @param u The DTO containing all informations about the user to update
+	 * Update the profile of the specific user with the informations contained
+	 * in the DTO
+	 * 
+	 * @param u
+	 *            The DTO containing all informations about the user to update
 	 */
 	@Transactional
-	public void updateUserProfile(UserDetailsUpdateRequestDTO u)
-	{ 
-		if(u==null){
+	public void updateUserProfile(UserDetailsUpdateRequestDTO u) {
+		if (u == null) {
 			throw new IllegalArgumentException("Request cannot be null ");
 		}
-		if(u.birth.equals("")){
+		if (u.birth.equals("")) {
 			throw new IllegalArgumentException("A birth date must be like dd/MM/yyyy ");
 		}
 
 		// parse the string date in class Date
-		String date =u.birth;
-		if (u.birth==null){
+		String date = u.birth;
+		if (u.birth == null) {
 			date = "00/00/0000";
 		}
 		DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
 		Date birth;
 		try {
-			birth = (Date)formatter.parse(date);
-			UserDetails uDetails =  em.get().find(UserDetails.class, u.id);
+			birth = (Date) formatter.parse(date);
+			UserDetails uDetails = em.get().find(UserDetails.class, u.id);
 			uDetails.setMail(u.email);
 			uDetails.setAdress(u.adress);
 			uDetails.setBirth(birth);
@@ -165,53 +170,58 @@ public class UserService extends AbstractService{
 			e.printStackTrace();
 		}
 	}
-	
+
 	/**
 	 * Lock the user who has the id 'id'
-	 * @param id The id of the user to lock
+	 * 
+	 * @param id
+	 *            The id of the user to lock
 	 */
-	@Transactional 
-	public void lockUser(int id){
+	@Transactional
+	public void lockUser(int id) {
 		UserDetails ud = em.get().find(UserDetails.class, id);
 		User u = em.get().find(User.class, ud.getUser().getId());
 		u.setLocked(!u.isLocked());
 	}
+
 	/**
 	 * Update an user from the administration
-	 * @param request The DTO containing all informations about the user to update
+	 * 
+	 * @param request
+	 *            The DTO containing all informations about the user to update
 	 */
 	@SuppressWarnings("unchecked")
 	@Transactional
 	public void updateUser(UserCreationRequestDTO request) {
-		if(request==null){
+		if (request == null) {
 			throw new IllegalArgumentException("Request cannot be null ");
 		}
 
-		if("".equals(request.username)){
+		if ("".equals(request.username)) {
 			throw new IllegalArgumentException("Username cannot be null ");
 		}
 
-		if("".equals(request.username.trim())){
+		if ("".equals(request.username.trim())) {
 			throw new IllegalArgumentException("Username cannot be space character only ");
 		}
 
 		// Retrieve the updated user
 		UserDetails ud = em.get().find(UserDetails.class, request.id);
 
-		Query verifExist = em.get().createQuery("SELECT u FROM User u WHERE username='"+ request.username +"' AND id != "+ ud.getUser().getId() );
-		List<User> list = (List<User>)verifExist.getResultList();
-		if(!list.isEmpty()){
+		Query verifExist = em.get().createQuery("SELECT u FROM User u WHERE username='" + request.username + "' AND id != " + ud.getUser().getId());
+		List<User> list = (List<User>) verifExist.getResultList();
+		if (!list.isEmpty()) {
 			throw new IllegalArgumentException("Another user with this username already exists");
 		}
 
 		// Retrieve the role User, automaticaly given to a user.
-		Query query = em.get().createQuery("SELECT r FROM Role r WHERE name='"+ Role.ROLE_USER +"'");
-		Role roleUser = (Role)query.getSingleResult();
+		Query query = em.get().createQuery("SELECT r FROM Role r WHERE name='" + Role.ROLE_USER + "'");
+		Role roleUser = (Role) query.getSingleResult();
 
 		Set<Role> roles = new HashSet<Role>();
-		if(!request.roles.isEmpty()){
-			if(!(request.roles.get(0).name == null)){
-				for(RoleDTO r: request.roles){
+		if (!request.roles.isEmpty()) {
+			if (!(request.roles.get(0).name == null)) {
+				for (RoleDTO r : request.roles) {
 					roles.add(em.get().find(Role.class, r.id));
 				}
 			}
@@ -244,99 +254,108 @@ public class UserService extends AbstractService{
 		return dtos;
 
 	}
+
 	/**
 	 * Get the details about the user specified
-	 * @param u The User that details are needed
+	 * 
+	 * @param u
+	 *            The User that details are needed
 	 * @return The DTO associated to the details of this user
 	 */
 	@Transactional
 	public UserDetailsDTO getUserDetails(User u) {
 		Query query = em.get().createQuery("SELECT e FROM UserDetails, User WHERE User.id =" + u.getId());
-		UserDetails ud = (UserDetails)query.getResultList().get(0);
+		UserDetails ud = (UserDetails) query.getResultList().get(0);
 
-		/// handle date
+		// / handle date
 		String newDateString;
-		if (ud.getBirth()!=null){
-			Date date =ud.getBirth();
-			String newPattern = "dd/MM/yyyy" ; 
-			newDateString = (new SimpleDateFormat( newPattern )).format( date ) ; 
+		if (ud.getBirth() != null) {
+			Date date = ud.getBirth();
+			String newPattern = "dd/MM/yyyy";
+			newDateString = (new SimpleDateFormat(newPattern)).format(date);
+		} else {
+			newDateString = "00/00/0000";
 		}
-		else{
-			newDateString="00/00/0000"; 
-		}
-		UserDetailsDTO dto = new UserDetailsDTO(ud.getFirstname(), ud.getName(), ud.getImage(), ud.getMail(), ud.getAdress(), ud.getZip(), ud.getCity(), ud.getHomephone(), ud.getMobilephone(), ud.getBusinessphone(), newDateString, ud.getNationality(), ud.getSsn(),ud.getCivility(),ud.getId_user_detail(), new UserDTO(u.getUsername(), u.isLocked(), u.getId()));
+		UserDetailsDTO dto = new UserDetailsDTO(ud.getFirstname(), ud.getName(), ud.getImage(), ud.getMail(), ud.getAdress(), ud.getZip(), ud.getCity(), ud.getHomephone(), ud.getMobilephone(), ud.getBusinessphone(), newDateString, ud.getNationality(), ud.getSsn(), ud.getCivility(), ud.getId_user_detail(), new UserDTO(u.getUsername(), u.isLocked(), u.getId()));
 
 		return dto;
 
 	}
+
 	/**
 	 * Get the details about the user who has the specified login
-	 * @param login The login of the user that details are needed
+	 * 
+	 * @param login
+	 *            The login of the user that details are needed
 	 * @return The DTO associated to the details of this user
 	 */
 	@Transactional
 	public UserDetailsDTO getUserDetails(String login) {
 		Query query = em.get().createQuery("SELECT e FROM User  e WHERE username ='" + login + "'");
-		User u = (User)query.getSingleResult();
+		User u = (User) query.getSingleResult();
 		query = em.get().createQuery("SELECT e FROM UserDetails e , User u WHERE e.user = u AND u.id =" + u.getId());
-		UserDetails ud = (UserDetails)query.getSingleResult();
+		UserDetails ud = (UserDetails) query.getSingleResult();
 
-		/// handle date
+		// / handle date
 		String newDateString;
-		if (ud.getBirth()!=null){
-			Date date =ud.getBirth();
-			String newPattern = "dd/MM/yyyy" ; 
-			newDateString = (new SimpleDateFormat( newPattern )).format( date ) ; 
+		if (ud.getBirth() != null) {
+			Date date = ud.getBirth();
+			String newPattern = "dd/MM/yyyy";
+			newDateString = (new SimpleDateFormat(newPattern)).format(date);
+		} else {
+			newDateString = "00/00/0000";
 		}
-		else{
-			newDateString="00/00/0000"; 
-		}
-		UserDetailsDTO dto = new UserDetailsDTO( ud.getFirstname(), ud.getName(), ud.getImage(), ud.getMail(), ud.getAdress(), ud.getZip(), ud.getCity(), ud.getHomephone(), ud.getMobilephone(), ud.getBusinessphone(), newDateString, ud.getNationality(), ud.getSsn(),ud.getCivility(),ud.getId_user_detail(),new UserDTO(u.getUsername(), u.isLocked(), u.getId()));
+		UserDetailsDTO dto = new UserDetailsDTO(ud.getFirstname(), ud.getName(), ud.getImage(), ud.getMail(), ud.getAdress(), ud.getZip(), ud.getCity(), ud.getHomephone(), ud.getMobilephone(), ud.getBusinessphone(), newDateString, ud.getNationality(), ud.getSsn(), ud.getCivility(), ud.getId_user_detail(), new UserDTO(u.getUsername(), u.isLocked(), u.getId()));
 		return dto;
 
 	}
-	
+
 	/**
 	 * Get the current user authenticated in the application
+	 * 
 	 * @return The DTO associated to the current user
 	 */
 	@Transactional
+
 	public UserDTO getAuthenticatedUserDTO(){
 		Query query = em.get().createQuery("SELECT e FROM User e WHERE username ='"+ SecurityUtils.getSubject().getPrincipal() +"'");
 		User u = (User)query.getSingleResult();
 		return new UserDTO(u.getUsername(), u.isLocked(), u.getId());
 	}
-	
+
 	/**
 	 * Get all Details about all users in the database
+	 * 
 	 * @return A list of DTO associated to all details stored in the database
 	 */
 	@Transactional
 	@SuppressWarnings("unchecked")
-	public List<UserDetailsDTO> getAllUserDetails(){
+	public List<UserDetailsDTO> getAllUserDetails() {
 		Query query = em.get().createQuery("SELECT e FROM UserDetails e");
 		List<UserDetails> collection = (List<UserDetails>) query.getResultList();
 		List<UserDetailsDTO> dtos = new ArrayList<UserDetailsDTO>();
 		for (UserDetails user : collection) {
-			dtos.add(new UserDetailsDTO( user.getFirstname(), user.getName(), user.getImage(), user.getMail(), user.getAdress(), user.getZip(), user.getCity(), user.getHomephone(), user.getMobilephone(), user.getBusinessphone(), null, user.getNationality(), user.getSsn(),user.getCivility(),user.getId_user_detail(),new UserDTO(user.getUser().getUsername(), user.getUser().isLocked(), user.getUser().getId())));
+			dtos.add(new UserDetailsDTO(user.getFirstname(), user.getName(), user.getImage(), user.getMail(), user.getAdress(), user.getZip(), user.getCity(), user.getHomephone(), user.getMobilephone(), user.getBusinessphone(), null, user.getNationality(), user.getSsn(), user.getCivility(), user.getId_user_detail(), new UserDTO(user.getUser().getUsername(), user.getUser().isLocked(), user.getUser().getId())));
 		}
 		return dtos;
 	}
 
 	/**
 	 * Verify if the current user has the role of administrator.
-	 * @return true if the current user has the role of administrator, false otherwise.
+	 * 
+	 * @return true if the current user has the role of administrator, false
+	 *         otherwise.
 	 */
-	public boolean currentUserIsAdministrator(){
+	public boolean currentUserIsAdministrator() {
 		return SecurityUtils.getSubject().hasRole(Role.ROLE_ADMINISTRATOR);
 	}
 
 	@Transactional
-	public List<RoleDTO> getUserRoles(int id){
+	public List<RoleDTO> getUserRoles(int id) {
 		UserDetails ud = em.get().find(UserDetails.class, id);
 
-		Query query = em.get().createQuery("SELECT r FROM Role r WHERE name='"+ Role.ROLE_USER +"'");
-		Role roleUser = (Role)query.getSingleResult();
+		Query query = em.get().createQuery("SELECT r FROM Role r WHERE name='" + Role.ROLE_USER + "'");
+		Role roleUser = (Role) query.getSingleResult();
 
 		List<RoleDTO> dtos = new ArrayList<RoleDTO>();
 		Set<Role> userRoles = ud.getUser().getRoles();
@@ -349,4 +368,117 @@ public class UserService extends AbstractService{
 		return dtos;
 	}
 	
+	/**
+	 * retrieve an users list belong to the managers.
+	 * 
+	 * @param managerId
+	 * @return the users
+	 */
+	@Transactional
+	public List<UserDTO> getUsers(String manager) {
+		if (manager==null){
+			throw new IllegalArgumentException("The manager cannot be null");
+		}
+		if (manager.equals("")){
+			throw new IllegalArgumentException("Manager cannot be an empty string");
+		}
+		Query query = em.get().createQuery("Select u FROM User u WHERE u.username=:manager");
+		query.setParameter("manager", manager);
+		User userManager = (User) query.getSingleResult();
+		Set<User> usersSet = userManager.getUsers();
+		List<UserDTO> users = new ArrayList<UserDTO>();
+		for (User user : usersSet) {
+			users.add(new UserDTO(user.getUsername(), user.getId()));
+		}
+		return users;
+	}
+	
+	
+	/**
+	 * Update all user of the list with the new manager
+	 * @param manager
+	 * @param list
+	 */
+	@Transactional 
+	public void updateManager(String manager, List<UserDTO> list){
+		if (manager==null){
+			throw new IllegalArgumentException("The manager cannot be null");
+		}
+		if (list==null){
+			throw new IllegalArgumentException("The list cannot be null");
+		}
+		if (manager.equals("")){
+			throw new IllegalArgumentException("Manager cannot be an empty string");
+		}
+		
+		Set<User> users  =new HashSet<User>();  
+		Query query = em.get().createQuery("Select u FROM User u WHERE u.username=:manager");
+		query.setParameter("manager", manager);
+		User userManager = (User) query.getSingleResult();
+		
+		//retrieve the id and the Users managed
+		for (UserDTO user : list){
+			Long idparam = user.id;
+			Query query2 = em.get().createQuery("Select u FROM User u WHERE u.id=:idparam");
+			query2.setParameter("idparam", idparam);
+			User userManaged = (User) query2.getSingleResult();
+			users.add(userManaged);
+		}
+		//  add the new users
+		userManager.setUsers(users);
+		// add the manager for each  user
+		for (User user : users){
+			user.setManager(userManager);
+			em.get().merge(user);
+		}
+	}
+
+	/**
+	 * Delete an existing manager in database
+	 * 
+	 * @param id
+	 *            The id of the group to delete
+	 */
+	@Transactional
+	public void deleteManager(String username) {
+		if (username==null){
+			throw new IllegalArgumentException("The manager cannot be null");
+		}
+		if (username.equals("")){
+			throw new IllegalArgumentException("Manager cannot be an empty string");
+		}
+		Query query = em.get().createQuery("Select u FROM User u WHERE u.username=:username");
+		query.setParameter("username", username);
+		User userManager = (User) query.getSingleResult();
+		Set<User> managed= userManager.getUsers();
+		userManager.setUsers(new HashSet<User>());
+		for (User user : managed){
+			user.setManager(null);
+			em.get().merge(user);
+		}
+		
+	}
+
+	/**
+	 * get all the manager of the data base
+	 * 
+	 * @return all the manager
+	 */
+	@SuppressWarnings("unchecked")
+	@Transactional
+	public Set<ManagerDTO> getAllManager() {
+		Query query = em.get().createQuery("SELECT u.manager FROM User u");
+		List<User> idManager = (List<User>) query.getResultList();
+		Set<ManagerDTO> collection = new HashSet<ManagerDTO>();
+		for (User manager : idManager) {
+			Set<User> users = manager.getUsers();
+			ArrayList<UserDTO> usersList = new ArrayList<UserDTO>();
+			for (User user : users) {
+				usersList.add(new UserDTO(user.getUsername(), user.getId()));
+			}
+			collection.add(new ManagerDTO(manager.getUsername(), usersList));
+		}
+		return collection;
+	}
+
 }

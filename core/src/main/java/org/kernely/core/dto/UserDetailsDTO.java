@@ -82,8 +82,13 @@ public class UserDetailsDTO {
 		this.city=details.getCity();
 		this.homephone=details.getHomephone();
 		this.mobilephone=details.getMobilephone();
-		this.businessphone=details.getBusinessphone(); 
-		this.birth=details.getBirth().toString();
+		this.businessphone=details.getBusinessphone();
+		if(details.getBirth() != null){
+			this.birth=details.getBirth().toString();
+		}
+		else{
+			this.birth = "";
+		}
 		this.nationality=details.getNationality();
 		this.ssn=details.getSsn();
 		this.civility=details.getCivility();
