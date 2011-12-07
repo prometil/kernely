@@ -80,7 +80,10 @@ public class StreamService extends AbstractService {
 		message.setUser(getAuthenticatedUserModel());
 
 		em.get().persist(message);
-		return new StreamMessageDTO(message);
+		
+		StreamMessageDTO messageDTO = new StreamMessageDTO(message);
+		messageDTO.deletion = currentUserHasRightsOnStream(Stream.RIGHT_DELETE, (int) streamId);
+		return messageDTO;
 	}
 
 	/**
@@ -113,7 +116,14 @@ public class StreamService extends AbstractService {
 		comments.add(comment);
 		messageParent.setComments(comments);
 		//mailService.create("/templates/gsp/mail.gsp").subject("This is a test mail").to("breton.gy@gmail.com").send();
-		return new StreamMessageDTO(comment);
+		
+		StreamMessageDTO commentDTO = new StreamMessageDTO(comment);
+
+		if (currentUserHasRightsOnStream(Stream.RIGHT_DELETE, (int) streamId)){
+			commentDTO.deletion = true;
+		}
+		
+		return commentDTO;
 	}
 	
 	/**
@@ -133,6 +143,9 @@ public class StreamService extends AbstractService {
 
 			StreamMessageDTO streamMessageDTO = new StreamMessageDTO(message);
 			log.debug("Returned message <message: {}, date:{}>", streamMessageDTO.message, streamMessageDTO.date);
+			
+			streamMessageDTO.deletion = currentUserHasRightsOnStream(Stream.RIGHT_DELETE, (int) streamMessageDTO.streamId);
+			
 			messageDtos.add(streamMessageDTO);
 		}
 		return messageDtos;
@@ -315,7 +328,13 @@ public class StreamService extends AbstractService {
 	@SuppressWarnings("unchecked")
 	public List<StreamMessageDTO> getAllMessagesForCurrentUser(long flag) {
 		if (flag == 0) {
-			flag = (Long) em.get().createQuery("SELECT max(id) FROM Message m").getSingleResult();
+			Query query = em.get().createQuery("SELECT max(id) FROM Message m");
+			try {
+				flag = (Long) query.getSingleResult();				
+			} catch (NullPointerException e) {
+				// When there is no message.
+				flag = 0;
+			}
 			// We add 1 to flag to consider the last id too in the request with '<'
 			flag++;
 		}
@@ -329,6 +348,9 @@ public class StreamService extends AbstractService {
 		List<StreamMessageDTO> messagesdto = new ArrayList<StreamMessageDTO>();
 		for(Message m : messages){
 			StreamMessageDTO messageDTO = new StreamMessageDTO(m);
+
+			messageDTO.deletion = currentUserHasRightsOnStream(Stream.RIGHT_DELETE, (int) messageDTO.streamId);
+
 			messagesdto.add(messageDTO);
 		}
 		return messagesdto;
@@ -368,7 +390,9 @@ public class StreamService extends AbstractService {
 		}
 		List<StreamMessageDTO> comments = new ArrayList<StreamMessageDTO>();
 		for(Message comment: commentsModel.descendingSet()){
-			comments.add(new StreamMessageDTO(comment));
+			StreamMessageDTO commentDTO = new StreamMessageDTO(comment);
+			commentDTO.deletion = currentUserHasRightsOnStream(Stream.RIGHT_DELETE, (int) commentDTO.streamId);
+			comments.add(commentDTO);
 		}
 		return comments;
 	}

@@ -16,10 +16,11 @@ App = (function($){
 		    "click .hidecomment": "hideComment",
 		    "click .input-comment-field-dis": "showInputComment",
 		    "click .cancelButton" : "hideInputComment",
-		    "click .share-comment" : "sendComment"
+		    "click .share-comment" : "sendComment",
+		    "click .deleteButton" : "deleteMessage"
 		},
 		initialize: function(message){
-			this.message = message
+			this.message = message;
 		},
 		render:function(){			
 			var template = $("#message-template").html();
@@ -27,6 +28,11 @@ App = (function($){
 			var view = {id: this.message.id, message : this.message.message, stream: this.message.streamName, author: this.message.author, date: this.message.timeToDisplay, comments: this.message.nbComments};
 			var html = Mustache.to_html(template, view);
 			$(this.el).html(html);
+			
+			if (this.message.deletion == "false"){
+				var chain = "#delete"+this.message.id;
+				$("img").remove(chain);
+			}			
 			return this;
 		},
 		showInputComment: function(){
@@ -89,14 +95,14 @@ App = (function($){
 			var parent = this
 			if ($("#comment-input"+this.message.id).val()=="")
 			{
-				alert("You can't send an empty message ! ");
+				alert("You can't send an empty message!");
 				$("#comment-input"+this.message.id).val("");
 	    		$("#comment-input"+this.message.id).prop('disabled', false);
 			}
 			else {
 			var message = new Backbone.Model({
 				  message: $("#comment-input"+parent.message.id).val(),
-				  idStream : $("#combobox").val(),
+				  idStream : parent.message.streamId,
 				  idMessageParent : parent.message.id
 			}); 
 			$("#comment-input"+parent.message.id).prop('disabled', true)
@@ -115,6 +121,24 @@ App = (function($){
 			});
 			
 			}
+		},
+		deleteMessage: function(){
+			var parent = this;
+			if (this.message.deletion == "false"){
+				alert("You can't delete this message.");
+			} else {
+				var answer = confirm("Do yo really want to delete this message ?");
+				if (answer){
+					$.ajax({
+						type:"POST",
+						url:"/streams/delete/"+parent.message.id, 
+						dataType:"json",
+						success: function(data){
+				  		}
+					});
+					$("#mess-"+parent.message.id).remove();
+				}
+			}
 		}
 	})
 	
@@ -127,7 +151,8 @@ App = (function($){
 		    "mouseover "  : "showOptions",
 		    "mouseout "  : "hideOptions",
 		    "mouseover .comment-buttons" : "showButtons",
-		    "mouseout .comment-buttons" : "hideButtons"
+		    "mouseout .comment-buttons" : "hideButtons",
+		    "click .deleteCommentButton" : "deleteComment"
 		},
 		initialize: function(comment){
 			this.comment = comment
@@ -151,6 +176,24 @@ App = (function($){
 		},
 		hideOptions: function(){
 			$(this.el).removeClass("comment_selected")
+		},
+		deleteComment: function(){
+			var parent = this;
+			if (this.comment.deletion == "false"){
+				alert("You can't delete this comment.");
+			} else {
+				var answer = confirm("Do yo really want to delete this comment?");
+				if (answer){
+					$.ajax({
+						type:"POST",
+						url:"/streams/delete/"+parent.comment.id, 
+						dataType:"json",
+						success: function(data){
+				  		}
+					});
+					$("#comment-"+parent.comment.id).remove();
+				}
+			}
 		}
 	})
 	
@@ -193,7 +236,7 @@ App = (function($){
 			var parent = this
 			if ($("#message-input").val()=="")
 			{
-				alert("You can't send an empty message ! ");
+				alert("You can't send an empty message! ");
 				$("#message-input").val("");
 	    		$("#message-input").prop('disabled', false);
 			}

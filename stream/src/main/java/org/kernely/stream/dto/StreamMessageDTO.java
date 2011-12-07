@@ -31,6 +31,28 @@ import org.kernely.stream.model.Message;
 @XmlRootElement
 public class StreamMessageDTO {
 
+	public long id;
+
+	// the id of the stream containing this message
+	public long streamId;
+
+	public String streamName;
+
+	public String author;
+
+	// the stream message DTO
+	public String message;
+
+	// the message date
+	public Date date;
+
+	public String timeToDisplay;
+
+	public int nbComments;
+
+	// can the curent user delete this message?
+	public boolean deletion;
+
 	/**
 	 * The message stream constructor
 	 */
@@ -39,8 +61,10 @@ public class StreamMessageDTO {
 	}
 
 	/**
-	 * The message stream 
-	 * @param pMessage the message
+	 * The message stream
+	 * 
+	 * @param pMessage
+	 *            the message
 	 */
 	public StreamMessageDTO(Message pMessage) {
 		this.id = pMessage.getId();
@@ -48,21 +72,21 @@ public class StreamMessageDTO {
 		this.date = pMessage.getDate();
 		this.streamId = pMessage.getStream().getId();
 		this.streamName = pMessage.getStream().getTitle();
-		String fullname = pMessage.getUser().getUserDetails().getFirstname() + " " + pMessage.getUser().getUserDetails().getName() + " (" + pMessage.getUser().getUsername() +")";
+		String fullname = pMessage.getUser().getUserDetails().getFirstname() + " " + pMessage.getUser().getUserDetails().getName() + " ("
+				+ pMessage.getUser().getUsername() + ")";
 
 		this.author = fullname;
-		if(pMessage.getComments() != null){
+		if (pMessage.getComments() != null) {
 			this.nbComments = pMessage.getComments().size();
-		}
-		else{
+		} else {
 			this.nbComments = 0;
 		}
-		
+
 		this.determinateTime();
 	}
 
-	private void determinateTime(){
-		//Date
+	private void determinateTime() {
+		// Date
 		SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
 
 		Calendar date1 = new GregorianCalendar();
@@ -74,28 +98,24 @@ public class StreamMessageDTO {
 		// Difference between the two dates
 		long timebetweend1d2 = date2long - date1long;
 		// less than one minute
-		if(timebetweend1d2 < 60000){
+		if (timebetweend1d2 < 60000) {
 			timeToDisplay = "a few seconds ago";
-		}
-		else{
+		} else {
 			// less than one hour
-			if(timebetweend1d2 < 3600000){
+			if (timebetweend1d2 < 3600000) {
 				long nbMin = timebetweend1d2 / 1000 / 60;
 				timeToDisplay = nbMin + " minutes ago";
-			}
-			else{
+			} else {
 				// less than one day
-				if(timebetweend1d2 < 86400000){
+				if (timebetweend1d2 < 86400000) {
 					long nbHour = timebetweend1d2 / 1000 / 60 / 60;
 					timeToDisplay = nbHour + " hours ago";
-				}
-				else{
+				} else {
 					// less than one week
-					if(timebetweend1d2 < 604800000){
+					if (timebetweend1d2 < 604800000) {
 						long nbDays = timebetweend1d2 / 1000 / 60 / 60 / 24;
 						timeToDisplay = nbDays + " days ago";
-					}
-					else{
+					} else {
 						timeToDisplay = dateFormat.format(this.date);
 					}
 				}
@@ -103,23 +123,5 @@ public class StreamMessageDTO {
 		}
 
 	}
-	
-	public long id;
-	
-	//the id of the stream containing this message
-	public long streamId;
 
-	public String streamName;
-
-	public String author;
-
-	//the stream message DTO
-	public String message;
-
-	// the message date
-	public Date date;
-
-	public String timeToDisplay;
-
-	public int nbComments;
 }
