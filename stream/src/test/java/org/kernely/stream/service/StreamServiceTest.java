@@ -30,6 +30,7 @@ import org.kernely.core.dto.RoleDTO;
 import org.kernely.core.dto.UserCreationRequestDTO;
 import org.kernely.core.event.UserCreationEvent;
 import org.kernely.core.model.Role;
+import org.kernely.core.service.mail.MailService;
 import org.kernely.core.service.user.PermissionService;
 import org.kernely.core.service.user.RoleService;
 import org.kernely.core.service.user.UserService;
@@ -37,6 +38,8 @@ import org.kernely.stream.UserEventHandler;
 import org.kernely.stream.dto.StreamDTO;
 import org.kernely.stream.dto.StreamMessageDTO;
 import org.kernely.stream.model.Stream;
+import org.mockito.Mock;
+import org.mockito.Mockito;
 
 import com.google.common.eventbus.EventBus;
 import com.google.inject.Inject;
@@ -73,6 +76,9 @@ public class StreamServiceTest extends AbstractServiceTest {
 
 	@Inject
 	private UserEventHandler handler;
+	
+	@Mock
+	private MailService mailService;
 
 	private void creationOfTestUser() {
 		RoleDTO requestRole = new RoleDTO(1, Role.ROLE_USER);
@@ -292,6 +298,7 @@ public class StreamServiceTest extends AbstractServiceTest {
 		assertNotNull(comment2);
 		assertEquals(COMMENT, comment1.message);
 		assertEquals(COMMENT, comment2.message);
+		Mockito.verify(mailService, Mockito.times(1));
 	}
 	
 	@Test

@@ -22,6 +22,7 @@ package org.kernely.core.service.mail;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 import javax.mail.Message;
@@ -108,6 +109,16 @@ public class MailService  implements Mailer{
 			ccs.add(addresses);
 			return this;
 		}
+		
+		public MailBuilder fillMail(Map<String, Object> content){
+			builder.with(content);
+			return this;
+		}
+		
+		public MailBuilder fillMail(String key, String value){
+			builder.with(key, value);
+			return this;
+		}
 
 		/**
 		 * Effectively send the email using the configuration and the recipients
@@ -141,7 +152,7 @@ public class MailService  implements Mailer{
 				}
 
 				message.setSubject(subject);
-				message.setText(body);
+				message.setContent(body, "text/html");
 
 				Transport.send(message);
 			} catch (MessagingException ex) {

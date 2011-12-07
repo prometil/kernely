@@ -29,9 +29,12 @@ import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
 import org.kernely.core.dto.PermissionDTO;
+import org.kernely.core.dto.UserDTO;
 import org.kernely.core.model.User;
 import org.kernely.core.service.AbstractService;
+import org.kernely.core.service.mail.MailService;
 import org.kernely.core.service.user.PermissionService;
+import org.kernely.core.service.user.UserService;
 import org.kernely.stream.dto.StreamCreationRequestDTO;
 import org.kernely.stream.dto.StreamDTO;
 import org.kernely.stream.dto.StreamMessageDTO;
@@ -55,6 +58,12 @@ public class StreamService extends AbstractService {
 
 	@Inject
 	private PermissionService permissionService;
+	
+	@Inject
+	private MailService mailService;
+	
+	@Inject
+	private UserService userService;
 
 	/**
 	 * Add a message to the database in a stream, the current user is the author.
@@ -75,11 +84,27 @@ public class StreamService extends AbstractService {
 		}
 		Message message = new Message();
 
-		message.setStream(getStreamModel(streamId));
+		Stream parent = getStreamModel(streamId);
+		message.setStream(parent);
 		message.setContent(pMessage);
 		message.setUser(getAuthenticatedUserModel());
 
 		em.get().persist(message);
+		
+		if(parent.getCategory() != Stream.CATEGORY_USERS){
+			List<UserDTO> subscribers = new ArrayList<UserDTO>();
+			subscribers.addAll(permissionService.getUsersWithPermission(Stream.RIGHT_READ, Stream.STREAM_RESOURCE, parent.getId()));
+			subscribers.addAll(permissionService.getUsersWithPermission(Stream.RIGHT_WRITE, Stream.STREAM_RESOURCE, parent.getId()));
+			subscribers.addAll(permissionService.getUsersWithPermission(Stream.RIGHT_DELETE, Stream.STREAM_RESOURCE, parent.getId()));
+			String contentString = "A new message <br/><p style='font-style:italic;'>"+message.getContent()+"</p><br/> has been posted on <span style='font-style:italic;'>"+parent.getTitle()+"</span>";
+			// Remove the current user
+			subscribers.remove(userService.getAuthenticatedUserDTO());
+			
+			for(UserDTO u : subscribers){
+				mailService.create("/templates/gsp/mail.gsp").fillMail("content", contentString).subject("[Kernely] Someone posted on " + parent.getTitle()).to(u.userDetails.email).send();
+			}
+		}
+		
 		return new StreamMessageDTO(message);
 	}
 
@@ -112,7 +137,10 @@ public class StreamService extends AbstractService {
 		}
 		comments.add(comment);
 		messageParent.setComments(comments);
-		//mailService.create("/templates/gsp/mail.gsp").subject("This is a test mail").to("breton.gy@gmail.com").send();
+		
+		String contentString = "Your message <br/><p style='font-style:italic;'>"+messageParent.getContent()+"</p><br/> has been commented with <br/><p style='font-style:italic;'>"+comment.getContent()+"</p>";
+		mailService.create("/templates/gsp/mail.gsp").fillMail("content", contentString).subject("[Kernely] Your message has been commented.").to(messageParent.getUser().getUserDetails().getMail()).send();
+			
 		return new StreamMessageDTO(comment);
 	}
 	
@@ -360,6 +388,11 @@ public class StreamService extends AbstractService {
 		em.get().remove(message);
 	}
 	
+	/**
+	 * Retrieves all comments associated to a given message
+	 * @param id Id of the message
+	 * @return the list of DTO corresponding to message's comments
+	 */
 	public List<StreamMessageDTO> getAllCommentsForMessage(long id){
 		Message message = em.get().find(Message.class, id);
 		TreeSet<Message> commentsModel = new TreeSet<Message>(new MessageComparator());

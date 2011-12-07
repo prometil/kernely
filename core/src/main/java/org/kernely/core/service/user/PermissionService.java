@@ -13,6 +13,8 @@ import javax.persistence.Query;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.AuthorizationException;
 import org.kernely.core.dto.PermissionDTO;
+import org.kernely.core.dto.UserDTO;
+import org.kernely.core.dto.UserDetailsDTO;
 import org.kernely.core.model.Permission;
 import org.kernely.core.model.User;
 import org.kernely.core.service.AbstractService;
@@ -227,5 +229,37 @@ public class PermissionService extends AbstractService {
 
 	private String createPermissionString(String right, String resourceType, String resourceId) {
 		return right + ":" + resourceType + ":" + resourceId;
+	}
+	
+	/**
+	 * Retrieves all users who have the given permission
+	 * @param right Right needed on the permission
+	 * @param resourceType Type of the resource needed
+	 * @param resourceId Id of the resource needed
+	 * @return A list of DTO corresponding to the users who have this permission
+	 */
+	public List<UserDTO> getUsersWithPermission(String right, String resourceType, Object resourceId){
+		String permission = this.createPermissionString(right, resourceType, resourceId.toString());
+		
+		Query permissionQuery = em.get().createQuery("SELECT p FROM Permission p WHERE name = :permission");
+		permissionQuery.setParameter("permission", permission);
+		List<UserDTO> usersDTO = new ArrayList<UserDTO>();
+		try {
+			Permission p = (Permission)permissionQuery.getSingleResult();
+			Set<User> users = p.getUsers();
+			
+			UserDTO dto;
+			for(User u: users){
+				dto = new UserDTO(u.getUsername(), u.getId());
+				dto.userDetails = new UserDetailsDTO(u.getUserDetails());
+				usersDTO.add(dto);
+			}
+			return usersDTO;
+		}
+		catch(NoResultException nre) {
+			log.debug("No permission founded for {}", permission);
+			return usersDTO;
+		}
+		
 	}
 }

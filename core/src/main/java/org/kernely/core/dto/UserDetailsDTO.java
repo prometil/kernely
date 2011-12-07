@@ -21,6 +21,8 @@ package org.kernely.core.dto;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.kernely.core.model.UserDetails;
+
 @XmlRootElement
 public class UserDetailsDTO {
 	/**
@@ -67,7 +69,25 @@ public class UserDetailsDTO {
 		this.ssn=ssn;
 		this.civility=civility;
 		this.id=id;
-		user = u;
+		this.user = u;
+	}
+	
+	public UserDetailsDTO(UserDetails details){
+		this.firstname = details.getFirstname();
+		this.lastname = details.getName();
+		this.image = details.getImage();
+		this.email = details.getMail();
+		this.adress = details.getAdress();
+		this.zip= details.getZip();
+		this.city=details.getCity();
+		this.homephone=details.getHomephone();
+		this.mobilephone=details.getMobilephone();
+		this.businessphone=details.getBusinessphone(); 
+		this.birth=details.getBirth().toString();
+		this.nationality=details.getNationality();
+		this.ssn=details.getSsn();
+		this.civility=details.getCivility();
+		this.id=details.getId_user_detail();
 	}
 
 	public int id;
