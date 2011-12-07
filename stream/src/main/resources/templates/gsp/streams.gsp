@@ -1,15 +1,15 @@
 <script type="text/javascript" src="/js/streams.js"></script>
 <script type="text/html" id="message-template">
-<div class='mess' style="height:auto;width:630px;border-top:1px solid grey;">
+<div id="mess-{{id}}" class='mess' style="height:auto;width:630px;border-top:1px solid grey;">
 	<div class="mess-left-side" style="width:80px;float:left;text-align:center;">
 		<div class="message-image" style="height:50px;width:79px;">
 			<img style="width:48px;height:48px;" src='/img/picture.png'/>
 		</div>
 	</div>
 	<div class="mess-right-side" style="width:549px;float:left;">
-		<div class='message-content' style="margin-left:0px;width:548px;min-height:60px;height:auto;">
+		<div  class='message-content' style="margin-left:0px;width:548px;min-height:60px;height:auto;">
 			<div class="message-buttons" id="buttons{{id}}" style="position:absolute;opacity:0.2;margin-left:410px;margin-top:-5px;width:135px; text-align:right;">
-				<img class="favButton" src="/img/favourite.png"/>  <img class="deleteButton" src="/img/delete.png"/>
+				<img class="favButton" src="/img/favourite.png"/>  <img id="delete{{id}}" class="deleteButton" src="/img/delete.png"/>
 			</div>
 			{{message}}
 		</div>
@@ -27,7 +27,7 @@
 </script>
 
 <script type="text/html" id="comment-template">
-<div class='comment' style="margin-top:10px;height:auto;width:540px;border-bottom:1px solid grey;">
+<div id="comment-{{id}}" class='comment' style="margin-top:10px;height:auto;width:540px;border-bottom:1px solid grey;">
 	<div class="comment-left-side" style="width:80px;float:left;text-align:center;">
 		<div class="comment-image" style="height:50px;width:79px;">
 			<img style="width:48px;height:48px;" src='{{commentPicture}}'/>
@@ -36,7 +36,7 @@
 	<div class="comment-right-side" style="width:459px;float:left;">
 		<div class='comment-content' style="margin-left:0px;width:468px;min-height:40px;height:auto;">
 			<div class="comment-buttons" id="comm_buttons{{id}}" style="position:absolute;opacity:0.2;margin-left:330px;margin-top:-5px;width:135px; text-align:right;">
-				<img class="deleteButton" src="/img/delete.png"/>
+				<img class="deleteCommentButton" src="/img/delete.png"/>
 			</div>
 			{{comment}}
 		</div>

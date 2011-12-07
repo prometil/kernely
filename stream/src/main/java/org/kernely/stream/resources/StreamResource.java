@@ -120,10 +120,11 @@ public class StreamResource extends AbstractController {
 		return streamService.addComment(comment.message,comment.idStream, comment.idMessageParent);
 	}
 	
+	@POST
 	@Path("/delete/{id}")
-	@Consumes( { MediaType.APPLICATION_JSON })
 	@Produces( { MediaType.APPLICATION_JSON })
 	public String deleteMessage(@PathParam("id") int id) {
+		log.trace("Delete message "+id);
 		streamService.deleteMessage((long) id);
 		return "{'result': 'ok'}";
 	}

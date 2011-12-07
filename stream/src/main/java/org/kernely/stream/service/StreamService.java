@@ -99,13 +99,14 @@ public class StreamService extends AbstractService {
 			String contentString = "A new message <br/><p style='font-style:italic;'>"+message.getContent()+"</p><br/> has been posted on <span style='font-style:italic;'>"+parent.getTitle()+"</span>";
 			// Remove the current user
 			subscribers.remove(userService.getAuthenticatedUserDTO());
-			
 			for(UserDTO u : subscribers){
 				mailService.create("/templates/gsp/mail.gsp").with("content", contentString).subject("[Kernely] Someone posted on " + parent.getTitle()).to(u.userDetails.email).send();
 			}
 		}
 		
-		return new StreamMessageDTO(message);
+		StreamMessageDTO messageDTO = new StreamMessageDTO(message);
+		messageDTO.deletion = currentUserHasRightsOnStream(Stream.RIGHT_DELETE, (int) streamId);
+		return messageDTO;
 	}
 
 	/**
@@ -137,11 +138,19 @@ public class StreamService extends AbstractService {
 		}
 		comments.add(comment);
 		messageParent.setComments(comments);
+		em.get().merge(messageParent);
 		
-		String contentString = "Your message <br/><p style='font-style:italic;'>"+messageParent.getContent()+"</p><br/> has been commented with <br/><p style='font-style:italic;'>"+comment.getContent()+"</p>";
-		mailService.create("/templates/gsp/mail.gsp").with("content", contentString).subject("[Kernely] Your message has been commented.").to(messageParent.getUser().getUserDetails().getMail()).send();
-			
-		return new StreamMessageDTO(comment);
+		if(this.getAuthenticatedUserModel() != messageParent.getUser()){
+			String contentString = "Your message <br/><p style='font-style:italic;'>"+messageParent.getContent()+"</p><br/> has been commented with <br/><p style='font-style:italic;'>"+comment.getContent()+"</p>";
+			mailService.create("/templates/gsp/mail.gsp").with("content", contentString).subject("[Kernely] Your message has been commented.").to(messageParent.getUser().getUserDetails().getMail()).send();
+		}
+		StreamMessageDTO commentDTO = new StreamMessageDTO(comment);
+
+		if (currentUserHasRightsOnStream(Stream.RIGHT_DELETE, (int) streamId)){
+			commentDTO.deletion = true;
+		}
+		
+		return commentDTO;
 	}
 	
 	/**
@@ -161,6 +170,9 @@ public class StreamService extends AbstractService {
 
 			StreamMessageDTO streamMessageDTO = new StreamMessageDTO(message);
 			log.debug("Returned message <message: {}, date:{}>", streamMessageDTO.message, streamMessageDTO.date);
+			
+			streamMessageDTO.deletion = currentUserHasRightsOnStream(Stream.RIGHT_DELETE, (int) streamMessageDTO.streamId);
+			
 			messageDtos.add(streamMessageDTO);
 		}
 		return messageDtos;
@@ -343,7 +355,13 @@ public class StreamService extends AbstractService {
 	@SuppressWarnings("unchecked")
 	public List<StreamMessageDTO> getAllMessagesForCurrentUser(long flag) {
 		if (flag == 0) {
-			flag = (Long) em.get().createQuery("SELECT max(id) FROM Message m").getSingleResult();
+			Query query = em.get().createQuery("SELECT max(id) FROM Message m");
+			try {
+				flag = (Long) query.getSingleResult();				
+			} catch (NullPointerException e) {
+				// When there is no message.
+				flag = 0;
+			}
 			// We add 1 to flag to consider the last id too in the request with '<'
 			flag++;
 		}
@@ -357,6 +375,9 @@ public class StreamService extends AbstractService {
 		List<StreamMessageDTO> messagesdto = new ArrayList<StreamMessageDTO>();
 		for(Message m : messages){
 			StreamMessageDTO messageDTO = new StreamMessageDTO(m);
+
+			messageDTO.deletion = currentUserHasRightsOnStream(Stream.RIGHT_DELETE, (int) messageDTO.streamId);
+
 			messagesdto.add(messageDTO);
 		}
 		return messagesdto;
@@ -401,7 +422,9 @@ public class StreamService extends AbstractService {
 		}
 		List<StreamMessageDTO> comments = new ArrayList<StreamMessageDTO>();
 		for(Message comment: commentsModel.descendingSet()){
-			comments.add(new StreamMessageDTO(comment));
+			StreamMessageDTO commentDTO = new StreamMessageDTO(comment);
+			commentDTO.deletion = currentUserHasRightsOnStream(Stream.RIGHT_DELETE, (int) commentDTO.streamId);
+			comments.add(commentDTO);
 		}
 		return comments;
 	}
