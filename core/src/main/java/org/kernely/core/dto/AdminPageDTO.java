@@ -33,11 +33,11 @@ public class AdminPageDTO {
 	/**
 	 * AdminPageDTO's constructor
 	 * @param name : page name that appears in the application
-	 * @param path : page page according to the name
+	 * @param regularName : will be in the path to access to the admin page
 	 */
-	public AdminPageDTO(String name, String path) {
+	public AdminPageDTO(String name, String regularName) {
 		this.name = name ;
-		this.path = path;
+		this.path = regularName;
 	}
 
 	public String name;

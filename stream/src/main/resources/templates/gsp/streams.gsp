@@ -36,7 +36,7 @@
 	<div class="comment-right-side" style="width:459px;float:left;">
 		<div class='comment-content' style="margin-left:0px;width:468px;min-height:40px;height:auto;">
 			<div class="comment-buttons" id="comm_buttons{{id}}" style="position:absolute;opacity:0.2;margin-left:330px;margin-top:-5px;width:135px; text-align:right;">
-				<img class="deleteCommentButton" src="/img/delete.png"/>
+				<img id="delete{{id}}" class="deleteCommentButton" src="/img/delete.png"/>
 			</div>
 			{{comment}}
 		</div>

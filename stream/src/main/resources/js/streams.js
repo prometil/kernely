@@ -31,8 +31,8 @@ App = (function($){
 			
 			if (this.message.deletion == "false"){
 				var chain = "#delete"+this.message.id;
-				$("img").remove(chain);
-			}			
+				this.$(chain).remove();
+			}
 			return this;
 		},
 		showInputComment: function(){
@@ -163,6 +163,12 @@ App = (function($){
 			var view = {id: this.comment.id, commentPicture: "/img/picture.png", comment : this.comment.message, author: this.comment.author, date: this.comment.timeToDisplay};
 			var html = Mustache.to_html(template, view);
 			$(this.el).html(html);
+			
+			if (this.comment.deletion == "false"){
+				var chain = "#delete"+this.comment.id;
+				this.$(chain).remove();
+			}
+			
 			return this;
 		},
 		showButtons: function(){
@@ -236,7 +242,7 @@ App = (function($){
 			var parent = this
 			if ($("#message-input").val()=="")
 			{
-				alert("You can't send an empty message! ");
+				alert("You can't send an empty message!");
 				$("#message-input").val("");
 	    		$("#message-input").prop('disabled', false);
 			}
@@ -320,7 +326,7 @@ App = (function($){
 	// define the application initialization
 	var self = {};
 	self.start = function(){
-		new StreamView().render()
+		new StreamView().render();
 	}
 	return self;
 })
