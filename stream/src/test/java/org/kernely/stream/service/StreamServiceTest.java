@@ -31,8 +31,6 @@ import org.kernely.core.dto.UserCreationRequestDTO;
 import org.kernely.core.dto.UserDetailsUpdateRequestDTO;
 import org.kernely.core.event.UserCreationEvent;
 import org.kernely.core.model.Role;
-import org.kernely.core.service.mail.Mailer;
-import org.kernely.core.service.mail.builder.MailBuilder;
 import org.kernely.core.service.user.PermissionService;
 import org.kernely.core.service.user.RoleService;
 import org.kernely.core.service.user.UserService;
@@ -40,7 +38,6 @@ import org.kernely.stream.UserEventHandler;
 import org.kernely.stream.dto.StreamDTO;
 import org.kernely.stream.dto.StreamMessageDTO;
 import org.kernely.stream.model.Stream;
-import org.mockito.Mockito;
 
 import com.google.common.eventbus.EventBus;
 import com.google.inject.Inject;
@@ -78,9 +75,6 @@ public class StreamServiceTest extends AbstractServiceTest {
 
 	@Inject
 	private UserEventHandler handler;
-	
-	@Inject
-	private Mailer mailService;
 
 	private void creationOfTestUser() {
 		RoleDTO requestRole = new RoleDTO(1, Role.ROLE_USER);
@@ -144,10 +138,6 @@ public class StreamServiceTest extends AbstractServiceTest {
 		assertNotNull(message);
 		assertEquals(MESSAGE, message.message);
 		assertEquals(streamService.getMessages().size(), 1);
-		
-		MailBuilder mailBuilder = mailService.create("Doesn't matter");
-		Mockito.verify(mailBuilder, Mockito.never()).send();
-		Mockito.verify(mailBuilder, Mockito.never()).to("test2@test2.com");
 	}
 	
 	@Test
@@ -171,10 +161,6 @@ public class StreamServiceTest extends AbstractServiceTest {
 		assertNotNull(message);
 		assertEquals(MESSAGE, message.message);
 		assertEquals(streamService.getMessages().size(), 1);
-		
-		MailBuilder mailBuilder = mailService.create("Doesn't matter");
-		Mockito.verify(mailBuilder, Mockito.times(1)).send();
-		Mockito.verify(mailBuilder, Mockito.times(1)).to("test2@test2.com");
 	}
 
 	@Test(expected = IllegalArgumentException.class)
@@ -369,13 +355,6 @@ public class StreamServiceTest extends AbstractServiceTest {
 		assertEquals(COMMENT, comment1.message);
 		assertEquals(COMMENT, comment2.message);
 		assertEquals(COMMENT, comment3.message);
-		
-		// TODO Find a way to reset mock verify counter.
-//		MailBuilder mailBuilder = mailService.create("Doesn't matter");
-		
-//		Mockito.verify(mailBuilder, Mockito.times(3)).send();
-//		Mockito.verify(mailBuilder, Mockito.times(2)).to("test@test.com");
-//		Mockito.verify(mailBuilder, Mockito.times(1)).to("test2@test2.com");
 	}
 	
 	@Test

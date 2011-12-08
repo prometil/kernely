@@ -55,7 +55,6 @@
 		<span id="manager_notifications" style="display:none;color:green;"></span>
 	</div>
 	<table id="manager_admin_table" style="cursor:pointer;width:100%">
-		<tr><th>Name</th><th>Members</th></tr>
 		
 	</table>
 </div>

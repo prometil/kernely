@@ -77,12 +77,13 @@ AppStreamAdmin = (function($){
 	})
 
 	StreamAdminTableView = Backbone.View.extend({
-		el:"stream_admin_table",
+		el:"#stream_admin_table",
 		events:{
 		
 		},
 		initialize:function(){
-			var parent = this
+			var parent = this;
+			$(this.el).html("<tr><th></th><th>Name</th><th>Category</th></tr>");
 			$.ajax({
 				type:"GET",
 				url:"/streams/admin/all",
@@ -101,6 +102,10 @@ AppStreamAdmin = (function($){
 					}
 				}
 			});
+		},
+		reload: function(){
+			this.initialize();
+			this.render();
 		},
 		render: function(){
 			return this;
@@ -174,6 +179,7 @@ AppStreamAdmin = (function($){
 						$("#streams_notifications").text("Operation completed successfully!");
 						$("#streams_notifications").fadeIn(1000);
 						$("#streams_notifications").fadeOut(3000);
+						tableView.reload();
 					}
 				});
 			}
@@ -188,6 +194,7 @@ AppStreamAdmin = (function($){
 						$("#streams_notifications").text("Operation completed successfully!");
 						$("#streams_notifications").fadeIn(1000);
 						$("#streams_notifications").fadeOut(3000);
+						tableView.reload();
 					}
 				});
 			}
@@ -399,6 +406,7 @@ AppStreamAdmin = (function($){
 						$("#streams_notifications").text("Operation completed successfully!");
 						$("#streams_notifications").fadeIn(1000);
 						$("#streams_notifications").fadeOut(3000);
+						tableView.reload();
 					} else {
 						$("#streams_errors").text(data.result);
 						$("#streams_errors").fadeIn(1000);
