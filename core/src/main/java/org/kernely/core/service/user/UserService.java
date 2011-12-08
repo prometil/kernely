@@ -137,8 +137,10 @@ public class UserService extends AbstractService{
 		if (u == null) {
 			throw new IllegalArgumentException("Request cannot be null ");
 		}
-		if (u.birth.equals("")) {
-			throw new IllegalArgumentException("A birth date must be like dd/MM/yyyy ");
+		if(u.birth != null){
+			if (u.birth.equals("")) {
+				throw new IllegalArgumentException("A birth date must be like dd/MM/yyyy ");
+			}
 		}
 
 		// parse the string date in class Date
@@ -464,6 +466,7 @@ public class UserService extends AbstractService{
 	 * 
 	 * @return all the manager
 	 */
+	@SuppressWarnings("unchecked")
 	@Transactional
 	public Set<ManagerDTO> getAllManager() {
 		Query query = em.get().createQuery("SELECT u.manager FROM User u");

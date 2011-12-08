@@ -75,12 +75,13 @@
         })
 
 	UserAdminTableView = Backbone.View.extend({
-		el:"user_admin_table",
+		el:"#user_admin_table",
 		events:{
 		
 		},
 		initialize:function(){
-			var parent = this
+			var parent = this;
+			$(this.el).html("<tr><th></th><th>Name</th><th>First name</th><th>Login</th><th>Mail</th></tr>");
 			$.ajax({
 				type:"GET",
 				url:"/admin/users/all",
@@ -98,6 +99,10 @@
 					}
 				}
 			});
+		},
+		reload: function(){
+			this.initialize();
+			this.render();
 		},
 		render: function(){
 			return this;
@@ -169,6 +174,7 @@
 						$("#users_notifications").text("Operation completed successfully !");
 						$("#users_notifications").fadeIn(1000);
 						$("#users_notifications").fadeOut(3000);
+						tableView.reload();
 					}
 				});
 			}
@@ -220,6 +226,7 @@
 					$("#users_notifications").text("Operation completed successfully !");
 					$("#users_notifications").fadeIn(1000);
 					$("#users_notifications").fadeOut(3000);
+					tableView.reload();
 				  } else {
                     $("#users_errors_create").text(data.result);
                     $("#users_errors_create").fadeIn(1000);
@@ -308,6 +315,7 @@
 						$("#users_notifications").text("Operation completed successfully !");
 						$("#users_notifications").fadeIn(1000);
 						$("#users_notifications").fadeOut(3000);
+						tableView.reload();
 					} else {
 						$("#users_errors_update").text(data.result);
 						$("#users_errors_update").fadeIn(1000);

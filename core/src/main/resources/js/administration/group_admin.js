@@ -56,12 +56,13 @@ AppGroupAdmin = (function($){
 	})
 
 	GroupAdminTableView = Backbone.View.extend({
-		el:"group_admin_table",
+		el:"#group_admin_table",
 		events:{
 		
 		},
 		initialize:function(){
-			var parent = this
+			var parent = this;
+			$(this.el).html("<tr><th>Name</th><th>Members</th></tr>");
 			$.ajax({
 				type:"GET",
 				url:"/admin/groups/all",
@@ -93,6 +94,10 @@ AppGroupAdmin = (function($){
 					}
 				}
 			});
+		},
+		reload: function(){
+			this.initialize();
+			this.render();
 		},
 		render: function(){
 			return this;
@@ -162,6 +167,7 @@ AppGroupAdmin = (function($){
 						$("#groups_notifications").text("Operation completed successfully !");
 						$("#groups_notifications").fadeIn(1000);
 						$("#groups_notifications").fadeOut(3000);
+						tableView.reload();
 					}
 				});
 			}
@@ -213,6 +219,7 @@ AppGroupAdmin = (function($){
 						$("#groups_notifications").text("Operation completed successfully !");
 						$("#groups_notifications").fadeIn(1000);
 						$("#groups_notifications").fadeOut(3000);
+						tableView.reload();
 					} else {
 						$("#groups_errors_create").text(data.result);
 						$("#groups_errors_create").fadeIn(1000);
@@ -291,6 +298,7 @@ AppGroupAdmin = (function($){
 						$("#groups_notifications").text("Operation completed successfully !");
 						$("#groups_notifications").fadeIn(1000);
 						$("#groups_notifications").fadeOut(3000);
+						tableView.reload();
 					} else {
 						$("#groups_errors_update").text(data.result);
 						$("#groups_errors_update").fadeIn(1000);

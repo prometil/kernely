@@ -53,12 +53,13 @@ AppManagerAdmin = (function($){
 	})
 	
 	ManagerAdminTableView = Backbone.View.extend({
-		el:"manager_admin_table",
+		el:"#manager_admin_table",
 		events:{
 		
 		},
 		initialize:function(){
 			var parent = this; 
+			$(this.el).html("<tr><th>Name</th><th>Members</th></tr>");
 			$.ajax({
 				type:"GET",
 				url:"/admin/manager/all",
@@ -91,6 +92,10 @@ AppManagerAdmin = (function($){
 					}
 				}
 			});
+		},
+		reload: function(){
+			this.initialize();
+			this.render();
 		},
 		render: function(){
 			return this;
@@ -160,6 +165,7 @@ AppManagerAdmin = (function($){
 						$("#manager_notifications").text("Operation completed successfully !");
 						$("#manager_notifications").fadeIn(1000);
 						$("#manager_notifications").fadeOut(3000);
+						tableView.reload();
 					}
 				});
 			}
@@ -210,6 +216,7 @@ AppManagerAdmin = (function($){
 		},
 		
 		registermanager: function(){	
+			var parent = this;
 			var usersCB = $("input:checked");
 			var count = 0;
 			var users = "";				
@@ -242,11 +249,13 @@ AppManagerAdmin = (function($){
 						$("#manager_notifications").text("Operation completed successfully !");
 						$("#manager_notifications").fadeIn(1000);
 						$("#manager_notifications").fadeOut(3000);
+						tableView.reload();
 					} else {
 						$("#manager_errors_create").text(data.result);
 						$("#manager_errors_create").fadeIn(1000);
 						$("#manager_errors_create").fadeOut(3000);
 					}
+					parent.closemodal();
 				}
 			});
 		}
@@ -286,6 +295,7 @@ AppManagerAdmin = (function($){
 		},
 		
 		updatemanager: function(){
+			var parent = this;
 			var usersCB = $("input:checked");
 			var count = 0;
 			var users = "";				
@@ -320,11 +330,13 @@ AppManagerAdmin = (function($){
 						$("#managers_notifications").text("Operation completed successfully !");
 						$("#managers_notifications").fadeIn(1000);
 						$("#managers_notifications").fadeOut(3000);
+						tableView.reload();
 					} else {
 						$("#managers_errors_update").text(data.result);
 						$("#managers_errors_update").fadeIn(1000);
 						$("#managers_errors_update").fadeOut(3000);
 					}
+					parent.closemodal();
 				}
 			});
 		}
