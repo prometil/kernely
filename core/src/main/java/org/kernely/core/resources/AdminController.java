@@ -16,7 +16,7 @@ GNU Affero General Public License for more details.
 You should have received a copy of the GNU Affero General Public
 License along with Kernely.
 If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 package org.kernely.core.resources;
 
 import java.util.ArrayList;
@@ -39,68 +39,53 @@ import com.google.inject.Inject;
  * Controller of the administration.
  */
 @Path("/admin")
-public class AdminController  extends AbstractController{
-	
-	
+public class AdminController extends AbstractController {
 
 	@Inject
 	private TemplateRenderer templateRenderer;
-	
+
 	@Inject
 	private UserService userService;
 
 	@Inject
 	private PluginsLoader pluginsLoader;
-	
+
 	/**
 	 * Display the administration panel.
+	 * 
 	 * @return The html content to display the administration.
 	 */
 	@GET
 	@Produces( { MediaType.TEXT_HTML })
-	public String getAdmin()
-	{
-		return getAdmin(null);
+	public String getAdmin() {
+		String page;
+		String displayedPanel = "Please click on an administration title on the left sidebar.";
+
+		// Display the admin page only if the user is admin.
+		if (userService.currentUserIsAdministrator()) {
+			page = templateRenderer.create("/templates/gsp/admin.gsp").with("pluginadmin", displayedPanel).addCss("/css/admin.css").render();
+		} else {
+			page = templateRenderer.create("/templates/gsp/home.gsp").render();
+		}
+		return page;
 	}
-	
+
 	/**
 	 * Get a list of all plugins detected by the application
+	 * 
 	 * @return A list of all DTO associated to detected plugins
 	 */
 	@GET
 	@Path("/plugins")
 	@Produces( { MediaType.APPLICATION_JSON })
-	public List<PluginDTO> getAdminList()
-	{
+	public List<PluginDTO> getAdminList() {
 		List<PluginDTO> plugins = new ArrayList<PluginDTO>();
 		for (AbstractPlugin plugin : pluginsLoader.getPlugins()) {
-			PluginDTO dto = new PluginDTO(plugin.getName(), plugin.getPath(), "",plugin.getAdminPages());
+			PluginDTO dto = new PluginDTO(plugin.getName(), plugin.getPath(), "", plugin.getAdminPages());
 			plugins.add(dto);
 		}
 		return plugins;
 	}
-	
-	/**
-	 * Display administration page with a specific sub page.
-	 * @param adminPanel The sub page needed
-	 * @return The complete administration page
-	 */
-	private String getAdmin(String adminPanel){
-		
-		String displayedPanel = adminPanel;
-		if (adminPanel == null){
-			displayedPanel = "Please click on an administration title on the left sidebar.";
-		}
-		
-		String page;
-		// Display the admin page only if the user is admin.
-		if (userService.currentUserIsAdministrator()){
-			page = templateRenderer.create("/templates/gsp/admin.gsp").with("pluginadmin",displayedPanel).addCss("/css/admin.css").render();
-		} else{
-			page = templateRenderer.create("/templates/gsp/home.gsp").render();
-		}
-		return page;
 
-	}
 
 }

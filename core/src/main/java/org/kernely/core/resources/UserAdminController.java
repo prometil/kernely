@@ -35,7 +35,7 @@ public class UserAdminController extends AbstractController{
 	public String displayPage()
 	{
 		if (userService.currentUserIsAdministrator()){
-			return templateRenderer.create("/templates/gsp/administration/user_admin.gsp").withoutLayout().render() ;
+			return templateRenderer.create("/templates/gsp/administration/user_admin.gsp").asAdminPage().render() ;
 		}
 		return templateRenderer.create("/templates/gsp/home.gsp").render();
 	}

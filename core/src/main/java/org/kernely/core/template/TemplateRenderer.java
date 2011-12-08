@@ -99,6 +99,11 @@ public class TemplateRenderer {
 		//the body
 		String body;
 		
+		//the layout
+		String otherLayout = null;
+		
+		boolean admin = false;
+		
 		boolean withLayout =true;
 		
 
@@ -109,6 +114,7 @@ public class TemplateRenderer {
 			binding = new HashMap<String, Object>();
 			engine = pEngine;
 			URL resource;
+
 			try {
 				resource = resourceLocator.getResource(pTemplate);
 				if(resource == null){
@@ -168,13 +174,27 @@ public class TemplateRenderer {
 			return this;
 		}
 		
+		/**
+		 * Insert the page in this layout
+		 * @param the layout to use
+		 * @return the template builder
+		 */
+		public TemplateBuilder withoutLayout(String otherLayout){
+			this.otherLayout = otherLayout;
+			return this;
+		}
 
+		public TemplateBuilder asAdminPage(){
+			this.admin = true;
+			return this;
+		}
+		
 		/**
 		 * Render the page with the default layout.
 		 * @return The html content.
 		 */
 		public String render() {
-			URL layout = TemplateRenderer.class.getResource("/templates/gsp/layout.gsp");
+			URL kernelyLayout = TemplateRenderer.class.getResource("/templates/gsp/layout.gsp");
 			if (body == null){
 				body = template.make(binding).toString();
 			}
@@ -203,14 +223,19 @@ public class TemplateRenderer {
 				layoutBinding.put("content", body);
 				layoutBinding.put("menu", menu);
 				layoutBinding.put("css", cssFiles);
+
 				try {
-					return engine.createTemplate(layout).make(layoutBinding).toString();
+					if (admin){
+						return create("/templates/gsp/admin.gsp").with("pluginadmin", body).addCss("/css/admin.css").render();
+					}
+
+					return engine.createTemplate(kernelyLayout).make(layoutBinding).toString();
 				} catch (CompilationFailedException e) {
-					log.error("Compilation error on {}", layout, e);
+					log.error("Compilation error on {}", kernelyLayout, e);
 				} catch (ClassNotFoundException e) {
-					log.error("Compilation error on {}", layout, e);
+					log.error("Compilation error on {}", kernelyLayout, e);
 				} catch (IOException e) {
-					log.error("Cannot find file {}", layout, e);
+					log.error("Cannot find file {}", kernelyLayout, e);
 				}
 				return "";
 			}

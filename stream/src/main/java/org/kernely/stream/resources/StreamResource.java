@@ -128,20 +128,7 @@ public class StreamResource extends AbstractController {
 		streamService.deleteMessage((long) id);
 		return "{'result': 'ok'}";
 	}
-	
-	@GET
-	@Path("/admin")
-	@Produces( { MediaType.TEXT_HTML })
-	public String getPluginAdminPanel(){
-		String page;
-		if (userService.currentUserIsAdministrator()){
-			page = templateRenderer.create("/templates/gsp/streams_admin.gsp").withoutLayout().render();
-		} else{
-			page = templateRenderer.create("/templates/gsp/home.gsp").render();
-		}
 
-		return page;
-	}
 	
 	@GET
 	@Path("/admin/all")

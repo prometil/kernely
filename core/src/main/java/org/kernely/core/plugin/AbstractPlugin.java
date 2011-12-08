@@ -88,8 +88,8 @@ public abstract class AbstractPlugin extends AbstractModule {
 	 * @param path
 	 *            The name without special characters : will be in the url to access to the admin page.
 	 */
-	protected void registerAdminPage(String name, String regularName) {
-		this.adminPages.add(new AdminPageDTO(name, regularName));
+	protected void registerAdminPage(String name, String pathToAdmin) {
+		this.adminPages.add(new AdminPageDTO(name, pathToAdmin));
 	}
 
 	protected void registerModel(Class<? extends AbstractModel> model) {
