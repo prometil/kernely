@@ -280,4 +280,12 @@ public class StreamResource extends AbstractController {
 	public List<StreamMessageDTO> getAllCommentsForMessage(@PathParam("id") long id){
 		return streamService.getAllCommentsForMessage(id);
 	}
+	
+	@GET
+	@Path("/current/nb")
+	@Produces( { MediaType.APPLICATION_JSON })
+	public String getNbMessages(){
+		long count = streamService.getCurrentNbMessages();
+		return "{\"count\":\""+count+"\"}";
+	}
 }

@@ -202,14 +202,24 @@ App = (function($){
 	StreamView = Backbone.View.extend({
 		flag: 0,
 		el: "#streams-main",
+		nbMessages:0,
+		nbMessagesLoaded:0,
 		
 		events: {
 			"click .share-message" : "send"
 		},
 		initialize:function(){
 			var parent = this
+			$.ajax({
+				type: 'GET',
+				url:'/streams/current/nb',
+				dataType:"json",
+				success: function(data){
+					parent.nbMessages = data.count;
+				}
+			});
 			$(window).scroll(function(){
-		        if  ($(window).scrollTop() == $(document).height() - $(window).height()){
+		        if  ($(window).scrollTop() == $(document).height() - $(window).height() && parent.nbMessagesLoaded < parent.nbMessages){
 		        	parent.getMore();
 		        }
 			});
@@ -263,7 +273,7 @@ App = (function($){
 			}
 		},
 		getMore: function(){
-			var parent = this
+			var parent = this;
 			var url = "";
 			if(this.flag == 0){
 				url = "/streams/current/messages";
@@ -280,11 +290,13 @@ App = (function($){
 							$.each(data.streamMessageDTO, function(){
 								parent.addMessage(this);
 								parent.flag = this.id;
+								parent.nbMessagesLoaded ++;
 							});
 						}
 						else{
 							parent.addMessage(data.streamMessageDTO);
 							parent.flag = data.streamMessageDTO.id;
+							parent.nbMessagesLoaded ++;
 						}
 					}
 				}

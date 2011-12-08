@@ -428,4 +428,12 @@ public class StreamService extends AbstractService {
 		}
 		return comments;
 	}
+	
+	public long getCurrentNbMessages(){
+		List<Stream> streams = this.getCurrentUserStreamModel();
+		Query query = em.get().createQuery("SELECT count(m) FROM Message m  WHERE message is null AND stream in (:streamSet)");
+		query.setParameter("streamSet", streams);
+		long count = (Long)query.getSingleResult();
+		return count;
+	}
 }
