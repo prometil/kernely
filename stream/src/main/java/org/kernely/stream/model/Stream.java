@@ -185,7 +185,7 @@ public class Stream extends AbstractModel {
 	 * All the messages contained by the stream.
 	 */
 	@OneToMany(fetch=FetchType.LAZY, mappedBy="stream")
-	@Cascade({ org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN })
+	@Cascade({ org.hibernate.annotations.CascadeType.ALL})
 	private Set<Message> messages;
 	
 	/**
@@ -225,10 +225,18 @@ public class Stream extends AbstractModel {
 		this.messages = messages;
 	}
 
+	/**
+	 * Retrieve the category of the stream (User / Plugin / Others...)
+	 * @return the category of the stream
+	 */
 	public String getCategory() {
 		return category;
 	}
 
+	/**
+	 * Sets the category of a Stream
+	 * @param category the category (User / Plugin / Others...)
+	 */
 	public void setCategory(String category) {
 		this.category = category;
 	}

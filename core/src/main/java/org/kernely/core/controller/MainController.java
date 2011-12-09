@@ -16,44 +16,40 @@ GNU Affero General Public License for more details.
 You should have received a copy of the GNU Affero General Public
 License along with Kernely.
 If not, see <http://www.gnu.org/licenses/>.
- */
-package org.kernely.stream.resources;
+*/
+package org.kernely.core.controller;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-import org.kernely.core.resources.AbstractController;
-import org.kernely.core.service.user.UserService;
 import org.kernely.core.template.TemplateRenderer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.inject.Inject;
 
-@Path("/admin/streams")
-public class StreamAdminResource extends AbstractController {
+/**
+ */
 
-	private static final Logger log = LoggerFactory.getLogger(StreamAdminResource.class);
+@Path("/")
+public class MainController extends AbstractController {
+	public static final Logger log = LoggerFactory.getLogger(MainController.class);
 
 	@Inject
 	private TemplateRenderer templateRenderer;
-	
-	@Inject
-	private UserService userService;
 
+	/**
+	 * Get the main page of the application
+	 * @return The HTML corresponding to the main page of the application
+	 */
 	@GET
-	@Path("/main")
 	@Produces( { MediaType.TEXT_HTML })
-	public String getPluginAdminPanel(){
-		String page;
-		if (userService.currentUserIsAdministrator()){
-			page = templateRenderer.create("/templates/gsp/streams_admin.gsp").withLayout(TemplateRenderer.ADMIN_LAYOUT).render();
-		} else{
-			page = templateRenderer.create("/templates/gsp/home.gsp").render();
-		}
+	public String getUI() {
+		String URL = new String("/templates/gsp/home.gsp");
+		return templateRenderer.create(URL).render();
 
-		return page;
 	}
+
 }
