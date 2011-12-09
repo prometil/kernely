@@ -155,9 +155,25 @@ public class UserController extends AbstractController {
 		if (uddto.image != null) {
 			imagePath = "/images/" + uddto.image;
 		}
-
-		return templateRenderer.create(template).with("username", uddto.firstname + " " + uddto.lastname).with("lastname", uddto.lastname).with("firstname", uddto.firstname).with("email", uddto.email).with("image", imagePath).with("imagename", uddto.image).with("adress", uddto.adress).with("zip",
-				uddto.zip).with("city", uddto.city).with("homephone", uddto.homephone).with("mobilephone", uddto.mobilephone).with("businessphone", uddto.businessphone).with("birth", uddto.birth).with("nationality", uddto.nationality).with("ssn", uddto.ssn).with("civility", uddto.civility).render();
+	
+		String username = uddto.firstname + " " + uddto.lastname;
+		String lastname = uddto.lastname;
+		String firstname = uddto.firstname;
+		String email = uddto.email;
+		String imageName = uddto.image;
+		String address = ( uddto.adress == null ) ? "" : uddto.adress ;
+		String zip = (uddto.zip == null) ? "" : uddto.zip;
+		String city = (uddto.city == null) ? "" : uddto.city;
+		String homephone = (uddto.homephone == null) ? "" : uddto.homephone;
+		String mobilephone = ( uddto.mobilephone == null) ? "" :uddto.mobilephone;
+		String businessphone = (uddto.businessphone == null) ? "": uddto.businessphone;
+		String birth = ( uddto.birth == null) ? "" : uddto.birth;
+		String nationality = (uddto.nationality == null) ? "" : uddto.nationality;
+		String ssn = ( uddto.ssn == null ) ? "" : uddto.ssn;
+		int civility = (uddto.civility == null) ? 0 : uddto.civility;
+		
+		return templateRenderer.create(template).with("username", username).with("lastname", lastname).with("firstname", firstname).with("email", email).with("image", imagePath).with("imagename", imageName).with("adress", address).with("zip",
+				zip).with("city", city).with("homephone", homephone).with("mobilephone", mobilephone).with("businessphone", businessphone).with("birth", birth).with("nationality", nationality).with("ssn", ssn).with("civility", civility).render();
 	}
 
 	/**

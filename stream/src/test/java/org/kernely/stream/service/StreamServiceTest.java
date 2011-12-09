@@ -108,17 +108,17 @@ public class StreamServiceTest extends AbstractServiceTest {
 	}
 
 	@Test
-	public void testGetNullMessages() {
+	public void getNullMessages() {
 		assertEquals(0, streamService.getMessages().size());
 	}
 
 	@Test(expected = IllegalArgumentException.class)
-	public void testAddVoidMessage() {
+	public void addVoidMessage() {
 		streamService.addMessage("", 0);
 	}
 
 	@Test
-	public void testAddMessageOnStreamUser() {
+	public void addMessageOnStreamUser() {
 		this.creationOfTestUser();
 		this.creationOfSecondTestUser();
 		
@@ -141,7 +141,7 @@ public class StreamServiceTest extends AbstractServiceTest {
 	}
 	
 	@Test
-	public void testAddMessageOnOtherStream() {
+	public void addMessageOnOtherStream() {
 		this.creationOfTestUser();
 		this.creationOfSecondTestUser();
 		
@@ -164,22 +164,22 @@ public class StreamServiceTest extends AbstractServiceTest {
 	}
 
 	@Test(expected = IllegalArgumentException.class)
-	public void testAddNullMessage() {
+	public void addNullMessage() {
 		streamService.addMessage(null, 0);
 	}
 
 	@Test
-	public void testGetNullMessages2() {
+	public void getNullMessages2() {
 		assertEquals(0, streamService.getMessages().size());
 	}
 
 	@Test
-	public void testNoMessages() {
+	public void noMessages() {
 		assertEquals(0, streamService.getMessages().size());
 	}
 
 	@Test
-	public void testHandlingEvent() {
+	public void handlingEvent() {
 		bus.register(handler);
 		bus.post(new UserCreationEvent(1, USERNAME));
 
@@ -190,7 +190,7 @@ public class StreamServiceTest extends AbstractServiceTest {
 	// Tests on streams
 
 	@Test
-	public void testGetAllStreams() {
+	public void getAllStreams() {
 		streamService.createStream(STREAM + "1", Stream.CATEGORY_OTHERS);
 		streamService.createStream(STREAM + "2", Stream.CATEGORY_OTHERS);
 		streamService.createStream(STREAM + "3", Stream.CATEGORY_OTHERS);
@@ -201,7 +201,7 @@ public class StreamServiceTest extends AbstractServiceTest {
 	}
 
 	@Test
-	public void testStreamLock() {
+	public void streamLock() {
 		streamService.createStream(STREAM, Stream.CATEGORY_OTHERS);
 		StreamDTO stream = streamService.getStream(STREAM, Stream.CATEGORY_OTHERS);
 		assertEquals(false, stream.isLocked());
@@ -211,7 +211,7 @@ public class StreamServiceTest extends AbstractServiceTest {
 	}
 
 	@Test
-	public void testStreamUnlock() {
+	public void streamUnlock() {
 		streamService.createStream(STREAM, Stream.CATEGORY_OTHERS);
 		StreamDTO stream = streamService.getStream(STREAM, Stream.CATEGORY_OTHERS);
 		assertEquals(false, stream.isLocked());
@@ -222,20 +222,20 @@ public class StreamServiceTest extends AbstractServiceTest {
 	}
 
 	@Test
-	public void testCreateStream() {
+	public void createStream() {
 		streamService.createStream(STREAM, Stream.CATEGORY_USERS);
 
 		assertNotNull(streamService.getStream(STREAM, Stream.CATEGORY_USERS));
 	}
 
 	@Test(expected = IllegalArgumentException.class)
-	public void testCreateExistingString() {
+	public void createExistingString() {
 		streamService.createStream(STREAM, Stream.CATEGORY_OTHERS);
 		streamService.createStream(STREAM, Stream.CATEGORY_OTHERS);
 	}
 
 	@Test
-	public void testCreateDifferentCategory() {
+	public void createExistingInDifferentCategory() {
 		streamService.createStream(STREAM, Stream.CATEGORY_OTHERS);
 		streamService.createStream(STREAM, Stream.CATEGORY_PLUGINS);
 		streamService.createStream(STREAM, Stream.CATEGORY_USERS);
@@ -245,7 +245,7 @@ public class StreamServiceTest extends AbstractServiceTest {
 	}
 
 	@Test
-	public void testWriteOnPluginStream() {
+	public void writeOnPluginStream() {
 		this.creationOfTestUser();
 		authenticateAs(USERNAME);
 
@@ -267,7 +267,7 @@ public class StreamServiceTest extends AbstractServiceTest {
 	}
 
 	@Test
-	public void testGetCurrentUserStreams() {
+	public void getCurrentUserStreams() {
 		this.creationOfTestUser();
 
 		authenticateAs(USERNAME);
@@ -286,7 +286,7 @@ public class StreamServiceTest extends AbstractServiceTest {
 	}
 
 	@Test
-	public void testGetAllMessagesForCurrentUser() {
+	public void getAllMessagesForCurrentUser() {
 		this.creationOfTestUser();
 
 		authenticateAs(USERNAME);
@@ -313,7 +313,7 @@ public class StreamServiceTest extends AbstractServiceTest {
 	}
 	
 	@Test
-	public void testPostComment(){
+	public void postComment(){
 		this.creationOfTestUser();
 		this.creationOfSecondTestUser();
 
@@ -358,7 +358,7 @@ public class StreamServiceTest extends AbstractServiceTest {
 	}
 	
 	@Test
-	public void testGetAllCommentForMessage(){
+	public void getAllCommentForMessage(){
 		this.creationOfTestUser();
 
 		authenticateAs(USERNAME);
@@ -407,7 +407,7 @@ public class StreamServiceTest extends AbstractServiceTest {
 	}
 
 	@Test
-	public void testUserHasRights() {
+	public void userHasRights() {
 		this.creationOfTestUser();
 		authenticateAs(USERNAME);
 
@@ -427,7 +427,7 @@ public class StreamServiceTest extends AbstractServiceTest {
 	}
 
 	@Test
-	public void testWriteOnUnexpectedStream() {
+	public void writeOnUnexpectedStream() {
 		this.creationOfTestUser();
 		authenticateAs(USERNAME);
 
@@ -443,7 +443,7 @@ public class StreamServiceTest extends AbstractServiceTest {
 	}
 	
 	@Test
-	public void testMessageDeletion(){
+	public void messageDeletion(){
 		this.creationOfTestUser();
 		authenticateAs(USERNAME);
 
