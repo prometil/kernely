@@ -6,6 +6,6 @@
 		</div>
 </div>
 <div id="admin_panel_container" style="width:710px; float:left;"">
-	${pluginadmin}
+	${extension}
 </div>
 <div id="admin_bottom_container"><div>

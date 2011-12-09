@@ -49,7 +49,7 @@ public class StreamAdminResource extends AbstractController {
 	public String getPluginAdminPanel(){
 		String page;
 		if (userService.currentUserIsAdministrator()){
-			page = templateRenderer.create("/templates/gsp/streams_admin.gsp").asAdminPage().render();
+			page = templateRenderer.create("/templates/gsp/streams_admin.gsp").withLayout(TemplateRenderer.ADMIN_LAYOUT).render();
 		} else{
 			page = templateRenderer.create("/templates/gsp/home.gsp").render();
 		}

@@ -63,7 +63,7 @@ public class AdminController extends AbstractController {
 
 		// Display the admin page only if the user is admin.
 		if (userService.currentUserIsAdministrator()) {
-			page = templateRenderer.create("/templates/gsp/admin.gsp").with("pluginadmin", displayedPanel).addCss("/css/admin.css").render();
+			page = templateRenderer.create("/templates/gsp/admin.gsp").with("extension", displayedPanel).addCss("/css/admin.css").render();
 		} else {
 			page = templateRenderer.create("/templates/gsp/home.gsp").render();
 		}
