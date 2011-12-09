@@ -86,7 +86,7 @@ AppStreamAdmin = (function($){
 			$(this.el).html("<tr><th></th><th>Name</th><th>Category</th></tr>");
 			$.ajax({
 				type:"GET",
-				url:"/streams/admin/all",
+				url:"/admin/streams/all",
 				dataType:"json",
 				success: function(data){
 					if(data.streamDTO.length > 1){
@@ -174,7 +174,7 @@ AppStreamAdmin = (function($){
 			var answer = confirm(lineSelected.vname + " will be locked. Do you want to continue?");
 			if (answer){
 				$.ajax({
-					url:"/streams/admin/lock/" + lineSelected.vid,
+					url:"/admin/streams/lock/" + lineSelected.vid,
 					success: function(){
 						$("#streams_notifications").text("Operation completed successfully!");
 						$("#streams_notifications").fadeIn(1000);
@@ -189,7 +189,7 @@ AppStreamAdmin = (function($){
 			var answer = confirm(lineSelected.vname + " will be unlocked. Do you want to continue?");
 			if (answer){
 				$.ajax({
-					url:"/streams/admin/unlock/" + lineSelected.vid,
+					url:"/admin/streams/unlock/" + lineSelected.vid,
 					success: function(){
 						$("#streams_notifications").text("Operation completed successfully!");
 						$("#streams_notifications").fadeIn(1000);
@@ -269,7 +269,7 @@ AppStreamAdmin = (function($){
 			var json = '{"streamid":"'+this.vid+'",'+ rights +'}';
 
 			$.ajax({
-				url:"/streams/admin/updaterights",
+				url:"/admin/streams/updaterights",
 				data: json,
 				type: "POST",
 				dataType: "json",
@@ -336,7 +336,7 @@ AppStreamAdmin = (function($){
 					// Select existing rights
 					$.ajax({
 						type: "GET",
-						url:"/streams/admin/rights/"+parent.streamId,
+						url:"/admin/streams/rights/"+parent.streamId,
 						dataType:"json",
 						success: function(data){
 							if(data != null && typeof(data) != "undefined"){
@@ -394,7 +394,7 @@ AppStreamAdmin = (function($){
 		registerstream: function(){
 			var json = '{"id":"'+this.vid+'", "name":"'+$('input[name*="name"]').val() + '", "category":"'+$('input[name*="category"]').val() +'"}';
 			$.ajax({
-				url:"/streams/admin/create",
+				url:"/admin/streams/create",
 				data: json,
 				type: "POST",
 				processData: false,

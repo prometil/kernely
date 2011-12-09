@@ -4,16 +4,29 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
 public class StreamCreationRequestDTO {
-	public StreamCreationRequestDTO(){
-		
+	/**
+	 * Default Constructor
+	 */
+	public StreamCreationRequestDTO() {
+
 	}
-	
-	public StreamCreationRequestDTO(int id, String name, String category){
+
+	/**
+	 * Creates StreamCreationRequestDTO
+	 * 
+	 * @param id
+	 *            Id of the stream
+	 * @param name
+	 *            Name of the Stream
+	 * @param category
+	 *            Category of the Stream
+	 */
+	public StreamCreationRequestDTO(int id, String name, String category) {
 		this.id = id;
 		this.name = name;
 		this.category = category;
 	}
-	
+
 	public int id;
 	public String name;
 	public String category;

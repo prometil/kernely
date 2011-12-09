@@ -16,7 +16,7 @@ GNU Affero General Public License for more details.
 You should have received a copy of the GNU Affero General Public
 License along with Kernely.
 If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 package org.kernely.stream.dto;
 
 import java.util.List;
@@ -34,10 +34,12 @@ public class StreamDTO {
 	public StreamDTO() {
 
 	}
-	
+
 	/**
-	 * The stream 
-	 * @param title the title
+	 * The stream
+	 * 
+	 * @param title
+	 *            the title
 	 */
 	public StreamDTO(Stream stream) {
 		this.title = stream.getTitle();
@@ -46,72 +48,19 @@ public class StreamDTO {
 		this.locked = stream.isLocked();
 	}
 
-	/**
-	 * Get the database id of the steam.
-	 * @return the id of the stream.
-	 */
-	public long getId() {
-		return id;
-	}
-	
-	/**
-	 * Set the id of the stream
-	 * @param id id of the stream
-	 */
-	public void setId(long id) {
-		this.id = id;
-	}
+	// the stream title
+	public String title;
 
-	public String getTitle() {
-		return title;
-	}
+	// the id in database
+	public long id;
 
-	public void setTitle(String title) {
-		this.title = title;
-	}
+	// messages contained by the stream
+	public List<StreamMessageDTO> messages;
 
-	public List<StreamMessageDTO> getMessages() {
-		return messages;
-	}
+	// the category of the stream
+	public String category;
 
-	public void setMessages(List<StreamMessageDTO> list) {
-		this.messages = list;
-	}
-
-	
-	
-	
-	public boolean isLocked() {
-		return locked;
-	}
-
-	public void setLocked(boolean locked) {
-		this.locked = locked;
-	}
-
-	public String getCategory() {
-		return category;
-	}
-
-	public void setCategory(String category) {
-		this.category = category;
-	}
-
-
-
-	//the stream title
-	private String title;
-	
-	//the id in database
-	private long id;
-	
-	//messages contained by the stream
-	private List<StreamMessageDTO> messages;
-	
-	//the category of the stream
-	private String category;
-	
-	//is the stream locked ?
-	private boolean locked;
+	// is the stream locked ?
+	public boolean locked;
 
 }

@@ -16,7 +16,7 @@ GNU Affero General Public License for more details.
 You should have received a copy of the GNU Affero General Public
 License along with Kernely.
 If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 package org.kernely.stream;
 
 import org.kernely.core.plugin.AbstractPlugin;
@@ -28,15 +28,16 @@ import org.kernely.stream.service.StreamService;
 
 import com.google.common.eventbus.EventBus;
 import com.google.inject.Inject;
+
 /**
  * The user plugin
- *
+ * 
  */
-public class StreamPlugin  extends AbstractPlugin {
+public class StreamPlugin extends AbstractPlugin {
 
 	@Inject
 	EventBus eventBus;
-	
+
 	/**
 	 * Default constructor
 	 */
@@ -48,12 +49,12 @@ public class StreamPlugin  extends AbstractPlugin {
 		registerModel(Stream.class);
 		registerAdminPage("Stream admin", "/admin/streams/main");
 	}
-	
+
 	@Override
-	public void start(){
+	public void start() {
 		eventBus.register(UserEventHandler.class);
 	}
-	
+
 	@Override
 	protected void configure() {
 		bind(StreamService.class);
