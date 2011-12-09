@@ -74,7 +74,7 @@ public class Migrator {
 			}
 			executeQuery.close();
 		} catch (SQLException e) {
-			e.printStackTrace();
+			log.error("Cannot get current schema migration", e);
 		}
 		return versions;
 	}
@@ -100,7 +100,7 @@ public class Migrator {
 			Class.forName(configuration.getString("hibernate.connection.driver_class"));
 			connectionProps.put("user", configuration.getString("hibernate.connection.username"));
 			connectionProps.put("password", configuration.getString("hibernate.connection.password"));
-			conn = DriverManager.getConnection(configuration.getString("hibernate.connection.url"),connectionProps);
+			conn = DriverManager.getConnection(configuration.getString("hibernate.connection.url"), connectionProps);
 
 			// initialise the database
 			DatabaseMetaData metaData = conn.getMetaData();

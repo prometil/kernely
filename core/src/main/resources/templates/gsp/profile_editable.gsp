@@ -22,7 +22,7 @@
 
 			<tr><td>Mail address</td><td><span id="profile_mail"><a href="mailto:${email}">${email}</a></span></td><td><span id="button_mail"><img class="button edit_button_mail" src="/images/icons/edit.png" style="margin-left : 15px;"/></span></td></tr>
 
-			<tr><td>Adress</td><td><span id="profile_adress">${adress}</span></td><td><span id="button_adress"><img class="button edit_button_adress" src="/images/icons/edit.png" style="margin-left : 15px;"/></span></td></tr>
+			<tr><td>Address</td><td><span id="profile_adress">${adress}</span></td><td><span id="button_adress"><img class="button edit_button_adress" src="/images/icons/edit.png" style="margin-left : 15px;"/></span></td></tr>
 
 			<tr><td>Zip code</td><td><span id="profile_zip">${zip}</span></td><td><span id="button_zip"><img class="button edit_button_zip" src="/images/icons/edit.png" style="margin-left : 15px;"/></span></td></tr>
 

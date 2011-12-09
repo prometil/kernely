@@ -16,7 +16,7 @@ GNU Affero General Public License for more details.
 You should have received a copy of the GNU Affero General Public
 License along with Kernely.
 If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 package org.kernely.core.hibernate;
 
 import java.util.Iterator;
@@ -31,32 +31,29 @@ import org.kernely.core.plugin.AbstractPlugin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * @author g.breton
- * 
- */
 public class KernelyHibernatePersistence extends HibernatePersistence {
+
 	public static final Logger log = LoggerFactory.getLogger(KernelyHibernatePersistence.class);
-	
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public EntityManagerFactory createEntityManagerFactory(String persistenceUnitName, Map overridenProperties) {
-		
+
 		Ejb3Configuration cfg = new Ejb3Configuration();
-		for(Object entry : overridenProperties.entrySet()){
-			
-			Map.Entry<String, String> mapEntry = (Map.Entry<String, String>)entry;
-			log.trace("Hibernate persistence property : {} - {}",mapEntry.getKey(), mapEntry.getValue());
+		for (Object entry : overridenProperties.entrySet()) {
+
+			Map.Entry<String, String> mapEntry = (Map.Entry<String, String>) entry;
+			log.trace("Hibernate persistence property : {} - {}", mapEntry.getKey(), mapEntry.getValue());
 			cfg.setProperty(mapEntry.getKey(), mapEntry.getValue());
 		}
-		
+
 		ServiceLoader<AbstractPlugin> commandLoader = ServiceLoader.load(AbstractPlugin.class);
 		Iterator<AbstractPlugin> it = commandLoader.iterator();
 		while (it.hasNext()) {
 			AbstractPlugin plugin = it.next();
-			
-			for (Class<? extends AbstractModel> entityClass: plugin.getModels()){
-				log.debug("Add annotated class : {}",entityClass);
+
+			for (Class<? extends AbstractModel> entityClass : plugin.getModels()) {
+				log.debug("Add annotated class : {}", entityClass);
 				cfg.addAnnotatedClass(entityClass);
 			}
 		}

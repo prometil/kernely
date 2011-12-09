@@ -21,6 +21,8 @@ package org.kernely.core.dto;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.kernely.core.model.User;
+
 /**
  * DTO for user data, contains only his name.
  */
@@ -30,6 +32,7 @@ public class UserDTO {
 	public long id;
 	public String username;
 	public boolean locked;
+	public UserDetailsDTO userDetails;
 
 	public UserDTO() {
 
@@ -58,14 +61,53 @@ public class UserDTO {
 		this.id = id;
 	}
 
+	public UserDTO(User u) {
+		this.username = u.getUsername();
+		this.locked = u.isLocked();
+		this.id = u.getId();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#hashCode()
+	 */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + (int) (id ^ (id >>> 32));
-		result = prime * result
-				+ ((username == null) ? 0 : username.hashCode());
+		result = prime * result + ((username == null) ? 0 : username.hashCode());
 		return result;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
+			return false;
+		}
+		UserDTO other = (UserDTO) obj;
+		if (id != other.id) {
+			return false;
+		}
+		if (username == null) {
+			if (other.username != null) {
+				return false;
+			}
+		} else if (!username.equals(other.username)) {
+			return false;
+		}
+		return true;
+	}
 }

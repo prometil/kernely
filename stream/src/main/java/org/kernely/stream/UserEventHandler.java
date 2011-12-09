@@ -37,13 +37,15 @@ public class UserEventHandler {
 
 	@Inject
 	EventBus e;
+
 	/**
 	 * Detect the creation of an user and create his stream.
 	 * 
-	 * @param e   The event, containing user data : id and username...
+	 * @param e
+	 *            The event, containing user data : id and username...
 	 */
 	@Subscribe
-	public void onUserCreation(UserCreationEvent event){
-		streamService.createStream("Stream of "+event.getUsername(), Stream.CATEGORY_USERS);
+	public void onUserCreation(UserCreationEvent event) {
+		streamService.createStream("Stream of " + event.getUsername(), Stream.CATEGORY_USERS);
 	}
 }

@@ -26,24 +26,28 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @XmlRootElement
 public class RoleDTO {
-	
+
+	public int id;
+	public String name;
+
 	/**
 	 * Default Constructor
 	 */
-	public RoleDTO(){
-		
+	public RoleDTO() {
+
 	}
-	
+
 	/**
 	 * Constructor which set datas of the role.
-	 * @param pName The name of the role.
-	 * @param id The id of the current role
+	 * 
+	 * @param pName
+	 *            The name of the role.
+	 * @param id
+	 *            The id of the current role
 	 */
 	public RoleDTO(int id, String pName) {
 		this.id = id;
 		name = pName;
 	}
 
-	public int id;
-	public String name;
 }

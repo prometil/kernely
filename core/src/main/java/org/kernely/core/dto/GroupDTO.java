@@ -28,19 +28,27 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @XmlRootElement
 public class GroupDTO {
-	
+
+	public int id;
+	public String name;
+	public List<UserDTO> users;
+
 	/**
 	 * Default Constructor
 	 */
-	public GroupDTO(){
-		
+	public GroupDTO() {
+
 	}
-	
+
 	/**
 	 * Constructor which set datas of the group.
-	 * @param id The id of the updated group. Null in the case of new group
-	 * @param pName The name of the group.
-	 * @param users Users associated to the current group
+	 * 
+	 * @param id
+	 *            The id of the updated group. Null in the case of new group
+	 * @param pName
+	 *            The name of the group.
+	 * @param users
+	 *            Users associated to the current group
 	 */
 	public GroupDTO(String pName, int id, List<UserDTO> users) {
 		this.id = id;
@@ -48,7 +56,4 @@ public class GroupDTO {
 		this.users = users;
 	}
 
-	public int id;
-	public String name;
-	public List<UserDTO> users;
 }

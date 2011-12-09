@@ -22,7 +22,7 @@
 		
 			<tr><td>Mail address</td><td><span id="profile_mail"><a href="mailto:${email}">${email}</a></span></span></td></tr>
 		
-			<tr><td>Adress</td><td><span id="profile_adress">${adress}</span></td></tr>
+			<tr><td>Address</td><td><span id="profile_adress">${adress}</span></td></tr>
 		
 			<tr><td>Zip code</td><td><span id="profile_zip">${zip}</span></td></tr>
 		

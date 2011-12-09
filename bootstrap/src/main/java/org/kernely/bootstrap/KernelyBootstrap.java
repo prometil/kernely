@@ -40,7 +40,7 @@ import org.kernely.bootstrap.guice.GuiceServletConfig;
 import org.kernely.core.migrations.migrator.Migrator;
 import org.kernely.core.plugin.AbstractPlugin;
 import org.kernely.core.plugin.PluginsLoader;
-import org.kernely.core.resourceLocator.ResourceLocator;
+import org.kernely.core.resource.ResourceLocator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

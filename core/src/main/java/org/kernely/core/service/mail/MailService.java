@@ -16,12 +16,13 @@ GNU Affero General Public License for more details.
 You should have received a copy of the GNU Affero General Public
 License along with Kernely.
 If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 package org.kernely.core.service.mail;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 import javax.mail.Message;
@@ -45,7 +46,7 @@ import com.google.inject.Inject;
  * The mail service
  * 
  */
-public class MailService  implements Mailer{
+public class MailService implements Mailer {
 
 	private static final Logger log = LoggerFactory.getLogger(MailService.class);
 
@@ -71,7 +72,7 @@ public class MailService  implements Mailer{
 	 * @author g.breton
 	 * 
 	 */
-	public class JavaMailBuilder implements MailBuilder{
+	public class JavaMailBuilder implements MailBuilder {
 
 		// the recipients list
 		private List<String> recipients;
@@ -109,12 +110,21 @@ public class MailService  implements Mailer{
 			return this;
 		}
 
+		public MailBuilder with(Map<String, Object> content) {
+			builder.with(content);
+			return this;
+		}
+
+		public MailBuilder with(String key, String value) {
+			builder.with(key, value);
+			return this;
+		}
+
 		/**
-		 * Effectively send the email using the configuration and the recipients
-		 * specified via the to() method.
+		 * Effectively send the email using the configuration and the recipients specified via the to() method.
 		 */
 		@SuppressWarnings("unchecked")
-		public void send() {
+		public boolean send() {
 			String body = builder.withoutLayout().render();
 			Properties props = new Properties();
 
@@ -141,11 +151,13 @@ public class MailService  implements Mailer{
 				}
 
 				message.setSubject(subject);
-				message.setText(body);
+				message.setContent(body, "text/html");
 
 				Transport.send(message);
+				return true;
 			} catch (MessagingException ex) {
 				log.error("Cannot send mail", ex);
+				return false;
 			}
 
 		}

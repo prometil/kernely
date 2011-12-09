@@ -1,4 +1,4 @@
-package org.kernely.core.resources;
+package org.kernely.core.controller;
 
 import java.util.List;
 
@@ -56,7 +56,7 @@ public class GroupAdminController extends AbstractController {
 	public String displayPage()
 	{
 		if (userService.currentUserIsAdministrator()){
-			return templateRenderer.create("/templates/gsp/administration/group_admin.gsp").withoutLayout().render() ;
+			return templateRenderer.create("/templates/gsp/administration/group_admin.gsp").withLayout(TemplateRenderer.ADMIN_LAYOUT).render();
 		}
 		return templateRenderer.create("/templates/gsp/home.gsp").render();
 	}

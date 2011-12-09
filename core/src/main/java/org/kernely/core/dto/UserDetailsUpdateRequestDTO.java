@@ -16,38 +16,14 @@ GNU Affero General Public License for more details.
 You should have received a copy of the GNU Affero General Public
 License along with Kernely.
 If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 package org.kernely.core.dto;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
 public class UserDetailsUpdateRequestDTO {
-	
-	public UserDetailsUpdateRequestDTO(String fName, String lName, String img, String mail, String adress, String zip
-			, String city, String homephone, String mobilephone, String businessphone, String birth, String nationality,
-			String ssn, int id, Integer civility) {
-		this.firstname = fName;
-		this.lastname = lName;
-		this.image = img;
-		this.email = mail;
-		this.adress = adress;
-		this.zip=zip;
-		this.city=city;
-		this.homephone=homephone;
-		this.mobilephone=mobilephone;
-		this.businessphone=businessphone; 
-		this.birth=birth;
-		this.nationality=nationality;
-		this.ssn=ssn;
-		this.civility=civility;
-		this.id=id;
-	}
-	
-	public UserDetailsUpdateRequestDTO(){
 
-	}
-	
 	public int id;
 	public String firstname;
 	public String lastname;
@@ -62,5 +38,29 @@ public class UserDetailsUpdateRequestDTO {
 	public String birth;
 	public String nationality;
 	public String ssn;
-	public Integer civility; 
+	public Integer civility;
+
+	public UserDetailsUpdateRequestDTO(String fName, String lName, String img, String mail, String adress, String zip, String city, String homephone,
+			String mobilephone, String businessphone, String birth, String nationality, String ssn, int id, Integer civility) {
+		this.firstname = fName;
+		this.lastname = lName;
+		this.image = img;
+		this.email = mail;
+		this.adress = adress;
+		this.zip = zip;
+		this.city = city;
+		this.homephone = homephone;
+		this.mobilephone = mobilephone;
+		this.businessphone = businessphone;
+		this.birth = birth;
+		this.nationality = nationality;
+		this.ssn = ssn;
+		this.civility = civility;
+		this.id = id;
+	}
+
+	public UserDetailsUpdateRequestDTO() {
+
+	}
+
 }

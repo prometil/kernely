@@ -32,13 +32,18 @@ import org.apache.commons.io.filefilter.DirectoryFileFilter;
 import org.apache.commons.io.filefilter.IOFileFilter;
 import org.apache.commons.io.filefilter.SuffixFileFilter;
 import org.eclipse.jetty.util.log.Log;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Update the classpath by adding plugins url.
  */
 public class ClasspathUpdater {
+	
+	//logger
+	private static Logger log = LoggerFactory.getLogger(ClasspathUpdater.class);
 
-
+	//the directory to look at
 	String directory;
 	
 	/**
@@ -66,17 +71,17 @@ public class ClasspathUpdater {
 					method.invoke(urlClassLoader, new Object[] { file.toURI().toURL() });
 					
 				} catch (IllegalArgumentException e) {
-					e.printStackTrace();
+					log.error("Classpath udpate failed, api change ?",e);
 				} catch (IllegalAccessException e) {
-					e.printStackTrace();
+					log.error("Classpath udpate failed, api change ?",e);
 				} catch (InvocationTargetException e) {
-					e.printStackTrace();
+					log.error("Classpath udpate failed, api change ?",e);
 				} catch (SecurityException e) {
-					e.printStackTrace();
+					log.error("Classpath udpate failed, api change ?",e);
 				} catch (NoSuchMethodException e) {
-					e.printStackTrace();
+					log.error("No such method, api change ?",e);
 				} catch (MalformedURLException e) {
-					e.printStackTrace();
+					log.error("Invalid url ?",e);
 				}
 			}
 		}

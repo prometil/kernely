@@ -1,4 +1,4 @@
-package org.kernely.core.resources;
+package org.kernely.core.controller;
 
 import java.util.List;
 

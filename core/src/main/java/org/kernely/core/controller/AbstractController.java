@@ -17,39 +17,27 @@ You should have received a copy of the GNU Affero General Public
 License along with Kernely.
 If not, see <http://www.gnu.org/licenses/>.
 */
-package org.kernely.core.resources;
+package org.kernely.core.controller;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
+import java.net.URI;
+import java.net.URISyntaxException;
 
-import org.kernely.core.template.TemplateRenderer;
+import javax.ws.rs.core.Response;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.inject.Inject;
 
-/**
- */
+public abstract class AbstractController {
 
-@Path("/")
-public class MainController extends AbstractController {
-	public static final Logger log = LoggerFactory.getLogger(MainController.class);
-
-	@Inject
-	private TemplateRenderer templateRenderer;
-
-	/**
-	 * Get the main page of the application
-	 * @return The HTML corresponding to the main page of the application
-	 */
-	@GET
-	@Produces( { MediaType.TEXT_HTML })
-	public String getUI() {
-		String URL = new String("/templates/gsp/home.gsp");
-		return templateRenderer.create(URL).render();
-
+	protected  final Logger log = LoggerFactory.getLogger(this.getClass());
+	
+	public Response redirect (String uri){
+		try {
+			return Response.temporaryRedirect(new URI("")).build();
+		} catch (URISyntaxException e) {
+			log.error("Invalid redirect url");
+			return null;
+		}
 	}
-
 }

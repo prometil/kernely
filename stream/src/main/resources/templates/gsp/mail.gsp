@@ -1,1 +1,2 @@
-This a test mail from kernely.
+<div style="text-align:center;font-weight:bold;">KERNELY NOTIFICATION</div>
+${content}

@@ -17,7 +17,7 @@ You should have received a copy of the GNU Affero General Public
 License along with Kernely.
 If not, see <http://www.gnu.org/licenses/>.
  */
-package org.kernely.core.resources;
+package org.kernely.core.controller;
 
 import java.io.File;
 import java.io.IOException;
@@ -38,7 +38,6 @@ import javax.ws.rs.core.Response;
 import org.apache.commons.configuration.AbstractConfiguration;
 import org.apache.commons.io.FileUtils;
 import org.apache.shiro.SecurityUtils;
-import org.kernely.core.dto.UserCreationRequestDTO;
 import org.kernely.core.dto.UserDTO;
 import org.kernely.core.dto.UserDetailsDTO;
 import org.kernely.core.dto.UserDetailsUpdateRequestDTO;
@@ -72,23 +71,6 @@ public class UserController extends AbstractController {
 		log.debug("Call to GET on all users");
 		List<UserDTO> users = userService.getAllUsers();
 		return templateRenderer.create("/templates/gsp/users.gsp").with("users", users).render();
-	}
-
-	/**
-	 * Create a new user with a random username and as password : "password".
-	 * 
-	 * @return "Ok", not useful.
-	 */
-	@GET
-	@Path("/create")
-	@Produces( { MediaType.TEXT_PLAIN })
-	public String create() {
-		log.debug("Create a user");
-		UserCreationRequestDTO request = new UserCreationRequestDTO();
-		request.username = "user";
-		request.password = "password";
-		userService.createUser(request);
-		return "User created";
 	}
 
 	/**
@@ -155,9 +137,25 @@ public class UserController extends AbstractController {
 		if (uddto.image != null) {
 			imagePath = "/images/" + uddto.image;
 		}
-
-		return templateRenderer.create(template).with("username", uddto.firstname + " " + uddto.lastname).with("lastname", uddto.lastname).with("firstname", uddto.firstname).with("email", uddto.email).with("image", imagePath).with("imagename", uddto.image).with("adress", uddto.adress).with("zip",
-				uddto.zip).with("city", uddto.city).with("homephone", uddto.homephone).with("mobilephone", uddto.mobilephone).with("businessphone", uddto.businessphone).with("birth", uddto.birth).with("nationality", uddto.nationality).with("ssn", uddto.ssn).with("civility", uddto.civility).render();
+	
+		String username = uddto.firstname + " " + uddto.lastname;
+		String lastname = uddto.lastname;
+		String firstname = uddto.firstname;
+		String email = uddto.email;
+		String imageName = uddto.image;
+		String address = ( uddto.adress == null ) ? "" : uddto.adress ;
+		String zip = (uddto.zip == null) ? "" : uddto.zip;
+		String city = (uddto.city == null) ? "" : uddto.city;
+		String homephone = (uddto.homephone == null) ? "" : uddto.homephone;
+		String mobilephone = ( uddto.mobilephone == null) ? "" :uddto.mobilephone;
+		String businessphone = (uddto.businessphone == null) ? "": uddto.businessphone;
+		String birth = ( uddto.birth == null) ? "" : uddto.birth;
+		String nationality = (uddto.nationality == null) ? "" : uddto.nationality;
+		String ssn = ( uddto.ssn == null ) ? "" : uddto.ssn;
+		int civility = (uddto.civility == null) ? 0 : uddto.civility;
+		
+		return templateRenderer.create(template).with("username", username).with("lastname", lastname).with("firstname", firstname).with("email", email).with("image", imagePath).with("imagename", imageName).with("adress", address).with("zip",
+				zip).with("city", city).with("homephone", homephone).with("mobilephone", mobilephone).with("businessphone", businessphone).with("birth", birth).with("nationality", nationality).with("ssn", ssn).with("civility", civility).render();
 	}
 
 	/**

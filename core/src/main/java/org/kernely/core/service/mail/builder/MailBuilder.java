@@ -19,6 +19,8 @@ If not, see <http://www.gnu.org/licenses/>.
 */
 package org.kernely.core.service.mail.builder;
 
+import java.util.Map;
+
 
 /**
  * @author g.breton
@@ -31,5 +33,9 @@ public interface MailBuilder {
 
 	public MailBuilder cc(String addresses);
 
-	public void send();
+	public MailBuilder with(Map<String, Object> content);
+	
+	public MailBuilder with(String key, String value);
+	
+	public boolean send();
 }

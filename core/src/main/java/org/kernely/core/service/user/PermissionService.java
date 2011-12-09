@@ -1,3 +1,22 @@
+/*
+Copyright 2011 Prometil SARL
+
+This file is part of Kernely.
+
+Kernely is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as
+published by the Free Software Foundation, either version 3 of
+the License, or (at your option) any later version.
+
+Kernely is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Affero General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public
+License along with Kernely.
+If not, see <http://www.gnu.org/licenses/>.
+ */
 package org.kernely.core.service.user;
 
 import java.util.ArrayList;
@@ -13,6 +32,8 @@ import javax.persistence.Query;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.AuthorizationException;
 import org.kernely.core.dto.PermissionDTO;
+import org.kernely.core.dto.UserDTO;
+import org.kernely.core.dto.UserDetailsDTO;
 import org.kernely.core.model.Permission;
 import org.kernely.core.model.User;
 import org.kernely.core.service.AbstractService;
@@ -133,7 +154,7 @@ public class PermissionService extends AbstractService {
 		} catch (NoResultException nre) {
 			// If there is no permission, we create it
 			String[] result = permission.split(":");
-			if (result.length > 3){
+			if (result.length > 3) {
 				throw new IllegalArgumentException("The permission " + permission + " is malformed");
 			}
 
@@ -169,7 +190,7 @@ public class PermissionService extends AbstractService {
 	@Transactional
 	public void ungrantPermission(int userId, String right, String resourceType, Object resourceId) {
 		String permission = this.createPermissionString(right, resourceType, resourceId.toString());
-		
+
 		// Verify if the permission already exists
 		Query permissionQuery = em.get().createQuery("SELECT p FROM Permission p WHERE name = :permission");
 		permissionQuery.setParameter("permission", permission);
@@ -191,8 +212,6 @@ public class PermissionService extends AbstractService {
 			// If there is no such permission, there is nothing to do : the user has already not the permission.
 		}
 	}
-	
-	
 
 	/**
 	 * Get all permissions matching a permission type, for a specific user.
@@ -227,5 +246,40 @@ public class PermissionService extends AbstractService {
 
 	private String createPermissionString(String right, String resourceType, String resourceId) {
 		return right + ":" + resourceType + ":" + resourceId;
+	}
+
+	/**
+	 * Retrieves all users who have the given permission
+	 * 
+	 * @param right
+	 *            Right needed on the permission
+	 * @param resourceType
+	 *            Type of the resource needed
+	 * @param resourceId
+	 *            Id of the resource needed
+	 * @return A list of DTO corresponding to the users who have this permission
+	 */
+	public List<UserDTO> getUsersWithPermission(String right, String resourceType, Object resourceId) {
+		String permission = this.createPermissionString(right, resourceType, resourceId.toString());
+
+		Query permissionQuery = em.get().createQuery("SELECT p FROM Permission p WHERE name = :permission");
+		permissionQuery.setParameter("permission", permission);
+		List<UserDTO> usersDTO = new ArrayList<UserDTO>();
+		try {
+			Permission p = (Permission) permissionQuery.getSingleResult();
+			Set<User> users = p.getUsers();
+
+			UserDTO dto;
+			for (User u : users) {
+				dto = new UserDTO(u.getUsername(), u.getId());
+				dto.userDetails = new UserDetailsDTO(u.getUserDetails());
+				usersDTO.add(dto);
+			}
+			return usersDTO;
+		} catch (NoResultException nre) {
+			log.debug("No permission founded for {}", permission);
+			return usersDTO;
+		}
+
 	}
 }

@@ -26,10 +26,10 @@ import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import org.kernely.core.controller.AbstractController;
 import org.kernely.core.dto.AdminPageDTO;
 import org.kernely.core.hibernate.AbstractModel;
 import org.kernely.core.migrations.migrator.Migration;
-import org.kernely.core.resources.AbstractController;
 import org.quartz.Job;
 import org.quartz.Trigger;
 
@@ -86,11 +86,10 @@ public abstract class AbstractPlugin extends AbstractModule {
 	 * @param name
 	 *            The displayed name of the admin page.
 	 * @param path
-	 *            The path to the admin page. This path must be mapped by a
-	 *            controller to display the page.
+	 *            The name without special characters : will be in the url to access to the admin page.
 	 */
-	protected void registerAdminPage(String name, String path) {
-		this.adminPages.add(new AdminPageDTO(name, path));
+	protected void registerAdminPage(String name, String pathToAdmin) {
+		this.adminPages.add(new AdminPageDTO(name, pathToAdmin));
 	}
 
 	protected void registerModel(Class<? extends AbstractModel> model) {

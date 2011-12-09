@@ -4,14 +4,28 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
 public class RightOnStreamDTO {
-	public RightOnStreamDTO(){
-		
+
+	public int userid;
+	public String permission;
+
+	/**
+	 * Default constructor
+	 */
+	public RightOnStreamDTO() {
+
 	}
-	
-	public RightOnStreamDTO(int userid, String permission){
+
+	/**
+	 * Creates a RightOnStreamDTO
+	 * 
+	 * @param userid
+	 *            Id of the user
+	 * @param permission
+	 *            Permission granted to the user
+	 */
+	public RightOnStreamDTO(int userid, String permission) {
 		this.userid = userid;
 		this.permission = permission;
 	}
-	public int userid;
-	public String permission;
+
 }

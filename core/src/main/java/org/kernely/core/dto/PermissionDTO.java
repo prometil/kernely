@@ -26,10 +26,16 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @XmlRootElement
 public class PermissionDTO {
-	
+
+	public String right;
+	public String type;
+	public String resourceId;
+
 	/**
 	 * Constructor which set datas of the permission.
-	 * @param pName The name of the permission.
+	 * 
+	 * @param pName
+	 *            The name of the permission.
 	 */
 	public PermissionDTO(String pName) {
 		name = pName;
@@ -40,8 +46,5 @@ public class PermissionDTO {
 	}
 
 	public String name;
-	
-	public String right;
-	public String type;
-	public String resourceId;
+
 }

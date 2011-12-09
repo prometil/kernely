@@ -40,7 +40,6 @@
 		<span id="streams_notifications" style="display:none;color:green;"></span>
 	</div>
 	<table id="stream_admin_table" style="cursor:pointer;width:100%">
-		<tr><th></th><th>Name</th><th>Category</th></tr>
 		
 	</table>
 </div>

@@ -16,7 +16,7 @@ GNU Affero General Public License for more details.
 You should have received a copy of the GNU Affero General Public
 License along with Kernely.
 If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 package org.kernely.stream.dto;
 
 import javax.xml.bind.annotation.XmlRootElement;
@@ -26,16 +26,27 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @XmlRootElement
 public class StreamMessageCreationRequestDTO {
-	
-	public StreamMessageCreationRequestDTO(String message, long idStream){
+
+	/**
+	 * Creates a StreamMessageCreationRequestDTO
+	 * 
+	 * @param message
+	 *            The message text posted on the stream
+	 * @param idStream
+	 *            The id of the concerned stream
+	 */
+	public StreamMessageCreationRequestDTO(String message, long idStream) {
 		this.message = message;
-		this.idStream = idStream;			
+		this.idStream = idStream;
 	}
-	
-	public StreamMessageCreationRequestDTO(){
-		
+
+	/**
+	 * Default Constructor
+	 */
+	public StreamMessageCreationRequestDTO() {
+
 	}
-	
+
 	public String message;
 	public long idStream;
 }

@@ -1,4 +1,4 @@
-package org.kernely.core.resources;
+package org.kernely.core.controller;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,7 +37,7 @@ public class ManagerAdminController extends AbstractController {
 	public String displayPage()
 	{
 		if (userService.currentUserIsAdministrator()){
-			return templateRenderer.create("/templates/gsp/administration/manager_admin.gsp").withoutLayout().render() ;
+			return templateRenderer.create("/templates/gsp/administration/manager_admin.gsp").withLayout(TemplateRenderer.ADMIN_LAYOUT).render();
 		}
 		return templateRenderer.create("/templates/gsp/home.gsp").render();
 	}
