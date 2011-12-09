@@ -23,24 +23,28 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
 public class AdminPageDTO {
-	/**
-	 * Default Constructor
-	 */
-	public AdminPageDTO(){
-		
-	}
-	
-	/**
-	 * AdminPageDTO's constructor
-	 * @param name : page name that appears in the application
-	 * @param regularName : will be in the path to access to the admin page
-	 */
-	public AdminPageDTO(String name, String regularName) {
-		this.name = name ;
-		this.path = regularName;
-	}
 
 	public String name;
 	public String path;
+
+	/**
+	 * Default Constructor
+	 */
+	public AdminPageDTO() {
+
+	}
+
+	/**
+	 * AdminPageDTO's constructor
+	 * 
+	 * @param name
+	 *            : page name that appears in the application
+	 * @param regularName
+	 *            : will be in the path to access to the admin page
+	 */
+	public AdminPageDTO(String name, String regularName) {
+		this.name = name;
+		this.path = regularName;
+	}
 
 }

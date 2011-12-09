@@ -26,6 +26,11 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @XmlRootElement
 public class StreamCommentCreationRequestDTO {
+
+	public String message;
+	public long idStream;
+	public long idMessageParent;
+
 	
 	public StreamCommentCreationRequestDTO(String message, long idStream, long idMessageParent){
 		this.message = message;
@@ -37,7 +42,4 @@ public class StreamCommentCreationRequestDTO {
 		
 	}
 	
-	public String message;
-	public long idStream;
-	public long idMessageParent;
 }

@@ -25,32 +25,37 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
 public class PluginDTO {
-	
-	/**
-	 * Default Constructor
-	 */
-	public PluginDTO(){
-		
-	}
-	
-	/**
-	 * PluginDTO Constructor
-	 * @param name Name of the current plugin
-	 * @param path Path of the current plugin
-	 * @param img Image associated to the current plugin
-	 * @param adminPages Administration pages associated to the current plugin
-	 */
-	public PluginDTO(String name, String path, String img, List<AdminPageDTO> adminPages) {
-		this.name = name ;
-		this.path = path;
-		this.img = img;
-		this.adminPages = adminPages;
-	}
 
 	public List<AdminPageDTO> adminPages;
 	public String name;
 	public String path;
 	public String img;
 	public String email;
-	
+
+	/**
+	 * Default Constructor
+	 */
+	public PluginDTO() {
+
+	}
+
+	/**
+	 * PluginDTO Constructor
+	 * 
+	 * @param name
+	 *            Name of the current plugin
+	 * @param path
+	 *            Path of the current plugin
+	 * @param img
+	 *            Image associated to the current plugin
+	 * @param adminPages
+	 *            Administration pages associated to the current plugin
+	 */
+	public PluginDTO(String name, String path, String img, List<AdminPageDTO> adminPages) {
+		this.name = name;
+		this.path = path;
+		this.img = img;
+		this.adminPages = adminPages;
+	}
+
 }

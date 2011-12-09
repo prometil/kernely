@@ -16,7 +16,7 @@ GNU Affero General Public License for more details.
 You should have received a copy of the GNU Affero General Public
 License along with Kernely.
 If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 package org.kernely.core.service.mail;
 
 import java.util.ArrayList;
@@ -46,7 +46,7 @@ import com.google.inject.Inject;
  * The mail service
  * 
  */
-public class MailService  implements Mailer{
+public class MailService implements Mailer {
 
 	private static final Logger log = LoggerFactory.getLogger(MailService.class);
 
@@ -72,7 +72,7 @@ public class MailService  implements Mailer{
 	 * @author g.breton
 	 * 
 	 */
-	public class JavaMailBuilder implements MailBuilder{
+	public class JavaMailBuilder implements MailBuilder {
 
 		// the recipients list
 		private List<String> recipients;
@@ -109,20 +109,19 @@ public class MailService  implements Mailer{
 			ccs.add(addresses);
 			return this;
 		}
-		
-		public MailBuilder with(Map<String, Object> content){
+
+		public MailBuilder with(Map<String, Object> content) {
 			builder.with(content);
 			return this;
 		}
-		
-		public MailBuilder with(String key, String value){
+
+		public MailBuilder with(String key, String value) {
 			builder.with(key, value);
 			return this;
 		}
 
 		/**
-		 * Effectively send the email using the configuration and the recipients
-		 * specified via the to() method.
+		 * Effectively send the email using the configuration and the recipients specified via the to() method.
 		 */
 		@SuppressWarnings("unchecked")
 		public boolean send() {

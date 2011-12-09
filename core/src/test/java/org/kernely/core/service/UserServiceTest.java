@@ -41,7 +41,15 @@ import com.google.inject.Inject;
 public class UserServiceTest extends AbstractServiceTest{
 
 	
-	private static final String STRING_TEST = "tes";
+	private static final String TEST_MODIFIED_3 = "test MODIFIED 3";
+
+	private static final String TEST_MODIFIED_2 = "test MODIFIED 2";
+
+	private static final String TEST_MODIFIED_1 = "test MODIFIED 1";
+
+	private static final String NUMBER = "050607";
+
+	private static final String STRING_TEST = "test";
 
 	@Inject
 	private UserService service;
@@ -97,38 +105,38 @@ public class UserServiceTest extends AbstractServiceTest{
 
 		UserDetailsUpdateRequestDTO request = new UserDetailsUpdateRequestDTO();
 		request.birth="18/12/1990";
-		request.adress="a";
-		request.businessphone="05";
-		request.city="5555";
+		request.adress=STRING_TEST;
+		request.businessphone=NUMBER;
+		request.city=STRING_TEST;
 		request.civility=1;
-		request.firstname="blabla";
-		request.homephone="252";
+		request.firstname=STRING_TEST;
+		request.homephone=NUMBER;
 		request.id=(int) userdto.id;
 		request.image="LLll.jpg";
-		request.email="papa";
-		request.mobilephone="06";
-		request.lastname="a";
-		request.nationality="nla";
-		request.ssn="232";
-		request.zip="45544";
+		request.email=STRING_TEST;
+		request.mobilephone=NUMBER;
+		request.lastname=STRING_TEST;
+		request.nationality=STRING_TEST;
+		request.ssn=NUMBER;
+		request.zip=NUMBER;
 		service.updateUserProfile(request);
 		
 		UserDetailsDTO uddto = new UserDetailsDTO();
 		uddto = service.getUserDetails(userdto.username);
 		
 		assertEquals("18/12/1990", uddto.birth);
-		assertEquals("a",uddto.adress);
-		assertEquals("05",uddto.businessphone);
-		assertEquals("5555" , uddto.city);
-		assertEquals("blabla", uddto.firstname);
-		assertEquals("252", uddto.homephone);
+		assertEquals(STRING_TEST,uddto.adress);
+		assertEquals(NUMBER,uddto.businessphone);
+		assertEquals(STRING_TEST , uddto.city);
+		assertEquals(STRING_TEST, uddto.firstname);
+		assertEquals(NUMBER, uddto.homephone);
 		assertEquals("LLll.jpg", uddto.image);
-		assertEquals("papa", uddto.email);
-		assertEquals("06", uddto.mobilephone); 
-		assertEquals("a", uddto.lastname);
-		assertEquals("nla",uddto.nationality);
-		assertEquals("232", uddto.ssn);
-		assertEquals("45544", uddto.zip);			
+		assertEquals(STRING_TEST, uddto.email);
+		assertEquals(NUMBER, uddto.mobilephone); 
+		assertEquals(STRING_TEST, uddto.lastname);
+		assertEquals(STRING_TEST,uddto.nationality);
+		assertEquals(NUMBER, uddto.ssn);
+		assertEquals(NUMBER, uddto.zip);			
 	}
 	
 	@Test(expected=IllegalArgumentException.class)
@@ -190,10 +198,10 @@ public class UserServiceTest extends AbstractServiceTest{
 		roleService.createRole(requestRole);
 		
 		UserCreationRequestDTO request = new UserCreationRequestDTO();
-		request.username="test";
-		request.password="test";
-		request.firstname="test";
-		request.lastname="test";
+		request.username=STRING_TEST;
+		request.password=STRING_TEST;
+		request.firstname=STRING_TEST;
+		request.lastname=STRING_TEST;
 		service.createUser(request);
 		UserDTO userdto = new UserDTO() ;
 		userdto = service.getAllUsers().get(0);
@@ -222,16 +230,16 @@ public class UserServiceTest extends AbstractServiceTest{
 		uddto = service.getUserDetails(userdto.username);
 		UserCreationRequestDTO ucr = new UserCreationRequestDTO();
 		ucr.id = uddto.id;
-		ucr.username = "test MODIFIED 1";
-		ucr.firstname = "test MODIFIED 2";
-		ucr.lastname = "test MODIFIED 3";
+		ucr.username = TEST_MODIFIED_1;
+		ucr.firstname = TEST_MODIFIED_2;
+		ucr.lastname = TEST_MODIFIED_3;
 		ucr.roles = new ArrayList<RoleDTO>();
 		service.updateUser(ucr);
 		userdto = service.getAllUsers().get(0);
 		uddto = service.getUserDetails(userdto.username);
-		assertEquals("test MODIFIED 1", userdto.username);
-		assertEquals("test MODIFIED 2", uddto.firstname);
-		assertEquals("test MODIFIED 3", uddto.lastname);
+		assertEquals(TEST_MODIFIED_1, userdto.username);
+		assertEquals(TEST_MODIFIED_2, uddto.firstname);
+		assertEquals(TEST_MODIFIED_3, uddto.lastname);
 	}
 	
 	@Test
@@ -287,13 +295,13 @@ public class UserServiceTest extends AbstractServiceTest{
 		service.createUser(request);
 		List<UserDTO> users = service.getAllUsers() ; 
 		UserCreationRequestDTO request2 = new UserCreationRequestDTO();
-		request2.username = "testMODIFIED1";
-		request2.password = "testMODIFIED1";
-		request2.firstname = "testMODIFIED1";
-		request2.lastname = "testMODIFIED1";
+		request2.username = TEST_MODIFIED_1;
+		request2.password = TEST_MODIFIED_1;
+		request2.firstname = TEST_MODIFIED_1;
+		request2.lastname = TEST_MODIFIED_1;
 		service.createUser(request2);
-		service.updateManager("testMODIFIED1", users) ;
-		List<UserDTO> list = service.getUsers("testMODIFIED1");
+		service.updateManager(TEST_MODIFIED_1, users) ;
+		List<UserDTO> list = service.getUsers(TEST_MODIFIED_1);
 		UserDTO usr= list.get(0);
 		assertEquals(usr.username, STRING_TEST);
 				
@@ -321,14 +329,14 @@ public class UserServiceTest extends AbstractServiceTest{
 		service.createUser(request);
 		List<UserDTO> users = service.getAllUsers() ; 
 		UserCreationRequestDTO request2 = new UserCreationRequestDTO();
-		request2.username = "testMODIFIED1";
-		request2.password = "testMODIFIED1";
-		request2.firstname = "testMODIFIED1";
-		request2.lastname = "testMODIFIED1";
+		request2.username = TEST_MODIFIED_1;
+		request2.password = TEST_MODIFIED_1;
+		request2.firstname = TEST_MODIFIED_1;
+		request2.lastname = TEST_MODIFIED_1;
 		service.createUser(request2);
-		service.updateManager("testMODIFIED1", users) ;
-		service.deleteManager("testMODIFIED1");
-		List<UserDTO> list = service.getUsers("testMODIFIED1");
+		service.updateManager(TEST_MODIFIED_1, users) ;
+		service.deleteManager(TEST_MODIFIED_1);
+		List<UserDTO> list = service.getUsers(TEST_MODIFIED_1);
 		Assert.assertEquals(list.size(),0);
 		
 	}

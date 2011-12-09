@@ -1,4 +1,5 @@
 package org.kernely.core.dto;
+
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlRootElement;
@@ -8,19 +9,19 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @XmlRootElement
 public class ManagerDTO {
+
 	public List<UserDTO> users;
 	public String name;
-	
-	public ManagerDTO(){
-		
-	}
-	
 
-	public ManagerDTO(String newName, List<UserDTO> newUsers){
-		this.users=newUsers;
-		this.name=newName; 
+	public ManagerDTO() {
+
 	}
-	
+
+	public ManagerDTO(String newName, List<UserDTO> newUsers) {
+		this.users = newUsers;
+		this.name = newName;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;

@@ -55,7 +55,7 @@ import com.google.inject.persist.Transactional;
  * Service provided by the user plugin.
  */
 @Singleton
-public class UserService extends AbstractService{
+public class UserService extends AbstractService {
 
 	@Inject
 	private EventBus eventBus;
@@ -88,7 +88,6 @@ public class UserService extends AbstractService{
 		}
 
 		User user = new User();
-		// user.setPassword(request.password.trim());
 		user.setUsername(request.username.trim());
 
 		RandomNumberGenerator rng = new SecureRandomNumberGenerator();
@@ -102,8 +101,8 @@ public class UserService extends AbstractService{
 		// Retrieve the role User, automatically given to a user.
 
 		Query query = em.get().createQuery("SELECT r FROM Role r WHERE name=:role_user");
-		query.setParameter("role_user", Role.ROLE_USER );
-		Role roleUser = (Role)query.getSingleResult();
+		query.setParameter("role_user", Role.ROLE_USER);
+		Role roleUser = (Role) query.getSingleResult();
 
 		user.setPassword(hashedPasswordBase64);
 		user.setSalt(salt.toString());
@@ -126,8 +125,7 @@ public class UserService extends AbstractService{
 	}
 
 	/**
-	 * Update the profile of the specific user with the informations contained
-	 * in the DTO
+	 * Update the profile of the specific user with the informations contained in the DTO
 	 * 
 	 * @param u
 	 *            The DTO containing all informations about the user to update
@@ -137,7 +135,7 @@ public class UserService extends AbstractService{
 		if (u == null) {
 			throw new IllegalArgumentException("Request cannot be null ");
 		}
-		if(u.birth != null){
+		if (u.birth != null) {
 			if (u.birth.equals("")) {
 				throw new IllegalArgumentException("A birth date must be like dd/MM/yyyy ");
 			}
@@ -168,8 +166,7 @@ public class UserService extends AbstractService{
 			uDetails.setCivility(u.civility);
 			uDetails.setImage(u.image);
 		} catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			birth = new Date();
 		}
 	}
 
@@ -216,7 +213,7 @@ public class UserService extends AbstractService{
 			throw new IllegalArgumentException("Another user with this username already exists");
 		}
 
-		// Retrieve the role User, automaticaly given to a user.
+		// Retrieve the role User, automatically given to a user.
 		Query query = em.get().createQuery("SELECT r FROM Role r WHERE name='" + Role.ROLE_USER + "'");
 		Role roleUser = (Role) query.getSingleResult();
 
@@ -278,7 +275,9 @@ public class UserService extends AbstractService{
 		} else {
 			newDateString = "00/00/0000";
 		}
-		UserDetailsDTO dto = new UserDetailsDTO(ud.getFirstname(), ud.getName(), ud.getImage(), ud.getMail(), ud.getAdress(), ud.getZip(), ud.getCity(), ud.getHomephone(), ud.getMobilephone(), ud.getBusinessphone(), newDateString, ud.getNationality(), ud.getSsn(), ud.getCivility(), ud.getId_user_detail(), new UserDTO(u.getUsername(), u.isLocked(), u.getId()));
+		UserDetailsDTO dto = new UserDetailsDTO(ud.getFirstname(), ud.getName(), ud.getImage(), ud.getMail(), ud.getAdress(), ud.getZip(), ud
+				.getCity(), ud.getHomephone(), ud.getMobilephone(), ud.getBusinessphone(), newDateString, ud.getNationality(), ud.getSsn(), ud
+				.getCivility(), ud.getId_user_detail(), new UserDTO(u.getUsername(), u.isLocked(), u.getId()));
 
 		return dto;
 
@@ -307,7 +306,9 @@ public class UserService extends AbstractService{
 		} else {
 			newDateString = "00/00/0000";
 		}
-		UserDetailsDTO dto = new UserDetailsDTO(ud.getFirstname(), ud.getName(), ud.getImage(), ud.getMail(), ud.getAdress(), ud.getZip(), ud.getCity(), ud.getHomephone(), ud.getMobilephone(), ud.getBusinessphone(), newDateString, ud.getNationality(), ud.getSsn(), ud.getCivility(), ud.getId_user_detail(), new UserDTO(u.getUsername(), u.isLocked(), u.getId()));
+		UserDetailsDTO dto = new UserDetailsDTO(ud.getFirstname(), ud.getName(), ud.getImage(), ud.getMail(), ud.getAdress(), ud.getZip(), ud
+				.getCity(), ud.getHomephone(), ud.getMobilephone(), ud.getBusinessphone(), newDateString, ud.getNationality(), ud.getSsn(), ud
+				.getCivility(), ud.getId_user_detail(), new UserDTO(u.getUsername(), u.isLocked(), u.getId()));
 		return dto;
 
 	}
@@ -318,10 +319,9 @@ public class UserService extends AbstractService{
 	 * @return The DTO associated to the current user
 	 */
 	@Transactional
-
-	public UserDTO getAuthenticatedUserDTO(){
-		Query query = em.get().createQuery("SELECT e FROM User e WHERE username ='"+ SecurityUtils.getSubject().getPrincipal() +"'");
-		User u = (User)query.getSingleResult();
+	public UserDTO getAuthenticatedUserDTO() {
+		Query query = em.get().createQuery("SELECT e FROM User e WHERE username ='" + SecurityUtils.getSubject().getPrincipal() + "'");
+		User u = (User) query.getSingleResult();
 		return new UserDTO(u.getUsername(), u.isLocked(), u.getId());
 	}
 
@@ -337,7 +337,10 @@ public class UserService extends AbstractService{
 		List<UserDetails> collection = (List<UserDetails>) query.getResultList();
 		List<UserDetailsDTO> dtos = new ArrayList<UserDetailsDTO>();
 		for (UserDetails user : collection) {
-			dtos.add(new UserDetailsDTO(user.getFirstname(), user.getName(), user.getImage(), user.getMail(), user.getAdress(), user.getZip(), user.getCity(), user.getHomephone(), user.getMobilephone(), user.getBusinessphone(), null, user.getNationality(), user.getSsn(), user.getCivility(), user.getId_user_detail(), new UserDTO(user.getUser().getUsername(), user.getUser().isLocked(), user.getUser().getId())));
+			dtos.add(new UserDetailsDTO(user.getFirstname(), user.getName(), user.getImage(), user.getMail(), user.getAdress(), user.getZip(), user
+					.getCity(), user.getHomephone(), user.getMobilephone(), user.getBusinessphone(), null, user.getNationality(), user.getSsn(), user
+					.getCivility(), user.getId_user_detail(), new UserDTO(user.getUser().getUsername(), user.getUser().isLocked(), user.getUser()
+					.getId())));
 		}
 		return dtos;
 	}
@@ -345,8 +348,7 @@ public class UserService extends AbstractService{
 	/**
 	 * Verify if the current user has the role of administrator.
 	 * 
-	 * @return true if the current user has the role of administrator, false
-	 *         otherwise.
+	 * @return true if the current user has the role of administrator, false otherwise.
 	 */
 	public boolean currentUserIsAdministrator() {
 		return SecurityUtils.getSubject().hasRole(Role.ROLE_ADMINISTRATOR);
@@ -369,7 +371,7 @@ public class UserService extends AbstractService{
 
 		return dtos;
 	}
-	
+
 	/**
 	 * retrieve an users list belong to the managers.
 	 * 
@@ -378,10 +380,10 @@ public class UserService extends AbstractService{
 	 */
 	@Transactional
 	public List<UserDTO> getUsers(String manager) {
-		if (manager==null){
+		if (manager == null) {
 			throw new IllegalArgumentException("The manager cannot be null");
 		}
-		if (manager.equals("")){
+		if (manager.equals("")) {
 			throw new IllegalArgumentException("Manager cannot be an empty string");
 		}
 		Query query = em.get().createQuery("Select u FROM User u WHERE u.username=:manager");
@@ -394,42 +396,42 @@ public class UserService extends AbstractService{
 		}
 		return users;
 	}
-	
-	
+
 	/**
 	 * Update all user of the list with the new manager
+	 * 
 	 * @param manager
 	 * @param list
 	 */
-	@Transactional 
-	public void updateManager(String manager, List<UserDTO> list){
-		if (manager==null){
+	@Transactional
+	public void updateManager(String manager, List<UserDTO> list) {
+		if (manager == null) {
 			throw new IllegalArgumentException("The manager cannot be null");
 		}
-		if (list==null){
+		if (list == null) {
 			throw new IllegalArgumentException("The list cannot be null");
 		}
-		if (manager.equals("")){
+		if (manager.equals("")) {
 			throw new IllegalArgumentException("Manager cannot be an empty string");
 		}
-		
-		Set<User> users  =new HashSet<User>();  
+
+		Set<User> users = new HashSet<User>();
 		Query query = em.get().createQuery("Select u FROM User u WHERE u.username=:manager");
 		query.setParameter("manager", manager);
 		User userManager = (User) query.getSingleResult();
-		
-		//retrieve the id and the Users managed
-		for (UserDTO user : list){
+
+		// retrieve the id and the Users managed
+		for (UserDTO user : list) {
 			Long idparam = user.id;
 			Query query2 = em.get().createQuery("Select u FROM User u WHERE u.id=:idparam");
 			query2.setParameter("idparam", idparam);
 			User userManaged = (User) query2.getSingleResult();
 			users.add(userManaged);
 		}
-		//  add the new users
+		// add the new users
 		userManager.setUsers(users);
-		// add the manager for each  user
-		for (User user : users){
+		// add the manager for each user
+		for (User user : users) {
 			user.setManager(userManager);
 			em.get().merge(user);
 		}
@@ -443,22 +445,22 @@ public class UserService extends AbstractService{
 	 */
 	@Transactional
 	public void deleteManager(String username) {
-		if (username==null){
+		if (username == null) {
 			throw new IllegalArgumentException("The manager cannot be null");
 		}
-		if (username.equals("")){
+		if (username.equals("")) {
 			throw new IllegalArgumentException("Manager cannot be an empty string");
 		}
 		Query query = em.get().createQuery("Select u FROM User u WHERE u.username=:username");
 		query.setParameter("username", username);
 		User userManager = (User) query.getSingleResult();
-		Set<User> managed= userManager.getUsers();
+		Set<User> managed = userManager.getUsers();
 		userManager.setUsers(new HashSet<User>());
-		for (User user : managed){
+		for (User user : managed) {
 			user.setManager(null);
 			em.get().merge(user);
 		}
-		
+
 	}
 
 	/**

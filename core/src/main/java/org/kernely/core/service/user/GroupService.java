@@ -1,3 +1,22 @@
+/*
+Copyright 2011 Prometil SARL
+
+This file is part of Kernely.
+
+Kernely is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as
+published by the Free Software Foundation, either version 3 of
+the License, or (at your option) any later version.
+
+Kernely is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Affero General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public
+License along with Kernely.
+If not, see <http://www.gnu.org/licenses/>.
+ */
 package org.kernely.core.service.user;
 
 import java.util.ArrayList;
@@ -19,9 +38,10 @@ import com.google.inject.persist.Transactional;
 
 @Singleton
 public class GroupService extends AbstractService {
-	
+
 	/**
 	 * Gets the lists of all groups contained in the database.
+	 * 
 	 * @return the list of all groups contained in the database.
 	 */
 	@Transactional
@@ -32,7 +52,7 @@ public class GroupService extends AbstractService {
 		List<GroupDTO> dtos = new ArrayList<GroupDTO>();
 		for (Group group : collection) {
 			List<UserDTO> users = new ArrayList<UserDTO>();
-			for(User u : group.getUsers()){
+			for (User u : group.getUsers()) {
 				users.add(new UserDTO(u.getUsername(), u.isLocked(), u.getId()));
 			}
 			dtos.add(new GroupDTO(group.getName(), group.getId(), users));
@@ -40,100 +60,107 @@ public class GroupService extends AbstractService {
 		return dtos;
 
 	}
-	
+
 	/**
 	 * Create a new Group in database
+	 * 
 	 * @param request
-	 * 			The request, containing group name
+	 *            The request, containing group name
 	 */
 	@SuppressWarnings("unchecked")
 	@Transactional
 	public void createGroup(GroupCreationRequestDTO request) {
-		if(request==null){
+		if (request == null) {
 			throw new IllegalArgumentException("Request cannot be null ");
 		}
-		
-		if("".equals(request.name)){
+
+		if ("".equals(request.name)) {
 			throw new IllegalArgumentException("Group name cannot be null ");
 		}
-		
-		if("".equals(request.name.trim())){
+
+		if ("".equals(request.name.trim())) {
 			throw new IllegalArgumentException("Group name cannot be space character only ");
 		}
-		
-		Query verifExist = em.get().createQuery("SELECT g FROM Group g WHERE name='"+ request.name +"'");
-		List<Group> list = (List<Group>)verifExist.getResultList();
-		if(!list.isEmpty()){
+
+		Query verifExist = em.get().createQuery("SELECT g FROM Group g WHERE name='" + request.name + "'");
+		List<Group> list = (List<Group>) verifExist.getResultList();
+		if (!list.isEmpty()) {
 			throw new IllegalArgumentException("Another group with this name already exists");
 		}
-		
+
 		Group group = new Group();
 		group.setName(request.name.trim());
 		em.get().persist(group);
 	}
-	
+
 	/**
 	 * Update an existing group in database
+	 * 
 	 * @param request
-	 * 			The request, containing group name and id of the needed group
+	 *            The request, containing group name and id of the needed group
 	 */
 	@SuppressWarnings("unchecked")
 	@Transactional
 	public void updateGroup(GroupCreationRequestDTO request) {
-		if(request==null){
+		if (request == null) {
 			throw new IllegalArgumentException("Request cannot be null ");
 		}
-		
-		if("".equals(request.name)){
+
+		if ("".equals(request.name)) {
 			throw new IllegalArgumentException("Group name cannot be null ");
 		}
-		
-		if("".equals(request.name.trim())){
+
+		if ("".equals(request.name.trim())) {
 			throw new IllegalArgumentException("Group name cannot be space character only ");
 		}
-		
-		Query verifExist = em.get().createQuery("SELECT g FROM Group g WHERE name='"+ request.name +"'AND group_id != "+ request.id);
-		List<Group> list = (List<Group>)verifExist.getResultList();
-		if(!list.isEmpty()){
+
+		Query verifExist = em.get().createQuery("SELECT g FROM Group g WHERE name='" + request.name + "'AND group_id != " + request.id);
+		List<Group> list = (List<Group>) verifExist.getResultList();
+		if (!list.isEmpty()) {
 			throw new IllegalArgumentException("Another group with this name already exists");
 		}
-		
+
 		Set<User> users = null;
-		if(!request.users.isEmpty()){
-			if(!(request.users.get(0).username == null)){
+		if (!request.users.isEmpty()) {
+			if (!(request.users.get(0).username == null)) {
 				users = new HashSet<User>();
-				for(UserDTO u: request.users){
+				for (UserDTO u : request.users) {
 					users.add(em.get().find(User.class, u.id));
 				}
 			}
 		}
 		Group group = em.get().find(Group.class, request.id);
 		group.setName(request.name);
-		
-		
-		if(users == null){
+
+		if (users == null) {
 			group.getUsers().clear();
-		}
-		else{
+		} else {
 			group.setUsers(users);
 		}
-			
-		
+
 	}
-	
+
 	/**
 	 * Delete an existing Group in database
+	 * 
 	 * @param id
-	 * 			The id of the group to delete
+	 *            The id of the group to delete
 	 */
 	@Transactional
 	public void deleteGroup(int id) {
 		Group group = em.get().find(Group.class, id);
 		em.get().remove(group);
 	}
-	
+
+	/**
+	 * Get all users from a group.
+	 * 
+	 * @param id
+	 *            The id of the group.
+	 * @return the list of users which are in the group.
+	 */
 	@Transactional
-	public List<UserDTO> getGroupUsers(int id){
+	public List<UserDTO> getGroupUsers(int id) {
 		Group g = em.get().find(Group.class, id);
 		List<UserDTO> dtos = new ArrayList<UserDTO>();
 		for (User user : g.getUsers()) {

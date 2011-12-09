@@ -60,14 +60,16 @@ public class UserDTO {
 		locked = pLocked;
 		this.id = id;
 	}
-	
-	public UserDTO(User u){
+
+	public UserDTO(User u) {
 		this.username = u.getUsername();
 		this.locked = u.isLocked();
 		this.id = u.getId();
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#hashCode()
 	 */
 	@Override
@@ -75,12 +77,13 @@ public class UserDTO {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + (int) (id ^ (id >>> 32));
-		result = prime * result
-				+ ((username == null) ? 0 : username.hashCode());
+		result = prime * result + ((username == null) ? 0 : username.hashCode());
 		return result;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	@Override

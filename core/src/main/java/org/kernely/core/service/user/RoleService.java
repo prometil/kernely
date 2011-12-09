@@ -1,3 +1,22 @@
+/*
+Copyright 2011 Prometil SARL
+
+This file is part of Kernely.
+
+Kernely is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as
+published by the Free Software Foundation, either version 3 of
+the License, or (at your option) any later version.
+
+Kernely is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Affero General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public
+License along with Kernely.
+If not, see <http://www.gnu.org/licenses/>.
+ */
 package org.kernely.core.service.user;
 
 import java.util.ArrayList;
@@ -13,8 +32,8 @@ import com.google.inject.Singleton;
 import com.google.inject.persist.Transactional;
 
 @Singleton
-public class RoleService extends AbstractService{
-	
+public class RoleService extends AbstractService {
+
 	/**
 	 * Gets the lists of all roles contained in the database.
 	 * 
@@ -23,21 +42,21 @@ public class RoleService extends AbstractService{
 	@SuppressWarnings("unchecked")
 	@Transactional
 	public List<RoleDTO> getAllRoles() {
-		Query query = em.get().createQuery("SELECT e FROM Role e WHERE name !='"+ Role.ROLE_USER +"'");
+		Query query = em.get().createQuery("SELECT e FROM Role e WHERE name !='" + Role.ROLE_USER + "'");
 		List<Role> collection = (List<Role>) query.getResultList();
 		List<RoleDTO> dtos = new ArrayList<RoleDTO>();
 		for (Role role : collection) {
-			dtos.add(new RoleDTO(role.getId(),role.getName()));
+			dtos.add(new RoleDTO(role.getId(), role.getName()));
 		}
 		return dtos;
 
 	}
-	
+
 	@Transactional
 	/**
 	 * Use for Unit tests
 	 */
-	public void createRole(RoleDTO request){
+	public void createRole(RoleDTO request) {
 		Role role = new Role();
 		role.setName(request.name.trim());
 		em.get().persist(role);

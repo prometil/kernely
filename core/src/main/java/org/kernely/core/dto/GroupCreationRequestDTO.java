@@ -25,27 +25,32 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
 public class GroupCreationRequestDTO {
-	
+
+	public int id;
+	public String name;
+	public List<UserDTO> users;
+
 	/**
 	 * Default Constructor
 	 */
-	public GroupCreationRequestDTO(){
-		
+	public GroupCreationRequestDTO() {
+
 	}
-	
+
 	/**
 	 * GroupCreationRequestDTO constructor
-	 * @param id : the id of the group updated. Null in the case of a new group
-	 * @param name : name of the new group/ group updated
-	 * @param users : users associated to the current group
+	 * 
+	 * @param id
+	 *            : the id of the group updated. Null in the case of a new group
+	 * @param name
+	 *            : name of the new group/ group updated
+	 * @param users
+	 *            : users associated to the current group
 	 */
-	public GroupCreationRequestDTO(int id, String name, List<UserDTO> users){
+	public GroupCreationRequestDTO(int id, String name, List<UserDTO> users) {
 		this.id = id;
 		this.name = name;
 		this.users = users;
 	}
-	
-	public int id;
-	public String name;
-	public List<UserDTO> users;
+
 }
