@@ -208,6 +208,7 @@ AppGroupAdmin = (function($){
 				contentType: "application/json; charset=utf-8",
 				success: function(data){
 					if (data.result == "ok"){
+						console.log("coucou !!!");
 						$('#modal_window_group').hide();
 						$('#mask').hide();
 						$("#groups_notifications").text("Operation completed successfully !");

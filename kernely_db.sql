@@ -121,6 +121,13 @@ create table kernely_user_details (
 	birth date
 );
 
+drop table IF EXISTS kernely_holiday;
+create table kernely_holiday (
+	id int primary key,
+	frequency int,
+	type varchar(50)
+);
+
 
 insert into kernely_user (id, username, password, salt) values (1, 'bobby', '2ty4LmflO9cRBKi1liWj3WvSrmtf2EnL67SoTa0bNuM=','gNc1mOUoQxGmCzoV2W7YP3CJj9oDML/SfABujWDrBmvx9xN5if4Y0jMckDNK1we/kMRGR75uQggRgr5dKgnd6ZGIVxG0Zr3EiYxiXBU9aDyZkYvBqy9ffwZ9JScQ5Wke1NarH/lZevTgOUMaLMYVV7q/QvzH42rYek3mF0F1ykM=');
 insert into kernely_user (id, username, password, salt) values (2, 'john', 'vAT9Kr/2bSbWoxFj3iinD783xrTez+lE2G/HSGaDzVk=','8EiKXghisVxqZ74Nwen+/5NanikCV0DRB9J31tC0jWGip79G1ZCrkwsFYOkD/aw1ggYA8r/nsYHnWXofR7x0nFU8CK87aiZ3BzXyzH4AEu9pzV/YWfWhq1d0W3gAB36gHsVQ6mZubI5UYforzdATLAAGOlQAa4BXF7Cwxs8wuf0=');

@@ -16,7 +16,7 @@ GNU Affero General Public License for more details.
 You should have received a copy of the GNU Affero General Public
 License along with Kernely.
 If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 package org.kernely.core.plugin;
 
 import java.util.ArrayList;
@@ -28,7 +28,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class PluginsLoader {
-	public static final Logger log = LoggerFactory.getLogger(PluginsLoader.class);
+	public static final Logger log = LoggerFactory
+			.getLogger(PluginsLoader.class);
 
 	/**
 	 * 
@@ -37,11 +38,13 @@ public class PluginsLoader {
 
 		List<AbstractPlugin> plugins = new ArrayList<AbstractPlugin>();
 
-		ServiceLoader<AbstractPlugin> commandLoader = ServiceLoader.load(AbstractPlugin.class);
+		ServiceLoader<AbstractPlugin> commandLoader = ServiceLoader
+				.load(AbstractPlugin.class);
 		// commandLoader.reload();
 		Iterator<AbstractPlugin> it = commandLoader.iterator();
 		while (it.hasNext()) {
 			AbstractPlugin plugin = it.next();
+			log.debug("Plugin {} found", plugin.getName());
 			plugins.add(plugin);
 
 		}
