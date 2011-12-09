@@ -18,7 +18,7 @@ License along with Kernely.
 If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.kernely.core.resourceLocator;
+package org.kernely.core.resource;
 
 import java.io.File;
 import java.net.MalformedURLException;

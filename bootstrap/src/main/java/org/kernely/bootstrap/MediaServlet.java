@@ -31,7 +31,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.configuration.AbstractConfiguration;
 import org.apache.commons.io.IOUtils;
-import org.kernely.core.resourceLocator.ResourceLocator;
+import org.kernely.core.resource.ResourceLocator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

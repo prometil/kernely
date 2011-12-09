@@ -26,10 +26,10 @@ import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import org.kernely.core.controller.AbstractController;
 import org.kernely.core.dto.AdminPageDTO;
 import org.kernely.core.hibernate.AbstractModel;
 import org.kernely.core.migrations.migrator.Migration;
-import org.kernely.core.resources.AbstractController;
 import org.quartz.Job;
 import org.quartz.Trigger;
 

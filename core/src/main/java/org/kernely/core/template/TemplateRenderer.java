@@ -34,7 +34,7 @@ import org.apache.shiro.SecurityUtils;
 import org.codehaus.groovy.control.CompilationFailedException;
 import org.kernely.core.plugin.AbstractPlugin;
 import org.kernely.core.plugin.PluginsLoader;
-import org.kernely.core.resourceLocator.ResourceLocator;
+import org.kernely.core.resource.ResourceLocator;
 import org.kernely.core.service.user.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

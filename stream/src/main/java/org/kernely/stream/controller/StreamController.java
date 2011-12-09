@@ -17,7 +17,7 @@ You should have received a copy of the GNU Affero General Public
 License along with Kernely.
 If not, see <http://www.gnu.org/licenses/>.
  */
-package org.kernely.stream.resources;
+package org.kernely.stream.controller;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,8 +32,8 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import org.apache.shiro.SecurityUtils;
+import org.kernely.core.controller.AbstractController;
 import org.kernely.core.dto.UserDTO;
-import org.kernely.core.resources.AbstractController;
 import org.kernely.core.service.user.PermissionService;
 import org.kernely.core.service.user.UserService;
 import org.kernely.core.template.TemplateRenderer;
@@ -52,9 +52,9 @@ import org.slf4j.LoggerFactory;
 import com.google.inject.Inject;
 
 @Path("/streams")
-public class StreamResource extends AbstractController {
+public class StreamController extends AbstractController {
 
-	private static final Logger log = LoggerFactory.getLogger(StreamResource.class);
+	private static final Logger log = LoggerFactory.getLogger(StreamController.class);
 
 	@Inject
 	private TemplateRenderer templateRenderer;
