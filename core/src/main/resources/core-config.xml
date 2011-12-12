@@ -29,6 +29,10 @@
 	<server>
 		<port>8080</port>
 	</server>
+	<locale>
+		<lang>en</lang>
+		<coubtry>EN</coubtry>
+	</locale>
 	<workpath>
 		<url>../workstation</url>
 	</workpath>
