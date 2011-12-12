@@ -39,12 +39,14 @@ public class HolidayCreationRequestDTO {
 	 * @param newType
 	 * @param newFrequency
 	 */
-	public HolidayCreationRequestDTO(String newType, int newFrequency){
+	public HolidayCreationRequestDTO(String newType, int newFrequency, String newUnity){
 		this.type=newType;
-		this.frequency  = newFrequency; 
+		this.frequency  = newFrequency;
+		this.unity = newUnity;
 	}
 	
 	public String type;
 	public int frequency;
+	public String unity;
 	
 }

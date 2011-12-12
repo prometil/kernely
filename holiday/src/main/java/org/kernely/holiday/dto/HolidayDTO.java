@@ -39,13 +39,15 @@ public class HolidayDTO {
 	 * @param newFrequency
 	 * @param newId
 	 */
-	public HolidayDTO(String newType, int newFrequency, long  newId){
+	public HolidayDTO(String newType, int newFrequency, String newUnity, long  newId){
 		this.type = newType ; 
 		this.frequency = newFrequency;
+		this.unity = newUnity;
 		this.id=newId;
 	}
 	
 	public String type;
 	public int frequency;
+	public String unity;
 	public long id;
 }

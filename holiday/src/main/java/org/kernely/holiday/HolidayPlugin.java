@@ -21,8 +21,8 @@ If not, see <http://www.gnu.org/licenses/>.
 package org.kernely.holiday;
 
 import org.kernely.core.plugin.AbstractPlugin;
+import org.kernely.holiday.controller.HolidayAdminController;
 import org.kernely.holiday.model.Holiday;
-import org.kernely.holiday.resources.HolidayAdminController;
 import org.kernely.holiday.service.HolidayService;
 
 import com.google.common.eventbus.EventBus;

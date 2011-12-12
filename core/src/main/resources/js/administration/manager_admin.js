@@ -368,7 +368,7 @@ AppManagerAdmin = (function($){
 					else{
 						$(parent.el).append('<input type="checkbox" id="'+ data.userDetailsDTO.user.id +'">'+ data.userDetailsDTO.lastname + ' ' + data.userDetailsDTO.firstname + ' ('+ data.userDetailsDTO.user.username +')'+'</input><br/>');
 					}
-					
+					console.log("I retrieve my combobox " + $("#combobox").val()); 
 					$.ajax({
 						type: "GET",
 						url:"/admin/manager/users/"+$("#combobox").val(),
@@ -422,7 +422,7 @@ AppManagerAdmin = (function($){
 					else{
 						$(parent.el).append('<input type="checkbox" id="'+ data.userDetailsDTO.user.id +'">'+ data.userDetailsDTO.lastname + ' ' + data.userDetailsDTO.firstname + ' ('+ data.userDetailsDTO.user.username +')'+'</input><br/>');
 					}
-					
+					console.log("I retrieve the input disabled")
 					$.ajax({
 						type: "GET",
 						url:"/admin/manager/users/"+$("#manager-username").val(),

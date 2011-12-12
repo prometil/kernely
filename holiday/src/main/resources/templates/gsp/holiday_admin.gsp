@@ -14,7 +14,12 @@
 	<fieldset>
 	<legend>Holiday informations</legend>
 		Type : <input type="text" name="type" value="{{type}}" id="holiday-type" /><br/>
-		Frequency : <input type="text" name="frequency" value="{{frequency}}" id="holiday-frequency" /><br/>	
+		Frequency : <input type="text" name="frequency" value="{{frequency}}" id="holiday-frequency" /> by : 
+		<select name="unity" id="unity">
+			<option value="week">week</opton> 
+			<option value="month">month</opton> 
+			<option value="year">year</opton>
+		</select> 
 	</fieldset>
 
 	<br/>
@@ -28,7 +33,7 @@
 	<fieldset>
 	<legend>Holiday informations</legend>
 	Type : <input type="text" name="type" value="{{type}}" id="holiday-type" /><br/>
-	Frequency : <input type="text" name="frequency" value="{{frequency}}" id="holiday-frequency" /><br/>
+	<div id="selected">Frequency : <input type="text" name="frequency" value="{{frequency}}" id="holiday-frequency" /> by : 	</div>
 	</fieldset>
 	<br/>
 	<input type="button" value="Send" class="updateHoliday"/>

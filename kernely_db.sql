@@ -125,7 +125,8 @@ drop table IF EXISTS kernely_holiday;
 create table kernely_holiday (
 	id int primary key,
 	frequency int,
-	type varchar(50)
+	type varchar(50),
+	unity varchar(50)
 );
 
 

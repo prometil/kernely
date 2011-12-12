@@ -28,8 +28,11 @@ import javax.persistence.Table;
 
 import org.kernely.core.hibernate.AbstractModel;
 
-
-
+/**
+ * 
+ * @author b.grandperret
+ *
+ */
 @Entity
 @Table(name = "kernely_holiday")
 public class Holiday extends AbstractModel {
@@ -39,6 +42,7 @@ public class Holiday extends AbstractModel {
 	
 	private String type ;
 	private int frequency ;
+	private String unity;
 	
 	
 	/**
@@ -76,6 +80,18 @@ public class Holiday extends AbstractModel {
 	 */
 	public void setFrequency(int frequency) {
 		this.frequency = frequency;
+	}
+	/**
+	 * @return the unity
+	 */
+	public String getUnity() {
+		return unity;
+	}
+	/**
+	 * @param unity the unity to set
+	 */
+	public void setUnity(String unity) {
+		this.unity = unity;
 	}
 	
 

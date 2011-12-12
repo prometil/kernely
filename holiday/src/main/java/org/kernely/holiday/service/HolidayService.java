@@ -60,12 +60,21 @@ public class HolidayService extends AbstractService {
 		List<HolidayDTO> dtos = new ArrayList<HolidayDTO>();
 		for (Holiday holiday : collection) {
 
-			dtos.add(new HolidayDTO(holiday.getType(), holiday.getFrequency(),
-					holiday.getId()));
+			dtos.add(new HolidayDTO(holiday.getType(), holiday.getFrequency(), holiday.getUnity(),holiday.getId()));
 		}
 		return dtos;
 	}
 
+
+	@Transactional
+	public HolidayDTO getHolidayDTO(long id){
+		Query query = em.get().createQuery("SELECT  h from Holiday h WHERE  h.id=:id");
+		query.setParameter("id", id);
+		Holiday holiday = (Holiday)query.getSingleResult() ;
+		HolidayDTO hdto = new HolidayDTO(holiday.getType(), holiday.getFrequency(), holiday.getUnity(), holiday.getId());
+		return hdto;
+	}
+	
 	/**
 	 * Delete an existing holiday in database
 	 * 
@@ -111,6 +120,7 @@ public class HolidayService extends AbstractService {
 		Holiday holiday = new Holiday();
 		holiday.setType(request.type.trim());
 		holiday.setFrequency(request.frequency);
+		holiday.setUnity(request.unity);
 		em.get().persist(holiday);
 	}
 	
@@ -138,10 +148,12 @@ public class HolidayService extends AbstractService {
 		String type = request.type;
 		long id = request.id;
 		int frequency = request.frequency;
-		Query verifExist = em.get().createQuery("SELECT g FROM Holiday g WHERE type=:type AND id=:id AND frequency=:frequency");
+		String unity = request.unity;
+		Query verifExist = em.get().createQuery("SELECT g FROM Holiday g WHERE type=:type AND id=:id AND frequency=:frequency AND unity=:unity");
 		verifExist.setParameter("type",type);
 		verifExist.setParameter("id", id);
 		verifExist.setParameter("frequency", frequency);
+		verifExist.setParameter("unity", unity);
 		List<Holiday> list = (List<Holiday>)verifExist.getResultList();
 		if(!list.isEmpty()){
 			throw new IllegalArgumentException("Another holiday  with this type already exists");
@@ -150,6 +162,7 @@ public class HolidayService extends AbstractService {
 		Holiday holiday = em.get().find(Holiday.class, request.id);
 		holiday.setType(request.type);
 		holiday.setFrequency(request.frequency);
+		holiday.setUnity(request.unity);
 		em.get().merge(holiday);
 		
 	}
