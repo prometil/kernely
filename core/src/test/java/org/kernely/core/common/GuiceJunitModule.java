@@ -41,7 +41,7 @@ import com.google.inject.persist.jpa.JpaPersistModule;
  * @author g.breton
  *
  */
-public class TestModule extends AbstractModule {
+public class GuiceJunitModule extends AbstractModule {
 
 	/**
 	 * 

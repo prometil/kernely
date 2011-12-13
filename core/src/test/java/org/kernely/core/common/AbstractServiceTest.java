@@ -45,7 +45,7 @@ import com.google.inject.persist.PersistService;
 public abstract class AbstractServiceTest {
 
 	@Rule
-	public final GuiceBerryRule guiceBerry = new GuiceBerryRule(TestModule.class);
+	public final GuiceBerryRule guiceBerry = new GuiceBerryRule(GuiceJunitModule.class);
 
 	@Inject
 	Initializer initializer;
