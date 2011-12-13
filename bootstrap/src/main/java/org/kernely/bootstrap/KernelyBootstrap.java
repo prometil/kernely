@@ -68,7 +68,7 @@ public class KernelyBootstrap {
 		List<AbstractPlugin> plugins = pluginLoad.getPlugins();
 
 		// configure
-		CombinedConfiguration combinedConfiguration = setTheConfiguration(plugins);
+		CombinedConfiguration combinedConfiguration = buildConfiguration(plugins);
 
 		// update database using configuration
 		Migrator m = new Migrator(combinedConfiguration, plugins);
@@ -89,7 +89,7 @@ public class KernelyBootstrap {
 			// Register a listener
 			ServletHandler handler = createServletHandler();
 			WebAppContext webApp = new WebAppContext(warUrlString, "/");
-			webApp.addEventListener(new GuiceServletConfig(plugins, setTheConfiguration(plugins)));
+			webApp.addEventListener(new GuiceServletConfig(plugins, buildConfiguration(plugins)));
 			webApp.setServletHandler(handler);
 			webApp.setErrorHandler(new KernelyErrorHandler());
 			server.setHandler(webApp);
@@ -159,7 +159,7 @@ public class KernelyBootstrap {
 	 *            list of plugins
 	 * @return the combinedconfiguration set
 	 */
-	private static CombinedConfiguration setTheConfiguration(List<AbstractPlugin> plugins) {
+	private static CombinedConfiguration buildConfiguration(List<AbstractPlugin> plugins) {
 		ResourceLocator resourceLocator = new ResourceLocator();
 		CombinedConfiguration combinedConfiguration = new CombinedConfiguration();
 		// Bind all Jersey resources detected in plugins
