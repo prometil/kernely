@@ -368,25 +368,6 @@ AppManagerAdmin = (function($){
 					else{
 						$(parent.el).append('<input type="checkbox" id="'+ data.userDetailsDTO.user.id +'">'+ data.userDetailsDTO.lastname + ' ' + data.userDetailsDTO.firstname + ' ('+ data.userDetailsDTO.user.username +')'+'</input><br/>');
 					}
-					console.log("I retrieve my combobox " + $("#combobox").val()); 
-					$.ajax({
-						type: "GET",
-						url:"/admin/manager/users/"+$("#combobox").val(),
-						dataType:"json",
-						success: function(data){
-							if(data != null && typeof(data) != "undefined"){
-								if(data.userDTO.length > 1){
-						    		$.each(data.userDTO, function() {
-						    			$('#' + this.id).attr("checked", "checked");
-						    		});
-								}
-								// In the case when there is only one user. 
-								else{
-									$('#' + data.userDTO.id).attr("checked", "checked");
-								}
-							}
-						}
-					});
 				}
 			});
 			return this;
