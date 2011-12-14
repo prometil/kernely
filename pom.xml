@@ -7,12 +7,18 @@
 	<version>0.1-SNAPSHOT</version>
 	<name>kernely</name>
 	<url>https://github.com/prometil/kernely</url>
+	 <organization>
+    <name>Prometil</name>
+    <url>http://www.prometil.com</url>
+  </organization>
 	<scm>
 		<connection>scm:git:https://github.com/prometil/kernely.git</connection>
 	</scm>
 
 	<properties>
     	<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    	 <license.licenseName>my_license</license.licenseName>
+    <license.licenseResolver>file://${basedir}/src/license</license.licenseResolver>
 	</properties>
 	
 	<build>
@@ -46,6 +52,25 @@
 				</plugin>
 			</plugins>
 		</pluginManagement>
+		<plugins>
+        <plugin>
+            <groupId>com.mycila.maven-license-plugin</groupId>
+            <artifactId>maven-license-plugin</artifactId>
+            <version>1.9.0</version>
+            <configuration>
+                <header>header.txt</header>
+                <strictCheck>true</strictCheck>
+		<excludes>
+                    <exclude>**/backbone.js</exclude>
+                    <exclude>**/jquery.js</exclude>
+		    <exclude>**/json2.js</exclude>
+                    <exclude>**/mustache.js</exclude>
+		    <exclude>**/underscore.js</exclude>
+                </excludes>
+		<useDefaultExcludes>true</useDefaultExcludes>
+            </configuration>
+        </plugin>
+    </plugins>
 	</build>
 
 	<!-- project module -->
@@ -63,7 +88,6 @@
 			<version>4.4</version>
 			<scope>test</scope>
 		</dependency>
-
 	</dependencies>
 
 </project>

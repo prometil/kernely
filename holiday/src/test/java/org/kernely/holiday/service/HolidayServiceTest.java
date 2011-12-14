@@ -1,21 +1,21 @@
-/*
-Copyright 2011 Prometil SARL
-
-This file is part of Kernely.
-
-Kernely is free software: you can redistribute it and/or modify
-it under the terms of the GNU Affero General Public License as
-published by the Free Software Foundation, either version 3 of
-the License, or (at your option) any later version.
-
-Kernely is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU Affero General Public License for more details.
-
-You should have received a copy of the GNU Affero General Public
-License along with Kernely.
-If not, see <http://www.gnu.org/licenses/>.
+/**
+ * Copyright 2011 Prometil SARL
+ *
+ * This file is part of Kernely.
+ *
+ * Kernely is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of
+ * the License, or (at your option) any later version.
+ *
+ * Kernely is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public
+ * License along with Kernely.
+ * If not, see <http://www.gnu.org/licenses/>.
  */
 
 package org.kernely.holiday.service;
@@ -28,7 +28,6 @@ import org.kernely.holiday.dto.HolidayCreationRequestDTO;
 import org.kernely.holiday.dto.HolidayDTO;
 import org.kernely.holiday.dto.HolidayUpdateRequestDTO;
 
-import com.google.common.eventbus.EventBus;
 import com.google.inject.Inject;
 
 public class HolidayServiceTest extends AbstractServiceTest {
@@ -97,8 +96,6 @@ public class HolidayServiceTest extends AbstractServiceTest {
 		cdto.frequency=FREQUENCY ;
 		cdto.type=TYPE;
 		holidayService.createHoliday(cdto) ;
-		HolidayDTO hdto = new HolidayDTO();
-		hdto = holidayService.getAllHoliday().get(0);
 		holidayService.updateHoliday(null);
 	}
 	
