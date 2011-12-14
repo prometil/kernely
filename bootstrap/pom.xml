@@ -29,11 +29,13 @@
 			<groupId>org.kernely</groupId>
 			<artifactId>stream</artifactId>
 			<version>0.1-SNAPSHOT</version>
+			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.kernely</groupId>
 			<artifactId>holiday</artifactId>
 			<version>0.1-SNAPSHOT</version>
+			<scope>runtime</scope>
 		</dependency>
 
 		<dependency>
@@ -131,8 +133,8 @@
 				<configuration>
 					<archive>
 						<manifest>
-							<addClasspath>true</addClasspath>
-							<classpathPrefix>lib/</classpathPrefix>
+						 	<addClasspath>true</addClasspath>
+							<classpathPrefix>../lib/</classpathPrefix>
 							<mainClass>org.kernely.bootstrap.KernelyBootstrap</mainClass>
 						</manifest>
 

@@ -7,7 +7,7 @@
 	<fileSets>
 		<fileSet>
 			<directory>target</directory>
-			<outputDirectory>.</outputDirectory>
+			<outputDirectory>bin/</outputDirectory>
 			<includes>
 				<include>bootstrap.jar</include>
 			</includes>
