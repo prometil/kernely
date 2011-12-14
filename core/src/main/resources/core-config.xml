@@ -9,7 +9,7 @@
 			<pool_size>10</pool_size>
 		</connection>
 		<hbm2ddl>
-			<auto>update</auto>
+			<auto>validate</auto>
 		</hbm2ddl>
 		<dialect>org.hibernate.dialect.PostgreSQLDialect</dialect>
 		<show_sql>false</show_sql>

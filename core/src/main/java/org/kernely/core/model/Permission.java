@@ -39,7 +39,6 @@ public class Permission extends AbstractModel {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	@Column(name = "permission_id")
 	/**
 	 * Permission's id
 	 */

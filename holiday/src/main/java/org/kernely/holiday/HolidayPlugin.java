@@ -20,6 +20,7 @@ If not, see <http://www.gnu.org/licenses/>.
 
 package org.kernely.holiday;
 
+import org.kernely.holiday.migrations.Migration01;
 import org.kernely.core.plugin.AbstractPlugin;
 import org.kernely.holiday.controller.HolidayAdminController;
 import org.kernely.holiday.model.Holiday;
@@ -47,6 +48,7 @@ public class HolidayPlugin extends AbstractPlugin {
 		registerController(HolidayAdminController.class);
 		registerModel(Holiday.class);
 		registerAdminPage("Holiday admin", "/admin/holiday");
+		registerMigration(new Migration01());
 	}
 	
 	@Override

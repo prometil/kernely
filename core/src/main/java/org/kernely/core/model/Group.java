@@ -42,7 +42,6 @@ import org.kernely.core.hibernate.AbstractModel;
 public class Group extends AbstractModel{
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	@Column(name="group_id")
 	/**
 	 * Group's id
 	 */

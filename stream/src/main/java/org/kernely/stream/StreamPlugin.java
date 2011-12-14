@@ -20,6 +20,7 @@ If not, see <http://www.gnu.org/licenses/>.
 package org.kernely.stream;
 
 import org.kernely.core.plugin.AbstractPlugin;
+import org.kernely.stream.migrations.Migration01;
 import org.kernely.stream.controller.StreamAdminController;
 import org.kernely.stream.controller.StreamController;
 import org.kernely.stream.model.Message;
@@ -48,6 +49,8 @@ public class StreamPlugin extends AbstractPlugin {
 		registerModel(Message.class);
 		registerModel(Stream.class);
 		registerAdminPage("Stream admin", "/admin/streams/main");
+		registerMigration(new Migration01());
+
 	}
 
 	@Override

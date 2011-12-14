@@ -61,7 +61,7 @@ public class Message extends AbstractModel {
 	}
 
 	@ManyToOne
-	@JoinColumn(name = "fk_user_id")
+	@JoinColumn(name = "user_id")
 	private User user;
 
 	public User getUser() {
