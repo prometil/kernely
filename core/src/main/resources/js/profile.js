@@ -135,6 +135,7 @@ AppProfile= (function($){
 		},
 		editMail: function(){
 			$('#button_mail').html("<img class='button valid_button_mail' src='/images/icons/save.png' style='margin-left : 15px;'/>");
+			$('#profile_mail').removeClass('span_profile_mail');
 			$('#profile_mail').html("<input id='edit_mail_field' name='mail' type='text' MAXLENGTH=50 value='" + $('#profile_mail').text() + "'/>");
 			document.getElementById('edit_mail_field').focus();
 			flag.edit="mail";
@@ -165,10 +166,12 @@ AppProfile= (function($){
 			});
 			$('#button_mail').html("<img class='button edit_button_mail' src='/images/icons/edit.png' style='margin-left : 15px;'/>");
 			$('#profile_mail').html("<a href='mailto:'"+ $('#edit_mail_field').text() +"'>"+ $('#edit_mail_field').text() +"</a>");
+			$('#profile_mail').addClass('span_profile_mail');
 		},
 		
 		editName: function(){
 			$('#button_name').html("<img class='button valid_button_name' src='/images/icons/save.png' style='margin-left : 15px;'/>");
+			$('#profile_name').removeClass('span_profile_lastname');
 			$('#profile_name').html("<input id='edit_name_field' name='name' type='text' MAXLENGTH=50 value='" + $('#profile_name').text() + "'/>");
 			document.getElementById('edit_name_field').focus();
 			flag.edit="name";
@@ -197,10 +200,12 @@ AppProfile= (function($){
 			});
 			$('#button_name').html("<img class='button edit_button_name' src='/images/icons/edit.png' style='margin-left : 15px;'/>");
 			$('#profile_name').html($('#edit_name_field').text());
+			$('#profile_name').addClass('span_profile_lastname');
 		},
 		
 		editFirstname: function(){
 			$('#button_firstname').html("<img class='button valid_button_firstname' src='/images/icons/save.png' style='margin-left : 15px;'/>");
+			$('#profile_firstname').removeClass('span_profile_firstname');
 			$('#profile_firstname').html("<input id='edit_firstname_field' name='firstname' type='text' MAXLENGTH=50 value='" + $('#profile_firstname').text() + "'/>");
 			document.getElementById('edit_firstname_field').focus();
 			flag.edit="firstname";
@@ -229,12 +234,14 @@ AppProfile= (function($){
 			});
 			$('#button_firstname').html("<img class='button edit_button_firstname' src='/images/icons/edit.png' style='margin-left : 15px;'/>");
 			$('#profile_firstname').html( $('#edit_firstname_field').text());
+			$('#profile_firstname').addClass('span_profile_firstname');
 		},
 		
 		editAdress: function(){
 			$('#button_adress').html("<img class='button valid_button_adress' src='/images/icons/save.png' style='margin-left : 15px;'/>");
+			$('#profile_adress').removeClass('span_profile_adress');
 			$('#profile_adress').html("<input id='edit_adress_field' name='adress' type='text' MAXLENGTH=100 value='" + $('#profile_adress').text() + "'/>");
-			document.getElementById('edit_adress_field').focus();
+			$('#edit_adress_field').focus();
 			flag.edit="adress";
 		},
 		saveAdress: function(){
@@ -261,10 +268,12 @@ AppProfile= (function($){
 			});
 			$('#button_adress').html("<img class='button edit_button_adress' src='/images/icons/edit.png' style='margin-left : 15px;'/>");
 			$('#profile_adress').html( $('#edit_adress_field').text());
+			$('#profile_adress').addClass('span_profile_adress');
 		},
 		
 		editZip: function(){
 			$('#button_zip').html("<img class='button valid_button_zip' src='/images/icons/save.png' style='margin-left : 15px;'/>");
+			$('#profile_zip').removeClass('span_profile_zip');
 			$('#profile_zip').html("<input id='edit_zip_field' name='zip' type='text' MAXLENGTH=5 value='" + $('#profile_zip').text() + "'/>");
 			document.getElementById('edit_zip_field').focus();
 			flag.edit="zip";
@@ -293,10 +302,12 @@ AppProfile= (function($){
 			});
 			$('#button_zip').html("<img class='button edit_button_zip' src='/images/icons/edit.png' style='margin-left : 15px;'/>");
 			$('#profile_zip').html($('#edit_zip_field').text());
+			$('#profile_zip').addClass('span_profile_zip');
 		},
 		
 		editCity: function(){
 			$('#button_city').html("<img class='button valid_button_city' src='/images/icons/save.png' style='margin-left : 15px;'/>");
+			$('#profile_city').removeClass('span_profile_city');
 			$('#profile_city').html("<input id='edit_city_field' name='city' type='text' MAXLENGTH=30 value='" + $('#profile_city').text() + "'/>");
 			document.getElementById('edit_city_field').focus();
 			flag.edit="city";
@@ -325,10 +336,12 @@ AppProfile= (function($){
 			});
 			$('#button_city').html("<img class='button edit_button_city' src='/images/icons/edit.png' style='margin-left : 15px;'/>");
 			$('#profile_city').html($('#edit_city_field').text());
+			$('#profile_city').addClass('span_profile_city');
 		},
 		
 		editHomephone: function(){
 			$('#button_homephone').html("<img class='button valid_button_homephone' src='/images/icons/save.png' style='margin-left : 15px;'/>");
+			$('#profile_homephone').removeClass('span_profile_homephone');
 			$('#profile_homephone').html("<input id='edit_homephone_field' name='homephone' type='text' MAXLENGTH=10 value='" + $('#profile_homephone').text() + "'/>");
 			document.getElementById('edit_homephone_field').focus();
 			flag.edit="homephone";
@@ -357,10 +370,12 @@ AppProfile= (function($){
 			});
 			$('#button_homephone').html("<img class='button edit_button_homephone' src='/images/icons/edit.png' style='margin-left : 15px;'/>");
 			$('#profile_homephone').html( $('#edit_homephone_field').text());
+			$('#profile_homephone').addClass('span_profile_homephone');
 		},
 		
 		editMobilephone: function(){
 			$('#button_mobilephone').html("<img class='button valid_button_mobilephone' src='/images/icons/save.png' style='margin-left : 15px;'/>");
+			$('#profile_mobilephone').removeClass('span_profile_mobilephone');
 			$('#profile_mobilephone').html("<input id='edit_mobilephone_field' name='mobilephone' type='text' MAXLENGTH=10 value='" + $('#profile_mobilephone').text() + "'/>");
 			document.getElementById('edit_mobilephone_field').focus();
 			flag.edit="mobilephone";
@@ -389,10 +404,12 @@ AppProfile= (function($){
 			});
 			$('#button_mobilephone').html("<img class='button edit_button_mobilephone' src='/images/icons/edit.png' style='margin-left : 15px;'/>");
 			$('#profile_mobilephone').html($('#edit_mobilephone_field').text() );
+			$('#profile_mobilephone').addClass('span_profile_mobilephone');
 		},
 		
 		editBusinessphone: function(){
 			$('#button_businessphone').html("<img class='button valid_button_businessphone' src='/images/icons/save.png' style='margin-left : 15px;'/>");
+			$('#profile_businessphone').removeClass('span_profile_businessphone');
 			$('#profile_businessphone').html("<input id='edit_businessphone_field' name='businessphone' type='text' MAXLENGTH=10 value='" + $('#profile_businessphone').text() + "'/>");
 			document.getElementById('edit_businessphone_field').focus();
 			flag.edit="businessphone";
@@ -421,10 +438,12 @@ AppProfile= (function($){
 			});
 			$('#button_businessphone').html("<img class='button edit_button_businessphone' src='/images/icons/edit.png' style='margin-left : 15px;'/>");
 			$('#profile_businessphone').html($('#edit_businessphone_field').text());
+			$('#profile_businessphone').addClass('span_profile_businessphone');
 		},
 		
 		editBirth: function(){
 			$('#button_birth').html("<img class='button valid_button_birth' src='/images/icons/save.png' style='margin-left : 15px;'/>");
+			$('#profile_birth').removeClass('span_profile_birth');
 			$('#profile_birth').html("<input id='edit_birth_field' name='birth' type='text' MAXLENGTH=10 value='" + $('#profile_birth').text() + "'/>");
 			document.getElementById('edit_birth_field').focus();
 			flag.edit="birth";
@@ -453,10 +472,12 @@ AppProfile= (function($){
 			});
 			$('#button_birth').html("<img class='button edit_button_birth' src='/images/icons/edit.png' style='margin-left : 15px;'/>");
 			$('#profile_birth').html( $('#edit_birth_field').text());
+			$('#profile_birth').addClass('span_profile_birth');
 		},
 		
 		editNationality: function(){
 			$('#button_nationality').html("<img class='button valid_button_nationality' src='/images/icons/save.png' style='margin-left : 15px;'/>");
+			$('#profile_nationality').removeClass('span_profile_nationality');
 			$('#profile_nationality').html("<input id='edit_nationality_field' name='nationality' type='text' MAXLENGTH=30 value='" + $('#profile_nationality').text() + "'/>");
 			document.getElementById('edit_nationality_field').focus();
 			flag.edit="nationality";
@@ -485,10 +506,12 @@ AppProfile= (function($){
 			});
 			$('#button_nationality').html("<img class='button edit_button_nationality' src='/images/icons/edit.png' style='margin-left : 15px;'/>");
 			$('#profile_nationality').html($('#edit_nationality_field').text() );
+			$('#profile_nationality').addClass('span_profile_nationality');
 		},
 		
 		editSsn: function(){
 			$('#button_ssn').html("<img class='button valid_button_ssn' src='/images/icons/save.png' style='margin-left : 15px;'/>");
+			$('#profile_ssn').removeClass('span_profile_ssn');
 			$('#profile_ssn').html("<input id='edit_ssn_field' name='ssn' type='text' MAXLENGTH=20 value='" + $('#profile_ssn').text() + "'/>");
 			document.getElementById('edit_ssn_field').focus();
 			flag.edit="ssn";
@@ -517,6 +540,7 @@ AppProfile= (function($){
 			});
 			$('#button_ssn').html("<img class='button edit_button_ssn' src='/images/icons/edit.png' style='margin-left : 15px;'/>");
 			$('#profile_ssn').html($('#edit_ssn_field').text());
+			$('#profile_ssn').addClass('span_profile_ssn');
 		},
 		
 		filterOnEnter:function(e){
