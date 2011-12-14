@@ -60,6 +60,14 @@
             <configuration>
                 <header>header.txt</header>
                 <strictCheck>true</strictCheck>
+		<excludes>
+                    <exclude>**/backbone.js</exclude>
+                    <exclude>**/jquery.js</exclude>
+		    <exclude>**/json2.js</exclude>
+                    <exclude>**/mustache.js</exclude>
+		    <exclude>**/underscore.js</exclude>
+                </excludes>
+		<useDefaultExcludes>true</useDefaultExcludes>
             </configuration>
         </plugin>
     </plugins>

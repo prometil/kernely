@@ -28,7 +28,6 @@ import org.kernely.holiday.dto.HolidayCreationRequestDTO;
 import org.kernely.holiday.dto.HolidayDTO;
 import org.kernely.holiday.dto.HolidayUpdateRequestDTO;
 
-import com.google.common.eventbus.EventBus;
 import com.google.inject.Inject;
 
 public class HolidayServiceTest extends AbstractServiceTest {
@@ -97,8 +96,6 @@ public class HolidayServiceTest extends AbstractServiceTest {
 		cdto.frequency=FREQUENCY ;
 		cdto.type=TYPE;
 		holidayService.createHoliday(cdto) ;
-		HolidayDTO hdto = new HolidayDTO();
-		hdto = holidayService.getAllHoliday().get(0);
 		holidayService.updateHoliday(null);
 	}
 	

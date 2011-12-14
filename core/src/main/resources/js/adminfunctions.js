@@ -17,7 +17,6 @@
  * License along with Kernely.
  * If not, see <http://www.gnu.org/licenses/>.
  */
- */
 AppAdmin = (function($){
 	// the admin view
 	AdminView = Backbone.View.extend({

@@ -21,15 +21,10 @@
 package org.kernely.holiday.service;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import javax.persistence.Query;
 
-import org.kernely.core.dto.UserDTO;
-import org.kernely.core.model.Group;
-import org.kernely.core.model.User;
 import org.kernely.core.service.AbstractService;
 import org.kernely.holiday.dto.HolidayCreationRequestDTO;
 import org.kernely.holiday.dto.HolidayDTO;
