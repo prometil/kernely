@@ -59,8 +59,6 @@ public abstract class AbstractPlugin extends AbstractModule {
 	// the path of the plugin
 	private String path;
 
-	// the configuration path
-	private String configurationFilepath;
 
 	public AbstractPlugin(String pName, String pPath) {
 		name = pName;
@@ -101,9 +99,7 @@ public abstract class AbstractPlugin extends AbstractModule {
 		controllers.add(controller);
 	}
 
-	protected void registerConfigurationPath(String pFilepath) {
-		configurationFilepath = pFilepath;
-	}
+	
 
 	public Module getModule() {
 		return this;
@@ -150,15 +146,6 @@ public abstract class AbstractPlugin extends AbstractModule {
 	 */
 	protected void registerJob(Class<? extends Job> job, Trigger trigger) {
 		jobs.put(job, trigger);
-	}
-
-	/**
-	 * Return the configuration filepath
-	 * 
-	 * @return the configuration file path
-	 */
-	public String getConfigurationFilepath() {
-		return configurationFilepath;
 	}
 
 	/**

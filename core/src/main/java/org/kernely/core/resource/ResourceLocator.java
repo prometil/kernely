@@ -24,12 +24,17 @@ import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * Allows to retrieve resource in a media folder if they exist or in the jar by
  * default
  * 
  */
 public class ResourceLocator {
+
+	private static final Logger log = LoggerFactory.getLogger(ResourceLocator.class);
 
 	/**
 	 * Find the resource in the folder with a specific path
@@ -42,6 +47,7 @@ public class ResourceLocator {
 	 * @throws MalformedURLException
 	 */
 	public URL getResource(String prefix, String resource) throws MalformedURLException {
+		log.trace("Looking for resource {} in {}", resource, prefix);
 		if (resource == null || "".equals(resource)) {
 			throw new IllegalArgumentException("file path cannot be null or empty");
 		}
@@ -52,15 +58,10 @@ public class ResourceLocator {
 		}
 
 		// add media directory to the url of the ressource
-
 		String fullURL = prefix + resource;
 		File file = new File(fullURL);
 		if (!file.exists()) {
-			if (ResourceLocator.class.getResource(resource) == null) {
-				throw new IllegalArgumentException("file "+fullURL+"doesn't exist");
-			} else {
 				return ResourceLocator.class.getResource(resource);
-			}
 		}
 		URL url = file.toURI().toURL();
 		return url;

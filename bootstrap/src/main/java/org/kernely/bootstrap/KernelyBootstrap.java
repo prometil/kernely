@@ -164,14 +164,17 @@ public class KernelyBootstrap {
 		CombinedConfiguration combinedConfiguration = new CombinedConfiguration();
 		// Bind all Jersey resources detected in plugins
 		for (AbstractPlugin plugin : plugins) {
-			String filepath = plugin.getConfigurationFilepath();
+			String filepath = plugin.getName()+".xml";
 			if (filepath != null) {
 				try {
 					AbstractConfiguration configuration;
 					try {
-						configuration = new XMLConfiguration(resourceLocator.getResource("../config", filepath));
-						log.info("Found configuration file {} for plugin {}", filepath, plugin.getName());
-						combinedConfiguration.addConfiguration(configuration);
+						URL resource = resourceLocator.getResource("../config", filepath);
+						if(resource != null){
+							configuration = new XMLConfiguration(resource);
+							log.info("Found configuration file {} for plugin {}", filepath, plugin.getName());
+							combinedConfiguration.addConfiguration(configuration);
+						}
 					} catch (MalformedURLException e) {
 						log.error("Cannot find configuration file : {}", filepath);
 					}
