@@ -24,7 +24,7 @@
 			<outputDirectory>conf</outputDirectory>
 			<includes>
 				<include>logback.xml</include>
-				<include>stream-config.xml</include>
+				<include>stream</include>
 			</includes>
 		</fileSet>
 		

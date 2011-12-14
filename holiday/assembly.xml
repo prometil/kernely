@@ -24,7 +24,7 @@
 			<outputDirectory>conf</outputDirectory>
 			<includes>
 				<include>logback.xml</include>
-				<include>holiday-config.xml</include>
+				<include>holiday.xml</include>
 			</includes>
 		</fileSet>
 		
