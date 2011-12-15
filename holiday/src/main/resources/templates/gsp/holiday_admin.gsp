@@ -13,12 +13,13 @@
 	<input type="button" value="Close" class="closeModal" id="modal_window_holiday" style="right:0;"/><br/>
 	<fieldset>
 	<legend>Holiday informations</legend>
-		Type : <input type="text" name="type" value="{{type}}" id="holiday-type" /><br/>
-		Frequency : <input type="text" name="frequency" value="{{frequency}}" id="holiday-frequency" /> by : 
+		Name: <input type="text" name="type" value="{{type}}" id="holiday-type" /><br/><br/>
+		<input type="text" name="quantity" value="{{quantity}}" id="holiday-quantity" size="2" maxlength="4" /> days every
+		<input type="text" name="frequency" value="{{frequency}}" id="holiday-frequency" size="2" maxlength="4" />  
 		<select name="unity" id="unity">
-			<option value="week">week</opton> 
-			<option value="month">month</opton> 
-			<option value="year">year</opton>
+			<option value="week">week</option> 
+			<option value="month">month</option>
+			<option value="year">year</option>
 		</select> 
 	</fieldset>
 
@@ -32,8 +33,11 @@
 	<input type="button" value="Close" class="closeModal" id="modal_window_holiday" style="right:0;"/><br/>
 	<fieldset>
 	<legend>Holiday informations</legend>
-	Type : <input type="text" name="type" value="{{type}}" id="holiday-type" /><br/>
-	<div id="selected">Frequency : <input type="text" name="frequency" value="{{frequency}}" id="holiday-frequency" /> by : 	</div>
+		Name: <input type="text" name="type" value="{{type}}" id="holiday-type" /><br/><br/>
+	<div id="selected">
+		<input type="text" name="quantity" value="{{quantity}}" id="holiday-quantity" size="2" maxlength="4" /> days every
+		<input type="text" name="frequency" value="{{frequency}}" id="holiday-frequency" size="2" maxlength="4" /> 
+	</div>
 	</fieldset>
 	<br/>
 	<input type="button" value="Send" class="updateHoliday"/>

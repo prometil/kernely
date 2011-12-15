@@ -30,24 +30,29 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @XmlRootElement
 public class HolidayDTO {
+
+	public long id;
+	public String name;
+	public float quantity;
+	public String periodUnit;
+	public int periodNumber;
+
+	
 	public HolidayDTO(){
 		
 	}
 	/**
 	 * holiday dto
-	 * @param newType
+	 * @param newType The name of the 
 	 * @param newFrequency
 	 * @param newId
 	 */
-	public HolidayDTO(String newType, int newFrequency, String newUnity, int  newId){
-		this.type = newType ; 
-		this.frequency = newFrequency;
-		this.unity = newUnity;
+	public HolidayDTO(String newType, float newQuantity, int newFrequency, String newUnity, long  newId){
+		this.name = newType ; 
+		this.quantity = newQuantity;
+		this.periodNumber = newFrequency;
+		this.periodUnit = newUnity;
 		this.id=newId;
 	}
 	
-	public String type;
-	public int frequency;
-	public String unity;
-	public int id;
 }

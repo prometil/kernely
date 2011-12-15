@@ -141,12 +141,45 @@ create table kernely_user_details (
 	birth date
 );
 
-drop table IF EXISTS kernely_holiday;
-create table kernely_holiday (
+drop table IF EXISTS kernely_holiday_type CASCADE;
+create table kernely_holiday_type (
 	id int primary key,
-	frequency int,
-	type varchar(50),
-	unity varchar(50)
+	name varchar(50),
+	quantity float,
+	period_number int,
+	period_unit varchar(50),
+	effective_month int
+);
+
+drop table IF EXISTS kernely_holiday_request CASCADE;
+create table kernely_holiday_request (
+	id int primary key,
+	begin_date date,
+	end_date date,
+	status int,
+	requester_comment varchar(500),
+	manager_comment varchar(500),
+	fk_user int references kernely_user(id)
+);
+
+drop table IF EXISTS kernely_holiday_balance CASCADE;
+create table kernely_holiday_balance (
+	id int primary key,
+	available_balance float,
+	future_balance float,
+	last_update date,
+	fk_holiday_type int references kernely_holiday_type(id),
+	fk_user int references kernely_user(id)
+);
+
+drop table IF EXISTS kernely_holiday_request_detail CASCADE;
+create table kernely_holiday_request_detail (
+	id int primary key,
+	day date,
+	am bool,
+	pm bool,
+	fk_holiday_request int references kernely_holiday_request(id),
+	fk_holiday_type int references kernely_holiday_type(id)
 );
 
 
