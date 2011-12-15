@@ -61,7 +61,7 @@ public class Message extends AbstractModel {
 	}
 
 	@ManyToOne
-	@JoinColumn(name = "fk_user_id")
+	@JoinColumn(name = "user_id")
 	private User user;
 
 	public User getUser() {
@@ -79,7 +79,7 @@ public class Message extends AbstractModel {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	private long id;
+	private int id;
 
 	private boolean commentable;
 
@@ -88,7 +88,7 @@ public class Message extends AbstractModel {
 	 * 
 	 * @return the long
 	 */
-	public long getId() {
+	public int getId() {
 		return id;
 	}
 
@@ -112,7 +112,7 @@ public class Message extends AbstractModel {
 	}
 
 	@ManyToOne
-	@JoinColumn(name = "stream")
+	@JoinColumn(name = "stream_id")
 	private Stream stream;
 
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "message")
@@ -122,13 +122,6 @@ public class Message extends AbstractModel {
 	@ManyToOne
 	@JoinColumn(name = "message_parent", nullable = true)
 	private Message message;
-
-	/**
-	 * Users who added the message to their favorites
-	 */
-	@ManyToMany(cascade = { CascadeType.MERGE }, fetch = FetchType.LAZY)
-	@JoinTable(name = "kernely_user_favorites", joinColumns = @JoinColumn(name = "fk_message"), inverseJoinColumns = @JoinColumn(name = "fk_user"))
-	private Set<User> favoriteUsers;
 
 	/**
 	 * Gets all the comments associated to the message.
@@ -154,30 +147,11 @@ public class Message extends AbstractModel {
 	 * 
 	 * @param id
 	 */
-	public void setId(long id) {
+	public void setId(int id) {
 		this.id = id;
 	}
 
-	/**
-	 * Get users which have set this message as a favorite.
-	 * 
-	 * @return a set containing users which have set this message as a favorite.
-	 */
-	public Set<User> getFavoriteUsers() {
-		return favoriteUsers;
-	}
-
-	/**
-	 * Set users which have set this message as a favorite.
-	 * 
-	 * @param a
-	 *            set containing users which have set this message as a
-	 *            favorite.
-	 */
-	public void setFavoriteUsers(Set<User> favoriteUsers) {
-		this.favoriteUsers = favoriteUsers;
-	}
-
+	
 	/**
 	 * Return the content of the message.
 	 * 

@@ -54,6 +54,7 @@ public abstract class Migration implements Comparable<Migration> {
 	 * @throws SQLException
 	 */
 	public boolean apply(Connection conn) throws SQLException {
+		boolean executed = true ; 
 		if (getList().size() == 0) {
 			return true;
 		}
@@ -61,18 +62,23 @@ public abstract class Migration implements Comparable<Migration> {
 		for (Command command : getList()) {
 			try {
 				command.execute(conn);
-				conn.commit();
-				return true;
+				executed = executed && true;
 			} catch (SQLException e) {
 				log.error("Cannot execute command", e);
-				conn.rollback();
+				executed = executed && false;
 				break;
-
-			} finally {
-				conn.setAutoCommit(true);
 			}
 		}
-
+		if (executed){
+			conn.commit();
+			conn.setAutoCommit(true);
+			return true;
+		}
+		else {
+			conn.rollback();
+			conn.setAutoCommit(true);
+		}
+		
 		return false;
 	}
 

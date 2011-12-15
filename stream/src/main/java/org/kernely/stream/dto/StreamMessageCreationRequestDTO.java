@@ -35,7 +35,7 @@ public class StreamMessageCreationRequestDTO {
 	 * @param idStream
 	 *            The id of the concerned stream
 	 */
-	public StreamMessageCreationRequestDTO(String message, long idStream) {
+	public StreamMessageCreationRequestDTO(String message, int idStream) {
 		this.message = message;
 		this.idStream = idStream;
 	}
@@ -48,5 +48,5 @@ public class StreamMessageCreationRequestDTO {
 	}
 
 	public String message;
-	public long idStream;
+	public int idStream;
 }

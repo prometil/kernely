@@ -22,29 +22,32 @@ package org.kernely.holiday.dto;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
-
 @XmlRootElement
 public class HolidayUpdateRequestDTO {
+
+	public int id;
+	public String type;
+	public float quantity;
+	public int frequency;
+	public String unity;
+
 	public HolidayUpdateRequestDTO() {
 
 	}
+
 	/**
-	 * create a dto  for update 
-	 * 	@param newId
- 	* @param newType
- 	* @param newFrequency
- 	*/
+	 * create a dto for update
+	 * 
+	 * @param newId
+	 * @param newType
+	 * @param newFrequency
+	 */
 	public HolidayUpdateRequestDTO(long newId, String newType, float quantity, int newFrequency, String newUnity) {
-		this.id = newId;
+		this.id = (int) newId;
 		this.type = newType;
 		this.quantity = quantity;
 		this.frequency = newFrequency;
 		this.unity = newUnity;
 	}
 
-	public long id;
-	public String type;
-	public float quantity;
-	public int frequency;
-	public String unity;
 }

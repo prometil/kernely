@@ -22,21 +22,16 @@ package org.kernely.stream.model;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.Cascade;
 import org.kernely.core.hibernate.AbstractModel;
-import org.kernely.core.model.User;
 
 @Entity
 @Table(name = "kernely_stream")
@@ -123,9 +118,9 @@ public class Stream extends AbstractModel {
 	/**
 	 * The method return the id.
 	 * 
-	 * @return the long
+	 * @return the id
 	 */
-	public long getId() {
+	public int getId() {
 		return id;
 	}
 
@@ -189,27 +184,6 @@ public class Stream extends AbstractModel {
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "stream")
 	@Cascade( { org.hibernate.annotations.CascadeType.ALL })
 	private Set<Message> messages;
-
-	/**
-	 * Users who subscribed to this stream
-	 */
-	@ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, fetch = FetchType.LAZY)
-	@JoinTable(name = "kernely_stream_subscription", joinColumns = @JoinColumn(name = "fk_stream"), inverseJoinColumns = @JoinColumn(name = "fk_user"))
-	private Set<User> subscriptors;
-
-	/**
-	 * Get users which follow this stream.
-	 */
-	public Set<User> getSubscriptors() {
-		return subscriptors;
-	}
-
-	/**
-	 * Set users which follow this stream.
-	 */
-	public void setSubscriptors(Set<User> subscriptors) {
-		this.subscriptors = subscriptors;
-	}
 
 	/**
 	 * @return the messages contained in the stream.

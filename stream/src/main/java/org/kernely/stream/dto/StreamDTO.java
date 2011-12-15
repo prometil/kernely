@@ -52,7 +52,7 @@ public class StreamDTO {
 	public String title;
 
 	// the id in database
-	public long id;
+	public int id;
 
 	// messages contained by the stream
 	public List<StreamMessageDTO> messages;

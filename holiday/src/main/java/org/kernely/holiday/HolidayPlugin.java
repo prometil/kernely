@@ -20,6 +20,7 @@
 
 package org.kernely.holiday;
 
+import org.kernely.holiday.migrations.Migration01;
 import org.kernely.core.plugin.AbstractPlugin;
 import org.kernely.holiday.controller.HolidayAdminController;
 import org.kernely.holiday.model.HolidayBalance;
@@ -48,6 +49,7 @@ public class HolidayPlugin extends AbstractPlugin {
 		registerModel(HolidayRequest.class);
 		registerModel(HolidayRequestDetail.class);
 		registerAdminPage("Holiday admin", "/admin/holiday");
+		registerMigration(new Migration01());
 	}
 	
 	@Override

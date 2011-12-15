@@ -74,7 +74,7 @@ public class StreamService extends AbstractService {
 	 * @throws IllegalAccessException
 	 */
 	@Transactional
-	public StreamMessageDTO addMessage(String pMessage, long streamId) {
+	public StreamMessageDTO addMessage(String pMessage, int streamId) {
 		if (pMessage == null) {
 			throw new IllegalArgumentException("Message cannot be null ");
 		}
@@ -119,7 +119,7 @@ public class StreamService extends AbstractService {
 	 * @return the created comment
 	 */
 	@Transactional
-	public StreamMessageDTO addComment(String pMessage, long streamId, long idMessageParent) {
+	public StreamMessageDTO addComment(String pMessage, int streamId, int idMessageParent) {
 		if (pMessage == null) {
 			throw new IllegalArgumentException("Comment cannot be null ");
 		}
@@ -190,7 +190,7 @@ public class StreamService extends AbstractService {
 	 * @return the stream
 	 */
 	@Transactional
-	public StreamDTO getStream(long stream_id) {
+	public StreamDTO getStream(int stream_id) {
 		Stream stream = getStreamModel(stream_id);
 		StreamDTO dto = new StreamDTO();
 		dto.id = stream.getId();
@@ -205,7 +205,7 @@ public class StreamService extends AbstractService {
 	 * @return the stream
 	 */
 	@Transactional
-	private Stream getStreamModel(long stream_id) {
+	private Stream getStreamModel(int stream_id) {
 		Query query = em.get().createQuery("SELECT s FROM Stream s WHERE id= :stream_id");
 		query.setParameter("stream_id", (int) stream_id);
 		Stream stream = (Stream) query.getSingleResult();
@@ -265,7 +265,7 @@ public class StreamService extends AbstractService {
 	 *            The id of the stream to lock.
 	 */
 	@Transactional
-	public void lockStream(long stream_id) {
+	public void lockStream(int stream_id) {
 		Stream stream = getStreamModel(stream_id);
 		stream.setLocked(true);
 	}
@@ -277,7 +277,7 @@ public class StreamService extends AbstractService {
 	 *            The id of the stream to lock.
 	 */
 	@Transactional
-	public void unlockStream(long stream_id) {
+	public void unlockStream(int stream_id) {
 		Stream stream = getStreamModel(stream_id);
 		stream.setLocked(false);
 	}
@@ -362,11 +362,11 @@ public class StreamService extends AbstractService {
 	 *         Messages are ordered by descendant id.
 	 */
 	@SuppressWarnings("unchecked")
-	public List<StreamMessageDTO> getAllMessagesForCurrentUser(long flag) {
+	public List<StreamMessageDTO> getAllMessagesForCurrentUser(int flag) {
 		if (flag == 0) {
 			Query query = em.get().createQuery("SELECT max(id) FROM Message m");
 			try {
-				flag = (Long) query.getSingleResult();
+				flag = (Integer) query.getSingleResult();
 			} catch (NullPointerException e) {
 				// When there is no message.
 				flag = 0;
@@ -415,7 +415,7 @@ public class StreamService extends AbstractService {
 	 *            The id of the message to delete
 	 */
 	@Transactional
-	public void deleteMessage(long messageId) {
+	public void deleteMessage(int messageId) {
 		Message message = em.get().find(Message.class, messageId);
 		em.get().remove(message);
 	}
@@ -427,7 +427,7 @@ public class StreamService extends AbstractService {
 	 *            Id of the message
 	 * @return the list of DTO corresponding to message's comments
 	 */
-	public List<StreamMessageDTO> getAllCommentsForMessage(long id) {
+	public List<StreamMessageDTO> getAllCommentsForMessage(int id) {
 		Message message = em.get().find(Message.class, id);
 		TreeSet<Message> commentsModel = new TreeSet<Message>(new MessageComparator());
 		if (message.getComments() != null) {
@@ -447,11 +447,11 @@ public class StreamService extends AbstractService {
 	 * 
 	 * @return the value of the total of messages for the current user
 	 */
-	public long getCurrentNbMessages() {
+	public int getCurrentNbMessages() {
 		List<Stream> streams = this.getCurrentUserStreamModel();
 		Query query = em.get().createQuery("SELECT count(m) FROM Message m  WHERE message is null AND stream in (:streamSet)");
 		query.setParameter("streamSet", streams);
-		long count = (Long) query.getSingleResult();
+		int count = (Integer) query.getSingleResult();
 		return count;
 	}
 }

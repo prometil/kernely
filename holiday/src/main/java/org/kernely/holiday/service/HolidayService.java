@@ -39,8 +39,8 @@ import com.google.inject.persist.Transactional;
 @Singleton
 public class HolidayService extends AbstractService {
 
-	protected  final Logger log = LoggerFactory.getLogger(this.getClass());
-	
+	protected final Logger log = LoggerFactory.getLogger(this.getClass());
+
 	/**
 	 * Gets the lists of all groups contained in the database.
 	 * 
@@ -49,28 +49,29 @@ public class HolidayService extends AbstractService {
 	@Transactional
 	@SuppressWarnings("unchecked")
 	public List<HolidayDTO> getAllHoliday() {
-		
+
 		Query query = em.get().createQuery("SELECT e FROM HolidayType e ORDER BY Name");
 		List<HolidayType> collection = (List<HolidayType>) query.getResultList();
 		List<HolidayDTO> dtos = new ArrayList<HolidayDTO>();
-		log.debug("HolidayService found {} holiday types",collection.size());
+		log.debug("HolidayService found {} holiday types", collection.size());
 		for (HolidayType holiday : collection) {
-			dtos.add(new HolidayDTO(holiday.getName(), holiday.getQuantity(), holiday.getPeriodNumber(), holiday.getPeriodUnit(),holiday.getId()));
-			log.debug("Holiday {}: {}",holiday.getName(), holiday.getQuantity() + " each " + holiday.getPeriodNumber() + " " + holiday.getPeriodUnit());
+			dtos.add(new HolidayDTO(holiday.getName(), holiday.getQuantity(), holiday.getPeriodNumber(), holiday.getPeriodUnit(), holiday.getId()));
+			log.debug("Holiday {}: {}", holiday.getName(), holiday.getQuantity() + " each " + holiday.getPeriodNumber() + " "
+					+ holiday.getPeriodUnit());
 		}
 		return dtos;
 	}
 
-
 	@Transactional
-	public HolidayDTO getHolidayDTO(long id){
+	public HolidayDTO getHolidayDTO(long id) {
 		Query query = em.get().createQuery("SELECT  h from HolidayType h WHERE  h.id=:id");
 		query.setParameter("id", id);
-		HolidayType holiday = (HolidayType)query.getSingleResult() ;
-		HolidayDTO hdto = new HolidayDTO(holiday.getName(), holiday.getQuantity(), holiday.getPeriodNumber(), holiday.getPeriodUnit(),holiday.getId());
+		HolidayType holiday = (HolidayType) query.getSingleResult();
+		HolidayDTO hdto = new HolidayDTO(holiday.getName(), holiday.getQuantity(), holiday.getPeriodNumber(), holiday.getPeriodUnit(), holiday
+				.getId());
 		return hdto;
 	}
-	
+
 	/**
 	 * Delete an existing holiday in database
 	 * 
@@ -83,36 +84,36 @@ public class HolidayService extends AbstractService {
 		em.get().remove(holiday);
 	}
 
-
 	/**
 	 * Create a new Holiday in database
+	 * 
 	 * @param request
-	 * 	
+	 * 
 	 */
 	@SuppressWarnings("unchecked")
 	@Transactional
 	public void createHoliday(HolidayCreationRequestDTO request) {
-		if(request==null){
+		if (request == null) {
 			throw new IllegalArgumentException("Request cannot be null ");
 		}
-		
-		if(request.type==null){
+
+		if (request.type == null) {
 			throw new IllegalArgumentException("holiday type cannot be null ");
 		}
-		if(request.frequency<0){
+		if (request.frequency < 0) {
 			throw new IllegalArgumentException("holiday frequency cannot be under 0 ");
 		}
-		if("".equals(request.type.trim())){
+		if ("".equals(request.type.trim())) {
 			throw new IllegalArgumentException("holiday type cannot be space character only ");
 		}
-		String type=request.type; 
+		String type = request.type;
 		Query verifExist = em.get().createQuery("SELECT g FROM HolidayType g WHERE name=:name");
 		verifExist.setParameter("name", type);
-		List<HolidayType> list = (List<HolidayType>)verifExist.getResultList();
-		if(!list.isEmpty()){
+		List<HolidayType> list = (List<HolidayType>) verifExist.getResultList();
+		if (!list.isEmpty()) {
 			throw new IllegalArgumentException("Another holiday with this name already exists");
 		}
-		
+
 		HolidayType holiday = new HolidayType();
 		holiday.setName(request.type.trim());
 		holiday.setQuantity(request.quantity);
@@ -120,42 +121,44 @@ public class HolidayService extends AbstractService {
 		holiday.setPeriodUnit(request.unity);
 		em.get().persist(holiday);
 	}
-	
+
 	/**
 	 * Update an existing holiday in database
+	 * 
 	 * @param request
-	 * 			The request, containing group name and id of the needed group
+	 *            The request, containing group name and id of the needed group
 	 */
 	@SuppressWarnings("unchecked")
 	@Transactional
 	public void updateHoliday(HolidayUpdateRequestDTO request) {
-		if(request==null){
+		if (request == null) {
 			throw new IllegalArgumentException("Request cannot be null ");
 		}
-		
-		if(request.type==null){
+
+		if (request.type == null) {
 			throw new IllegalArgumentException("holiday cannot be null ");
 		}
-		if(request.frequency<0){
+		if (request.frequency < 0) {
 			throw new IllegalArgumentException("holiday frequency cannot be under 0 ");
 		}
-		if("".equals(request.type.trim())){
+		if ("".equals(request.type.trim())) {
 			throw new IllegalArgumentException("holiday type cannot be space character only ");
 		}
-		
+
 		String name = request.type;
 		long id = request.id;
 
 		// Check if the user whant to change the name
 		HolidayType holiday = em.get().find(HolidayType.class, id);
-		if (! holiday.getName().equals(name)){
+		if (!holiday.getName().equals(name)) {
 			// If the new name already exists, don't update
 			Query verifExist = em.get().createQuery("SELECT g FROM HolidayType g WHERE name=:name");
-			verifExist.setParameter("name",name);
-			List<HolidayType> list = (List<HolidayType>)verifExist.getResultList();
-			if(!list.isEmpty()){
+			verifExist.setParameter("name", name);
+			List<HolidayType> list = (List<HolidayType>) verifExist.getResultList();
+			if (!list.isEmpty()) {
 				return;
-			}			
+			}
+
 		}
 
 		holiday.setName(request.type);
@@ -163,6 +166,6 @@ public class HolidayService extends AbstractService {
 		holiday.setQuantity(request.quantity);
 		holiday.setPeriodUnit(request.unity);
 		em.get().merge(holiday);
-		
+
 	}
 }

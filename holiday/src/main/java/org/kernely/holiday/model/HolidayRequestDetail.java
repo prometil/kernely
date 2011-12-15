@@ -51,7 +51,7 @@ public class HolidayRequestDetail extends AbstractModel {
     @JoinColumn(name = "fk_holiday_type")
 	private HolidayType type;
 
-	
+
 	/**
 	 * @return the id
 	 */
@@ -63,7 +63,7 @@ public class HolidayRequestDetail extends AbstractModel {
 	 * @param id
 	 *            the id to set
 	 */
-	public void setId(long id) {
+	public void setId(int id) {
 		this.id = id;
 	}
 
