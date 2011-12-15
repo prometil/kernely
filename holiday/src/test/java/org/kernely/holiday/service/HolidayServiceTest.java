@@ -46,8 +46,8 @@ public class HolidayServiceTest extends AbstractServiceTest {
 		holidayService.createHoliday(cdto) ;
 		HolidayDTO hdto = new HolidayDTO();
 		hdto = holidayService.getAllHoliday().get(0);
-		assertEquals(FREQUENCY, hdto.frequency);
-		assertEquals(TYPE, hdto.type);
+		assertEquals(FREQUENCY, hdto.periodNumber);
+		assertEquals(TYPE, hdto.name);
 	}
 	
 	@Test(expected=IllegalArgumentException.class)
@@ -86,8 +86,8 @@ public class HolidayServiceTest extends AbstractServiceTest {
 		
 		HolidayDTO hdto2 = new HolidayDTO();
 		hdto2 = holidayService.getAllHoliday().get(0);
-		assertEquals(6, hdto2.frequency);
-		assertEquals("new type", hdto2.type);
+		assertEquals(6, hdto2.periodNumber);
+		assertEquals("new type", hdto2.name);
 	}
 	
 	@Test(expected=IllegalArgumentException.class)
