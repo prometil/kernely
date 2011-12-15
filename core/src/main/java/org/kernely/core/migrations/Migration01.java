@@ -254,6 +254,15 @@ public class Migration01 extends Migration {
 		
 		commands.add(insertUserRole2);
 		
+		CreateTable mail = CreateTable.name("kernely_mail");
+		mail.column("mail_id", "int primary key");
+		mail.column("subject", "text");
+		mail.column("content", "text");
+		mail.column("recipients", "text");
+		mail.column("cc", "text");
+		
+		commands.add(mail);
+		
 		//sequence 
 		RawSql hibernateSequence = new RawSql("CREATE SEQUENCE hibernate_sequence START 10");
 		commands.add(hibernateSequence);

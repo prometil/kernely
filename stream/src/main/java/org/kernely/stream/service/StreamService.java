@@ -102,10 +102,14 @@ public class StreamService extends AbstractService {
 					+ "</p><br/> has been posted on <span style='font-style:italic;'>" + parent.getTitle() + "</span>";
 			// Remove the current user
 			subscribers.remove(userService.getAuthenticatedUserDTO());
+			List<String> recipients = new ArrayList<String>();
 			for (UserDTO u : subscribers) {
-				mailService.create("/templates/gsp/mail.gsp").with("content", contentString).subject(
-						"[Kernely] Someone posted on " + parent.getTitle()).to(u.userDetails.email).send();
+				recipients.add(u.userDetails.email);
+				log.debug("Adds {} in the mail recipients !", u.userDetails.email);
 			}
+			mailService.create("/templates/gsp/mail.gsp").with("content", contentString).subject(
+					"[Kernely] Someone posted on " + parent.getTitle()).to(recipients).registerMail();
+			log.debug("Mail registered !");
 		}
 
 		StreamMessageDTO messageDTO = new StreamMessageDTO(message);
@@ -148,7 +152,7 @@ public class StreamService extends AbstractService {
 			String contentString = "Your message <br/><p style='font-style:italic;'>" + messageParent.getContent()
 					+ "</p><br/> has been commented with <br/><p style='font-style:italic;'>" + comment.getContent() + "</p>";
 			mailService.create("/templates/gsp/mail.gsp").with("content", contentString).subject("[Kernely] Your message has been commented.").to(
-					messageParent.getUser().getUserDetails().getMail()).send();
+					messageParent.getUser().getUserDetails().getMail()).registerMail();
 		}
 		StreamMessageDTO commentDTO = new StreamMessageDTO(comment);
 
