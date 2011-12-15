@@ -130,32 +130,8 @@ public class UserController extends AbstractController {
 			template = "/templates/gsp/profile_editable.gsp";
 		}
 		UserDetailsDTO uddto = userService.getUserDetails(userLogin);
-		String imagePath = "/images/default_user.png";
-		if (uddto.image != null && uddto.image.equals("null")) {
-			uddto.image = null;
-		}
-		if (uddto.image != null) {
-			imagePath = "/images/" + uddto.image;
-		}
-	
-		String username = uddto.firstname + " " + uddto.lastname;
-		String lastname = uddto.lastname;
-		String firstname = uddto.firstname;
-		String email = uddto.email;
-		String imageName = uddto.image;
-		String address = ( uddto.adress == null ) ? "" : uddto.adress ;
-		String zip = (uddto.zip == null) ? "" : uddto.zip;
-		String city = (uddto.city == null) ? "" : uddto.city;
-		String homephone = (uddto.homephone == null) ? "" : uddto.homephone;
-		String mobilephone = ( uddto.mobilephone == null) ? "" :uddto.mobilephone;
-		String businessphone = (uddto.businessphone == null) ? "": uddto.businessphone;
-		String birth = ( uddto.birth == null) ? "" : uddto.birth;
-		String nationality = (uddto.nationality == null) ? "" : uddto.nationality;
-		String ssn = ( uddto.ssn == null ) ? "" : uddto.ssn;
-		int civility = (uddto.civility == null) ? 0 : uddto.civility;
-		
-		return templateRenderer.create(template).with("username", username).with("lastname", lastname).with("firstname", firstname).with("email", email).with("image", imagePath).with("imagename", imageName).with("adress", address).with("zip",
-				zip).with("city", city).with("homephone", homephone).with("mobilephone", mobilephone).with("businessphone", businessphone).with("birth", birth).with("nationality", nationality).with("ssn", ssn).with("civility", civility).render();
+
+		return templateRenderer.create(template).with("details", uddto).render();
 	}
 
 	/**
@@ -172,13 +148,11 @@ public class UserController extends AbstractController {
 	public UserDetailsDTO editProfil(UserDetailsUpdateRequestDTO user) {
 
 		UserDetailsDTO ud = userService.getUserDetails(userService.getAuthenticatedUserDTO().username);
-		UserDetailsDTO uddto = new UserDetailsDTO(user.firstname, user.lastname, user.image, user.email, user.adress, user.zip, user.city, user.homephone, user.mobilephone, user.businessphone, user.birth, user.nationality, user.ssn, user.civility, ud.id, new UserDTO());
-
 		// Match the user id (foreign key) with the userdetailid
 		user.id = ud.id;
 		// Call UserService to update informations
-		userService.updateUserProfile(user);
-		return uddto;
+		
+		return userService.updateUserProfile(user);
 	}
 
 	/**

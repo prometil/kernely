@@ -131,7 +131,7 @@ public class UserService extends AbstractService {
 	 *            The DTO containing all informations about the user to update
 	 */
 	@Transactional
-	public void updateUserProfile(UserDetailsUpdateRequestDTO u) {
+	public UserDetailsDTO updateUserProfile(UserDetailsUpdateRequestDTO u) {
 		if (u == null) {
 			throw new IllegalArgumentException("Request cannot be null ");
 		}
@@ -165,8 +165,10 @@ public class UserService extends AbstractService {
 			uDetails.setZip(u.zip);
 			uDetails.setCivility(u.civility);
 			uDetails.setImage(u.image);
+			return new UserDetailsDTO(uDetails);
 		} catch (ParseException e) {
 			birth = new Date();
+			return new UserDetailsDTO();
 		}
 	}
 
@@ -266,18 +268,7 @@ public class UserService extends AbstractService {
 		Query query = em.get().createQuery("SELECT e FROM UserDetails, User WHERE User.id =" + u.getId());
 		UserDetails ud = (UserDetails) query.getResultList().get(0);
 
-		// / handle date
-		String newDateString;
-		if (ud.getBirth() != null) {
-			Date date = ud.getBirth();
-			String newPattern = "dd/MM/yyyy";
-			newDateString = (new SimpleDateFormat(newPattern)).format(date);
-		} else {
-			newDateString = "00/00/0000";
-		}
-		UserDetailsDTO dto = new UserDetailsDTO(ud.getFirstname(), ud.getName(), ud.getImage(), ud.getMail(), ud.getAdress(), ud.getZip(), ud
-				.getCity(), ud.getHomephone(), ud.getMobilephone(), ud.getBusinessphone(), newDateString, ud.getNationality(), ud.getSsn(), ud
-				.getCivility(), ud.getId_user_detail(), new UserDTO(u.getUsername(), u.isLocked(), u.getId()));
+		UserDetailsDTO dto = new UserDetailsDTO(ud);
 
 		return dto;
 
@@ -297,18 +288,7 @@ public class UserService extends AbstractService {
 		query = em.get().createQuery("SELECT e FROM UserDetails e , User u WHERE e.user = u AND u.id =" + u.getId());
 		UserDetails ud = (UserDetails) query.getSingleResult();
 
-		// / handle date
-		String newDateString;
-		if (ud.getBirth() != null) {
-			Date date = ud.getBirth();
-			String newPattern = "dd/MM/yyyy";
-			newDateString = (new SimpleDateFormat(newPattern)).format(date);
-		} else {
-			newDateString = "00/00/0000";
-		}
-		UserDetailsDTO dto = new UserDetailsDTO(ud.getFirstname(), ud.getName(), ud.getImage(), ud.getMail(), ud.getAdress(), ud.getZip(), ud
-				.getCity(), ud.getHomephone(), ud.getMobilephone(), ud.getBusinessphone(), newDateString, ud.getNationality(), ud.getSsn(), ud
-				.getCivility(), ud.getId_user_detail(), new UserDTO(u.getUsername(), u.isLocked(), u.getId()));
+		UserDetailsDTO dto = new UserDetailsDTO(ud);
 		return dto;
 
 	}
@@ -337,10 +317,7 @@ public class UserService extends AbstractService {
 		List<UserDetails> collection = (List<UserDetails>) query.getResultList();
 		List<UserDetailsDTO> dtos = new ArrayList<UserDetailsDTO>();
 		for (UserDetails user : collection) {
-			dtos.add(new UserDetailsDTO(user.getFirstname(), user.getName(), user.getImage(), user.getMail(), user.getAdress(), user.getZip(), user
-					.getCity(), user.getHomephone(), user.getMobilephone(), user.getBusinessphone(), null, user.getNationality(), user.getSsn(), user
-					.getCivility(), user.getId_user_detail(), new UserDTO(user.getUser().getUsername(), user.getUser().isLocked(), user.getUser()
-					.getId())));
+			dtos.add(new UserDetailsDTO(user));
 		}
 		return dtos;
 	}

@@ -19,6 +19,9 @@
  */
 package org.kernely.core.dto;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.kernely.core.model.UserDetails;
@@ -27,20 +30,20 @@ import org.kernely.core.model.UserDetails;
 public class UserDetailsDTO {
 
 	public int id;
-	public String firstname;
-	public String lastname;
-	public String image;
-	public String email;
-	public String adress;
-	public String zip;
-	public String city;
-	public String homephone;
-	public String mobilephone;
-	public String businessphone;
-	public String birth;
-	public String nationality;
-	public String ssn;
-	public Integer civility;
+	public String firstname = "";
+	public String lastname = "";
+	public String image = "default_user.png";
+	public String email = "";
+	public String adress = "";
+	public String zip = "";
+	public String city = "";
+	public String homephone = "";
+	public String mobilephone = "";
+	public String businessphone = "";
+	public String birth = "";
+	public String nationality = "";
+	public String ssn = "";
+	public Integer civility = 0;
 	public UserDTO user;
 
 	/**
@@ -57,51 +60,14 @@ public class UserDetailsDTO {
 	 *            User's firstname
 	 * @param lName
 	 *            User's lastname
-	 * @param img
-	 *            User's image
-	 * @param mail
-	 *            User's mail address
-	 * @param adress
-	 *            User's address
-	 * @param zip
-	 *            User's zip
-	 * @param city
-	 *            User's city
-	 * @param homephone
-	 *            User's homephone
-	 * @param mobilephone
-	 *            User's mobile phone
-	 * @param businessphone
-	 *            User's business phone
-	 * @param birth
-	 *            User's birth date
-	 * @param nationality
-	 *            User's nationality
-	 * @param ssn
-	 *            User's social security
-	 * @param civility
-	 *            User's civility
 	 * @param id
 	 *            User's id
 	 * @param u
 	 *            User's login/password
 	 */
-	public UserDetailsDTO(String fName, String lName, String img, String mail, String adress, String zip, String city, String homephone,
-			String mobilephone, String businessphone, String birth, String nationality, String ssn, Integer civility, int id, UserDTO u) {
+	public UserDetailsDTO(String fName, String lName, int id, UserDTO u) {
 		this.firstname = fName;
 		this.lastname = lName;
-		this.image = img;
-		this.email = mail;
-		this.adress = adress;
-		this.zip = zip;
-		this.city = city;
-		this.homephone = homephone;
-		this.mobilephone = mobilephone;
-		this.businessphone = businessphone;
-		this.birth = birth;
-		this.nationality = nationality;
-		this.ssn = ssn;
-		this.civility = civility;
 		this.id = id;
 		this.user = u;
 	}
@@ -118,7 +84,11 @@ public class UserDetailsDTO {
 		this.mobilephone = details.getMobilephone();
 		this.businessphone = details.getBusinessphone();
 		if (details.getBirth() != null) {
-			this.birth = details.getBirth().toString();
+			String newDateString;
+			Date date = details.getBirth();
+			String newPattern = "dd/MM/yyyy";
+			newDateString = (new SimpleDateFormat(newPattern)).format(date);
+			this.birth = newDateString;
 		} else {
 			this.birth = "";
 		}

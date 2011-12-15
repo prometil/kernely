@@ -68,7 +68,7 @@ public class KernelyBootstrap {
 		List<AbstractPlugin> plugins = pluginLoad.getPlugins();
 
 		// configure
-		CombinedConfiguration combinedConfiguration = setTheConfiguration(plugins);
+		CombinedConfiguration combinedConfiguration = buildConfiguration(plugins);
 
 		// update database using configuration
 		Migrator m = new Migrator(combinedConfiguration, plugins);
@@ -89,7 +89,7 @@ public class KernelyBootstrap {
 			// Register a listener
 			ServletHandler handler = createServletHandler();
 			WebAppContext webApp = new WebAppContext(warUrlString, "/");
-			webApp.addEventListener(new GuiceServletConfig(plugins, setTheConfiguration(plugins)));
+			webApp.addEventListener(new GuiceServletConfig(plugins, buildConfiguration(plugins)));
 			webApp.setServletHandler(handler);
 			webApp.setErrorHandler(new KernelyErrorHandler());
 			server.setHandler(webApp);
@@ -159,19 +159,22 @@ public class KernelyBootstrap {
 	 *            list of plugins
 	 * @return the combinedconfiguration set
 	 */
-	private static CombinedConfiguration setTheConfiguration(List<AbstractPlugin> plugins) {
+	private static CombinedConfiguration buildConfiguration(List<AbstractPlugin> plugins) {
 		ResourceLocator resourceLocator = new ResourceLocator();
 		CombinedConfiguration combinedConfiguration = new CombinedConfiguration();
 		// Bind all Jersey resources detected in plugins
 		for (AbstractPlugin plugin : plugins) {
-			String filepath = plugin.getConfigurationFilepath();
+			String filepath = plugin.getName()+".xml";
 			if (filepath != null) {
 				try {
 					AbstractConfiguration configuration;
 					try {
-						configuration = new XMLConfiguration(resourceLocator.getResource("../config", filepath));
-						log.info("Found configuration file {} for plugin {}", filepath, plugin.getName());
-						combinedConfiguration.addConfiguration(configuration);
+						URL resource = resourceLocator.getResource("../config", filepath);
+						if(resource != null){
+							configuration = new XMLConfiguration(resource);
+							log.info("Found configuration file {} for plugin {}", filepath, plugin.getName());
+							combinedConfiguration.addConfiguration(configuration);
+						}
 					} catch (MalformedURLException e) {
 						log.error("Cannot find configuration file : {}", filepath);
 					}

@@ -22,12 +22,13 @@
 		<dependency>
 			<groupId>org.kernely</groupId>
 			<artifactId>core</artifactId>
-			<version>0.1-SNAPSHOT</version>
+			<version>${project.version}</version>
+			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.kernely</groupId>
 			<artifactId>core</artifactId>
-			<version>0.1-SNAPSHOT</version>
+			<version>${project.version}</version>
 			<type>test-jar</type>
 			<scope>test</scope>
 		</dependency>
@@ -56,5 +57,27 @@
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
-	
+	<build>
+		<finalName>holiday</finalName>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<version>2.2</version>
+				<configuration>
+					<descriptors>
+						<descriptor>assembly.xml</descriptor>
+					</descriptors>
+				</configuration>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>single</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
 </project>

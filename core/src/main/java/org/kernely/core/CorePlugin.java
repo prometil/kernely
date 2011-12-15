@@ -60,9 +60,8 @@ public class CorePlugin extends AbstractPlugin {
 	 * Default constructor
 	 */
 	public CorePlugin() {
-		super("Core", null);
+		super(NAME, null);
 		registerController(MainController.class);
-		registerConfigurationPath("core-config.xml");
 		registerController(UserController.class);
 		registerController(GroupController.class);
 		registerController(RoleController.class);

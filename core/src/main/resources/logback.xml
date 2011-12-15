@@ -32,8 +32,8 @@
 	<logger name="org.hibernate" level="ERROR"/>
 	<logger name="org.apache.shiro" level="ERROR"/>
 	<logger name="org.quartz" level="ERROR"/>
-	<logger name="org.kernely" level="DEBUG" />
-  <root level="INFO">
+	<logger name="org.kernely" level="trace" />
+  <root level="trace">
     <appender-ref ref="STDOUT" />
   </root>
 </configuration>
