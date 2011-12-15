@@ -338,7 +338,6 @@ AppStreamAdmin = (function($){
 					console.log(data);
 					if(data != null){
 						if(data.userDetailsDTO.length > 1){
-							
 							$(parent.el).append("<table>")
 				    		$.each(data.userDetailsDTO, function() {
 				    			$(parent.el).append( 					
