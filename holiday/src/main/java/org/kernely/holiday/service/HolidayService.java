@@ -79,7 +79,7 @@ public class HolidayService extends AbstractService {
 	 *            The id of the group to delete
 	 */
 	@Transactional
-	public void deleteHoliday(long id) {
+	public void deleteHoliday(int id) {
 		HolidayType holiday = em.get().find(HolidayType.class, id);
 		em.get().remove(holiday);
 	}
@@ -146,7 +146,7 @@ public class HolidayService extends AbstractService {
 		}
 
 		String name = request.type;
-		long id = request.id;
+		int id = request.id;
 
 		// Check if the user whant to change the name
 		HolidayType holiday = em.get().find(HolidayType.class, id);
