@@ -106,15 +106,17 @@
 				url:"/admin/users/all",
 				dataType:"json",
 				success: function(data){
-					if(data.userDetailsDTO.length > 1){
-			    		$.each(data.userDetailsDTO, function() {
-			    			var view = new UserAdminTableLineView(this.id, this.lastname, this.firstname, this.user.username, this.email, this.user.locked);
+					if (data != null){
+						if(data.userDetailsDTO.length > 1){
+				    		$.each(data.userDetailsDTO, function() {
+				    			var view = new UserAdminTableLineView(this.id, this.lastname, this.firstname, this.user.username, this.email, this.user.locked);
+				    			view.render();
+				    		});
+						}
+						else{
+							var view = new UserAdminTableLineView(data.userDetailsDTO.id, data.userDetailsDTO.lastname, data.userDetailsDTO.firstname, data.userDetailsDTO.user.username, data.userDetailsDTO.email, data.userDetailsDTO.user.locked);
 			    			view.render();
-			    		});
-					}
-					else{
-						var view = new UserAdminTableLineView(data.userDetailsDTO.id, data.userDetailsDTO.lastname, data.userDetailsDTO.firstname, data.userDetailsDTO.user.username, data.userDetailsDTO.email, data.userDetailsDTO.user.locked);
-		    			view.render();
+						}
 					}
 				}
 			});

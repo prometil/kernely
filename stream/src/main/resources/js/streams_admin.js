@@ -108,16 +108,18 @@ AppStreamAdmin = (function($){
 				url:"/admin/streams/all",
 				dataType:"json",
 				success: function(data){
-					if(data.streamDTO.length > 1){
-			    		$.each(data.streamDTO, function() {
-			    			var view = new StreamAdminTableLineView(this.id, this.title,this.category,this.locked);
+					if (data != null){
+						if(data.streamDTO.length > 1){
+				    		$.each(data.streamDTO, function() {
+				    			var view = new StreamAdminTableLineView(this.id, this.title,this.category,this.locked);
+				    			view.render();
+				    		});
+						}
+				    	// In the case when there is only one element
+			    		else{
+							var view = new StreamAdminTableLineView(data.streamDTO.id, data.streamDTO.title,data.streamDTO.category, data.streamDTO.locked);
 			    			view.render();
-			    		});
-					}
-			    	// In the case when there is only one element
-		    		else{
-						var view = new StreamAdminTableLineView(data.streamDTO.id, data.streamDTO.name,data.streamDTO.category, data.streamDTO.locked);
-		    			view.render();
+						}
 					}
 				}
 			});
@@ -333,25 +335,26 @@ AppStreamAdmin = (function($){
 				url:"/admin/users/all",
 				dataType:"json",
 				success: function(data){
-					if(data.userDetailsDTO.length > 1){
-						
-						$(parent.el).append("<table>")
-			    		$.each(data.userDetailsDTO, function() {
-			    			$(parent.el).append(
-			    					
-			    					
-			    					'<tr><td>'+ this.lastname + ' ' + this.firstname +'</td><td>'+
-			    			'<select id="'+ this.user.id +'"><option value="nothing">No right</option><option value="read">Read</option><option value="write">Read / Write</option><option value="delete">Read / Write / Delete</option></select><br/>'
-			    			+'</td></tr>');
-			    		});
-					}
-					// In the case when there is only one user.
-					else{
-		    			$(parent.el).append(data.userDetailsDTO.lastname+ ' ' + data.userDetailsDTO.firstname +
-				    			'<select id="'+ data.userDetailsDTO.user.id +'"><option value="nothing">No right</option><option value="read">Read</option><option value="write">Read / Write</option><option value="delete">Read / Write / Delete</option></select><br/>');
+					console.log(data);
+					if(data != null){
+						if(data.userDetailsDTO.length > 1){
+							
+							$(parent.el).append("<table>")
+				    		$.each(data.userDetailsDTO, function() {
+				    			$(parent.el).append( 					
+				   				'<tr><td>'+ this.lastname + ' ' + this.firstname +'</td><td>'+
+				    			'<select id="'+ this.user.id +'"><option value="nothing">No right</option><option value="read">Read</option><option value="write">Read / Write</option><option value="delete">Read / Write / Delete</option></select><br/>'
+				    			+'</td></tr>');
+				    		});
+						}
+						// In the case when there is only one user.
+						else{
+			    			$(parent.el).append(data.userDetailsDTO.lastname+ ' ' + data.userDetailsDTO.firstname +
+					    			'<select id="'+ data.userDetailsDTO.user.id +'"><option value="nothing">No right</option><option value="read">Read</option><option value="write">Read / Write</option><option value="delete">Read / Write / Delete</option></select><br/>');
+						}
 					}
 					$(parent.el).append("</table>");
-
+					
 					// Select existing rights
 					$.ajax({
 						type: "GET",

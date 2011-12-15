@@ -87,29 +87,31 @@ AppGroupAdmin = (function($){
 				url:"/admin/groups/all",
 				dataType:"json",
 				success: function(data){
-					if(data.groupDTO.length > 1){
-			    		$.each(data.groupDTO, function() {
+					if(data != null){
+						if(data.groupDTO.length > 1){
+				    		$.each(data.groupDTO, function() {
+				    			var users = 0;
+				    			if(this.users != null && typeof(this.users) != "undefined"){
+				    				if(typeof(this.users.length) != "undefined"){
+				    					users = this.users.length;
+				    				}
+				    				else{
+				    					users = 1;
+				    				}
+				    			}
+				    			var view = new GroupAdminTableLineView(this.id, this.name, users);
+				    			view.render();
+				    		});
+						}
+					   	// In the case when there is only one element
+			    		else{
 			    			var users = 0;
-			    			if(this.users != null && typeof(this.users) != "undefined"){
-			    				if(typeof(this.users.length) != "undefined"){
-			    					users = this.users.length;
-			    				}
-			    				else{
-			    					users = 1;
-			    				}
+			    			if(data.groupDTO.users != null && typeof(data.groupDTO.users) != "undefined"){
+			    				users = data.groupDTO.users.length;
 			    			}
-			    			var view = new GroupAdminTableLineView(this.id, this.name, users);
+							var view = new GroupAdminTableLineView(data.groupDTO.id, data.groupDTO.name, users);
 			    			view.render();
-			    		});
-					}
-			    	// In the case when there is only one element
-		    		else{
-		    			var users = 0;
-		    			if(data.groupDTO.users != null && typeof(data.groupDTO.users) != "undefined"){
-		    				users = data.groupDTO.users.length;
-		    			}
-						var view = new GroupAdminTableLineView(data.groupDTO.id, data.groupDTO.name, users);
-		    			view.render();
+						}
 					}
 				}
 			});

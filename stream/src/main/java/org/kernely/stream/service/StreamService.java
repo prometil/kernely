@@ -377,21 +377,24 @@ public class StreamService extends AbstractService {
 		}
 		List<Stream> streams = this.getCurrentUserStreamModel();
 		TreeSet<Message> messages = new TreeSet<Message>(new MessageComparator());
-		Query query = em.get().createQuery(
-				"SELECT m FROM Message m  WHERE message is null AND stream in (:streamSet) AND id < :flag ORDER BY id DESC");
-		query.setParameter("streamSet", streams);
-		query.setParameter("flag", flag);
-		query.setMaxResults(9);
-		messages.addAll((List<Message>) query.getResultList());
-		List<StreamMessageDTO> messagesdto = new ArrayList<StreamMessageDTO>();
-		for (Message m : messages) {
-			StreamMessageDTO messageDTO = new StreamMessageDTO(m);
-
-			messageDTO.deletion = currentUserHasRightsOnStream(Stream.RIGHT_DELETE, (int) messageDTO.streamId);
-
-			messagesdto.add(messageDTO);
+		if (!streams.isEmpty()){
+			Query query = em.get().createQuery(
+					"SELECT m FROM Message m  WHERE message is null AND stream in (:streamSet) AND id < :flag ORDER BY id DESC");
+			query.setParameter("streamSet", streams);
+			query.setParameter("flag", flag);
+			query.setMaxResults(9);
+			messages.addAll((List<Message>) query.getResultList());
+			List<StreamMessageDTO> messagesdto = new ArrayList<StreamMessageDTO>();
+			for (Message m : messages) {
+				StreamMessageDTO messageDTO = new StreamMessageDTO(m);
+	
+				messageDTO.deletion = currentUserHasRightsOnStream(Stream.RIGHT_DELETE, (int) messageDTO.streamId);
+	
+				messagesdto.add(messageDTO);
+			}
+			return messagesdto;
 		}
-		return messagesdto;
+		return null; 
 	}
 
 	/**
@@ -449,9 +452,12 @@ public class StreamService extends AbstractService {
 	 */
 	public int getCurrentNbMessages() {
 		List<Stream> streams = this.getCurrentUserStreamModel();
-		Query query = em.get().createQuery("SELECT count(m) FROM Message m  WHERE message is null AND stream in (:streamSet)");
-		query.setParameter("streamSet", streams);
-		int count = (Integer) query.getSingleResult();
-		return count;
+		if (!streams.isEmpty()){
+			Query query = em.get().createQuery("SELECT count(m) FROM Message m  WHERE message is null AND stream in (:streamSet)");
+			query.setParameter("streamSet", streams);
+			int count = (Integer) query.getSingleResult();
+			return count;
+		}
+		return 0; 
 	}
 }
