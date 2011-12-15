@@ -33,6 +33,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import org.kernely.core.hibernate.AbstractModel;
+import org.kernely.core.model.User;
 
 @Entity
 @Table(name = "kernely_holiday_balance")
