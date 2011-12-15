@@ -31,7 +31,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 public class HolidayDTO {
 
-	public long id;
+	public int id;
 	public String name;
 	public float quantity;
 	public String periodUnit;
@@ -47,7 +47,7 @@ public class HolidayDTO {
 	 * @param newFrequency
 	 * @param newId
 	 */
-	public HolidayDTO(String newType, float newQuantity, int newFrequency, String newUnity, long  newId){
+	public HolidayDTO(String newType, float newQuantity, int newFrequency, String newUnity, int newId){
 		this.name = newType ; 
 		this.quantity = newQuantity;
 		this.periodNumber = newFrequency;
