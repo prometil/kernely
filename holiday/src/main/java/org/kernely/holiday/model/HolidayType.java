@@ -22,6 +22,7 @@ package org.kernely.holiday.model;
 
 import java.util.Set;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -40,9 +41,15 @@ public class HolidayType extends AbstractModel {
 
 	private String name;
 	private float quantity;
-	private int period_number;
-	private String period_unit;
-	private int effective_month;
+	
+	@Column(name="period_number")
+	private int periodNumber;
+	
+	@Column(name="period_unit")
+	private String periodUnit;
+
+	@Column(name="effective_month")
+	private int effectiveMonth;
 	
 	@OneToMany(mappedBy = "holidayType")
 	private Set<HolidayBalance> balances;
@@ -79,36 +86,6 @@ public class HolidayType extends AbstractModel {
 	}
 
 	/**
-	 * @return the period number :
-	 */
-	public int getPeriodNumber() {
-		return period_number;
-	}
-
-	/**
-	 * @param the
-	 *            period number
-	 */
-	public void setPeriodNumber(int periodNumber) {
-		this.period_number = periodNumber;
-	}
-
-	/**
-	 * @return the unit of the period number
-	 */
-	public String getPeriodUnit() {
-		return period_unit;
-	}
-
-	/**
-	 * @param unity
-	 *            the unity to set. Use constants of Holiday class.
-	 */
-	public void setPeriodUnit(String unit) {
-		this.period_unit = unit;
-	}
-
-	/**
 	 * Get the amount of holiday gained each periodNumber of periodUnit
 	 * 
 	 * @return the quantity
@@ -127,25 +104,6 @@ public class HolidayType extends AbstractModel {
 	}
 
 	/**
-	 * Get the month where anticipated holidays become available holidays.
-	 * 
-	 * @return the month where anticipated holidays become available.
-	 */
-	public int getEffectiveMonth() {
-		return effective_month;
-	}
-
-	/**
-	 * Set the month where anticipated holidays become available holidays.
-	 * 
-	 * @param the
-	 *            month where anticipated holidays become available. User HolidayType constants.
-	 */
-	public void setEffectiveMonth(int effectiveMonth) {
-		effective_month = effectiveMonth;
-	}
-
-	/**
 	 * @return the balances associated to this type
 	 */
 	public Set<HolidayBalance> getBalances() {
@@ -158,6 +116,49 @@ public class HolidayType extends AbstractModel {
 	public void setBalances(Set<HolidayBalance> balances) {
 		this.balances = balances;
 	}
+
+	/**
+	 * @return the periodNumber
+	 */
+	public int getPeriodNumber() {
+		return periodNumber;
+	}
+
+	/**
+	 * @param periodNumber the periodNumber to set
+	 */
+	public void setPeriodNumber(int periodNumber) {
+		this.periodNumber = periodNumber;
+	}
+
+	/**
+	 * @return the periodUnit
+	 */
+	public String getPeriodUnit() {
+		return periodUnit;
+	}
+
+	/**
+	 * @param periodUnit the periodUnit to set
+	 */
+	public void setPeriodUnit(String periodUnit) {
+		this.periodUnit = periodUnit;
+	}
+
+	/**
+	 * @return the effectiveMonth
+	 */
+	public int getEffectiveMonth() {
+		return effectiveMonth;
+	}
+
+	/**
+	 * @param effectiveMonth the effectiveMonth to set
+	 */
+	public void setEffectiveMonth(int effectiveMonth) {
+		this.effectiveMonth = effectiveMonth;
+	}
+	
 	
 	
 

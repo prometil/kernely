@@ -22,6 +22,7 @@ package org.kernely.holiday.model;
 
 import java.util.Date;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -43,10 +44,13 @@ public class HolidayBalance extends AbstractModel {
 	private int id;
 
 	private float available_balance;
-	private float future_balance;
 	
+	@Column(name="future_balance")
+	private float futureBalance;
+	
+	@Column(name="last_update")
 	@Temporal(TemporalType.TIMESTAMP)
-	private Date last_update;
+	private Date lastUpdate;
 
 	@ManyToOne
     @JoinColumn(name = "holiday_type_id")
@@ -87,36 +91,6 @@ public class HolidayBalance extends AbstractModel {
 	}
 
 	/**
-	 * @return the future_balance
-	 */
-	public float getFutureBalance() {
-		return future_balance;
-	}
-
-	/**
-	 * @param futureBalance
-	 *            the future balance to set
-	 */
-	public void setFuturebalance(float futureBalance) {
-		future_balance = futureBalance;
-	}
-
-	/**
-	 * @return the last_update
-	 */
-	public Date getLastUpdate() {
-		return last_update;
-	}
-
-	/**
-	 * @param lastUpdate
-	 *            the last date when the balance was updated
-	 */
-	public void setLastUpdate(Date lastUpdate) {
-		last_update = lastUpdate;
-	}
-
-	/**
 	 * @return the holidayType
 	 */
 	public HolidayType getHolidayType() {
@@ -146,4 +120,47 @@ public class HolidayBalance extends AbstractModel {
 		this.user = user;
 	}
 
+	/**
+	 * @return the available_balance
+	 */
+	public float getAvailable_balance() {
+		return available_balance;
+	}
+
+	/**
+	 * @param availableBalance the available_balance to set
+	 */
+	public void setAvailable_balance(float availableBalance) {
+		available_balance = availableBalance;
+	}
+
+	/**
+	 * @return the futureBalance
+	 */
+	public float getFutureBalance() {
+		return futureBalance;
+	}
+
+	/**
+	 * @param futureBalance the futureBalance to set
+	 */
+	public void setFutureBalance(float futureBalance) {
+		this.futureBalance = futureBalance;
+	}
+
+	/**
+	 * @return the lastUpdate
+	 */
+	public Date getLastUpdate() {
+		return lastUpdate;
+	}
+
+	/**
+	 * @param lastUpdate the lastUpdate to set
+	 */
+	public void setLastUpdate(Date lastUpdate) {
+		this.lastUpdate = lastUpdate;
+	}
+
+	
 }

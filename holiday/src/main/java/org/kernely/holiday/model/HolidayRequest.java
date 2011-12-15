@@ -23,6 +23,7 @@ package org.kernely.holiday.model;
 import java.util.Date;
 import java.util.Set;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -44,14 +45,21 @@ public class HolidayRequest extends AbstractModel {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private int id;
 	
+	@Column(name="begin_date")
 	@Temporal(TemporalType.TIMESTAMP)
-	private Date begin_date;
+	private Date beginDate;
 	
+	@Column(name="end_date")
 	@Temporal(TemporalType.TIMESTAMP)
-	private Date end_date;
+	private Date endDate;
+
 	private int status;
-	private String requester_comment;
-	private String manager_comment;
+	
+	@Column(name="requester_comment")
+	private String requesterComment;
+
+	@Column(name="manager_comment")
+	private String managerComment;
 
 	@ManyToOne
 	@JoinColumn(name = "user_id")
@@ -75,34 +83,62 @@ public class HolidayRequest extends AbstractModel {
 		this.id = id;
 	}
 
+	
+	
 	/**
-	 * @return the begin_date
+	 * @return the beginDate
 	 */
 	public Date getBeginDate() {
-		return begin_date;
+		return beginDate;
 	}
 
 	/**
-	 * @param beginDate
-	 *            the begin_date to set
+	 * @param beginDate the beginDate to set
 	 */
 	public void setBeginDate(Date beginDate) {
-		begin_date = beginDate;
+		this.beginDate = beginDate;
 	}
 
 	/**
-	 * @return the end_date
+	 * @return the endDate
 	 */
 	public Date getEndDate() {
-		return end_date;
+		return endDate;
 	}
 
 	/**
-	 * @param endDate
-	 *            the end_date to set
+	 * @param endDate the endDate to set
 	 */
 	public void setEndDate(Date endDate) {
-		end_date = endDate;
+		this.endDate = endDate;
+	}
+
+	/**
+	 * @return the requesterComment
+	 */
+	public String getRequesterComment() {
+		return requesterComment;
+	}
+
+	/**
+	 * @param requesterComment the requesterComment to set
+	 */
+	public void setRequesterComment(String requesterComment) {
+		this.requesterComment = requesterComment;
+	}
+
+	/**
+	 * @return the managerComment
+	 */
+	public String getManagerComment() {
+		return managerComment;
+	}
+
+	/**
+	 * @param managerComment the managerComment to set
+	 */
+	public void setManagerComment(String managerComment) {
+		this.managerComment = managerComment;
 	}
 
 	/**
@@ -120,36 +156,8 @@ public class HolidayRequest extends AbstractModel {
 		this.status = status;
 	}
 
-	/**
-	 * @return the requester_comment
-	 */
-	public String getRequesterComment() {
-		return requester_comment;
-	}
-
-	/**
-	 * @param requesterComment
-	 *            the requester_comment to set
-	 */
-	public void setRequesterComment(String requesterComment) {
-		requester_comment = requesterComment;
-	}
-
-	/**
-	 * @return the manager_comment
-	 */
-	public String getManagerComment() {
-		return manager_comment;
-	}
-
-	/**
-	 * @param managerComment
-	 *            the manager_comment to set
-	 */
-	public void setManagerComment(String managerComment) {
-		manager_comment = managerComment;
-	}
-
+	
+	
 	/**
 	 * @return the user
 	 */
