@@ -151,7 +151,7 @@ public class StreamController extends AbstractController {
 	@Produces( { MediaType.APPLICATION_JSON })
 	public String deleteMessage(@PathParam("id") int id) {
 		log.trace("Delete message " + id);
-		streamService.deleteMessage((long) id);
+		streamService.deleteMessage((int) id);
 		return "{'result': 'ok'}";
 	}
 
@@ -178,7 +178,7 @@ public class StreamController extends AbstractController {
 	@GET
 	@Path("/current/messages")
 	@Produces( { MediaType.APPLICATION_JSON })
-	public List<StreamMessageDTO> getAllMessagesForCurrentUser(@QueryParam("last") long flag) {
+	public List<StreamMessageDTO> getAllMessagesForCurrentUser(@QueryParam("last") int flag) {
 		return streamService.getAllMessagesForCurrentUser(flag);
 	}
 
@@ -192,7 +192,7 @@ public class StreamController extends AbstractController {
 	@GET
 	@Path("/{id}/comments")
 	@Produces( { MediaType.APPLICATION_JSON })
-	public List<StreamMessageDTO> getAllCommentsForMessage(@PathParam("id") long id) {
+	public List<StreamMessageDTO> getAllCommentsForMessage(@PathParam("id") int id) {
 		return streamService.getAllCommentsForMessage(id);
 	}
 

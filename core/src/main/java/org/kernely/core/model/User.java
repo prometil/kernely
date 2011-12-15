@@ -56,7 +56,7 @@ public class User extends AbstractModel {
 	private boolean locked;
 
 	@ManyToOne
-    @JoinColumn(name = "fk_manager_id", nullable = true)
+    @JoinColumn(name = "manager_id", nullable = true)
 	private User manager;
 
 	@OneToMany(mappedBy = "manager")
@@ -69,7 +69,7 @@ public class User extends AbstractModel {
 	 * Roles of the user
 	 */
 	@ManyToMany(fetch = FetchType.LAZY)
-	@JoinTable(name = "kernely_user_roles", joinColumns = @JoinColumn(name = "fk_user"), inverseJoinColumns = @JoinColumn(name = "fk_role"))
+	@JoinTable(name = "kernely_user_roles", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
 	@Cascade( { org.hibernate.annotations.CascadeType.ALL })
 	private Set<Role> roles;
 
@@ -77,7 +77,7 @@ public class User extends AbstractModel {
 	 * Permissions of the user
 	 */
 	@ManyToMany(fetch = FetchType.LAZY)
-	@JoinTable(name = "kernely_user_permissions", joinColumns = @JoinColumn(name = "fk_user"), inverseJoinColumns = @JoinColumn(name = "fk_permission"))
+	@JoinTable(name = "kernely_user_permissions", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "permission_id"))
 	@Cascade( { org.hibernate.annotations.CascadeType.ALL })
 	private Set<Permission> permissions;
 	

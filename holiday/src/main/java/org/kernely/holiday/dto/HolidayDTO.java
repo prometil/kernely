@@ -39,7 +39,7 @@ public class HolidayDTO {
 	 * @param newFrequency
 	 * @param newId
 	 */
-	public HolidayDTO(String newType, int newFrequency, String newUnity, long  newId){
+	public HolidayDTO(String newType, int newFrequency, String newUnity, int  newId){
 		this.type = newType ; 
 		this.frequency = newFrequency;
 		this.unity = newUnity;
@@ -49,5 +49,5 @@ public class HolidayDTO {
 	public String type;
 	public int frequency;
 	public String unity;
-	public long id;
+	public int id;
 }

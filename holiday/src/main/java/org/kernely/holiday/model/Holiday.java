@@ -38,7 +38,7 @@ import org.kernely.core.hibernate.AbstractModel;
 public class Holiday extends AbstractModel {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	private long id ;
+	private int id ;
 	
 	private String type ;
 	private int frequency ;
@@ -48,13 +48,13 @@ public class Holiday extends AbstractModel {
 	/**
 	 * @return the id
 	 */
-	public long getId() {
+	public int getId() {
 		return id;
 	}
 	/**
 	 * @param id the id to set
 	 */
-	public void setId(long id) {
+	public void setId(int id) {
 		this.id = id;
 	}
 	/**

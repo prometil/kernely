@@ -70,7 +70,7 @@ public class HolidayServiceTest extends AbstractServiceTest {
 	}
 	
 	@Test
-	public void updateoliday(){
+	public void updateHoliday(){
 		HolidayCreationRequestDTO cdto = new HolidayCreationRequestDTO();
 		cdto.frequency=FREQUENCY ;
 		cdto.type=TYPE;

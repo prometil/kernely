@@ -31,10 +31,10 @@ import org.kernely.stream.model.Message;
 @XmlRootElement
 public class StreamMessageDTO {
 
-	public long id;
+	public int id;
 
 	// the id of the stream containing this message
-	public long streamId;
+	public int streamId;
 
 	public String streamName;
 

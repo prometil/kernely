@@ -82,7 +82,8 @@ public class GroupService extends AbstractService {
 			throw new IllegalArgumentException("Group name cannot be space character only ");
 		}
 
-		Query verifExist = em.get().createQuery("SELECT g FROM Group g WHERE name='" + request.name + "'");
+		Query verifExist = em.get().createQuery("SELECT g FROM Group g WHERE name=:name");
+		verifExist.setParameter("name", request.name);
 		List<Group> list = (List<Group>) verifExist.getResultList();
 		if (!list.isEmpty()) {
 			throw new IllegalArgumentException("Another group with this name already exists");
@@ -114,7 +115,9 @@ public class GroupService extends AbstractService {
 			throw new IllegalArgumentException("Group name cannot be space character only ");
 		}
 
-		Query verifExist = em.get().createQuery("SELECT g FROM Group g WHERE name='" + request.name + "'AND group_id != " + request.id);
+		Query verifExist = em.get().createQuery("SELECT g FROM Group g WHERE name=:name AND id !=:id");
+		verifExist.setParameter("name", request.name);
+		verifExist.setParameter("id", request.id);
 		List<Group> list = (List<Group>) verifExist.getResultList();
 		if (!list.isEmpty()) {
 			throw new IllegalArgumentException("Another group with this name already exists");

@@ -40,11 +40,12 @@ import org.kernely.core.hibernate.AbstractModel;
 @Entity
 @Table(name = "kernely_group")
 public class Group extends AbstractModel{
-	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	
 	/**
 	 * Group's id
 	 */
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
 	private int id;
 
 	/**
@@ -57,8 +58,8 @@ public class Group extends AbstractModel{
 	 */
 	@ManyToMany(cascade={CascadeType.PERSIST, CascadeType.MERGE}, fetch=FetchType.LAZY)
 	@JoinTable( name="kernely_user_group",
-			joinColumns=@JoinColumn(name="fk_group_user_group"),
-			inverseJoinColumns=@JoinColumn(name="fk_user_user_group"))
+			joinColumns=@JoinColumn(name="group_id"),
+			inverseJoinColumns=@JoinColumn(name="user_id"))
 			private Set<User> users;
 
 	/**
@@ -66,8 +67,8 @@ public class Group extends AbstractModel{
 	 */
 	@ManyToMany(cascade={CascadeType.PERSIST, CascadeType.MERGE}, fetch=FetchType.LAZY)
 	@JoinTable( name="kernely_group_roles",
-			joinColumns=@JoinColumn(name="fk_group"),
-			inverseJoinColumns=@JoinColumn(name="fk_role"))
+			joinColumns=@JoinColumn(name="group_id"),
+			inverseJoinColumns=@JoinColumn(name="role_id"))
 			private Set<Role> roles;
 
 	/**
@@ -75,8 +76,8 @@ public class Group extends AbstractModel{
 	 */
 	@ManyToMany(fetch=FetchType.LAZY)
 	@JoinTable( name="kernely_group_permissions",
-			joinColumns=@JoinColumn(name="fk_group"),
-			inverseJoinColumns=@JoinColumn(name="fk_permission"))
+			joinColumns=@JoinColumn(name="group_id"),
+			inverseJoinColumns=@JoinColumn(name="permission_id"))
 			@Cascade( { org.hibernate.annotations.CascadeType.ALL})
 			private Set<Permission> permissions;
 

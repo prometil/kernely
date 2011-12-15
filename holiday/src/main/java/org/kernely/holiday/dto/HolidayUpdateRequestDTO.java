@@ -34,14 +34,14 @@ public class HolidayUpdateRequestDTO {
  	* @param newType
  	* @param newFrequency
  	*/
-	public HolidayUpdateRequestDTO(long newId, String newType, int newFrequency, String newUnity) {
+	public HolidayUpdateRequestDTO(int newId, String newType, int newFrequency, String newUnity) {
 		this.id = newId;
 		this.type = newType;
 		this.frequency = newFrequency;
 		this.unity = newUnity;
 	}
 
-	public long id;
+	public int id;
 	public String type;
 	public int frequency;
 	public String unity;

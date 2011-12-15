@@ -62,7 +62,7 @@ public class HolidayService extends AbstractService {
 
 
 	@Transactional
-	public HolidayDTO getHolidayDTO(long id){
+	public HolidayDTO getHolidayDTO(int id){
 		Query query = em.get().createQuery("SELECT  h from Holiday h WHERE  h.id=:id");
 		query.setParameter("id", id);
 		Holiday holiday = (Holiday)query.getSingleResult() ;
@@ -77,7 +77,7 @@ public class HolidayService extends AbstractService {
 	 *            The id of the group to delete
 	 */
 	@Transactional
-	public void deleteHoliday(long id) {
+	public void deleteHoliday(int id) {
 		Holiday holiday = em.get().find(Holiday.class, id);
 		em.get().remove(holiday);
 	}
@@ -141,7 +141,7 @@ public class HolidayService extends AbstractService {
 			throw new IllegalArgumentException("holiday  type  cannot be space character only ");
 		}
 		String type = request.type;
-		long id = request.id;
+		int id = request.id;
 		int frequency = request.frequency;
 		String unity = request.unity;
 		Query verifExist = em.get().createQuery("SELECT g FROM Holiday g WHERE type=:type AND id=:id AND frequency=:frequency AND unity=:unity");
