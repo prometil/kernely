@@ -29,6 +29,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 import org.kernely.core.hibernate.AbstractModel;
 import org.kernely.core.model.User;
@@ -38,26 +40,26 @@ import org.kernely.core.model.User;
 public class HolidayBalance extends AbstractModel {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	private long id;
+	private int id;
 
 	private float available_balance;
 	private float future_balance;
+	
+	@Temporal(TemporalType.TIMESTAMP)
 	private Date last_update;
-	private String period_unit;
-	private int effective_month;
 
 	@ManyToOne
-	@JoinColumn(name = "fk_holiday_type")
+    @JoinColumn(name = "holiday_type_id")
 	private HolidayType holidayType;
 
 	@ManyToOne
-	@JoinColumn(name = "fk_user")
-	private HolidayType user;
+    @JoinColumn(name = "user_id")
+	private User user;
 
 	/**
 	 * @return the id
 	 */
-	public long getId() {
+	public int getId() {
 		return id;
 	}
 
@@ -65,7 +67,7 @@ public class HolidayBalance extends AbstractModel {
 	 * @param id
 	 *            the id to set
 	 */
-	public void setId(long id) {
+	public void setId(int id) {
 		this.id = id;
 	}
 
@@ -115,36 +117,6 @@ public class HolidayBalance extends AbstractModel {
 	}
 
 	/**
-	 * @return the period unit
-	 */
-	public String getPeriodUnit() {
-		return period_unit;
-	}
-
-	/**
-	 * @param periodUnit
-	 *            the period unit to set
-	 */
-	public void setPeriodUnit(String periodUnit) {
-		period_unit = periodUnit;
-	}
-
-	/**
-	 * @return the effective_month
-	 */
-	public int getEffectiveMonth() {
-		return effective_month;
-	}
-
-	/**
-	 * @param effectiveMonth
-	 *            the effective month to set
-	 */
-	public void setEffectiveMonth(int effectiveMonth) {
-		effective_month = effectiveMonth;
-	}
-
-	/**
 	 * @return the holidayType
 	 */
 	public HolidayType getHolidayType() {
@@ -162,7 +134,7 @@ public class HolidayBalance extends AbstractModel {
 	/**
 	 * @return the user
 	 */
-	public HolidayType getUser() {
+	public User getUser() {
 		return user;
 	}
 
@@ -170,7 +142,7 @@ public class HolidayBalance extends AbstractModel {
 	 * @param user
 	 *            the user to set
 	 */
-	public void setUser(HolidayType user) {
+	public void setUser(User user) {
 		this.user = user;
 	}
 

@@ -31,6 +31,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 import org.kernely.core.hibernate.AbstractModel;
 import org.kernely.core.model.User;
@@ -40,16 +42,19 @@ import org.kernely.core.model.User;
 public class HolidayRequest extends AbstractModel {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	private long id;
-
+	private int id;
+	
+	@Temporal(TemporalType.TIMESTAMP)
 	private Date begin_date;
+	
+	@Temporal(TemporalType.TIMESTAMP)
 	private Date end_date;
 	private int status;
 	private String requester_comment;
 	private String manager_comment;
 
 	@ManyToOne
-	@JoinColumn(name = "fk_user")
+	@JoinColumn(name = "user_id")
 	private User user;
 	
 	@OneToMany(mappedBy = "request")
@@ -58,7 +63,7 @@ public class HolidayRequest extends AbstractModel {
 	/**
 	 * @return the id
 	 */
-	public long getId() {
+	public int getId() {
 		return id;
 	}
 
@@ -66,7 +71,7 @@ public class HolidayRequest extends AbstractModel {
 	 * @param id
 	 *            the id to set
 	 */
-	public void setId(long id) {
+	public void setId(int id) {
 		this.id = id;
 	}
 

@@ -29,6 +29,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 import org.kernely.core.hibernate.AbstractModel;
 
@@ -37,25 +39,26 @@ import org.kernely.core.hibernate.AbstractModel;
 public class HolidayRequestDetail extends AbstractModel {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	private long id;
+	private int id;
 
+	@Temporal(TemporalType.TIMESTAMP)
 	private Date day;
 	private boolean am;
 	private boolean pm;
 
 	@ManyToOne
-    @JoinColumn(name = "fk_holiday_request")
+    @JoinColumn(name = "holiday_request_id")
 	private HolidayRequest request;
 
 	@ManyToOne
-    @JoinColumn(name = "fk_holiday_type")
+    @JoinColumn(name = "holiday_type_id")
 	private HolidayType type;
 
 
 	/**
 	 * @return the id
 	 */
-	public long getId() {
+	public int getId() {
 		return id;
 	}
 
