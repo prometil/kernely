@@ -75,7 +75,7 @@ public class GuiceJunitModule extends AbstractModule {
 		Mockito.when(mailBuilderMock.to(Mockito.anyString())).thenReturn(mailBuilderMock);
 		Mockito.when(mailBuilderMock.subject(Mockito.anyString())).thenReturn(mailBuilderMock);
 		Mockito.when(mailBuilderMock.with(Mockito.anyString(), Mockito.anyString())).thenReturn(mailBuilderMock);
-		Mockito.when(mailBuilderMock.send()).thenReturn(true);
+	//	Mockito.when(mailBuilderMock.send()).thenReturn(true);
 		
 		Mockito.when(mailerMock.create(Mockito.anyString())).thenReturn(mailBuilderMock);
 

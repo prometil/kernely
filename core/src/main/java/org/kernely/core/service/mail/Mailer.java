@@ -19,6 +19,9 @@
  */
 package org.kernely.core.service.mail;
 
+import java.util.List;
+
+import org.kernely.core.model.Mail;
 import org.kernely.core.service.mail.builder.MailBuilder;
 
 /**
@@ -27,4 +30,6 @@ import org.kernely.core.service.mail.builder.MailBuilder;
  */
 public interface Mailer {
 	 MailBuilder create(String templatePath);
+	 List<Mail> getMailsToSend();
+	 boolean send(Mail mail);
 }

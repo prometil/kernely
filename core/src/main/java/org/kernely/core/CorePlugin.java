@@ -31,18 +31,26 @@ import org.kernely.core.controller.UserAdminController;
 import org.kernely.core.controller.UserController;
 import org.kernely.core.migrations.Migration01;
 import org.kernely.core.model.Group;
+import org.kernely.core.model.Mail;
 import org.kernely.core.model.Permission;
 import org.kernely.core.model.Role;
 import org.kernely.core.model.User;
 import org.kernely.core.model.UserDetails;
 import org.kernely.core.plugin.AbstractPlugin;
 import org.kernely.core.plugin.PluginsLoader;
+import org.kernely.core.service.mail.MailJob;
 import org.kernely.core.service.mail.MailService;
 import org.kernely.core.service.mail.Mailer;
 import org.kernely.core.template.TemplateRenderer;
+import org.quartz.DateBuilder;
+import org.quartz.ScheduleBuilder;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.SchedulerFactory;
+import org.quartz.SimpleScheduleBuilder;
+import org.quartz.Trigger;
+import org.quartz.TriggerBuilder;
+import org.quartz.DateBuilder.IntervalUnit;
 import org.quartz.impl.StdSchedulerFactory;
 
 import com.google.common.eventbus.EventBus;
@@ -59,6 +67,7 @@ public class CorePlugin extends AbstractPlugin {
 	/**
 	 * Default constructor
 	 */
+	@SuppressWarnings({ "unchecked" })
 	public CorePlugin() {
 		super(NAME, null);
 		registerController(MainController.class);
@@ -77,7 +86,22 @@ public class CorePlugin extends AbstractPlugin {
 		registerModel(Permission.class);
 		registerModel(Group.class);
 		registerModel(UserDetails.class);
+		registerModel(Mail.class);
 		registerMigration(new Migration01());
+		
+		 // create the Mail schedule, run every 5 minutes
+        ScheduleBuilder mailScheduleBuilder = SimpleScheduleBuilder.
+                simpleSchedule().
+                withIntervalInMinutes(5).
+                repeatForever();
+ 
+        // Create the Mail trigger
+        Trigger mailTrigger = TriggerBuilder.
+                newTrigger().
+                withSchedule(mailScheduleBuilder).
+                startAt(DateBuilder.futureDate(1, IntervalUnit.MINUTE)).build();
+        
+        registerJob(MailJob.class, mailTrigger);
 	}
 
 	@Override

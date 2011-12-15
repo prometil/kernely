@@ -19,6 +19,7 @@
  */
 package org.kernely.core.service.mail.builder;
 
+import java.util.List;
 import java.util.Map;
 
 
@@ -30,12 +31,16 @@ public interface MailBuilder {
 	public MailBuilder subject(String pSubject);
 
 	public MailBuilder to(String addresses);
+	
+	public MailBuilder to(List<String> addresses);
 
 	public MailBuilder cc(String addresses);
+	
+	public MailBuilder cc(List<String> addresses);
 
 	public MailBuilder with(Map<String, Object> content);
 	
 	public MailBuilder with(String key, String value);
 	
-	public boolean send();
+	public void registerMail();
 }

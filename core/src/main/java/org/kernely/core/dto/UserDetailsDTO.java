@@ -96,6 +96,7 @@ public class UserDetailsDTO {
 		this.ssn = details.getSsn();
 		this.civility = details.getCivility();
 		this.id = details.getId_user_detail();
+		this.user = new UserDTO(details.getUser());
 	}
 
 }

@@ -32,8 +32,11 @@ import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
+import javax.persistence.Query;
 
 import org.apache.commons.configuration.AbstractConfiguration;
+import org.kernely.core.model.Mail;
+import org.kernely.core.service.AbstractService;
 import org.kernely.core.service.mail.builder.MailBuilder;
 import org.kernely.core.template.TemplateRenderer;
 import org.kernely.core.template.TemplateRenderer.TemplateBuilder;
@@ -41,12 +44,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.inject.Inject;
+import com.google.inject.persist.Transactional;
 
 /**
  * The mail service
  * 
  */
-public class MailService implements Mailer {
+public class MailService extends AbstractService implements Mailer {
 
 	private static final Logger log = LoggerFactory.getLogger(MailService.class);
 
@@ -104,9 +108,19 @@ public class MailService implements Mailer {
 			recipients.add(addresses);
 			return this;
 		}
+		
+		public MailBuilder to(List<String> addresses){
+			recipients.addAll(addresses);
+			return this;
+		}
 
 		public MailBuilder cc(String addresses) {
 			ccs.add(addresses);
+			return this;
+		}
+		
+		public MailBuilder cc(List<String> addresses) {
+			ccs.addAll(addresses);
 			return this;
 		}
 
@@ -119,60 +133,115 @@ public class MailService implements Mailer {
 			builder.with(key, value);
 			return this;
 		}
-
-		/**
-		 * Effectively send the email using the configuration and the recipients specified via the to() method.
-		 */
-		@SuppressWarnings("unchecked")
-		public boolean send() {
+		
+		@Transactional
+		public void registerMail(){
 			String body = builder.withoutLayout().render();
-			Properties props = new Properties();
-
-			Iterator<String> keys = (Iterator<String>) configuration.getKeys("mail");
-			while (keys.hasNext()) {
-				String key = keys.next();
-				props.put(key, configuration.getProperty(key));
+			String recipString = "";
+			for (String to : recipients) {
+				recipString += to + ",";
 			}
-			Session session;
-			if (configuration.getBoolean("mail.smtp.auth")) {
-				session = Session.getDefaultInstance(props, new Authenticator());
-			} else {
-				session = Session.getDefaultInstance(props);
+			if(recipString != ""){
+				// Remove the last coma
+				recipString = recipString.substring(0, recipString.lastIndexOf(','));
+			}
+			String ccString = "";
+			for (String cc : ccs) {
+				ccString += cc + ",";
+			}
+			if(ccString != ""){
+				// Remove the last coma
+				ccString = ccString.substring(0, ccString.lastIndexOf(','));
+			}
+			
+			Mail mail = new Mail();
+			if(ccString != ""){
+				mail.setCc(ccString);
+			}
+			mail.setContent(body);
+			mail.setRecipients(recipString);
+			mail.setSubject(subject);
+			
+			em.get().persist(mail);
+		}
+
+		
+
+	}
+	
+	@Transactional
+	private void deleteMail(Mail mail){
+		Mail m = em.get().find(Mail.class, mail.getId());
+		em.get().remove(m);
+	}
+	
+	/**
+	 * Retrieve waiting mails stored in bd
+	 */
+	@SuppressWarnings("unchecked")
+	public List<Mail> getMailsToSend(){
+		Query query = em.get().createQuery("SELECT m FROM Mail m");
+		List<Mail> mails = (List<Mail>) query.getResultList();
+		return mails;
+	}
+	
+	/**
+	 * Effectively send the email using the configuration and the recipients specified via the to() method.
+	 */
+	@SuppressWarnings("unchecked")
+	@Transactional
+	public boolean send(Mail mail) {
+		Properties props = new Properties();
+
+		Iterator<String> keys = (Iterator<String>) configuration.getKeys("mail");
+		while (keys.hasNext()) {
+			String key = keys.next();
+			props.put(key, configuration.getProperty(key));
+		}
+		Session session;
+		if (configuration.getBoolean("mail.smtp.auth")) {
+			session = Session.getDefaultInstance(props, new Authenticator());
+		} else {
+			session = Session.getDefaultInstance(props);
+		}
+
+		MimeMessage message = new MimeMessage(session);
+		try {
+			String[] rec = mail.getRecipients().split(",");
+			for (String to : rec) {
+				message.addRecipient(Message.RecipientType.TO, new InternetAddress(to));
 			}
 
-			MimeMessage message = new MimeMessage(session);
-			try {
-
-				for (String to : recipients) {
-					message.addRecipient(Message.RecipientType.TO, new InternetAddress(to));
-				}
-				for (String cc : ccs) {
+			if(mail.getCc() != null){
+				String[] ccsS = mail.getCc().split(",");
+				for (String cc : ccsS) {
 					message.addRecipient(Message.RecipientType.CC, new InternetAddress(cc));
 				}
-
-				message.setSubject(subject);
-				message.setContent(body, "text/html");
-
-				Transport.send(message);
-				return true;
-			} catch (MessagingException ex) {
-				log.error("Cannot send mail", ex);
-				return false;
 			}
 
+			message.setSubject(mail.getSubject());
+			message.setContent(mail.getContent(), "text/html");
+
+			Transport.send(message);
+			this.deleteMail(mail);
+			log.debug("Mail sended ! ");
+			return true;
+		} catch (MessagingException ex) {
+			log.error("Cannot send mail", ex);
+			return false;
 		}
 
-		private class Authenticator extends javax.mail.Authenticator {
-			private PasswordAuthentication authentication;
+	}
 
-			public Authenticator() {
-				authentication = new PasswordAuthentication(configuration.getString("mail.smtp.user"), configuration.getString("mail.smtp.password"));
-			}
+	private class Authenticator extends javax.mail.Authenticator {
+		private PasswordAuthentication authentication;
 
-			protected PasswordAuthentication getPasswordAuthentication() {
-				return authentication;
-			}
+		public Authenticator() {
+			authentication = new PasswordAuthentication(configuration.getString("mail.smtp.user"), configuration.getString("mail.smtp.password"));
 		}
 
+		protected PasswordAuthentication getPasswordAuthentication() {
+			return authentication;
+		}
 	}
 }
