@@ -46,6 +46,7 @@ public class GuiceJunitModule extends AbstractModule {
 	/**
 	 * 
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	protected void configure() {
 		install(new GuiceBerryModule());
@@ -72,10 +73,12 @@ public class GuiceJunitModule extends AbstractModule {
 		Mailer mailerMock = Mockito.mock(Mailer.class);
 		MailBuilder mailBuilderMock = Mockito.mock(MailBuilder.class);
 		Mockito.when(mailBuilderMock.cc(Mockito.anyString())).thenReturn(mailBuilderMock);
+		Mockito.when(mailBuilderMock.cc(Mockito.anyList())).thenReturn(mailBuilderMock);
 		Mockito.when(mailBuilderMock.to(Mockito.anyString())).thenReturn(mailBuilderMock);
+		Mockito.when(mailBuilderMock.to(Mockito.anyList())).thenReturn(mailBuilderMock);
 		Mockito.when(mailBuilderMock.subject(Mockito.anyString())).thenReturn(mailBuilderMock);
 		Mockito.when(mailBuilderMock.with(Mockito.anyString(), Mockito.anyString())).thenReturn(mailBuilderMock);
-	//	Mockito.when(mailBuilderMock.send()).thenReturn(true);
+		Mockito.when(mailBuilderMock.registerMail()).thenReturn(true);
 		
 		Mockito.when(mailerMock.create(Mockito.anyString())).thenReturn(mailBuilderMock);
 

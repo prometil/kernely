@@ -110,7 +110,7 @@ public class MailService extends AbstractService implements Mailer {
 		}
 		
 		public MailBuilder to(List<String> addresses){
-			recipients.addAll(addresses);
+			//recipients.addAll(addresses);
 			return this;
 		}
 
@@ -135,7 +135,7 @@ public class MailService extends AbstractService implements Mailer {
 		}
 		
 		@Transactional
-		public void registerMail(){
+		public boolean registerMail(){
 			String body = builder.withoutLayout().render();
 			String recipString = "";
 			for (String to : recipients) {
@@ -163,6 +163,7 @@ public class MailService extends AbstractService implements Mailer {
 			mail.setSubject(subject);
 			
 			em.get().persist(mail);
+			return true;
 		}
 
 		

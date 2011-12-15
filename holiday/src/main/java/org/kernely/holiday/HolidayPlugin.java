@@ -20,19 +20,18 @@
 
 package org.kernely.holiday;
 
+import org.kernely.holiday.migrations.Migration01;
 import org.kernely.core.plugin.AbstractPlugin;
 import org.kernely.holiday.controller.HolidayAdminController;
-import org.kernely.holiday.model.Holiday;
+import org.kernely.holiday.model.HolidayBalance;
+import org.kernely.holiday.model.HolidayRequest;
+import org.kernely.holiday.model.HolidayRequestDetail;
+import org.kernely.holiday.model.HolidayType;
 import org.kernely.holiday.service.HolidayService;
 
 import com.google.common.eventbus.EventBus;
 import com.google.inject.Inject;
 
-/**
- * 
- * @author b.grandperret
- *
- */
 public class HolidayPlugin extends AbstractPlugin {
 
 	@Inject
@@ -45,8 +44,12 @@ public class HolidayPlugin extends AbstractPlugin {
 	public HolidayPlugin(){
 		super("Holiday", "/holiday");
 		registerController(HolidayAdminController.class);
-		registerModel(Holiday.class);
+		registerModel(HolidayType.class);
+		registerModel(HolidayBalance.class);
+		registerModel(HolidayRequest.class);
+		registerModel(HolidayRequestDetail.class);
 		registerAdminPage("Holiday admin", "/admin/holiday");
+		registerMigration(new Migration01());
 	}
 	
 	@Override

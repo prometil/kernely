@@ -22,7 +22,6 @@ package org.kernely.core.model;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -39,7 +38,6 @@ public class Permission extends AbstractModel {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	@Column(name = "permission_id")
 	/**
 	 * Permission's id
 	 */

@@ -42,5 +42,5 @@ public interface MailBuilder {
 	
 	public MailBuilder with(String key, String value);
 	
-	public void registerMail();
+	public boolean registerMail();
 }

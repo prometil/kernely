@@ -1,25 +1,4 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<!--
-
-    Copyright 2011 Prometil SARL
-
-    This file is part of Kernely.
-
-    Kernely is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License as
-    published by the Free Software Foundation, either version 3 of
-    the License, or (at your option) any later version.
-
-    Kernely is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Affero General Public License for more details.
-
-    You should have received a copy of the GNU Affero General Public
-    License along with Kernely.
-    If not, see <http://www.gnu.org/licenses/>.
-
--->
 <core>
 	<hibernate>
 		<connection>
@@ -30,20 +9,20 @@
 			<pool_size>10</pool_size>
 		</connection>
 		<hbm2ddl>
-			<auto>update</auto>
+			<auto>validate</auto>
 		</hbm2ddl>
 		<dialect>org.hibernate.dialect.PostgreSQLDialect</dialect>
 		<show_sql>false</show_sql>
 	</hibernate>
 	<mail>
 		<debug>true</debug>
-		<host></host>
-		<from>kernely</from>
+		<host>to_change</host>
+		<from>to_change</from>
 		<smtp>
-			<host>mail.prometil.com</host>
-			<port>25</port>
-			<user></user>
-			<password></password>
+			<host>to_change</host>
+			<port>to_change</port>
+			<user>to_change</user>
+			<password>to_change</password>
 			<auth>true</auth>
 		</smtp>
 	</mail>

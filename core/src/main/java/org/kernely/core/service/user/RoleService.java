@@ -42,7 +42,8 @@ public class RoleService extends AbstractService {
 	@SuppressWarnings("unchecked")
 	@Transactional
 	public List<RoleDTO> getAllRoles() {
-		Query query = em.get().createQuery("SELECT e FROM Role e WHERE name !='" + Role.ROLE_USER + "'");
+		Query query = em.get().createQuery("SELECT e FROM Role e WHERE name !=:name ");
+		query.setParameter("name", Role.ROLE_USER);
 		List<Role> collection = (List<Role>) query.getResultList();
 		List<RoleDTO> dtos = new ArrayList<RoleDTO>();
 		for (Role role : collection) {

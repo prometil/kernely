@@ -93,7 +93,7 @@ public class HolidayAdminController extends AbstractController {
 	@GET
 	@Path("/combo/{holiday}")
 	@Produces({"application/json"})
-	public HolidayDTO getComboUnity(@PathParam("holiday") long id ) {
+	public HolidayDTO getComboUnity(@PathParam("holiday") int id ) {
 		if (userService.currentUserIsAdministrator()){
 			HolidayDTO hdto= holidayService.getHolidayDTO(id) ;
 			return hdto;		
@@ -109,7 +109,7 @@ public class HolidayAdminController extends AbstractController {
 	@GET
 	@Path("/delete/{id}")
 	@Produces( { MediaType.TEXT_HTML })
-	public String deleteHoliday(@PathParam("id") long id){
+	public String deleteHoliday(@PathParam("id") int id){
 		if (userService.currentUserIsAdministrator()){
 			holidayService.deleteHoliday(id);
 			return "{\"result\":\"Ok\"}"; 

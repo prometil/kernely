@@ -36,21 +36,21 @@ import org.kernely.core.hibernate.AbstractModel;
 public class UserDetails extends AbstractModel{
 	 @Id
      @GeneratedValue(strategy = GenerationType.AUTO)
-	 private int id_user_detail;
-		private String name;
-		private String firstname;
-		private String mail;
-		private String image;
-		private String adress;
-		private String zip;
-		private String city;
-		private String homephone;
-		private String mobilephone;
-		private String businessphone;
-		private Date birth;
-		private String nationality;
-		private String ssn;
-		private Integer civility;
+	 private int id;
+     private String name;
+	 private String firstname;
+	 private String mail;
+	 private String image;
+	 private String adress;
+	 private String zip;
+	 private String city;
+	 private String homephone;
+	 private String mobilephone;
+	 private String businessphone;
+	 private Date birth;
+	 private String nationality;
+	 private String ssn;
+	 private Integer civility;
 
      
      
@@ -73,7 +73,7 @@ public class UserDetails extends AbstractModel{
      }
 
      @OneToOne
-     @JoinColumn(name="fk_user_id")
+     @JoinColumn(name="user_id")
      private User user;
      
      /**
@@ -85,7 +85,7 @@ public class UserDetails extends AbstractModel{
      }
 
      /**
-      * Set the User's name
+      * Set the User's name 
       * @param name : the user's name
       */
      public final void setName(String name) {
@@ -129,7 +129,7 @@ public class UserDetails extends AbstractModel{
       * @return : the userdetails' id
       */
      public final int getId_user_detail() {
-             return id_user_detail;
+             return id;
      }
 
      /**
@@ -137,7 +137,7 @@ public class UserDetails extends AbstractModel{
       * @param idUserDetail : the userdetails' id
       */
      public final void setId_user_detail(int idUserDetail) {
-             id_user_detail = idUserDetail;
+             id = idUserDetail;
      }
 
      /**
