@@ -20,7 +20,7 @@
 
 package org.kernely.holiday.service;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 import org.junit.Test;
 import org.kernely.core.common.AbstractServiceTest;
@@ -41,20 +41,20 @@ public class HolidayBalanceServiceTest extends AbstractServiceTest {
 
 	private static final String TEST_STRING = "type";
 	private static final int QUANTITY = 3;
-	
+
 	@Inject
 	private HolidayBalanceService holidayBalanceService;
-	
+
 	@Inject
 	private HolidayService holidayService;
-	
+
 	@Inject
 	private UserService userService;
 
 	@Inject
 	private RoleService roleService;
 
-	private HolidayDTO createHolidayTypeForTest(){
+	private HolidayDTO createHolidayTypeForTest() {
 		HolidayCreationRequestDTO request = new HolidayCreationRequestDTO();
 		request.type = TEST_STRING;
 		request.quantity = QUANTITY;
@@ -62,12 +62,11 @@ public class HolidayBalanceServiceTest extends AbstractServiceTest {
 		holidayService.createHoliday(request);
 		return holidayService.getAllHoliday().get(0);
 	}
-	
-	private UserDTO createUserForTest(){
+
+	private UserDTO createUserForTest() {
 		RoleDTO requestRole = new RoleDTO(1, Role.ROLE_USER);
 		roleService.createRole(requestRole);
 
-		
 		UserCreationRequestDTO request = new UserCreationRequestDTO();
 		request.username = TEST_STRING;
 		request.password = TEST_STRING;
@@ -81,25 +80,25 @@ public class HolidayBalanceServiceTest extends AbstractServiceTest {
 		UserDTO user = createUserForTest();
 		holidayBalanceService.createHolidayBalance(user.id, type.id);
 		HolidayBalanceDTO balance = holidayBalanceService.getHolidayBalance(user.id, type.id);
-		assertEquals(0,balance.availableBalance,0);
-		assertEquals(0,balance.futureBalance,0);
+		assertEquals(0, balance.availableBalance, 0);
+		assertEquals(0, balance.futureBalance, 0);
 	}
-	
+
 	@Test
 	public void getAllHolidayBalances() {
 		HolidayDTO type = createHolidayTypeForTest();
 		UserDTO user = createUserForTest();
-		
+
 		holidayBalanceService.createHolidayBalance(user.id, type.id);
 		HolidayBalanceDTO balance = holidayBalanceService.getAllHolidayBalances().get(0);
-		assertEquals(0,balance.availableBalance,0);
-		assertEquals(0,balance.futureBalance,0);
+		assertEquals(0, balance.availableBalance, 0);
+		assertEquals(0, balance.futureBalance, 0);
 	}
-	
+
 	@Test
-	public void incrementSpecificMonthHoliday(){
+	public void incrementSpecificMonthHoliday() {
 		UserDTO user = createUserForTest();
-		
+
 		HolidayCreationRequestDTO request = new HolidayCreationRequestDTO();
 		request.type = TEST_STRING;
 		request.quantity = QUANTITY;
@@ -107,25 +106,25 @@ public class HolidayBalanceServiceTest extends AbstractServiceTest {
 		request.effectiveMonth = HolidayType.FEBRUARY;
 		holidayService.createHoliday(request);
 		HolidayDTO specificHoliday = holidayService.getAllHoliday().get(0);
-		
+
 		holidayBalanceService.createHolidayBalance(user.id, specificHoliday.id);
 		HolidayBalanceDTO balance = holidayBalanceService.getHolidayBalance(user.id, specificHoliday.id);
 
-		assertEquals(0F, balance.availableBalance,0);
-		assertEquals(0F, balance.futureBalance,0);
-		
+		assertEquals(0F, balance.availableBalance, 0);
+		assertEquals(0F, balance.futureBalance, 0);
+
 		holidayBalanceService.incrementBalance(balance.id);
 
 		balance = holidayBalanceService.getHolidayBalance(user.id, specificHoliday.id);
-		
-		assertEquals(0, balance.availableBalance);
-		assertEquals(QUANTITY*12, balance.futureBalance);
+
+		assertEquals(0, balance.availableBalance, 0);
+		assertEquals(QUANTITY, balance.futureBalance, 0);
 	}
-	
+
 	@Test
-	public void incrementMonthlyHoliday(){
+	public void incrementMonthlyHoliday() {
 		UserDTO user = createUserForTest();
-		
+
 		HolidayCreationRequestDTO request = new HolidayCreationRequestDTO();
 		request.type = TEST_STRING;
 		request.quantity = QUANTITY;
@@ -133,26 +132,26 @@ public class HolidayBalanceServiceTest extends AbstractServiceTest {
 		request.effectiveMonth = HolidayType.ALL_MONTH;
 		holidayService.createHoliday(request);
 		HolidayDTO monthlyHoliday = holidayService.getAllHoliday().get(0);
-		
+
 		holidayBalanceService.createHolidayBalance(user.id, monthlyHoliday.id);
-		
+
 		HolidayBalanceDTO balance = holidayBalanceService.getHolidayBalance(user.id, monthlyHoliday.id);
 
-		assertEquals(0F, balance.availableBalance,0);
-		assertEquals(0F, balance.futureBalance,0);
-		
+		assertEquals(0F, balance.availableBalance, 0);
+		assertEquals(0F, balance.futureBalance, 0);
+
 		holidayBalanceService.incrementBalance(balance.id);
 
 		balance = holidayBalanceService.getHolidayBalance(user.id, monthlyHoliday.id);
 
-		assertEquals(QUANTITY*12, balance.availableBalance);
-		assertEquals(0,balance.futureBalance);
+		assertEquals(QUANTITY, balance.availableBalance, 0);
+		assertEquals(0, balance.futureBalance, 0);
 	}
 
 	@Test
-	public void transferFutureToAvailableBalance(){
+	public void transferFutureToAvailableBalance() {
 		UserDTO user = createUserForTest();
-		
+
 		HolidayCreationRequestDTO request = new HolidayCreationRequestDTO();
 		request.type = TEST_STRING;
 		request.quantity = QUANTITY;
@@ -161,9 +160,9 @@ public class HolidayBalanceServiceTest extends AbstractServiceTest {
 
 		holidayService.createHoliday(request);
 		HolidayDTO holidayType = holidayService.getAllHoliday().get(0);
-		
+
 		holidayBalanceService.createHolidayBalance(user.id, holidayType.id);
-		
+
 		HolidayBalanceDTO balance = holidayBalanceService.getHolidayBalance(user.id, holidayType.id);
 
 		holidayBalanceService.incrementBalance(balance.id);
@@ -172,9 +171,63 @@ public class HolidayBalanceServiceTest extends AbstractServiceTest {
 		holidayBalanceService.transferFutureBalance(balance.id);
 
 		balance = holidayBalanceService.getHolidayBalance(user.id, holidayType.id);
-		
-		assertEquals(QUANTITY*3*12, balance.availableBalance);
-		assertEquals(0, balance.futureBalance);
+
+		assertEquals(QUANTITY * 3, balance.availableBalance, 0);
+		assertEquals(0, balance.futureBalance, 0);
+
+	}
+
+	@Test
+	public void hasAvailableDays() {
+		HolidayDTO type = createHolidayTypeForTest();
+		UserDTO user = createUserForTest();
+		holidayBalanceService.createHolidayBalance(user.id, type.id);
+		HolidayBalanceDTO balance = holidayBalanceService.getHolidayBalance(user.id, type.id);
+
+		assertFalse(holidayBalanceService.hasAvailableDays(balance.id, QUANTITY));
+
+		holidayBalanceService.incrementBalance(balance.id);
+		assertTrue(holidayBalanceService.hasAvailableDays(balance.id, QUANTITY));
+		holidayBalanceService.incrementBalance(balance.id);
+		assertTrue(holidayBalanceService.hasAvailableDays(balance.id, QUANTITY));
+	}
+
+	@Test
+	public void retrieveAvailableDays() {
+		HolidayDTO type = createHolidayTypeForTest();
+		UserDTO user = createUserForTest();
+		holidayBalanceService.createHolidayBalance(user.id, type.id);
+		HolidayBalanceDTO balance = holidayBalanceService.getHolidayBalance(user.id, type.id);
+
+		holidayBalanceService.incrementBalance(balance.id);
+		holidayBalanceService.incrementBalance(balance.id);
+		holidayBalanceService.incrementBalance(balance.id);
+
+		holidayBalanceService.retrieveAvailableDays(balance.id, 2);
+		assertEquals(QUANTITY * 3 - 2, holidayBalanceService.getHolidayBalanceDTO(balance.id).availableBalance, 0);
+
+		holidayBalanceService.retrieveAvailableDays(balance.id, 4.5F);
+		assertEquals(QUANTITY * 3 - 6.5, holidayBalanceService.getHolidayBalanceDTO(balance.id).availableBalance, 0);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void retrieveNotAvailableDays() {
+		HolidayDTO type = createHolidayTypeForTest();
+		UserDTO user = createUserForTest();
+		holidayBalanceService.createHolidayBalance(user.id, type.id);
+		HolidayBalanceDTO balance = holidayBalanceService.getHolidayBalance(user.id, type.id);
+
+		holidayBalanceService.retrieveAvailableDays(balance.id, 1);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void retrieveAvailableDaysWithWrongFormat() {
+		HolidayDTO type = createHolidayTypeForTest();
+		UserDTO user = createUserForTest();
+		holidayBalanceService.createHolidayBalance(user.id, type.id);
+		HolidayBalanceDTO balance = holidayBalanceService.getHolidayBalance(user.id, type.id);
+
+		holidayBalanceService.retrieveAvailableDays(balance.id, 1.2F);
 
 	}
 }

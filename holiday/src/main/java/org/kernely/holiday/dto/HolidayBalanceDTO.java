@@ -34,8 +34,8 @@ import org.kernely.holiday.model.HolidayBalance;
 public class HolidayBalanceDTO {
 
 	public int id;
-	public int availableBalance;
-	public int futureBalance;
+	public float availableBalance;
+	public float futureBalance;
 	
 	public HolidayBalanceDTO(){
 		
@@ -43,8 +43,10 @@ public class HolidayBalanceDTO {
 
 	public HolidayBalanceDTO(HolidayBalance balance){
 		this.id = balance.getId() ; 
-		this.availableBalance = balance.getAvailableBalance();
-		this.futureBalance = balance.getFutureBalance();
+		
+		// Divide balances by 12 because in database, balances are in twelths of days.
+		this.availableBalance = ((float) balance.getAvailableBalance()) / 12.0F;
+		this.futureBalance = ((float) balance.getFutureBalance()) / 12.0F;
 	}
 	
 }

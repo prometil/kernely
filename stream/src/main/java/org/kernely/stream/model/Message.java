@@ -148,7 +148,6 @@ public class Message extends AbstractModel {
 		this.id = id;
 	}
 
-	
 	/**
 	 * Return the content of the message.
 	 * 
