@@ -3,8 +3,8 @@
 	<link rel="stylesheet" type="text/css" href="/css/login.css"/>	
 	</head>
 	<body>
-	<div id="createaccount">
-		<div id="logo">Kernely</div>
+	<div id="header" >
+		<div id="logo"><%= i18n.t("title") %></div>
 	
 	</div>
 	
@@ -12,19 +12,19 @@
 	
 	</div>
 	<div id="information">
-		you can put information about the gate here.
+		
 	</div>
 	
 	<div id="login">
 		<form action="" method="POST">
-			Connexion<br/>
-			<p><input name="username" type="text" value="Username"/></p>
-			<p><input name="password" type="password" value="Password"/></p>
+			<%= i18n.t("connexion") %><br/>
+			<p><input name="username" type="text" placeholder="<%= i18n.t("username") %>"/></p>
+			<p><input name="password" type="password"  placeholder="<%= i18n.t("password") %>"/></p>
 			<div id="connection"> 
-				<input type="submit" value="login"/>
+				<input type="submit" value="<%= i18n.t("login") %>"/>
 			</div> 
 			<div id="remember">
-				<input type="checkbox" name="rememberMe" value="true"/>Remember Me?<br/>
+				<input type="checkbox" name="rememberMe" value="true"/><%= i18n.t("remember_me") %>?<br/>
 			</div>
 		</form>
 	</div>

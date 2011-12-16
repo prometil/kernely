@@ -32,6 +32,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.subject.Subject;
 import org.codehaus.groovy.control.CompilationFailedException;
 import org.kernely.core.plugin.AbstractPlugin;
 import org.kernely.core.plugin.PluginsLoader;
@@ -80,16 +81,16 @@ public class TemplateRenderer {
 	 * @param URLFile
 	 * @return
 	 */
-	public TemplateBuilder create(String URLFile) {
+	public KernelyTemplate create(String URLFile) {
 		if (URLFile == null) {
 			throw new IllegalArgumentException("Cannot load the template");
 		}
 		log.trace("Engine {}, Url {}", engine, URLFile);
-		return new TemplateBuilder(URLFile, engine);
+		return new KernelyTemplate(URLFile, engine);
 
 	}
 
-	public class TemplateBuilder {
+	public class KernelyTemplate {
 
 		// the template
 		private Template template;
@@ -110,7 +111,12 @@ public class TemplateRenderer {
 
 		private SimpleTemplateEngine engine;
 
-		public TemplateBuilder(String pTemplate, SimpleTemplateEngine pEngine) {
+		/**
+		 *  
+		 * @param pTemplate
+		 * @param pEngine
+		 */
+		public KernelyTemplate(String pTemplate, SimpleTemplateEngine pEngine) {
 			cssFiles = new ArrayList<String>();
 			binding = new HashMap<String, Object>();
 			engine = pEngine;
@@ -145,7 +151,7 @@ public class TemplateRenderer {
 		 *            the value of the variable
 		 * @return the template builder
 		 */
-		public TemplateBuilder with(String key, Object value) {
+		public KernelyTemplate with(String key, Object value) {
 			binding.put(key, value);
 			return this;
 		}
@@ -157,7 +163,7 @@ public class TemplateRenderer {
 		 *            the value
 		 * @return the template renderer.
 		 */
-		public TemplateBuilder with(Map<String, Object> values) {
+		public KernelyTemplate with(Map<String, Object> values) {
 			binding.putAll(values);
 			return this;
 		}
@@ -169,7 +175,7 @@ public class TemplateRenderer {
 		 *            the css file
 		 * @return the template builder
 		 */
-		public TemplateBuilder addCss(String file) {
+		public KernelyTemplate addCss(String file) {
 			cssFiles.add(file);
 			return this;
 		}
@@ -179,7 +185,7 @@ public class TemplateRenderer {
 		 * 
 		 * @return the template builder
 		 */
-		public TemplateBuilder withoutLayout() {
+		public KernelyTemplate withoutLayout() {
 			withLayout = false;
 			return this;
 		}
@@ -191,7 +197,7 @@ public class TemplateRenderer {
 		 *            layout to use
 		 * @return the template builder
 		 */
-		public TemplateBuilder withLayout(String otherLayout) {
+		public KernelyTemplate withLayout(String otherLayout) {
 			this.otherLayout = otherLayout;
 			return this;
 		}
@@ -206,12 +212,12 @@ public class TemplateRenderer {
 		 */
 		public String render() {
 			URL kernelyLayout = TemplateRenderer.class.getResource("/templates/gsp/layout.gsp");
+			binding = enhanceBinding(binding);
 			if (body == null) {
 				body = template.make(binding).toString();
 			}
 			if (withLayout) {
 				binding.put("content", body);
-				binding = enhanceBinding(binding);
 				try {
 					if (otherLayout != null) {
 						return create(otherLayout).with("extension", body).render();
@@ -252,8 +258,11 @@ public class TemplateRenderer {
 			} else {
 				binding.put("admin", "");
 			}
-			binding.put("currentUser", SecurityUtils.getSubject().getPrincipal().toString());
-			binding.put("content", body);
+			Subject subject = SecurityUtils.getSubject();
+			if(subject.getPrincipal() != null){
+				
+				binding.put("currentUser", subject.getPrincipal().toString());
+			}
 			binding.put("css", cssFiles);
 			binding.put("i18n", new I18n(new Locale("en","US")));
 
