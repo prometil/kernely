@@ -255,7 +255,7 @@ public class TemplateRenderer {
 			binding.put("currentUser", SecurityUtils.getSubject().getPrincipal().toString());
 			binding.put("content", body);
 			binding.put("css", cssFiles);
-			binding.put("i18n", new I18n(new Locale("en","EN")));
+			binding.put("i18n", new I18n(new Locale("en","US")));
 
 			return binding;
 		}
