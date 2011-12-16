@@ -159,7 +159,9 @@ public class MailService extends AbstractService implements Mailer {
 				mail.setCc(ccString);
 			}
 			mail.setContent(body);
-			mail.setRecipients(recipString);
+			if(recipString != ""){
+				mail.setRecipients(recipString);
+			}
 			mail.setSubject(subject);
 			
 			em.get().persist(mail);

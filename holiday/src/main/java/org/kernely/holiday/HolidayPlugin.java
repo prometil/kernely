@@ -27,6 +27,7 @@ import org.kernely.holiday.model.HolidayBalance;
 import org.kernely.holiday.model.HolidayRequest;
 import org.kernely.holiday.model.HolidayRequestDetail;
 import org.kernely.holiday.model.HolidayType;
+import org.kernely.holiday.service.HolidayRequestService;
 import org.kernely.holiday.service.HolidayService;
 
 import com.google.common.eventbus.EventBus;
@@ -60,6 +61,7 @@ public class HolidayPlugin extends AbstractPlugin {
 	@Override
 	protected void configure() {
 		bind(HolidayService.class);
+		bind(HolidayRequestService.class);
 	}
 
 }

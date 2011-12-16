@@ -41,6 +41,12 @@ import org.kernely.core.model.User;
 @Entity
 @Table(name = "kernely_holiday_request")
 public class HolidayRequest extends AbstractModel {
+	
+	public static int DENIED_STATUS = 0;
+	public static int ACCEPTED_STATUS = 1;
+	public static int PENDING_STATUS = 2;
+	
+	
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private int id;
