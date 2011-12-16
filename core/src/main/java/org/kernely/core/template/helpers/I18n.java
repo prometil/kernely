@@ -48,7 +48,7 @@ public class I18n {
 		List<String> names = new ArrayList<String>();
 		names.add("core");
 		names.add("stream");
-		messages = new Messages(new Locale("fr", "FR"), names);
+		messages = new Messages(pLocale, names);
 		locale = pLocale;
 	}
 
