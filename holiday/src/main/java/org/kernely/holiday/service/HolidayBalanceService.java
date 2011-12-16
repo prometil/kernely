@@ -26,6 +26,8 @@ import java.util.List;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 import org.kernely.core.model.User;
 import org.kernely.core.service.AbstractService;
 import org.kernely.holiday.dto.HolidayBalanceDTO;
@@ -69,11 +71,9 @@ public class HolidayBalanceService extends AbstractService {
 	 * @return the holiday balance dto of the holiday balance matching the id passed in parameter.
 	 */
 	@Transactional
-	public HolidayBalanceDTO getHolidayBalanceDTO(long id) {
-		Query query = em.get().createQuery("SELECT  h from HolidayBalance h WHERE  h.id=:id");
-		query.setParameter("id", id);
-		HolidayBalance holiday = (HolidayBalance) query.getSingleResult();
-		HolidayBalanceDTO hdto = new HolidayBalanceDTO(holiday);
+	public HolidayBalanceDTO getHolidayBalanceDTO(int id) {
+		HolidayBalance balance = em.get().find(HolidayBalance.class, id);
+		HolidayBalanceDTO hdto = new HolidayBalanceDTO(balance);
 		return hdto;
 	}
 
@@ -111,6 +111,8 @@ public class HolidayBalanceService extends AbstractService {
 		balance.setHolidayType(type);
 		balance.setAvailableBalance(0);
 		balance.setFutureBalance(0);
+		DateTimeZone zoneUTC = DateTimeZone.UTC;
+		balance.setLastUpdate(new DateTime().withZone(zoneUTC).toDate());
 
 		em.get().persist(balance);
 	}
@@ -150,7 +152,9 @@ public class HolidayBalanceService extends AbstractService {
 
 	/**
 	 * Increment the balance with the quantity of time corresponding to the type of holiday.
-	 * @param holidayBalanceId The id of the balance to increment.
+	 * 
+	 * @param holidayBalanceId
+	 *            The id of the balance to increment.
 	 */
 	@Transactional
 	public void incrementBalance(int holidayBalanceId) {
@@ -158,23 +162,23 @@ public class HolidayBalanceService extends AbstractService {
 
 		// Quantity of time (in days) earned each period
 		int quantity = balance.getHolidayType().getQuantity();
-		
+
 		// Adjust quantity: balances contains twelths of days
 		// If type unity is month, multiply earn quantity by 12 to gain complete days
-		if (balance.getHolidayType().getPeriodUnit() == HolidayType.PERIOD_MONTH){
+		if (balance.getHolidayType().getPeriodUnit() == HolidayType.PERIOD_MONTH) {
 			quantity = quantity * HolidayType.PERIOD_MONTH;
 		}
 
 		int newBalance;
-		
+
 		// If there is no effective month of the type of holidays, the available balance is incremented, otherwise the future balance is incremented.
-		if (balance.getHolidayType().getEffectiveMonth() == HolidayType.ALL_MONTH){
+		if (balance.getHolidayType().getEffectiveMonth() == HolidayType.ALL_MONTH) {
 			newBalance = balance.getAvailableBalance() + quantity;
-			log.debug("Holiday (id:{}) had available balance: {}",holidayBalanceId,balance.getAvailableBalance());
-			log.debug("Holiday (id:{}) incremented by {}",holidayBalanceId,quantity);
+			log.debug("Holiday (id:{}) had available balance: {}", holidayBalanceId, balance.getAvailableBalance());
+			log.debug("Holiday (id:{}) incremented by {}", holidayBalanceId, quantity);
 			balance.setAvailableBalance(newBalance);
-			log.debug("Holiday (id:{}) new balance: {}",holidayBalanceId,balance.getAvailableBalance());
-			
+			log.debug("Holiday (id:{}) new balance: {}", holidayBalanceId, balance.getAvailableBalance());
+
 		} else {
 			// If there is a specific month when future balance is added to available balance, adds the quantity to the future balance
 			newBalance = balance.getFutureBalance() + quantity;
@@ -182,21 +186,73 @@ public class HolidayBalanceService extends AbstractService {
 		}
 		em.get().merge(balance);
 	}
-	
+
 	/**
 	 * Adds the future balance to the available balance.
-	 * @param holidayBalanceId the balance concerned by the transfer.
+	 * 
+	 * @param holidayBalanceId
+	 *            the balance concerned by the transfer.
 	 */
 	@Transactional
-	public void transferFutureBalance(int holidayBalanceId){
+	public void transferFutureBalance(int holidayBalanceId) {
 		HolidayBalance balance = em.get().find(HolidayBalance.class, holidayBalanceId);
-		
+
 		balance.setAvailableBalance(balance.getAvailableBalance() + balance.getFutureBalance());
 
 		// Reset future balance
 		balance.setFutureBalance(0);
-		
+
 		em.get().merge(balance);
+	}
+
+	/**
+	 * Verify if the balance has the amount of days.
+	 * 
+	 * @param holidayBalanceId
+	 *            the id of the balance.
+	 * @param days
+	 *            the number of days.
+	 */
+	@Transactional
+	public boolean hasAvailableDays(int holidayBalanceId, float days) {
+		HolidayBalanceDTO balance = getHolidayBalanceDTO(holidayBalanceId);
+		return balance.availableBalance >= days;
+	}
+
+	/**
+	 * Retrieve days or half days to the available balance.
+	 */
+	/**
+	 * Verify if the balance has the amount of days.
+	 * 
+	 * @param holidayBalanceId
+	 *            the id of the balance.
+	 * @param days
+	 *            the number of days.
+	 */
+	@Transactional
+	public void retrieveAvailableDays(int holidayBalanceId, float days) {
+		// Can only retrieve days or half days.
+		int entire = (int) (days / 0.5F);
+		if (((float) entire) * 0.5F != days) {
+			throw new IllegalArgumentException("Can only retrieve days or half days. " + days + " is not a multiple of half day");
+		}
+
+		if (!hasAvailableDays(holidayBalanceId, days)) {
+			throw new IllegalArgumentException("Can not retrieve " + days + " days: holiday balance with id " + holidayBalanceId
+					+ " has not enough available days.");
+		}
+
+		HolidayBalance balance = em.get().find(HolidayBalance.class, holidayBalanceId);
+		int twelthsAvailableDays = balance.getAvailableBalance();
+
+		// Convert days to twelth days.
+		int toRetrieve = (int) (days * 12);
+
+		balance.setAvailableBalance(twelthsAvailableDays - toRetrieve);
+
+		em.get().merge(balance);
+
 	}
 
 }
