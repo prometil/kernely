@@ -40,19 +40,32 @@ public class HolidayType extends AbstractModel {
 	private int id;
 
 	private String name;
-	private float quantity;
-	
-	@Column(name="period_number")
-	private int periodNumber;
+	private int quantity;
 	
 	@Column(name="period_unit")
-	private String periodUnit;
+	private int periodUnit;
 
 	@Column(name="effective_month")
 	private int effectiveMonth;
 	
 	@OneToMany(mappedBy = "holidayType")
 	private Set<HolidayBalance> balances;
+	
+	public static final int PERIOD_YEAR = 1;
+	public static final int PERIOD_MONTH = 12;
+	
+	public static final int ALL_MONTH = 0;
+	public static final int JANUARY = 1;
+	public static final int FEBRUARY = 1;
+	public static final int MARCH = 1;
+	public static final int MAY = 1;
+	public static final int JUNE = 1;
+	public static final int JULY = 1;
+	public static final int AUGUST = 1;
+	public static final int SEPTEMBER = 1;
+	public static final int OCTOBER = 1;
+	public static final int NOVEMBER = 1;
+	public static final int DECEMBER = 1;
 
 
 	/**
@@ -90,7 +103,7 @@ public class HolidayType extends AbstractModel {
 	 * 
 	 * @return the quantity
 	 */
-	public float getQuantity() {
+	public int getQuantity() {
 		return quantity;
 	}
 
@@ -99,7 +112,7 @@ public class HolidayType extends AbstractModel {
 	 * 
 	 * @return the quantity
 	 */
-	public void setQuantity(float quantity) {
+	public void setQuantity(int quantity) {
 		this.quantity = quantity;
 	}
 
@@ -118,30 +131,16 @@ public class HolidayType extends AbstractModel {
 	}
 
 	/**
-	 * @return the periodNumber
+	 * @return the periodUnit, a constant in this class
 	 */
-	public int getPeriodNumber() {
-		return periodNumber;
-	}
-
-	/**
-	 * @param periodNumber the periodNumber to set
-	 */
-	public void setPeriodNumber(int periodNumber) {
-		this.periodNumber = periodNumber;
-	}
-
-	/**
-	 * @return the periodUnit
-	 */
-	public String getPeriodUnit() {
+	public int getPeriodUnit() {
 		return periodUnit;
 	}
 
 	/**
-	 * @param periodUnit the periodUnit to set
+	 * @param periodUnit the periodUnit to set: use constants in this class
 	 */
-	public void setPeriodUnit(String periodUnit) {
+	public void setPeriodUnit(int periodUnit) {
 		this.periodUnit = periodUnit;
 	}
 

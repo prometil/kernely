@@ -33,8 +33,7 @@ import com.google.inject.Inject;
 public class HolidayServiceTest extends AbstractServiceTest {
 
 	private static final String TYPE = "type";
-	private static final int FREQUENCY = 5;
-	private static final float QUANTITY = 2.5F;
+	private static final int QUANTITY = 25;
 
 	@Inject
 	private HolidayService holidayService;
@@ -42,13 +41,11 @@ public class HolidayServiceTest extends AbstractServiceTest {
 	@Test
 	public void creationHoliday() {
 		HolidayCreationRequestDTO cdto = new HolidayCreationRequestDTO();
-		cdto.frequency = FREQUENCY;
 		cdto.type = TYPE;
 		cdto.quantity = QUANTITY;
 		holidayService.createHoliday(cdto);
 		HolidayDTO hdto = new HolidayDTO();
 		hdto = holidayService.getAllHoliday().get(0);
-		assertEquals(FREQUENCY, hdto.periodNumber);
 		assertEquals(TYPE, hdto.name);
 		assertEquals(QUANTITY, hdto.quantity, 0.0);
 	}
@@ -75,7 +72,6 @@ public class HolidayServiceTest extends AbstractServiceTest {
 	@Test
 	public void updateHoliday() {
 		HolidayCreationRequestDTO cdto = new HolidayCreationRequestDTO();
-		cdto.frequency = FREQUENCY;
 		cdto.type = TYPE;
 		holidayService.createHoliday(cdto);
 		HolidayDTO hdto = new HolidayDTO();
@@ -84,21 +80,19 @@ public class HolidayServiceTest extends AbstractServiceTest {
 		HolidayUpdateRequestDTO udto = new HolidayUpdateRequestDTO();
 		udto.id = (int) hdto.id;
 		udto.frequency = 6;
-		udto.quantity = 2.5F;
+		udto.quantity = QUANTITY;
 		udto.type = "new type";
 		holidayService.updateHoliday(udto);
 
 		HolidayDTO hdto2 = new HolidayDTO();
 		hdto2 = holidayService.getAllHoliday().get(0);
-		assertEquals(6, hdto2.periodNumber);
 		assertEquals("new type", hdto2.name);
-		assertEquals(2.5, hdto2.quantity, 0.0);
+		assertEquals(QUANTITY, hdto2.quantity);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void updateHolidayWithNullRequest() {
 		HolidayCreationRequestDTO cdto = new HolidayCreationRequestDTO();
-		cdto.frequency = FREQUENCY;
 		cdto.type = TYPE;
 		holidayService.createHoliday(cdto);
 		holidayService.updateHoliday(null);
@@ -107,7 +101,6 @@ public class HolidayServiceTest extends AbstractServiceTest {
 	@Test(expected = IllegalArgumentException.class)
 	public void updateHolidayWithNullType() {
 		HolidayCreationRequestDTO cdto = new HolidayCreationRequestDTO();
-		cdto.frequency = FREQUENCY;
 		cdto.type = TYPE;
 		holidayService.createHoliday(cdto);
 		HolidayDTO hdto = new HolidayDTO();
@@ -123,7 +116,6 @@ public class HolidayServiceTest extends AbstractServiceTest {
 	@Test(expected = IllegalArgumentException.class)
 	public void updateHolidayWithVoidType() {
 		HolidayCreationRequestDTO cdto = new HolidayCreationRequestDTO();
-		cdto.frequency = FREQUENCY;
 		cdto.type = TYPE;
 		holidayService.createHoliday(cdto);
 		HolidayDTO hdto = new HolidayDTO();
@@ -139,7 +131,6 @@ public class HolidayServiceTest extends AbstractServiceTest {
 	@Test(expected = IllegalArgumentException.class)
 	public void updateHolidayWithSignedFrequency() {
 		HolidayCreationRequestDTO cdto = new HolidayCreationRequestDTO();
-		cdto.frequency = FREQUENCY;
 		cdto.type = TYPE;
 		holidayService.createHoliday(cdto);
 		HolidayDTO hdto = new HolidayDTO();
@@ -155,7 +146,6 @@ public class HolidayServiceTest extends AbstractServiceTest {
 	@Test
 	public void deleteHoliday() {
 		HolidayCreationRequestDTO cdto = new HolidayCreationRequestDTO();
-		cdto.frequency = FREQUENCY;
 		cdto.type = TYPE;
 		holidayService.createHoliday(cdto);
 		HolidayDTO hdto = new HolidayDTO();

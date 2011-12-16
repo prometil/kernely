@@ -33,9 +33,8 @@ public class HolidayDTO {
 
 	public int id;
 	public String name;
-	public float quantity;
-	public String periodUnit;
-	public int periodNumber;
+	public int quantity;
+	public int periodUnit;
 
 	
 	public HolidayDTO(){
@@ -43,14 +42,13 @@ public class HolidayDTO {
 	}
 	/**
 	 * holiday dto
-	 * @param newType The name of the 
-	 * @param newFrequency
+	 * @param newType The name of the type
+	 * @param newUnity The unit: user HolidayType constants
 	 * @param newId
 	 */
-	public HolidayDTO(String newType, float newQuantity, int newFrequency, String newUnity, int newId){
+	public HolidayDTO(String newType, int newQuantity, int newUnity, int newId){
 		this.name = newType ; 
 		this.quantity = newQuantity;
-		this.periodNumber = newFrequency;
 		this.periodUnit = newUnity;
 		this.id=newId;
 	}
