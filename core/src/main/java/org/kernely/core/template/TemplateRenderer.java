@@ -32,6 +32,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.subject.Subject;
 import org.codehaus.groovy.control.CompilationFailedException;
 import org.kernely.core.plugin.AbstractPlugin;
 import org.kernely.core.plugin.PluginsLoader;
@@ -211,12 +212,12 @@ public class TemplateRenderer {
 		 */
 		public String render() {
 			URL kernelyLayout = TemplateRenderer.class.getResource("/templates/gsp/layout.gsp");
+			binding = enhanceBinding(binding);
 			if (body == null) {
 				body = template.make(binding).toString();
 			}
 			if (withLayout) {
 				binding.put("content", body);
-				binding = enhanceBinding(binding);
 				try {
 					if (otherLayout != null) {
 						return create(otherLayout).with("extension", body).render();
@@ -257,8 +258,11 @@ public class TemplateRenderer {
 			} else {
 				binding.put("admin", "");
 			}
-			binding.put("currentUser", SecurityUtils.getSubject().getPrincipal().toString());
-			binding.put("content", body);
+			Subject subject = SecurityUtils.getSubject();
+			if(subject.getPrincipal() != null){
+				
+				binding.put("currentUser", subject.getPrincipal().toString());
+			}
 			binding.put("css", cssFiles);
 			binding.put("i18n", new I18n(new Locale("en","US")));
 
