@@ -30,10 +30,9 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 public class HolidayCreationRequestDTO {
 	public String type;
-	public float quantity;
-	public int frequency;
-	public String unity;
-	
+	public int quantity;
+	public int unity;
+	public int effectiveMonth;
 
 	public HolidayCreationRequestDTO(){
 		
@@ -44,11 +43,11 @@ public class HolidayCreationRequestDTO {
 	 * @param newType
 	 * @param newFrequency
 	 */
-	public HolidayCreationRequestDTO(String newType, float newQuantity, int newFrequency, String newUnity){
+	public HolidayCreationRequestDTO(String newType, int newQuantity, int newUnity, int effectiveMonth){
 		this.type=newType;
 		this.quantity = newQuantity;
-		this.frequency  = newFrequency;
 		this.unity = newUnity;
+		this.effectiveMonth = effectiveMonth;
 	}
 	
 }

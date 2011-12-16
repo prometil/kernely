@@ -24,7 +24,7 @@
 			<outputDirectory>conf</outputDirectory>
 			<includes>
 				<include>logback.xml</include>
-				<include>core-config.xml</include>
+				<include>core.xml</include>
 			</includes>
 		</fileSet>
 		

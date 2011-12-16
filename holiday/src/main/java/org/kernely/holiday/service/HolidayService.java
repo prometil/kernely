@@ -55,20 +55,23 @@ public class HolidayService extends AbstractService {
 		List<HolidayDTO> dtos = new ArrayList<HolidayDTO>();
 		log.debug("HolidayService found {} holiday types", collection.size());
 		for (HolidayType holiday : collection) {
-			dtos.add(new HolidayDTO(holiday.getName(), holiday.getQuantity(), holiday.getPeriodNumber(), holiday.getPeriodUnit(), holiday.getId()));
-			log.debug("Holiday {}: {}", holiday.getName(), holiday.getQuantity() + " each " + holiday.getPeriodNumber() + " "
-					+ holiday.getPeriodUnit());
+			dtos.add(new HolidayDTO(holiday.getName(), holiday.getQuantity(), holiday.getPeriodUnit(), holiday.getId()));
+			log.debug("Holiday {}: {}", holiday.getName(), holiday.getQuantity() + " each " + holiday.getPeriodUnit());
 		}
 		return dtos;
 	}
 
+	/**
+	 * Gets the holiday DTO for the holiday type with the id passed in parameter.
+	 * @param id The id of the holiday typ
+	 * @return the holiday type dto.
+	 */
 	@Transactional
-	public HolidayDTO getHolidayDTO(long id) {
+	public HolidayDTO getHolidayDTO(int id) {
 		Query query = em.get().createQuery("SELECT  h from HolidayType h WHERE  h.id=:id");
 		query.setParameter("id", id);
 		HolidayType holiday = (HolidayType) query.getSingleResult();
-		HolidayDTO hdto = new HolidayDTO(holiday.getName(), holiday.getQuantity(), holiday.getPeriodNumber(), holiday.getPeriodUnit(), holiday
-				.getId());
+		HolidayDTO hdto = new HolidayDTO(holiday.getName(), holiday.getQuantity(), holiday.getPeriodUnit(), holiday.getId());
 		return hdto;
 	}
 
@@ -100,9 +103,6 @@ public class HolidayService extends AbstractService {
 		if (request.type == null) {
 			throw new IllegalArgumentException("holiday type cannot be null ");
 		}
-		if (request.frequency < 0) {
-			throw new IllegalArgumentException("holiday frequency cannot be under 0 ");
-		}
 		if ("".equals(request.type.trim())) {
 			throw new IllegalArgumentException("holiday type cannot be space character only ");
 		}
@@ -117,8 +117,9 @@ public class HolidayService extends AbstractService {
 		HolidayType holiday = new HolidayType();
 		holiday.setName(request.type.trim());
 		holiday.setQuantity(request.quantity);
-		holiday.setPeriodNumber(request.frequency);
 		holiday.setPeriodUnit(request.unity);
+		holiday.setEffectiveMonth(request.effectiveMonth);
+
 		em.get().persist(holiday);
 	}
 
@@ -148,7 +149,7 @@ public class HolidayService extends AbstractService {
 		String name = request.type;
 		int id = request.id;
 
-		// Check if the user whant to change the name
+		// Check if the user wants to change the name
 		HolidayType holiday = em.get().find(HolidayType.class, id);
 		if (!holiday.getName().equals(name)) {
 			// If the new name already exists, don't update
@@ -160,9 +161,8 @@ public class HolidayService extends AbstractService {
 			}
 
 		}
-
+		
 		holiday.setName(request.type);
-		holiday.setPeriodNumber(request.frequency);
 		holiday.setQuantity(request.quantity);
 		holiday.setPeriodUnit(request.unity);
 		em.get().merge(holiday);

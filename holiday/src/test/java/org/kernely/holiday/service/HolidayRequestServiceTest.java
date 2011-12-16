@@ -11,25 +11,30 @@ import org.junit.Test;
 import org.kernely.core.common.AbstractServiceTest;
 import org.kernely.core.dto.RoleDTO;
 import org.kernely.core.dto.UserCreationRequestDTO;
-import org.kernely.core.dto.UserDetailsUpdateRequestDTO;
+import org.kernely.core.dto.UserDTO;
 import org.kernely.core.model.Role;
 import org.kernely.core.service.user.RoleService;
 import org.kernely.core.service.user.UserService;
+import org.kernely.holiday.dto.HolidayCreationRequestDTO;
+import org.kernely.holiday.dto.HolidayDTO;
 import org.kernely.holiday.dto.HolidayDetailCreationRequestDTO;
 import org.kernely.holiday.dto.HolidayRequestCreationRequestDTO;
 import org.kernely.holiday.dto.HolidayRequestDTO;
 import org.kernely.holiday.model.HolidayRequest;
 import org.kernely.holiday.model.HolidayRequestDetail;
+import org.kernely.holiday.model.HolidayType;
 
 import com.google.inject.Inject;
 
 public class HolidayRequestServiceTest extends AbstractServiceTest{
 	
-	private static Date DATE1 = new DateTime().toDate();
-	private static Date DATE2 = new DateTime().plusDays(2).toDate();
-	private static Date DATE3 = new DateTime().plusDays(5).toDate();
-	private static String R_COMMENT = "I want my holidays !";
+	private static final Date DATE1 = new DateTime().toDate();
+	private static final Date DATE2 = new DateTime().plusDays(2).toDate();
+	private static final Date DATE3 = new DateTime().plusDays(5).toDate();
+	private static final String R_COMMENT = "I want my holidays !";
 	private static final String USERNAME = "test_username";
+	private static final String TEST_STRING = "type";
+	private static final int QUANTITY = 3;
 
 	@Inject
 	private HolidayRequestService holidayRequestService;
@@ -40,29 +45,37 @@ public class HolidayRequestServiceTest extends AbstractServiceTest{
 	@Inject
 	private RoleService roleService;
 	
+	@Inject
+	private HolidayService holidayService;
 	
+	@Inject
+	private HolidayBalanceService holidayBalanceService;
 	
-	private void creationOfTestUser() {
+	private UserDTO createUserForTest(){
 		RoleDTO requestRole = new RoleDTO(1, Role.ROLE_USER);
 		roleService.createRole(requestRole);
 
+		
 		UserCreationRequestDTO request = new UserCreationRequestDTO();
 		request.username = USERNAME;
 		request.password = USERNAME;
-		request.firstname = USERNAME;
-		request.lastname = USERNAME;
 		userService.createUser(request);
-
-		UserDetailsUpdateRequestDTO request2 = new UserDetailsUpdateRequestDTO();
-		request2.email = "test@test.com";
-		request2.id = userService.getUserDetails(USERNAME).id;
-		userService.updateUserProfile(request2);
+		return userService.getAllUsers().get(0);
 	}
+
 	
+	private HolidayDTO createHolidayTypeForTest(){
+		HolidayCreationRequestDTO request = new HolidayCreationRequestDTO();
+		request.type = TEST_STRING;
+		request.quantity = QUANTITY;
+		request.unity = HolidayType.PERIOD_MONTH;
+		holidayService.createHoliday(request);
+		return holidayService.getAllHoliday().get(0);
+	}
 	@Test
 	public void getRequestCorrespondingToDetails(){
 		
-		this.creationOfTestUser();
+		this.createUserForTest();
 		authenticateAs(USERNAME);
 		
 		HolidayRequestDetail detail1 = new HolidayRequestDetail();
@@ -87,8 +100,12 @@ public class HolidayRequestServiceTest extends AbstractServiceTest{
 	
 	@Test
 	public void registerRequestTest(){
-		this.creationOfTestUser();
+		HolidayDTO hdto = this.createHolidayTypeForTest();
+		
+		UserDTO udto = this.createUserForTest();
 		authenticateAs(USERNAME);
+		
+		holidayBalanceService.createHolidayBalance(udto.id, hdto.id);
 		
 		HolidayDetailCreationRequestDTO detailDTO1 = new HolidayDetailCreationRequestDTO();
 		HolidayDetailCreationRequestDTO detailDTO2 = new HolidayDetailCreationRequestDTO();
@@ -96,6 +113,10 @@ public class HolidayRequestServiceTest extends AbstractServiceTest{
 		detailDTO1.day = DATE1;
 		detailDTO2.day = DATE2;
 		detailDTO3.day = DATE3;
+		
+		detailDTO1.typeId = hdto.id;
+		detailDTO2.typeId = hdto.id;
+		detailDTO3.typeId = hdto.id;
 		
 		List<HolidayDetailCreationRequestDTO> list = new ArrayList<HolidayDetailCreationRequestDTO>();
 		list.add(detailDTO1);
@@ -115,7 +136,6 @@ public class HolidayRequestServiceTest extends AbstractServiceTest{
 		assertEquals(testDto.endDate, DATE3);
 		assertEquals(testDto.details.size(), 3);
 		assertEquals(testDto.requesterComment, R_COMMENT);
-		
 	}
 	
 }

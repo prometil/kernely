@@ -28,14 +28,17 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.subject.Subject;
 import org.codehaus.groovy.control.CompilationFailedException;
 import org.kernely.core.plugin.AbstractPlugin;
 import org.kernely.core.plugin.PluginsLoader;
 import org.kernely.core.resource.ResourceLocator;
 import org.kernely.core.service.user.UserService;
+import org.kernely.core.template.helpers.I18n;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -78,16 +81,16 @@ public class TemplateRenderer {
 	 * @param URLFile
 	 * @return
 	 */
-	public TemplateBuilder create(String URLFile) {
+	public KernelyTemplate create(String URLFile) {
 		if (URLFile == null) {
 			throw new IllegalArgumentException("Cannot load the template");
 		}
 		log.trace("Engine {}, Url {}", engine, URLFile);
-		return new TemplateBuilder(URLFile, engine);
+		return new KernelyTemplate(URLFile, engine);
 
 	}
 
-	public class TemplateBuilder {
+	public class KernelyTemplate {
 
 		// the template
 		private Template template;
@@ -108,7 +111,12 @@ public class TemplateRenderer {
 
 		private SimpleTemplateEngine engine;
 
-		public TemplateBuilder(String pTemplate, SimpleTemplateEngine pEngine) {
+		/**
+		 *  
+		 * @param pTemplate
+		 * @param pEngine
+		 */
+		public KernelyTemplate(String pTemplate, SimpleTemplateEngine pEngine) {
 			cssFiles = new ArrayList<String>();
 			binding = new HashMap<String, Object>();
 			engine = pEngine;
@@ -143,7 +151,7 @@ public class TemplateRenderer {
 		 *            the value of the variable
 		 * @return the template builder
 		 */
-		public TemplateBuilder with(String key, Object value) {
+		public KernelyTemplate with(String key, Object value) {
 			binding.put(key, value);
 			return this;
 		}
@@ -155,7 +163,7 @@ public class TemplateRenderer {
 		 *            the value
 		 * @return the template renderer.
 		 */
-		public TemplateBuilder with(Map<String, Object> values) {
+		public KernelyTemplate with(Map<String, Object> values) {
 			binding.putAll(values);
 			return this;
 		}
@@ -167,7 +175,7 @@ public class TemplateRenderer {
 		 *            the css file
 		 * @return the template builder
 		 */
-		public TemplateBuilder addCss(String file) {
+		public KernelyTemplate addCss(String file) {
 			cssFiles.add(file);
 			return this;
 		}
@@ -177,7 +185,7 @@ public class TemplateRenderer {
 		 * 
 		 * @return the template builder
 		 */
-		public TemplateBuilder withoutLayout() {
+		public KernelyTemplate withoutLayout() {
 			withLayout = false;
 			return this;
 		}
@@ -189,52 +197,32 @@ public class TemplateRenderer {
 		 *            layout to use
 		 * @return the template builder
 		 */
-		public TemplateBuilder withLayout(String otherLayout) {
+		public KernelyTemplate withLayout(String otherLayout) {
 			this.otherLayout = otherLayout;
 			return this;
 		}
 
 		/**
-		 * Render the page with the default layout. If you want to insert the page in the admin layout for example, use the appropriate
-		 * TemplateRenderer constant. Note that the layout must have a template variable called "extension", where the page will be included.
+		 * Render the page with the default layout. If you want to insert the
+		 * page in the admin layout for example, use the appropriate
+		 * TemplateRenderer constant. Note that the layout must have a template
+		 * variable called "extension", where the page will be included.
 		 * 
 		 * @return The html content.
 		 */
 		public String render() {
 			URL kernelyLayout = TemplateRenderer.class.getResource("/templates/gsp/layout.gsp");
+			binding = enhanceBinding(binding);
 			if (body == null) {
 				body = template.make(binding).toString();
 			}
 			if (withLayout) {
-				HashMap<String, Object> layoutBinding = new HashMap<String, Object>();
-				HashMap<String, String> menu = new HashMap<String, String>();
-				for (AbstractPlugin plugin : pluginsLoader.getPlugins()) {
-					String path = plugin.getPath();
-					if (path != null) {
-						menu.put(plugin.getName(), path);
-					}
-				}
-
-				if (userService.currentUserIsAdministrator()) {
-					layoutBinding.put("admin", "Administration");
-				} else {
-					layoutBinding.put("admin", "");
-				}
-				layoutBinding.put("groups", "Groups");
-				layoutBinding.put("users", "Users");
-				layoutBinding.put("currentUser", SecurityUtils.getSubject().getPrincipal().toString());
-				// ============================================================//
-
-				layoutBinding.put("content", body);
-				layoutBinding.put("menu", menu);
-				layoutBinding.put("css", cssFiles);
-
+				binding.put("content", body);
 				try {
 					if (otherLayout != null) {
 						return create(otherLayout).with("extension", body).render();
 					}
-
-					return engine.createTemplate(kernelyLayout).make(layoutBinding).toString();
+					return engine.createTemplate(kernelyLayout).make(binding).toString();
 				} catch (CompilationFailedException e) {
 					log.error("Compilation error on {}", kernelyLayout, e);
 				} catch (ClassNotFoundException e) {
@@ -247,6 +235,38 @@ public class TemplateRenderer {
 				return body;
 			}
 
+		}
+
+		/**
+		 * Enhanced the binding, to add constants
+		 * 
+		 * @param binding
+		 *            the bind
+		 * @return the binding enhanced
+		 */
+		private HashMap<String, Object> enhanceBinding(HashMap<String, Object> binding) {
+			HashMap<String, String> menu = new HashMap<String, String>();
+			for (AbstractPlugin plugin : pluginsLoader.getPlugins()) {
+				String path = plugin.getPath();
+				if (path != null) {
+					menu.put(plugin.getName(), path);
+				}
+			}
+			binding.put("menu", menu);
+			if (userService.currentUserIsAdministrator()) {
+				binding.put("admin", "Administration");
+			} else {
+				binding.put("admin", "");
+			}
+			Subject subject = SecurityUtils.getSubject();
+			if(subject.getPrincipal() != null){
+				
+				binding.put("currentUser", subject.getPrincipal().toString());
+			}
+			binding.put("css", cssFiles);
+			binding.put("i18n", new I18n(new Locale("en","US")));
+
+			return binding;
 		}
 	}
 }

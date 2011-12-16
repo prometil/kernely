@@ -9,6 +9,7 @@ public class HolidayDetailCreationRequestDTO {
 	public Date day;
 	public boolean am;
 	public boolean pm;
+	public int typeId;
 
 	public HolidayDetailCreationRequestDTO(){
 		

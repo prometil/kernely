@@ -8,7 +8,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class HolidayRequestCreationRequestDTO {
 
 	public String requesterComment;
-	public int typeId;
 	public List<HolidayDetailCreationRequestDTO> details;
 	
 	public HolidayRequestCreationRequestDTO(){
