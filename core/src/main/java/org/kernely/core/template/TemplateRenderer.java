@@ -28,6 +28,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.shiro.SecurityUtils;
@@ -36,6 +37,7 @@ import org.kernely.core.plugin.AbstractPlugin;
 import org.kernely.core.plugin.PluginsLoader;
 import org.kernely.core.resource.ResourceLocator;
 import org.kernely.core.service.user.UserService;
+import org.kernely.core.template.helpers.I18n;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -195,8 +197,10 @@ public class TemplateRenderer {
 		}
 
 		/**
-		 * Render the page with the default layout. If you want to insert the page in the admin layout for example, use the appropriate
-		 * TemplateRenderer constant. Note that the layout must have a template variable called "extension", where the page will be included.
+		 * Render the page with the default layout. If you want to insert the
+		 * page in the admin layout for example, use the appropriate
+		 * TemplateRenderer constant. Note that the layout must have a template
+		 * variable called "extension", where the page will be included.
 		 * 
 		 * @return The html content.
 		 */
@@ -206,35 +210,13 @@ public class TemplateRenderer {
 				body = template.make(binding).toString();
 			}
 			if (withLayout) {
-				HashMap<String, Object> layoutBinding = new HashMap<String, Object>();
-				HashMap<String, String> menu = new HashMap<String, String>();
-				for (AbstractPlugin plugin : pluginsLoader.getPlugins()) {
-					String path = plugin.getPath();
-					if (path != null) {
-						menu.put(plugin.getName(), path);
-					}
-				}
-
-				if (userService.currentUserIsAdministrator()) {
-					layoutBinding.put("admin", "Administration");
-				} else {
-					layoutBinding.put("admin", "");
-				}
-				layoutBinding.put("groups", "Groups");
-				layoutBinding.put("users", "Users");
-				layoutBinding.put("currentUser", SecurityUtils.getSubject().getPrincipal().toString());
-				// ============================================================//
-
-				layoutBinding.put("content", body);
-				layoutBinding.put("menu", menu);
-				layoutBinding.put("css", cssFiles);
-
+				binding.put("content", body);
+				binding = enhanceBinding(binding);
 				try {
 					if (otherLayout != null) {
 						return create(otherLayout).with("extension", body).render();
 					}
-
-					return engine.createTemplate(kernelyLayout).make(layoutBinding).toString();
+					return engine.createTemplate(kernelyLayout).make(binding).toString();
 				} catch (CompilationFailedException e) {
 					log.error("Compilation error on {}", kernelyLayout, e);
 				} catch (ClassNotFoundException e) {
@@ -247,6 +229,35 @@ public class TemplateRenderer {
 				return body;
 			}
 
+		}
+
+		/**
+		 * Enhanced the binding, to add constants
+		 * 
+		 * @param binding
+		 *            the bind
+		 * @return the binding enhanced
+		 */
+		private HashMap<String, Object> enhanceBinding(HashMap<String, Object> binding) {
+			HashMap<String, String> menu = new HashMap<String, String>();
+			for (AbstractPlugin plugin : pluginsLoader.getPlugins()) {
+				String path = plugin.getPath();
+				if (path != null) {
+					menu.put(plugin.getName(), path);
+				}
+			}
+			binding.put("menu", menu);
+			if (userService.currentUserIsAdministrator()) {
+				binding.put("admin", "Administration");
+			} else {
+				binding.put("admin", "");
+			}
+			binding.put("currentUser", SecurityUtils.getSubject().getPrincipal().toString());
+			binding.put("content", body);
+			binding.put("css", cssFiles);
+			binding.put("i18n", new I18n(new Locale("en","EN")));
+
+			return binding;
 		}
 	}
 }

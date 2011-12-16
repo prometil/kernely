@@ -19,6 +19,7 @@
 	<% };%>
 	</head>
 	<body>
+	<h1><% i18n.t("cancel.button") %></h1>
 			<script type="text/html" id="profile-template">
 				<div id='profilePU-content' style="border:1px solid black; padding:5px;">
 					<div id='profilePU-main' style="height:80px;">

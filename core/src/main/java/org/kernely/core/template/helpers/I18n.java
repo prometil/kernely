@@ -26,11 +26,24 @@ import java.util.Locale;
 
 import org.kernely.core.i18n.Messages;
 
+/**
+ * 
+ * @author g.breton
+ * 
+ */
 public class I18n {
 
 	private static Messages messages;
+
+	// the choosen locale
 	private Locale locale;
 
+	/**
+	 * Create the I18N with a given locale
+	 * 
+	 * @param pLocale
+	 *            the i18n locale
+	 */
 	public I18n(Locale pLocale) {
 		List<String> names = new ArrayList<String>();
 		names.add("core");
@@ -40,7 +53,7 @@ public class I18n {
 	}
 
 	/**
-	 * The method
+	 * Translates a key to a string
 	 * 
 	 * @param key
 	 *            the key of the message to get
@@ -51,7 +64,7 @@ public class I18n {
 	}
 
 	/**
-	 * This method returns a key with parameters
+	 * Translate a key to a string with some parameters
 	 * 
 	 * eg. template = At {2,time,short} on {2,date,long}, we detected
 	 * {1,number,integer} spaceships on the planet {0}.
