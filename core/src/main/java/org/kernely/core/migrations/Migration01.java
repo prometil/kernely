@@ -128,7 +128,7 @@ public class Migration01 extends Migration {
 		insertJohnDetails.set("businessphone","0897654321");
 		insertJohnDetails.set("ssn", "123565552221111");
 		insertJohnDetails.set("civility","1");
-		insertJohnDetails.set("birth", "18/12/1990");
+		insertJohnDetails.set("birth", "01/12/1990");
 		
 		Insert insertBobbyDetails = Insert.into("kernely_user_details");
 		insertBobbyDetails.set("id", "6");
@@ -145,7 +145,7 @@ public class Migration01 extends Migration {
 		insertBobbyDetails.set("businessphone","0897654321");
 		insertBobbyDetails.set("ssn", "123565552221111");
 		insertBobbyDetails.set("civility","1");
-		insertBobbyDetails.set("birth", "18/12/1990");
+		insertBobbyDetails.set("birth", "01/12/1990");
 		
 		
 		commands.add(userDetails);
