@@ -21,6 +21,7 @@
 package org.kernely.holiday.model;
 
 import java.util.Date;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -29,6 +30,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -43,22 +45,26 @@ public class HolidayBalance extends AbstractModel {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private int id;
 
-	private float available_balance;
-	
-	@Column(name="future_balance")
-	private float futureBalance;
-	
-	@Column(name="last_update")
+	@Column(name = "available_balance")
+	private int availableBalance;
+
+	@Column(name = "future_balance")
+	private int futureBalance;
+
+	@Column(name = "last_update")
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date lastUpdate;
 
 	@ManyToOne
-    @JoinColumn(name = "holiday_type_id")
+	@JoinColumn(name = "holiday_type_id")
 	private HolidayType holidayType;
 
 	@ManyToOne
-    @JoinColumn(name = "user_id")
+	@JoinColumn(name = "user_id")
 	private User user;
+	
+	@OneToMany(mappedBy = "balance")
+	private Set<HolidayRequestDetail> details;
 
 	/**
 	 * @return the id
@@ -78,16 +84,16 @@ public class HolidayBalance extends AbstractModel {
 	/**
 	 * @return the available balance
 	 */
-	public float getAvailableBalance() {
-		return available_balance;
+	public int getAvailableBalance() {
+		return availableBalance;
 	}
 
 	/**
 	 * @param availableBalance
 	 *            the available balance to set
 	 */
-	public void setAvailableBalance(float availableBalance) {
-		available_balance = availableBalance;
+	public void setAvailableBalance(int availableBalance) {
+		this.availableBalance = availableBalance;
 	}
 
 	/**
@@ -121,30 +127,17 @@ public class HolidayBalance extends AbstractModel {
 	}
 
 	/**
-	 * @return the available_balance
-	 */
-	public float getAvailable_balance() {
-		return available_balance;
-	}
-
-	/**
-	 * @param availableBalance the available_balance to set
-	 */
-	public void setAvailable_balance(float availableBalance) {
-		available_balance = availableBalance;
-	}
-
-	/**
 	 * @return the futureBalance
 	 */
-	public float getFutureBalance() {
+	public int getFutureBalance() {
 		return futureBalance;
 	}
 
 	/**
-	 * @param futureBalance the futureBalance to set
+	 * @param futureBalance
+	 *            the futureBalance to set
 	 */
-	public void setFutureBalance(float futureBalance) {
+	public void setFutureBalance(int futureBalance) {
 		this.futureBalance = futureBalance;
 	}
 
@@ -156,11 +149,25 @@ public class HolidayBalance extends AbstractModel {
 	}
 
 	/**
-	 * @param lastUpdate the lastUpdate to set
+	 * @param lastUpdate
+	 *            the lastUpdate to set
 	 */
 	public void setLastUpdate(Date lastUpdate) {
 		this.lastUpdate = lastUpdate;
 	}
-
 	
+	/**
+	 * @return the details
+	 */
+	public Set<HolidayRequestDetail> getDetails() {
+		return details;
+	}
+
+	/**
+	 * @param details the details to set
+	 */
+	public void setDetails(Set<HolidayRequestDetail> details) {
+		this.details = details;
+	}
+
 }

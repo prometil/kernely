@@ -39,7 +39,7 @@ import org.kernely.core.model.Mail;
 import org.kernely.core.service.AbstractService;
 import org.kernely.core.service.mail.builder.MailBuilder;
 import org.kernely.core.template.TemplateRenderer;
-import org.kernely.core.template.TemplateRenderer.TemplateBuilder;
+import org.kernely.core.template.TemplateRenderer.KernelyTemplate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -85,7 +85,7 @@ public class MailService extends AbstractService implements Mailer {
 
 		private String subject;
 
-		private TemplateBuilder builder;
+		private KernelyTemplate builder;
 
 		/**
 		 * Create a mail builder from a template
@@ -93,7 +93,7 @@ public class MailService extends AbstractService implements Mailer {
 		 * @param templatePath
 		 *            the template
 		 */
-		public JavaMailBuilder(String template, TemplateBuilder pBuilder) {
+		public JavaMailBuilder(String template, KernelyTemplate pBuilder) {
 			recipients = new ArrayList<String>();
 			ccs = new ArrayList<String>();
 			builder = pBuilder;
@@ -159,7 +159,9 @@ public class MailService extends AbstractService implements Mailer {
 				mail.setCc(ccString);
 			}
 			mail.setContent(body);
-			mail.setRecipients(recipString);
+			if(recipString != ""){
+				mail.setRecipients(recipString);
+			}
 			mail.setSubject(subject);
 			
 			em.get().persist(mail);

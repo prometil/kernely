@@ -29,7 +29,6 @@ AppHolidayAdmin = (function($){
 		vid: null,
 		vtype : null,
 		vquantity : null,
-		vfrequency : null,
 		vunity : null,
 		
 		events: {
@@ -38,11 +37,10 @@ AppHolidayAdmin = (function($){
 			"mouseout" : "outLine"
 		},
 		
-		initialize: function(id, type, quantity, frequency, unity){
+		initialize: function(id, type, quantity, unity){
 			this.vid = id;
 			this.vtype = type;
 			this.vquantity = quantity;
-			this.vfrequency = frequency;
 			this.vunity = unity;
 		},
 		selectLine : function(){
@@ -67,8 +65,14 @@ AppHolidayAdmin = (function($){
 			}
 		},
 		render:function(){
-			var template = '<td>{{type}}</td><td>{{quantity}}</td><td>{{frequency}}</td><td>{{unity}}</td>';
-			var view = {type : this.vtype, quantity: this.vquantity, frequency: this.vfrequency, unity : this.vunity};
+			var template = '<td>{{type}}</td><td>{{quantity}}</td><td>{{unity}}</td>';
+			var stringunity ="Undefined";
+			if (this.vunity == 12) {
+				stringunity = "Month";
+			} else {
+				stringunity = "Year";
+			}
+			var view = {type : this.vtype, quantity: this.vquantity, unity : stringunity};
 			var html = Mustache.to_html(template, view);
 			
 			$(this.el).html(html);
@@ -85,7 +89,7 @@ AppHolidayAdmin = (function($){
 		},
 		initialize:function(){
 			var parent = this;
-			$(this.el).html("<tr><th>Name</th><th>Quantity</th><th>Every</th><th>Unit</th></tr>");
+			$(this.el).html("<tr><th>Name</th><th>Quantity</th><th>Unit</th></tr>");
 			$.ajax({
 				type:"GET",
 				url:"/admin/holiday/all",
@@ -94,13 +98,13 @@ AppHolidayAdmin = (function($){
 					if (data != null){
 						if(data.holidayDTO.length > 1){
 				    		$.each(data.holidayDTO, function() {
-				    			var view = new HolidayAdminTableLineView(this.id, this.name, this.quantity, this.periodNumber, this.periodUnit);
+				    			var view = new HolidayAdminTableLineView(this.id, this.name, this.quantity, this.periodUnit);
 				    			view.render();
 				    		});
 						}
 				    	// In the case when there is only one element
 			    		else{
-							var view = new HolidayAdminTableLineView(data.holidayDTO.id, data.holidayDTO.name, data.holidayDTO.quantity, data.holidayDTO.periodNumber, data.holidayDTO.periodUnit);
+							var view = new HolidayAdminTableLineView(data.holidayDTO.id, data.holidayDTO.name, data.holidayDTO.quantity, data.holidayDTO.periodUnit);
 			    			view.render();
 						}
 					}
@@ -216,8 +220,7 @@ AppHolidayAdmin = (function($){
 		},
 		
 		registerholiday: function(){
-			var json = '{"type":"'+$('input[name*="type"]').val() + '", "quantity":"' + $('input[name*="quantity"]').val() +'", "frequency":"'+$('input[name*="frequency"]').val() + '", "unity":"'+$('#unity').val()+ '"}';
-			console.log(json);         
+			var json = '{"type":"'+$('input[name*="type"]').val() + '", "quantity":"' + $('input[name*="quantity"]').val() +'", "frequency":"'+$('input[name*="frequency"]').val() + '", "unity":"'+$('#unity').val()+ '", "effectiveMonth":"0"}';
 			$.ajax({
 				url:"/admin/holiday/create",
 				data: json,
@@ -226,7 +229,6 @@ AppHolidayAdmin = (function($){
 				processData: false,
 				contentType: "application/json; charset=utf-8",
 				success: function(data){
-					//console.log(data);
 					if (data.result == "Ok"){
 						console.log("success") ; 
 						$('#modal_window_holiday').hide();
@@ -280,17 +282,14 @@ AppHolidayAdmin = (function($){
 					if(data != null){
 						var option = "";
 						var unity = data.periodUnit; 
-						if (unity == "week"){
-							option = '<option value="week" selected="selected">week</opton><option value="month">month</opton><option value="year">year</opton>';
+						if (unity == 12){
+							option = '<option value="12" selected="selected">month</option><option value="1">year</option>';
 						}
-						if (unity == "month"){
-							option = '<option value="week">week</opton><option value="month" selected="selected">month</opton><option value="year">year</opton>';
-						}
-						if (unity == "year"){
-							option = '<option value="week">week</opton><option value="month">month</opton><option value="year" selected="selected">year</opton>';
+						if (unity == 1){
+							option = '<option value="12">month</opton><option value="1" selected="selected">year</opton>';
 						}
 						else {
-							option = '<option value="week">week</opton><option value="month">month</opton><option value="year">year</option>';
+							option = '<option value="12">month</opton><option value="1">year</option>';
 						}
 						$("#selected").append('<select name="unity" id="unity">'+ option + '</select>'); 		
 					}
@@ -308,8 +307,7 @@ AppHolidayAdmin = (function($){
 		},
 		
 		updateholiday: function(){
-			var json = '{"id":"'+this.vid+'", "type":"'+$('input[name*="type"]').val() + '", "quantity":"' + $('input[name*="quantity"]').val() + '", "frequency":"'+$('input[name*="frequency"]').val()+ '", "unity":"'+$('#unity').val() + '"}';
-			console.log(json);
+			var json = '{"id":"'+this.vid+'", "type":"'+$('input[name*="type"]').val() + '", "quantity":"' + $('input[name*="quantity"]').val() + '", "frequency":"'+$('input[name*="frequency"]').val()+ '", "unity":"'+$('#unity').val() + '", "effectiveMonth":"0"}';
 			$.ajax({
 				url:"/admin/holiday/update",
 				data: json,

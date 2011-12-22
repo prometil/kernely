@@ -22,33 +22,31 @@ package org.kernely.holiday.dto;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.kernely.holiday.model.HolidayBalance;
+
+
+/**
+ * dto for holiday  
+ * @author b.grandperret
+ *
+ */
 @XmlRootElement
-public class HolidayUpdateRequestDTO {
+public class HolidayBalanceDTO {
 
 	public int id;
-	public String type;
-	public int quantity;
-	public int frequency;
-	public int unity;
-	public int effectiveMonth;
-
-	public HolidayUpdateRequestDTO() {
-
+	public float availableBalance;
+	public float futureBalance;
+	
+	public HolidayBalanceDTO(){
+		
 	}
 
-	/**
-	 * create a dto for update
-	 * 
-	 * @param newId
-	 * @param newType
-	 * @param newFrequency
-	 */
-	public HolidayUpdateRequestDTO(long newId, String newType, int quantity, int newUnity, int effectiveMonth) {
-		this.id = (int) newId;
-		this.type = newType;
-		this.quantity = quantity;
-		this.unity = newUnity;
-		this.effectiveMonth = effectiveMonth;
+	public HolidayBalanceDTO(HolidayBalance balance){
+		this.id = balance.getId() ; 
+		
+		// Divide balances by 12 because in database, balances are in twelths of days.
+		this.availableBalance = ((float) balance.getAvailableBalance()) / 12.0F;
+		this.futureBalance = ((float) balance.getFutureBalance()) / 12.0F;
 	}
-
+	
 }

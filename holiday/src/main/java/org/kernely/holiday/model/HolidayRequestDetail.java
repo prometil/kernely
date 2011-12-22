@@ -32,11 +32,12 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.joda.time.DateTime;
 import org.kernely.core.hibernate.AbstractModel;
 
 @Entity
 @Table(name = "kernely_holiday_request_detail")
-public class HolidayRequestDetail extends AbstractModel {
+public class HolidayRequestDetail extends AbstractModel implements Comparable<HolidayRequestDetail> {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private int id;
@@ -51,8 +52,8 @@ public class HolidayRequestDetail extends AbstractModel {
 	private HolidayRequest request;
 
 	@ManyToOne
-    @JoinColumn(name = "holiday_type_id")
-	private HolidayType type;
+    @JoinColumn(name = "holiday_balance_id")
+	private HolidayBalance balance;
 
 
 	/**
@@ -132,15 +133,32 @@ public class HolidayRequestDetail extends AbstractModel {
 	/**
 	 * @return the type
 	 */
-	public HolidayType getType() {
-		return type;
+	public HolidayBalance getBalance() {
+		return balance;
 	}
 
 	/**
-	 * @param type the type to set
+	 * @param balance the balance to set
 	 */
-	public void setType(HolidayType type) {
-		this.type = type;
+	public void setBalance(HolidayBalance balance) {
+		this.balance = balance;
+	}
+
+	@Override
+	public int compareTo(HolidayRequestDetail otherRequest) {
+		DateTime dt1 = new DateTime(this.day);
+		DateTime dt2 = new DateTime(otherRequest.getDay());
+		if(dt1.isBefore(dt2)){
+			return -1;
+		}
+		else{
+			if(dt1.isAfter(dt2)){
+				return 1;
+			}
+			else{
+				return 0;
+			}
+		}
 	}
 
 	

@@ -24,6 +24,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import org.kernely.core.template.TemplateRenderer;
 import org.slf4j.Logger;
@@ -47,9 +48,9 @@ public class MainController extends AbstractController {
 	 */
 	@GET
 	@Produces( { MediaType.TEXT_HTML })
-	public String getUI() {
+	public Response getUI() {
 		String URL = new String("/templates/gsp/home.gsp");
-		return templateRenderer.create(URL).render();
+		return ok(templateRenderer.create(URL));
 
 	}
 

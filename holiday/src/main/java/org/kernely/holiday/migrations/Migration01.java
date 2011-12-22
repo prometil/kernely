@@ -20,17 +20,16 @@ public class Migration01 extends Migration {
 		CreateTable holidayType = CreateTable.name("kernely_holiday_type");
 		holidayType.column("id", "int primary key");
 		holidayType.column("name", "varchar(50)");
-		holidayType.column("quantity", "real");
-		holidayType.column("period_number","int");
-		holidayType.column("period_unit","varchar(50)");
+		holidayType.column("quantity", "int");
+		holidayType.column("period_unit","int");
 		holidayType.column("effective_month","int");
 		
 		commands.add(holidayType);
 		
 		CreateTable holidayBalance = CreateTable.name("kernely_holiday_balance");
 		holidayBalance.column("id", "int primary key");
-		holidayBalance.column("available_balance", "real");
-		holidayBalance.column("future_balance", "real");
+		holidayBalance.column("available_balance", "int");
+		holidayBalance.column("future_balance", "int");
 		holidayBalance.column("last_update","timestamp");
 		holidayBalance.column("holiday_type_id","int");
 		holidayBalance.column("user_id","bigint");
@@ -62,14 +61,14 @@ public class Migration01 extends Migration {
 		holidayRequestDetail.column("am", "boolean");
 		holidayRequestDetail.column("pm","boolean");
 		holidayRequestDetail.column("holiday_request_id","int");
-		holidayRequestDetail.column("holiday_type_id","int");
+		holidayRequestDetail.column("holiday_balance_id","int");
 
 		RawSql holidayRequestDetailRequestForeignKey = new RawSql("ALTER TABLE kernely_holiday_request_detail ADD CONSTRAINT fk_holiday_request FOREIGN KEY (holiday_request_id) REFERENCES kernely_holiday_request(id)");
-		RawSql holidayRequestDetailTypeForeignKey = new RawSql("ALTER TABLE kernely_holiday_request_detail ADD CONSTRAINT fk_holiday_type FOREIGN KEY (holiday_type_id) REFERENCES kernely_holiday_type(id)");
+		RawSql holidayRequestDetailBalanceForeignKey = new RawSql("ALTER TABLE kernely_holiday_request_detail ADD CONSTRAINT fk_holiday_balance FOREIGN KEY (holiday_balance_id) REFERENCES kernely_holiday_balance(id)");
 		
 		commands.add(holidayRequestDetail);
 		commands.add(holidayRequestDetailRequestForeignKey);
-		commands.add(holidayRequestDetailTypeForeignKey);
+		commands.add(holidayRequestDetailBalanceForeignKey);
 		
 		return commands;
 	}

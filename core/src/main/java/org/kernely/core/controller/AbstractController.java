@@ -25,6 +25,7 @@ import java.net.URISyntaxException;
 
 import javax.ws.rs.core.Response;
 
+import org.kernely.core.template.TemplateRenderer.KernelyTemplate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,5 +41,13 @@ public abstract class AbstractController {
 			log.error("Invalid redirect url");
 			return null;
 		}
+	}
+	/**
+	 * Create an ok response
+	 * @param template the template to render
+	 * @return the response
+	 */
+	public Response ok(KernelyTemplate template){
+		return Response.ok(template.render()).build();
 	}
 }

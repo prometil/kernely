@@ -42,12 +42,11 @@
 			<!-- display all applications in the menu -->
 			<div id="header">
 				<div id="menu">
-					<div id="title">Kernely</div>
+					<div id="title"><%= i18n.t("title") %></div>
 					<% menu.each() { key, value -> %>
 						<a href="${value}">${key}</a>
 					<% };%>
-					<a href="/group">${groups}</a>
-					<a href="/user">${users}</a>
+					
 					<% if (admin != ""){ %>
 						<a href="/admin">${admin}</a>
 					<% } %>

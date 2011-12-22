@@ -15,11 +15,9 @@
 	<legend>Holiday informations</legend>
 		Name: <input type="text" name="type" value="{{type}}" id="holiday-type" /><br/><br/>
 		<input type="text" name="quantity" value="{{quantity}}" id="holiday-quantity" size="2" maxlength="4" /> days every
-		<input type="text" name="frequency" value="{{frequency}}" id="holiday-frequency" size="2" maxlength="4" />  
 		<select name="unity" id="unity">
-			<option value="week">week</option> 
-			<option value="month">month</option>
-			<option value="year">year</option>
+			<option value="12">month</option>
+			<option value="1">year</option>
 		</select> 
 	</fieldset>
 
@@ -36,7 +34,6 @@
 		Name: <input type="text" name="type" value="{{type}}" id="holiday-type" /><br/><br/>
 	<div id="selected">
 		<input type="text" name="quantity" value="{{quantity}}" id="holiday-quantity" size="2" maxlength="4" /> days every
-		<input type="text" name="frequency" value="{{frequency}}" id="holiday-frequency" size="2" maxlength="4" /> 
 	</div>
 	</fieldset>
 	<br/>
