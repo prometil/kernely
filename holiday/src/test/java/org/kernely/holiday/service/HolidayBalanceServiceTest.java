@@ -193,7 +193,7 @@ public class HolidayBalanceServiceTest extends AbstractServiceTest {
 	}
 
 	@Test
-	public void retrieveAvailableDays() {
+	public void removeAvailableDays() {
 		HolidayDTO type = createHolidayTypeForTest();
 		UserDTO user = createUserForTest();
 		holidayBalanceService.createHolidayBalance(user.id, type.id);
@@ -203,31 +203,46 @@ public class HolidayBalanceServiceTest extends AbstractServiceTest {
 		holidayBalanceService.incrementBalance(balance.id);
 		holidayBalanceService.incrementBalance(balance.id);
 
-		holidayBalanceService.retrieveAvailableDays(balance.id, 2);
+		holidayBalanceService.removeAvailableDays(balance.id, 2);
 		assertEquals(QUANTITY * 3 - 2, holidayBalanceService.getHolidayBalanceDTO(balance.id).availableBalance, 0);
 
-		holidayBalanceService.retrieveAvailableDays(balance.id, 4.5F);
+		holidayBalanceService.removeAvailableDays(balance.id, 4.5F);
 		assertEquals(QUANTITY * 3 - 6.5, holidayBalanceService.getHolidayBalanceDTO(balance.id).availableBalance, 0);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
-	public void retrieveNotAvailableDays() {
+	public void removeNotAvailableDays() {
 		HolidayDTO type = createHolidayTypeForTest();
 		UserDTO user = createUserForTest();
 		holidayBalanceService.createHolidayBalance(user.id, type.id);
 		HolidayBalanceDTO balance = holidayBalanceService.getHolidayBalance(user.id, type.id);
 
-		holidayBalanceService.retrieveAvailableDays(balance.id, 1);
+		holidayBalanceService.removeAvailableDays(balance.id, 1);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
-	public void retrieveAvailableDaysWithWrongFormat() {
+	public void removeAvailableDaysWithWrongFormat() {
 		HolidayDTO type = createHolidayTypeForTest();
 		UserDTO user = createUserForTest();
 		holidayBalanceService.createHolidayBalance(user.id, type.id);
 		HolidayBalanceDTO balance = holidayBalanceService.getHolidayBalance(user.id, type.id);
 
-		holidayBalanceService.retrieveAvailableDays(balance.id, 1.2F);
+		holidayBalanceService.removeAvailableDays(balance.id, 1.2F);
+	}
+	
+	@Test
+	public void addAndRemoveAvailableDays(){
+		HolidayDTO type = createHolidayTypeForTest();
+		UserDTO user = createUserForTest();
+		holidayBalanceService.createHolidayBalance(user.id, type.id);
+		HolidayBalanceDTO balance = holidayBalanceService.getHolidayBalance(user.id, type.id);
+		
+		holidayBalanceService.incrementBalance(balance.id);
+		holidayBalanceService.removeAvailableDays(balance.id, QUANTITY);
 
+		balance = holidayBalanceService.getHolidayBalance(user.id, type.id);
+
+		assertEquals(0,balance.availableBalance,0);
+		assertEquals(0,balance.futureBalance,0);
 	}
 }

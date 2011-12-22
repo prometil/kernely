@@ -48,6 +48,8 @@ public class HolidayType extends AbstractModel {
 	@Column(name="effective_month")
 	private int effectiveMonth;
 	
+	private boolean anticipated;
+	
 	@OneToMany(mappedBy = "holidayType")
 	private Set<HolidayBalance> balances;
 	
@@ -156,6 +158,21 @@ public class HolidayType extends AbstractModel {
 	 */
 	public void setEffectiveMonth(int effectiveMonth) {
 		this.effectiveMonth = effectiveMonth;
+	}
+
+	/**
+	 * Return the state of the holiday: with anticipation or not.
+	 * @return true if holidays can be taken with anticipation, false otherwise.
+	 */
+	public boolean isAnticipated() {
+		return anticipated;
+	}
+
+	/**
+	 * @param anticipated the anticipated to set
+	 */
+	public void setAnticipated(boolean anticipated) {
+		this.anticipated = anticipated;
 	}
 	
 	

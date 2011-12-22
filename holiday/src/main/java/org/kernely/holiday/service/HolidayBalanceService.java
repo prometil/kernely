@@ -21,6 +21,7 @@
 package org.kernely.holiday.service;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.NoResultException;
@@ -184,6 +185,13 @@ public class HolidayBalanceService extends AbstractService {
 			newBalance = balance.getFutureBalance() + quantity;
 			balance.setFutureBalance(newBalance);
 		}
+		
+		DateTimeZone zoneUTC = DateTimeZone.UTC;
+		Date today = new DateTime().withZone(zoneUTC).toDate();
+
+		// Actualize date
+		balance.setLastUpdate(today);
+		
 		em.get().merge(balance);
 	}
 
@@ -231,8 +239,8 @@ public class HolidayBalanceService extends AbstractService {
 	 *            the number of days.
 	 */
 	@Transactional
-	public void retrieveAvailableDays(int holidayBalanceId, float days) {
-		// Can only retrieve days or half days.
+	public void removeAvailableDays(int holidayBalanceId, float days) {
+		// Can only remove days or half days.
 		int entire = (int) (days / 0.5F);
 		if (((float) entire) * 0.5F != days) {
 			throw new IllegalArgumentException("Can only retrieve days or half days. " + days + " is not a multiple of half day");

@@ -459,7 +459,7 @@ public class StreamService extends AbstractService {
 		if (!streams.isEmpty()){
 			Query query = em.get().createQuery("SELECT count(m) FROM Message m  WHERE message is null AND stream in (:streamSet)");
 			query.setParameter("streamSet", streams);
-			int count = (Integer) query.getSingleResult();
+			int count = ((Long) query.getSingleResult()).intValue();
 			return count;
 		}
 		return 0; 
