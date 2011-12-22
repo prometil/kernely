@@ -27,6 +27,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import org.kernely.core.dto.GroupCreationRequestDTO;
 import org.kernely.core.dto.GroupDTO;
@@ -67,17 +68,17 @@ public class GroupAdminController extends AbstractController {
 	}
 	
 	/**
-	 * Display the group administration page
+	 * Display the gStringroup administration page
 	 * @return the group administration page
 	 */
 	@GET
 	@Produces( { MediaType.TEXT_HTML })
-	public String displayPage()
+	public Response displayPage()
 	{
 		if (userService.currentUserIsAdministrator()){
-			return templateRenderer.create("/templates/gsp/administration/group_admin.gsp").withLayout(TemplateRenderer.ADMIN_LAYOUT).render();
+			return ok(templateRenderer.create("/templates/gsp/administration/group_admin.gsp").withLayout(TemplateRenderer.ADMIN_LAYOUT));
 		}
-		return templateRenderer.create("/templates/gsp/home.gsp").render();
+		return ok(templateRenderer.create("/templates/gsp/home.gsp"));
 	}
 	
 	/**

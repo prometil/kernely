@@ -30,6 +30,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import org.apache.shiro.SecurityUtils;
 import org.kernely.core.controller.AbstractController;
@@ -63,10 +64,10 @@ public class StreamController extends AbstractController {
 	 */
 	@GET
 	@Produces( { MediaType.TEXT_HTML })
-	public String display() {
+	public Response display() {
 		log.debug("Call to GET on streams");
 
-		return templateRenderer.create("/templates/gsp/streams.gsp").addCss("/css/stream.css").render();
+		return ok(templateRenderer.create("/templates/gsp/streams.gsp").addCss("/css/stream.css"));
 	}
 
 	/**

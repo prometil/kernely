@@ -25,6 +25,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import org.kernely.core.dto.GroupDTO;
 import org.kernely.core.service.user.GroupService;
@@ -46,10 +47,10 @@ public class GroupController extends AbstractController{
 	 */
 	@GET
 	@Produces( { MediaType.TEXT_HTML })
-	public String getText()
+	public Response getText()
 	{
 		log.debug("Call to GET on all groups");
 		List<GroupDTO> groups = groupService.getAllGroups();
-		return templateRenderer.create("/templates/gsp/groups.gsp").with("groups", groups).render() ;
+		return ok(templateRenderer.create("/templates/gsp/groups.gsp").with("groups", groups));
 	}
 }
