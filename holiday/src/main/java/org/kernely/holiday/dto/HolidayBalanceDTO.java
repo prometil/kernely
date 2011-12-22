@@ -20,6 +20,8 @@
 
 package org.kernely.holiday.dto;
 
+import java.util.Date;
+
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.kernely.holiday.model.HolidayBalance;
@@ -36,6 +38,8 @@ public class HolidayBalanceDTO {
 	public int id;
 	public float availableBalance;
 	public float futureBalance;
+	public int effectiveMonth;
+	public Date lastUpdate;
 	
 	public HolidayBalanceDTO(){
 		
@@ -47,6 +51,8 @@ public class HolidayBalanceDTO {
 		// Divide balances by 12 because in database, balances are in twelths of days.
 		this.availableBalance = ((float) balance.getAvailableBalance()) / 12.0F;
 		this.futureBalance = ((float) balance.getFutureBalance()) / 12.0F;
+		this.lastUpdate = balance.getLastUpdate();
+		this.effectiveMonth = balance.getHolidayType().getEffectiveMonth();
 	}
 	
 }

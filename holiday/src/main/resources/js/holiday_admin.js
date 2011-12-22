@@ -30,6 +30,8 @@ AppHolidayAdmin = (function($){
 		vtype : null,
 		vquantity : null,
 		vunity : null,
+		veffectivemonth : null,
+		vanticipation : null,
 		
 		events: {
 			"click" : "selectLine",
@@ -37,11 +39,13 @@ AppHolidayAdmin = (function($){
 			"mouseout" : "outLine"
 		},
 		
-		initialize: function(id, type, quantity, unity){
+		initialize: function(id, type, quantity, unity, effectivemonth, anticipation){
 			this.vid = id;
 			this.vtype = type;
 			this.vquantity = quantity;
 			this.vunity = unity;
+			this.veffectivemonth = effectivemonth;
+			this.vanticipation = anticipation;
 		},
 		selectLine : function(){
 			$(".editButton").removeAttr('disabled');
@@ -65,14 +69,63 @@ AppHolidayAdmin = (function($){
 			}
 		},
 		render:function(){
-			var template = '<td>{{type}}</td><td>{{quantity}}</td><td>{{unity}}</td>';
+			var template = '<td>{{type}}</td><td>{{quantity}}</td><td>{{unity}}</td><td>{{effectivemonth}}</td><td>{{anticipation}}</td>';
 			var stringunity ="Undefined";
 			if (this.vunity == 12) {
 				stringunity = "Month";
 			} else {
 				stringunity = "Year";
 			}
-			var view = {type : this.vtype, quantity: this.vquantity, unity : stringunity};
+			
+			var stringmonth = "Undefined";
+			switch(parseInt(this.veffectivemonth)){
+			case 0:
+				stringmonth = "January";
+				break;
+			case 1:
+				stringmonth = "February";
+				break;
+			case 2:
+				stringmonth = "March";
+				break;
+			case 3:
+				stringmonth = "April";
+				break;
+			case 4:
+				stringmonth = "May";
+				break;
+			case 5:
+				stringmonth = "June";
+				break;
+			case 6:
+				stringmonth = "July";
+				break;
+			case 7:
+				stringmonth = "August";
+				break;
+			case 8:
+				stringmonth = "September";
+				break;
+			case 9:
+				stringmonth = "October";
+				break;
+			case 10:
+				stringmonth = "November";
+				break;
+			case 11:
+				stringmonth = "December";
+				break;
+			}
+			
+			var stringanticipation ="Undefined";
+			if (this.vanticipation == "true") {
+				stringanticipation = "Yes";
+			} else {
+				stringanticipation = "No";
+			}
+
+			
+			var view = {type : this.vtype, quantity: this.vquantity, unity : stringunity, effectivemonth: stringmonth, anticipation: stringanticipation};
 			var html = Mustache.to_html(template, view);
 			
 			$(this.el).html(html);
@@ -89,7 +142,7 @@ AppHolidayAdmin = (function($){
 		},
 		initialize:function(){
 			var parent = this;
-			$(this.el).html("<tr><th>Name</th><th>Quantity</th><th>Unit</th></tr>");
+			$(this.el).html("<tr><th>Name</th><th>Quantity</th><th>Each</th><th>Effective month</th><th>Can be anticipated</th></tr>");
 			$.ajax({
 				type:"GET",
 				url:"/admin/holiday/all",
@@ -98,13 +151,13 @@ AppHolidayAdmin = (function($){
 					if (data != null){
 						if(data.holidayDTO.length > 1){
 				    		$.each(data.holidayDTO, function() {
-				    			var view = new HolidayAdminTableLineView(this.id, this.name, this.quantity, this.periodUnit);
+				    			var view = new HolidayAdminTableLineView(this.id, this.name, this.quantity, this.periodUnit, this.effectiveMonth, this.anticipation);
 				    			view.render();
 				    		});
 						}
 				    	// In the case when there is only one element
 			    		else{
-							var view = new HolidayAdminTableLineView(data.holidayDTO.id, data.holidayDTO.name, data.holidayDTO.quantity, data.holidayDTO.periodUnit);
+							var view = new HolidayAdminTableLineView(data.holidayDTO.id, data.holidayDTO.name, data.holidayDTO.quantity, data.holidayDTO.periodUnit, data.holidayDTO.effectiveMonth, data.holidayDTO.anticipation);
 			    			view.render();
 						}
 					}
@@ -220,7 +273,11 @@ AppHolidayAdmin = (function($){
 		},
 		
 		registerholiday: function(){
-			var json = '{"type":"'+$('input[name*="type"]').val() + '", "quantity":"' + $('input[name*="quantity"]').val() +'", "frequency":"'+$('input[name*="frequency"]').val() + '", "unity":"'+$('#unity').val()+ '", "effectiveMonth":"0"}';
+			var anticipation = false;
+			if ($('input[name*="anticipated"]:checked').length == 1){
+				anticipation = true;
+			}
+			var json = '{"type":"'+$('input[name*="type"]').val() + '", "quantity":"' + $('input[name*="quantity"]').val() +'", "frequency":"'+$('input[name*="frequency"]').val() + '", "unity":"'+$('#unity').val()+ '", "effectiveMonth":"' + $('#effectivemonth').val() + '", "anticipation":'+ anticipation +'}';
 			$.ajax({
 				url:"/admin/holiday/create",
 				data: json,
@@ -307,7 +364,7 @@ AppHolidayAdmin = (function($){
 		},
 		
 		updateholiday: function(){
-			var json = '{"id":"'+this.vid+'", "type":"'+$('input[name*="type"]').val() + '", "quantity":"' + $('input[name*="quantity"]').val() + '", "frequency":"'+$('input[name*="frequency"]').val()+ '", "unity":"'+$('#unity').val() + '", "effectiveMonth":"0"}';
+			var json = '{"id":"'+this.vid+'", "type":"'+$('input[name*="type"]').val() + '", "quantity":"' + $('input[name*="quantity"]').val() + '", "frequency":"'+$('input[name*="frequency"]').val()+ '", "unity":"'+$('#unity').val() + '", "effectiveMonth":"' + $('#effectivemonth').val() + '"}';
 			$.ajax({
 				url:"/admin/holiday/update",
 				data: json,
