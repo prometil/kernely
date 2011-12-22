@@ -99,10 +99,10 @@ App = (function($){
 			parent.commentLoaded = false;
 		},
 		showButtons: function(){
-			$("#buttons" + this.message.id).fadeTo("fast",1);
+			$("#buttons" + this.message.id).fadeTo(0,1);
 		},
 		hideButtons: function(){
-			$("#buttons" + this.message.id).fadeTo("fast",0.2);
+			$("#buttons" + this.message.id).fadeTo(0,0.2);
 		},
 		showOptions: function(){
 			$(this.el).addClass("selected")
