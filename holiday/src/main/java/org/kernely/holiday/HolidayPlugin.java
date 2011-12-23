@@ -20,16 +20,23 @@
 
 package org.kernely.holiday;
 
-import org.kernely.holiday.migrations.Migration01;
 import org.kernely.core.plugin.AbstractPlugin;
 import org.kernely.holiday.controller.HolidayAdminController;
 import org.kernely.holiday.controller.HolidayRequestController;
+import org.kernely.holiday.job.HolidaysJob;
+import org.kernely.holiday.migrations.Migration01;
 import org.kernely.holiday.model.HolidayBalance;
 import org.kernely.holiday.model.HolidayRequest;
 import org.kernely.holiday.model.HolidayRequestDetail;
 import org.kernely.holiday.model.HolidayType;
 import org.kernely.holiday.service.HolidayRequestService;
 import org.kernely.holiday.service.HolidayService;
+import org.quartz.CronScheduleBuilder;
+import org.quartz.DateBuilder;
+import org.quartz.ScheduleBuilder;
+import org.quartz.Trigger;
+import org.quartz.TriggerBuilder;
+import org.quartz.DateBuilder.IntervalUnit;
 
 import com.google.common.eventbus.EventBus;
 import com.google.inject.Inject;
@@ -43,6 +50,7 @@ public class HolidayPlugin extends AbstractPlugin {
 	/**
 	 * Default constructor
 	 */
+	@SuppressWarnings({ "unchecked" })
 	public HolidayPlugin(){
 		super("Holiday", "/holiday");
 		registerController(HolidayAdminController.class);
@@ -53,6 +61,27 @@ public class HolidayPlugin extends AbstractPlugin {
 		registerModel(HolidayRequestDetail.class);
 		registerAdminPage("Holiday admin", "/admin/holiday");
 		registerMigration(new Migration01());
+		
+		// Register job
+		// Create the holidays computing schedule with a cron expression :
+		// 0  : at the second 0
+		// 0  : at the minute 0
+		// 23 : at 11 p.m
+		// L  : the last day of the month
+		// *  : every month
+		// ?  : the day of the week is not important
+		// *  : every year
+		
+        ScheduleBuilder holidaysSchedule = CronScheduleBuilder.cronSchedule("0 0 23 L * ? *");
+
+        // Create the holidays trigger
+        Trigger holidaysTrigger = TriggerBuilder.
+                newTrigger().
+                withSchedule(holidaysSchedule).
+                startAt(DateBuilder.futureDate(1, IntervalUnit.MINUTE)).build();
+        
+        registerJob(HolidaysJob.class, holidaysTrigger);
+		
 	}
 	
 	@Override

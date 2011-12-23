@@ -454,14 +454,15 @@ public class StreamService extends AbstractService {
 	 * 
 	 * @return the value of the total of messages for the current user
 	 */
-	public int getCurrentNbMessages() {
+	public Long getCurrentNbMessages() {
 		List<Stream> streams = this.getCurrentUserStreamModel();
 		if (!streams.isEmpty()){
 			Query query = em.get().createQuery("SELECT count(m) FROM Message m  WHERE message is null AND stream in (:streamSet)");
 			query.setParameter("streamSet", streams);
-			int count = (Integer) query.getSingleResult();
+			Long count = (Long) query.getSingleResult();
 			return count;
+			
 		}
-		return 0; 
+		return new Long(0); 
 	}
 }

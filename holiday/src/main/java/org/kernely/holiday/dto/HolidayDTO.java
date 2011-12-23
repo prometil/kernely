@@ -35,22 +35,21 @@ public class HolidayDTO {
 	public String name;
 	public int quantity;
 	public int periodUnit;
-
+	public boolean anticipation;
+	public int effectiveMonth;
 	
 	public HolidayDTO(){
 		
 	}
-	/**
-	 * holiday dto
-	 * @param newType The name of the type
-	 * @param newUnity The unit: user HolidayType constants
-	 * @param newId
-	 */
-	public HolidayDTO(String newType, int newQuantity, int newUnity, int newId){
-		this.name = newType ; 
-		this.quantity = newQuantity;
-		this.periodUnit = newUnity;
-		this.id=newId;
+
+	public HolidayDTO(String name, int quantity, int periodUnit, int id, boolean anticipation, int effectiveMonth) {
+		super();
+		this.id = id;
+		this.name = name;
+		this.quantity = quantity;
+		this.periodUnit = periodUnit;
+		this.anticipation = anticipation;
+		this.effectiveMonth = effectiveMonth;
 	}
 	
 }

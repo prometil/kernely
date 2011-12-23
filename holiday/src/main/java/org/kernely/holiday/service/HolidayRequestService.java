@@ -35,6 +35,7 @@ import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.kernely.core.model.User;
 import org.kernely.core.service.AbstractService;
+import org.kernely.holiday.dto.CalendarBalanceDetailDTO;
 import org.kernely.holiday.dto.CalendarDayDTO;
 import org.kernely.holiday.dto.CalendarRequestDTO;
 import org.kernely.holiday.dto.HolidayDetailCreationRequestDTO;
@@ -214,6 +215,14 @@ public class HolidayRequestService extends AbstractService{
 		}
 	}
 
+	/**
+	 * Build the calendar for request holidays. Returns the weeks concerned by the dates given in param.
+	 * Verify in existing request if the days are available.
+	 * Finally, build the color picker containing all balance available with their associated color
+	 * @param date1 begin date for the request
+	 * @param date2 end date for the request
+	 * @return A DTO containing all days concerned by the request
+	 */
 	@Transactional
 	public CalendarRequestDTO getCalendarRequest(DateTime date1, DateTime date2) {
 		CalendarRequestDTO calendar = new CalendarRequestDTO();
@@ -271,6 +280,25 @@ public class HolidayRequestService extends AbstractService{
 		calendar.nbWeeks = ((date2.getWeekOfWeekyear() - date1.getWeekOfWeekyear()) + 1);
 		calendar.startWeek = date1.getWeekOfWeekyear();
 		calendar.days = daysDTO;
+		calendar.details = this.buildColorPickerForRequest();
 		return calendar;
+	}
+
+	@SuppressWarnings("unchecked")
+	private List<CalendarBalanceDetailDTO> buildColorPickerForRequest() {
+		Query balanceRequest = em.get().createQuery("SELECT b FROM HolidayBalance b WHERE user=:user");
+		balanceRequest.setParameter("user", this.getAuthenticatedUserModel());
+		try {
+			List<HolidayBalance> balance = (List<HolidayBalance>) balanceRequest.getResultList();
+
+			List<CalendarBalanceDetailDTO> details = new ArrayList<CalendarBalanceDetailDTO>();
+			for(HolidayBalance b : balance){
+				details.add(new CalendarBalanceDetailDTO(b.getHolidayType().getName(), b.getAvailableBalance(), b.getHolidayType().getColor(), b.getHolidayType().getId()));
+			}
+			return details;
+			
+		} catch (NoResultException nre) {
+			return null;
+		}
 	}
 }

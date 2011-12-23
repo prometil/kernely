@@ -28,6 +28,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import org.kernely.core.controller.AbstractController;
 import org.kernely.core.service.user.UserService;
@@ -60,12 +61,12 @@ public class HolidayAdminController extends AbstractController {
 	 */
 	@GET
 	@Produces( { MediaType.TEXT_HTML })
-	public String getPluginAdminPanel(){
-		String page;
+	public Response getPluginAdminPanel(){
+		Response page;
 		if (userService.currentUserIsAdministrator()){
-			page = templateRenderer.create("/templates/gsp/holiday_admin.gsp").withLayout(TemplateRenderer.ADMIN_LAYOUT).render();
+			page = ok(templateRenderer.create("/templates/gsp/holiday_admin.gsp").withLayout(TemplateRenderer.ADMIN_LAYOUT));
 		} else{
-			page = templateRenderer.create("/templates/gsp/home.gsp").render();
+			page = ok(templateRenderer.create("/templates/gsp/home.gsp"));
 		}
 
 		return page;

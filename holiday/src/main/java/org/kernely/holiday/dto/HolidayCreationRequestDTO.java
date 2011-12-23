@@ -33,6 +33,7 @@ public class HolidayCreationRequestDTO {
 	public int quantity;
 	public int unity;
 	public int effectiveMonth;
+	public boolean anticipation;
 
 	public HolidayCreationRequestDTO(){
 		
@@ -43,11 +44,12 @@ public class HolidayCreationRequestDTO {
 	 * @param newType
 	 * @param newFrequency
 	 */
-	public HolidayCreationRequestDTO(String newType, int newQuantity, int newUnity, int effectiveMonth){
+	public HolidayCreationRequestDTO(String newType, int newQuantity, int newUnity, int effectiveMonth, boolean anticipation){
 		this.type=newType;
 		this.quantity = newQuantity;
 		this.unity = newUnity;
 		this.effectiveMonth = effectiveMonth;
+		this.anticipation = anticipation;
 	}
 	
 }

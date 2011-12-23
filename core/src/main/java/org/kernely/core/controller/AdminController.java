@@ -26,6 +26,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import org.kernely.core.dto.PluginDTO;
 import org.kernely.core.plugin.AbstractPlugin;
@@ -57,15 +58,15 @@ public class AdminController extends AbstractController {
 	 */
 	@GET
 	@Produces( { MediaType.TEXT_HTML })
-	public String getAdmin() {
-		String page;
+	public Response getAdmin() {
+		javax.ws.rs.core.Response page;
 		String displayedPanel = "Please click on an administration title on the left sidebar.";
 
 		// Display the admin page only if the user is admin.
 		if (userService.currentUserIsAdministrator()) {
-			page = templateRenderer.create("/templates/gsp/admin.gsp").with("extension", displayedPanel).addCss("/css/admin.css").render();
+			page = ok(templateRenderer.create("/templates/gsp/admin.gsp").with("extension", displayedPanel).addCss("/css/admin.css"));
 		} else {
-			page = templateRenderer.create("/templates/gsp/home.gsp").render();
+			page = ok(templateRenderer.create("/templates/gsp/home.gsp"));
 		}
 		return page;
 	}

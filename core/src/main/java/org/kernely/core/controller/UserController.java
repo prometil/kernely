@@ -67,10 +67,10 @@ public class UserController extends AbstractController {
 	 */
 	@GET
 	@Produces( { MediaType.TEXT_HTML })
-	public String getText() {
+	public Response getText() {
 		log.debug("Call to GET on all users");
 		List<UserDTO> users = userService.getAllUsers();
-		return templateRenderer.create("/templates/gsp/users.gsp").with("users", users).render();
+		return ok(templateRenderer.create("/templates/gsp/users.gsp").with("users", users));
 	}
 
 	/**
@@ -81,8 +81,8 @@ public class UserController extends AbstractController {
 	@GET
 	@Path("/login")
 	@Produces( { MediaType.TEXT_HTML })
-	public String login() {
-		return templateRenderer.create("/templates/gsp/login.gsp").withoutLayout().render();
+	public Response login() {
+		return ok(templateRenderer.create("/templates/gsp/login.gsp").withoutLayout());
 	}
 
 	/**
@@ -93,10 +93,10 @@ public class UserController extends AbstractController {
 	@POST
 	@Path("/login")
 	@Produces( { MediaType.TEXT_HTML })
-	public String postLogin() {
+	public Response postLogin() {
 		log.info("Login attempt : is authenticated {}", SecurityUtils.getSubject().isAuthenticated());
 
-		return templateRenderer.create("/templates/gsp/login.gsp").withoutLayout().render();
+		return ok(templateRenderer.create("/templates/gsp/login.gsp").withoutLayout());
 	}
 
 	/**
@@ -123,7 +123,7 @@ public class UserController extends AbstractController {
 	@GET
 	@Path("/{login}/profile")
 	@Produces( { MediaType.TEXT_HTML })
-	public String profil(@PathParam("login") String userLogin) {
+	public Response profil(@PathParam("login") String userLogin) {
 		String template = "/templates/gsp/profile.gsp";
 		UserDTO usercurrent = this.getCurrent();
 		if (usercurrent.username.equals(userLogin)) {
@@ -131,7 +131,7 @@ public class UserController extends AbstractController {
 		}
 		UserDetailsDTO uddto = userService.getUserDetails(userLogin);
 
-		return templateRenderer.create(template).with("details", uddto).render();
+		return ok(templateRenderer.create(template).with("details", uddto));
 	}
 
 	/**

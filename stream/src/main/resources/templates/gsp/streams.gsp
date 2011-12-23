@@ -9,7 +9,7 @@
 	<div class="mess-right-side" style="width:549px;float:left;">
 		<div  class='message-content' style="margin-left:0px;width:548px;min-height:60px;height:auto;">
 			<div class="message-buttons" id="buttons{{id}}" style="position:absolute;opacity:0.2;margin-left:410px;margin-top:-5px;width:135px; text-align:right;">
-				<img class="favButton" src="/img/favourite.png"/>  <img id="delete{{id}}" class="deleteButton" src="/img/delete.png"/>
+			 <img id="delete{{id}}" class="deleteButton" src="/img/delete.png"/>
 			</div>
 			{{message}}
 		</div>

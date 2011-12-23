@@ -1,5 +1,10 @@
 <script type="text/javascript" src="/js/holiday_request.js"></script>
 
+<script type="text/html" id="balance-cell-template">
+		<span style="font-weight:bold;">{{name}}</span><br/>
+		Available : <span class="available-cpt">{{available}}</span>
+</script>
+
 <div id="request-main">  
 	<div id="period">
 		<label for="from">From </label><input type="text" id="from" name="from"/>

@@ -27,6 +27,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import org.kernely.core.controller.AbstractController;
 import org.kernely.core.dto.UserDTO;
@@ -69,12 +70,12 @@ public class StreamAdminController extends AbstractController {
 	@GET
 	@Path("/main")
 	@Produces( { MediaType.TEXT_HTML })
-	public String getPluginAdminPanel() {
-		String page;
+	public Response getPluginAdminPanel() {
+		Response page;
 		if (userService.currentUserIsAdministrator()) {
-			page = templateRenderer.create("/templates/gsp/streams_admin.gsp").withLayout(TemplateRenderer.ADMIN_LAYOUT).render();
+			page = ok(templateRenderer.create("/templates/gsp/streams_admin.gsp").withLayout(TemplateRenderer.ADMIN_LAYOUT));
 		} else {
-			page = templateRenderer.create("/templates/gsp/home.gsp").render();
+			page = ok(templateRenderer.create("/templates/gsp/home.gsp"));
 		}
 		log.debug("getting stream administration main page");
 		return page;
