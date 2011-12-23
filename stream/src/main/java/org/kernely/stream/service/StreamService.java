@@ -200,6 +200,7 @@ public class StreamService extends AbstractService {
 		dto.id = stream.getId();
 		dto.title = stream.getTitle();
 		dto.messages = getMessages();
+		dto.category = stream.getCategory();
 		return dto;
 	}
 
