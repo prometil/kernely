@@ -10,12 +10,30 @@
 	<fieldset>
 	<legend>Stream informations</legend>
 	Name : <input type="text" name="name" value="{{name}}"/><br/>
-	Category : <input type="text" name="category" value="{{category}}"/><br/>
+	Category :
+	<select name="category" id="category">
+		<option value="streams/users">User</option>
+		<option value="streams/plugins">Plugin</option>
+		<option value="streams/others">Other</option>
+	</select>
 	</fieldset>
 	<br/>
 	<input type="button" value="Send" class="sendStream"/><br/>
 	<span id="streams_errors" style="display:none;font-weight:bold;color:red;"></span>
 </script>
+
+<script type="text/html" id="popup-stream-admin-update-template">
+	<input type="button" value="Close" class="closeModal" style="right:0;"/><br/>
+	<fieldset>
+	<legend>Stream informations</legend>
+	Name : <input type="text" name="name" value="{{name}}"/><br/>
+	<div id="selected">	Category : </div> 
+	</fieldset>
+	<br/>
+	<input type="button" value="Send" class="updateDataStream"/><br/>
+	<span id="streams_errors" style="display:none;font-weight:bold;color:red;"></span>
+</script>
+
 
 <!-- Template for the rights view  -->
 <script type="text/html" id="popup-stream-rights-update-template">

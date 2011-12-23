@@ -147,9 +147,13 @@ AppStreamAdmin = (function($){
 		
 
 		viewRightsUpdate:null,
+		viewCreate:null,
+		viewUpdate:null,
+
 		
 		initialize: function(){
-			this.viewCreateUpdate =  new StreamAdminCreateUpdateView("", 0,"");
+			this.viewCreate =  new StreamAdminCreateView("", 0,"");
+			this.viewUpdate = new StreamAdminUpdateView("", 0,"");
 			this.viewRightsUpdate = new StreamRightsUpdateView("",0);
 		},
 		
@@ -180,15 +184,13 @@ AppStreamAdmin = (function($){
 		
 		createstream: function(){
 			this.showModalWindow();
-			// We set 0 for the id to create
-			this.viewCreateUpdate.setFields("", 0,"");
-			this.viewCreateUpdate.render();
+			this.viewCreate.render();
 		},
 		
 		editstream: function(){
 			this.showModalWindow();
-			this.viewCreateUpdate.setFields(lineSelected.vname, lineSelected.vid,lineSelected.vcategory);
-			this.viewCreateUpdate.render();
+			this.viewUpdate.setFields(lineSelected.vname, lineSelected.vid,lineSelected.vcategory);
+			this.viewUpdate.render();
 		},
 		
 		lockstream: function(){
@@ -234,10 +236,12 @@ AppStreamAdmin = (function($){
 	
 	StreamRightsUpdateView = Backbone.View.extend({
 		el: "#modal_window",
+		
 		events:{
 			"click .closeModal" : "closemodal",
 			"click .updateStream" : "updatestreamrights",
 		},
+		
 		vid: null,
 		vname: null,
 		vcategory: null,
@@ -373,13 +377,12 @@ AppStreamAdmin = (function($){
 		}
 	})
 	
-	StreamAdminCreateUpdateView = Backbone.View.extend({
+	StreamAdminCreateView = Backbone.View.extend({
 		el: "#modal_window",
 		
 		vid: null,
 		vname: null,
 		vcategory : null,
-		
 
 		events:{
 			"click .closeModal" : "closemodal",
@@ -391,13 +394,7 @@ AppStreamAdmin = (function($){
 			this.vname = name;
 			this.vcategory = category;
 		},
-		
-		setFields: function(name, id,category){
-			this.vid = id;
-			this.vname = name;
-			this.vcategory = category;
-		},
-		
+
 		render : function(){
 			var template = $("#popup-stream-admin-template").html();
 			
@@ -413,7 +410,7 @@ AppStreamAdmin = (function($){
 		},
 		
 		registerstream: function(){
-			var json = '{"id":"'+this.vid+'", "name":"'+$('input[name*="name"]').val() + '", "category":"'+$('input[name*="category"]').val() +'"}';
+			var json = '{"id":"'+this.vid+'", "name":"'+$('input[name*="name"]').val() + '", "category":"'+$("#category").val() +'"}';
 			$.ajax({
 				url:"/admin/streams/create",
 				data: json,
@@ -427,6 +424,94 @@ AppStreamAdmin = (function($){
 						$("#streams_notifications").text("Operation completed successfully!");
 						$("#streams_notifications").fadeIn(1000);
 						$("#streams_notifications").fadeOut(3000);
+						console.log("la");
+						tableView.reload();
+					} else {
+						$("#streams_errors").text(data.result);
+						$("#streams_errors").fadeIn(1000);
+						$("#streams_errors").fadeOut(3000);
+					}
+				}
+			});
+		}
+	})
+	
+		
+	StreamAdminUpdateView = Backbone.View.extend({
+		el: "#modal_window",
+		
+		vid: null,
+		vname: null,
+		vcategory : null,
+
+		events:{
+			"click .closeModal" : "closemodal",
+			"click .updateDataStream" : "updatestream"
+		},
+		
+		initialize:function(name, id,category){
+			this.vid = id;
+			this.vname = name;
+			this.vcategory = category;
+		},
+		
+		setFields: function(name, id,category){
+			this.vid = id;
+			this.vname = name;
+			this.vcategory = category;
+		},
+		
+		render : function(){
+			var template = $("#popup-stream-admin-update-template").html();
+			$.ajax({
+				type: "GET",
+				url : "/admin/streams/combo/" + this.vid,
+				dataType:"json",
+				success: function(data){
+					if(data != null){
+						var option = "";
+						console.log(data.category);
+						var category = data.category; 
+						if (category == "streams/users"){
+							option = '<option value="streams/users" selected="selected">User</option><option value="streams/plugins">Plugin</option><option value="streams/others">Other</option>';
+						}
+						if (category == "streams/plugins"){
+							option = '<option value="streams/users">User</option><option value="streams/plugins" selected="selected">Plugin</option><option value="streams/others">Other</option>';
+						}
+						if (category == "streams/others"){
+							option = '<option value="streams/users">User</option><option value="streams/plugins">Plugin</option><option value="streams/others" selected="selected">Other</option>';
+						}
+						$("#selected").append('<select name="category" id="category">'+ option + '</select>'); 		
+					}
+				}
+			});
+			var view = {name : this.vname, category:this.vcategory};
+			var html = Mustache.to_html(template, view);
+			$(this.el).html(html);
+			return this;
+		},
+		
+		closemodal: function(){
+			$('#modal_window').hide();
+       		$('#mask').hide();
+		},
+		
+		updatestream: function(){
+			var json = '{"id":"'+this.vid+'", "name":"'+$('input[name*="name"]').val() + '", "category":"'+$("#category").val() +'"}';
+			$.ajax({
+				url:"/admin/streams/update",
+				data: json,
+				type: "POST",
+				processData: false,
+				contentType: "application/json; charset=utf-8",
+				success: function(data){
+					if (data.result == "ok"){
+						$('#modal_window').hide();
+	       				$('#mask').hide();
+						$("#streams_notifications").text("Operation completed successfully!");
+						$("#streams_notifications").fadeIn(1000);
+						$("#streams_notifications").fadeOut(3000);
+						console.log("cic");
 						tableView.reload();
 					} else {
 						$("#streams_errors").text(data.result);
@@ -437,6 +522,7 @@ AppStreamAdmin = (function($){
 			});
 		}
 	}) 
+	
 	
 	// define the application initialization
 	var self = {};
