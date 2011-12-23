@@ -53,6 +53,8 @@ public class HolidayType extends AbstractModel {
 	@OneToMany(mappedBy = "holidayType")
 	private Set<HolidayBalance> balances;
 	
+	private String color;
+	
 	public static final int PERIOD_YEAR = 1;
 	public static final int PERIOD_MONTH = 12;
 	
@@ -173,6 +175,20 @@ public class HolidayType extends AbstractModel {
 	 */
 	public void setAnticipated(boolean anticipated) {
 		this.anticipated = anticipated;
+	}
+
+	/**
+	 * @return the color
+	 */
+	public String getColor() {
+		return color;
+	}
+
+	/**
+	 * @param color the color to set
+	 */
+	public void setColor(String color) {
+		this.color = color;
 	}
 	
 	
