@@ -24,6 +24,7 @@ public class Migration01 extends Migration {
 		holidayType.column("period_unit","int");
 		holidayType.column("effective_month","int");
 		holidayType.column("anticipated","bool");
+		holidayType.column("color","varchar(10)");
 		
 		commands.add(holidayType);
 		

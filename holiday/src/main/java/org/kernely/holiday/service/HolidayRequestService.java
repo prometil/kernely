@@ -21,14 +21,25 @@
 package org.kernely.holiday.service;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Set;
 import java.util.TreeSet;
 
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
+import org.joda.time.DateTime;
+import org.joda.time.Days;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
+import org.kernely.core.model.User;
 import org.kernely.core.service.AbstractService;
+import org.kernely.holiday.dto.CalendarBalanceDetailDTO;
+import org.kernely.holiday.dto.CalendarDayDTO;
+import org.kernely.holiday.dto.CalendarRequestDTO;
 import org.kernely.holiday.dto.HolidayDetailCreationRequestDTO;
+import org.kernely.holiday.dto.HolidayDetailDTO;
 import org.kernely.holiday.dto.HolidayRequestCreationRequestDTO;
 import org.kernely.holiday.dto.HolidayRequestDTO;
 import org.kernely.holiday.model.HolidayBalance;
@@ -51,7 +62,7 @@ public class HolidayRequestService extends AbstractService{
 	 * @param details
 	 * @return
 	 */
-	public HolidayRequest getHolidayRequestFromDetails(List<HolidayRequestDetail> details){
+	private HolidayRequest getHolidayRequestFromDetails(List<HolidayRequestDetail> details){
 		TreeSet<HolidayRequestDetail> orderedDetails = new TreeSet<HolidayRequestDetail>();
 		orderedDetails.addAll(details);
 
@@ -122,24 +133,172 @@ public class HolidayRequestService extends AbstractService{
 		}
 	}
 	
+	@SuppressWarnings("unchecked")
+	@Transactional
+	public List<HolidayRequestDTO> getAllRequestsWithStatus(int status){
+		Query query = em.get().createQuery("SELECT  r from HolidayRequest r WHERE  status = :status");
+		query.setParameter("status", status);
+		try{
+			List<HolidayRequest> requests = (List<HolidayRequest>) query.getResultList();
+			List<HolidayRequestDTO> requestsDTO = new ArrayList<HolidayRequestDTO>();
+			for(HolidayRequest r : requests){
+				requestsDTO.add(new HolidayRequestDTO(r));
+			}
+
+			return requestsDTO;
+		}
+		catch(NoResultException e){
+			log.debug("There is no holiday waiting requests");
+			return null;
+		}
+	}
 	
 	@SuppressWarnings("unchecked")
-    @Transactional
-    public List<HolidayRequestDTO> getAllRequestsWithStatus(int status){
-            Query query = em.get().createQuery("SELECT  r from HolidayRequest r WHERE  status = :status");
-            query.setParameter("status", status);
-            try{
-                    List<HolidayRequest> requests = (List<HolidayRequest>) query.getResultList();
-                    List<HolidayRequestDTO> requestsDTO = new ArrayList<HolidayRequestDTO>();
-                    for(HolidayRequest r : requests){
-                            requestsDTO.add(new HolidayRequestDTO(r));
-                    }
+	@Transactional
+	public List<HolidayRequestDTO> getRequestBetweenDatesForCurrentUser(Date date1, Date date2){
+		Query query = em.get().createQuery("SELECT  r from HolidayRequest r WHERE beginDate between :date1 and :date2" +
+										" OR endDate between :date1 and :date2" +
+										" and user = :user");
+		query.setParameter("date1", date1);
+		query.setParameter("date2", date1);
+		query.setParameter("user", this.getAuthenticatedUserModel());
+		try{
+			List<HolidayRequest> requests = (List<HolidayRequest>) query.getResultList();
+			List<HolidayRequestDTO> requestsDTO = new ArrayList<HolidayRequestDTO>();
+			for(HolidayRequest r : requests){
+				requestsDTO.add(new HolidayRequestDTO(r));
+			}
 
-                    return requestsDTO;
-            }
-            catch(NoResultException e){
-                    log.debug("There is no holiday waiting requests");
-                    return null;
-            }
-    }
+			return requestsDTO;
+		}
+		catch(NoResultException e){
+			log.debug("There is no holiday request for this date");
+			return null;
+		}
+	}
+	
+	@Transactional
+	public void acceptRequest(int idRequest){
+		log.debug("ACCEPT : Retrieving holiday request with id {}", idRequest);
+		HolidayRequest request = em.get().find(HolidayRequest.class, idRequest);
+		request.setStatus(HolidayRequest.ACCEPTED_STATUS);
+		log.debug("Holiday request with id {} has been accepted", idRequest);
+	}
+	
+	@Transactional
+	public void denyRequest(int idRequest){
+		log.debug("DENY : Retrieving holiday request with id {}", idRequest);
+		HolidayRequest request = em.get().find(HolidayRequest.class, idRequest);
+		request.setStatus(HolidayRequest.DENIED_STATUS);
+		log.debug("Holiday request with id {} has been denied", idRequest);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Transactional
+	public List<HolidayRequestDTO> getAllRequestToProcess(){
+		User current = this.getAuthenticatedUserModel();
+		Set<User> managed = current.getUsers();
+		Query query = em.get().createQuery("SELECT  r from HolidayRequest r WHERE  status = :status AND user in :users");
+		query.setParameter("status", HolidayRequest.PENDING_STATUS);
+		query.setParameter("users", managed);
+		try{
+			List<HolidayRequest> requests = (List<HolidayRequest>) query.getResultList();
+			List<HolidayRequestDTO> requestsDTO = new ArrayList<HolidayRequestDTO>();
+			for(HolidayRequest r : requests){
+				requestsDTO.add(new HolidayRequestDTO(r));
+			}
+			return requestsDTO;
+		}
+		catch(NoResultException e){
+			log.debug("There is no holiday waiting requests to process");
+			return null;
+		}
+	}
+
+	/**
+	 * Build the calendar for request holidays. Returns the weeks concerned by the dates given in param.
+	 * Verify in existing request if the days are available.
+	 * Finally, build the color picker containing all balance available with their associated color
+	 * @param date1 begin date for the request
+	 * @param date2 end date for the request
+	 * @return A DTO containing all days concerned by the request
+	 */
+	@Transactional
+	public CalendarRequestDTO getCalendarRequest(DateTime date1, DateTime date2) {
+		CalendarRequestDTO calendar = new CalendarRequestDTO();
+		int dayOfWeek1 = date1.getDayOfWeek();
+		int dayOfWeek2 = date2.getDayOfWeek();
+		DateTimeFormatter fmt = DateTimeFormat.forPattern("MM/dd/yyyy");
+		List<CalendarDayDTO> daysDTO = new ArrayList<CalendarDayDTO>();
+		
+		DateTime dtmaj;
+		
+		List<HolidayRequestDTO> currentRequests = this.getRequestBetweenDatesForCurrentUser(date1.toDate(), date2.toDate());
+		
+		List<HolidayDetailDTO> allDayReserved = new ArrayList<HolidayDetailDTO>();
+		
+		// Retrieve all days non available in order to disable them in the UI
+		for(HolidayRequestDTO req : currentRequests){
+			allDayReserved.addAll(req.details);
+		}
+		
+		
+		// We add the first days of the week in not available for the graphic interface
+		for(int i = 1; i < dayOfWeek1; i++){
+			dtmaj = date1.minusDays(dayOfWeek1 - i);
+			// The end of the week is not displayed
+			if(dtmaj.getDayOfWeek() < 6){
+				daysDTO.add(new CalendarDayDTO(dtmaj.toString(fmt), false, false,  dtmaj.getWeekOfWeekyear()));
+			}
+		}
+		
+		// We add one day to date2 to consider the date2's day. Else, it doesn't consider the last day.
+		Days days = Days.daysBetween(date1.toDateMidnight(), date2.plusDays(1).toDateMidnight());
+		for(int i = 0; i < days.getDays(); i++){
+			dtmaj = date1.plusDays(i);
+			// The end of the week is not displayed
+			if(dtmaj.getDayOfWeek() < 6){
+				/*for(HolidayDetailDTO detail : allDayReserved){
+					if(new DateTime(detail.day).toDateMidnight().isEqual(dtmaj.toDateMidnight())){*/
+						daysDTO.add(new CalendarDayDTO(dtmaj.toString(fmt), true, true, dtmaj.getWeekOfWeekyear()));
+					/*}
+				}*/
+			}
+		}
+		
+		// We add the last days of the week in not available for the graphic interface
+		for(int i = dayOfWeek2 +1; i <= 7; i++){
+			dtmaj = date2.plusDays(i - dayOfWeek2);
+			// The end of the week is not displayed
+			if(dtmaj.getDayOfWeek() < 6){
+				daysDTO.add(new CalendarDayDTO(dtmaj.toString(fmt), false, false, dtmaj.getWeekOfWeekyear()));
+			}
+		}
+		
+		// We add +1 to consider 2 weeks
+		// IE : Week 52 - Week 51 = 2 week and not 1
+		calendar.nbWeeks = ((date2.getWeekOfWeekyear() - date1.getWeekOfWeekyear()) + 1);
+		calendar.startWeek = date1.getWeekOfWeekyear();
+		calendar.days = daysDTO;
+		calendar.details = this.buildColorPickerForRequest();
+		return calendar;
+	}
+
+	@SuppressWarnings("unchecked")
+	private List<CalendarBalanceDetailDTO> buildColorPickerForRequest() {
+		Query balanceRequest = em.get().createQuery("SELECT b FROM HolidayBalance b WHERE user=:user");
+		balanceRequest.setParameter("user", this.getAuthenticatedUserModel());
+		try {
+			List<HolidayBalance> balance = (List<HolidayBalance>) balanceRequest.getResultList();
+
+			List<CalendarBalanceDetailDTO> details = new ArrayList<CalendarBalanceDetailDTO>();
+			for(HolidayBalance b : balance){
+				details.add(new CalendarBalanceDetailDTO(b.getHolidayType().getName(), b.getAvailableBalance(), b.getHolidayType().getColor(), b.getHolidayType().getId()));
+			}
+			return details;
+			
+		} catch (NoResultException nre) {
+			return null;
+		}
+	}
 }

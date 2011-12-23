@@ -22,6 +22,7 @@ package org.kernely.holiday;
 
 import org.kernely.core.plugin.AbstractPlugin;
 import org.kernely.holiday.controller.HolidayAdminController;
+import org.kernely.holiday.controller.HolidayRequestController;
 import org.kernely.holiday.job.HolidaysJob;
 import org.kernely.holiday.migrations.Migration01;
 import org.kernely.holiday.model.HolidayBalance;
@@ -53,6 +54,7 @@ public class HolidayPlugin extends AbstractPlugin {
 	public HolidayPlugin(){
 		super("Holiday", "/holiday");
 		registerController(HolidayAdminController.class);
+		registerController(HolidayRequestController.class);
 		registerModel(HolidayType.class);
 		registerModel(HolidayBalance.class);
 		registerModel(HolidayRequest.class);
@@ -70,8 +72,7 @@ public class HolidayPlugin extends AbstractPlugin {
 		// ?  : the day of the week is not important
 		// *  : every year
 		
-//        ScheduleBuilder holidaysSchedule = CronScheduleBuilder.cronSchedule("0 0 23 L * ? *");
-        ScheduleBuilder holidaysSchedule = CronScheduleBuilder.cronSchedule("0/3 * * * * ? *");
+        ScheduleBuilder holidaysSchedule = CronScheduleBuilder.cronSchedule("0 0 23 L * ? *");
 
         // Create the holidays trigger
         Trigger holidaysTrigger = TriggerBuilder.

@@ -35,6 +35,8 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 import org.kernely.core.hibernate.AbstractModel;
 import org.kernely.core.model.User;
 
@@ -95,14 +97,14 @@ public class HolidayRequest extends AbstractModel {
 	 * @return the beginDate
 	 */
 	public Date getBeginDate() {
-		return beginDate;
+		return new DateTime(beginDate).withZone(DateTimeZone.UTC).toDate();
 	}
 
 	/**
 	 * @param beginDate the beginDate to set
 	 */
 	public void setBeginDate(Date beginDate) {
-		this.beginDate = beginDate;
+		this.beginDate = new DateTime(beginDate).withZone(DateTimeZone.UTC).toDate();
 	}
 
 	/**

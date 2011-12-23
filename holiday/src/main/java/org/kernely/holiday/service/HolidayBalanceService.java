@@ -280,36 +280,57 @@ public class HolidayBalanceService extends AbstractService {
 	@Transactional
 	public void removePastHolidays() {
 		List<HolidayRequestDTO> requests = holidayRequestService.getAllRequestsWithStatus(HolidayRequest.ACCEPTED_STATUS);
+		
+		log.debug("Removing past holidays");
+		
 		for (HolidayRequestDTO request : requests){
 			
 			// Days for each type of holidays
 			Map<String,Float> days = new HashMap<String,Float>();
-			
+
+			// Balance id associated to holidays types
+			Map<String,Integer> balances = new HashMap<String,Integer>();
+
 			DateTime beginTime = new DateTime(request.beginDate);
 
 			DateTimeZone zoneUTC = DateTimeZone.UTC;
 			DateTime today = new DateTime().withZone(zoneUTC);
-			
-			if (today.toDateMidnight().isEqual(beginTime.toDateMidnight())){
 
+			log.debug("Begin: "+beginTime.withZone(DateTimeZone.UTC).toDateMidnight());
+			log.debug("Today: "+today.withZone(DateTimeZone.UTC).toDateMidnight());
+
+			if (today.withZone(DateTimeZone.UTC).toDateMidnight().isEqual(beginTime.withZone(DateTimeZone.UTC).toDateMidnight())){
+
+				log.debug("JE PASSE");
+				
 				// Calculate the amount of days of this request
 				for (HolidayDetailDTO detail : request.details){
-					
-//					if(!days.containsKey(detail.type)){
-//						days.put(detail.type.name, 0);
-//					}
+					log.debug("ET DE UN !");
+
+					if(!days.containsKey(detail.type)){
+						log.debug("NOUVEAU TYPE : "+detail.type);
+
+						days.put(detail.type, 0F);
+						balances.put(detail.type, detail.balanceId);
+					}
 					
 					if (detail.am){
-//						days.put(detail.type.name,days.get(detail.type.name) + 0.5);
+						log.debug("PAS UN LEVE TOT ");
+
+						days.put(detail.type, new Float(days.get(detail.type) + 0.5));
 					}
 					if (detail.pm){
-//						days.put(detail.type.name,days.get(detail.type.name) + 0.5);
+						log.debug("COUCHE TARD");
+
+						days.put(detail.type, new Float(days.get(detail.type) + 0.5));
 					}
 				}
 			}
-			
-//			removeAvailableDays(request., days);
-			
+
+			for (String key : days.keySet()){
+				removeAvailableDays(balances.get(key), days.get(key));
+			}
+
 		}
 	}
 

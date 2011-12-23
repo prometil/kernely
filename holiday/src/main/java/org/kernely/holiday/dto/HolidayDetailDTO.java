@@ -12,6 +12,8 @@ public class HolidayDetailDTO {
 	public Date day;
 	public boolean am;
 	public boolean pm;
+	public String type;
+	public int balanceId;
 	
 	public HolidayDetailDTO(){
 		
@@ -21,5 +23,7 @@ public class HolidayDetailDTO {
 		this.day = detail.getDay();
 		this.pm = detail.isPm();
 		this.am = detail.isAm();
+		this.type = detail.getBalance().getHolidayType().getName();
+		this.balanceId = detail.getBalance().getId();
 	}
 }

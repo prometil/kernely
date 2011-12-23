@@ -111,6 +111,8 @@ public class HolidayAdminController extends AbstractController {
 	@Path("/delete/{id}")
 	@Produces( { MediaType.TEXT_HTML })
 	public String deleteHoliday(@PathParam("id") int id){
+		
+		
 		if (userService.currentUserIsAdministrator()){
 			holidayService.deleteHoliday(id);
 			return "{\"result\":\"Ok\"}"; 
