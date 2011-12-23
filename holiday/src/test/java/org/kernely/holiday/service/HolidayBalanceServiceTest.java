@@ -59,6 +59,7 @@ public class HolidayBalanceServiceTest extends AbstractServiceTest {
 		request.type = TEST_STRING;
 		request.quantity = QUANTITY;
 		request.unity = HolidayType.PERIOD_MONTH;
+		request.effectiveMonth = HolidayType.ALL_MONTH;
 		holidayService.createHoliday(request);
 		return holidayService.getAllHoliday().get(0);
 	}
@@ -148,6 +149,36 @@ public class HolidayBalanceServiceTest extends AbstractServiceTest {
 		assertEquals(0, balance.futureBalance, 0);
 	}
 
+	@Test
+	public void incrementMonthlyHolidayMassively() {
+		UserDTO user = createUserForTest();
+
+		HolidayCreationRequestDTO request = new HolidayCreationRequestDTO();
+		request.type = TEST_STRING;
+		request.quantity = QUANTITY;
+		request.unity = HolidayType.PERIOD_MONTH;
+		request.effectiveMonth = HolidayType.ALL_MONTH;
+		holidayService.createHoliday(request);
+		HolidayDTO monthlyHoliday = holidayService.getAllHoliday().get(0);
+
+		holidayBalanceService.createHolidayBalance(user.id, monthlyHoliday.id);
+
+		HolidayBalanceDTO balance = holidayBalanceService.getHolidayBalance(user.id, monthlyHoliday.id);
+
+		assertEquals(0F, balance.availableBalance, 0);
+		assertEquals(0F, balance.futureBalance, 0);
+
+		for (int i = 0; i < 1000; i++){
+			holidayBalanceService.incrementBalance(balance.id);
+		}
+
+		balance = holidayBalanceService.getHolidayBalance(user.id, monthlyHoliday.id);
+
+		assertEquals(QUANTITY*1000, balance.availableBalance, 0);
+		assertEquals(0, balance.futureBalance, 0);
+	}
+	
+	
 	@Test
 	public void transferFutureToAvailableBalance() {
 		UserDTO user = createUserForTest();

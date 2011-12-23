@@ -21,18 +21,19 @@
 		</select>
 		<br/>Effective month :
 		<select name="effectivemonth" id="effectivemonth">
+			<option value="12" selected="selected">All months</option>
 			<option value="0">January</option>
 			<option value="1">February</option>
-			<option value="3">March</option>
-			<option value="4">April</option>
-			<option value="5">May</option>
-			<option value="6">June</option>
-			<option value="7">July</option>
-			<option value="8">August</option>
-			<option value="9">September</option>
-			<option value="10">October</option>
-			<option value="11">November</option>
-			<option value="12">Decembre</option>
+			<option value="2">March</option>
+			<option value="3">April</option>
+			<option value="4">May</option>
+			<option value="5">June</option>
+			<option value="6">July</option>
+			<option value="7">August</option>
+			<option value="8">September</option>
+			<option value="9">October</option>
+			<option value="10">November</option>
+			<option value="12">December</option>
 		</select>
 		<br/><input name="anticipated" type="checkbox">Can be taken with anticipation</input>
 	</fieldset>
@@ -51,7 +52,23 @@
 	<div id="selected">
 		<input type="text" name="quantity" value="{{quantity}}" id="holiday-quantity" size="2" maxlength="4" /> days every
 	</div>
-	<input name="anticipated" type="checkbox">Can be taken with anticipation</input>
+		<br/>Effective month :
+		<select name="effectivemonth" id="effectivemonth">
+			<option value="12" selected="selected">All months</option>
+			<option value="0">January</option>
+			<option value="1">February</option>
+			<option value="2">March</option>
+			<option value="3">April</option>
+			<option value="4">May</option>
+			<option value="5">June</option>
+			<option value="6">July</option>
+			<option value="7">August</option>
+			<option value="8">September</option>
+			<option value="9">October</option>
+			<option value="10">November</option>
+			<option value="11">December</option>
+		</select>
+		<br/><input id="anticipated" name="anticipated" type="checkbox">Can be taken with anticipation</input>
 	</fieldset>
 	<br/>
 	<input type="button" value="Send" class="updateHoliday"/>

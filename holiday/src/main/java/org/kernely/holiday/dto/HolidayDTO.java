@@ -44,6 +44,7 @@ public class HolidayDTO {
 
 	public HolidayDTO(String name, int quantity, int periodUnit, int id, boolean anticipation, int effectiveMonth) {
 		super();
+		
 		this.id = id;
 		this.name = name;
 		this.quantity = quantity;

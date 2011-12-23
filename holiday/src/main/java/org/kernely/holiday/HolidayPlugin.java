@@ -70,13 +70,14 @@ public class HolidayPlugin extends AbstractPlugin {
 		// ?  : the day of the week is not important
 		// *  : every year
 		
-        ScheduleBuilder holidaysSchedule = CronScheduleBuilder.cronSchedule("0 0 23 L * ? *");
+//        ScheduleBuilder holidaysSchedule = CronScheduleBuilder.cronSchedule("0 0 23 L * ? *");
+        ScheduleBuilder holidaysSchedule = CronScheduleBuilder.cronSchedule("0/3 * * * * ? *");
 
         // Create the holidays trigger
         Trigger holidaysTrigger = TriggerBuilder.
                 newTrigger().
                 withSchedule(holidaysSchedule).
-                startAt(DateBuilder.futureDate(1, IntervalUnit.MINUTE)).build();
+                startAt(DateBuilder.futureDate(15, IntervalUnit.SECOND)).build();
         
         registerJob(HolidaysJob.class, holidaysTrigger);
 		

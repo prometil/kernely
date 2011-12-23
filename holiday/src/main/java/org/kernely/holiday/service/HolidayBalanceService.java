@@ -22,7 +22,9 @@ package org.kernely.holiday.service;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
@@ -32,11 +34,15 @@ import org.joda.time.DateTimeZone;
 import org.kernely.core.model.User;
 import org.kernely.core.service.AbstractService;
 import org.kernely.holiday.dto.HolidayBalanceDTO;
+import org.kernely.holiday.dto.HolidayDetailDTO;
+import org.kernely.holiday.dto.HolidayRequestDTO;
 import org.kernely.holiday.model.HolidayBalance;
+import org.kernely.holiday.model.HolidayRequest;
 import org.kernely.holiday.model.HolidayType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.google.inject.persist.Transactional;
 
@@ -44,6 +50,9 @@ import com.google.inject.persist.Transactional;
 public class HolidayBalanceService extends AbstractService {
 
 	protected final Logger log = LoggerFactory.getLogger(this.getClass());
+
+	@Inject
+	private HolidayRequestService holidayRequestService;
 
 	/**
 	 * Gets the lists of all balances contained in the database.
@@ -165,10 +174,9 @@ public class HolidayBalanceService extends AbstractService {
 		int quantity = balance.getHolidayType().getQuantity();
 
 		// Adjust quantity: balances contains twelths of days
-		// If type unity is month, multiply earn quantity by 12 to gain complete days
-		if (balance.getHolidayType().getPeriodUnit() == HolidayType.PERIOD_MONTH) {
-			quantity = quantity * HolidayType.PERIOD_MONTH;
-		}
+		// Multiply quantity by the ratio of the period.
+		// The period unit is 12 for months, 1 for years (constants in HolidayType class).
+		quantity = quantity * balance.getHolidayType().getPeriodUnit();
 
 		int newBalance;
 
@@ -182,16 +190,19 @@ public class HolidayBalanceService extends AbstractService {
 
 		} else {
 			// If there is a specific month when future balance is added to available balance, adds the quantity to the future balance
+			log.debug("Holiday (id:{}) had future balance: {}", holidayBalanceId, balance.getAvailableBalance());
+			log.debug("Holiday (id:{}) incremented by {}", holidayBalanceId, quantity);
 			newBalance = balance.getFutureBalance() + quantity;
 			balance.setFutureBalance(newBalance);
+			log.debug("Holiday (id:{}) future balance: {}", holidayBalanceId, balance.getAvailableBalance());
 		}
-		
+
 		DateTimeZone zoneUTC = DateTimeZone.UTC;
 		Date today = new DateTime().withZone(zoneUTC).toDate();
 
 		// Actualize date
 		balance.setLastUpdate(today);
-		
+
 		em.get().merge(balance);
 	}
 
@@ -228,7 +239,7 @@ public class HolidayBalanceService extends AbstractService {
 	}
 
 	/**
-	 * Retrieve days or half days to the available balance.
+	 * Remove days or half days to the available balance.
 	 */
 	/**
 	 * Verify if the balance has the amount of days.
@@ -254,13 +265,52 @@ public class HolidayBalanceService extends AbstractService {
 		HolidayBalance balance = em.get().find(HolidayBalance.class, holidayBalanceId);
 		int twelthsAvailableDays = balance.getAvailableBalance();
 
-		// Convert days to twelth days.
+		// Convert days to twelth days, because in database we store twelths days.
 		int toRetrieve = (int) (days * 12);
 
 		balance.setAvailableBalance(twelthsAvailableDays - toRetrieve);
 
 		em.get().merge(balance);
 
+	}
+
+	/**
+	 * Update balances by removing days of past holiday requests. A holiday is considered past when the first date of the request is today.
+	 */
+	@Transactional
+	public void removePastHolidays() {
+		List<HolidayRequestDTO> requests = holidayRequestService.getAllRequestsWithStatus(HolidayRequest.ACCEPTED_STATUS);
+		for (HolidayRequestDTO request : requests){
+			
+			// Days for each type of holidays
+			Map<String,Float> days = new HashMap<String,Float>();
+			
+			DateTime beginTime = new DateTime(request.beginDate);
+
+			DateTimeZone zoneUTC = DateTimeZone.UTC;
+			DateTime today = new DateTime().withZone(zoneUTC);
+			
+			if (today.toDateMidnight().isEqual(beginTime.toDateMidnight())){
+
+				// Calculate the amount of days of this request
+				for (HolidayDetailDTO detail : request.details){
+					
+//					if(!days.containsKey(detail.type)){
+//						days.put(detail.type.name, 0);
+//					}
+					
+					if (detail.am){
+//						days.put(detail.type.name,days.get(detail.type.name) + 0.5);
+					}
+					if (detail.pm){
+//						days.put(detail.type.name,days.get(detail.type.name) + 0.5);
+					}
+				}
+			}
+			
+//			removeAvailableDays(request., days);
+			
+		}
 	}
 
 }

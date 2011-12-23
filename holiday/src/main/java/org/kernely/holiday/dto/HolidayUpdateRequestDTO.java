@@ -31,6 +31,7 @@ public class HolidayUpdateRequestDTO {
 	public int frequency;
 	public int unity;
 	public int effectiveMonth;
+	public boolean anticipation;
 
 	public HolidayUpdateRequestDTO() {
 
@@ -43,12 +44,13 @@ public class HolidayUpdateRequestDTO {
 	 * @param newType
 	 * @param newFrequency
 	 */
-	public HolidayUpdateRequestDTO(long newId, String newType, int quantity, int newUnity, int effectiveMonth) {
+	public HolidayUpdateRequestDTO(long newId, String newType, int quantity, int newUnity, int effectiveMonth, boolean anticipation) {
 		this.id = (int) newId;
 		this.type = newType;
 		this.quantity = quantity;
 		this.unity = newUnity;
 		this.effectiveMonth = effectiveMonth;
+		this.anticipation = anticipation;
 	}
 
 }

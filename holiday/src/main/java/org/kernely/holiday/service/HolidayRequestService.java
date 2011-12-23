@@ -121,4 +121,25 @@ public class HolidayRequestService extends AbstractService{
 			return null;
 		}
 	}
+	
+	
+	@SuppressWarnings("unchecked")
+    @Transactional
+    public List<HolidayRequestDTO> getAllRequestsWithStatus(int status){
+            Query query = em.get().createQuery("SELECT  r from HolidayRequest r WHERE  status = :status");
+            query.setParameter("status", status);
+            try{
+                    List<HolidayRequest> requests = (List<HolidayRequest>) query.getResultList();
+                    List<HolidayRequestDTO> requestsDTO = new ArrayList<HolidayRequestDTO>();
+                    for(HolidayRequest r : requests){
+                            requestsDTO.add(new HolidayRequestDTO(r));
+                    }
+
+                    return requestsDTO;
+            }
+            catch(NoResultException e){
+                    log.debug("There is no holiday waiting requests");
+                    return null;
+            }
+    }
 }
