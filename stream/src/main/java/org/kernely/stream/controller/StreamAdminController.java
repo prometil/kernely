@@ -69,7 +69,7 @@ public class StreamAdminController extends AbstractController {
 	 */
 	@GET
 	@Path("/main")
-	@Produces( { MediaType.TEXT_HTML })
+	@Produces({ MediaType.TEXT_HTML })
 	public Response getPluginAdminPanel() {
 		Response page;
 		if (userService.currentUserIsAdministrator()) {
@@ -88,7 +88,7 @@ public class StreamAdminController extends AbstractController {
 	 */
 	@GET
 	@Path("/all")
-	@Produces( { "application/json" })
+	@Produces({ "application/json" })
 	public List<StreamDTO> displayAllStreams() {
 		if (userService.currentUserIsAdministrator()) {
 			log.debug("Call to GET on all streams");
@@ -106,18 +106,32 @@ public class StreamAdminController extends AbstractController {
 	 */
 	@POST
 	@Path("/create")
-	@Produces( { MediaType.APPLICATION_JSON })
+	@Produces({ MediaType.APPLICATION_JSON })
 	public String create(StreamCreationRequestDTO stream) {
 		log.debug("Create a user");
 
-		if (stream.id == 0) {
+		if (userService.currentUserIsAdministrator()){
 			try {
 				streamService.createStream(stream.name, stream.category);
 			} catch (IllegalArgumentException iae) {
 				log.debug(iae.getMessage());
 				return "{\"result\":\"" + iae.getMessage() + "\"}";
 			}
-		} else {
+		}
+		
+		return "{\"result\":\"ok\"}";
+	}
+	
+	/**
+	 * update a stream with the given informations
+	 * 
+	 * @return "Ok", not useful.
+	 */
+	@POST
+	@Path("/update")
+	@Produces({ MediaType.APPLICATION_JSON })
+	public String update(StreamCreationRequestDTO stream) {
+		if (userService.currentUserIsAdministrator()){
 			streamService.updateStream(stream);
 		}
 		return "{\"result\":\"ok\"}";
@@ -132,7 +146,7 @@ public class StreamAdminController extends AbstractController {
 	 */
 	@GET
 	@Path("/lock/{id}")
-	@Produces( { MediaType.APPLICATION_JSON })
+	@Produces({ MediaType.APPLICATION_JSON })
 	public String lock(@PathParam("id") int id) {
 		if (userService.currentUserIsAdministrator()) {
 			streamService.lockStream(id);
@@ -150,7 +164,7 @@ public class StreamAdminController extends AbstractController {
 	 */
 	@GET
 	@Path("/unlock/{id}")
-	@Produces( { MediaType.APPLICATION_JSON })
+	@Produces({ MediaType.APPLICATION_JSON })
 	public String unlock(@PathParam("id") int id) {
 		if (userService.currentUserIsAdministrator()) {
 			streamService.unlockStream(id);
@@ -168,7 +182,7 @@ public class StreamAdminController extends AbstractController {
 	 */
 	@GET
 	@Path("/rights/{id}")
-	@Produces( { MediaType.APPLICATION_JSON })
+	@Produces({ MediaType.APPLICATION_JSON })
 	public String getStreamRights(@PathParam("id") int id) {
 		String json = "{\"permission\":[";
 		List<UserDTO> allUsers = userService.getAllUsers();
@@ -199,7 +213,7 @@ public class StreamAdminController extends AbstractController {
 	 */
 	@POST
 	@Path("/updaterights")
-	@Produces( { MediaType.APPLICATION_JSON })
+	@Produces({ MediaType.APPLICATION_JSON })
 	public String updateRights(StreamRightsUpdateRequestDTO request) {
 		log.debug("Update rights of the stream : {}", request.streamid);
 		for (RightOnStreamDTO right : request.rights) {
@@ -223,6 +237,22 @@ public class StreamAdminController extends AbstractController {
 			}
 		}
 		return "{\"result\":\"ok\"}";
+	}
+
+	/**
+	 * Display the good category when the administrator edit streams
+	 * 
+	 * @return
+	 */
+	@GET
+	@Path("/combo/{stream}")
+	@Produces({ "application/json" })
+	public StreamDTO getComboCategory(@PathParam("stream") int id) {
+		if (userService.currentUserIsAdministrator()) {
+			StreamDTO sdto = streamService.getStream(id);
+			return sdto;
+		}
+		return null;
 	}
 
 }
