@@ -12,6 +12,7 @@ import org.kernely.holiday.model.HolidayRequestDetail;
 @XmlRootElement
 public class HolidayRequestDTO {
 
+	public int id;
 	public Date beginDate;
 	public Date endDate;
 	public int status;
@@ -23,6 +24,7 @@ public class HolidayRequestDTO {
 	}
 	
 	public HolidayRequestDTO(HolidayRequest request){
+		this.id = request.getId();
 		this.beginDate = request.getBeginDate();
 		this.endDate = request.getEndDate();
 		this.status = request.getStatus();

@@ -11,8 +11,11 @@
 	<script type="text/javascript" src="/js/backbone.js"></script>
 	<script type="text/javascript" src="/js/miniprofile.js"></script>
 	
+	<script type="text/javascript" src="/js/jquery-ui-1.8.16.min.js"></script>
+	
 	<!-- css files -->
 	<link rel="stylesheet" type="text/css" href="/css/style.css"/>
+	<link rel="stylesheet" type="text/css" href="/css/jquery-ui.css"/>
 	<% css.each() {  value -> %>
 		<link rel="stylesheet" type="text/css" href="${value}"/>
 					
