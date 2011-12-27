@@ -37,6 +37,7 @@ AppHolidayAdmin = (function($){
 			"click" : "selectLine",
 			"mouseover" : "overLine",
 			"mouseout" : "outLine"
+		
 		},
 		
 		initialize: function(id, type, quantity, unity, effectivemonth, anticipation){
@@ -48,6 +49,8 @@ AppHolidayAdmin = (function($){
 			this.vanticipation = anticipation;
 		},
 		selectLine : function(){
+			
+			
 			$(".editButton").removeAttr('disabled');
 			$(".deleteButton").removeAttr('disabled');
 			$(this.el).css("background-color", "#8AA5A1");
@@ -78,7 +81,11 @@ AppHolidayAdmin = (function($){
 			}
 			
 			var stringmonth = "Undefined";
+
 			switch(parseInt(this.veffectivemonth)){
+			case 12:
+				stringmonth = "All months";
+				break;
 			case 0:
 				stringmonth = "January";
 				break;
@@ -118,7 +125,9 @@ AppHolidayAdmin = (function($){
 			}
 			
 			var stringanticipation ="Undefined";
-			if (this.vanticipation == "true") {
+			if (parseInt(this.veffectivemonth) == 12){
+				stringanticipation = "-";
+			} else if (this.vanticipation == "true") {
 				stringanticipation = "Yes";
 			} else {
 				stringanticipation = "No";
@@ -187,7 +196,7 @@ AppHolidayAdmin = (function($){
 		
 		initialize: function(){
 			this.viewCreate = new HolidayAdminCreateView();
-			this.viewUpdate =  new HolidayAdminUpdateView("", 0, "", 0);
+			this.viewUpdate =  new HolidayAdminUpdateView();
 		},
 		
 		showModalWindow: function(){
@@ -222,7 +231,7 @@ AppHolidayAdmin = (function($){
 		
 		editholiday: function(){
 			this.showModalWindow();
-			this.viewUpdate.setFields(lineSelected.vtype, lineSelected.vquantity, lineSelected.vfrequency, lineSelected.vunity, lineSelected.vid);
+			this.viewUpdate.setFields(lineSelected.vtype, lineSelected.vquantity, lineSelected.vfrequency, lineSelected.vunity, lineSelected.veffectivemonth, lineSelected.vanticipation, lineSelected.vid);
 			this.viewUpdate.render();
 		},
 		
@@ -251,7 +260,7 @@ AppHolidayAdmin = (function($){
 		
 		events:{
 			"click .closeModal" : "closemodal",
-			"click .createHoliday" :  "registerholiday"
+			"click .createHoliday" :  "registerholiday",
 		},
 		
 		initialize:function(){
@@ -287,7 +296,6 @@ AppHolidayAdmin = (function($){
 				contentType: "application/json; charset=utf-8",
 				success: function(data){
 					if (data.result == "Ok"){
-						console.log("success") ; 
 						$('#modal_window_holiday').hide();
 						$('#mask').hide();
 						$("#holidays_notifications").text("Operation completed successfully !");
@@ -313,24 +321,34 @@ AppHolidayAdmin = (function($){
 			"click .updateHoliday" : "updateholiday"
 		},
 		
-		initialize:function(type, quantity, frequency, unity, id){
-			this.vid = id;
-			this.vquantity = quantity;
-			this.vfrequency = frequency;
-			this.vtype= type;
-			this.vunity=unity;
+		initialize:function(){
+			
+			this.vid = null;
+			this.vquantity = null;
+			this.vfrequency = null;
+			this.vtype= null;
+			this.vunity=null;
+			this.veffectivemonth = null;
+			this.vanticipation = null;
 		},
 		
-		setFields: function(type, quantity, frequency, unity, id){
+		setFields: function(type, quantity, frequency, unity,effectivemonth, anticipation, id){
 			this.vid = id;
 			this.vquantity = quantity;
 			this.vfrequency = frequency;
 			this.vtype = type;
 			this.vunity = unity;
+			this.veffectivemonth = effectivemonth;
+			this.vanticipation = anticipation;
+			
 		},
 		
 		render : function(){
+			
+			var parent = this;
+			
 			var template = $("#popup-holiday-admin-update-template").html();
+			
 			$.ajax({
 				type: "GET",
 				url : "/admin/holiday/combo/" + this.vid,
@@ -348,7 +366,13 @@ AppHolidayAdmin = (function($){
 						else {
 							option = '<option value="12">month</opton><option value="1">year</option>';
 						}
-						$("#selected").append('<select name="unity" id="unity">'+ option + '</select>'); 		
+						$("#selected").append('<select name="unity" id="unity">'+ option + '</select>');
+	
+						if (parent.vanticipation == "true"){
+							$("#anticipated").attr('checked','checked');
+						}
+						$("#effectivemonth").val(parseInt(parent.veffectivemonth));
+						
 					}
 				}
 			});
@@ -364,7 +388,12 @@ AppHolidayAdmin = (function($){
 		},
 		
 		updateholiday: function(){
-			var json = '{"id":"'+this.vid+'", "type":"'+$('input[name*="type"]').val() + '", "quantity":"' + $('input[name*="quantity"]').val() + '", "frequency":"'+$('input[name*="frequency"]').val()+ '", "unity":"'+$('#unity').val() + '", "effectiveMonth":"' + $('#effectivemonth').val() + '"}';
+			var anticipation = false;
+			if ($('input[name*="anticipated"]:checked').length == 1){
+				anticipation = true;
+			}
+
+			var json = '{"id":"'+this.vid+'", "type":"'+$('input[name*="type"]').val() + '", "quantity":"' + $('input[name*="quantity"]').val() + '", "frequency":"'+$('input[name*="frequency"]').val()+ '", "unity":"'+$('#unity').val() + '", "effectiveMonth":"' + $('#effectivemonth').val() + '", "anticipation":"' + anticipation + '"}';
 			$.ajax({
 				url:"/admin/holiday/update",
 				data: json,

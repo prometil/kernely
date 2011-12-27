@@ -78,7 +78,7 @@ public class HolidayPlugin extends AbstractPlugin {
         Trigger holidaysTrigger = TriggerBuilder.
                 newTrigger().
                 withSchedule(holidaysSchedule).
-                startAt(DateBuilder.futureDate(1, IntervalUnit.MINUTE)).build();
+                startAt(DateBuilder.futureDate(15, IntervalUnit.SECOND)).build();
         
         registerJob(HolidaysJob.class, holidaysTrigger);
 		

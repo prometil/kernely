@@ -55,15 +55,18 @@ public class HolidayService extends AbstractService {
 		List<HolidayDTO> dtos = new ArrayList<HolidayDTO>();
 		log.debug("HolidayService found {} holiday types", collection.size());
 		for (HolidayType holiday : collection) {
-			dtos.add(new HolidayDTO(holiday.getName(), holiday.getQuantity(), holiday.getPeriodUnit(), holiday.getId(), holiday.isAnticipated(), holiday.getEffectiveMonth()));
-			log.debug("Holiday {}: {}", holiday.getName(), holiday.getQuantity() + " each " + holiday.getPeriodUnit());
+			dtos.add(new HolidayDTO(holiday.getName(), holiday.getQuantity(), holiday.getPeriodUnit(), holiday.getId(), holiday.isAnticipated(),
+					holiday.getEffectiveMonth()));
+			log.debug("Creation of Holiday Type {}", holiday.getName());
 		}
 		return dtos;
 	}
 
 	/**
 	 * Gets the holiday DTO for the holiday type with the id passed in parameter.
-	 * @param id The id of the holiday typ
+	 * 
+	 * @param id
+	 *            The id of the holiday typ
 	 * @return the holiday type dto.
 	 */
 	@Transactional
@@ -71,7 +74,9 @@ public class HolidayService extends AbstractService {
 		Query query = em.get().createQuery("SELECT  h from HolidayType h WHERE  h.id=:id");
 		query.setParameter("id", id);
 		HolidayType holiday = (HolidayType) query.getSingleResult();
-		HolidayDTO hdto = new HolidayDTO(holiday.getName(), holiday.getQuantity(), holiday.getPeriodUnit(), holiday.getId(), holiday.isAnticipated(), holiday.getEffectiveMonth());
+		HolidayDTO hdto = new HolidayDTO(holiday.getName(), holiday.getQuantity(), holiday.getPeriodUnit(), holiday.getId(), holiday.isAnticipated(),
+				holiday.getEffectiveMonth());
+
 		return hdto;
 	}
 
@@ -161,14 +166,14 @@ public class HolidayService extends AbstractService {
 				return;
 			}
 		}
-		
+
 		holiday.setName(request.type);
 		holiday.setQuantity(request.quantity);
 		holiday.setPeriodUnit(request.unity);
 		holiday.setEffectiveMonth(request.effectiveMonth);
-//		holiday.setAnticipated(request.anticipation);
+		holiday.setAnticipated(request.anticipation);
+System.out.println("Anticipation "+request.anticipation);
 		em.get().merge(holiday);
 	}
-	
-	
+
 }

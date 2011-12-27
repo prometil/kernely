@@ -2,6 +2,11 @@ AppHolidayRequest = (function($){
 
 	var currentCellPickerSelected = null;
 	var oldCellPickerSelected = null;
+	var lastClicked = null;
+	var allDayCells = new Array();
+	var cellDayMorningCounter = 0;
+	var cellDayAfternoonCounter = 1;
+	var shifted = false;
 
 	HolidayRequestPageView = Backbone.View.extend({
 		el:"#request-main",
@@ -34,6 +39,10 @@ AppHolidayRequest = (function($){
 				data: {date1: dates[0].value, date2: dates[1].value},
 				dataType:"json",
 				success: function(data){
+					// Clean the div content
+					$('#calendarContent').html("");
+					$('#colorSelector').html("");
+					// Create the views
 					new HolidayRequestCalendarView(data).render();
 					new HolidayRequestColorPicker(data).render();
 				}
@@ -58,20 +67,29 @@ AppHolidayRequest = (function($){
 			var view = null;
 			
 			
-			
+			// Variables declarations :
+			// List of the headers : contains days
 			var headerList = new Array();
+			// List of the available mornings
 			var morningList = new Array();
+			// List of the available afternoons
 			var afternoonList = new Array();
+			// Counter for the list building
 			var cptBuildingList = 0;
+			// Counter for the header list
 			var cptHeaderList = 0;
+			// Counter for the morning list
 			var cptMorningList = 0;
+			// Counter for the afternoon list
 			var cptAfternoonList = 0;
+			// Contains a tr element to add a row for header
 			var lineHeader;
+			// Contains a tr element to add a row for morning
 			var lineMorning;
+			// Contains a tr element to add a row for afternoon
 			var lineAfternoon;
+			// Count the number of weeks created
 			var nPath = 0;
-			
-			var emptyTD = $("<td>");
 			
 
 			// Building the header list
@@ -93,34 +111,45 @@ AppHolidayRequest = (function($){
 			
 			
 			while (nPath < this.data.nbWeeks){
+				// Create tr element
 				lineHeader = $("<tr>", {
 					class:'day-header'
 				});
+				// Adds all the headers for the week
 				while(cptHeaderList < 5){
-					lineHeader.append($(new HolidayRequestDayView(headerList[cptHeaderList + (nPath * 5)], true, null, true).render().el));
+					lineHeader.append($(new HolidayRequestDayView(headerList[cptHeaderList + (nPath * 5)], true, null, true, -1).render().el));
 					cptHeaderList ++;
 				}
 				$(parent.el).append(lineHeader);
-					
+				
+				// Create the tr element
 				lineMorning = $("<tr>", {
 					class:'morning-part'
 				});
+				// Adds all the mornings for the week
 				while(cptMorningList < 5){
-					lineMorning.append($(new HolidayRequestDayView(null, morningList[cptMorningList + (nPath * 5)], null, false).render().el));
+					lineMorning.append($(new HolidayRequestDayView(null, morningList[cptMorningList + (nPath * 5)], null, false, cellDayMorningCounter).render().el));
+					cellDayMorningCounter += 2;
 					cptMorningList ++;
 				}
 				$(parent.el).append(lineMorning);
+				
+				// Create the tr element
 				lineAfternoon = $("<tr>", {
 					class:'afternoon-part'
 				});
+				// Adds all the afternoons for the week
 				while(cptAfternoonList < 5){
-					lineAfternoon.append($(new HolidayRequestDayView(null, afternoonList[cptAfternoonList + (nPath * 5)], null, false).render().el));
+					lineAfternoon.append($(new HolidayRequestDayView(null, afternoonList[cptAfternoonList + (nPath * 5)], null, false, cellDayAfternoonCounter).render().el));
+					cellDayAfternoonCounter += 2;
 					cptAfternoonList ++;
 				}
 				$(parent.el).append(lineAfternoon);
+				// Reinitialize all counters
 				cptHeaderList = 0;
 				cptMorningList = 0;
 				cptAfternoonList = 0;
+				// Increases week created
 				nPath ++;
 			}
 			
@@ -138,36 +167,71 @@ AppHolidayRequest = (function($){
 		isHeader: false,
 		isSelected: false,
 		selectedBy: -1,
+		// An id only reserved to the view to allow the shift + clic event.
+		viewRank: -1,
+		
 
 		events:{
 			"click" : "colorTheWorld"
 		},
 
-		initialize: function(day, available, week, header){
+		initialize: function(day, available, week, header, rank){
 			this.day = day;
 			this.available = available;
 			this.week = week;
 			this.isHeader = header;
+			this.viewRank = rank;
+			// Store the view into the array of all cell day views
+			if(this.viewRank != -1){
+				allDayCells[this.viewRank] = this;
+			}
 		},
-		colorTheWorld : function(){
-			console.log(this.selectedBy);
-			if(currentCellPickerSelected != null && !this.isHeader && this.available == "true"
-				&& this.selectedBy != currentCellPickerSelected.idType){
-				if(currentCellPickerSelected.nbAvailable > 0){
-					$(this.el).css('background-color', currentCellPickerSelected.color);
-					currentCellPickerSelected.decrease();
-					if(oldCellPickerSelected != null && this.isSelected){
-						oldCellPickerSelected.increase();
+		colorTheWorld : function(event){
+			if(currentCellPickerSelected != null && !this.isHeader && this.available == "true"){
+				if(this.selectedBy != currentCellPickerSelected.idType){
+					if(currentCellPickerSelected.nbAvailable > 0){
+						// Color the cell with the Balance color
+						$(this.el).css('background-color', currentCellPickerSelected.color);
+						// decrease balance's available days
+						currentCellPickerSelected.decrease();
+						// If this cell was already selected, increase the old selection in order to not loose a day
+						if(oldCellPickerSelected != null && this.isSelected){
+							oldCellPickerSelected.increase();
+						}
+						this.isSelected = true;
+						// Store the id of the type choosen for this cell
+						this.selectedBy = currentCellPickerSelected.idType;
 					}
 				}
-				this.isSelected = true;
-				this.selectedBy = currentCellPickerSelected.idType;
+				else{
+					if(!shifted){
+						// If we deselect a cell
+						currentCellPickerSelected.increase();
+						$(this.el).css('background-color', 'transparent');
+						this.isSelected = false;
+						this.selectedBy = -1;
+					}
+				}
+				// If shift is pressed, we colore all fields between days selected 
+				if(typeof(event) != "undefined"){
+					if(event.shiftKey){
+						shifted = true;
+						var cpt = lastClicked.viewRank;
+						while(cpt < this.viewRank){
+							allDayCells[cpt].colorTheWorld();
+							cpt ++;
+						}
+					}
+				}
+				shifted = false;
+				lastClicked = this;
 			}
 		},
 		render: function(){
 			if(this.isHeader){
 				$(this.el).text(this.day);
 			}
+			
 			if(this.available == "false"){
 				$(this.el).attr('disabled', '');
 				$(this.el).addClass('day-disabled');
@@ -198,7 +262,7 @@ AppHolidayRequest = (function($){
 				});
 			}
 			else{
-				
+				$(parent.el).append(new HolidayRequestColorPickerCell(this.data.details.nameOfType, this.data.details.nbAvailable, this.data.details.color, this.data.details.idOfType).render().el);
 			}
 			return this;
 		}
@@ -210,7 +274,7 @@ AppHolidayRequest = (function($){
 		
 		color:null,
 		name:null,
-		nbAvailable:null,
+		nbAvailable:0.0,
 		idType: null,
 		
 		events: {
@@ -239,12 +303,12 @@ AppHolidayRequest = (function($){
 		},
 		
 		decrease: function(){
-			this.nbAvailable --;
+			this.nbAvailable -= 0.5;
 			this.updateCounter();
 		},
 		
 		increase: function(){
-			this.nbAvailable ++;
+			this.nbAvailable += 0.5;
 			this.updateCounter();
 		},
 		

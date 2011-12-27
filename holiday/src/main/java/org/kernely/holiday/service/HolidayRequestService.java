@@ -78,6 +78,10 @@ public class HolidayRequestService extends AbstractService{
 		return request;
 	}
 
+	/**
+	 * Register an Holiday request with his details.
+	 * @param request The request DTO to store.
+	 */
 	@Transactional
 	public void registerRequestAndDetails(HolidayRequestCreationRequestDTO request){
 		List<HolidayRequestDetail> detailsModels = new ArrayList<HolidayRequestDetail>();
@@ -113,6 +117,10 @@ public class HolidayRequestService extends AbstractService{
 		}
 	}
 
+	/**
+	 * Retrieve all request done by the current user
+	 * @return A list of DTO corresponding to the request done by the current user
+	 */
 	@SuppressWarnings("unchecked")
 	@Transactional
 	public List<HolidayRequestDTO> getAllRequestsForCurrentUser(){
@@ -133,6 +141,11 @@ public class HolidayRequestService extends AbstractService{
 		}
 	}
 	
+	/**
+	 * Retrieve all the request with a given status
+	 * @param status the status of the request needed
+	 * @return A list of DTO corresponding to all request with the given status
+	 */
 	@SuppressWarnings("unchecked")
 	@Transactional
 	public List<HolidayRequestDTO> getAllRequestsWithStatus(int status){
@@ -153,6 +166,12 @@ public class HolidayRequestService extends AbstractService{
 		}
 	}
 	
+	/**
+	 * Gets all the request for the current user between the two given dates
+	 * @param date1 beginning of the needed interval
+	 * @param date2 ending of the needed interval
+	 * @return A list of DTO corresponding to the request located in the interval
+	 */
 	@SuppressWarnings("unchecked")
 	@Transactional
 	public List<HolidayRequestDTO> getRequestBetweenDatesForCurrentUser(Date date1, Date date2){
@@ -177,6 +196,10 @@ public class HolidayRequestService extends AbstractService{
 		}
 	}
 	
+	/**
+	 * Accept a waiting request
+	 * @param idRequest The request to accept
+	 */
 	@Transactional
 	public void acceptRequest(int idRequest){
 		log.debug("ACCEPT : Retrieving holiday request with id {}", idRequest);
@@ -185,6 +208,10 @@ public class HolidayRequestService extends AbstractService{
 		log.debug("Holiday request with id {} has been accepted", idRequest);
 	}
 	
+	/**
+	 * Deny a waiting request
+	 * @param idRequest The request to deny
+	 */
 	@Transactional
 	public void denyRequest(int idRequest){
 		log.debug("DENY : Retrieving holiday request with id {}", idRequest);
@@ -193,6 +220,10 @@ public class HolidayRequestService extends AbstractService{
 		log.debug("Holiday request with id {} has been denied", idRequest);
 	}
 	
+	/**
+	 * Get all request to process for a manager
+	 * @return A list of DTO corresponding to all request done by managed users of the current user manager
+	 */
 	@SuppressWarnings("unchecked")
 	@Transactional
 	public List<HolidayRequestDTO> getAllRequestToProcess(){
@@ -254,15 +285,23 @@ public class HolidayRequestService extends AbstractService{
 		
 		// We add one day to date2 to consider the date2's day. Else, it doesn't consider the last day.
 		Days days = Days.daysBetween(date1.toDateMidnight(), date2.plusDays(1).toDateMidnight());
+		
+		boolean am;
+		boolean pm;
+		
 		for(int i = 0; i < days.getDays(); i++){
+			am = true;
+			pm=true;
 			dtmaj = date1.plusDays(i);
 			// The end of the week is not displayed
 			if(dtmaj.getDayOfWeek() < 6){
-				/*for(HolidayDetailDTO detail : allDayReserved){
-					if(new DateTime(detail.day).toDateMidnight().isEqual(dtmaj.toDateMidnight())){*/
-						daysDTO.add(new CalendarDayDTO(dtmaj.toString(fmt), true, true, dtmaj.getWeekOfWeekyear()));
-					/*}
-				}*/
+				for(HolidayDetailDTO detail : allDayReserved){
+					if(new DateTime(detail.day).toDateMidnight().isEqual(dtmaj.toDateMidnight())){
+						am = detail.am;
+						pm = detail.pm;
+					}
+				}
+				daysDTO.add(new CalendarDayDTO(dtmaj.toString(fmt), am, pm, dtmaj.getWeekOfWeekyear()));
 			}
 		}
 		
@@ -283,7 +322,7 @@ public class HolidayRequestService extends AbstractService{
 		calendar.details = this.buildColorPickerForRequest();
 		return calendar;
 	}
-
+	
 	@SuppressWarnings("unchecked")
 	private List<CalendarBalanceDetailDTO> buildColorPickerForRequest() {
 		Query balanceRequest = em.get().createQuery("SELECT b FROM HolidayBalance b WHERE user=:user");

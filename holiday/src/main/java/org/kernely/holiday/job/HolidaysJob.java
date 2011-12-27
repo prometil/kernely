@@ -5,8 +5,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
 
-import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
 import org.kernely.holiday.dto.HolidayBalanceDTO;
 import org.kernely.holiday.service.HolidayBalanceService;
 import org.quartz.Job;
@@ -33,7 +31,7 @@ public class HolidaysJob implements Job {
 	    Calendar calendar = Calendar.getInstance (zone);
 	    calendar.setTime (curDate);
 	    int curMonth = calendar.get(Calendar.MONTH);
-		
+
 		for (HolidayBalanceDTO balance : allBalances) {
 			balanceService.incrementBalance(balance.id);
 			

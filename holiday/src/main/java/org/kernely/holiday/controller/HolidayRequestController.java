@@ -1,5 +1,9 @@
 package org.kernely.holiday.controller;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -7,12 +11,17 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.kernely.core.controller.AbstractController;
-import org.kernely.core.service.user.UserService;
 import org.kernely.core.template.TemplateRenderer;
 import org.kernely.holiday.dto.CalendarRequestDTO;
+import org.kernely.holiday.dto.HolidayDetailCreationRequestDTO;
+import org.kernely.holiday.dto.HolidayRequestCreationRequestDTO;
+import org.kernely.holiday.dto.HolidayRequestDTO;
+import org.kernely.holiday.model.HolidayRequest;
+import org.kernely.holiday.service.HolidayBalanceService;
 import org.kernely.holiday.service.HolidayRequestService;
 
 import com.google.inject.Inject;
@@ -23,11 +32,11 @@ public class HolidayRequestController extends AbstractController {
 	private TemplateRenderer templateRenderer;
 	
 	@Inject
-	private UserService userService;
-	
-	@Inject
 	private HolidayRequestService holidayRequestService;
-	
+
+	@Inject
+	private HolidayBalanceService holidayBalanceService;
+
 	@GET
 	@Produces( { MediaType.TEXT_HTML })
 	public String getHolidayRequestPanel(){
