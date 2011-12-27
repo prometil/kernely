@@ -182,34 +182,46 @@ public class HolidayRequestDetail extends AbstractModel implements Comparable<Ho
 	 */
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
+		if (this == obj){
 			return true;
-		if (obj == null)
+		}
+		if (obj == null){
 			return false;
-		if (getClass() != obj.getClass())
+		}
+		if (getClass() != obj.getClass()){
 			return false;
+		}
 		HolidayRequestDetail other = (HolidayRequestDetail) obj;
-		if (am != other.am)
+		if (am != other.am){
 			return false;
+		}
 		if (balance == null) {
-			if (other.balance != null)
+			if (other.balance != null){
 				return false;
-		} else if (!balance.equals(other.balance))
+			}
+		} else if (!balance.equals(other.balance)){
 			return false;
+		}
 		if (day == null) {
-			if (other.day != null)
+			if (other.day != null){
 				return false;
-		} else if (!day.equals(other.day))
+			}
+		} else if (!day.equals(other.day)){
 			return false;
-		if (id != other.id)
+		}
+		if (id != other.id){
 			return false;
-		if (pm != other.pm)
+		}
+		if (pm != other.pm){
 			return false;
+		}
 		if (request == null) {
-			if (other.request != null)
+			if (other.request != null){
 				return false;
-		} else if (!request.equals(other.request))
+			}
+		} else if (!request.equals(other.request)){
 			return false;
+		}
 		return true;
 	}
 

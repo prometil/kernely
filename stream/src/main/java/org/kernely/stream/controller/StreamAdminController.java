@@ -48,7 +48,7 @@ import com.google.inject.Inject;
 @Path("/admin/streams")
 public class StreamAdminController extends AbstractController {
 
-	private static final Logger log = LoggerFactory.getLogger(StreamAdminController.class);
+	private static Logger log = LoggerFactory.getLogger(StreamAdminController.class);
 
 	@Inject
 	private TemplateRenderer templateRenderer;
@@ -184,7 +184,8 @@ public class StreamAdminController extends AbstractController {
 	@Path("/rights/{id}")
 	@Produces({ MediaType.APPLICATION_JSON })
 	public String getStreamRights(@PathParam("id") int id) {
-		String json = "{\"permission\":[";
+		StringBuilder jsonBuilder = new StringBuilder();
+		jsonBuilder.append("{\"permission\":[");
 		List<UserDTO> allUsers = userService.getAllUsers();
 
 		for (UserDTO user : allUsers) {
@@ -193,13 +194,20 @@ public class StreamAdminController extends AbstractController {
 			boolean delete = permissionService.userHasPermission((int) user.id, Stream.RIGHT_DELETE, Stream.STREAM_RESOURCE, id);
 
 			if (delete) {
-				json += "{\"user\":" + user.id + ",\"right\":\"delete\"},";
+				jsonBuilder.append("{\"user\":");
+				jsonBuilder.append(user.id);
+				jsonBuilder.append(",\"right\":\"delete\"},");
 			} else if (write) {
-				json += "{\"user\":" + user.id + ",\"right\":\"write\"},";
+				jsonBuilder.append("{\"user\":");
+				jsonBuilder.append(user.id);
+				jsonBuilder.append(",\"right\":\"write\"},");
 			} else if (read) {
-				json += "{\"user\":" + user.id + ",\"right\":\"read\"},";
+				jsonBuilder.append("{\"user\":");
+				jsonBuilder.append(user.id);
+				jsonBuilder.append(",\"right\":\"read\"},");
 			}
 		}
+		String json = jsonBuilder.toString(); 
 		json = json.substring(0, json.length() - 1);
 		json += "]}";
 		return json;

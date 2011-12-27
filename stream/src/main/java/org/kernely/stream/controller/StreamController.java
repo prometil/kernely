@@ -49,7 +49,7 @@ import com.google.inject.Inject;
 @Path("/streams")
 public class StreamController extends AbstractController {
 
-	private static final Logger log = LoggerFactory.getLogger(StreamController.class);
+	private static Logger log = LoggerFactory.getLogger(StreamController.class);
 
 	@Inject
 	private TemplateRenderer templateRenderer;

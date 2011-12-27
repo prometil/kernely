@@ -54,7 +54,9 @@ import com.google.inject.persist.Transactional;
 @Singleton
 public class StreamService extends AbstractService {
 
-	private static final Logger log = LoggerFactory.getLogger(StreamService.class);
+	private static final int MAX_RESULT = 9;
+
+	private static Logger log = LoggerFactory.getLogger(StreamService.class);
 
 	@Inject
 	private PermissionService permissionService;
@@ -194,8 +196,8 @@ public class StreamService extends AbstractService {
 	 * @return the stream
 	 */
 	@Transactional
-	public StreamDTO getStream(int stream_id) {
-		Stream stream = getStreamModel(stream_id);
+	public StreamDTO getStream(int streamId) {
+		Stream stream = getStreamModel(streamId);
 		StreamDTO dto = new StreamDTO();
 		dto.id = stream.getId();
 		dto.title = stream.getTitle();
@@ -210,9 +212,9 @@ public class StreamService extends AbstractService {
 	 * @return the stream
 	 */
 	@Transactional
-	private Stream getStreamModel(int stream_id) {
+	private Stream getStreamModel(int streamId) {
 		Query query = em.get().createQuery("SELECT s FROM Stream s WHERE id= :stream_id");
-		query.setParameter("stream_id", (int) stream_id);
+		query.setParameter("stream_id", (int) streamId);
 		Stream stream = (Stream) query.getSingleResult();
 		log.debug("Found stream titled: {}", stream.getTitle());
 		return stream;
@@ -270,8 +272,8 @@ public class StreamService extends AbstractService {
 	 *            The id of the stream to lock.
 	 */
 	@Transactional
-	public void lockStream(int stream_id) {
-		Stream stream = getStreamModel(stream_id);
+	public void lockStream(int streamId) {
+		Stream stream = getStreamModel(streamId);
 		stream.setLocked(true);
 	}
 
@@ -282,8 +284,8 @@ public class StreamService extends AbstractService {
 	 *            The id of the stream to lock.
 	 */
 	@Transactional
-	public void unlockStream(int stream_id) {
-		Stream stream = getStreamModel(stream_id);
+	public void unlockStream(int streamId) {
+		Stream stream = getStreamModel(streamId);
 		stream.setLocked(false);
 	}
 
@@ -367,17 +369,13 @@ public class StreamService extends AbstractService {
 	 */
 	@SuppressWarnings("unchecked")
 	public List<StreamMessageDTO> getAllMessagesForCurrentUser(int flag) {
+		int cFlag =flag;
 		if (flag == 0) {
 			Query query = em.get().createQuery("SELECT max(id) FROM Message m");
-			try {
-				flag = (Integer) query.getSingleResult();
-			} catch (NullPointerException e) {
-				// When there is no message.
-				flag = 0;
-			}
+			cFlag = (Integer) query.getSingleResult();
 			// We add 1 to flag to consider the last id too in the request with
 			// '<'
-			flag++;
+			cFlag++;
 		}
 		List<Stream> streams = this.getCurrentUserStreamModel();
 		TreeSet<Message> messages = new TreeSet<Message>(new MessageComparator());
@@ -385,15 +383,13 @@ public class StreamService extends AbstractService {
 			Query query = em.get().createQuery(
 					"SELECT m FROM Message m  WHERE message is null AND stream in (:streamSet) AND id < :flag ORDER BY id DESC");
 			query.setParameter("streamSet", streams);
-			query.setParameter("flag", flag);
-			query.setMaxResults(9);
+			query.setParameter("flag", cFlag);
+			query.setMaxResults(MAX_RESULT);
 			messages.addAll((List<Message>) query.getResultList());
 			List<StreamMessageDTO> messagesdto = new ArrayList<StreamMessageDTO>();
 			for (Message m : messages) {
 				StreamMessageDTO messageDTO = new StreamMessageDTO(m);
-	
 				messageDTO.deletion = currentUserHasRightsOnStream(Stream.RIGHT_DELETE, (int) messageDTO.streamId);
-	
 				messagesdto.add(messageDTO);
 			}
 			return messagesdto;
@@ -460,9 +456,7 @@ public class StreamService extends AbstractService {
 			Query query = em.get().createQuery("SELECT count(m) FROM Message m  WHERE message is null AND stream in (:streamSet)");
 			query.setParameter("streamSet", streams);
 			return ((Long) query.getSingleResult());
-			
-			
 		}
-		return new Long(0); 
+		return Long.valueOf(0); 
 	}
 }

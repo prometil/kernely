@@ -31,6 +31,20 @@ import org.kernely.stream.model.Message;
 @XmlRootElement
 public class StreamMessageDTO {
 
+	private static final int HOUR_IN_A_DAY = 24;
+
+	private static final int MINUTES_OR_SECONDS = 60;
+
+	private static final int UNITY_1000 = 1000;
+
+	private static final int WEEK = 604800000;
+
+	private static final int DAY = 86400000;
+
+	private static final int HOUR = 3600000;
+
+	private static final int MINUTE = 60000;
+
 	public int id;
 
 	// the id of the stream containing this message
@@ -98,22 +112,22 @@ public class StreamMessageDTO {
 		// Difference between the two dates
 		long timebetweend1d2 = date2long - date1long;
 		// less than one minute
-		if (timebetweend1d2 < 60000) {
+		if (timebetweend1d2 < MINUTE) {
 			timeToDisplay = "a few seconds ago";
 		} else {
 			// less than one hour
-			if (timebetweend1d2 < 3600000) {
-				long nbMin = timebetweend1d2 / 1000 / 60;
+			if (timebetweend1d2 < HOUR) {
+				long nbMin = timebetweend1d2 / UNITY_1000 / MINUTES_OR_SECONDS;
 				timeToDisplay = nbMin + " minutes ago";
 			} else {
 				// less than one day
-				if (timebetweend1d2 < 86400000) {
-					long nbHour = timebetweend1d2 / 1000 / 60 / 60;
+				if (timebetweend1d2 < DAY) {
+					long nbHour = timebetweend1d2 / UNITY_1000 / MINUTES_OR_SECONDS / MINUTES_OR_SECONDS;
 					timeToDisplay = nbHour + " hours ago";
 				} else {
 					// less than one week
-					if (timebetweend1d2 < 604800000) {
-						long nbDays = timebetweend1d2 / 1000 / 60 / 60 / 24;
+					if (timebetweend1d2 < WEEK) {
+						long nbDays = timebetweend1d2 / UNITY_1000 / MINUTES_OR_SECONDS / MINUTES_OR_SECONDS / HOUR_IN_A_DAY;
 						timeToDisplay = nbDays + " days ago";
 					} else {
 						timeToDisplay = dateFormat.format(this.date);

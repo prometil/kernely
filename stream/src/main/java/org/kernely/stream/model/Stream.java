@@ -22,6 +22,7 @@ package org.kernely.stream.model;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -43,17 +44,18 @@ public class Stream extends AbstractModel {
 		this.locked = false;
 		this.messages = new HashSet<Message>();
 		this.title = "";
-		this.user_id = 1;
+		this.userId = 1;
 	}
 
-	private int user_id;
+	@Column(name="user_id")
+	private int userId;
 
 	public int getUserId() {
-		return user_id;
+		return userId;
 	}
 
 	public void setUserId(int userId) {
-		this.user_id = userId;
+		this.userId = userId;
 	}
 
 	public void setLocked(boolean locked) {
