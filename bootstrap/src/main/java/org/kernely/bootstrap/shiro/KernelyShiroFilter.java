@@ -35,7 +35,7 @@ import com.google.inject.Singleton;
 
 @Singleton
 public class KernelyShiroFilter extends IniShiroFilter {
-	private static final Logger log = LoggerFactory.getLogger(KernelyShiroFilter.class);
+	private static Logger log = LoggerFactory.getLogger(KernelyShiroFilter.class);
 
     static class SecurityManagerFactory extends WebIniSecurityManagerFactory {
 

@@ -35,8 +35,8 @@ import org.kernely.core.hibernate.AbstractModel;
 @Entity
 @Table(name="kernely_role")
 public class Role extends AbstractModel {
-	public final static String ROLE_USER = "User";
-	public final static String ROLE_ADMINISTRATOR = "Administrator";
+	public static final String ROLE_USER = "User";
+	public static final String ROLE_ADMINISTRATOR = "Administrator";
 
 	/**
 	 * Role's id

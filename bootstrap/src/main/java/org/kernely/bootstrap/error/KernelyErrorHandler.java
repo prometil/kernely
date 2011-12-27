@@ -41,7 +41,7 @@ public class KernelyErrorHandler extends ErrorHandler {
 	
 	
 	//the logger
-	private static final Logger log = LoggerFactory.getLogger(KernelyErrorHandler.class);
+	private static Logger log = LoggerFactory.getLogger(KernelyErrorHandler.class);
 	
 
 	/**

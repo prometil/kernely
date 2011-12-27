@@ -24,7 +24,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
 import org.apache.shiro.authc.AccountException;
-import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.authc.SimpleAuthenticationInfo;
@@ -46,12 +45,12 @@ import com.google.inject.Inject;
 
 public class KernelyRealm extends AuthorizingRealm {
 
-	private static final Logger log = LoggerFactory.getLogger(KernelyRealm.class);
+	private static Logger log = LoggerFactory.getLogger(KernelyRealm.class);
 
 	@Inject
 	private EntityManager em;
 
-	protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
+	protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token){
 		try {
 			UsernamePasswordToken upToken = (UsernamePasswordToken) token;
 			em.getTransaction().begin();

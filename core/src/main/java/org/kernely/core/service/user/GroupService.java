@@ -124,12 +124,10 @@ public class GroupService extends AbstractService {
 		}
 
 		Set<User> users = null;
-		if (!request.users.isEmpty()) {
-			if (!(request.users.get(0).username == null)) {
-				users = new HashSet<User>();
-				for (UserDTO u : request.users) {
-					users.add(em.get().find(User.class, u.id));
-				}
+		if (!request.users.isEmpty() && (!(request.users.get(0).username == null))) {
+			users = new HashSet<User>();
+			for (UserDTO u : request.users) {
+				users.add(em.get().find(User.class, u.id));
 			}
 		}
 		Group group = em.get().find(Group.class, request.id);

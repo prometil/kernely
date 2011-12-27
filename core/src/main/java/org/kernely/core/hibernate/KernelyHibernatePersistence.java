@@ -33,7 +33,7 @@ import org.slf4j.LoggerFactory;
 
 public class KernelyHibernatePersistence extends HibernatePersistence {
 
-	public static final Logger log = LoggerFactory.getLogger(KernelyHibernatePersistence.class);
+	public static Logger log = LoggerFactory.getLogger(KernelyHibernatePersistence.class);
 
 	@SuppressWarnings("unchecked")
 	@Override

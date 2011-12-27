@@ -55,7 +55,9 @@ import com.sun.jersey.guice.spi.container.servlet.GuiceContainer;
  */
 public class KernelyServletModule extends JerseyServletModule {
 
-	public static final Logger log = LoggerFactory.getLogger(KernelyServletModule.class);
+	private static final int SALT_ITERATION = 1024;
+
+	public static Logger log = LoggerFactory.getLogger(KernelyServletModule.class);
 
 	private List<? extends AbstractPlugin> plugins;
 	private final CombinedConfiguration combinedConfiguration;
@@ -144,7 +146,7 @@ public class KernelyServletModule extends JerseyServletModule {
 		log.debug("Create security manager");  
 		// Configure encrypting password matcher
 		HashedCredentialsMatcher customMatcher = new HashedCredentialsMatcher(Sha256Hash.ALGORITHM_NAME);
-		customMatcher.setHashIterations(1024);
+		customMatcher.setHashIterations(SALT_ITERATION);
 		realm.setCredentialsMatcher(customMatcher);
 		return new DefaultWebSecurityManager(realm);
 	}

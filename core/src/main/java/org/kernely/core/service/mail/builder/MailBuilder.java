@@ -28,19 +28,19 @@ import java.util.Map;
  *
  */
 public interface MailBuilder {
-	public MailBuilder subject(String pSubject);
+	MailBuilder subject(String pSubject);
 
-	public MailBuilder to(String addresses);
+	MailBuilder to(String addresses);
 	
-	public MailBuilder to(List<String> addresses);
+	MailBuilder to(List<String> addresses);
 
-	public MailBuilder cc(String addresses);
+	MailBuilder cc(String addresses);
 	
-	public MailBuilder cc(List<String> addresses);
+	MailBuilder cc(List<String> addresses);
 
-	public MailBuilder with(Map<String, Object> content);
+	MailBuilder with(Map<String, Object> content);
 	
-	public MailBuilder with(String key, String value);
+	MailBuilder with(String key, String value);
 	
-	public boolean registerMail();
+	boolean registerMail();
 }

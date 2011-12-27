@@ -16,7 +16,7 @@ import org.slf4j.LoggerFactory;
 import com.google.inject.Inject;
 
 public class HolidaysJob implements Job {
-	private static final Logger log = LoggerFactory.getLogger(HolidaysJob.class);
+	private static Logger log = LoggerFactory.getLogger(HolidaysJob.class);
 
 	@Inject
 	private HolidayBalanceService balanceService;
