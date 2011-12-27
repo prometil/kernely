@@ -44,7 +44,7 @@ public class ClasspathUpdater {
 	private static Logger log = LoggerFactory.getLogger(ClasspathUpdater.class);
 
 	//the directory to look at
-	String directory;
+	private String directory;
 	
 	/**
 	 * Constructor which needs the directory where plugins are.
@@ -58,10 +58,10 @@ public class ClasspathUpdater {
 	public void update(){
 		
 		IOFileFilter f = new SuffixFileFilter(".jar");
-		File directory = new File(this.directory);
+		File newDirectory = new File(this.directory);
 		
-		if(directory.exists()){
-			Collection<File> listFiles = FileUtils.listFiles(directory, f, DirectoryFileFilter.INSTANCE);
+		if(newDirectory.exists()){
+			Collection<File> listFiles = FileUtils.listFiles(newDirectory, f, DirectoryFileFilter.INSTANCE);
 			for (File file : listFiles) {
 				try {
 					URLClassLoader urlClassLoader = (URLClassLoader) ClassLoader.getSystemClassLoader();

@@ -26,7 +26,7 @@ package org.kernely.core.migrations.migrator;
  */
 public class RawSql extends Command {
 
-	public String request;
+	private String request;
 
 	/**
 	 * Construct a Raw sql request

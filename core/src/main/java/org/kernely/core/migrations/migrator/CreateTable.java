@@ -31,10 +31,10 @@ import com.google.common.base.Joiner;
 public class CreateTable extends Command {
 
 	// the name of the table
-	String name;
+	private String name;
 
 	// the column
-	List<String> columns;
+	private List<String> columns;
 
 	
 	/**

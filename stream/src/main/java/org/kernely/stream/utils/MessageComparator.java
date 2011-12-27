@@ -27,8 +27,12 @@ import org.kernely.stream.model.Message;
 /**
  * The comparator for Messages, to order them by ID.
  */
-@SuppressWarnings("serial")
 public class MessageComparator implements Comparator<Message>, Serializable {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -2540722370197723628L;
 
 	/**
 	 * Compares two messages.

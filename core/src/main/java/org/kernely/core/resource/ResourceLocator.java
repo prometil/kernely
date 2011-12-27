@@ -34,7 +34,7 @@ import org.slf4j.LoggerFactory;
  */
 public class ResourceLocator {
 
-	private static final Logger log = LoggerFactory.getLogger(ResourceLocator.class);
+	private static Logger log = LoggerFactory.getLogger(ResourceLocator.class);
 
 	/**
 	 * Find the resource in the folder with a specific path
@@ -48,20 +48,21 @@ public class ResourceLocator {
 	 */
 	public URL getResource(String prefix, String resource) throws MalformedURLException {
 		log.trace("Looking for resource {} in {}", resource, prefix);
+		String cResource = resource;
 		if (resource == null || "".equals(resource)) {
 			throw new IllegalArgumentException("file path cannot be null or empty");
 		}
 
 		// handle if the first character is a / or not
 		if (resource.charAt(0) != '/') {
-			resource = '/' + resource;
+			cResource = '/' + resource;
 		}
 
 		// add media directory to the url of the ressource
-		String fullURL = prefix + resource;
+		String fullURL = prefix + cResource;
 		File file = new File(fullURL);
 		if (!file.exists()) {
-				return ResourceLocator.class.getResource(resource);
+				return ResourceLocator.class.getResource(cResource);
 		}
 		return file.toURI().toURL();
 	}

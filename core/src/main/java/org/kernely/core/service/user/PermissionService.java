@@ -46,7 +46,7 @@ import com.google.inject.persist.Transactional;
 @Singleton
 public class PermissionService extends AbstractService {
 
-	private static final Logger log = LoggerFactory.getLogger(PermissionService.class);
+	private static Logger log = LoggerFactory.getLogger(PermissionService.class);
 
 	/**
 	 * Verify if the current user has a specific permission.
@@ -157,7 +157,6 @@ public class PermissionService extends AbstractService {
 			if (result.length > 3) {
 				throw new IllegalArgumentException("The permission " + permission + " is malformed");
 			}
-
 			p = new Permission();
 			p.setName(permission);
 			em.get().persist(p);

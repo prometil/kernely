@@ -43,9 +43,9 @@ public class Migrator {
 
 	private static Logger log = LoggerFactory.getLogger(Migration.class);
 
-	public AbstractConfiguration configuration;
+	private AbstractConfiguration configuration;
 
-	public List<AbstractPlugin> plugins;
+	private List<AbstractPlugin> plugins;
 
 	public Migrator(AbstractConfiguration pConfiguration, List<AbstractPlugin> pluginList) {
 		configuration = pConfiguration;

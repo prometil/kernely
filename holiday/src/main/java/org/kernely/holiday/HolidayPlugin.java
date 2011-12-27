@@ -44,7 +44,7 @@ import com.google.inject.Inject;
 public class HolidayPlugin extends AbstractPlugin {
 
 	@Inject
-	EventBus eventBus;
+	private EventBus eventBus;
 	
 
 	/**

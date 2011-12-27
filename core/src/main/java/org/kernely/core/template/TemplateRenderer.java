@@ -63,9 +63,9 @@ public class TemplateRenderer {
 	@Inject
 	private ResourceLocator resourceLocator;
 
-	public final static String ADMIN_LAYOUT = "/templates/gsp/admin.gsp";
+	public static final String ADMIN_LAYOUT = "/templates/gsp/admin.gsp";
 
-	public static final Logger log = LoggerFactory.getLogger(TemplateRenderer.class);
+	public static Logger log = LoggerFactory.getLogger(TemplateRenderer.class);
 
 	/**
 	 * The template renderer
@@ -81,12 +81,12 @@ public class TemplateRenderer {
 	 * @param URLFile
 	 * @return
 	 */
-	public KernelyTemplate create(String URLFile) {
-		if (URLFile == null) {
+	public KernelyTemplate create(String urlFile) {
+		if (urlFile == null) {
 			throw new IllegalArgumentException("Cannot load the template");
 		}
-		log.trace("Engine {}, Url {}", engine, URLFile);
-		return new KernelyTemplate(URLFile, engine);
+		log.trace("Engine {}, Url {}", engine, urlFile);
+		return new KernelyTemplate(urlFile, engine);
 
 	}
 
@@ -96,18 +96,18 @@ public class TemplateRenderer {
 		private Template template;
 
 		// the binding files
-		HashMap<String, Object> binding;
+		private Map<String, Object> binding;
 
 		// the css files
-		List<String> cssFiles;
+		private List<String> cssFiles;
 
 		// the body
-		String body;
+		private String body;
 
 		// the layout
-		String otherLayout = null;
+		private String otherLayout = null;
 
-		boolean withLayout = true;
+		private boolean withLayout = true;
 
 		private SimpleTemplateEngine engine;
 
@@ -212,7 +212,7 @@ public class TemplateRenderer {
 		 */
 		public String render() {
 			URL kernelyLayout = TemplateRenderer.class.getResource("/templates/gsp/layout.gsp");
-			binding = enhanceBinding(binding);
+			binding = enhanceBinding((HashMap<String, Object>) binding);
 			if (body == null) {
 				body = template.make(binding).toString();
 			}
@@ -245,7 +245,7 @@ public class TemplateRenderer {
 		 * @return the binding enhanced
 		 */
 		private HashMap<String, Object> enhanceBinding(HashMap<String, Object> binding) {
-			HashMap<String, String> menu = new HashMap<String, String>();
+			Map<String, String> menu = new HashMap<String, String>();
 			for (AbstractPlugin plugin : pluginsLoader.getPlugins()) {
 				String path = plugin.getPath();
 				if (path != null) {

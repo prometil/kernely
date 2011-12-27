@@ -65,7 +65,7 @@ public class DeleteCommand extends Command {
 		StringBuilder b = new StringBuilder();
 		b.append("DELETE FROM ");
 		b.append(name);
-		if (where != "" && where != null) {
+		if (where != null && !where.equals("")) {
 			b.append("WHERE ");
 			b.append(where);
 			b.append(";");

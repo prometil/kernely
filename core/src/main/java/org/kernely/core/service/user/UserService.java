@@ -57,6 +57,7 @@ import com.google.inject.persist.Transactional;
 @Singleton
 public class UserService extends AbstractService {
 
+	private static final int SALT_ITERATION = 1024;
 	@Inject
 	private EventBus eventBus;
 
@@ -96,7 +97,7 @@ public class UserService extends AbstractService {
 		// Now hash the plain-text password with the random salt and multiple
 		// iterations and then Base64-encode the value (requires less space than
 		// Hex):
-		String hashedPasswordBase64 = new Sha256Hash(request.password.trim(), salt, 1024).toBase64();
+		String hashedPasswordBase64 = new Sha256Hash(request.password.trim(), salt, SALT_ITERATION).toBase64();
 
 		// Retrieve the role User, automatically given to a user.
 
@@ -135,10 +136,8 @@ public class UserService extends AbstractService {
 		if (u == null) {
 			throw new IllegalArgumentException("Request cannot be null ");
 		}
-		if (u.birth != null) {
-			if (u.birth.equals("")) {
+		if (u.birth != null && u.birth.equals("")) {
 				throw new IllegalArgumentException("A birth date must be like dd/MM/yyyy ");
-			}
 		}
 
 		// parse the string date in class Date
@@ -167,8 +166,7 @@ public class UserService extends AbstractService {
 			uDetails.setImage(u.image);
 			return new UserDetailsDTO(uDetails);
 		} catch (ParseException e) {
-			birth = new Date();
-			return new UserDetailsDTO();
+			return null;
 		}
 	}
 
@@ -220,11 +218,9 @@ public class UserService extends AbstractService {
 		Role roleUser = (Role) query.getSingleResult();
 
 		Set<Role> roles = new HashSet<Role>();
-		if (!request.roles.isEmpty()) {
-			if (!(request.roles.get(0).name == null)) {
-				for (RoleDTO r : request.roles) {
-					roles.add(em.get().find(Role.class, r.id));
-				}
+		if (!request.roles.isEmpty() && (!(request.roles.get(0).name == null))) {
+			for (RoleDTO r : request.roles) {
+				roles.add(em.get().find(Role.class, r.id));
 			}
 		}
 		// Add the user Role.

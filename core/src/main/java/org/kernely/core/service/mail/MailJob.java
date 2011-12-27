@@ -12,10 +12,10 @@ import org.slf4j.LoggerFactory;
 import com.google.inject.Inject;
 
 public class MailJob implements Job{
-	private static final Logger log = LoggerFactory.getLogger(MailService.class);
+	private static Logger log = LoggerFactory.getLogger(MailService.class);
 	
 	@Inject
-	public Mailer mailService;
+	private Mailer mailService;
 	
 	@Override
 	public void execute(JobExecutionContext arg0) throws JobExecutionException {

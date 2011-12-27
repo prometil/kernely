@@ -23,7 +23,6 @@ import org.kernely.core.event.UserCreationEvent;
 import org.kernely.stream.model.Stream;
 import org.kernely.stream.service.StreamService;
 
-import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
 
@@ -33,10 +32,7 @@ import com.google.inject.Inject;
 public class UserEventHandler {
 
 	@Inject
-	StreamService streamService;
-
-	@Inject
-	EventBus e;
+	private StreamService streamService;
 
 	/**
 	 * Detect the creation of an user and create his stream.

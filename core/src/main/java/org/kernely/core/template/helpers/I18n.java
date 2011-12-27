@@ -33,7 +33,7 @@ import org.kernely.core.i18n.Messages;
  */
 public class I18n {
 
-	private static Messages messages;
+	private Messages messages;
 
 	// the choosen locale
 	private Locale locale;

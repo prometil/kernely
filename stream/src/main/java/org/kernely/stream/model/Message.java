@@ -173,7 +173,7 @@ public class Message extends AbstractModel {
 	 * @return the message date
 	 */
 	public Date getDate() {
-		return date;
+		return (Date)date.clone();
 	}
 
 	/**
@@ -201,7 +201,7 @@ public class Message extends AbstractModel {
 	 *            the date of the message
 	 */
 	public void setDate(Date pDate) {
-		this.date = pDate;
+		this.date = (Date)pDate.clone();
 	}
 
 	/**

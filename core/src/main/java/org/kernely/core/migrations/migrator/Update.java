@@ -39,7 +39,7 @@ public class Update extends Command {
 	private String where;
 
 	// the column
-	List<String> columns;
+	private List<String> columns;
 
 	/**
 	 * Creates an update command for the table name

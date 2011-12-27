@@ -52,13 +52,13 @@ import com.google.inject.persist.Transactional;
  */
 public class MailService extends AbstractService implements Mailer {
 
-	private static final Logger log = LoggerFactory.getLogger(MailService.class);
+	private static Logger log = LoggerFactory.getLogger(MailService.class);
 
 	@Inject
-	public AbstractConfiguration configuration;
+	private AbstractConfiguration configuration;
 
 	@Inject
-	public TemplateRenderer renderer;
+	private TemplateRenderer renderer;
 
 	/**
 	 * Create mail from the given gsp template
@@ -68,7 +68,7 @@ public class MailService extends AbstractService implements Mailer {
 	 * @return a mail builder
 	 */
 	public MailBuilder create(String templatePath) {
-		return new JavaMailBuilder(templatePath, renderer.create(templatePath));
+		return new JavaMailBuilder(renderer.create(templatePath));
 	}
 
 	/**
@@ -93,7 +93,7 @@ public class MailService extends AbstractService implements Mailer {
 		 * @param templatePath
 		 *            the template
 		 */
-		public JavaMailBuilder(String template, KernelyTemplate pBuilder) {
+		public JavaMailBuilder(KernelyTemplate pBuilder) {
 			recipients = new ArrayList<String>();
 			ccs = new ArrayList<String>();
 			builder = pBuilder;
@@ -137,39 +137,40 @@ public class MailService extends AbstractService implements Mailer {
 		@Transactional
 		public boolean registerMail(){
 			String body = builder.withoutLayout().render();
-			String recipString = "";
+			StringBuilder recipString = new StringBuilder("");
+			String recipInString="";
 			for (String to : recipients) {
-				recipString += to + ",";
+				recipString.append(to);
+				recipString.append(",");
 			}
-			if(recipString != ""){
+			if(!recipString.toString().equals("")){
 				// Remove the last coma
-				recipString = recipString.substring(0, recipString.lastIndexOf(','));
+				recipInString = recipString.toString().substring(0, recipString.toString().lastIndexOf(','));
 			}
-			String ccString = "";
+			StringBuilder ccBuildString = new StringBuilder("");
+			String ccString ="" ;
 			for (String cc : ccs) {
-				ccString += cc + ",";
+				ccBuildString.append(cc);
+				ccBuildString.append(",");
 			}
-			if(ccString != ""){
+			if(!ccBuildString.toString().equals("")){
 				// Remove the last coma
-				ccString = ccString.substring(0, ccString.lastIndexOf(','));
+				ccString = ccBuildString.toString().substring(0, ccBuildString.toString().lastIndexOf(','));
 			}
 			
 			Mail mail = new Mail();
-			if(ccString != ""){
+			if(!ccString.equals("")){
 				mail.setCc(ccString);
 			}
 			mail.setContent(body);
-			if(recipString != ""){
-				mail.setRecipients(recipString);
+			if(!recipInString.equals("")){
+				mail.setRecipients(recipInString);
 			}
 			mail.setSubject(subject);
 			
 			em.get().persist(mail);
 			return true;
 		}
-
-		
-
 	}
 	
 	@Transactional

@@ -44,15 +44,14 @@ public class MediaServlet extends HttpServlet {
 
 	private static final long serialVersionUID = 3840583598946361059L;
 
-	private static final Logger log = LoggerFactory
-			.getLogger(MediaServlet.class);
+	private static Logger log = LoggerFactory.getLogger(MediaServlet.class);
 
 	@Inject
 	private ResourceLocator resourceLocator;
-	
+
 	@Inject
 	private AbstractConfiguration configuration;
-	
+
 	/**
 	 * @see javax.servlet.http.HttpServlet#doGet(javax.servlet.http.HttpServletRequest,
 	 *      javax.servlet.http.HttpServletResponse)
@@ -61,38 +60,38 @@ public class MediaServlet extends HttpServlet {
 		String servletPath = request.getServletPath();
 		URL url;
 		try {
-			//retrieve the path in the config file.
-			String prefix=configuration.getString("workpath.url");
+			// retrieve the path in the config file.
+			String prefix = configuration.getString("workpath.url");
 			url = resourceLocator.getResource(prefix, servletPath);
 			if (url == null) {
 				log.error("Cannot find url {}", servletPath);
 			} else {
-					String type = this.getServletContext().getMimeType(servletPath);
-					response.setContentType(type);
+				String type = this.getServletContext().getMimeType(servletPath);
+				response.setContentType(type);
 
-					InputStream input;
+				InputStream input;
+				try {
+					input = url.openStream();
+					OutputStream pw;
 					try {
-						input = url.openStream();
-						OutputStream pw;
-						try {
-							pw = response.getOutputStream();
-							IOUtils.copy(input, pw);
-							input.close();
-							pw.flush();
-						} catch (IOException e) {
-							log.error("Cannot write file {}", servletPath);
-						}
-						 
-					} catch (IOException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
+						pw = response.getOutputStream();
+						IOUtils.copy(input, pw);
+						input.close();
+						pw.flush();
+					} catch (IOException e) {
+						log.error("Cannot write file {}", servletPath);
 					}
-				
+
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					log.error("Cannot write file {}",e1);
+				}
+
 			}
 
 		} catch (MalformedURLException e1) {
 			// TODO Auto-generated catch block
-			e1.printStackTrace();
+			log.error("malformed url {}", e1);
 		}
 
 	}

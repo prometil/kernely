@@ -19,7 +19,7 @@ public class HolidaysJob implements Job {
 	private static final Logger log = LoggerFactory.getLogger(HolidaysJob.class);
 
 	@Inject
-	HolidayBalanceService balanceService;
+	private HolidayBalanceService balanceService;
 
 	@Override
 	public void execute(JobExecutionContext arg0) throws JobExecutionException {

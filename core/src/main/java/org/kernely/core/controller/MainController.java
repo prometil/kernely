@@ -37,20 +37,21 @@ import com.google.inject.Inject;
 
 @Path("/")
 public class MainController extends AbstractController {
-	public static final Logger log = LoggerFactory.getLogger(MainController.class);
+	public static Logger log = LoggerFactory.getLogger(MainController.class);
 
 	@Inject
 	private TemplateRenderer templateRenderer;
 
 	/**
 	 * Get the main page of the application
+	 * 
 	 * @return The HTML corresponding to the main page of the application
 	 */
 	@GET
-	@Produces( { MediaType.TEXT_HTML })
+	@Produces({ MediaType.TEXT_HTML })
 	public Response getUI() {
-		String URL = new String("/templates/gsp/home.gsp");
-		return ok(templateRenderer.create(URL));
+		String url = "/templates/gsp/home.gsp";
+		return ok(templateRenderer.create(url));
 
 	}
 

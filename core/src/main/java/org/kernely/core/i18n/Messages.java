@@ -32,7 +32,7 @@ import java.util.ResourceBundle;
  */
 public class Messages {
 
-	List<ResourceBundle> bundles = new ArrayList<ResourceBundle>();
+	private List<ResourceBundle> bundles = new ArrayList<ResourceBundle>();
 
 	public Messages(Locale locale, List<String> names) {
 		for(String name: names){

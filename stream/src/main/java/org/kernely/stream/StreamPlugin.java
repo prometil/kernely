@@ -37,7 +37,7 @@ import com.google.inject.Inject;
 public class StreamPlugin extends AbstractPlugin {
 
 	@Inject
-	EventBus eventBus;
+	private EventBus eventBus;
 
 	/**
 	 * Default constructor

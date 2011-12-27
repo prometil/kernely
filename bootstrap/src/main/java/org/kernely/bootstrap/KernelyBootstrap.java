@@ -54,7 +54,7 @@ import com.google.inject.servlet.GuiceFilter;
  */
 public class KernelyBootstrap {
 	// Root of web content directory (jsp, css, js...)
-	private static final Logger log = LoggerFactory.getLogger(KernelyBootstrap.class);
+	private static Logger log = LoggerFactory.getLogger(KernelyBootstrap.class);
 
 	public static void main(String[] args) throws IOException {
 		log.info("Bootstrapping kernely");

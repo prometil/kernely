@@ -128,7 +128,7 @@ public class UserDetails extends AbstractModel{
       * Get the userdetails' id
       * @return : the userdetails' id
       */
-     public final int getId_user_detail() {
+     public final int getIdUserDetail() {
              return id;
      }
 
@@ -136,7 +136,7 @@ public class UserDetails extends AbstractModel{
       * Set the userdetails' id
       * @param idUserDetail : the userdetails' id
       */
-     public final void setId_user_detail(int idUserDetail) {
+     public final void setIdUserDetail(int idUserDetail) {
              id = idUserDetail;
      }
 
