@@ -92,8 +92,8 @@ public class StreamAdminController extends AbstractController {
 	public List<StreamDTO> displayAllStreams() {
 		if (userService.currentUserIsAdministrator()) {
 			log.debug("Call to GET on all streams");
-			List<StreamDTO> streams = streamService.getAllStreams();
-			return streams;
+			return streamService.getAllStreams();
+			
 		} else {
 			return null;
 		}
@@ -249,8 +249,7 @@ public class StreamAdminController extends AbstractController {
 	@Produces({ "application/json" })
 	public StreamDTO getComboCategory(@PathParam("stream") int id) {
 		if (userService.currentUserIsAdministrator()) {
-			StreamDTO sdto = streamService.getStream(id);
-			return sdto;
+			return streamService.getStream(id);
 		}
 		return null;
 	}

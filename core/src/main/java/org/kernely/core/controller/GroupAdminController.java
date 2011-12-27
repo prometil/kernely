@@ -61,8 +61,7 @@ public class GroupAdminController extends AbstractController {
 	{
 		if (userService.currentUserIsAdministrator()){
 			log.debug("Call to GET on all users");
-			List<GroupDTO> groups = groupService.getAllGroups();
-			return groups;
+			return groupService.getAllGroups();
 		}
 		return null;
 	}

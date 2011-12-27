@@ -81,8 +81,7 @@ public class HolidayAdminController extends AbstractController {
 	public List<HolidayDTO> displayAllHoliday(){
 		if (userService.currentUserIsAdministrator()){
 			log.debug("Call to GET on all holidays");
-			List<HolidayDTO> holidays = holidayService.getAllHoliday();
-			return holidays;
+			return holidayService.getAllHoliday();
 		}
 		return null;
 	}
@@ -96,8 +95,7 @@ public class HolidayAdminController extends AbstractController {
 	@Produces({"application/json"})
 	public HolidayDTO getComboUnity(@PathParam("holiday") int id ) {
 		if (userService.currentUserIsAdministrator()){
-			HolidayDTO hdto= holidayService.getHolidayDTO(id) ;
-			return hdto;		
+			return holidayService.getHolidayDTO(id) ;		
 		}
 		return null;
 	}

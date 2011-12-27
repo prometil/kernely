@@ -287,10 +287,7 @@ public class UserService extends AbstractService {
 		User u = (User) query.getSingleResult();
 		query = em.get().createQuery("SELECT e FROM UserDetails e , User u WHERE e.user = u AND u.id =" + u.getId());
 		UserDetails ud = (UserDetails) query.getSingleResult();
-
-		UserDetailsDTO dto = new UserDetailsDTO(ud);
-		return dto;
-
+		return new UserDetailsDTO(ud);
 	}
 
 	/**

@@ -67,9 +67,7 @@ public class CreateTable extends Command {
 	 * @return the table creation
 	 */
 	public static CreateTable name(String tableName) {
-		CreateTable createTable = new CreateTable(tableName);
-		return createTable;
-
+		return new CreateTable(tableName);
 	}
 
 	@Override

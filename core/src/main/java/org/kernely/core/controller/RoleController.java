@@ -51,8 +51,7 @@ public class RoleController extends AbstractController {
 	public List<RoleDTO> getAllRoles()
 	{
 		if (userService.currentUserIsAdministrator()){
-			List<RoleDTO> roles = roleService.getAllRoles();
-			return roles;
+			return roleService.getAllRoles();
 		}
 		return null;
 	}

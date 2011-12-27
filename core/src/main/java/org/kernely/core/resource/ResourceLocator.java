@@ -63,8 +63,7 @@ public class ResourceLocator {
 		if (!file.exists()) {
 				return ResourceLocator.class.getResource(resource);
 		}
-		URL url = file.toURI().toURL();
-		return url;
+		return file.toURI().toURL();
 	}
 
 	/**

@@ -71,8 +71,7 @@ public class UserAdminController extends AbstractController{
 	{
 		if (userService.currentUserIsAdministrator()){
 			log.debug("Call to GET on all users");
-			List<UserDetailsDTO> users = userService.getAllUserDetails();
-			return users;
+			return userService.getAllUserDetails();
 		}
 		return null;
 	}

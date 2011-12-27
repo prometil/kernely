@@ -309,8 +309,7 @@ public class StreamService extends AbstractService {
 			return null;
 		}
 		log.debug("Found stream: {}", result.getTitle());
-		StreamDTO dto = new StreamDTO(result);
-		return dto;
+		return new StreamDTO(result);
 	}
 
 	/**
@@ -460,8 +459,8 @@ public class StreamService extends AbstractService {
 		if (!streams.isEmpty()){
 			Query query = em.get().createQuery("SELECT count(m) FROM Message m  WHERE message is null AND stream in (:streamSet)");
 			query.setParameter("streamSet", streams);
-			Long count = (Long) query.getSingleResult();
-			return count;
+			return ((Long) query.getSingleResult());
+			
 			
 		}
 		return new Long(0); 

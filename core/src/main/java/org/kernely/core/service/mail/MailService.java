@@ -184,8 +184,7 @@ public class MailService extends AbstractService implements Mailer {
 	@SuppressWarnings("unchecked")
 	public List<Mail> getMailsToSend(){
 		Query query = em.get().createQuery("SELECT m FROM Mail m");
-		List<Mail> mails = (List<Mail>) query.getResultList();
-		return mails;
+		return (List<Mail>) query.getResultList();
 	}
 	
 	/**

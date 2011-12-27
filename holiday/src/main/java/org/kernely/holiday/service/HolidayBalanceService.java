@@ -83,8 +83,7 @@ public class HolidayBalanceService extends AbstractService {
 	@Transactional
 	public HolidayBalanceDTO getHolidayBalanceDTO(int id) {
 		HolidayBalance balance = em.get().find(HolidayBalance.class, id);
-		HolidayBalanceDTO hdto = new HolidayBalanceDTO(balance);
-		return hdto;
+		return new HolidayBalanceDTO(balance);
 	}
 
 	/**

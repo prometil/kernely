@@ -127,8 +127,7 @@ public class ManagerAdminController extends AbstractController {
 	public List<ManagerDTO> displayAllManager(){
 		if (userService.currentUserIsAdministrator()){
 			Set<ManagerDTO> setManagers = userService.getAllManager();
-			List<ManagerDTO> managers = new ArrayList<ManagerDTO>(setManagers);			
-			return managers;
+			return new ArrayList<ManagerDTO>(setManagers);
 		}
 		return null;
 	}
