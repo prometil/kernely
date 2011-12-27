@@ -172,7 +172,6 @@ public class HolidayService extends AbstractService {
 		holiday.setPeriodUnit(request.unity);
 		holiday.setEffectiveMonth(request.effectiveMonth);
 		holiday.setAnticipated(request.anticipation);
-System.out.println("Anticipation "+request.anticipation);
 		em.get().merge(holiday);
 	}
 

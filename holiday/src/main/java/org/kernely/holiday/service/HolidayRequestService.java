@@ -55,6 +55,7 @@ import com.google.inject.persist.Transactional;
 @Singleton
 public class HolidayRequestService extends AbstractService{
 	
+	private static final int DAYS_IN_WEEK = 6;
 	protected final Logger log = LoggerFactory.getLogger(this.getClass());
 
 	/**
@@ -278,7 +279,7 @@ public class HolidayRequestService extends AbstractService{
 		for(int i = 1; i < dayOfWeek1; i++){
 			dtmaj = date1.minusDays(dayOfWeek1 - i);
 			// The end of the week is not displayed
-			if(dtmaj.getDayOfWeek() < 6){
+			if(dtmaj.getDayOfWeek() < DAYS_IN_WEEK){
 				daysDTO.add(new CalendarDayDTO(dtmaj.toString(fmt), false, false,  dtmaj.getWeekOfWeekyear()));
 			}
 		}
@@ -294,7 +295,7 @@ public class HolidayRequestService extends AbstractService{
 			pm=true;
 			dtmaj = date1.plusDays(i);
 			// The end of the week is not displayed
-			if(dtmaj.getDayOfWeek() < 6){
+			if(dtmaj.getDayOfWeek() < DAYS_IN_WEEK){
 				for(HolidayDetailDTO detail : allDayReserved){
 					if(new DateTime(detail.day).toDateMidnight().isEqual(dtmaj.toDateMidnight())){
 						am = detail.am;
@@ -306,10 +307,10 @@ public class HolidayRequestService extends AbstractService{
 		}
 		
 		// We add the last days of the week in not available for the graphic interface
-		for(int i = dayOfWeek2 +1; i <= 7; i++){
+		for(int i = dayOfWeek2 +1; i <= DAYS_IN_WEEK+1; i++){
 			dtmaj = date2.plusDays(i - dayOfWeek2);
 			// The end of the week is not displayed
-			if(dtmaj.getDayOfWeek() < 6){
+			if(dtmaj.getDayOfWeek() < DAYS_IN_WEEK){
 				daysDTO.add(new CalendarDayDTO(dtmaj.toString(fmt), false, false, dtmaj.getWeekOfWeekyear()));
 			}
 		}

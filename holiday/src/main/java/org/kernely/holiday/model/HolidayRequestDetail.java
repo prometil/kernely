@@ -75,7 +75,7 @@ public class HolidayRequestDetail extends AbstractModel implements Comparable<Ho
 	 * @return the day
 	 */
 	public Date getDay() {
-		return day;
+		return (Date) day.clone();
 	}
 
 	/**
@@ -83,7 +83,7 @@ public class HolidayRequestDetail extends AbstractModel implements Comparable<Ho
 	 *            the day to set
 	 */
 	public void setDay(Date day) {
-		this.day = day;
+		this.day = (Date) day.clone();
 	}
 
 	/**
@@ -159,6 +159,58 @@ public class HolidayRequestDetail extends AbstractModel implements Comparable<Ho
 				return 0;
 			}
 		}
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + (am ? 1231 : 1237);
+		result = prime * result + ((balance == null) ? 0 : balance.hashCode());
+		result = prime * result + ((day == null) ? 0 : day.hashCode());
+		result = prime * result + id;
+		result = prime * result + (pm ? 1231 : 1237);
+		result = prime * result + ((request == null) ? 0 : request.hashCode());
+		return result;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		HolidayRequestDetail other = (HolidayRequestDetail) obj;
+		if (am != other.am)
+			return false;
+		if (balance == null) {
+			if (other.balance != null)
+				return false;
+		} else if (!balance.equals(other.balance))
+			return false;
+		if (day == null) {
+			if (other.day != null)
+				return false;
+		} else if (!day.equals(other.day))
+			return false;
+		if (id != other.id)
+			return false;
+		if (pm != other.pm)
+			return false;
+		if (request == null) {
+			if (other.request != null)
+				return false;
+		} else if (!request.equals(other.request))
+			return false;
+		return true;
 	}
 
 	

@@ -44,9 +44,9 @@ import org.kernely.core.model.User;
 @Table(name = "kernely_holiday_request")
 public class HolidayRequest extends AbstractModel {
 	
-	public static int DENIED_STATUS = 0;
-	public static int ACCEPTED_STATUS = 1;
-	public static int PENDING_STATUS = 2;
+	public static final int DENIED_STATUS = 0;
+	public static final int ACCEPTED_STATUS = 1;
+	public static final int PENDING_STATUS = 2;
 	
 	
 	@Id
@@ -111,14 +111,14 @@ public class HolidayRequest extends AbstractModel {
 	 * @return the endDate
 	 */
 	public Date getEndDate() {
-		return endDate;
+		return (Date)endDate.clone();
 	}
 
 	/**
 	 * @param endDate the endDate to set
 	 */
 	public void setEndDate(Date endDate) {
-		this.endDate = endDate;
+		this.endDate = (Date)endDate.clone();
 	}
 
 	/**

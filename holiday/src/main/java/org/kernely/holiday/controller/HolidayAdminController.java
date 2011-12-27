@@ -77,7 +77,7 @@ public class HolidayAdminController extends AbstractController {
 	 */
 	@GET
 	@Path("/all")
-	@Produces({"application/json"})
+	@Produces({MediaType.APPLICATION_JSON})
 	public List<HolidayDTO> displayAllHoliday(){
 		if (userService.currentUserIsAdministrator()){
 			log.debug("Call to GET on all holidays");
@@ -92,7 +92,7 @@ public class HolidayAdminController extends AbstractController {
 	 */
 	@GET
 	@Path("/combo/{holiday}")
-	@Produces({"application/json"})
+	@Produces({MediaType.APPLICATION_JSON})
 	public HolidayDTO getComboUnity(@PathParam("holiday") int id ) {
 		if (userService.currentUserIsAdministrator()){
 			return holidayService.getHolidayDTO(id) ;		
@@ -125,7 +125,7 @@ public class HolidayAdminController extends AbstractController {
 	 */
 	@POST
 	@Path("/create")
-	@Produces({"application/json"})
+	@Produces({MediaType.APPLICATION_JSON})
 	public String create(HolidayCreationRequestDTO holiday){
 		if (userService.currentUserIsAdministrator()){
 			holidayService.createHoliday(holiday);
@@ -142,7 +142,7 @@ public class HolidayAdminController extends AbstractController {
 	 */
 	@POST
 	@Path("/update")
-	@Produces({"application/json"})
+	@Produces({MediaType.APPLICATION_JSON})
 	public String update(HolidayUpdateRequestDTO holiday){
 		if (userService.currentUserIsAdministrator()){
 			holidayService.updateHoliday(holiday);

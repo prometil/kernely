@@ -145,7 +145,7 @@ public class HolidayBalance extends AbstractModel {
 	 * @return the lastUpdate
 	 */
 	public Date getLastUpdate() {
-		return lastUpdate;
+		return (Date)lastUpdate.clone();
 	}
 
 	/**
@@ -153,7 +153,7 @@ public class HolidayBalance extends AbstractModel {
 	 *            the lastUpdate to set
 	 */
 	public void setLastUpdate(Date lastUpdate) {
-		this.lastUpdate = lastUpdate;
+		this.lastUpdate = (Date)lastUpdate.clone();
 	}
 	
 	/**

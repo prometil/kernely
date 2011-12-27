@@ -12,7 +12,6 @@ import org.joda.time.format.DateTimeFormatter;
 import org.kernely.core.controller.AbstractController;
 import org.kernely.core.template.TemplateRenderer;
 import org.kernely.holiday.dto.CalendarRequestDTO;
-import org.kernely.holiday.service.HolidayBalanceService;
 import org.kernely.holiday.service.HolidayRequestService;
 
 import com.google.inject.Inject;
@@ -24,9 +23,6 @@ public class HolidayRequestController extends AbstractController {
 	
 	@Inject
 	private HolidayRequestService holidayRequestService;
-
-	@Inject
-	private HolidayBalanceService holidayBalanceService;
 
 	@GET
 	@Produces( { MediaType.TEXT_HTML })
