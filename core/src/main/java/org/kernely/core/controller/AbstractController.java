@@ -36,7 +36,7 @@ public abstract class AbstractController {
 	
 	public Response redirect (String uri){
 		try {
-			return Response.temporaryRedirect(new URI("")).build();
+			return Response.temporaryRedirect(new URI(uri)).build();
 		} catch (URISyntaxException e) {
 			log.error("Invalid redirect url");
 			return null;

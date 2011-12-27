@@ -166,9 +166,11 @@ public class UserController extends AbstractController {
 	@POST
 	@Path("/upload")
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
-	public void uploadFile(@FormDataParam("file") InputStream uploadedInputStream, @FormDataParam("file") FormDataContentDisposition fileDetail) {
+	@Produces({MediaType.TEXT_HTML})
+	public Response uploadFile(@FormDataParam("file") InputStream uploadedInputStream, @FormDataParam("file") FormDataContentDisposition fileDetail) {
 		if (fileDetail.getFileName().equals("")) {
-			return;
+			String template="/templates/gsp/profile_editable.gsp";
+			return ok(templateRenderer.create(template).with("details", userService.getUserDetails(userService.getAuthenticatedUserDTO().username)));
 		}
 		// get extension
 		String[] extension = fileDetail.getFileName().split("\\.");
@@ -191,9 +193,12 @@ public class UserController extends AbstractController {
 
 		UserDetailsUpdateRequestDTO ud = new UserDetailsUpdateRequestDTO(user.firstname, user.lastname, fileName, user.email, user.adress, user.zip, user.city, user.homephone, user.mobilephone, user.businessphone, user.birth, user.nationality, user.ssn, user.id, user.civility);
 		userService.updateUserProfile(ud);
-
+		
+		//get the dto modified
+		String template="/templates/gsp/profile_editable.gsp";
+		return ok(templateRenderer.create(template).with("details", userService.getUserDetails(userService.getAuthenticatedUserDTO().username)));
 	}
-
+	
 	/**
 	 * Get the DTO associated to the current user
 	 * 
