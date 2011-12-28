@@ -37,7 +37,7 @@ import com.google.inject.Inject;
 
 @Path("/")
 public class MainController extends AbstractController {
-	public static Logger log = LoggerFactory.getLogger(MainController.class);
+	private static Logger log = LoggerFactory.getLogger(MainController.class);
 
 	@Inject
 	private TemplateRenderer templateRenderer;

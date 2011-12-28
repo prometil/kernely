@@ -66,7 +66,6 @@ public abstract class Migration implements Comparable<Migration> {
 			} catch (SQLException e) {
 				log.error("Cannot execute command", e);
 				executed = executed && false;
-				break;
 			}
 		}
 		if (executed){
@@ -96,6 +95,37 @@ public abstract class Migration implements Comparable<Migration> {
 	@Override
 	public int compareTo(Migration other) {
 		return getVersion().compareTo(other.getVersion());
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((version == null) ? 0 : version.hashCode());
+		return result;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Migration other = (Migration) obj;
+		if (version == null) {
+			if (other.version != null)
+				return false;
+		} else if (!version.equals(other.version))
+			return false;
+		return true;
 	}
 
 }

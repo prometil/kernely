@@ -65,7 +65,7 @@ public class TemplateRenderer {
 
 	public static final String ADMIN_LAYOUT = "/templates/gsp/admin.gsp";
 
-	public static Logger log = LoggerFactory.getLogger(TemplateRenderer.class);
+	private static Logger log = LoggerFactory.getLogger(TemplateRenderer.class);
 
 	/**
 	 * The template renderer
@@ -244,7 +244,7 @@ public class TemplateRenderer {
 		 *            the bind
 		 * @return the binding enhanced
 		 */
-		private HashMap<String, Object> enhanceBinding(HashMap<String, Object> binding) {
+		private Map<String, Object> enhanceBinding(HashMap<String, Object> binding) {
 			Map<String, String> menu = new HashMap<String, String>();
 			for (AbstractPlugin plugin : pluginsLoader.getPlugins()) {
 				String path = plugin.getPath();

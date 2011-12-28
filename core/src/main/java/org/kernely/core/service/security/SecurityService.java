@@ -20,6 +20,6 @@
 package org.kernely.core.service.security;
 
 public interface SecurityService {
-	public void logout();
-	public String getCurrentUserName();
+	void logout();
+	String getCurrentUserName();
 }

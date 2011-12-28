@@ -50,6 +50,8 @@ import com.google.inject.persist.Transactional;
 @Singleton
 public class HolidayBalanceService extends AbstractService {
 
+	private static final float RANGE = 0.0001F;
+
 	private static final int TWELTHS_DAYS = 12;
 
 	private static final float HALF_DAY = 0.5F;
@@ -257,7 +259,7 @@ public class HolidayBalanceService extends AbstractService {
 	public void removeAvailableDays(int holidayBalanceId, float days) {
 		// Can only remove days or half days.
 		int entire = (int) (days / HALF_DAY);
-		if (((float) entire) * HALF_DAY != days) {
+		if (Math.abs(((float) entire) * HALF_DAY - days) < RANGE) {
 			throw new IllegalArgumentException("Can only retrieve days or half days. " + days + " is not a multiple of half day");
 		}
 
@@ -321,12 +323,12 @@ public class HolidayBalanceService extends AbstractService {
 					if (detail.am){
 						log.debug("PAS UN LEVE TOT ");
 
-						days.put(detail.type, new Float(days.get(detail.type) + HALF_DAY));
+						days.put(detail.type, Float.valueOf(days.get(detail.type) + HALF_DAY));
 					}
 					if (detail.pm){
 						log.debug("COUCHE TARD");
 
-						days.put(detail.type, new Float(days.get(detail.type) + HALF_DAY));
+						days.put(detail.type, Float.valueOf(days.get(detail.type) + HALF_DAY));
 					}
 				}
 			}

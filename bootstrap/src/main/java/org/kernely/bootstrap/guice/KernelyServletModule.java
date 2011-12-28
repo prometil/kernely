@@ -57,7 +57,7 @@ public class KernelyServletModule extends JerseyServletModule {
 
 	private static final int SALT_ITERATION = 1024;
 
-	public static Logger log = LoggerFactory.getLogger(KernelyServletModule.class);
+	private static Logger log = LoggerFactory.getLogger(KernelyServletModule.class);
 
 	private List<? extends AbstractPlugin> plugins;
 	private final CombinedConfiguration combinedConfiguration;

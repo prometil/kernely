@@ -51,7 +51,7 @@ import com.google.inject.servlet.ServletModule;
  */
 public class GuiceServletConfig extends GuiceServletContextListener {
 
-	public static Logger log = LoggerFactory.getLogger(GuiceServletConfig.class);
+	private static Logger log = LoggerFactory.getLogger(GuiceServletConfig.class);
 	private List<? extends AbstractPlugin> plugins;
 	private final CombinedConfiguration combinedConfiguration;
 
