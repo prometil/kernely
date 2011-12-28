@@ -37,10 +37,23 @@ public class UserCreationRequestDTO {
 	public boolean locked;
 	public List<RoleDTO> roles;
 
+	/**
+	 * Default constructor 
+	 */
 	public UserCreationRequestDTO() {
 
 	}
 
+	/**
+	 * Constructor
+	 * @param id
+	 * @param fName
+	 * @param lName
+	 * @param username
+	 * @param password
+	 * @param locked
+	 * @param roles
+	 */
 	public UserCreationRequestDTO(int id, String fName, String lName, String username, String password, boolean locked, List<RoleDTO> roles) {
 		this.id = id;
 		this.firstname = fName;

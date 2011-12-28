@@ -28,10 +28,19 @@ import org.kernely.core.model.User;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 
+/**
+ * The abstract class   for service
+ * @author b.grandperret
+ *
+ */
 public abstract class AbstractService {
 	@Inject
 	protected Provider<EntityManager> em;
 
+	/**
+	 * 
+	 * @return user
+	 */
 	protected User getAuthenticatedUserModel(){
 		Query query = em.get().createQuery("SELECT e FROM User e WHERE username ='"+ SecurityUtils.getSubject().getPrincipal() +"'");
 		return (User)query.getSingleResult();

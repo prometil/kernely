@@ -41,12 +41,15 @@ import org.kernely.core.hibernate.AbstractModel;
 import org.kernely.core.model.User;
 
 /**
- *
+ * The message model 
  */
 @Entity
 @Table(name = "kernely_message")
 public class Message extends AbstractModel {
 
+	/**
+	 * Constructor 
+	 */
 	public Message() {
 		super();
 		DateTimeZone zoneUTC = DateTimeZone.UTC;
@@ -61,10 +64,19 @@ public class Message extends AbstractModel {
 	@JoinColumn(name = "user_id")
 	private User user;
 
+
+	/**
+     * Get the user associated to this message
+     * @return : the user associated
+     */
 	public User getUser() {
 		return this.user;
 	}
 
+	/**
+	 * Set the user associated  to this message
+	 * @param the new user
+	 */
 	public void setUser(User u) {
 		this.user = u;
 	}

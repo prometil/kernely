@@ -38,10 +38,22 @@ public class HolidayDTO {
 	public boolean anticipation;
 	public int effectiveMonth;
 	
+	/**
+	 * default constructor
+	 */
 	public HolidayDTO(){
 		
 	}
 
+	/**
+	 * constructor
+	 * @param name
+	 * @param quantity
+	 * @param periodUnit
+	 * @param id
+	 * @param anticipation
+	 * @param effectiveMonth
+	 */
 	public HolidayDTO(String name, int quantity, int periodUnit, int id, boolean anticipation, int effectiveMonth) {
 		super();
 		

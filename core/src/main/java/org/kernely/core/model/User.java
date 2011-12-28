@@ -165,7 +165,7 @@ public class User extends AbstractModel {
 	}
 
 	/**
-	 * get the salt of the user
+	 * Get the salt of the user
 	 * 
 	 * @return the salt of the user
 	 */

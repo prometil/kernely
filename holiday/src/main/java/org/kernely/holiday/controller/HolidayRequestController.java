@@ -16,6 +16,11 @@ import org.kernely.holiday.service.HolidayRequestService;
 
 import com.google.inject.Inject;
 
+/**
+ * Holiday request controller
+ * @author b.grandperret
+ *
+ */
 @Path("/holiday/request")
 public class HolidayRequestController extends AbstractController {
 	@Inject
@@ -24,15 +29,25 @@ public class HolidayRequestController extends AbstractController {
 	@Inject
 	private HolidayRequestService holidayRequestService;
 
+	/**
+	 * Get the template for holiday request page
+	 * @return The template
+	 */
 	@GET
 	@Produces( { MediaType.TEXT_HTML })
 	public String getHolidayRequestPanel(){
 		return templateRenderer.create("/templates/gsp/holiday_request.gsp").addCss("/css/holiday_request.css").render();
 	}
 	
+	/**
+	 * get the calendar request
+	 * @param date1
+	 * @param date2
+	 * @return calendarRequestDTO
+	 */
 	@GET
 	@Path("/interval")
-	@Produces( {"application/json"} )
+	@Produces( {MediaType.APPLICATION_JSON} )
 	public CalendarRequestDTO getTimeIntervalRepresentation(@QueryParam("date1") String date1, @QueryParam("date2") String date2){
 		DateTimeFormatter fmt = DateTimeFormat.forPattern("MM/dd/yyyy");
 		DateTime d1 = DateTime.parse(date1, fmt);

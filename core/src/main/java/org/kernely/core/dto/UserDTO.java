@@ -34,6 +34,9 @@ public class UserDTO {
 	public boolean locked;
 	public UserDetailsDTO userDetails;
 
+	/**
+	 * default constructor
+	 */
 	public UserDTO() {
 
 	}
@@ -61,14 +64,18 @@ public class UserDTO {
 		this.id = id;
 	}
 
+	/**
+	 * Constructor from a mode
+	 * @param u
+	 */
 	public UserDTO(User u) {
 		this.username = u.getUsername();
 		this.locked = u.isLocked();
 		this.id = u.getId();
 	}
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Return the hashcode of the object
 	 * 
 	 * @see java.lang.Object#hashCode()
 	 */
@@ -81,8 +88,8 @@ public class UserDTO {
 		return result;
 	}
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Equals
 	 * 
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */

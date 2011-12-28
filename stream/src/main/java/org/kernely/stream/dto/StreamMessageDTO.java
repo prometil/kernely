@@ -28,6 +28,11 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.kernely.stream.model.Message;
 
+/**
+ * The message DTO
+ * @author b.grandperret
+ *
+ */
 @XmlRootElement
 public class StreamMessageDTO {
 
@@ -99,6 +104,9 @@ public class StreamMessageDTO {
 		this.determinateTime();
 	}
 
+	/**
+	 * Determinate the time when the message was posted
+	 */
 	private void determinateTime() {
 		// Date
 		SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");

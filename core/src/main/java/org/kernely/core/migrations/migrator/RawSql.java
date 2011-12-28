@@ -37,9 +37,8 @@ public class RawSql extends Command {
 
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/**
+	 *  
 	 * @see org.kernely.core.migrations.migrator.Command#build()
 	 */
 	@Override

@@ -23,6 +23,11 @@ import java.util.List;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
+/**
+ * Plugin DTO
+ * @author b.grandperret
+ *
+ */
 @XmlRootElement
 public class PluginDTO {
 

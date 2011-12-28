@@ -23,6 +23,11 @@ import java.util.List;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
+/**
+ * 
+ * @author b.grandperret
+ * The dto for the creation of  a group
+ */
 @XmlRootElement
 public class GroupCreationRequestDTO {
 

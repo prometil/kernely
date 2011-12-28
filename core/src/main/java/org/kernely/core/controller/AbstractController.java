@@ -29,11 +29,21 @@ import org.kernely.core.template.TemplateRenderer.KernelyTemplate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
+/**
+ * 
+ * @author b.grandperret
+ * Handle the server response
+ *
+ */
 public abstract class AbstractController {
 
 	protected  final Logger log = LoggerFactory.getLogger(this.getClass());
 	
+	/**
+	 * Redirect the response to a new URI
+	 * @param uri
+	 * @return response
+	 */
 	public Response redirect (String uri){
 		try {
 			return Response.temporaryRedirect(new URI(uri)).build();

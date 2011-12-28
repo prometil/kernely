@@ -38,6 +38,11 @@ import org.quartz.ScheduleBuilder;
 import org.quartz.Trigger;
 import org.quartz.TriggerBuilder;
 
+/**
+ * The Plugin for holiday
+ * @author b.grandperret
+ *
+ */
 public class HolidayPlugin extends AbstractPlugin {
 
 	/**

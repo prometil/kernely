@@ -55,8 +55,8 @@ public class DeleteCommand extends Command {
 		return new DeleteCommand(name);
 	}
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * 
 	 * 
 	 * @see org.kernely.core.migrations.migrator.Command#build()
 	 */

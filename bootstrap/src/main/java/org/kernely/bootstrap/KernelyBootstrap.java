@@ -153,7 +153,7 @@ public class KernelyBootstrap {
 	}
 
 	/**
-	 * create and set the configuration from a xml file
+	 * Create and set the configuration from a xml file
 	 * 
 	 * @param plugins
 	 *            list of plugins

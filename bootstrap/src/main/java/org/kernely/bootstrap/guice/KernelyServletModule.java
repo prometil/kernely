@@ -73,6 +73,9 @@ public class KernelyServletModule extends JerseyServletModule {
 		this.combinedConfiguration = combinedConfiguration;
 	}
 
+	/**
+	 * Bind the servlet of the application
+	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	protected void configureServlets() {
@@ -88,7 +91,6 @@ public class KernelyServletModule extends JerseyServletModule {
 		}
 		bind(AbstractConfiguration.class).toInstance(combinedConfiguration);
 
-		// Todo basile ?
 		bind(ResourceLocator.class);
 
 		// persistence
@@ -140,6 +142,11 @@ public class KernelyServletModule extends JerseyServletModule {
 		serve("/*").with(GuiceContainer.class);
 	}
 
+	/**
+	 * Configure the websecuritymanager 
+	 * @param realm 
+	 * @return the websecuritymanager
+	 */
 	@Provides
 	@Singleton
 	public WebSecurityManager securityManager(KernelyRealm realm) {

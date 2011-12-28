@@ -32,6 +32,11 @@ import javax.persistence.Table;
 
 import org.kernely.core.hibernate.AbstractModel;
 
+/**
+ * The permission role
+ * @author b.grandperret
+ *
+ */
 @Entity
 @Table(name = "kernely_permission")
 public class Permission extends AbstractModel {

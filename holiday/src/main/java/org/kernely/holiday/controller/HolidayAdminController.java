@@ -56,8 +56,8 @@ public class HolidayAdminController extends AbstractController {
 	private HolidayService holidayService ; 
 
 	/**
-	 * set the template
-	 * @return the pae admin
+	 * Set the template
+	 * @return the page admin
 	 */
 	@GET
 	@Produces( { MediaType.TEXT_HTML })
@@ -72,8 +72,8 @@ public class HolidayAdminController extends AbstractController {
 		return page;
 	}
 	/**
-	 * display the list of holiday for the table
-	 * @return
+	 * Display the list of holiday for the table
+	 * @return List of holiday 
 	 */
 	@GET
 	@Path("/all")
@@ -88,7 +88,7 @@ public class HolidayAdminController extends AbstractController {
 	
 	/**
 	 * Display the good unity when the administrator edit holidays
-	 * @return
+	 * @return the holiday
 	 */
 	@GET
 	@Path("/combo/{holiday}")

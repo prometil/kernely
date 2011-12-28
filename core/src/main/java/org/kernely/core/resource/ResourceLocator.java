@@ -68,7 +68,7 @@ public class ResourceLocator {
 	}
 
 	/**
-	 * find a resource in media
+	 * Find a resource in media
 	 * 
 	 * @param resource
 	 *            the path of the resource

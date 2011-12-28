@@ -29,15 +29,27 @@ import org.quartz.spi.TriggerFiredBundle;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 
+/**
+ * Scheduler factory
+ * @author b.grandperret
+ *
+ */
 public class GuiceSchedulerFactory implements JobFactory {
 
 	private final Injector guice;
 
+	/**
+	 * Constructor
+	 * @param guice
+	 */
 	@Inject
 	public GuiceSchedulerFactory(final Injector guice) {
 		this.guice = guice;
 	}
 
+	/**
+	 * Create a new job  for the scheduler
+	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public Job newJob(TriggerFiredBundle bundle, Scheduler scheduler) throws SchedulerException {

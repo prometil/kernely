@@ -19,6 +19,11 @@
  */
 package org.kernely.core.service.security;
 
+/**
+ * Security service interface
+ * @author b.grandperret
+ *
+ */
 public interface SecurityService {
 	void logout();
 	String getCurrentUserName();

@@ -26,6 +26,11 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.kernely.core.model.UserDetails;
 
+/**
+ * The details of the user
+ * @author b.grandperret
+ *
+ */
 @XmlRootElement
 public class UserDetailsDTO {
 
@@ -72,6 +77,10 @@ public class UserDetailsDTO {
 		this.user = u;
 	}
 
+	/**
+	 * Constructor using a model
+	 * @param details
+	 */
 	public UserDetailsDTO(UserDetails details) {
 		this.firstname = details.getFirstname();
 		this.lastname = details.getName();

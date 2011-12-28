@@ -34,10 +34,18 @@ import javax.persistence.Table;
 import org.hibernate.annotations.Cascade;
 import org.kernely.core.hibernate.AbstractModel;
 
+/**
+ * The stream model
+ * @author b.grandperret
+ *
+ */
 @Entity
 @Table(name = "kernely_stream")
 public class Stream extends AbstractModel {
 
+	/**
+	 * Constructor
+	 */
 	public Stream() {
 		super();
 		this.category = "";
@@ -50,14 +58,26 @@ public class Stream extends AbstractModel {
 	@Column(name="user_id")
 	private int userId;
 
+	/**
+     * get the userid associated to this stream
+     * @return : the userid associated
+     */
 	public int getUserId() {
 		return userId;
 	}
 
+	/**
+     * set the userid associated to this stream
+     * @param : the userid associated
+     */
 	public void setUserId(int userId) {
 		this.userId = userId;
 	}
 
+	/**
+     * set the lock associated to this stream
+     * @param : the new lock
+     */
 	public void setLocked(boolean locked) {
 		this.locked = locked;
 	}

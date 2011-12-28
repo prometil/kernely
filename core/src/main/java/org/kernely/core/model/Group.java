@@ -36,6 +36,11 @@ import javax.persistence.Table;
 import org.hibernate.annotations.Cascade;
 import org.kernely.core.hibernate.AbstractModel;
 
+/**
+ * The group model
+ * @author b.grandperret
+ *
+ */
 @Entity
 @Table(name = "kernely_group")
 public class Group extends AbstractModel{

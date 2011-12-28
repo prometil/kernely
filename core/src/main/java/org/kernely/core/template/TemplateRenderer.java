@@ -90,6 +90,11 @@ public class TemplateRenderer {
 
 	}
 
+	/**
+	 * The template handler
+	 * @author b.grandperret
+	 *
+	 */
 	public class KernelyTemplate {
 
 		// the template

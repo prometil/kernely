@@ -21,6 +21,11 @@ package org.kernely.stream.dto;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
+/**
+ * The stream creation request DTO
+ * @author b.grandperret
+ *
+ */
 @XmlRootElement
 public class StreamCreationRequestDTO {
 

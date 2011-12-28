@@ -33,6 +33,12 @@ import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.Singleton;
 
+/**
+ * 
+ * @author b.grandperret
+ * The filter for shiro
+ *
+ */
 @Singleton
 public class KernelyShiroFilter extends IniShiroFilter {
 	private static Logger log = LoggerFactory.getLogger(KernelyShiroFilter.class);

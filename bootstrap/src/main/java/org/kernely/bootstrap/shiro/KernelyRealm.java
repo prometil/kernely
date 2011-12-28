@@ -43,6 +43,12 @@ import org.slf4j.LoggerFactory;
 
 import com.google.inject.Inject;
 
+
+/**
+ * 
+ * @author b.grandperret
+ * Definition of the realm for shiro 
+ */
 public class KernelyRealm extends AuthorizingRealm {
 
 	private static Logger log = LoggerFactory.getLogger(KernelyRealm.class);
@@ -50,6 +56,9 @@ public class KernelyRealm extends AuthorizingRealm {
 	@Inject
 	private EntityManager em;
 
+	/**
+	 * Handle the  authentification of kernely
+	 */
 	protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token){
 		try {
 			UsernamePasswordToken upToken = (UsernamePasswordToken) token;
@@ -74,6 +83,9 @@ public class KernelyRealm extends AuthorizingRealm {
 
 	}
 
+	/**
+	 * Handle the authorization of kernely 
+	 */
 	protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
 		if (principals == null) {
 			throw new AuthorizationException("PrincipalCollection method argument cannot be null.");

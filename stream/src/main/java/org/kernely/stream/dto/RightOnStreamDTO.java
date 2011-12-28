@@ -21,6 +21,11 @@ package org.kernely.stream.dto;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
+/**
+ * the stream dto for the write
+ * @author b.grandperret
+ *
+ */
 @XmlRootElement
 public class RightOnStreamDTO {
 

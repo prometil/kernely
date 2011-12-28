@@ -39,7 +39,11 @@ import org.kernely.core.template.TemplateRenderer;
 
 import com.google.inject.Inject;
 
-
+/**
+ * 
+ * @author b.grandperret 
+ * The controller of the manager admin page
+ */
 @Path("/admin/manager")
 public class ManagerAdminController extends AbstractController {
 	@Inject
@@ -47,32 +51,36 @@ public class ManagerAdminController extends AbstractController {
 
 	@Inject
 	private UserService userService;
-	
+
 	/**
 	 * Display the manager administration page
+	 * 
 	 * @return the manager administration page
 	 */
 	@GET
-	@Produces( { MediaType.TEXT_HTML })
-	public Response displayPage()
-	{
-		if (userService.currentUserIsAdministrator()){
+	@Produces({ MediaType.TEXT_HTML })
+	public Response displayPage() {
+		if (userService.currentUserIsAdministrator()) {
 			return ok(templateRenderer.create("/templates/gsp/administration/manager_admin.gsp").withLayout(TemplateRenderer.ADMIN_LAYOUT));
 		}
 		return ok(templateRenderer.create("/templates/gsp/home.gsp"));
 	}
-	
-	
+
+	/**
+	 * Create the list for the combobox
+	 * 
+	 * @return a json which contains all the user that are not manager
+	 */
 	@GET
 	@Path("/combobox")
-	@Produces({MediaType.APPLICATION_JSON})
-	public List<UserDTO> getListUsers(){
+	@Produces({ MediaType.APPLICATION_JSON })
+	public List<UserDTO> getListUsers() {
 		Set<ManagerDTO> manager = userService.getAllManager();
-		List<UserDTO> allUser  = userService.getAllUsers();
+		List<UserDTO> allUser = userService.getAllUsers();
 		List<UserDTO> removeUser = new ArrayList<UserDTO>();
-		for (ManagerDTO man : manager){
-			for (UserDTO usr : allUser){
-				if (man.name.equals(usr.username)){
+		for (ManagerDTO man : manager) {
+			for (UserDTO usr : allUser) {
+				if (man.name.equals(usr.username)) {
 					removeUser.add(usr);
 				}
 			}
@@ -80,85 +88,95 @@ public class ManagerAdminController extends AbstractController {
 		allUser.removeAll(removeUser);
 		return allUser;
 	}
-	
+
 	/**
 	 * Create a new manager with the given informations
-	 * @param manager The DTO containing all informations about the new manager
+	 * 
+	 * @param manager
+	 *            The DTO containing all informations about the new manager
 	 * @return A JSON string containing the result of the operation
 	 */
 	@POST
 	@Path("/create")
-	@Produces({"application/json"})
-	public String create(ManagerCreationRequestDTO manager)
-	{ 
-		if (userService.currentUserIsAdministrator()){
+	@Produces({ MediaType.APPLICATION_JSON })
+	public String create(ManagerCreationRequestDTO manager) {
+		if (userService.currentUserIsAdministrator()) {
 			userService.updateManager(manager.manager, manager.users);
-			return "{\"result\":\"ok\"}"; 
+			return "{\"result\":\"ok\"}";
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Update a manager with the given informations
-	 * @param manager The DTO containing all informations about the manager
+	 * 
+	 * @param manager
+	 *            The DTO containing all informations about the manager
 	 * @return A JSON string containing the result of the operation
 	 */
 	@POST
 	@Path("/update")
-	@Produces({"application/json"})
-	public String update(ManagerCreationRequestDTO manager)
-	{ 
-		if (userService.currentUserIsAdministrator()){
-			userService.updateManager(manager.manager, manager.users); 
-			return "{\"result\":\"ok\"}"; 
+	@Produces({ MediaType.APPLICATION_JSON })
+	public String update(ManagerCreationRequestDTO manager) {
+		if (userService.currentUserIsAdministrator()) {
+			userService.updateManager(manager.manager, manager.users);
+			return "{\"result\":\"ok\"}";
 		}
 		return null;
 	}
-	
-	
-	
+
 	/**
 	 * Get all existing manager in the database
-	 * @return A list of all DTO associated to the existing manager in the database
+	 * 
+	 * @return A list of all DTO associated to the existing manager in the
+	 *         database
 	 */
 	@GET
 	@Path("/all")
-	@Produces({"application/json"})
-	public List<ManagerDTO> displayAllManager(){
-		if (userService.currentUserIsAdministrator()){
+	@Produces({ MediaType.APPLICATION_JSON })
+	public List<ManagerDTO> displayAllManager() {
+		if (userService.currentUserIsAdministrator()) {
 			Set<ManagerDTO> setManagers = userService.getAllManager();
 			return new ArrayList<ManagerDTO>(setManagers);
 		}
 		return null;
 	}
 
+	/**
+	 * Get the list of members that are managed by a manager
+	 * 
+	 * @param username
+	 *            of the manager
+	 * @return list of users managed
+	 */
 	@GET
 	@Path("/users/{username}")
-	@Produces({"application/json"})
-	public List<UserDTO> getListManaged(@PathParam("username") String manager)
-	{
-		if (userService.currentUserIsAdministrator()){
+	@Produces({ MediaType.APPLICATION_JSON })
+	public List<UserDTO> getListManaged(@PathParam("username") String manager) {
+		if (userService.currentUserIsAdministrator()) {
 			return userService.getUsers(manager);
 		}
 		return null;
-		
+
 	}
-	
+
 	/**
-	 * Delete the lanager which has the username 'username'
-	 * The manager lost all his managed user
-	 * @param the username of the manager to delete
+	 * Delete the lanager which has the username 'username' The manager lost all
+	 * his managed user
+	 * 
+	 * @param the
+	 *            username of the manager to delete
 	 * @return The result of the operation
 	 */
 	@GET
 	@Path("/delete/{username}")
-	@Produces( { MediaType.TEXT_HTML })
-	public String lock(@PathParam("username") String username){
-		if (userService.currentUserIsAdministrator()){
+	@Produces({ MediaType.TEXT_HTML })
+	public String lock(@PathParam("username") String username) {
+		if (userService.currentUserIsAdministrator()) {
 			userService.deleteManager(username);
 			return "Ok";
 		}
 		return null;
 	}
-	
+
 }

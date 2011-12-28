@@ -23,16 +23,29 @@ import java.util.List;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
+/**
+ * The dto for the creation request of a manager
+ * @author b.grandperret
+ *
+ */
 @XmlRootElement
 public class ManagerCreationRequestDTO {
 
 	public String manager;
 	public List<UserDTO> users;
 
+	/**
+	 * Default constructor
+	 */
 	public ManagerCreationRequestDTO() {
 
 	}
 
+	/**
+	 * Constructor with the manager username and his list of users
+	 * @param newManager
+	 * @param newUsers
+	 */
 	public ManagerCreationRequestDTO(String newManager, List<UserDTO> newUsers) {
 		this.manager = newManager;
 		this.users = newUsers;

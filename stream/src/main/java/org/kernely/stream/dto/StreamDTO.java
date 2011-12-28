@@ -25,6 +25,11 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.kernely.stream.model.Stream;
 
+/**
+ * The stream DTO 
+ * @author b.grandperret
+ *
+ */
 @XmlRootElement
 public class StreamDTO {
 

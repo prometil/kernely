@@ -33,6 +33,11 @@ import org.kernely.core.template.TemplateRenderer;
 
 import com.google.inject.Inject;
 
+/**
+ * 
+ * @author b.grandperret
+ * The controller of the group page
+ */
 @Path("/group")
 public class GroupController extends AbstractController{
 	@Inject

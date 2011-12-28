@@ -91,6 +91,9 @@ public class Update extends Command {
 		return this;
 	}
 
+	/**
+	 * Build an update request
+	 */
 	@Override
 	protected String build() {
 		StringBuilder b = new StringBuilder();

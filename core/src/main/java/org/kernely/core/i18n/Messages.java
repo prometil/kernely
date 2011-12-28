@@ -34,6 +34,11 @@ public class Messages {
 
 	private List<ResourceBundle> bundles = new ArrayList<ResourceBundle>();
 
+	/**
+	 * Constructor
+	 * @param locale
+	 * @param names
+	 */
 	public Messages(Locale locale, List<String> names) {
 		for(String name: names){
 			ResourceBundle bundle = ResourceBundle.getBundle("messages/"+name, locale);
@@ -41,10 +46,19 @@ public class Messages {
 		}
 	}
 
+	/**
+	 * Add a bundle 
+	 * @param bundle
+	 */
 	private void addBundle(ResourceBundle bundle) {
 		bundles.add(bundle);
 	}
 
+	/**
+	 * Get the key of a bundle
+	 * @param key
+	 * @return
+	 */
 	public String getKey(String key) {
 		for (ResourceBundle bundle : bundles) {
 			if (bundle.containsKey(key)) {

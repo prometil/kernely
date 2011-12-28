@@ -31,6 +31,11 @@ import org.kernely.core.service.AbstractService;
 import com.google.inject.Singleton;
 import com.google.inject.persist.Transactional;
 
+/**
+ * The role service
+ * @author b.grandperret
+ *
+ */
 @Singleton
 public class RoleService extends AbstractService {
 
@@ -50,7 +55,6 @@ public class RoleService extends AbstractService {
 			dtos.add(new RoleDTO(role.getId(), role.getName()));
 		}
 		return dtos;
-
 	}
 
 	@Transactional

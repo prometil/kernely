@@ -36,6 +36,12 @@ import org.quartz.Trigger;
 import com.google.inject.AbstractModule;
 import com.google.inject.Module;
 
+/**
+ * The abstract class for a plugin
+ * 
+ * @author b.grandperret
+ * 
+ */
 public abstract class AbstractPlugin extends AbstractModule {
 
 	// the controller list
@@ -59,7 +65,12 @@ public abstract class AbstractPlugin extends AbstractModule {
 	// the path of the plugin
 	private String path;
 
-
+	/**
+	 * the constructor
+	 * 
+	 * @param pName
+	 * @param pPath
+	 */
 	public AbstractPlugin(String pName, String pPath) {
 		name = pName;
 		path = pPath;
@@ -84,23 +95,34 @@ public abstract class AbstractPlugin extends AbstractModule {
 	 * @param name
 	 *            The displayed name of the admin page.
 	 * @param path
-	 *            The name without special characters : will be in the url to access to the admin page.
+	 *            The name without special characters : will be in the url to
+	 *            access to the admin page.
 	 */
 	protected void registerAdminPage(String name, String pathToAdmin) {
 		this.adminPages.add(new AdminPageDTO(name, pathToAdmin));
 	}
 
+	/**
+	 * Register a new model.
+	 * @param model
+	 */
 	protected void registerModel(Class<? extends AbstractModel> model) {
 		models.add(model);
 
 	}
 
+	/**
+	 * register a new controller
+	 * @param controller
+	 */
 	protected void registerController(Class<? extends AbstractController> controller) {
 		controllers.add(controller);
 	}
 
-	
-
+	/**
+	 * return the module
+	 * @return
+	 */
 	public Module getModule() {
 		return this;
 	}
@@ -180,10 +202,18 @@ public abstract class AbstractPlugin extends AbstractModule {
 		// do nothing
 	}
 
+	/**
+	 * Register the migration script
+	 * @param migration
+	 */
 	protected void registerMigration(Migration migration) {
 		migrations.add(migration);
 	}
 
+	/**
+	 * Return all the migration script
+	 * @return a set of Migration
+	 */
 	public SortedSet<Migration> getMigrations() {
 		return migrations;
 	}

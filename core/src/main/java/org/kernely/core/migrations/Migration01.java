@@ -36,13 +36,15 @@ import org.kernely.core.migrations.migrator.RawSql;
  */
 public class Migration01 extends Migration {
 
+	/**
+	 * Constructor
+	 */
 	public Migration01() {
 		super("0.1");
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/**
+	 * Script
 	 * @see org.kernely.core.migrations.migrator.Migration#getList()
 	 */
 	@Override

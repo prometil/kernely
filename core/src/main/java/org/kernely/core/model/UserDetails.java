@@ -31,195 +31,310 @@ import javax.persistence.Table;
 
 import org.kernely.core.hibernate.AbstractModel;
 
+/**
+ * the user details model
+ * 
+ * @author b.grandperret
+ * 
+ */
 @Entity
 @Table(name = "kernely_user_details")
-public class UserDetails extends AbstractModel{
-	 @Id
-     @GeneratedValue(strategy = GenerationType.AUTO)
-	 private int id;
-     private String name;
-	 private String firstname;
-	 private String mail;
-	 private String image;
-	 private String adress;
-	 private String zip;
-	 private String city;
-	 private String homephone;
-	 private String mobilephone;
-	 private String businessphone;
-	 private Date birth;
-	 private String nationality;
-	 private String ssn;
-	 private Integer civility;
+public class UserDetails extends AbstractModel {
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	private int id;
+	private String name;
+	private String firstname;
+	private String mail;
+	private String image;
+	private String adress;
+	private String zip;
+	private String city;
+	private String homephone;
+	private String mobilephone;
+	private String businessphone;
+	private Date birth;
+	private String nationality;
+	private String ssn;
+	private Integer civility;
 
-     
-     
-     
-     /**
-      * Retrieve the user's image
-      * @return the user's image
-      */
-     public final String getImage() {
-             return image;
-     }
+	/**
+	 * Retrieve the user's image
+	 * 
+	 * @return the user's image
+	 */
+	public final String getImage() {
+		return image;
+	}
 
-     
-     /**
-      * Set the user's image
-      * @param image : the user's image
-      */
-     public final void setImage(String image) {
-             this.image = image;
-     }
+	/**
+	 * Set the user's image
+	 * 
+	 * @param image
+	 *            : the user's image
+	 */
+	public final void setImage(String image) {
+		this.image = image;
+	}
 
-     @OneToOne
-     @JoinColumn(name="user_id")
-     private User user;
-     
-     /**
-      * Get the user's name
-      * @return the user's name
-      */
-     public final String getName() {
-             return name;
-     }
+	@OneToOne
+	@JoinColumn(name = "user_id")
+	private User user;
 
-     /**
-      * Set the User's name 
-      * @param name : the user's name
-      */
-     public final void setName(String name) {
-             this.name = name;
-     }
+	/**
+	 * Get the user's name
+	 * 
+	 * @return the user's name
+	 */
+	public final String getName() {
+		return name;
+	}
 
-     /**
-      * Get the user's firstname
-      * @return : the user's firstname
-      */
-     public final String getFirstname() {
-             return firstname;
-     }
+	/**
+	 * Set the User's name
+	 * 
+	 * @param name
+	 *            : the user's name
+	 */
+	public final void setName(String name) {
+		this.name = name;
+	}
 
-     /**
-      * Set the user's firstname
-      * @param firstname : the user's firstname
-      */
-     public final void setFirstname(String firstname) {
-             this.firstname = firstname;
-     }
+	/**
+	 * Get the user's firstname
+	 * 
+	 * @return : the user's firstname
+	 */
+	public final String getFirstname() {
+		return firstname;
+	}
 
-     /**
-      * Get the user's mail
-      * @return the user's mail
-      */
-     public final String getMail() {
-             return mail;
-     }
+	/**
+	 * Set the user's firstname
+	 * 
+	 * @param firstname
+	 *            : the user's firstname
+	 */
+	public final void setFirstname(String firstname) {
+		this.firstname = firstname;
+	}
 
-     /**
-      * Set the user's mail
-      * @param mail : the user's mail
-      */
-     public final void setMail(String mail) {
-             this.mail = mail;
-     }
+	/**
+	 * Get the user's mail
+	 * 
+	 * @return the user's mail
+	 */
+	public final String getMail() {
+		return mail;
+	}
 
-     /**
-      * Get the userdetails' id
-      * @return : the userdetails' id
-      */
-     public final int getIdUserDetail() {
-             return id;
-     }
+	/**
+	 * Set the user's mail
+	 * 
+	 * @param mail
+	 *            : the user's mail
+	 */
+	public final void setMail(String mail) {
+		this.mail = mail;
+	}
 
-     /**
-      * Set the userdetails' id
-      * @param idUserDetail : the userdetails' id
-      */
-     public final void setIdUserDetail(int idUserDetail) {
-             id = idUserDetail;
-     }
+	/**
+	 * Get the userdetails' id
+	 * 
+	 * @return : the userdetails' id
+	 */
+	public final int getIdUserDetail() {
+		return id;
+	}
 
-     /**
-      * Get the User associated to this userDetails
-      * @return : the User associated
-      */
-     public final User getUser() {
-             return user;
-     }
+	/**
+	 * Set the userdetails' id
+	 * 
+	 * @param idUserDetail
+	 *            : the userdetails' id
+	 */
+	public final void setIdUserDetail(int idUserDetail) {
+		id = idUserDetail;
+	}
 
-     /**
-      * Set the User associated to this Userdetails
-      * @param user : the User associated
-      */
-     public final void setUser(User user) {
-             this.user = user;
-     }
-     
- 	public final String getAdress() {
+	/**
+	 * Get the User associated to this userDetails
+	 * 
+	 * @return : the User associated
+	 */
+	public final User getUser() {
+		return user;
+	}
+
+	/**
+	 * Set the User associated to this Userdetails
+	 * 
+	 * @param user
+	 *            : the User associated
+	 */
+	public final void setUser(User user) {
+		this.user = user;
+	}
+
+	/**
+	 * Get the adress associated to this userDetails
+	 * 
+	 * @return : the adress associated
+	 */
+	public final String getAdress() {
 		return adress;
 	}
 
+
+	/**
+	 * Set the adress associated to this Userdetails
+	 * 
+	 * @param adress
+	 *            : the adress associated
+	 */
 	public final void setAdress(String adress) {
 		this.adress = adress;
 	}
 
+	/**
+	 * Get the zip associated to this userDetails
+	 * 
+	 * @return : the zip associated
+	 */
 	public final String getZip() {
 		return zip;
 	}
 
+
+	/**
+	 * Set the zip associated to this Userdetails
+	 * 
+	 * @param zip
+	 *            : the zip associated
+	 */
 	public final void setZip(String zip) {
 		this.zip = zip;
 	}
 
+	/**
+	 * Get the city associated to this userDetails
+	 * @return : the city associated
+	 */
 	public final String getCity() {
 		return city;
 	}
 
+
+	/**
+	 * Set the city associated to this Userdetails
+	 * 
+	 * @param city
+	 *            : the city associated
+	 */
 	public final void setCity(String city) {
 		this.city = city;
 	}
 
+	/**
+	 * Get the homephone associated to this userDetails
+	 * 
+	 * @return : the homepone associated
+	 */
 	public final String getHomephone() {
 		return homephone;
 	}
 
+
+	/**
+	 * Set the homephone associated to this Userdetails
+	 * 
+	 * @param homephone
+	 *            : the homepone associated
+	 */
 	public final void setHomephone(String homephone) {
 		this.homephone = homephone;
 	}
 
+	/**
+     * Get the mobilephone associated to this userDetails
+     * @return : the mobilephone associated
+     */
 	public final String getMobilephone() {
 		return mobilephone;
 	}
 
+
+	/**
+	 * Set the mobilephone associated to this Userdetails
+	 * 
+	 * @param mobilephone
+	 *            : the mobilephone associated
+	 */
 	public final void setMobilephone(String mobilephone) {
 		this.mobilephone = mobilephone;
 	}
 
+	/**
+     * gGet the business associated to this userDetails
+     * @return : the adress associated
+     */
 	public final String getBusinessphone() {
 		return businessphone;
 	}
 
+
+	/**
+	 * Set the businesspone associated to this Userdetails
+	 * 
+	 * @param businessphone
+	 *            : the businessphone associated
+	 */
 	public final void setBusinessphone(String businessphone) {
 		this.businessphone = businessphone;
 	}
 
+	/**
+     * Get the birth associated to this userDetails
+     * @return : the birth associated
+     */
 	public final Date getBirth() {
 		return birth;
 	}
 
+
+	/**
+	 * Set the birth associated to this Userdetails
+	 * 
+	 * @param birth
+	 *            : the birth associated
+	 */
 	public final void setBirth(Date birth) {
 		this.birth = birth;
 	}
 
+	/**
+     * Get the nationality associated to this userDetails
+     * @return : the  nationality associated
+     */
 	public final String getNationality() {
 		return nationality;
 	}
 
+
+	/**
+	 * Set the nationality associated to this Userdetails
+	 * 
+	 * @param nationality
+	 *            : the nationality associated
+	 */
 	public final void setNationality(String nationality) {
 		this.nationality = nationality;
 	}
 
+	/**
+     * Get the security social number associated to this userDetails
+     * @return : the ssn associated
+     */
 	public final String getSsn() {
 		return ssn;
 	}
@@ -228,11 +343,22 @@ public class UserDetails extends AbstractModel{
 		this.ssn = ssn;
 	}
 
-	public final Integer getCivility(){
+	/**
+     * Get the civility associated to this userDetails
+     * @return : the civility associated
+     */
+	public final Integer getCivility() {
 		return this.civility;
 	}
-	
-	public final void setCivility(Integer civility){
-		this.civility=civility;
+
+
+	/**
+	 * Set the civility associated to this Userdetails
+	 * 
+	 * @param civility
+	 *            : the civility associated
+	 */
+	public final void setCivility(Integer civility) {
+		this.civility = civility;
 	}
 }

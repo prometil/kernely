@@ -104,6 +104,9 @@ public class CorePlugin extends AbstractPlugin {
         registerJob(MailJob.class, mailTrigger);
 	}
 
+	/**
+	 * bind the class
+	 */
 	@Override
 	protected void configure() {
 		bind(PluginsLoader.class);
@@ -114,6 +117,10 @@ public class CorePlugin extends AbstractPlugin {
 
 	}
 
+	/**
+	 * Return the scheduler of the plugin 
+	 * @return Scheduler
+	 */
 	@Provides
 	@Singleton
 	public Scheduler getScheduler() {

@@ -21,6 +21,11 @@ package org.kernely.core.dto;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
+/**
+ * 
+ * @author b.grandperret
+ * The dto of admin page
+ */
 @XmlRootElement
 public class AdminPageDTO {
 

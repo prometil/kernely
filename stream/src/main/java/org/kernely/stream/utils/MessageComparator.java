@@ -29,9 +29,6 @@ import org.kernely.stream.model.Message;
  */
 public class MessageComparator implements Comparator<Message>, Serializable {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -2540722370197723628L;
 
 	/**

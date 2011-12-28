@@ -32,6 +32,11 @@ import javax.persistence.Table;
 
 import org.kernely.core.hibernate.AbstractModel;
 
+/**
+ * The role model
+ * @author b.grandperret
+ *
+ */
 @Entity
 @Table(name="kernely_role")
 public class Role extends AbstractModel {
@@ -134,6 +139,9 @@ public class Role extends AbstractModel {
 		this.users = roleUsers;
 	}
 
+	/**
+	 * return the hashcode of the object code 
+	 */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -143,6 +151,9 @@ public class Role extends AbstractModel {
 		return result;
 	}
 
+	/**
+	 * Equals 
+	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj){

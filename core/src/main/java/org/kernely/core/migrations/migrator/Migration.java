@@ -97,7 +97,7 @@ public abstract class Migration implements Comparable<Migration> {
 		return getVersion().compareTo(other.getVersion());
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * @see java.lang.Object#hashCode()
 	 */
 	@Override
@@ -108,7 +108,7 @@ public abstract class Migration implements Comparable<Migration> {
 		return result;
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	@Override

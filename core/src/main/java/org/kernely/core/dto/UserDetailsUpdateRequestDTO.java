@@ -21,6 +21,11 @@ package org.kernely.core.dto;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
+/**
+ * The update dto of an user detail
+ * @author b.grandperret
+ *
+ */
 @XmlRootElement
 public class UserDetailsUpdateRequestDTO {
 
@@ -40,6 +45,24 @@ public class UserDetailsUpdateRequestDTO {
 	public String ssn;
 	public Integer civility;
 
+	/**
+	 * Constructor
+	 * @param fName
+	 * @param lName
+	 * @param img
+	 * @param mail
+	 * @param adress
+	 * @param zip
+	 * @param city
+	 * @param homephone
+	 * @param mobilephone
+	 * @param businessphone
+	 * @param birth
+	 * @param nationality
+	 * @param ssn
+	 * @param id
+	 * @param civility
+	 */
 	public UserDetailsUpdateRequestDTO(String fName, String lName, String img, String mail, String adress, String zip, String city, String homephone,
 			String mobilephone, String businessphone, String birth, String nationality, String ssn, int id, Integer civility) {
 		this.firstname = fName;
@@ -59,6 +82,9 @@ public class UserDetailsUpdateRequestDTO {
 		this.id = id;
 	}
 
+	/**
+	 * Default constructor
+	 */
 	public UserDetailsUpdateRequestDTO() {
 
 	}

@@ -22,7 +22,7 @@ package org.kernely.stream.dto;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
- *
+ * the message creation DTO
  */
 @XmlRootElement
 public class StreamMessageCreationRequestDTO {

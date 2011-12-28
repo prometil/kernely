@@ -49,7 +49,7 @@ import com.google.inject.Singleton;
 import com.google.inject.persist.Transactional;
 
 /**
- * 
+ * The stream service
  */
 @Singleton
 public class StreamService extends AbstractService {

@@ -27,12 +27,17 @@ import java.util.ServiceLoader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * 
+ * @author b.grandperret
+ *
+ */
 public class PluginsLoader {
 	private static Logger log = LoggerFactory
 			.getLogger(PluginsLoader.class);
 
 	/**
-	 * 
+	 * Find the plugins 
 	 */
 	public List<AbstractPlugin> getPlugins() {
 
