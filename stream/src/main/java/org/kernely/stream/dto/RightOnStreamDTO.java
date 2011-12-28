@@ -21,10 +21,22 @@ package org.kernely.stream.dto;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
+/**
+ * the stream dto for the write
+ * @author b.grandperret
+ *
+ */
 @XmlRootElement
 public class RightOnStreamDTO {
 
+	/**
+	 * The user id 
+	 */
 	public int userid;
+	
+	/**
+	 * The type of permission for the user 
+	 */
 	public String permission;
 
 	/**

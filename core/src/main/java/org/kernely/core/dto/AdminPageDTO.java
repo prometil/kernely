@@ -21,10 +21,22 @@ package org.kernely.core.dto;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
+/**
+ * 
+ * @author b.grandperret
+ * The dto of admin page
+ */
 @XmlRootElement
 public class AdminPageDTO {
 
+	/**
+	 * page name that appears in the application
+	 */
 	public String name;
+	
+	/**
+	 * the regularName will be in the path to access the admin page
+	 */
 	public String path;
 
 	/**

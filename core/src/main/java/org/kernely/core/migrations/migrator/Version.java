@@ -41,9 +41,7 @@ public class Version implements Comparable<Version> {
 		version = pVersion;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/**
 	 * @see java.lang.Comparable#compareTo(java.lang.Object)
 	 */
 	@Override
@@ -81,16 +79,59 @@ public class Version implements Comparable<Version> {
 		return result;
 	}
 
+	/**
+	 * get the version
+	 * @return String version
+	 */
 	public String getVersion() {
 		return version;
 	}
 
+	/**
+	 * Set the version
+	 * @param version
+	 */
 	public void setVersion(String version) {
 		this.version = version;
 	}
 
+	/**
+	 * Return the version
+	 */
 	@Override
 	public String toString() {
 		return version;
+	}
+
+	/**
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((version == null) ? 0 : version.hashCode());
+		return result;
+	}
+
+	/**
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj){
+			return true;
+		}
+		if (obj == null){
+			return false;
+		}
+		if (getClass() != obj.getClass()){
+			return false;
+		}
+		String other = (String) obj;
+		if (this.compareTo(other)==0){
+			return true;
+		}
+		return false;
 	}
 }

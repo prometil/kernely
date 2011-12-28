@@ -21,13 +21,25 @@ package org.kernely.core.service.security;
 
 import org.apache.shiro.SecurityUtils;
 
+/**
+ * Implementation of security service
+ * @author b.grandperret
+ *
+ */
 public class SecurityServiceImpl implements SecurityService{
 
+	/**
+	 * Logout the user
+	 */
 	@Override
 	public void logout() {
 		SecurityUtils.getSubject().logout();
 	}
 
+	/**
+	 * Get the current username
+	 * @Return String username
+	 */
 	@Override
 	public String getCurrentUserName() {
 		return (String)SecurityUtils.getSubject().getPrincipal();

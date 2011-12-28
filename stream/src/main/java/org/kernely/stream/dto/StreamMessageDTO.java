@@ -28,6 +28,11 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.kernely.stream.model.Message;
 
+/**
+ * The message DTO
+ * @author b.grandperret
+ *
+ */
 @XmlRootElement
 public class StreamMessageDTO {
 
@@ -47,24 +52,44 @@ public class StreamMessageDTO {
 
 	public int id;
 
-	// the id of the stream containing this message
+	/**
+	 *  the id of the stream containing this message
+	 */
 	public int streamId;
 
+	/**
+	 * The name of the stream
+	 */
 	public String streamName;
 
+	/**
+	 * Thr author of the message
+	 */
 	public String author;
 
-	// the stream message DTO
+	/**
+	 * the stream message DTO
+	 */
 	public String message;
 
-	// the message date
+	/**
+	 * the message date
+	 */
 	public Date date;
 
+	/**
+	 * time to display the message 	
+	 */
 	public String timeToDisplay;
-
+	
+	/**
+	 * The number of comments
+	 */
 	public int nbComments;
 
-	// can the curent user delete this message?
+	/**
+	 * Can the curent user delete this message?
+	 */
 	public boolean deletion;
 
 	/**
@@ -99,6 +124,9 @@ public class StreamMessageDTO {
 		this.determinateTime();
 	}
 
+	/**
+	 * Determinate the time when the message was posted
+	 */
 	private void determinateTime() {
 		// Date
 		SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");

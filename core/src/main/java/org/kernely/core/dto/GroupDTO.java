@@ -29,8 +29,19 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 public class GroupDTO {
 
+	/**
+	 * The id of the group
+	 */
 	public int id;
+	
+	/**
+	 * The name of the group
+	 */
 	public String name;
+	
+	/**
+	 * The list of member of the group
+	 */
 	public List<UserDTO> users;
 
 	/**

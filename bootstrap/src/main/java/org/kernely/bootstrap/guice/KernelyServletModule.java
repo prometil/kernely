@@ -57,7 +57,7 @@ public class KernelyServletModule extends JerseyServletModule {
 
 	private static final int SALT_ITERATION = 1024;
 
-	public static Logger log = LoggerFactory.getLogger(KernelyServletModule.class);
+	private static Logger log = LoggerFactory.getLogger(KernelyServletModule.class);
 
 	private List<? extends AbstractPlugin> plugins;
 	private final CombinedConfiguration combinedConfiguration;
@@ -73,6 +73,9 @@ public class KernelyServletModule extends JerseyServletModule {
 		this.combinedConfiguration = combinedConfiguration;
 	}
 
+	/**
+	 * Bind the servlet of the application
+	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	protected void configureServlets() {
@@ -88,7 +91,6 @@ public class KernelyServletModule extends JerseyServletModule {
 		}
 		bind(AbstractConfiguration.class).toInstance(combinedConfiguration);
 
-		// Todo basile ?
 		bind(ResourceLocator.class);
 
 		// persistence
@@ -140,6 +142,11 @@ public class KernelyServletModule extends JerseyServletModule {
 		serve("/*").with(GuiceContainer.class);
 	}
 
+	/**
+	 * Configure the websecuritymanager 
+	 * @param realm 
+	 * @return the websecuritymanager
+	 */
 	@Provides
 	@Singleton
 	public WebSecurityManager securityManager(KernelyRealm realm) {

@@ -22,13 +22,24 @@ package org.kernely.stream.dto;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
- *
+ * the stream dto for the comment
  */
 @XmlRootElement
 public class StreamCommentCreationRequestDTO {
 
+	/**
+	 * The message in the comment
+	 */
 	public String message;
+	
+	/**
+	 * the id of the Stream
+	 */
 	public int idStream;
+	
+	/**
+	 * the id of the message parent
+	 */
 	public int idMessageParent;
 
 	/**

@@ -45,6 +45,11 @@ import org.slf4j.LoggerFactory;
 
 import com.google.inject.Inject;
 
+/**
+ * Controller for the admin page
+ * @author b.grandperret
+ *
+ */
 @Path("/admin/streams")
 public class StreamAdminController extends AbstractController {
 
@@ -88,7 +93,7 @@ public class StreamAdminController extends AbstractController {
 	 */
 	@GET
 	@Path("/all")
-	@Produces({ "application/json" })
+	@Produces({ MediaType.APPLICATION_JSON})
 	public List<StreamDTO> displayAllStreams() {
 		if (userService.currentUserIsAdministrator()) {
 			log.debug("Call to GET on all streams");
@@ -254,7 +259,7 @@ public class StreamAdminController extends AbstractController {
 	 */
 	@GET
 	@Path("/combo/{stream}")
-	@Produces({ "application/json" })
+	@Produces({ MediaType.APPLICATION_JSON })
 	public StreamDTO getComboCategory(@PathParam("stream") int id) {
 		if (userService.currentUserIsAdministrator()) {
 			return streamService.getStream(id);

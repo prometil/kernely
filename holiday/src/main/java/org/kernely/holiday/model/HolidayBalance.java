@@ -38,6 +38,11 @@ import javax.persistence.TemporalType;
 import org.kernely.core.hibernate.AbstractModel;
 import org.kernely.core.model.User;
 
+/**
+ * Model holiday balance
+ * @author b.grandperret
+ *
+ */
 @Entity
 @Table(name = "kernely_holiday_balance")
 public class HolidayBalance extends AbstractModel {

@@ -24,6 +24,7 @@ import java.util.List;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
 
 import org.kernely.core.dto.RoleDTO;
 import org.kernely.core.service.user.RoleService;
@@ -31,6 +32,11 @@ import org.kernely.core.service.user.UserService;
 
 import com.google.inject.Inject;
 
+/**
+ * 
+ * @author b.grandperret
+ * The controller of the role page
+ */
 @Path("/roles")
 public class RoleController extends AbstractController {
 
@@ -47,7 +53,7 @@ public class RoleController extends AbstractController {
 	 */
 	@GET
 	@Path("/all")
-	@Produces({"application/json"})
+	@Produces({MediaType.APPLICATION_JSON})
 	public List<RoleDTO> getAllRoles()
 	{
 		if (userService.currentUserIsAdministrator()){

@@ -19,11 +19,20 @@
  */
 package org.kernely.core.event;
 
+/**
+ * 
+ * @author b.grandperret
+ *
+ */
 public class UserCreationEvent{
 	private long id;
 	private String username;
 	
-	
+	/**
+	 * Constructor
+	 * @param id
+	 * @param username
+	 */
 	public UserCreationEvent(long id, String username) {
 		super();
 		this.id = id;

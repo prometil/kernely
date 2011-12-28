@@ -22,7 +22,7 @@ package org.kernely.stream.dto;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
- *
+ * the message creation DTO
  */
 @XmlRootElement
 public class StreamMessageCreationRequestDTO {
@@ -47,6 +47,14 @@ public class StreamMessageCreationRequestDTO {
 
 	}
 
+	
+	/**
+	 * The message
+	 */
 	public String message;
+	
+	/**
+	 * the id of the stream where the message is post
+	 */
 	public int idStream;
 }

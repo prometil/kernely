@@ -27,18 +27,17 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.kernely.core.template.TemplateRenderer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.inject.Inject;
 
 /**
+ * The controller of the main page
+ * 
+ * @author b.grandperret
+ * 
  */
-
 @Path("/")
 public class MainController extends AbstractController {
-	public static Logger log = LoggerFactory.getLogger(MainController.class);
-
 	@Inject
 	private TemplateRenderer templateRenderer;
 

@@ -37,6 +37,11 @@ import org.kernely.core.template.TemplateRenderer;
 
 import com.google.inject.Inject;
 
+/**
+ * The controller of the admin user page
+ * @author b.grandperret
+ *
+ */
 @Path("/admin/users")
 public class UserAdminController extends AbstractController{
 
@@ -66,7 +71,7 @@ public class UserAdminController extends AbstractController{
 	 */
 	@GET
 	@Path("/all")
-	@Produces({"application/json"})
+	@Produces({MediaType.APPLICATION_JSON})
 	public List<UserDetailsDTO> displayAllUsers()
 	{
 		if (userService.currentUserIsAdministrator()){
@@ -82,7 +87,7 @@ public class UserAdminController extends AbstractController{
 	 */
 	@POST
 	@Path("/create")
-	@Produces({"application/json"})
+	@Produces({MediaType.APPLICATION_JSON})
 	public String create(UserCreationRequestDTO user)
 	{
 		if (userService.currentUserIsAdministrator()){
@@ -110,7 +115,7 @@ public class UserAdminController extends AbstractController{
 	 */
 	@GET
 	@Path("/lock/{id}")
-	@Produces({"application/json"})
+	@Produces({MediaType.APPLICATION_JSON})
 	public String lock(@PathParam("id") int id){
 		if (userService.currentUserIsAdministrator()){
 			userService.lockUser(id);
@@ -126,7 +131,7 @@ public class UserAdminController extends AbstractController{
 	 */
 	@GET
 	@Path("/{id}/roles")
-	@Produces({"application/json"})
+	@Produces({MediaType.APPLICATION_JSON})
 	public List<RoleDTO> getUserRoles(@PathParam("id") int id){
 		if (userService.currentUserIsAdministrator()){
 			return userService.getUserRoles(id);

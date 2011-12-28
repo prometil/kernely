@@ -29,11 +29,29 @@ import org.kernely.core.model.User;
 @XmlRootElement
 public class UserDTO {
 
+	/**
+	 * The id of the user  
+	 */
 	public long id;
+	
+	/**
+	 * The username of the user
+	 */
 	public String username;
+	
+	/**
+	 * The indicator if the user is locked or not 
+	 */
 	public boolean locked;
+	
+	/**
+	 * The reference to the userDetails 
+	 */
 	public UserDetailsDTO userDetails;
 
+	/**
+	 * default constructor
+	 */
 	public UserDTO() {
 
 	}
@@ -61,14 +79,18 @@ public class UserDTO {
 		this.id = id;
 	}
 
+	/**
+	 * Constructor from a mode
+	 * @param u
+	 */
 	public UserDTO(User u) {
 		this.username = u.getUsername();
 		this.locked = u.isLocked();
 		this.id = u.getId();
 	}
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Return the hashcode of the object
 	 * 
 	 * @see java.lang.Object#hashCode()
 	 */
@@ -81,8 +103,8 @@ public class UserDTO {
 		return result;
 	}
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Equals
 	 * 
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */

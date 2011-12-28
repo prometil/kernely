@@ -54,6 +54,9 @@ public class ClasspathUpdater {
 		directory = pDirectory;
 	}
 	
+	/**
+	 * update the classpath with the plugins found 
+	 */
 	@SuppressWarnings("unchecked")
 	public void update(){
 		

@@ -43,6 +43,11 @@ import org.slf4j.LoggerFactory;
 import com.google.inject.Singleton;
 import com.google.inject.persist.Transactional;
 
+/**
+ * The permission service
+ * @author b.grandperret
+ *
+ */
 @Singleton
 public class PermissionService extends AbstractService {
 
@@ -233,6 +238,12 @@ public class PermissionService extends AbstractService {
 
 	}
 
+	/**
+	 * Filter the permission by type
+	 * @param collection all the permission
+	 * @param type the filter
+	 * @return a set of permission
+	 */
 	private Set<Permission> filterPermissionByType(Collection<Permission> collection, String type) {
 		Set<Permission> filteredPermissions = new HashSet<Permission>();
 		for (Permission p : collection) {
@@ -243,6 +254,13 @@ public class PermissionService extends AbstractService {
 		return filteredPermissions;
 	}
 
+	/**
+	 * Create a permission with is right, type, id
+	 * @param right
+	 * @param resourceType
+	 * @param resourceId
+	 * @return the permission
+	 */
 	private String createPermissionString(String right, String resourceType, String resourceId) {
 		return right + ":" + resourceType + ":" + resourceId;
 	}

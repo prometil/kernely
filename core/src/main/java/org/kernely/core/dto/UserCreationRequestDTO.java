@@ -29,18 +29,58 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 public class UserCreationRequestDTO {
 
+	/**
+	 * The id of the user
+	 */
 	public int id;
+	
+	/**
+	 * The  firstname of the user
+	 */
 	public String firstname;
+	
+	/**
+	 * the lastname of the user 
+	 */
 	public String lastname;
+	
+	/**
+	 * the username of the user
+	 */
 	public String username;
+	
+	/**
+	 * the password of the user
+	 */
 	public String password;
+	
+	/**
+	 * the indication if an user  is locked or not
+	 */
 	public boolean locked;
+	
+	/**
+	 * the list of   roles of an user
+	 */
 	public List<RoleDTO> roles;
 
+	/**
+	 * Default constructor 
+	 */
 	public UserCreationRequestDTO() {
 
 	}
 
+	/**
+	 * Constructor
+	 * @param id
+	 * @param fName
+	 * @param lName
+	 * @param username
+	 * @param password
+	 * @param locked
+	 * @param roles
+	 */
 	public UserCreationRequestDTO(int id, String fName, String lName, String username, String password, boolean locked, List<RoleDTO> roles) {
 		this.id = id;
 		this.firstname = fName;

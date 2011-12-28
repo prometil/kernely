@@ -33,19 +33,17 @@ import org.kernely.holiday.service.HolidayRequestService;
 import org.kernely.holiday.service.HolidayService;
 import org.quartz.CronScheduleBuilder;
 import org.quartz.DateBuilder;
+import org.quartz.DateBuilder.IntervalUnit;
 import org.quartz.ScheduleBuilder;
 import org.quartz.Trigger;
 import org.quartz.TriggerBuilder;
-import org.quartz.DateBuilder.IntervalUnit;
 
-import com.google.common.eventbus.EventBus;
-import com.google.inject.Inject;
-
+/**
+ * The Plugin for holiday
+ * @author b.grandperret
+ *
+ */
 public class HolidayPlugin extends AbstractPlugin {
-
-	@Inject
-	private EventBus eventBus;
-	
 
 	/**
 	 * Default constructor

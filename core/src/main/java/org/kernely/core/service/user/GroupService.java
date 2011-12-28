@@ -36,6 +36,11 @@ import org.kernely.core.service.AbstractService;
 import com.google.inject.Singleton;
 import com.google.inject.persist.Transactional;
 
+/**
+ * The group service 
+ * @author b.grandperret
+ *
+ */
 @Singleton
 public class GroupService extends AbstractService {
 

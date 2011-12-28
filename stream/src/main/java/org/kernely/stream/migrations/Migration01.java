@@ -8,11 +8,24 @@ import org.kernely.core.migrations.migrator.CreateTable;
 import org.kernely.core.migrations.migrator.Migration;
 import org.kernely.core.migrations.migrator.RawSql;
 
+/**
+ * The migration script
+ * @author b.grandperret
+ *
+ */
 public class Migration01 extends Migration {
+
+	/**
+	 * The constructor
+	 */
 	public Migration01() {
 		super("0.1");
 	}
 
+	/**
+	 * The script
+	 * @return list of commands
+	 */
 	@Override
 	public List<Command> getList() {
 		ArrayList<Command> commands = new ArrayList<Command>();

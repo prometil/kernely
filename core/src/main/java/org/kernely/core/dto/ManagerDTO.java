@@ -29,18 +29,36 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 public class ManagerDTO {
 
+	/**
+	 * The members managed by the manager 
+	 */
 	public List<UserDTO> users;
+	
+	/**
+	 * The username of the manager
+	 */
 	public String name;
 
+	/**
+	 * Manager DTO default constructor
+	 */
 	public ManagerDTO() {
 
 	}
 
+	/**
+	 * Manager constructor with his username and the list of users managed
+	 * @param newName
+	 * @param newUsers
+	 */
 	public ManagerDTO(String newName, List<UserDTO> newUsers) {
 		this.users = newUsers;
 		this.name = newName;
 	}
 
+	/**
+	 * Return the hashcode of the object
+	 */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -50,6 +68,9 @@ public class ManagerDTO {
 		return result;
 	}
 
+	/**
+	 * Equals
+	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj){

@@ -32,6 +32,11 @@ import javax.persistence.Table;
 
 import org.kernely.core.hibernate.AbstractModel;
 
+/**
+ * holiday type model
+ * @author b.grandperret
+ *
+ */
 @Entity
 @Table(name = "kernely_holiday_type")
 public class HolidayType extends AbstractModel {

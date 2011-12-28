@@ -28,6 +28,11 @@ import javax.persistence.Table;
 
 import org.kernely.core.hibernate.AbstractModel;
 
+/**
+ * The mail model
+ * @author b.grandperret
+ *
+ */
 @Entity
 @Table(name = "kernely_mail")
 public class Mail extends AbstractModel {

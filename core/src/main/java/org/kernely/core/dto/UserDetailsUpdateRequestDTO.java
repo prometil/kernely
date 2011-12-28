@@ -21,25 +21,108 @@ package org.kernely.core.dto;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
+/**
+ * The update dto of an user detail
+ * @author b.grandperret
+ *
+ */
 @XmlRootElement
 public class UserDetailsUpdateRequestDTO {
 
+	/**
+	 * The id of the user detail
+	 */
 	public int id;
+	
+	/**
+	 * The firstname of the user
+	 */
 	public String firstname;
-	public String lastname;
-	public String image;
-	public String email;
+	
+	/**
+	 * The lastname of the user
+	 */
+	public String lastname ;
+	
+	/**
+	 * The image of  the user
+	 */
+	public String image ;
+	
+	/**
+	 * The  email of the user
+	 */
+	public String email ;
+	
+	/**
+	 * The adress of the hser
+	 */
 	public String adress;
-	public String zip;
-	public String city;
+	
+	/**
+	 * The zip code of the user
+	 */
+	public String zip ;
+	
+	/**
+	 * The city of the user 
+	 */
+	public String city ;
+	
+	/**
+	 * the homephone of the user
+	 */
 	public String homephone;
-	public String mobilephone;
-	public String businessphone;
-	public String birth;
-	public String nationality;
+	
+	/**
+	 * The mobilephone of the user
+	 */
+	public String mobilephone ;
+	
+	/**
+	 * The businessphone of the user
+	 */
+	public String businessphone ;
+	
+	/**
+	 * The brth of the user
+	 */
+	public String birth ;
+	
+	/**
+	 * The nationality of the user
+	 */
+	public String nationality ;
+	
+	/**
+	 * The social security number of the user
+	 */
 	public String ssn;
+	
+	/**
+	 * the civility of the user
+	 */
 	public Integer civility;
+	
 
+	/**
+	 * Constructor
+	 * @param fName
+	 * @param lName
+	 * @param img
+	 * @param mail
+	 * @param adress
+	 * @param zip
+	 * @param city
+	 * @param homephone
+	 * @param mobilephone
+	 * @param businessphone
+	 * @param birth
+	 * @param nationality
+	 * @param ssn
+	 * @param id
+	 * @param civility
+	 */
 	public UserDetailsUpdateRequestDTO(String fName, String lName, String img, String mail, String adress, String zip, String city, String homephone,
 			String mobilephone, String businessphone, String birth, String nationality, String ssn, int id, Integer civility) {
 		this.firstname = fName;
@@ -59,6 +142,9 @@ public class UserDetailsUpdateRequestDTO {
 		this.id = id;
 	}
 
+	/**
+	 * Default constructor
+	 */
 	public UserDetailsUpdateRequestDTO() {
 
 	}

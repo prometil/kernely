@@ -25,6 +25,11 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.kernely.stream.model.Stream;
 
+/**
+ * The stream DTO 
+ * @author b.grandperret
+ *
+ */
 @XmlRootElement
 public class StreamDTO {
 
@@ -48,19 +53,29 @@ public class StreamDTO {
 		this.locked = stream.isLocked();
 	}
 
-	// the stream title
+	/**
+	 *  the stream title
+	 */
 	public String title;
 
-	// the id in database
+	/**
+	 *  the id in database
+	 */
 	public int id;
 
-	// messages contained by the stream
+	/**
+	 *  messages contained by the stream
+	 */
 	public List<StreamMessageDTO> messages;
 
-	// the category of the stream
+	/**
+	 *  the category of the stream
+	 */
 	public String category;
 
-	// is the stream locked ?
+	/**
+	 * is the stream locked ?
+	 */
 	public boolean locked;
 
 }

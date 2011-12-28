@@ -23,13 +23,37 @@ import java.util.List;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
+/**
+ * Plugin DTO
+ * @author b.grandperret
+ *
+ */
 @XmlRootElement
 public class PluginDTO {
 
+	/**
+	 * The list of admin page
+	 */
 	public List<AdminPageDTO> adminPages;
+	
+	/**
+	 * The name of the plugin 
+	 */
 	public String name;
+	
+	/**
+	 * The path of the plugin
+	 */
 	public String path;
+	
+	/**
+	 * The image associated with the plugin
+	 */
 	public String img;
+	
+	/**
+	 * The email  
+	 */
 	public String email;
 
 	/**

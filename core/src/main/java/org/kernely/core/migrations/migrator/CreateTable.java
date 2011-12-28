@@ -47,7 +47,7 @@ public class CreateTable extends Command {
 	}
 
 	/**
-	 * add a column to the command
+	 * Add a column to the command
 	 * 
 	 * @param pName
 	 *            the name of the column
@@ -69,7 +69,10 @@ public class CreateTable extends Command {
 	public static CreateTable name(String tableName) {
 		return new CreateTable(tableName);
 	}
-
+	
+	/**
+	 * Build a create table request 
+	 */
 	@Override
 	public String build() {
 		StringBuilder b = new StringBuilder();

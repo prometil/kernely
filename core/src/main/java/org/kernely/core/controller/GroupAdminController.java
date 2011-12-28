@@ -38,6 +38,11 @@ import org.kernely.core.template.TemplateRenderer;
 
 import com.google.inject.Inject;
 
+/**
+ * 
+ * @author b.grandperret
+ * The controller of the group administration page
+ */
 @Path("/admin/groups")
 public class GroupAdminController extends AbstractController {
 
@@ -56,7 +61,7 @@ public class GroupAdminController extends AbstractController {
 	 */
 	@GET
 	@Path("/all")
-	@Produces({"application/json"})
+	@Produces({MediaType.APPLICATION_JSON})
 	public List<GroupDTO> displayAllGroups()
 	{
 		if (userService.currentUserIsAdministrator()){
@@ -87,7 +92,7 @@ public class GroupAdminController extends AbstractController {
 	 */
 	@POST
 	@Path("/create")
-	@Produces({"application/json"})
+	@Produces({MediaType.APPLICATION_JSON})
 	public String create(GroupCreationRequestDTO group)
 	{
 		
@@ -132,7 +137,7 @@ public class GroupAdminController extends AbstractController {
 	 */
 	@GET
 	@Path("/{id}/users")
-	@Produces({"application/json"})
+	@Produces({MediaType.APPLICATION_JSON})
 	public List<UserDTO> getGroupUsers(@PathParam("id") int id){
 		if (userService.currentUserIsAdministrator()){
 			return groupService.getGroupUsers(id);

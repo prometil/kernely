@@ -31,10 +31,18 @@ import org.kernely.core.plugin.AbstractPlugin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * The hibernate persistance
+ * @author b.grandperret
+ *
+ */
 public class KernelyHibernatePersistence extends HibernatePersistence {
 
-	public static Logger log = LoggerFactory.getLogger(KernelyHibernatePersistence.class);
+	private static Logger log = LoggerFactory.getLogger(KernelyHibernatePersistence.class);
 
+	/**
+	 * Creation of the entity manager factory
+	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public EntityManagerFactory createEntityManagerFactory(String persistenceUnitName, Map overridenProperties) {

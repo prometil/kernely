@@ -48,6 +48,11 @@ import com.google.inject.Inject;
 import com.sun.jersey.core.header.FormDataContentDisposition;
 import com.sun.jersey.multipart.FormDataParam;
 
+/**
+ * 
+ * @author b.grandperret
+ * The controller of the user profile page
+ */
 @Path("/user")
 public class UserController extends AbstractController {
 
@@ -206,7 +211,7 @@ public class UserController extends AbstractController {
 	 */
 	@GET
 	@Path("/current")
-	@Produces( { "application/json" })
+	@Produces( { MediaType.APPLICATION_JSON })
 	public UserDTO getCurrent() {
 		return userService.getAuthenticatedUserDTO();
 	}
@@ -220,7 +225,7 @@ public class UserController extends AbstractController {
 	 */
 	@GET
 	@Path("/{login}")
-	@Produces( { "application/json" })
+	@Produces( {MediaType.APPLICATION_JSON})
 	public UserDetailsDTO getDetails(@PathParam("login") String userLogin) {
 		return userService.getUserDetails(userLogin);
 
