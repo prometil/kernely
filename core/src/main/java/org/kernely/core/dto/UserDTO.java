@@ -29,9 +29,24 @@ import org.kernely.core.model.User;
 @XmlRootElement
 public class UserDTO {
 
+	/**
+	 * The id of the user  
+	 */
 	public long id;
+	
+	/**
+	 * The username of the user
+	 */
 	public String username;
+	
+	/**
+	 * The indicator if the user is locked or not 
+	 */
 	public boolean locked;
+	
+	/**
+	 * The reference to the userDetails 
+	 */
 	public UserDetailsDTO userDetails;
 
 	/**

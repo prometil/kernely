@@ -47,6 +47,14 @@ public class StreamMessageCreationRequestDTO {
 
 	}
 
+	
+	/**
+	 * The message
+	 */
 	public String message;
+	
+	/**
+	 * the id of the stream where the message is post
+	 */
 	public int idStream;
 }

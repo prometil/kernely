@@ -27,8 +27,19 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 public class PermissionDTO {
 
+	/**
+	 * The right
+	 */
 	public String right;
+	
+	/**
+	 * The type of permission
+	 */
 	public String type;
+	
+	/**
+	 * The resourceID
+	 */
 	public String resourceId;
 
 	/**

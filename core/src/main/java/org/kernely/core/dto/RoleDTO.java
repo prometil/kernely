@@ -27,7 +27,14 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 public class RoleDTO {
 
+	/**
+	 * The id of the role
+	 */
 	public int id;
+	
+	/**
+	 * The name of the role
+	 */
 	public String name;
 
 	/**

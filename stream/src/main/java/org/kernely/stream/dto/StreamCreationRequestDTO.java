@@ -29,8 +29,19 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 public class StreamCreationRequestDTO {
 
+	/**
+	 * The id of the stream
+	 */
 	public int id;
+	
+	/**
+	 * The name of the stream
+	 */
 	public String name;
+	
+	/**
+	 * The category of the stream
+	 */
 	public String category;
 
 	/**

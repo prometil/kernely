@@ -29,7 +29,14 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 public class ManagerDTO {
 
+	/**
+	 * The members managed by the manager 
+	 */
 	public List<UserDTO> users;
+	
+	/**
+	 * The username of the manager
+	 */
 	public String name;
 
 	/**

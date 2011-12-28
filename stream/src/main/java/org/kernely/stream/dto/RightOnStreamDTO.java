@@ -29,7 +29,14 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 public class RightOnStreamDTO {
 
+	/**
+	 * The user id 
+	 */
 	public int userid;
+	
+	/**
+	 * The type of permission for the user 
+	 */
 	public String permission;
 
 	/**

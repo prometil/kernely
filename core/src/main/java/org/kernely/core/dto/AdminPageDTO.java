@@ -29,7 +29,14 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 public class AdminPageDTO {
 
+	/**
+	 * page name that appears in the application
+	 */
 	public String name;
+	
+	/**
+	 * the regularName will be in the path to access the admin page
+	 */
 	public String path;
 
 	/**

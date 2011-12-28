@@ -31,11 +31,34 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 public class HolidayDTO {
 
+	/**
+	 * The id of the holiday
+	 */
 	public int id;
+	
+	/**
+	 * THe name of the holiday
+	 */
 	public String name;
+	
+	/**
+	 * the quantity of day earn by month / year
+	 */
 	public int quantity;
+	
+	/**
+	 * The unity, month or year
+	 */
 	public int periodUnit;
+	
+	/**
+	 * The anticipation is available, yes or no 
+	 */
 	public boolean anticipation;
+	
+	/**
+	 * The month where all the holiday are gain
+	 */
 	public int effectiveMonth;
 	
 	/**

@@ -28,17 +28,36 @@ import org.kernely.holiday.model.HolidayBalance;
 
 
 /**
- * dto for holiday  
+ * Dto for holiday  
  * @author b.grandperret
  *
  */
 @XmlRootElement
 public class HolidayBalanceDTO {
 
+	/**
+	 * The holiday id
+	 */
 	public int id;
+	
+	/**
+	 * Available balance for this type of holiday
+	 */
 	public float availableBalance;
+	
+	/**
+	 * The future balance
+	 */
 	public float futureBalance;
+	
+	/**
+	 * The effective month
+	 */
 	public int effectiveMonth;
+	
+	/**
+	 * the last update
+	 */
 	public Date lastUpdate;
 	
 	public HolidayBalanceDTO(){

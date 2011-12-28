@@ -34,21 +34,84 @@ import org.kernely.core.model.UserDetails;
 @XmlRootElement
 public class UserDetailsDTO {
 
+	/**
+	 * The id of the user detail
+	 */
 	public int id;
+	
+	/**
+	 * The firstname of the user
+	 */
 	public String firstname = "";
+	
+	/**
+	 * The lastname of the user
+	 */
 	public String lastname = "";
+	
+	/**
+	 * The image of  the user
+	 */
 	public String image = "default_user.png";
+	
+	/**
+	 * The  email of the user
+	 */
 	public String email = "";
+	
+	/**
+	 * The adress of the hser
+	 */
 	public String adress = "";
+	
+	/**
+	 * The zip code of the user
+	 */
 	public String zip = "";
+	
+	/**
+	 * The city of the user 
+	 */
 	public String city = "";
+	
+	/**
+	 * the homephone of the user
+	 */
 	public String homephone = "";
+	
+	/**
+	 * The mobilephone of the user
+	 */
 	public String mobilephone = "";
+	
+	/**
+	 * The businessphone of the user
+	 */
 	public String businessphone = "";
+	
+	/**
+	 * The brth of the user
+	 */
 	public String birth = "";
+	
+	/**
+	 * The nationality of the user
+	 */
 	public String nationality = "";
+	
+	/**
+	 * The social security number of the user
+	 */
 	public String ssn = "";
+	
+	/**
+	 * the civility of the user
+	 */
 	public Integer civility = 0;
+	
+	/**
+	 * The user link to the user detail 
+	 */
 	public UserDTO user;
 
 	/**
