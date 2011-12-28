@@ -110,18 +110,19 @@ public class Version implements Comparable<Version> {
 	 */
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
+		if (this == obj){
 			return true;
-		if (obj == null)
+		}
+		if (obj == null){
 			return false;
-		if (getClass() != obj.getClass())
+		}
+		if (getClass() != obj.getClass()){
 			return false;
-		Version other = (Version) obj;
-		if (version == null) {
-			if (other.version != null)
-				return false;
-		} else if (!version.equals(other.version))
-			return false;
-		return true;
+		}
+		String other = (String) obj;
+		if (this.compareTo(other)==0){
+			return true;
+		}
+		return false;
 	}
 }

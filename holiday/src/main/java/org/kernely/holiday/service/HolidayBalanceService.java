@@ -259,7 +259,7 @@ public class HolidayBalanceService extends AbstractService {
 	public void removeAvailableDays(int holidayBalanceId, float days) {
 		// Can only remove days or half days.
 		int entire = (int) (days / HALF_DAY);
-		if (Math.abs(((float) entire) * HALF_DAY - days) < RANGE) {
+		if (!(Math.abs(((float) entire) * HALF_DAY - days) < RANGE)) {
 			throw new IllegalArgumentException("Can only retrieve days or half days. " + days + " is not a multiple of half day");
 		}
 

@@ -113,18 +113,23 @@ public abstract class Migration implements Comparable<Migration> {
 	 */
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
+		if (this == obj){
 			return true;
-		if (obj == null)
+		}
+		if (obj == null){
 			return false;
-		if (getClass() != obj.getClass())
+		}
+		if (getClass() != obj.getClass()){
 			return false;
+		}
 		Migration other = (Migration) obj;
 		if (version == null) {
-			if (other.version != null)
+			if (other.version != null){
 				return false;
-		} else if (!version.equals(other.version))
+			}
+		} else if (!version.equals(other.version)){
 			return false;
+		}
 		return true;
 	}
 
