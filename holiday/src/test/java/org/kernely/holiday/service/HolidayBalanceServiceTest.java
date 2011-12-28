@@ -30,6 +30,8 @@ import java.util.List;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import org.junit.Test;
 import org.kernely.core.common.AbstractServiceTest;
 import org.kernely.core.dto.RoleDTO;
@@ -335,8 +337,9 @@ public class HolidayBalanceServiceTest extends AbstractServiceTest {
 		HolidayDetailCreationRequestDTO detailDTO1 = new HolidayDetailCreationRequestDTO();
 		HolidayDetailCreationRequestDTO detailDTO2 = new HolidayDetailCreationRequestDTO();
 
-		detailDTO1.day = DATE_TODAY;
-		detailDTO2.day = DATE_TOMORROW;
+		DateTimeFormatter fmt = DateTimeFormat.forPattern("MM/dd/yyyy");
+		detailDTO1.day = new DateTime(DATE_TODAY).toString(fmt);
+		detailDTO2.day = new DateTime(DATE_TOMORROW).toString(fmt);
 
 		detailDTO1.typeId = type.id;
 		detailDTO2.typeId = type.id;
@@ -364,7 +367,7 @@ public class HolidayBalanceServiceTest extends AbstractServiceTest {
 		holidayBalanceService.removePastHolidays();
 		
 		balance = holidayBalanceService.getHolidayBalance(user.id, type.id);
-		assertEquals(QUANTITY - 1.5,balance.availableBalance,0); // The user hs take "today" complete and "tomorrow" morning
+		assertEquals(QUANTITY - 1.5,balance.availableBalance,0); // The user has take "today" complete and "tomorrow" morning
 		assertEquals(0,balance.futureBalance,0);
 	}
 	

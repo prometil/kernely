@@ -300,10 +300,10 @@ public class HolidayBalanceService extends AbstractService {
 			DateTimeZone zoneUTC = DateTimeZone.UTC;
 			DateTime today = new DateTime().withZone(zoneUTC);
 
-			log.debug("Begin: "+beginTime.withZone(DateTimeZone.UTC).toDateMidnight());
+			log.debug("Begin: "+beginTime.withZone(DateTimeZone.UTC));
 			log.debug("Today: "+today.withZone(DateTimeZone.UTC).toDateMidnight());
 
-			if (today.withZone(DateTimeZone.UTC).toDateMidnight().isEqual(beginTime.withZone(DateTimeZone.UTC).toDateMidnight())){
+			if (today.withZone(DateTimeZone.UTC).toDateMidnight().isEqual(beginTime.withZone(DateTimeZone.UTC).plusHours(1).toDateMidnight())){
 
 				log.debug("JE PASSE");
 				

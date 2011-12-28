@@ -90,13 +90,19 @@ public class HolidayRequestService extends AbstractService{
 			HolidayRequestDetail detail = new HolidayRequestDetail();
 			detail.setAm(hdcr.am);
 			detail.setPm(hdcr.pm);
-			detail.setDay(hdcr.day);
+			DateTimeFormatter fmt = DateTimeFormat.forPattern("MM/dd/yyyy");
+			DateTime day = fmt.parseDateTime(hdcr.day);
+			detail.setDay(day.toDate());
 			detail.setBalance(getBalanceWithTypeId(hdcr.typeId));
 			em.get().persist(detail);
 			log.debug("Holiday request detail registered for the day {}", hdcr.day);
 			detailsModels.add(detail);
 		}
 		HolidayRequest hr = this.getHolidayRequestFromDetails(detailsModels);
+		// Link the new request to all details
+		for(HolidayRequestDetail rd : hr.getDetails()){
+			rd.setRequest(hr);
+		}
 		hr.setRequesterComment(request.requesterComment);
 		em.get().persist(hr);
 		log.debug("Holiday Request registered !");
@@ -180,7 +186,7 @@ public class HolidayRequestService extends AbstractService{
 										" OR endDate between :date1 and :date2" +
 										" and user = :user");
 		query.setParameter("date1", date1);
-		query.setParameter("date2", date1);
+		query.setParameter("date2", date2);
 		query.setParameter("user", this.getAuthenticatedUserModel());
 		try{
 			List<HolidayRequest> requests = (List<HolidayRequest>) query.getResultList();
@@ -274,7 +280,6 @@ public class HolidayRequestService extends AbstractService{
 			allDayReserved.addAll(req.details);
 		}
 		
-		
 		// We add the first days of the week in not available for the graphic interface
 		for(int i = 1; i < dayOfWeek1; i++){
 			dtmaj = date1.minusDays(dayOfWeek1 - i);
@@ -289,21 +294,26 @@ public class HolidayRequestService extends AbstractService{
 		
 		boolean am;
 		boolean pm;
-		
+		int count = 0;
 		for(int i = 0; i < days.getDays(); i++){
 			am = true;
-			pm=true;
+			pm = true;
 			dtmaj = date1.plusDays(i);
 			// The end of the week is not displayed
 			if(dtmaj.getDayOfWeek() < DAYS_IN_WEEK){
 				for(HolidayDetailDTO detail : allDayReserved){
 					if(new DateTime(detail.day).toDateMidnight().isEqual(dtmaj.toDateMidnight())){
-						am = detail.am;
-						pm = detail.pm;
+						if(detail.am){
+							am = !detail.am;
+						}
+						if(detail.pm){
+							pm = !detail.pm;
+						}
 					}
 				}
 				daysDTO.add(new CalendarDayDTO(dtmaj.toString(fmt), am, pm, dtmaj.getWeekOfWeekyear()));
 			}
+			count ++;
 		}
 		
 		// We add the last days of the week in not available for the graphic interface

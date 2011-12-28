@@ -2,17 +2,22 @@ AppHolidayRequest = (function($){
 
 	var currentCellPickerSelected = null;
 	var oldCellPickerSelected = null;
+	var allCellPicker = new Array();
 	var lastClicked = null;
 	var allDayCells = new Array();
+	var nbSelected = 0;
 	var cellDayMorningCounter = 0;
 	var cellDayAfternoonCounter = 1;
 	var shifted = false;
+	var MORNING_PART = 1;
+	var AFTERNOON_PART = 2;
 
 	HolidayRequestPageView = Backbone.View.extend({
 		el:"#request-main",
 		dates: null,
 		events:{
-			"click #submitPeriod" : "buildCalendarAndPicker"
+			"click #submitPeriod" : "buildCalendarAndPicker",
+			"click #validate-holidays" : "sendRequestHolidays"
 		},
 		initialize: function(){
 			dates = $( "#from, #to" ).datepicker({
@@ -42,9 +47,48 @@ AppHolidayRequest = (function($){
 					// Clean the div content
 					$('#calendarContent').html("");
 					$('#colorSelector').html("");
+					$("#requester-comment").val("");
 					// Create the views
+					$("#calendarRequest").show();
 					new HolidayRequestCalendarView(data).render();
 					new HolidayRequestColorPicker(data).render();
+				}
+			});
+			
+		},
+		sendRequestHolidays: function(){
+			var parent = this;
+			var json = "";
+			var count = 0;
+			// Build the json request
+			json += '{"requesterComment" : "' + $("#requester-comment").val() + '","details":[';
+			$.each(allDayCells, function(){
+				if(this.isSelected){
+					json += '{"day":"'+ this.day +'",';
+					if(this.partOfDay == MORNING_PART){
+						json += '"am": true, "pm": false ,';
+					}
+					else{
+						json += '"am": false, "pm": true ,';
+					}
+					json += '"typeId":' + this.selectedBy + '}';
+					
+					count++;
+					if(count<nbSelected){
+						json += ',';
+					}
+				}
+			});
+			json += ']}';
+			$.ajax({
+				type: 'POST',
+				url:"/holiday/request/create",
+				data: json,
+				dataType: "json",
+				processData: false,
+				contentType: "application/json; charset=utf-8",
+				success: function(){
+					
 				}
 			});
 			
@@ -117,10 +161,11 @@ AppHolidayRequest = (function($){
 				});
 				// Adds all the headers for the week
 				while(cptHeaderList < 5){
-					lineHeader.append($(new HolidayRequestDayView(headerList[cptHeaderList + (nPath * 5)], true, null, true, -1).render().el));
+					lineHeader.append($(new HolidayRequestDayView(headerList[cptHeaderList + (nPath * 5)], true, null, true, false, -1).render().el));
 					cptHeaderList ++;
 				}
 				$(parent.el).append(lineHeader);
+				cptHeaderList = 0;
 				
 				// Create the tr element
 				lineMorning = $("<tr>", {
@@ -128,11 +173,13 @@ AppHolidayRequest = (function($){
 				});
 				// Adds all the mornings for the week
 				while(cptMorningList < 5){
-					lineMorning.append($(new HolidayRequestDayView(null, morningList[cptMorningList + (nPath * 5)], null, false, cellDayMorningCounter).render().el));
+					lineMorning.append($(new HolidayRequestDayView(headerList[cptHeaderList + (nPath * 5)], morningList[cptMorningList + (nPath * 5)], null, false, true, cellDayMorningCounter, MORNING_PART).render().el));
 					cellDayMorningCounter += 2;
 					cptMorningList ++;
+					cptHeaderList++;
 				}
 				$(parent.el).append(lineMorning);
+				cptHeaderList = 0;
 				
 				// Create the tr element
 				lineAfternoon = $("<tr>", {
@@ -140,11 +187,18 @@ AppHolidayRequest = (function($){
 				});
 				// Adds all the afternoons for the week
 				while(cptAfternoonList < 5){
-					lineAfternoon.append($(new HolidayRequestDayView(null, afternoonList[cptAfternoonList + (nPath * 5)], null, false, cellDayAfternoonCounter).render().el));
+					lineAfternoon.append($(new HolidayRequestDayView(headerList[cptHeaderList + (nPath * 5)], afternoonList[cptAfternoonList + (nPath * 5)], null, false, false, cellDayAfternoonCounter, AFTERNOON_PART).render().el));
 					cellDayAfternoonCounter += 2;
 					cptAfternoonList ++;
+					cptHeaderList ++;
 				}
 				$(parent.el).append(lineAfternoon);
+				
+				// Add an empty line for the separation of the week
+				$(parent.el).append($("<tr>", {
+					class:'separation-part'
+				}));
+				
 				// Reinitialize all counters
 				cptHeaderList = 0;
 				cptMorningList = 0;
@@ -165,7 +219,10 @@ AppHolidayRequest = (function($){
 		available : null,
 		week : null,
 		isHeader: false,
+		// We just specify if morning, if this is false, and header too ,this is afternoon
+		isMorning: false,
 		isSelected: false,
+		partOfDay: null,
 		selectedBy: -1,
 		// An id only reserved to the view to allow the shift + clic event.
 		viewRank: -1,
@@ -175,7 +232,7 @@ AppHolidayRequest = (function($){
 			"click" : "colorTheWorld"
 		},
 
-		initialize: function(day, available, week, header, rank){
+		initialize: function(day, available, week, header, morning, rank, part){
 			this.day = day;
 			this.available = available;
 			this.week = week;
@@ -185,6 +242,8 @@ AppHolidayRequest = (function($){
 			if(this.viewRank != -1){
 				allDayCells[this.viewRank] = this;
 			}
+			
+			this.partOfDay = part;
 		},
 		colorTheWorld : function(event){
 			if(currentCellPickerSelected != null && !this.isHeader && this.available == "true"){
@@ -196,20 +255,22 @@ AppHolidayRequest = (function($){
 						currentCellPickerSelected.decrease();
 						// If this cell was already selected, increase the old selection in order to not loose a day
 						if(oldCellPickerSelected != null && this.isSelected){
-							oldCellPickerSelected.increase();
+							allCellPicker[this.selectedBy].increase();
 						}
 						this.isSelected = true;
 						// Store the id of the type choosen for this cell
 						this.selectedBy = currentCellPickerSelected.idType;
+						nbSelected ++;
 					}
 				}
 				else{
 					if(!shifted){
 						// If we deselect a cell
 						currentCellPickerSelected.increase();
-						$(this.el).css('background-color', 'transparent');
+						$(this.el).css('background-color', '#dce8f1');
 						this.isSelected = false;
 						this.selectedBy = -1;
+						nbSelected --;
 					}
 				}
 				// If shift is pressed, we colore all fields between days selected 
@@ -230,11 +291,21 @@ AppHolidayRequest = (function($){
 		render: function(){
 			if(this.isHeader){
 				$(this.el).text(this.day);
+				$(this.el).addClass("dayHeader-part");
 			}
-			
-			if(this.available == "false"){
-				$(this.el).attr('disabled', '');
-				$(this.el).addClass('day-disabled');
+			else{
+				if(this.available == "true"){
+					if(this.isMorning){
+						$(this.el).addClass("am-part");
+					}
+					else{
+						$(this.el).addClass("pm-part");
+					}
+				}
+				else{
+					$(this.el).attr('disabled', '');
+					$(this.el).addClass('day-disabled');
+				}
 			}
 	
 			return this;
@@ -286,6 +357,8 @@ AppHolidayRequest = (function($){
 			this.name = name;
 			this.nbAvailable = avail;
 			this.idType = idType;
+			// We store the object at the rank of the id to make easy the recuperation
+			allCellPicker[idType] = this;
 		},
 		
 		render : function(){
@@ -298,7 +371,12 @@ AppHolidayRequest = (function($){
 		},
 		
 		selectColor : function(){
+			$(this.el).addClass("balance-cell-selected");
+			
 			oldCellPickerSelected = currentCellPickerSelected;
+			if(oldCellPickerSelected != null){
+				$(oldCellPickerSelected.el).removeClass("balance-cell-selected");
+			}
 			currentCellPickerSelected = this;
 		},
 		

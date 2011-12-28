@@ -1,18 +1,18 @@
-.dayHeader-part{
-	height: 24px;
+#period{
 	text-align:center;
-	padding-top:3px;
+}
+
+.dayHeader-part{
+	background-image:url("/images/top_day.png");
+	background-repeat:no-repeat;
 }
 
 .am-part{
-	height: 88px;
-
-	border-top : 1px solid green;
+	background-color:#dce8f1;
 }
 
 .pm-part{
-	height: 88px;
-	border-top : 1px solid green;
+	background-color:#dce8f1;
 }
 
 .day-disabled{
@@ -70,6 +70,8 @@
 
 .afternoon-part{
 	cursor:pointer;
+margin:0px;
+padding:0px;
 }
 
 #request-main{
@@ -79,10 +81,11 @@
 }
 
 #calendarRequest{
-	
+	margin-top:15px;
 	width:720px;
 	height:auto;
 	float:left;
+	display : none;
 }
 
 #colorSelector{
@@ -111,6 +114,25 @@
 	
 }
 
+.balance-cell-selected{
+	opacity:0.6;
+}
+
 .available-cpt{
 	 font-weight:bold;
+}
+
+#requester-comment{
+	width:640px;
+height:43px;
+	
+}
+
+#validate-holidays{
+	position:absolute;
+	height:50px;
+}
+
+.separation-part{
+	height:20px;
 }

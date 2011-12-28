@@ -3,10 +3,11 @@ package org.kernely.holiday.service;
 import static org.junit.Assert.assertEquals;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import org.junit.Test;
 import org.kernely.core.common.AbstractServiceTest;
 import org.kernely.core.dto.RoleDTO;
@@ -27,9 +28,9 @@ import com.google.inject.Inject;
 
 public class HolidayRequestServiceTest extends AbstractServiceTest{
 
-	private static final Date DATE1 = new DateTime().toDate();
-	private static final Date DATE2 = new DateTime().plusDays(2).toDate();
-	private static final Date DATE3 = new DateTime().plusDays(5).toDate();
+	private static final String DATE1 = "01/01/2012";
+	private static final String DATE2 = "01/03/2012";
+	private static final String DATE3 = "01/05/2012";
 	private static final String R_COMMENT = "I want my holidays !";
 	private static final String USERNAME = "test_username";
 	private static final String TEST_STRING = "type";
@@ -106,8 +107,9 @@ public class HolidayRequestServiceTest extends AbstractServiceTest{
 		List<HolidayRequestDTO> dtos = holidayRequestService.getAllRequestsForCurrentUser();
 		HolidayRequestDTO testDto = dtos.get(0);
 
-		assertEquals(testDto.beginDate, DATE1);
-		assertEquals(testDto.endDate, DATE3);
+		DateTimeFormatter fmt = DateTimeFormat.forPattern("MM/dd/yyyy");
+		assertEquals(new DateTime(testDto.beginDate).toString(fmt), DATE1);
+		assertEquals(new DateTime(testDto.endDate).toString(fmt), DATE3);
 		assertEquals(testDto.details.size(), 3);
 		assertEquals(testDto.requesterComment, R_COMMENT);
 	}

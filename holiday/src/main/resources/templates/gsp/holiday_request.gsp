@@ -9,10 +9,14 @@
 	<div id="period">
 		<label for="from">From </label><input readonly="readonly" type="text" id="from" name="from"/>
 		<label for="to">to </label><input readonly="readonly" type="text" id="to" name="to"/>
-		<input id="submitPeriod" type="button" value="Submit"/>
+		<input id="submitPeriod" type="button" value="Generate"/>
 	</div>
 	<div id="calendarRequest">
-		<table id="calendarTable">
+		<div style="height:50px;">
+			<textarea id="requester-comment"></textarea>
+			<input type="button" id="validate-holidays" value="Submit"/>
+		</div>
+		<table id="calendarTable" border="0">
 			<tr><th>Mo</th><th>Tu</th><th>We</th><th>Th</th><th>Fr</th></tr>
 			<tbody id="calendarContent">
 			<tbody>
