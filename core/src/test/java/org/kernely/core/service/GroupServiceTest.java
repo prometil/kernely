@@ -48,6 +48,21 @@ public class GroupServiceTest extends AbstractServiceTest{
 	@Inject
 	private RoleService roleService;
 	
+	private final String TEST_STRING = "test_string";
+	
+	private long creationOfTestUser() {
+		RoleDTO requestRole = new RoleDTO(1, Role.ROLE_USER);
+		roleService.createRole(requestRole);
+
+		UserCreationRequestDTO request = new UserCreationRequestDTO();
+		request.username = TEST_STRING;
+		request.password = TEST_STRING;
+		request.firstname = TEST_STRING;
+		request.lastname = TEST_STRING;
+		serviceUser.createUser(request);
+		return serviceUser.getAllUsers().get(0).id;
+	}
+		
 	@Test
 	public void  createGroup(){
 		GroupCreationRequestDTO request = new GroupCreationRequestDTO();
@@ -57,6 +72,15 @@ public class GroupServiceTest extends AbstractServiceTest{
 		groupdto = serviceGroup.getAllGroups().get(0);
 		assertEquals("Test Group", groupdto.name);
 	}
+	
+	@Test(expected= IllegalArgumentException.class)
+	public void  createGroupAlreadyExist(){
+		GroupCreationRequestDTO request = new GroupCreationRequestDTO();
+		request.name="Test Group";
+		serviceGroup.createGroup(request);
+		serviceGroup.createGroup(request);
+	}
+	
 	
 	@Test
 	public void  updateGroupName(){
@@ -72,6 +96,55 @@ public class GroupServiceTest extends AbstractServiceTest{
 		assertEquals("Test Group Modified", groupdto.name);
 	}
 	
+	@Test (expected = IllegalArgumentException.class)
+	public void updateGroupNull(){
+		serviceGroup.updateGroup(null);
+	}
+	
+	@Test (expected = IllegalArgumentException.class)
+	public void updateGroupNameNull(){
+		GroupCreationRequestDTO request = new GroupCreationRequestDTO();
+		request.name="Test Group";
+		serviceGroup.createGroup(request);
+		GroupDTO groupdto = new GroupDTO() ;
+		groupdto = serviceGroup.getAllGroups().get(0);
+		GroupCreationRequestDTO gcr = new GroupCreationRequestDTO(groupdto.id, "", new ArrayList<UserDTO>());
+		serviceGroup.updateGroup(gcr);
+	}
+	
+	@Test (expected = IllegalArgumentException.class)
+	public void updateGroupNameEmpty(){
+		GroupCreationRequestDTO request = new GroupCreationRequestDTO();
+		request.name="Test Group";
+		serviceGroup.createGroup(request);
+		GroupDTO groupdto = new GroupDTO() ;
+		groupdto = serviceGroup.getAllGroups().get(0);
+		GroupCreationRequestDTO gcr = new GroupCreationRequestDTO(groupdto.id, " ", new ArrayList<UserDTO>());
+		serviceGroup.updateGroup(gcr);
+	}
+	
+	
+	@Test
+	public void getGroupUser(){
+		GroupCreationRequestDTO request = new GroupCreationRequestDTO();
+		request.name="Test Group";
+		serviceGroup.createGroup(request);
+		GroupDTO groupdto = new GroupDTO() ;
+		groupdto = serviceGroup.getAllGroups().get(0);
+
+		this.creationOfTestUser();
+		
+		UserDTO userdto = new UserDTO() ;
+		userdto = serviceUser.getAllUsers().get(0);
+		
+		List<UserDTO> users = new ArrayList<UserDTO>();
+		users.add(userdto);
+		GroupCreationRequestDTO gcr = new GroupCreationRequestDTO(groupdto.id, groupdto.name, users);
+		serviceGroup.updateGroup(gcr);
+		
+		assertEquals(1, serviceGroup.getGroupUsers(groupdto.id).size());
+	}
+	
 	@Test
 	public void addGroupUser(){
 		GroupCreationRequestDTO request = new GroupCreationRequestDTO();
@@ -80,15 +153,8 @@ public class GroupServiceTest extends AbstractServiceTest{
 		GroupDTO groupdto = new GroupDTO() ;
 		groupdto = serviceGroup.getAllGroups().get(0);
 
-		RoleDTO requestRole = new RoleDTO(1, Role.ROLE_USER);
-		roleService.createRole(requestRole);
+		this.creationOfTestUser();
 		
-		UserCreationRequestDTO requestUser = new UserCreationRequestDTO();
-		requestUser.username="toto";
-		requestUser.password="tata";
-		requestUser.firstname="toto";
-		requestUser.lastname="tata";
-		serviceUser.createUser(requestUser);
 		UserDTO userdto = new UserDTO() ;
 		userdto = serviceUser.getAllUsers().get(0);
 		
@@ -99,7 +165,7 @@ public class GroupServiceTest extends AbstractServiceTest{
 		
 		groupdto = serviceGroup.getAllGroups().get(0);
 		assertEquals(1, groupdto.users.size());
-		assertEquals("toto", groupdto.users.get(0).username);
+		assertEquals(TEST_STRING, groupdto.users.get(0).username);
 		
 		gcr = new GroupCreationRequestDTO(groupdto.id, groupdto.name, new ArrayList<UserDTO>());
 		serviceGroup.updateGroup(gcr);

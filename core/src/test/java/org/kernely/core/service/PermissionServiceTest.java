@@ -24,8 +24,10 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 import org.kernely.core.common.AbstractServiceTest;
+import org.kernely.core.dto.PermissionDTO;
 import org.kernely.core.dto.RoleDTO;
 import org.kernely.core.dto.UserCreationRequestDTO;
+import org.kernely.core.dto.UserDTO;
 import org.kernely.core.model.Role;
 import org.kernely.core.service.user.PermissionService;
 import org.kernely.core.service.user.RoleService;
@@ -61,6 +63,10 @@ public class PermissionServiceTest extends AbstractServiceTest {
 		userService.createUser(request);
 		return userService.getAllUsers().get(0).id;
 	}
+	
+	private PermissionDTO createPermissionDTO(String pName){
+		return new PermissionDTO(pName);
+	}
 
 	@Test
 	public void grantPermission() {
@@ -73,6 +79,15 @@ public class PermissionServiceTest extends AbstractServiceTest {
 	}
 
 	@Test
+	public void currentUserHasPermission(){
+		long userId = this.creationOfTestUser();
+		authenticateAs(userService.getAllUsers().get(0).username);
+	    //assertEquals(false,permissionService.currentUserHasPermission(FAKE_RIGHT, FAKE_RESOURCE_TYPE1, 1));
+		permissionService.grantPermission((int) userId, FAKE_RIGHT,FAKE_RESOURCE_TYPE1,1);
+		assertEquals(true,permissionService.currentUserHasPermission(FAKE_RIGHT, FAKE_RESOURCE_TYPE1, 1));	
+	}
+	
+	@Test
 	public void ungrantPermission() {
 		long userId = this.creationOfTestUser();
 
@@ -81,6 +96,13 @@ public class PermissionServiceTest extends AbstractServiceTest {
 		permissionService.ungrantPermission((int) userId, FAKE_RIGHT,FAKE_RESOURCE_TYPE1,1);
 		assertEquals(false, permissionService.userHasPermission((int) userId, FAKE_RIGHT,FAKE_RESOURCE_TYPE1,1));
 	}
+	
+	
+	/*@Test(expected = NoResultException.class)
+	public void ungrantPermissionNotExist() {
+		long userId = this.creationOfTestUser();
+		permissionService.ungrantPermission((int) userId, FAKE_RIGHT,FAKE_RESOURCE_TYPE1,1);
+	}*/
 
 	@Test
 	public void typeOfPermissionForOneUser() {
@@ -105,6 +127,34 @@ public class PermissionServiceTest extends AbstractServiceTest {
 	public void illegalPermission(){
 		permissionService.grantPermission(1, "test:test", "resource", "else");
 	}
+
+	@Test
+	public void getAllPermissionTest(){
+		long userId = this.creationOfTestUser();
+		permissionService.grantPermission((int) userId, FAKE_RIGHT, FAKE_RESOURCE_TYPE1, 1);
+		permissionService.grantPermission((int) userId, FAKE_RIGHT, FAKE_RESOURCE_TYPE2, 1);
+		PermissionDTO pDto1 = createPermissionDTO(FAKE_RIGHT + ":" + FAKE_RESOURCE_TYPE1 + ":1");
+		PermissionDTO pDto2 = createPermissionDTO(FAKE_RIGHT + ":" + FAKE_RESOURCE_TYPE2 + ":1");
+		assertEquals(pDto1.name, permissionService.getAllPermissions().get(0).name);
+		assertEquals(pDto2.name, permissionService.getAllPermissions().get(1).name);	
+	}
 	
+	@Test 
+	public void getUserWithPermissionTest(){
+		long userId = this.creationOfTestUser();
+		permissionService.grantPermission((int) userId, FAKE_RIGHT, FAKE_RESOURCE_TYPE1, 1);
+		UserDTO udto = new UserDTO(TEST_STRING, userId);
+		assertEquals(udto.id, permissionService.getUsersWithPermission(FAKE_RIGHT, FAKE_RESOURCE_TYPE1, 1).get(0).id);
+		assertEquals(udto.username, permissionService.getUsersWithPermission(FAKE_RIGHT, FAKE_RESOURCE_TYPE1, 1).get(0).username);
+	}
+	
+/*	@Test(expected = NonUniqueResultException.class)
+	public void  userHasMultiplePermission(){
+		long userId = this.creationOfTestUser();
+		
+		permissionService.grantPermission((int) userId, FAKE_RIGHT,FAKE_RESOURCE_TYPE1,1);
+		permissionService.grantPermission((int) userId, FAKE_RIGHT,FAKE_RESOURCE_TYPE1,1);
+		permissionService.userHasPermission((int) userId, FAKE_RIGHT,FAKE_RESOURCE_TYPE1,1);	
+	}*/
 
 }

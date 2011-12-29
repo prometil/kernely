@@ -63,7 +63,7 @@ public class HolidayRequestController extends AbstractController {
 	public String createRequest(HolidayRequestCreationRequestDTO request){
 		// Check if request is not null.
 		// We check the value of the first element of details because Jersey create a list with one empty element
-		if(request.details.get(0).day != null && request.details.get(0).day != ""){
+		if(request.details.get(0).day != null && !request.details.get(0).day.equals("")){
 			holidayRequestService.registerRequestAndDetails(request);
 		}
 		return "'result':'Ok'";

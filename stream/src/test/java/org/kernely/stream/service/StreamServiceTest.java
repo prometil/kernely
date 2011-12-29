@@ -35,6 +35,7 @@ import org.kernely.core.service.user.PermissionService;
 import org.kernely.core.service.user.RoleService;
 import org.kernely.core.service.user.UserService;
 import org.kernely.stream.UserEventHandler;
+import org.kernely.stream.dto.StreamCreationRequestDTO;
 import org.kernely.stream.dto.StreamDTO;
 import org.kernely.stream.dto.StreamMessageDTO;
 import org.kernely.stream.model.Stream;
@@ -76,7 +77,7 @@ public class StreamServiceTest extends AbstractServiceTest {
 	@Inject
 	private UserEventHandler handler;
 
-	private void creationOfTestUser() {
+	private long creationOfTestUser() {
 		RoleDTO requestRole = new RoleDTO(1, Role.ROLE_USER);
 		roleService.createRole(requestRole);
 
@@ -91,6 +92,7 @@ public class StreamServiceTest extends AbstractServiceTest {
 		request2.email = "test@test.com";
 		request2.id = userService.getUserDetails(USERNAME).id;
 		userService.updateUserProfile(request2);
+		return userService.getAllUsers().get(0).id;
 	}
 
 	private void creationOfSecondTestUser() {
@@ -106,6 +108,14 @@ public class StreamServiceTest extends AbstractServiceTest {
 		request2.id = userService.getUserDetails(USERNAME2).id;
 		userService.updateUserProfile(request2);
 	}
+	
+	@Test
+	public void getStreamTest(){
+		streamService.createStream(STREAM, Stream.CATEGORY_PLUGINS);
+		StreamDTO createdStream = streamService.getStream(STREAM, Stream.CATEGORY_PLUGINS);
+		assertEquals(STREAM, createdStream.title);
+		assertEquals(Stream.CATEGORY_PLUGINS,createdStream.category);
+	}
 
 	@Test
 	public void getNullMessages() {
@@ -115,6 +125,29 @@ public class StreamServiceTest extends AbstractServiceTest {
 	@Test(expected = IllegalArgumentException.class)
 	public void addVoidMessage() {
 		streamService.addMessage("", 0);
+	}
+	
+	@Test
+	public void updateStreamTest(){
+		streamService.createStream(STREAM, Stream.CATEGORY_PLUGINS);
+		StreamDTO createdStream = streamService.getStream(STREAM, Stream.CATEGORY_PLUGINS);
+		streamService.updateStream(new StreamCreationRequestDTO(createdStream.id, STREAM2, Stream.CATEGORY_OTHERS));
+		StreamDTO updatedStream = streamService.getAllStreams().get(0);
+		
+		assertEquals(STREAM2, updatedStream.title);
+		assertEquals(Stream.CATEGORY_OTHERS, updatedStream.category);
+	}
+	
+	@Test(expected = IllegalArgumentException.class)
+	public void updateStreamTestNull(){
+		streamService.updateStream(null);
+	}
+	
+	@Test(expected = IllegalArgumentException.class)
+	public void updateStreamTestEmty(){
+		streamService.createStream(STREAM, Stream.CATEGORY_PLUGINS);
+		StreamDTO createdStream = streamService.getStream(STREAM, Stream.CATEGORY_PLUGINS);
+		streamService.updateStream(new StreamCreationRequestDTO(createdStream.id, "  ", Stream.CATEGORY_OTHERS));
 	}
 
 	@Test
@@ -353,6 +386,32 @@ public class StreamServiceTest extends AbstractServiceTest {
 		assertEquals(COMMENT, comment2.message);
 		assertEquals(COMMENT, comment3.message);
 	}
+	
+	@Test
+	public void addCommentDelete(){
+		long id = this.creationOfTestUser();
+		authenticateAs(USERNAME);
+		streamService.createStream(STREAM, Stream.CATEGORY_USERS);
+		int streamId = streamService.getAllStreams().get(0).id;
+		permissionService.grantPermission((int)id, Stream.RIGHT_DELETE , Stream.STREAM_RESOURCE, streamId);
+		
+		StreamMessageDTO smd1 = streamService.addMessage(MESSAGE, streamId);
+		StreamMessageDTO comment0 = streamService.addComment(COMMENT, streamId, smd1.id);
+		
+		assertEquals(true, comment0.deletion);
+		
+	}
+	
+	@Test(expected = IllegalArgumentException.class)
+	public void addCommentNull(){
+		streamService.addComment(null, 1, 1);
+	}
+	
+	@Test(expected = IllegalArgumentException.class)
+	public void addCommentEmpty(){
+		streamService.addComment("", 1, 1);
+	}
+	
 
 	@Test
 	public void getAllCommentForMessage(){
@@ -456,5 +515,17 @@ public class StreamServiceTest extends AbstractServiceTest {
 		assertEquals(1, streamService.getMessages().size());
 		streamService.deleteMessage(message.id);
 		assertEquals(0, streamService.getMessages().size());
+	}
+	
+	@Test 
+	public void getCurrentNbMessageTest(){
+		this.creationOfTestUser();
+		authenticateAs(USERNAME);
+		streamService.createStream(STREAM, Stream.CATEGORY_USERS);
+		int userId = (int) userService.getAllUsers().get(0).id;
+		int streamId = (int) streamService.getStream(STREAM, Stream.CATEGORY_USERS).id;
+		permissionService.grantPermission(userId, Stream.RIGHT_WRITE, Stream.STREAM_RESOURCE, streamId);
+		streamService.addMessage(MESSAGE, streamId);
+		assertEquals(Long.valueOf(1), streamService.getCurrentNbMessages()); 
 	}
 }

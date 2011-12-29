@@ -251,11 +251,6 @@ public class StreamService extends AbstractService {
 		if (request == null) {
 			throw new IllegalArgumentException("Request cannot be null ");
 		}
-
-		if ("".equals(request.name)) {
-			throw new IllegalArgumentException("Stream title cannot be null ");
-		}
-
 		if ("".equals(request.name.trim())) {
 			throw new IllegalArgumentException("Stream title cannot be space character only ");
 		}
