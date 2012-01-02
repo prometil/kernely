@@ -82,7 +82,8 @@ public class UserService extends AbstractService {
 			throw new IllegalArgumentException("Username or/and password cannot be space character only ");
 		}
 
-		Query verifExist = em.get().createQuery("SELECT u FROM User u WHERE username='" + request.username + "'");
+		Query verifExist = em.get().createQuery("SELECT u FROM User u WHERE username=:username");
+		verifExist.setParameter("username", request.username);
 		List<User> list = (List<User>) verifExist.getResultList();
 		if (!list.isEmpty()) {
 			throw new IllegalArgumentException("Another user with this username already exists");
@@ -146,9 +147,8 @@ public class UserService extends AbstractService {
 			date = "00/00/0000";
 		}
 		DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-		Date birth;
 		try {
-			birth = (Date) formatter.parse(date);
+			Date birth = (Date) formatter.parse(date);
 			UserDetails uDetails = em.get().find(UserDetails.class, u.id);
 			uDetails.setMail(u.email);
 			uDetails.setAdress(u.adress);
@@ -214,7 +214,8 @@ public class UserService extends AbstractService {
 		}
 
 		// Retrieve the role User, automatically given to a user.
-		Query query = em.get().createQuery("SELECT r FROM Role r WHERE name='" + Role.ROLE_USER + "'");
+		Query query = em.get().createQuery("SELECT r FROM Role r WHERE name=:role");
+		query.setParameter("role",Role.ROLE_USER);
 		Role roleUser = (Role) query.getSingleResult();
 
 		Set<Role> roles = new HashSet<Role>();
@@ -261,7 +262,8 @@ public class UserService extends AbstractService {
 	 */
 	@Transactional
 	public UserDetailsDTO getUserDetails(User u) {
-		Query query = em.get().createQuery("SELECT e FROM UserDetails, User WHERE User.id =" + u.getId());
+		Query query = em.get().createQuery("SELECT e FROM UserDetails, User WHERE User.id =:id");
+		query.setParameter("id", u.getId());
 		UserDetails ud = (UserDetails) query.getResultList().get(0);
 
 		UserDetailsDTO dto = new UserDetailsDTO(ud);
@@ -279,9 +281,11 @@ public class UserService extends AbstractService {
 	 */
 	@Transactional
 	public UserDetailsDTO getUserDetails(String login) {
-		Query query = em.get().createQuery("SELECT e FROM User  e WHERE username ='" + login + "'");
+		Query query = em.get().createQuery("SELECT e FROM User  e WHERE username=:login");
+		query.setParameter("login", login);		
 		User u = (User) query.getSingleResult();
-		query = em.get().createQuery("SELECT e FROM UserDetails e , User u WHERE e.user = u AND u.id =" + u.getId());
+		query = em.get().createQuery("SELECT e FROM UserDetails e , User u WHERE e.user = u AND u.id =:id");
+		query.setParameter("id", u.getId());
 		UserDetails ud = (UserDetails) query.getSingleResult();
 		return new UserDetailsDTO(ud);
 	}
@@ -293,7 +297,8 @@ public class UserService extends AbstractService {
 	 */
 	@Transactional
 	public UserDTO getAuthenticatedUserDTO() {
-		Query query = em.get().createQuery("SELECT e FROM User e WHERE username ='" + SecurityUtils.getSubject().getPrincipal() + "'");
+		Query query = em.get().createQuery("SELECT e FROM User e WHERE username =:principal");
+		query.setParameter("principal", SecurityUtils.getSubject().getPrincipal());
 		User u = (User) query.getSingleResult();
 		return new UserDTO(u.getUsername(), u.isLocked(), u.getId());
 	}
@@ -324,11 +329,17 @@ public class UserService extends AbstractService {
 		return SecurityUtils.getSubject().hasRole(Role.ROLE_ADMINISTRATOR);
 	}
 
+	/**
+	 * Retrieve the list of RoleDTO from an userdetails id 
+	 * @param id of userDetails
+	 * @return list of RoleDTO
+	 */
 	@Transactional
 	public List<RoleDTO> getUserRoles(int id) {
 		UserDetails ud = em.get().find(UserDetails.class, id);
 
-		Query query = em.get().createQuery("SELECT r FROM Role r WHERE name='" + Role.ROLE_USER + "'");
+		Query query = em.get().createQuery("SELECT r FROM Role r WHERE name=:role");
+		query.setParameter("role", Role.ROLE_USER);
 		Role roleUser = (Role) query.getSingleResult();
 
 		List<RoleDTO> dtos = new ArrayList<RoleDTO>();
