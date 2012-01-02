@@ -123,6 +123,20 @@ public class GroupServiceTest extends AbstractServiceTest{
 		serviceGroup.updateGroup(gcr);
 	}
 	
+	@Test(expected=IllegalArgumentException.class)
+	public void updateGroupNameExist(){
+		GroupCreationRequestDTO request = new GroupCreationRequestDTO();
+		request.name="Test Group";
+		serviceGroup.createGroup(request);
+		GroupCreationRequestDTO request2 = new GroupCreationRequestDTO();
+		request2.name="Test Group2";
+		serviceGroup.createGroup(request2);
+		GroupDTO groupdto = new GroupDTO() ;
+		groupdto = serviceGroup.getAllGroups().get(0);
+		GroupCreationRequestDTO gcr = new GroupCreationRequestDTO(groupdto.id, "Test Group2", new ArrayList<UserDTO>());
+		serviceGroup.updateGroup(gcr);
+	}
+	
 	
 	@Test
 	public void getGroupUser(){

@@ -400,6 +400,13 @@ public class UserServiceTest extends AbstractServiceTest{
 		assertEquals(1, service.getAllManager().size());
 	}
 	
+/*	@Test
+	public void getAllRoleTest(){
+		RoleDTO requestRole = new RoleDTO(1, Role.ROLE_USER);
+		roleService.createRole(requestRole);
+		assertEquals(1, roleService.getAllRoles().size());
+	}*/
+	
 	/*@Test
 	public void getRoleTest(){
 		UserDTO udto = creationOfTestUser();

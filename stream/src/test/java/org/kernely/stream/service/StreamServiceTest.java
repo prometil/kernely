@@ -112,9 +112,8 @@ public class StreamServiceTest extends AbstractServiceTest {
 	@Test
 	public void getStreamTest(){
 		streamService.createStream(STREAM, Stream.CATEGORY_PLUGINS);
-		StreamDTO createdStream = streamService.getStream(STREAM, Stream.CATEGORY_PLUGINS);
-		assertEquals(STREAM, createdStream.title);
-		assertEquals(Stream.CATEGORY_PLUGINS,createdStream.category);
+		assertEquals(STREAM, streamService.getStream(STREAM, Stream.CATEGORY_PLUGINS).title);
+		assertEquals(Stream.CATEGORY_PLUGINS,streamService.getStream(STREAM, Stream.CATEGORY_PLUGINS).category);
 	}
 
 	@Test
@@ -528,4 +527,16 @@ public class StreamServiceTest extends AbstractServiceTest {
 		streamService.addMessage(MESSAGE, streamId);
 		assertEquals(Long.valueOf(1), streamService.getCurrentNbMessages()); 
 	}
+	
+	@Test
+	public void getCurrentNbMessage0Test(){
+		this.creationOfTestUser();
+		authenticateAs(USERNAME);
+		streamService.createStream(STREAM, Stream.CATEGORY_USERS);
+		int userId = (int) userService.getAllUsers().get(0).id;
+		int streamId = (int) streamService.getStream(STREAM, Stream.CATEGORY_USERS).id;
+		permissionService.grantPermission(userId, Stream.RIGHT_WRITE, Stream.STREAM_RESOURCE, streamId);	
+		assertEquals(Long.valueOf(0), streamService.getCurrentNbMessages());
+	}
+	
 }
