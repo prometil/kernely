@@ -50,10 +50,13 @@ public class StreamMessageDTO {
 
 	private static final int MINUTE = 60000;
 
+	/**
+	 * The id of the message
+	 */
 	public int id;
 
 	/**
-	 *  the id of the stream containing this message
+	 *  The id of the stream containing this message
 	 */
 	public int streamId;
 

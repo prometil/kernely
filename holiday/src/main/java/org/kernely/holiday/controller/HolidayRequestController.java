@@ -42,7 +42,7 @@ public class HolidayRequestController extends AbstractController {
 	}
 	
 	/**
-	 * get the calendar request
+	 * Get the calendar request
 	 * @param date1
 	 * @param date2
 	 * @return calendarRequestDTO
@@ -57,6 +57,11 @@ public class HolidayRequestController extends AbstractController {
 		return holidayRequestService.getCalendarRequest(d1, d2);
 	}
 	
+	/**
+	 * Create a holiday request
+	 * @param request the hliday request creation DTO
+	 * @return ok 
+	 */
 	@POST
 	@Path("/create")
 	@Produces({"application/json"})

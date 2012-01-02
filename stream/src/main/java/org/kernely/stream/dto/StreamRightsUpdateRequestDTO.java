@@ -51,6 +51,13 @@ public class StreamRightsUpdateRequestDTO {
 		this.rights = rights;
 	}
 
+	/**
+	 * The id of the stream
+	 */
 	public int streamid;
+	
+	/**
+	 * The list of right 
+	 */
 	public List<RightOnStreamDTO> rights;
 }

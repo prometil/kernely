@@ -40,6 +40,11 @@ import org.joda.time.DateTimeZone;
 import org.kernely.core.hibernate.AbstractModel;
 import org.kernely.core.model.User;
 
+/**
+ * The holiday request model
+ * @author b.grandperret
+ *
+ */
 @Entity
 @Table(name = "kernely_holiday_request")
 public class HolidayRequest extends AbstractModel {

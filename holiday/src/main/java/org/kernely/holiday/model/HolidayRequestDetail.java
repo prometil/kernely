@@ -35,6 +35,11 @@ import javax.persistence.TemporalType;
 import org.joda.time.DateTime;
 import org.kernely.core.hibernate.AbstractModel;
 
+/**
+ * the holiday request model
+ * @author b.grandperret
+ *
+ */
 @Entity
 @Table(name = "kernely_holiday_request_detail")
 public class HolidayRequestDetail extends AbstractModel implements Comparable<HolidayRequestDetail> {
@@ -144,6 +149,10 @@ public class HolidayRequestDetail extends AbstractModel implements Comparable<Ho
 		this.balance = balance;
 	}
 
+	/**
+	 * Compare two holiday request
+	 * @param another  holiday request
+	 */
 	@Override
 	public int compareTo(HolidayRequestDetail otherRequest) {
 		DateTime dt1 = new DateTime(this.day);
@@ -161,7 +170,7 @@ public class HolidayRequestDetail extends AbstractModel implements Comparable<Ho
 		}
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * @see java.lang.Object#hashCode()
 	 */
 	@Override
@@ -177,7 +186,7 @@ public class HolidayRequestDetail extends AbstractModel implements Comparable<Ho
 		return result;
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	@Override

@@ -52,6 +52,11 @@ import org.slf4j.LoggerFactory;
 import com.google.inject.Singleton;
 import com.google.inject.persist.Transactional;
 
+/**
+ * The service  for holiday request pages
+ * @author b.grandperret
+ *
+ */
 @Singleton
 public class HolidayRequestService extends AbstractService{
 	
@@ -294,7 +299,6 @@ public class HolidayRequestService extends AbstractService{
 		
 		boolean am;
 		boolean pm;
-		int count = 0;
 		for(int i = 0; i < days.getDays(); i++){
 			am = true;
 			pm = true;
@@ -313,7 +317,6 @@ public class HolidayRequestService extends AbstractService{
 				}
 				daysDTO.add(new CalendarDayDTO(dtmaj.toString(fmt), am, pm, dtmaj.getWeekOfWeekyear()));
 			}
-			count ++;
 		}
 		
 		// We add the last days of the week in not available for the graphic interface
@@ -333,7 +336,10 @@ public class HolidayRequestService extends AbstractService{
 		calendar.details = this.buildColorPickerForRequest();
 		return calendar;
 	}
-	
+	/**
+	 * Create the color picker
+	 * @return a list of calendar balance detail dto
+	 */
 	@SuppressWarnings("unchecked")
 	private List<CalendarBalanceDetailDTO> buildColorPickerForRequest() {
 		Query balanceRequest = em.get().createQuery("SELECT b FROM HolidayBalance b WHERE user=:user");

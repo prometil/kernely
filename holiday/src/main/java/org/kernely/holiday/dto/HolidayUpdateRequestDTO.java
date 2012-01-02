@@ -22,17 +22,52 @@ package org.kernely.holiday.dto;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
+/**
+ * The holiday update request DTO
+ * @author b.grandperret
+ *
+ */
 @XmlRootElement
 public class HolidayUpdateRequestDTO {
 
+	/**
+	 * The id of holiday
+	 */
 	public int id;
+	
+	/**
+	 * The type of holiday
+	 */
 	public String type;
+	
+	/**
+	 * The quantity of day of holiday
+	 */
 	public int quantity;
+	
+	/**
+	 * The frequency 
+	 */
 	public int frequency;
+	
+	/**lidayUpdateRequestDTO
+	 * Unity of the quantity month / year
+	 */
 	public int unity;
+	
+	/**
+	 * The month when the quantity of holiday is give to an employee
+	 */
 	public int effectiveMonth;
+	
+	/**
+	 * Is the holiday have anticipation 
+	 */
 	public boolean anticipation;
 
+	/**
+	 * Default constructor 
+	 */
 	public HolidayUpdateRequestDTO() {
 
 	}

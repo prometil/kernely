@@ -96,6 +96,28 @@ public class HolidayBalanceServiceTest extends AbstractServiceTest {
 		return userService.getAllUsers().get(0);
 	}
 
+	@Test (expected=IllegalArgumentException.class)
+	public void createHolidayBalanceWithNullUser(){
+		HolidayDTO type = createHolidayTypeForTest();
+		holidayBalanceService.createHolidayBalance(Long.valueOf(0), type.id);		
+	}
+
+	@Test (expected=IllegalArgumentException.class)
+	public void createHolidayBalanceWithNullType(){
+		UserDTO user = createUserForTest();
+		holidayBalanceService.createHolidayBalance(user.id, 0);		
+	}
+	
+	@Test (expected=IllegalArgumentException.class)
+	public void createHolidayBalanceAlreadyExist(){
+		HolidayDTO type = createHolidayTypeForTest();
+		UserDTO user = createUserForTest();
+		holidayBalanceService.createHolidayBalance(user.id, type.id);
+		HolidayDTO type2 = createHolidayTypeForTest();
+		UserDTO user2 = createUserForTest();
+		holidayBalanceService.createHolidayBalance(user2.id, type2.id);		
+	}
+		
 	@Test
 	public void getHolidayBalance() {
 		HolidayDTO type = createHolidayTypeForTest();
@@ -104,6 +126,22 @@ public class HolidayBalanceServiceTest extends AbstractServiceTest {
 		HolidayBalanceDTO balance = holidayBalanceService.getHolidayBalance(user.id, type.id);
 		assertEquals(0, balance.availableBalance, 0);
 		assertEquals(0, balance.futureBalance, 0);
+	}
+	
+	@Test(expected=IllegalArgumentException.class)
+	public void getHolidayBalanceUserNull(){
+		HolidayDTO type = createHolidayTypeForTest();
+		UserDTO user = createUserForTest();
+		holidayBalanceService.createHolidayBalance(user.id, type.id);
+		holidayBalanceService.getHolidayBalance(user.id+1, type.id);		
+	}
+	
+	@Test(expected=IllegalArgumentException.class)
+	public void getHolidayBalanceTypeNull(){
+		HolidayDTO type = createHolidayTypeForTest();
+		UserDTO user = createUserForTest();
+		holidayBalanceService.createHolidayBalance(user.id, type.id);
+		holidayBalanceService.getHolidayBalance(user.id, type.id+1);		
 	}
 
 	@Test

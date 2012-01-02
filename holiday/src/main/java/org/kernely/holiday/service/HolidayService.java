@@ -36,6 +36,11 @@ import org.slf4j.LoggerFactory;
 import com.google.inject.Singleton;
 import com.google.inject.persist.Transactional;
 
+/**
+ * The service for holiday pages 
+ * @author b.grandperret
+ *
+ */
 @Singleton
 public class HolidayService extends AbstractService {
 

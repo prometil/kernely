@@ -12,17 +12,47 @@ import org.kernely.holiday.model.HolidayRequestDetail;
 @XmlRootElement
 public class HolidayRequestDTO {
 
+	/**
+	 * The id of the holiday request DTO 
+	 */
 	public int id;
+	
+	/**
+	 * The begin date of holiday
+	 */
 	public Date beginDate;
+	
+	/**
+	 * The end date of holiday
+	 */
 	public Date endDate;
+	
+	/**
+	 * The status of the request
+	 */
 	public int status;
+	
+	/**
+	 * The comment of the request
+	 */
 	public String requesterComment;
+	
+	/**
+	 * The list of holiday details
+	 */
 	public List<HolidayDetailDTO> details = new ArrayList<HolidayDetailDTO>();
 	
+	/**
+	 * Default constructor 
+	 */
 	public HolidayRequestDTO(){
 		
 	}
 	
+	/**
+	 * The constructor 
+	 * @param request the model of HolidayRequest
+	 */
 	public HolidayRequestDTO(HolidayRequest request){
 		this.id = request.getId();
 		this.beginDate = request.getBeginDate();

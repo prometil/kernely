@@ -117,6 +117,15 @@ public class StreamServiceTest extends AbstractServiceTest {
 	}
 
 	@Test
+	public void getStreamFromIdTest(){
+		streamService.createStream(STREAM, Stream.CATEGORY_PLUGINS);
+		StreamDTO sdto = streamService.getAllStreams().get(0);
+		assertEquals(STREAM, streamService.getStream(sdto.id).title);
+		assertEquals(Stream.CATEGORY_PLUGINS,streamService.getStream(sdto.id).category);
+	}
+
+	
+	@Test
 	public void getNullMessages() {
 		assertEquals(0, streamService.getMessages().size());
 	}

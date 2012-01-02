@@ -56,6 +56,11 @@ public class KernelyBootstrap {
 	// Root of web content directory (jsp, css, js...)
 	private static Logger log = LoggerFactory.getLogger(KernelyBootstrap.class);
 
+	/**
+	 * Main function
+	 * @param args
+	 * @throws IOException
+	 */
 	public static void main(String[] args) throws IOException {
 		log.info("Bootstrapping kernely");
 

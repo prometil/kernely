@@ -57,10 +57,11 @@ public class RoleService extends AbstractService {
 		return dtos;
 	}
 
-	@Transactional
 	/**
-	 * Use for Unit tests
+	 * Use for unit test, create a new role 
+	 * @param request a role dto
 	 */
+	@Transactional
 	public void createRole(RoleDTO request) {
 		Role role = new Role();
 		role.setName(request.name.trim());

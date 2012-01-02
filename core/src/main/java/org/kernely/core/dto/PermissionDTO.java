@@ -56,6 +56,9 @@ public class PermissionDTO {
 		this.resourceId = splitted[2];
 	}
 
+	/**
+	 * The name of the permission like right:type:resourceId
+	 */
 	public String name;
 
 }

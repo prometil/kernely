@@ -47,6 +47,9 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.google.inject.persist.Transactional;
 
+/**
+ * The service for Holiday balance pages
+ */
 @Singleton
 public class HolidayBalanceService extends AbstractService {
 

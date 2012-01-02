@@ -39,6 +39,17 @@ public class HolidayServiceTest extends AbstractServiceTest {
 	private HolidayService holidayService;
 
 	@Test
+	public void getHolidayDTOTest(){
+		HolidayCreationRequestDTO cdto = new HolidayCreationRequestDTO();
+		cdto.type = TYPE;
+		cdto.quantity = QUANTITY;
+		holidayService.createHoliday(cdto);
+		HolidayDTO hdto = holidayService.getAllHoliday().get(0);
+		assertEquals(TYPE, holidayService.getHolidayDTO(hdto.id).name);
+		assertEquals(QUANTITY, holidayService.getHolidayDTO(hdto.id).quantity);
+	}
+	
+	@Test
 	public void creationHoliday() {
 		HolidayCreationRequestDTO cdto = new HolidayCreationRequestDTO();
 		cdto.type = TYPE;
@@ -67,6 +78,18 @@ public class HolidayServiceTest extends AbstractServiceTest {
 		HolidayCreationRequestDTO cdto = new HolidayCreationRequestDTO();
 		cdto.type = "  ";
 		holidayService.createHoliday(cdto);
+	}
+	
+	@Test(expected = IllegalArgumentException.class)
+	public void creationHolidayAlreadyExist(){
+		HolidayCreationRequestDTO cdto = new HolidayCreationRequestDTO();
+		cdto.type = TYPE;
+		cdto.quantity = QUANTITY;
+		holidayService.createHoliday(cdto);
+		HolidayCreationRequestDTO cdto2 = new HolidayCreationRequestDTO();
+		cdto2.type = TYPE;
+		cdto2.quantity = QUANTITY;
+		holidayService.createHoliday(cdto2);	
 	}
 
 	@Test

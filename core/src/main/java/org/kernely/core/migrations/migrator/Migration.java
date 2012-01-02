@@ -81,6 +81,10 @@ public abstract class Migration implements Comparable<Migration> {
 		return false;
 	}
 
+	/**
+	 * Get the list of sql command
+	 * @return a List of command
+	 */
 	public abstract List<Command> getList();
 
 	/**
@@ -92,6 +96,10 @@ public abstract class Migration implements Comparable<Migration> {
 		return version;
 	}
 
+	/**
+	 * compare to migration
+	 * @param an other migration
+	 */
 	@Override
 	public int compareTo(Migration other) {
 		return getVersion().compareTo(other.getVersion());
