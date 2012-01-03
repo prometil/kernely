@@ -46,6 +46,11 @@ import org.slf4j.LoggerFactory;
 
 import com.google.inject.Inject;
 
+/**
+ * The controller for stream pages
+ * @author b.grandperret
+ *
+ */
 @Path("/streams")
 public class StreamController extends AbstractController {
 

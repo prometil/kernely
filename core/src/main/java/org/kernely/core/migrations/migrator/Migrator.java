@@ -47,6 +47,11 @@ public class Migrator {
 
 	private List<AbstractPlugin> plugins;
 
+	/**
+	 * Constructor
+	 * @param pConfiguration
+	 * @param pluginList
+	 */
 	public Migrator(AbstractConfiguration pConfiguration, List<AbstractPlugin> pluginList) {
 		configuration = pConfiguration;
 		plugins = pluginList;
@@ -79,6 +84,12 @@ public class Migrator {
 		return versions;
 	}
 
+	/**
+	 * Add a  version to the kernely_schema_version plugin 
+	 * @param connection
+	 * @param version
+	 * @param name
+	 */
 	public void addVersion(Connection connection, Version version, String name) {
 		String request = "INSERT INTO kernely_schema_version (version, plugin) VALUES (?, ?)";
 		PreparedStatement createStatement;
@@ -93,6 +104,9 @@ public class Migrator {
 
 	}
 
+	/**
+	 * Migrate the data base
+	 */
 	public void migrate() {
 		Connection conn = null;
 		Properties connectionProps = new Properties();

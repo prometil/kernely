@@ -24,23 +24,64 @@ import java.util.Map;
 
 
 /**
+ * Interface of mail bilder
  * @author g.breton
  *
  */
 public interface MailBuilder {
+	/**
+	 * The subject of the mail
+	 * @param pSubject
+	 * @return
+	 */
 	MailBuilder subject(String pSubject);
 
+	/**
+	 * The destinations of the mail
+	 * @param addresses String
+	 * @return
+	 */
 	MailBuilder to(String addresses);
 	
+	/**
+	 * The destinations of the mail
+	 * @param addresses list of String
+	 * @return
+	 */
 	MailBuilder to(List<String> addresses);
 
+	/**
+	 * The list of addresses in copy 
+	 * @param addresses String
+	 * @return
+	 */
 	MailBuilder cc(String addresses);
 	
+	/**
+	 * The list of addresses in copy
+	 * @param addresses list of string
+	 * @return
+	 */
 	MailBuilder cc(List<String> addresses);
 
+	/**
+	 * Attachment of the mail
+	 * @param content a map of String and Object
+	 * @return
+	 */
 	MailBuilder with(Map<String, Object> content);
 	
+	/**
+	 * Attachment of the mail
+	 * @param key the key of the attachment
+	 * @param value the value
+	 * @return
+	 */
 	MailBuilder with(String key, String value);
 	
+	/**
+	 * Is the mail registered ?
+	 * @return a boolean 
+	 */
 	boolean registerMail();
 }

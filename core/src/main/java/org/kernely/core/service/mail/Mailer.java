@@ -25,11 +25,29 @@ import org.kernely.core.model.Mail;
 import org.kernely.core.service.mail.builder.MailBuilder;
 
 /**
+ * Interface for the creation and sending of mail 
  * @author g.breton
  *
  */
 public interface Mailer {
+	
+	/**
+	 * Create a mail builder
+	 * @param String templatePath
+	 * @return A mail builder
+	 */
 	 MailBuilder create(String templatePath);
+	 
+	 /**
+	  * Retrieve the mails to send 
+	  * @return a list of mail
+	  */
 	 List<Mail> getMailsToSend();
+	 
+	 /**
+	  * Send a mail
+	  * @param mail
+	  * @return true if the mail is send else false
+	  */
 	 boolean send(Mail mail);
 }

@@ -9,6 +9,11 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.kernely.holiday.model.HolidayRequest;
 import org.kernely.holiday.model.HolidayRequestDetail;
 
+/**
+ * Dto for holiday request 
+ * @author b.grandperret
+ *
+ */
 @XmlRootElement
 public class HolidayRequestDTO {
 

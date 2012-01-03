@@ -56,14 +56,21 @@ public class HolidayBalanceDTO {
 	public int effectiveMonth;
 	
 	/**
-	 * the last update
+	 * The last update
 	 */
 	public Date lastUpdate;
 	
+	/**
+	 * Default constructor
+	 */
 	public HolidayBalanceDTO(){
 		
 	}
 
+	/**
+	 * Constructor
+	 * @param balance the HolidayBalance model
+	 */
 	public HolidayBalanceDTO(HolidayBalance balance){
 		this.id = balance.getId() ; 
 		
