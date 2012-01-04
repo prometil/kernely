@@ -346,8 +346,7 @@ public class UserServiceTest extends AbstractServiceTest{
 		service.updateManager(TEST_MODIFIED_1, users) ;
 		List<UserDTO> list = service.getUsers(TEST_MODIFIED_1);
 		UserDTO usr= list.get(0);
-		assertEquals(usr.username, STRING_TEST);
-				
+		assertEquals(usr.username, STRING_TEST);		
 	}
 	
 	@Test(expected=IllegalArgumentException.class)

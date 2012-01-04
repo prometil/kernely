@@ -303,7 +303,6 @@ AppManagerAdmin = (function($){
 			var view = {name : this.vname};
 			var html = Mustache.to_html(template, view);
 			$(this.el).html(html);
-			console.log(this.vid + "in the adminupdate"); 
 			new UserCBListView(this.vid).render();
 			return this;
 		},

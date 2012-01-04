@@ -138,7 +138,7 @@ public class UserService extends AbstractService {
 			throw new IllegalArgumentException("Request cannot be null ");
 		}
 		if (u.birth != null && u.birth.equals("")) {
-				throw new IllegalArgumentException("A birth date must be like dd/MM/yyyy ");
+				throw new IllegalArgumentException("A birth date must be like dd/MM/yyyy");
 		}
 
 		// parse the string date in class Date
@@ -395,7 +395,6 @@ public class UserService extends AbstractService {
 		if (manager.equals("")) {
 			throw new IllegalArgumentException("Manager cannot be an empty string");
 		}
-
 		Set<User> users = new HashSet<User>();
 		Query query = em.get().createQuery("Select u FROM User u WHERE u.username=:manager");
 		query.setParameter("manager", manager);
@@ -409,13 +408,28 @@ public class UserService extends AbstractService {
 			User userManaged = (User) query2.getSingleResult();
 			users.add(userManaged);
 		}
-		// add the new users
-		userManager.setUsers(users);
+		
+		Set<User> ancientManaged = userManager.getUsers();
+		if (ancientManaged != null){
+			for (User user : ancientManaged) {
+				user.getManagers().remove(userManager);
+			}
+		}
+		
 		// add the manager for each user
-		for (User user : users) {
-			user.setManager(userManager);
+	 	for (User user : users) {
+	 		Set<User> temp = new HashSet<User>();
+	 		if (user.getManagers() != null){
+		 		temp = user.getManagers() ;
+			}
+			temp.add(userManager);
+			user.setManager(temp);		 			
 			em.get().merge(user);
 		}
+	 	
+		// add the new users
+		userManager.setUsers(users);
+		em.get().merge(userManager);
 	}
 
 	/**
@@ -438,7 +452,7 @@ public class UserService extends AbstractService {
 		Set<User> managed = userManager.getUsers();
 		userManager.setUsers(new HashSet<User>());
 		for (User user : managed) {
-			user.setManager(null);
+			user.getManagers().remove(userManager);
 			em.get().merge(user);
 		}
 
@@ -452,7 +466,7 @@ public class UserService extends AbstractService {
 	@SuppressWarnings("unchecked")
 	@Transactional
 	public Set<ManagerDTO> getAllManager() {
-		Query query = em.get().createQuery("SELECT u.manager FROM User u");
+		Query query = em.get().createQuery("SELECT u.managers FROM User u");
 		List<User> idManager = (List<User>) query.getResultList();
 		Set<ManagerDTO> collection = new HashSet<ManagerDTO>();
 		for (User manager : idManager) {
@@ -462,7 +476,7 @@ public class UserService extends AbstractService {
 				usersList.add(new UserDTO(user.getUsername(), user.getId()));
 			}
 			collection.add(new ManagerDTO(manager.getUsername(), usersList));
-		}
+		} 
 		return collection;
 	}
 

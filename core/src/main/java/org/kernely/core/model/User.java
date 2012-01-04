@@ -32,8 +32,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToOne;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.Cascade;
@@ -55,11 +53,12 @@ public class User extends AbstractModel {
 	private String salt;
 	private boolean locked;
 
-	@ManyToOne
-    @JoinColumn(name = "manager_id", nullable = true)
-	private User manager;
+	@ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "kernely_user_managers", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "manager_id"))
+	@Cascade({org.hibernate.annotations.CascadeType.ALL})
+	private Set<User> managers;
 
-	@OneToMany(mappedBy = "manager")
+	@ManyToMany(mappedBy = "managers", fetch = FetchType.LAZY)
 	private Set<User> users;
 
 	@ManyToMany(mappedBy = "users", fetch = FetchType.LAZY)
@@ -175,10 +174,10 @@ public class User extends AbstractModel {
 	}
 
 	/**
-	 * @return the manager
+	 * @return the managers
 	 */
-	public User getManager() {
-		return manager;
+	public Set<User> getManagers() {
+		return managers;
 	}
 
 	/**
@@ -267,10 +266,14 @@ public class User extends AbstractModel {
 		this.groups = groups;
 	}
 
-	public void setManager(User newManager) {
-		this.manager = newManager;
+	/**
+	 * Sets the managers of the users
+	 * @param newManagers
+	 */
+	public void setManager(Set<User> newManagers) {
+		this.managers = newManagers;
 	}
-
+		
 	public void setUsers(Set<User> users) {
 		this.users = users;
 	}

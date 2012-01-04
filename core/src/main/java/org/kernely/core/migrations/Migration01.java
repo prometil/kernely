@@ -57,7 +57,6 @@ public class Migration01 extends Migration {
 		user.column("password", "varchar(80)");
 		user.column("salt", "varchar(300)");
 		user.column("locked", "boolean default false");
-		user.column("manager_id", "bigint");		
 
 		Insert insertBoby = Insert.into("kernely_user");
 		insertBoby.set("id", "1");
@@ -73,13 +72,15 @@ public class Migration01 extends Migration {
 		insertJohn.set("salt", "8EiKXghisVxqZ74Nwen+/5NanikCV0DRB9J31tC0jWGip79G1ZCrkwsFYOkD/aw1ggYA8r/nsYHnWXofR7x0nFU8CK87aiZ3BzXyzH4AEu9pzV/YWfWhq1d0W3gAB36gHsVQ6mZubI5UYforzdATLAAGOlQAa4BXF7Cwxs8wuf0=");
 		insertJohn.set("locked", "false");
 
-		RawSql userForeignKey = new RawSql("ALTER TABLE kernely_user ADD CONSTRAINT fk_user_id FOREIGN KEY (manager_id) REFERENCES kernely_user (id)");
-		
 		commands.add(user);
 		commands.add(insertBoby);
 		commands.add(insertJohn);
-		commands.add(userForeignKey);
 		
+		CreateTable manager = CreateTable.name("kernely_user_managers");
+		manager.column("manager_id", "bigint NOT NULL");
+		manager.column("user_id", "bigint NOT NULL");
+		
+		commands.add(manager);
 		
 		//the table kernely group
 		CreateTable group = CreateTable.name("kernely_group");
