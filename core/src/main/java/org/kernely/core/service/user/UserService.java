@@ -395,6 +395,10 @@ public class UserService extends AbstractService {
 		if (manager.equals("")) {
 			throw new IllegalArgumentException("Manager cannot be an empty string");
 		}
+		if (list.get(0).id == 0){
+			deleteManager(manager);
+			return ;
+		}
 		Set<User> users = new HashSet<User>();
 		Query query = em.get().createQuery("Select u FROM User u WHERE u.username=:manager");
 		query.setParameter("manager", manager);
