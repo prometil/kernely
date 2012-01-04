@@ -54,6 +54,11 @@ public class HolidayCreationRequestDTO {
 	 * If the holiday can be take in advance or not 
 	 */
 	public boolean anticipation;
+	
+	/**
+	 * The color associated to the Type
+	 */
+	public String color;
 
 	/**
 	 * Default constructor
@@ -67,12 +72,13 @@ public class HolidayCreationRequestDTO {
 	 * @param newType
 	 * @param newFrequency
 	 */
-	public HolidayCreationRequestDTO(String newType, int newQuantity, int newUnity, int effectiveMonth, boolean anticipation){
+	public HolidayCreationRequestDTO(String newType, int newQuantity, int newUnity, int effectiveMonth, boolean anticipation, String color){
 		this.type=newType;
 		this.quantity = newQuantity;
 		this.unity = newUnity;
 		this.effectiveMonth = effectiveMonth;
 		this.anticipation = anticipation;
+		this.color = color;
 	}
 	
 }

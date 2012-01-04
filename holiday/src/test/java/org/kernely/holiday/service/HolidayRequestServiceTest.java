@@ -233,4 +233,6 @@ public class HolidayRequestServiceTest extends AbstractServiceTest{
 		List<HolidayRequestDTO> deniedDtos = holidayRequestService.getAllRequestsWithStatus(HolidayRequest.DENIED_STATUS);
 		assertEquals(1, deniedDtos.size());
 	}
+	
+	
 }

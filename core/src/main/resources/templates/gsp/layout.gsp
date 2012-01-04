@@ -12,10 +12,12 @@
 	<script type="text/javascript" src="/js/miniprofile.js"></script>
 	
 	<script type="text/javascript" src="/js/jquery-ui-1.8.16.min.js"></script>
+	<script type="text/javascript" src="/js/farbtastic.js"></script>
 	
 	<!-- css files -->
 	<link rel="stylesheet" type="text/css" href="/css/style.css"/>
 	<link rel="stylesheet" type="text/css" href="/css/jquery-ui.css"/>
+	<link rel="stylesheet" type="text/css" href="/css/farbtastic.css"/>
 	<% css.each() {  value -> %>
 		<link rel="stylesheet" type="text/css" href="${value}"/>
 					

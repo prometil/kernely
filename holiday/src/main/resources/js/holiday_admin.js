@@ -32,6 +32,7 @@ AppHolidayAdmin = (function($){
 		vunity : null,
 		veffectivemonth : null,
 		vanticipation : null,
+		vcolor : null,
 		
 		events: {
 			"click" : "selectLine",
@@ -40,13 +41,14 @@ AppHolidayAdmin = (function($){
 		
 		},
 		
-		initialize: function(id, type, quantity, unity, effectivemonth, anticipation){
+		initialize: function(id, type, quantity, unity, effectivemonth, anticipation, color){
 			this.vid = id;
 			this.vtype = type;
 			this.vquantity = quantity;
 			this.vunity = unity;
 			this.veffectivemonth = effectivemonth;
 			this.vanticipation = anticipation;
+			this.vcolor = color;
 		},
 		selectLine : function(){
 			
@@ -160,13 +162,13 @@ AppHolidayAdmin = (function($){
 					if (data != null){
 						if(data.holidayDTO.length > 1){
 				    		$.each(data.holidayDTO, function() {
-				    			var view = new HolidayAdminTableLineView(this.id, this.name, this.quantity, this.periodUnit, this.effectiveMonth, this.anticipation);
+				    			var view = new HolidayAdminTableLineView(this.id, this.name, this.quantity, this.periodUnit, this.effectiveMonth, this.anticipation, this.color);
 				    			view.render();
 				    		});
 						}
 				    	// In the case when there is only one element
 			    		else{
-							var view = new HolidayAdminTableLineView(data.holidayDTO.id, data.holidayDTO.name, data.holidayDTO.quantity, data.holidayDTO.periodUnit, data.holidayDTO.effectiveMonth, data.holidayDTO.anticipation);
+							var view = new HolidayAdminTableLineView(data.holidayDTO.id, data.holidayDTO.name, data.holidayDTO.quantity, data.holidayDTO.periodUnit, data.holidayDTO.effectiveMonth, data.holidayDTO.anticipation, data.holidayDTO.color);
 			    			view.render();
 						}
 					}
@@ -231,7 +233,7 @@ AppHolidayAdmin = (function($){
 		
 		editholiday: function(){
 			this.showModalWindow();
-			this.viewUpdate.setFields(lineSelected.vtype, lineSelected.vquantity, lineSelected.vfrequency, lineSelected.vunity, lineSelected.veffectivemonth, lineSelected.vanticipation, lineSelected.vid);
+			this.viewUpdate.setFields(lineSelected.vtype, lineSelected.vquantity, lineSelected.vfrequency, lineSelected.vunity, lineSelected.veffectivemonth, lineSelected.vanticipation, lineSelected.vid, lineSelected.vcolor);
 			this.viewUpdate.render();
 		},
 		
@@ -273,6 +275,7 @@ AppHolidayAdmin = (function($){
 			var view = {};
 			var html = Mustache.to_html(template, view);
 			$(this.el).html(html);
+			$('#colorpicker').farbtastic('#color');
 			return this;
 		},
 		
@@ -286,7 +289,7 @@ AppHolidayAdmin = (function($){
 			if ($('input[name*="anticipated"]:checked').length == 1){
 				anticipation = true;
 			}
-			var json = '{"type":"'+$('input[name*="type"]').val() + '", "quantity":"' + $('input[name*="quantity"]').val() +'", "frequency":"'+$('input[name*="frequency"]').val() + '", "unity":"'+$('#unity').val()+ '", "effectiveMonth":"' + $('#effectivemonth').val() + '", "anticipation":'+ anticipation +'}';
+			var json = '{"type":"'+$('input[name*="type"]').val() + '", "quantity":"' + $('input[name*="quantity"]').val() +'", "frequency":"'+$('input[name*="frequency"]').val() + '", "unity":"'+$('#unity').val()+ '", "effectiveMonth":"' + $('#effectivemonth').val() + '", "anticipation":'+ anticipation +', "color":"'+ $('#color').val() +'"}';
 			$.ajax({
 				url:"/admin/holiday/create",
 				data: json,
@@ -330,9 +333,10 @@ AppHolidayAdmin = (function($){
 			this.vunity=null;
 			this.veffectivemonth = null;
 			this.vanticipation = null;
+			this.vcolor = null;
 		},
 		
-		setFields: function(type, quantity, frequency, unity,effectivemonth, anticipation, id){
+		setFields: function(type, quantity, frequency, unity,effectivemonth, anticipation, id, color){
 			this.vid = id;
 			this.vquantity = quantity;
 			this.vfrequency = frequency;
@@ -340,7 +344,7 @@ AppHolidayAdmin = (function($){
 			this.vunity = unity;
 			this.veffectivemonth = effectivemonth;
 			this.vanticipation = anticipation;
-			
+			this.vcolor = color;
 		},
 		
 		render : function(){
@@ -376,9 +380,10 @@ AppHolidayAdmin = (function($){
 					}
 				}
 			});
-			var view = {type : this.vtype, quantity : this.vquantity, frequency : this.vfrequency, unity : this.vunity};
+			var view = {type : this.vtype, quantity : this.vquantity, frequency : this.vfrequency, unity : this.vunity, color: this.vcolor};
 			var html = Mustache.to_html(template, view);
 			$(this.el).html(html);
+			$('#colorpicker').farbtastic('#color');
 			return this;
 		},
 		
@@ -393,7 +398,7 @@ AppHolidayAdmin = (function($){
 				anticipation = true;
 			}
 
-			var json = '{"id":"'+this.vid+'", "type":"'+$('input[name*="type"]').val() + '", "quantity":"' + $('input[name*="quantity"]').val() + '", "frequency":"'+$('input[name*="frequency"]').val()+ '", "unity":"'+$('#unity').val() + '", "effectiveMonth":"' + $('#effectivemonth').val() + '", "anticipation":"' + anticipation + '"}';
+			var json = '{"id":"'+this.vid+'", "type":"'+$('input[name*="type"]').val() + '", "quantity":"' + $('input[name*="quantity"]').val() + '", "frequency":"'+$('input[name*="frequency"]').val()+ '", "unity":"'+$('#unity').val() + '", "effectiveMonth":"' + $('#effectivemonth').val() + '", "anticipation":"' + anticipation + '", "color":"'+ $('#color').val() +'"}';
 			$.ajax({
 				url:"/admin/holiday/update",
 				data: json,
