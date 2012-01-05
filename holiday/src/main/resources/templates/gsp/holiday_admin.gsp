@@ -14,7 +14,7 @@
 	<input type="button" value="Close" class="closeModal" id="modal_window_holiday" style="right:0;"/><br/>
 	<fieldset style="height:210px;">
 	<legend>Holiday informations</legend>
-		<div style="width:230px;float:left;">
+		<div style="width:225px;float:left;">
 			Name: <input type="text" name="type" value="{{type}}" id="holiday-type" style="width:150px;"/><br/><br/>
 			<input type="text" name="quantity" value="{{quantity}}" id="holiday-quantity" size="2" maxlength="4" /> days every
 			<select name="unity" id="unity">
@@ -53,7 +53,7 @@
 	<input type="button" value="Close" class="closeModal" id="modal_window_holiday" style="right:0;"/><br/>
 	<fieldset style="height:210px;">
 		<legend>Holiday informations</legend>
-		<div style="width:230px;float:left;">
+		<div style="width:225px;float:left;">
 			Name: <input type="text" name="type" value="{{type}}" id="holiday-type" /><br/><br/>
 			<div id="selected">
 				<input type="text" name="quantity" value="{{quantity}}" id="holiday-quantity" size="2" maxlength="4" /> days every

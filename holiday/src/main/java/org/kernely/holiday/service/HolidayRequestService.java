@@ -217,6 +217,7 @@ public class HolidayRequestService extends AbstractService{
 		log.debug("ACCEPT : Retrieving holiday request with id {}", idRequest);
 		HolidayRequest request = em.get().find(HolidayRequest.class, idRequest);
 		request.setStatus(HolidayRequest.ACCEPTED_STATUS);
+		em.get().merge(request);
 		log.debug("Holiday request with id {} has been accepted", idRequest);
 	}
 	
@@ -229,6 +230,7 @@ public class HolidayRequestService extends AbstractService{
 		log.debug("DENY : Retrieving holiday request with id {}", idRequest);
 		HolidayRequest request = em.get().find(HolidayRequest.class, idRequest);
 		request.setStatus(HolidayRequest.DENIED_STATUS);
+		em.get().merge(request);
 		log.debug("Holiday request with id {} has been denied", idRequest);
 	}
 	
@@ -268,6 +270,10 @@ public class HolidayRequestService extends AbstractService{
 	 */
 	@Transactional
 	public CalendarRequestDTO getCalendarRequest(DateTime date1, DateTime date2) {
+		if (date1.isAfter(date2)) {
+			throw new IllegalArgumentException("First Date must be anterior to second !!");
+		}
+		
 		CalendarRequestDTO calendar = new CalendarRequestDTO();
 		int dayOfWeek1 = date1.getDayOfWeek();
 		int dayOfWeek2 = date2.getDayOfWeek();
@@ -328,9 +334,20 @@ public class HolidayRequestService extends AbstractService{
 			}
 		}
 		
+		
+		int weekPlace1 = date1.getWeekOfWeekyear();
+		int weekPlace2 = date2.getWeekOfWeekyear();
 		// We add +1 to consider 2 weeks
 		// IE : Week 52 - Week 51 = 2 week and not 1
-		calendar.nbWeeks = ((date2.getWeekOfWeekyear() - date1.getWeekOfWeekyear()) + 1);
+		if(weekPlace1 <= weekPlace2){
+			calendar.nbWeeks = ((weekPlace2 - weekPlace1) + 1);
+		}
+		// We consider the fact that an interval can be on 2 different years
+		// IE : Week 52 of 2011 and Week 1 of 2012.
+		else{
+			calendar.nbWeeks = ((weekPlace2 + (52 - weekPlace1) + 1));
+		}
+		
 		calendar.startWeek = date1.getWeekOfWeekyear();
 		calendar.days = daysDTO;
 		calendar.details = this.buildColorPickerForRequest();
