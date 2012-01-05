@@ -110,7 +110,6 @@ AppHolidayRequest = (function($){
 			var parent = this;
 			var view = null;
 			
-			
 			// Variables declarations :
 			// List of the headers : contains days
 			var headerList = new Array();

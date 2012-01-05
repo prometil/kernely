@@ -68,9 +68,9 @@ public class HolidayAdminController extends AbstractController {
 		} else{
 			page = ok(templateRenderer.create("/templates/gsp/home.gsp"));
 		}
-
 		return page;
 	}
+	
 	/**
 	 * Display the list of holiday for the table
 	 * @return List of holiday 

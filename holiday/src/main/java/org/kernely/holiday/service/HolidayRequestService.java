@@ -20,6 +20,11 @@
 
 package org.kernely.holiday.service;
 
+import groovy.ui.Console;
+
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -166,7 +171,7 @@ public class HolidayRequestService extends AbstractService{
 		try{
 			List<HolidayRequest> requests = (List<HolidayRequest>) query.getResultList();
 			List<HolidayRequestDTO> requestsDTO = new ArrayList<HolidayRequestDTO>();
-			for(HolidayRequest r : requests){
+			for(HolidayRequest r : requests){				
 				requestsDTO.add(new HolidayRequestDTO(r));
 			}
 
