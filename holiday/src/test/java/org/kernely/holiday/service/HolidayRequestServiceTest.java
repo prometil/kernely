@@ -16,6 +16,7 @@ import org.kernely.core.dto.UserDTO;
 import org.kernely.core.model.Role;
 import org.kernely.core.service.user.RoleService;
 import org.kernely.core.service.user.UserService;
+import org.kernely.holiday.dto.CalendarRequestDTO;
 import org.kernely.holiday.dto.HolidayCreationRequestDTO;
 import org.kernely.holiday.dto.HolidayDTO;
 import org.kernely.holiday.dto.HolidayDetailCreationRequestDTO;
@@ -31,6 +32,8 @@ public class HolidayRequestServiceTest extends AbstractServiceTest{
 	private static final String DATE1 = "01/01/2012";
 	private static final String DATE2 = "01/03/2012";
 	private static final String DATE3 = "01/05/2012";
+	private static final String DATE4 = "12/30/2011";
+	private static final String DATE5 = "01/20/2012";
 	private static final String R_COMMENT = "I want my holidays !";
 	private static final String USERNAME = "test_username";
 	private static final String TEST_STRING = "type";
@@ -233,4 +236,44 @@ public class HolidayRequestServiceTest extends AbstractServiceTest{
 		List<HolidayRequestDTO> deniedDtos = holidayRequestService.getAllRequestsWithStatus(HolidayRequest.DENIED_STATUS);
 		assertEquals(1, deniedDtos.size());
 	}
+	
+	@Test
+	public void getCalendarIntervalTest(){
+		this.createUserForTest();
+		authenticateAs(USERNAME);
+		
+		DateTimeFormatter fmt = DateTimeFormat.forPattern("MM/dd/yyyy");
+		CalendarRequestDTO calendar = holidayRequestService.getCalendarRequest(fmt.parseDateTime(DATE3), fmt.parseDateTime(DATE5));
+		// Verify there is 4 different weeks in the interval
+		assertEquals(3, calendar.nbWeeks);
+		// 01/01/2012 is the Sunday of the 52th week of 2011
+		assertEquals(1, calendar.startWeek);
+		// Expect 20 for 4 weeks * 5 days (week end are not considered !)
+		assertEquals(15, calendar.days.size());
+	}
+	
+	@Test
+	public void getCalendarIntervalOnTwoYearsTest(){
+		this.createUserForTest();
+		authenticateAs(USERNAME);
+		
+		DateTimeFormatter fmt = DateTimeFormat.forPattern("MM/dd/yyyy");
+		CalendarRequestDTO calendar = holidayRequestService.getCalendarRequest(fmt.parseDateTime(DATE4), fmt.parseDateTime(DATE5));
+		// Verify there is 4 different weeks in the interval
+		assertEquals(4, calendar.nbWeeks);
+		// 30/12/2011 is the Friday of the 52th week of 2011
+		assertEquals(52, calendar.startWeek);
+		// Expect 20 for 4 weeks * 5 days (week end are not considered !)
+		assertEquals(20, calendar.days.size());
+	}
+	
+	@Test(expected = IllegalArgumentException.class)
+	public void getCalendarWithWrongArgumentsTest(){
+		this.createUserForTest();
+		authenticateAs(USERNAME);
+		
+		DateTimeFormatter fmt = DateTimeFormat.forPattern("MM/dd/yyyy");
+		holidayRequestService.getCalendarRequest(fmt.parseDateTime(DATE5), fmt.parseDateTime(DATE4));
+	}
+	
 }

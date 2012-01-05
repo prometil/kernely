@@ -14,16 +14,40 @@
 			{{message}}
 		</div>
 		<div class="message-author-info" style="text-align:right;padding-right:10px;width:548px;height:20px;">
-			<span style="font-style:italic;color:grey;">Posted by {{author}} on {{stream}}, {{date}}</span>
+			<span style="font-style:italic;color:grey;"><%= i18n.t("posted_by") %></span>
 		</div>
 		<div class="comment-field" style="width:548px; height:auto;">
 			<div id="comments-{{id}}"></div>
-			<div id="other_comment{{id}}" style="border-bottom:1px solid grey;padding:3px;"><span style="cursor:pointer;color:grey;" class="loadcomment">View the {{comments}} comment(s)<span/></div>
-			<div id="input_comment{{id}}" style="height:auto;padding-top:5px;text-align:right;"><input type="text" value="Comment this message here..." class="input-comment-field-dis" style="width:100%;" /></div>
+			<div id="other_comment{{id}}" style="border-bottom:1px solid grey;padding:3px;"><span style="cursor:pointer;color:grey;" class="loadcomment"><%= i18n.t("view_comments") %><span/></div>
+			<div id="input_comment{{id}}" style="height:auto;padding-top:5px;text-align:right;"><input type="text" value='<%= i18n.t("comment_here") %>' class="input-comment-field-dis" style="width:100%;" /></div>
 		</div>
 	</div>
 	<div style="clear:both;"></div>	
 </div>
+</script>
+
+<script type="text/html" id="view-comments-template">
+<span style='cursor:pointer;color:grey;' class='loadcomment'><%= i18n.t("view_comments") %><span/>
+<script/>
+
+<script type="text/html" id="hide-comments-template">
+<span style='cursor:pointer;color:grey;' class='hidecomment'><%= i18n.t("hide_comments") %><span/>
+</script>
+
+<script type="text/html" id="confirm-deletion-template">
+<%= i18n.t("confirm_message_deletion") %>
+</script>
+
+<script type="text/html" id="confirm-deletion-comment-template">
+<%= i18n.t("confirm_comment_deletion") %>
+</script>
+
+<script type="text/html" id="alert-empty-message-template">
+<%= i18n.t("empty_message_forbidden") %>
+</script>
+
+<script type="text/html" id="comment-here-template">
+<input type="text" value='<%= i18n.t("comment_here") %>' class="input-comment-field-dis" style="width:100%;" />
 </script>
 
 <script type="text/html" id="comment-template">
@@ -48,13 +72,18 @@
 </div>
 </script>
 
+<script type="text/html" id="input_comment-template">
+<textarea class='comment-input' id='{{commentInputId}}' style='width:540px; margin-bottom:10px;'></textarea>
+<a style='cursor:pointer;' class='cancelButton'><%= i18n.t("cancel") %></a>  <a class='button share-comment' href='javascript:void(0)' ><%= i18n.t("comment_message") %></a>
+</script>
+
 <div id="streams">
 	<div id="streams-main">
-		<h1>Streams</h1>
+		<h1><%= i18n.t("stream_page_title") %></h1>
 		<div>
 			<textarea id="message-input" style="width:630px;"></textarea>		
 			<div class="button-bar" id="combo">
-			
+				<a id="share-message"  class="button share-message" href="javascript:void(0)" ><%= i18n.t("share_button") %></a>
 			</div>
 		</div>
 		<div id="streams-messages">

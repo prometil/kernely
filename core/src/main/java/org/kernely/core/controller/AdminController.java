@@ -60,11 +60,10 @@ public class AdminController extends AbstractController {
 	@Produces( { MediaType.TEXT_HTML })
 	public Response getAdmin() {
 		javax.ws.rs.core.Response page;
-		String displayedPanel = "Please click on an administration title on the left sidebar.";
 
 		// Display the admin page only if the user is admin.
 		if (userService.currentUserIsAdministrator()) {
-			page = ok(templateRenderer.create("/templates/gsp/admin.gsp").with("extension", displayedPanel).addCss("/css/admin.css"));
+			page = ok(templateRenderer.create("/templates/gsp/admin.gsp").with("extension", "").addCss("/css/admin.css"));
 		} else {
 			page = ok(templateRenderer.create("/templates/gsp/home.gsp"));
 		}

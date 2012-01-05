@@ -1,7 +1,7 @@
 <script type="text/javascript" src="/js/user.js"></script>
-This is the users page.
+<%= i18n.t("users_page_text") %>
 <br/>
-<a href="#" class=".create">Create a new user</a>
+<a href="#" class=".create"><%= i18n.t("create_user") %></a>
 <div id="users">
 
 <ul>

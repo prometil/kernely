@@ -3,6 +3,7 @@ AppHolidayRequest = (function($){
 	var currentCellPickerSelected = null;
 	var oldCellPickerSelected = null;
 	var allCellPicker = new Array();
+	//The last day cell clicked (used for the shift + clic function)
 	var lastClicked = null;
 	var allDayCells = new Array();
 	var nbSelected = 0;

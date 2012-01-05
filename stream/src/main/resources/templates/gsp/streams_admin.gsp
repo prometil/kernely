@@ -6,55 +6,101 @@
 </div>
 
 <script type="text/html" id="popup-stream-admin-template">
-	<input type="button" value="Close" class="closeModal" style="right:0;"/><br/>
+	<input type="button" value="<%= i18n.t("close") %>" class="closeModal" style="right:0;"/><br/>
 	<fieldset>
-	<legend>Stream informations</legend>
-	Name : <input type="text" name="name" value="{{name}}"/><br/>
-	Category :
+	<legend><%= i18n.t("stream_informations") %></legend>
+	<%= i18n.t("name") %>: <input type="text" name="name" value="{{name}}"/><br/>
+	<%= i18n.t("stream_category") %>:
 	<select name="category" id="category">
-		<option value="streams/users">User</option>
-		<option value="streams/plugins">Plugin</option>
-		<option value="streams/others">Other</option>
+		<option value="streams/users"><%= i18n.t("stream_category_user") %></option>
+		<option value="streams/plugins"><%= i18n.t("stream_category_plugin") %></option>
+		<option value="streams/others"><%= i18n.t("stream_category_other") %></option>
 	</select>
 	</fieldset>
 	<br/>
-	<input type="button" value="Send" class="sendStream"/><br/>
+	<input type="button" value="<%= i18n.t("create") %>" class="sendStream"/><br/>
 	<span id="streams_errors" style="display:none;font-weight:bold;color:red;"></span>
 </script>
 
 <script type="text/html" id="popup-stream-admin-update-template">
-	<input type="button" value="Close" class="closeModal" style="right:0;"/><br/>
+	<input type="button" value="<%= i18n.t("close") %>" class="closeModal" style="right:0;"/><br/>
 	<fieldset>
-	<legend>Stream informations</legend>
-	Name : <input type="text" name="name" value="{{name}}"/><br/>
-	<div id="selected">	Category : </div> 
+	<legend><%= i18n.t("stream_informations") %></legend>
+	<%= i18n.t("name") %>: <input type="text" name="name" value="{{name}}"/><br/>
+	<div id="selected"><%= i18n.t("stream_category") %>:
+		<select name="category" id="category">
+			<option value="streams/users"><%= i18n.t("stream_category_user") %></option>
+			<option value="streams/plugins"><%= i18n.t("stream_category_plugin") %></option>
+			<option value="streams/others"><%= i18n.t("stream_category_other") %></option>
+		</select>
+	</div> 
 	</fieldset>
 	<br/>
-	<input type="button" value="Send" class="updateDataStream"/><br/>
+	<input type="button" value="<%= i18n.t("update") %>" class="updateDataStream"/><br/>
 	<span id="streams_errors" style="display:none;font-weight:bold;color:red;"></span>
 </script>
 
+<script type="text/html" id="confirm-stream-lock-template">
+<%= i18n.t("confirm_stream_lock") %>
+</script>
+
+<script type="text/html" id="confirm-stream-unlock-template">
+<%= i18n.t("confirm_stream_unlock") %>
+</script>
+
+<script type="text/html" id="stream-locked-template">
+<%= i18n.t("stream_locked") %>
+</script>
+
+<script type="text/html" id="stream-unlocked-template">
+<%= i18n.t("stream_unlocked") %>
+</script>
+
+<script type="text/html" id="rights-updated-template">
+<%= i18n.t("stream_rights_updated") %>
+</script>
+
+<script type="text/html" id="stream-created-template">
+<%= i18n.t("stream_created") %>
+</script>
+
+<script type="text/html" id="stream-updated-template">
+<%= i18n.t("stream_updated") %>
+</script>
+
+<script type="text/html" id="stream-rights-combo-template">
+<tr>
+	<td>{{lastname}} {{firstname}}</td>
+	<td><select id="{{id}}">
+			<option value="nothing"><%= i18n.t("no_right") %></option>
+			<option value="read"><%= i18n.t("read_right") %></option>
+			<option value="write"><%= i18n.t("read_write_right") %></option>
+			<option value="delete"><%= i18n.t("read_write_delete_right") %></option>
+		</select><br/>
+	</td>
+</tr>
+</script>
 
 <!-- Template for the rights view  -->
 <script type="text/html" id="popup-stream-rights-update-template">
-	<input type="button" value="Close" class="closeModal" style="right:0;"/><br/>
+	<input type="button" value="<%= i18n.t("close") %>" class="closeModal" style="right:0;"/><br/>
 	<fieldset>
-	<legend>Rights for the stream {{title}}</legend>
+	<legend><%= i18n.t("stream_rights_text") %> {{title}}</legend>
 		<div id="usersToRight" style="height:150px;overflow-y:auto;">
 			<!-- Filled by ajax  -->
 		</div>
 	</fieldset>
 	<br/>
-	<input type="button" value="Send" class="updateStream"/>
+	<input type="button" value="<%= i18n.t("update") %>" class="updateStream"/>
 </script>
 
 <div id="stream_admin_container">
 	<div id="stream_admin_buttons">
-		<input type="button" class="createButton" value="Create"/>
-		<input type="button" class="editButton" value="Edit" disabled="disabled"/>
-		<input type="button" class="lockButton" value="Lock" disabled="disabled"/>
-		<input type="button" class="unlockButton" value="Unlock" disabled="disabled"/>
-		<input type="button" class="rightsButton" value="Rights" disabled="disabled"/>
+		<input type="button" class="createButton" value="<%= i18n.t("create") %>"/>
+		<input type="button" class="editButton" value="<%= i18n.t("edit") %>" disabled="disabled"/>
+		<input type="button" class="lockButton" value="<%= i18n.t("lock") %>" disabled="disabled"/>
+		<input type="button" class="unlockButton" value="<%= i18n.t("unlock") %>" disabled="disabled"/>
+		<input type="button" class="rightsButton" value="<%= i18n.t("rights") %>" disabled="disabled"/>
 		<span id="streams_notifications" style="display:none;color:green;"></span>
 	</div>
 	<table id="stream_admin_table" style="cursor:pointer;width:100%">

@@ -62,6 +62,11 @@ public class HolidayDTO {
 	public int effectiveMonth;
 	
 	/**
+	 * The color associated to the type
+	 */
+	public String color;
+	
+	/**
 	 * default constructor
 	 */
 	public HolidayDTO(){
@@ -77,7 +82,7 @@ public class HolidayDTO {
 	 * @param anticipation
 	 * @param effectiveMonth
 	 */
-	public HolidayDTO(String name, int quantity, int periodUnit, int id, boolean anticipation, int effectiveMonth) {
+	public HolidayDTO(String name, int quantity, int periodUnit, int id, boolean anticipation, int effectiveMonth, String color) {
 		super();
 		
 		this.id = id;
@@ -86,6 +91,7 @@ public class HolidayDTO {
 		this.periodUnit = periodUnit;
 		this.anticipation = anticipation;
 		this.effectiveMonth = effectiveMonth;
+		this.color = color;
 	}
 	
 }

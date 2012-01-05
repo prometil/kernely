@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 	<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 	<title>Kernely</title>
 	
 	<!-- js files -->
@@ -12,10 +13,12 @@
 	<script type="text/javascript" src="/js/miniprofile.js"></script>
 	
 	<script type="text/javascript" src="/js/jquery-ui-1.8.16.min.js"></script>
+	<script type="text/javascript" src="/js/farbtastic.js"></script>
 	
 	<!-- css files -->
 	<link rel="stylesheet" type="text/css" href="/css/style.css"/>
 	<link rel="stylesheet" type="text/css" href="/css/jquery-ui.css"/>
+	<link rel="stylesheet" type="text/css" href="/css/farbtastic.css"/>
 	<% css.each() {  value -> %>
 		<link rel="stylesheet" type="text/css" href="${value}"/>
 					
@@ -32,12 +35,12 @@
 							{{fullname}} ({{username}})<br/>
 							{{mail}}<br/>
 							<br/>
-							<a href="/user/{{username}}/profile">Profile</a>
+							<a href="/user/{{username}}/profile"><% i18n.t("profile") %></a>
 						</div>
 					</div>
 					<div id="profilePU-footer" style="height:30px;text-align:center;">
 						<hr/>
-						<a href="/user/logout">logout</a>
+						<a href="/user/logout"><% i18n.t("logout") %></a>
 					</div>
 				</div>
 			</script>

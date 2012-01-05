@@ -65,7 +65,7 @@ public class Messages {
 				return bundle.getString(key);
 			}
 		}
-		return "<key not found>";
+		return "<key " + key + " not found>";
 	}
 	/**
 	 * 

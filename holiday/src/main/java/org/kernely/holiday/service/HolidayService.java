@@ -61,7 +61,7 @@ public class HolidayService extends AbstractService {
 		log.debug("HolidayService found {} holiday types", collection.size());
 		for (HolidayType holiday : collection) {
 			dtos.add(new HolidayDTO(holiday.getName(), holiday.getQuantity(), holiday.getPeriodUnit(), holiday.getId(), holiday.isAnticipated(),
-					holiday.getEffectiveMonth()));
+					holiday.getEffectiveMonth(), holiday.getColor()));
 			log.debug("Creation of Holiday Type {}", holiday.getName());
 		}
 		return dtos;
@@ -80,7 +80,7 @@ public class HolidayService extends AbstractService {
 		query.setParameter("id", id);
 		HolidayType holiday = (HolidayType) query.getSingleResult();
 		HolidayDTO hdto = new HolidayDTO(holiday.getName(), holiday.getQuantity(), holiday.getPeriodUnit(), holiday.getId(), holiday.isAnticipated(),
-				holiday.getEffectiveMonth());
+				holiday.getEffectiveMonth(), holiday.getColor());
 
 		return hdto;
 	}
@@ -130,6 +130,7 @@ public class HolidayService extends AbstractService {
 		holiday.setPeriodUnit(request.unity);
 		holiday.setEffectiveMonth(request.effectiveMonth);
 		holiday.setAnticipated(request.anticipation);
+		holiday.setColor(request.color);
 
 		em.get().persist(holiday);
 	}
@@ -177,6 +178,7 @@ public class HolidayService extends AbstractService {
 		holiday.setPeriodUnit(request.unity);
 		holiday.setEffectiveMonth(request.effectiveMonth);
 		holiday.setAnticipated(request.anticipation);
+		holiday.setColor(request.color);
 		em.get().merge(holiday);
 	}
 
