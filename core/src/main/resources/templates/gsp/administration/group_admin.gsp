@@ -9,40 +9,40 @@
 
 <!-- Template for the create view  -->
 <script type="text/html" id="popup-group-admin-create-template">
-	<input type="button" value="Close" class="closeModal" style="right:0;"/><br/>
+	<input type="button" value="<%= i18n.t("close") %>" class="closeModal" style="right:0;"/><br/>
 	<fieldset>
-	<legend>Group informations</legend>
-	Name : <input type="text" name="name"/><br/>
+	<legend><%= i18n.t("group_informations") %></legend>
+	<%= i18n.t("group.name") %>: <input type="text" name="name"/><br/>
 	</fieldset>
 	<br/>
-	<input type="button" value="Send" class="createGroup"/>
+	<input type="button" value="<%= i18n.t("create") %>" class="createGroup"/>
 	<span id="groups_errors_create" style="display:none;font-weight:bold;color:red;"></span>
 </script>
 
 <!-- Template for the edit view  -->
 <script type="text/html" id="popup-group-admin-update-template">
-	<input type="button" value="Close" class="closeModal" style="right:0;"/><br/>
+	<input type="button" value="<%= i18n.t("close") %>" class="closeModal" style="right:0;"/><br/>
 	<fieldset>
-	<legend>Group informations</legend>
-	Name : <input type="text" name="name" value="{{name}}"/><br/>
+	<legend><%= i18n.t("group_informations") %></legend>
+	<%= i18n.t("group.name") %>: <input type="text" name="name" value="{{name}}"/><br/>
 	</fieldset>
 	
 	<fieldset>
-	<legend>Group users</legend>
+	<legend><%= i18n.t("group_users") %></legend>
 		<div id="usersToLink" style="height:150px;overflow-y:auto;">
 			<!-- Filled by ajax  -->
 		</div>
 	</fieldset>
 	<br/>
-	<input type="button" value="Send" class="updateGroup"/>
+	<input type="button" value="<%= i18n.t("update") %>" class="updateGroup"/>
 	<span id="groups_errors_update" style="display:none;font-weight:bold;color:red;"></span>
 </script>
 
 <div id="group_admin_container">
 	<div id="group_admin_buttons">
-		<input type="button" class="createButton" value="Create"/>
-		<input type="button" class="editButton" value="Edit" disabled="disabled"/>
-		<input type="button" class="deleteButton" value="Delete" disabled="disabled"/>
+		<input type="button" class="createButton" value="<%= i18n.t("create") %>"/>
+		<input type="button" class="editButton" value="<%= i18n.t("edit") %>" disabled="disabled"/>
+		<input type="button" class="deleteButton" value="<%= i18n.t("delete") %>" disabled="disabled"/>
 		<span id="groups_notifications" style="display:none;color:green;"></span>
 	</div>
 	<table id="group_admin_table" style="cursor:pointer;width:100%">

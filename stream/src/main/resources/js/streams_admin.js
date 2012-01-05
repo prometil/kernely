@@ -5,7 +5,7 @@
  *
  * Kernely is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of
+ * published by the Free Softfware Foundation, either version 3 of
  * the License, or (at your option) any later version.
  *
  * Kernely is distributed in the hope that it will be useful,
@@ -194,12 +194,19 @@ AppStreamAdmin = (function($){
 		},
 		
 		lockstream: function(){
-			var answer = confirm(lineSelected.vname + " will be locked. Do you want to continue?");
+			var template = $("#confirm-stream-lock-template").html();
+			
+			var view = {stream: lineSelected.vname};
+			var html = Mustache.to_html(template, view);
+			
+			var answer = confirm(html);
 			if (answer){
 				$.ajax({
 					url:"/admin/streams/lock/" + lineSelected.vid,
 					success: function(){
-						$("#streams_notifications").text("Operation completed successfully!");
+						var successHtml = $("#stream-locked-template").html();
+					
+						$("#streams_notifications").text(successHtml);
 						$("#streams_notifications").fadeIn(1000);
 						$("#streams_notifications").fadeOut(3000);
 						tableView.reload();
@@ -209,12 +216,17 @@ AppStreamAdmin = (function($){
 		},
 		
 		unlockstream: function(){
-			var answer = confirm(lineSelected.vname + " will be unlocked. Do you want to continue?");
+			var template = $("#confirm-stream-unlock-template").html();
+			var view = {stream: lineSelected.vname};
+			var html = Mustache.to_html(template, view);
+			var answer = confirm(html);
+
 			if (answer){
 				$.ajax({
 					url:"/admin/streams/unlock/" + lineSelected.vid,
 					success: function(){
-						$("#streams_notifications").text("Operation completed successfully!");
+						var successHtml = $("#stream-unlocked-template").html();
+						$("#streams_notifications").text(successHtml);
 						$("#streams_notifications").fadeIn(1000);
 						$("#streams_notifications").fadeOut(3000);
 						tableView.reload();
@@ -304,13 +316,16 @@ AppStreamAdmin = (function($){
 					if (data.result == "ok"){
 						$('#modal_window').hide();
 						$('#mask').hide();
-						$("#groups_notifications").text("Operation completed successfully !");
-						$("#groups_notifications").fadeIn(1000);
-						$("#groups_notifications").fadeOut(3000);
+						
+						var successHtml = $("#rights-updated-template").html();
+
+						$("#streams_notifications").text(successHtml);
+						$("#streams_notifications").fadeIn(1000);
+						$("#streams_notifications").fadeOut(3000);
 					} else {
-						$("#groups_errors_update").text(data.result);
-						$("#groups_errors_update").fadeIn(1000);
-						$("#groups_errors_update").fadeOut(3000);
+						$("#streams_errors_update").text(data.result);
+						$("#streams_errors_update").fadeIn(1000);
+						$("#streams_errors_update").fadeOut(3000);
 					}
 				}
 			});
@@ -339,21 +354,27 @@ AppStreamAdmin = (function($){
 				url:"/admin/users/all",
 				dataType:"json",
 				success: function(data){
-					console.log(data);
 					if(data != null){
 						if(data.userDetailsDTO.length > 1){
 							$(parent.el).append("<table>")
 				    		$.each(data.userDetailsDTO, function() {
-				    			$(parent.el).append( 					
-				   				'<tr><td>'+ this.lastname + ' ' + this.firstname +'</td><td>'+
-				    			'<select id="'+ this.user.id +'"><option value="nothing">No right</option><option value="read">Read</option><option value="write">Read / Write</option><option value="delete">Read / Write / Delete</option></select><br/>'
-				    			+'</td></tr>');
+				    			
+				    			var template = $("#stream-rights-combo-template").html();
+				    			
+				    			var view = {lastname: this.lastname, firstname: this.firstname, id: this.user.id};
+				    			var html = Mustache.to_html(template, view);
+				    			
+				    			$(parent.el).append(html);
 				    		});
 						}
 						// In the case when there is only one user.
 						else{
-			    			$(parent.el).append(data.userDetailsDTO.lastname+ ' ' + data.userDetailsDTO.firstname +
-					    			'<select id="'+ data.userDetailsDTO.user.id +'"><option value="nothing">No right</option><option value="read">Read</option><option value="write">Read / Write</option><option value="delete">Read / Write / Delete</option></select><br/>');
+			    			var template = $("#stream-rights-combo-template").html();
+			    			
+			    			var view = {lastname: data.userDetailsDTO.lastname, firstname: data.userDetailsDTO.firstname, id: data.userDetailsDTO.user.id};
+			    			var html = Mustache.to_html(template, view);
+			    			
+			    			$(parent.el).append(html);
 						}
 					}
 					$(parent.el).append("</table>");
@@ -421,10 +442,12 @@ AppStreamAdmin = (function($){
 					if (data.result == "ok"){
 						$('#modal_window').hide();
 	       				$('#mask').hide();
-						$("#streams_notifications").text("Operation completed successfully!");
+
+	       				var html = $("#stream-created-template").html();
+
+						$("#streams_notifications").text(html);
 						$("#streams_notifications").fadeIn(1000);
 						$("#streams_notifications").fadeOut(3000);
-						console.log("la");
 						tableView.reload();
 					} else {
 						$("#streams_errors").text(data.result);
@@ -468,21 +491,7 @@ AppStreamAdmin = (function($){
 				url : "/admin/streams/combo/" + this.vid,
 				dataType:"json",
 				success: function(data){
-					if(data != null){
-						var option = "";
-						console.log(data.category);
-						var category = data.category; 
-						if (category == "streams/users"){
-							option = '<option value="streams/users" selected="selected">User</option><option value="streams/plugins">Plugin</option><option value="streams/others">Other</option>';
-						}
-						if (category == "streams/plugins"){
-							option = '<option value="streams/users">User</option><option value="streams/plugins" selected="selected">Plugin</option><option value="streams/others">Other</option>';
-						}
-						if (category == "streams/others"){
-							option = '<option value="streams/users">User</option><option value="streams/plugins">Plugin</option><option value="streams/others" selected="selected">Other</option>';
-						}
-						$("#selected").append('<select name="category" id="category">'+ option + '</select>'); 		
-					}
+					$("#category option[value='"+data.category+"']").attr("selected", "selected");
 				}
 			});
 			var view = {name : this.vname, category:this.vcategory};
@@ -508,10 +517,12 @@ AppStreamAdmin = (function($){
 					if (data.result == "ok"){
 						$('#modal_window').hide();
 	       				$('#mask').hide();
-						$("#streams_notifications").text("Operation completed successfully!");
+	       				
+	       				var html = $("#stream-updated-template").html();
+	       				
+						$("#streams_notifications").text(html);
 						$("#streams_notifications").fadeIn(1000);
 						$("#streams_notifications").fadeOut(3000);
-						console.log("cic");
 						tableView.reload();
 					} else {
 						$("#streams_errors").text(data.result);

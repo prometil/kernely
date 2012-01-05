@@ -10,48 +10,48 @@
 
 <!-- Template for the create view  -->
 <script type="text/html" id="popup-manager-admin-create-template">
-	<input type="button" value="Close" class="closeModal" style="right:0;"/><br/>
+	<input type="button" value="<%= i18n.t("close") %>" class="closeModal" style="right:0;"/><br/>
 	<fieldset>
-	<legend>Manager informations</legend>
+	<legend><%= i18n.t("manager_informations") %></legend>
 	<div id="combo"></div>
 	
 	</fieldset>
 		
 	<fieldset>
-	<legend>Manager users</legend>
+	<legend><%= i18n.t("manager_users") %></legend>
 		<div id="usersToLink" style="height:150px;overflow-y:auto;">
 			<!-- Filled by ajax  -->
 		</div>
 	</fieldset>
 	<br/>
-	<input type="button" value="Send" class="createManager"/>
+	<input type="button" value="<%= i18n.t("create") %>" class="createManager"/>
 	<span id="managers_errors_create" style="display:none;font-weight:bold;color:red;"></span>
 </script>
 
 <!-- Template for the edit view  -->
 <script type="text/html" id="popup-manager-admin-update-template">
-	<input type="button" value="Close" class="closeModal" style="right:0;"/><br/>
+	<input type="button" value="<%= i18n.t("close") %>" class="closeModal" style="right:0;"/><br/>
 	<fieldset>
-	<legend>Manager informations</legend>
-	Name : <input type="text" name="name" value="{{name}}" id="manager-username" disabled="disabled"/><br/>
+	<legend><%= i18n.t("manager_information") %></legend>
+	<%= i18n.t("name") %>: <input type="text" name="name" value="{{name}}" id="manager-username" disabled="disabled"/><br/>
 	</fieldset>
 	
 	<fieldset>
-	<legend>Manager users</legend>
+	<legend><%= i18n.t("manager_users") %></legend>
 		<div id="usersToLink" style="height:150px;overflow-y:auto;">
 			<!-- Filled by ajax  -->
 		</div>
 	</fieldset>
 	<br/>
-	<input type="button" value="Send" class="updateManager"/>
+	<input type="button" value="<%= i18n.t("update") %>" class="updateManager"/>
 	<span id="managers_errors_update" style="display:none;font-weight:bold;color:red;"></span>
 </script>
  
  <div id="manager_admin_container">
 	<div id="manager_admin_buttons">
-		<input type="button" class="createButton" value="Add"/>
-		<input type="button" class="editButton" value="Edit" disabled="disabled"/>
-		<input type="button" class="deleteButton" value="Delete" disabled="disabled"/>
+		<input type="button" class="createButton" value="<%= i18n.t("create") %>"/>
+		<input type="button" class="editButton" value="<%= i18n.t("edit") %>" disabled="disabled"/>
+		<input type="button" class="deleteButton" value="<%= i18n.t("delete") %>" disabled="disabled"/>
 		<span id="manager_notifications" style="display:none;color:green;"></span>
 	</div>
 	<table id="manager_admin_table" style="cursor:pointer;width:100%">

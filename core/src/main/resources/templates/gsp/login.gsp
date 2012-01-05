@@ -17,7 +17,7 @@
 	
 	<div id="login">
 		<form action="" method="POST">
-			<%= i18n.t("connexion") %><br/>
+			<%= i18n.t("connection") %><br/>
 			<p><input name="username" type="text" placeholder="<%= i18n.t("username") %>"/></p>
 			<p><input name="password" type="password"  placeholder="<%= i18n.t("password") %>"/></p>
 			<div id="connection"> 
