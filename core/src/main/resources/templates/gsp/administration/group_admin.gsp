@@ -38,6 +38,23 @@
 	<span id="groups_errors_update" style="display:none;font-weight:bold;color:red;"></span>
 </script>
 
+<script type="text/html" id="table-header-template">
+<tr><th><%= i18n.t("group.name") %></th><th><%= i18n.t("group_users") %></th></tr>
+</script>
+
+<script type="text/html" id="confirm-group-deletion-template">
+<%= i18n.t("confirm_group_deletion") %>
+</script>
+
+<script type="text/html" id="group-deleted-template">
+<%= i18n.t("group_deleted") %>
+</script>
+
+<script type="text/html" id="group-created-updated-template">
+<%= i18n.t("group_created_updated") %>
+</script>
+
+
 <div id="group_admin_container">
 	<div id="group_admin_buttons">
 		<input type="button" class="createButton" value="<%= i18n.t("create") %>"/>

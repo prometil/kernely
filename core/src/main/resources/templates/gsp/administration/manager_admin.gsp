@@ -47,6 +47,18 @@
 	<span id="managers_errors_update" style="display:none;font-weight:bold;color:red;"></span>
 </script>
  
+<script type="text/html" id="table-header-template">
+<tr><th><%= i18n.t("manager_name") %></th><th><%= i18n.t("manager_users") %></th></tr>
+</script>
+
+<script type="text/html" id="confirm-manager-deletion-template">
+<%= i18n.t("confirm_manager_deletion") %>
+</script>
+
+<script type="text/html" id="manager-success-template">
+<%= i18n.t("manager_success") %>
+</script>
+
  <div id="manager_admin_container">
 	<div id="manager_admin_buttons">
 		<input type="button" class="createButton" value="<%= i18n.t("create") %>"/>
