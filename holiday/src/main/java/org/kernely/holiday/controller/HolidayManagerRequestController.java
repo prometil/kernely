@@ -53,8 +53,8 @@ public class HolidayManagerRequestController extends AbstractController {
 	@Produces({MediaType.APPLICATION_JSON})
 	public List<HolidayRequestDTO> displayAllHolidayRequestPending()
 	{
-		if (userService.currentUserIsAdministrator()){
-			log.debug("Call to GET on all holiday request ");
+		if (userService.isManager(userService.getAuthenticatedUserDTO().username)){
+			log.debug("Call to GET on all holiday request pending");
 			return holidayRequestService.getAllRequestsWithStatus(HolidayRequest.PENDING_STATUS);
 		}
 		return null;
@@ -69,8 +69,8 @@ public class HolidayManagerRequestController extends AbstractController {
 	@Produces({MediaType.APPLICATION_JSON})
 	public List<HolidayRequestDTO> displayAllHolidayRequestStatus()
 	{
-		if (userService.currentUserIsAdministrator()){
-			log.debug("Call to GET on all users");
+		if (userService.isManager(userService.getAuthenticatedUserDTO().username)){
+			log.debug("Call to GET on all holiday request accepted or denied");
 			List<HolidayRequestDTO> lhr = new ArrayList<HolidayRequestDTO>();
 			lhr.addAll(holidayRequestService.getAllRequestsWithStatus(HolidayRequest.ACCEPTED_STATUS));
 			lhr.addAll(holidayRequestService.getAllRequestsWithStatus(HolidayRequest.DENIED_STATUS));

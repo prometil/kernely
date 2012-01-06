@@ -269,7 +269,7 @@ public class TemplateRenderer {
 				binding.put("currentUser", subject.getPrincipal().toString());
 			}
 			binding.put("css", cssFiles);
-			binding.put("i18n", new I18n(new Locale("en","US")));
+			binding.put("i18n", new I18n(new Locale("fr","FR")));
 
 			return binding;
 		}

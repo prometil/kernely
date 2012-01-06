@@ -120,8 +120,15 @@ AppHolidayManagerRequest = (function($){
 			}
 		},
 		render:function(){
+			var statusTemplate="";
+			if (this.vstatus==0){
+				 statusTemplate=$("#status-denied-template").html();
+			}
+			else {
+				statusTemplate=$("#status-accepted-template").html();
+			}
 			var template = '<td>{{from}}</td><td>{{requesterComment}}</td><td>{{managerComment}}</td><td>{{beginDate}}</td><td>{{endDate}}</td><td>{{status}}</td>';
-			var view = {from : this.vfrom, requesterComment : this.vrequesterComment, managerComment : this.vmanagerComment, beginDate : this.vbegin, endDate : this.vend, status : this.vstatus};
+			var view = {from : this.vfrom, requesterComment : this.vrequesterComment, managerComment : this.vmanagerComment, beginDate : this.vbegin, endDate : this.vend, status : statusTemplate};
 			var html = Mustache.to_html(template, view);
 			$(this.el).html(html);
 			$(this.el).appendTo($("#manager_request_table"));
