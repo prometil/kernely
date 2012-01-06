@@ -398,6 +398,21 @@ public class UserServiceTest extends AbstractServiceTest{
 		service.updateManager(TEST_MODIFIED_1, users) ;
 		assertEquals(1, service.getAllManager().size());
 	}
+
+	@Test
+	public void isManagerTest(){
+		creationOfTestUser();
+		List<UserDTO> users = service.getAllUsers() ; 
+		UserCreationRequestDTO request2 = new UserCreationRequestDTO();
+		request2.username = TEST_MODIFIED_1;
+		request2.password = TEST_MODIFIED_1;
+		request2.firstname = TEST_MODIFIED_1;
+		request2.lastname = TEST_MODIFIED_1;
+		service.createUser(request2);
+		assertEquals(false, service.isManager(TEST_MODIFIED_1)); 
+		service.updateManager(TEST_MODIFIED_1, users) ;
+		assertEquals(true, service.isManager(TEST_MODIFIED_1));
+	}
 	
 /*	@Test
 	public void getAllRoleTest(){

@@ -43,6 +43,16 @@ public class HolidayRequestDTO {
 	public String requesterComment;
 	
 	/**
+	 * The username of the requester
+	 */
+	public String user;
+	
+	/**
+	 * The comment of the manager
+	 */
+	public String managerComment;
+	
+	/**
 	 * The list of holiday details
 	 */
 	public List<HolidayDetailDTO> details = new ArrayList<HolidayDetailDTO>();
@@ -64,6 +74,8 @@ public class HolidayRequestDTO {
 		this.endDate = request.getEndDate();
 		this.status = request.getStatus();
 		this.requesterComment = request.getRequesterComment();
+		this.user = request.getUser().getUsername();
+		this.managerComment = request.getManagerComment(); 
 		for(HolidayRequestDetail hd : request.getDetails()){
 			this.details.add(new HolidayDetailDTO(hd));
 		}
