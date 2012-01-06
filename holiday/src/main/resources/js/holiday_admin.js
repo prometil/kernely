@@ -77,62 +77,20 @@ AppHolidayAdmin = (function($){
 			var template = '<td>{{type}}</td><td>{{quantity}}</td><td>{{unity}}</td><td>{{effectivemonth}}</td><td>{{anticipation}}</td>';
 			var stringunity ="Undefined";
 			if (this.vunity == 12) {
-				stringunity = "Month";
+				stringunity = $("#month-template").html();
 			} else {
-				stringunity = "Year";
+				stringunity = $("#year-template").html();
 			}
 			
-			var stringmonth = "Undefined";
+			var stringmonth = $("#"+this.veffectivemonth+"-month-template").html();
 
-			switch(parseInt(this.veffectivemonth)){
-			case 12:
-				stringmonth = "All months";
-				break;
-			case 0:
-				stringmonth = "January";
-				break;
-			case 1:
-				stringmonth = "February";
-				break;
-			case 2:
-				stringmonth = "March";
-				break;
-			case 3:
-				stringmonth = "April";
-				break;
-			case 4:
-				stringmonth = "May";
-				break;
-			case 5:
-				stringmonth = "June";
-				break;
-			case 6:
-				stringmonth = "July";
-				break;
-			case 7:
-				stringmonth = "August";
-				break;
-			case 8:
-				stringmonth = "September";
-				break;
-			case 9:
-				stringmonth = "October";
-				break;
-			case 10:
-				stringmonth = "November";
-				break;
-			case 11:
-				stringmonth = "December";
-				break;
-			}
-			
 			var stringanticipation ="Undefined";
 			if (parseInt(this.veffectivemonth) == 12){
 				stringanticipation = "-";
 			} else if (this.vanticipation == "true") {
-				stringanticipation = "Yes";
+				stringanticipation = $("#yes-template").html();
 			} else {
-				stringanticipation = "No";
+				stringanticipation = $("#no-template").html();
 			}
 
 			
@@ -153,7 +111,8 @@ AppHolidayAdmin = (function($){
 		},
 		initialize:function(){
 			var parent = this;
-			$(this.el).html("<tr><th>Name</th><th>Quantity</th><th>Each</th><th>Effective month</th><th>Can be anticipated</th></tr>");
+			var html = $("#table-header").html();
+			$(this.el).html(html);
 			$.ajax({
 				type:"GET",
 				url:"/admin/holiday/all",
@@ -190,7 +149,6 @@ AppHolidayAdmin = (function($){
 		events: {
 			"click .createButton" : "createholiday",
 			"click .editButton" : "editholiday",
-			"click .deleteButton" : "deleteholiday"
 		},
 		
 		viewCreate:null,
@@ -235,21 +193,6 @@ AppHolidayAdmin = (function($){
 			this.showModalWindow();
 			this.viewUpdate.setFields(lineSelected.vtype, lineSelected.vquantity, lineSelected.vfrequency, lineSelected.vunity, lineSelected.veffectivemonth, lineSelected.vanticipation, lineSelected.vid, lineSelected.vcolor);
 			this.viewUpdate.render();
-		},
-		
-		deleteholiday: function(){
-			var answer = confirm(lineSelected.vname + " will be deleted. Do you want to continue ?");
-			if (answer){
-				$.ajax({
-					url:"/admin/holiday/delete/" + lineSelected.vid,
-					success: function(){
-						$("#holidays_notifications").text("Operation completed successfully !");
-						$("#holidays_notifications").fadeIn(1000);
-						$("#holidays_notifications").fadeOut(3000);
-						tableView.reload();
-					}
-				});
-			}
 		},
 		
 		render:function(){
@@ -301,7 +244,10 @@ AppHolidayAdmin = (function($){
 					if (data.result == "Ok"){
 						$('#modal_window_holiday').hide();
 						$('#mask').hide();
-						$("#holidays_notifications").text("Operation completed successfully !");
+						
+						var successHtml = $("#holiday-success-message-template").html();
+										
+						$("#holidays_notifications").text(successHtml);
 						$("#holidays_notifications").fadeIn(1000);
 						$("#holidays_notifications").fadeOut(3000);
 						tableView.reload();
@@ -360,17 +306,7 @@ AppHolidayAdmin = (function($){
 				success: function(data){
 					if(data != null){
 						var option = "";
-						var unity = data.periodUnit; 
-						if (unity == 12){
-							option = '<option value="12" selected="selected">month</option><option value="1">year</option>';
-						}
-						if (unity == 1){
-							option = '<option value="12">month</opton><option value="1" selected="selected">year</opton>';
-						}
-						else {
-							option = '<option value="12">month</opton><option value="1">year</option>';
-						}
-						$("#selected").append('<select name="unity" id="unity">'+ option + '</select>');
+						$("#unity").val(parseInt(data.periodUnit));
 	
 						if (parent.vanticipation == "true"){
 							$("#anticipated").attr('checked','checked');
@@ -410,7 +346,10 @@ AppHolidayAdmin = (function($){
 					if (data.result == "Ok"){
 						$('#modal_window_holiday').hide();
 						$('#mask').hide();
-						$("#holidays_notifications").text("Operation completed successfully !");
+						
+						var successHtml = $("#holiday-success-message-template").html();
+						
+						$("#holidays_notifications").text(successHtml);
 						$("#holidays_notifications").fadeIn(1000);
 						$("#holidays_notifications").fadeOut(3000);
 						tableView.reload();
