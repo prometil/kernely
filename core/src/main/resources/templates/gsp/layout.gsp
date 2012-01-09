@@ -35,12 +35,12 @@
 							{{fullname}} ({{username}})<br/>
 							{{mail}}<br/>
 							<br/>
-							<a href="/user/{{username}}/profile"><% i18n.t("profile") %></a>
+							<a href="/user/{{username}}/profile"><%= i18n.t("profile") %></a>
 						</div>
 					</div>
 					<div id="profilePU-footer" style="height:30px;text-align:center;">
 						<hr/>
-						<a href="/user/logout"><% i18n.t("logout") %></a>
+						<a href="/user/logout"><%= i18n.t("logout") %></a>
 					</div>
 				</div>
 			</script>

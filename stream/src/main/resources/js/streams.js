@@ -98,7 +98,7 @@ App = (function($){
 				$("#comments-" + parent.message.id).slideDown(1000);
 			}
 			var html = $("#hide-comments-template").html();
-			
+			console.log(html);
 			$("#other_comment" + parent.message.id).html(html);
 		},
 		hideComment: function(){

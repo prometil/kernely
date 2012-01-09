@@ -28,7 +28,7 @@
 
 <script type="text/html" id="view-comments-template">
 <span style='cursor:pointer;color:grey;' class='loadcomment'><%= i18n.t("view_comments") %><span/>
-<script/>
+</script>
 
 <script type="text/html" id="hide-comments-template">
 <span style='cursor:pointer;color:grey;' class='hidecomment'><%= i18n.t("hide_comments") %><span/>

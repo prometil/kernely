@@ -83,7 +83,9 @@ AppGroupAdmin = (function($){
 		
 		initialize:function(){
 			var parent = this;
-			$(this.el).html("<tr><th>Name</th><th>Members</th></tr>");
+			var html= $("#table-header-template").html();
+
+			$(this.el).html(html);
 			$.ajax({
 				type:"GET",
 				url:"/admin/groups/all",
@@ -182,12 +184,19 @@ AppGroupAdmin = (function($){
 		},
 		
 		deletegroup: function(){
-			var answer = confirm(lineSelected.vname + " will be deleted. Do you want to continue ?");
+			var template = $("#confirm-group-deletion-template").html();
+			
+			var view = {name: lineSelected.vname};
+			var html = Mustache.to_html(template, view);
+			
+			var answer = confirm(html);
 			if (answer){
 				$.ajax({
 					url:"/admin/groups/delete/" + lineSelected.vid,
 					success: function(){
-						$("#groups_notifications").text("Operation completed successfully !");
+						var successHtml = $("#group-deleted-template").html();
+					
+						$("#groups_notifications").text(successHtml);
 						$("#groups_notifications").fadeIn(1000);
 						$("#groups_notifications").fadeOut(3000);
 						tableView.reload();
@@ -239,10 +248,13 @@ AppGroupAdmin = (function($){
 					if (data.result == "ok"){
 						$('#modal_window_group').hide();
 						$('#mask').hide();
-						$("#groups_notifications").text("Operation completed successfully !");
+						
+						var successHtml = $("#group-created-updated-template").html();
+						tableView.reload();
+						console.log(successHtml);
+						$("#groups_notifications").text(successHtml);
 						$("#groups_notifications").fadeIn(1000);
 						$("#groups_notifications").fadeOut(3000);
-						tableView.reload();
 					} else {
 						$("#groups_errors_create").text(data.result);
 						$("#groups_errors_create").fadeIn(1000);
@@ -318,7 +330,10 @@ AppGroupAdmin = (function($){
 					if (data.result == "ok"){
 						$('#modal_window_group').hide();
 						$('#mask').hide();
-						$("#groups_notifications").text("Operation completed successfully !");
+						
+						var successHtml= $("#groupe-created-updated-template").html();
+
+						$("#groups_notifications").text(successHtml);
 						$("#groups_notifications").fadeIn(1000);
 						$("#groups_notifications").fadeOut(3000);
 						tableView.reload();

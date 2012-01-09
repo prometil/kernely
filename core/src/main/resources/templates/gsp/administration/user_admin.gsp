@@ -48,6 +48,27 @@
 	<span id="users_errors_update" style="display:none;font-weight:bold;color:red;"></span>
 </script>
 
+<script type="text/html" id="lock-button-template"><%= i18n.t("lock") %></script>
+
+<script type="text/html" id="unlock-button-template"><%= i18n.t("unlock") %></script>
+
+<script type="text/html" id="table-header-template">
+<tr>
+	<th>
+	</th>
+	<th><%= i18n.t("name") %></th>
+	<th><%= i18n.t("firstname") %></th>
+	<th><%= i18n.t("username") %></th>
+	<th><%= i18n.t("email") %></th>
+</tr>
+</script>
+
+<script type="text/html" id="success-message-template"><%= i18n.t("success_message") %></script>
+
+<script type="text/html" id="user-change-state-confirm-template">
+<%= i18n.t("user_change_status_confirm") %>
+</script>
+
 <div id="user_admin_container">
         <div id="user_admin_buttons">
                 <input type="button" class="createButton" value="<%= i18n.t("create") %>"/>

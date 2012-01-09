@@ -78,7 +78,9 @@ AppManagerAdmin = (function($){
 		},
 		initialize:function(){
 			var parent = this; 
-			$(this.el).html("<tr><th>Name</th><th>Members</th></tr>");
+			var html= $("#table-header-template").html();
+
+			$(this.el).html(html);
 			$.ajax({
 				type:"GET",
 				url:"/admin/manager/all",
@@ -176,12 +178,20 @@ AppManagerAdmin = (function($){
 		},
 		
 		deletemanager: function(){
-			var answer = confirm(lineSelected.vname + " will be deleted. Do you want to continue ?");
+			
+			var template = $("#confirm-manager-deletion-template").html();
+			
+			var view = {name: lineSelected.vname};
+			var html = Mustache.to_html(template, view);
+			
+			var answer = confirm(html);
 			if (answer){
 				$.ajax({
 					url:"/admin/manager/delete/" + lineSelected.vname,
 					success: function(){
-						$("#manager_notifications").text("Operation completed successfully !");
+						var successHtml = $("#manager-success-template").html();
+					
+						$("#manager_notifications").text(successHtml);
 						$("#manager_notifications").fadeIn(1000);
 						$("#manager_notifications").fadeOut(3000);
 						tableView.reload();
@@ -265,7 +275,9 @@ AppManagerAdmin = (function($){
 				contentType: "application/json; charset=utf-8",
 				success: function(data){
 					if (data.result == "ok"){
-						$("#manager_notifications").text("Operation completed successfully !");
+						var successHtml = $("#manager-success-template").html();
+						
+						$("#manager_notifications").text(successHtml);
 						$("#manager_notifications").fadeIn(1000);
 						$("#manager_notifications").fadeOut(3000);
 						tableView.reload();
@@ -345,9 +357,11 @@ AppManagerAdmin = (function($){
 					if (data.result == "ok"){
 						$('#modal_window_manager').hide();
 						$('#mask').hide();
-						$("#managers_notifications").text("Operation completed successfully !");
-						$("#managers_notifications").fadeIn(1000);
-						$("#managers_notifications").fadeOut(3000);
+						var successHtml = $("#manager-success-template").html();
+						
+						$("#manager_notifications").text(successHtml);
+						$("#manager_notifications").fadeIn(1000);
+						$("#manager_notifications").fadeOut(3000);
 						tableView.reload();
 					} else {
 						$("#managers_errors_update").text(data.result);
@@ -421,7 +435,6 @@ AppManagerAdmin = (function($){
 					else{
 						$(parent.el).append('<input type="checkbox" id="'+ data.userDetailsDTO.user.id +'">'+ data.userDetailsDTO.lastname + ' ' + data.userDetailsDTO.firstname + ' ('+ data.userDetailsDTO.user.username +')'+'</input><br/>');
 					}
-					console.log("I retrieve the input disabled")
 					$.ajax({
 						type: "GET",
 						url:"/admin/manager/users/"+$("#manager-username").val(),
