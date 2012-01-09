@@ -17,6 +17,7 @@
  * License along with Kernely.
  * If not, see <http://www.gnu.org/licenses/>.
  */
+
 AppGroupAdmin = (function($){
 	var lineSelected = null;
 	var tableView = null;
@@ -79,6 +80,7 @@ AppGroupAdmin = (function($){
 		events:{
 		
 		},
+		
 		initialize:function(){
 			var parent = this;
 			$(this.el).html("<tr><th>Name</th><th>Members</th></tr>");
@@ -235,7 +237,6 @@ AppGroupAdmin = (function($){
 				contentType: "application/json; charset=utf-8",
 				success: function(data){
 					if (data.result == "ok"){
-						console.log("coucou !!!");
 						$('#modal_window_group').hide();
 						$('#mask').hide();
 						$("#groups_notifications").text("Operation completed successfully !");

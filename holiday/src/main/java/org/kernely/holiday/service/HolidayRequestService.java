@@ -20,11 +20,6 @@
 
 package org.kernely.holiday.service;
 
-import groovy.ui.Console;
-
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -237,6 +232,19 @@ public class HolidayRequestService extends AbstractService{
 		request.setStatus(HolidayRequest.DENIED_STATUS);
 		em.get().merge(request);
 		log.debug("Holiday request with id {} has been denied", idRequest);
+	}
+	
+	/**
+	 * Add a manager commentary to the request 
+	 * @param idRequest The request to comment
+	 * @param managerComment the comment of the manager
+	 */
+	@Transactional
+	public void addManagerComentary(int idRequest, String managerComment){
+		HolidayRequest request = em.get().find(HolidayRequest.class, idRequest);
+		request.setManagerComment(managerComment);
+		em.get().merge(request);
+		log.debug("Holiday request with id {} has been commented", idRequest);
 	}
 	
 	/**

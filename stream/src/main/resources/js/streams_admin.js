@@ -205,7 +205,6 @@ AppStreamAdmin = (function($){
 					url:"/admin/streams/lock/" + lineSelected.vid,
 					success: function(){
 						var successHtml = $("#stream-locked-template").html();
-					
 						$("#streams_notifications").text(successHtml);
 						$("#streams_notifications").fadeIn(1000);
 						$("#streams_notifications").fadeOut(3000);
