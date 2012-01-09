@@ -17,3 +17,20 @@
 	top:0;
 	left:0;
 }
+
+#main_title{
+	text-align:center;
+	font-size:16px;
+	font-weight:bold;
+}
+
+#holiday_notifications{
+	text-align:center;
+	display:none;
+	color:green;
+}
+
+.closeModal{
+	right:0;
+}
+
