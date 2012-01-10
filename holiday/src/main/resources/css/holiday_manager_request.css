@@ -34,3 +34,12 @@
 	right:0;
 }
 
+#manager_pending_request_table{
+	cursor:pointer;
+	width:100%
+}
+
+#manager_request_table{
+	cursor:pointer;
+	width:100%
+}

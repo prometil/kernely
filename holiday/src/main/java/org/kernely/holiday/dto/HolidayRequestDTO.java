@@ -80,4 +80,35 @@ public class HolidayRequestDTO {
 			this.details.add(new HolidayDetailDTO(hd));
 		}
 	}
+	
+	/** 
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		return prime * result + id;
+	}
+
+	/**
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj){
+			return true;
+		}
+		if (obj == null){
+			return false;
+		}
+		if (getClass() != obj.getClass()){
+			return false;
+		}
+		HolidayRequestDTO other = (HolidayRequestDTO) obj;
+		if (id != other.id){
+			return false;
+		}
+		return true;
+	}
 }
