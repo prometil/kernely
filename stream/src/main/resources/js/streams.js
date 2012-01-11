@@ -41,13 +41,29 @@ App = (function($){
 		initialize: function(message){
 			this.message = message;
 		},
-		render:function(){			
+		render:function(){
+			var dateTemplate;
+			var dateView;
+			var localisedDate;
+			if (this.message.timeToDisplay != "seconds" &&
+					this.message.timeToDisplay != "minutes" &&
+					this.message.timeToDisplay != "hours" &&
+					this.message.timeToDisplay != "days"){
+				localisedDate = this.message.timeToDisplay;
+			} else {
+				console.log(this.message.timeToDisplay);
+				dateTemplate = $("#date-"+this.message.timeToDisplay+"-template").html();
+				console.log(dateTemplate);
+
+				dateView = {value: this.message.timeValue}
+				localisedDate = Mustache.to_html(dateTemplate, dateView);
+				console.log(localisedDate);
+			}
 			var template = $("#message-template").html();
-			
-			var view = {id: this.message.id, message : this.message.message, stream: this.message.streamName, author: this.message.author, date: this.message.timeToDisplay, comments: this.message.nbComments};
+			var view = {id: this.message.id, message : this.message.message, stream: this.message.streamName, author: this.message.author, date: localisedDate, comments: this.message.nbComments};
 			var html = Mustache.to_html(template, view);
 			$(this.el).html(html);
-			
+
 			if (this.message.deletion == "false"){
 				var chain = "#delete"+this.message.id;
 				this.$(chain).remove();
@@ -67,7 +83,6 @@ App = (function($){
 			
 		},
 		hideInputComment: function(){
-			$("#comments-" + this.message.id).slideUp(1000);
 			var html = $("#comment-here-template").html();
 			$("#input_comment"+this.message.id).html(html);
 		},
@@ -98,7 +113,6 @@ App = (function($){
 				$("#comments-" + parent.message.id).slideDown(1000);
 			}
 			var html = $("#hide-comments-template").html();
-			console.log(html);
 			$("#other_comment" + parent.message.id).html(html);
 		},
 		hideComment: function(){
@@ -191,9 +205,27 @@ App = (function($){
 			this.comment = comment
 		},
 		render:function(){			
+			
+			var dateTemplate;
+			var dateView;
+			var localisedDate;
+			if (this.comment.timeToDisplay != "seconds" &&
+					this.comment.timeToDisplay != "minutes" &&
+					this.comment.timeToDisplay != "hours" &&
+					this.comment.timeToDisplay != "days"){
+				localisedDate = this.comment.timeToDisplay;
+			} else {
+				console.log(this.comment.timeToDisplay);
+				dateTemplate = $("#date-"+this.comment.timeToDisplay+"-template").html();
+				console.log(dateTemplate);
+
+				dateView = {value: this.comment.timeValue}
+				localisedDate = Mustache.to_html(dateTemplate, dateView);
+				console.log(localisedDate);
+			}
 			var template = $("#comment-template").html();
 			
-			var view = {id: this.comment.id, commentPicture: "/img/picture.png", comment : this.comment.message, author: this.comment.author, date: this.comment.timeToDisplay};
+			var view = {id: this.comment.id, commentPicture: "/img/picture.png", comment : this.comment.message, author: this.comment.author, date: localisedDate};
 			var html = Mustache.to_html(template, view);
 			$(this.el).html(html);
 			
