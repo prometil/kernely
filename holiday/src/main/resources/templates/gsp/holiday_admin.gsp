@@ -1,5 +1,4 @@
 <script type="text/javascript" src="/js/holiday_admin.js"></script>
-<script type="text/javascript" src="/js/farbtastic.js"></script>
 
 <div id="holiday_header" style=""></div>
 

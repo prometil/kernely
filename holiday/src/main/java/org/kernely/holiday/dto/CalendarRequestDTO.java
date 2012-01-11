@@ -27,7 +27,7 @@ public class CalendarRequestDTO {
 	public int startWeek;
 	
 	/**
-	 * The list of details of the calendar
+	 * The list of different balances available for this user
 	 */
 	public List<CalendarBalanceDetailDTO> details;
 }

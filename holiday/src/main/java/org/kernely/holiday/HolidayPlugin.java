@@ -22,6 +22,7 @@ package org.kernely.holiday;
 
 import org.kernely.core.plugin.AbstractPlugin;
 import org.kernely.holiday.controller.HolidayAdminController;
+import org.kernely.holiday.controller.HolidayManagerUserController;
 import org.kernely.holiday.controller.HolidayRequestController;
 import org.kernely.holiday.job.HolidaysJob;
 import org.kernely.holiday.migrations.Migration01;
@@ -29,14 +30,15 @@ import org.kernely.holiday.model.HolidayBalance;
 import org.kernely.holiday.model.HolidayRequest;
 import org.kernely.holiday.model.HolidayRequestDetail;
 import org.kernely.holiday.model.HolidayType;
+import org.kernely.holiday.service.HolidayManagerUserService;
 import org.kernely.holiday.service.HolidayRequestService;
 import org.kernely.holiday.service.HolidayService;
 import org.quartz.CronScheduleBuilder;
 import org.quartz.DateBuilder;
-import org.quartz.DateBuilder.IntervalUnit;
 import org.quartz.ScheduleBuilder;
 import org.quartz.Trigger;
 import org.quartz.TriggerBuilder;
+import org.quartz.DateBuilder.IntervalUnit;
 
 /**
  * The Plugin for holiday
@@ -53,6 +55,7 @@ public class HolidayPlugin extends AbstractPlugin {
 		super("Holiday", "/holiday");
 		registerController(HolidayAdminController.class);
 		registerController(HolidayRequestController.class);
+		registerController(HolidayManagerUserController.class);
 		registerModel(HolidayType.class);
 		registerModel(HolidayBalance.class);
 		registerModel(HolidayRequest.class);
@@ -91,6 +94,7 @@ public class HolidayPlugin extends AbstractPlugin {
 	protected void configure() {
 		bind(HolidayService.class);
 		bind(HolidayRequestService.class);
+		bind(HolidayManagerUserService.class);
 	}
 
 }
