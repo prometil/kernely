@@ -30,8 +30,8 @@
 		<port>8080</port>
 	</server>
 	<locale>
-		<lang>fr</lang>
-		<country>FR</country>
+		<lang>en</lang>
+		<country>US</country>
 	</locale>
 	<workpath>
 		<url>../workstation</url>

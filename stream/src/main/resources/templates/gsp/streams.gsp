@@ -65,7 +65,7 @@
 			{{comment}}
 		</div>
 		<div class="comment-author-info" style="text-align:right;padding-right:10px;width:468px;height:20px;">
-			<span style="font-style:italic;color:grey;">Posted by {{author}}, {{date}}</span>
+			<span style="font-style:italic;color:grey;"><%= i18n.t("comment_posted_by") %></span>
 		</div>
 	</div>
 	<div style="clear:both;"></div>
@@ -75,6 +75,20 @@
 <script type="text/html" id="input_comment-template">
 <textarea class='comment-input' id='{{commentInputId}}' style='width:540px; margin-bottom:10px;'></textarea>
 <a style='cursor:pointer;' class='cancelButton'><%= i18n.t("cancel") %></a>  <a class='button share-comment' href='javascript:void(0)' ><%= i18n.t("comment_message") %></a>
+</script>
+
+<!-- Dates -->
+<script type="text/html" id="date-seconds-template">
+<%= i18n.t("stream_seconds_message") %>
+</script>
+<script type="text/html" id="date-minutes-template">
+<%= i18n.t("stream_minutes_message") %>
+</script>
+<script type="text/html" id="date-hours-template">
+<%= i18n.t("stream_hours_message") %>
+</script>
+<script type="text/html" id="date-days-template">
+<%= i18n.t("stream_days_message") %>
 </script>
 
 <div id="streams">

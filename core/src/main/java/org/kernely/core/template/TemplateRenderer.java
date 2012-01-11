@@ -31,6 +31,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import org.apache.commons.configuration.AbstractConfiguration;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 import org.codehaus.groovy.control.CompilationFailedException;
@@ -62,6 +63,9 @@ public class TemplateRenderer {
 
 	@Inject
 	private ResourceLocator resourceLocator;
+	
+	@Inject
+	private AbstractConfiguration configuration;
 
 	public static final String ADMIN_LAYOUT = "/templates/gsp/admin.gsp";
 
@@ -272,8 +276,9 @@ public class TemplateRenderer {
 			if (!binding.containsKey("css")) {
 				binding.put("css", cssFiles);
 			}
-			binding.put("i18n", new I18n(new Locale("fr", "FR")));
-
+			String lang = configuration.getString("locale.lang");
+			String country = configuration.getString("locale.country");
+			binding.put("i18n", new I18n(new Locale(lang,country)));
 			return binding;
 		}
 	}

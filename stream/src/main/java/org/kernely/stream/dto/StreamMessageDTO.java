@@ -81,10 +81,15 @@ public class StreamMessageDTO {
 	public Date date;
 
 	/**
-	 * time to display the message 	
+	 * "seconds", "minutes", "hours" or "days" : determines which template is uses in the stream.gsp
 	 */
 	public String timeToDisplay;
-	
+
+	/**
+	 * value depending on the timeToDisplay : if timeToDisplay is in "minutes", the message has been posted timeValue minutes ago.
+	 */
+	public long timeValue;
+
 	/**
 	 * The number of comments
 	 */
@@ -144,22 +149,25 @@ public class StreamMessageDTO {
 		long timebetweend1d2 = date2long - date1long;
 		// less than one minute
 		if (timebetweend1d2 < MINUTE) {
-			timeToDisplay = "a few seconds ago";
+			timeToDisplay = "seconds";
 		} else {
 			// less than one hour
 			if (timebetweend1d2 < HOUR) {
 				long nbMin = timebetweend1d2 / UNITY_1000 / MINUTES_OR_SECONDS;
-				timeToDisplay = nbMin + " minutes ago";
+				timeToDisplay = "minutes";
+				timeValue = nbMin;
 			} else {
 				// less than one day
 				if (timebetweend1d2 < DAY) {
 					long nbHour = timebetweend1d2 / UNITY_1000 / MINUTES_OR_SECONDS / MINUTES_OR_SECONDS;
-					timeToDisplay = nbHour + " hours ago";
+					timeToDisplay = "hours";
+					timeValue = nbHour;
 				} else {
 					// less than one week
 					if (timebetweend1d2 < WEEK) {
 						long nbDays = timebetweend1d2 / UNITY_1000 / MINUTES_OR_SECONDS / MINUTES_OR_SECONDS / HOUR_IN_A_DAY;
-						timeToDisplay = nbDays + " days ago";
+						timeToDisplay = "days";
+						timeValue = nbDays;
 					} else {
 						timeToDisplay = dateFormat.format(this.date);
 					}
