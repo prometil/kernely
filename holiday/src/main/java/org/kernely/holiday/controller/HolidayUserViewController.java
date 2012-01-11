@@ -5,12 +5,12 @@ import java.util.List;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.kernely.core.controller.AbstractController;
-import org.kernely.core.service.user.UserService;
 import org.kernely.core.template.TemplateRenderer;
 import org.kernely.holiday.dto.HolidayRequestDTO;
 import org.kernely.holiday.model.HolidayRequest;
@@ -84,6 +84,21 @@ public class HolidayUserViewController extends AbstractController{
 		}
 		return userStatuedRequest;
 	}
+	
+	
+	/**
+	 * cancel a request
+	 * @param idRequest
+	 * @return ok
+	 */
+	@GET
+	@Path("/cancel/{id}")
+	@Produces({MediaType.TEXT_HTML})
+	public String denyHoliday(@PathParam("id")int idRequest){
+		holidayRequestService.cancelRequest(idRequest);
+		return "{\"result\":\"Ok\"}"; 			
+	}
+	
 	
 	
 	

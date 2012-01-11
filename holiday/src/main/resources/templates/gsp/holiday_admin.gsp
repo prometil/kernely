@@ -1,12 +1,11 @@
 <script type="text/javascript" src="/js/holiday_admin.js"></script>
 <script type="text/javascript" src="/js/farbtastic.js"></script>
 
-<div id="holiday_header" style=""></div>
+<div id="holiday_header"></div>
 
 <div id="mask"></div>
 
-<div id="modal_window_holiday">
-</div>
+<div id="modal_window_holiday"></div>
 
 <script type="text/html" id="table-header">
 <tr>
@@ -131,6 +130,5 @@
 	</div>
 	<table id="holiday_admin_table">
 		
-		
-	</ table>
+	</table>
 </div>
