@@ -34,17 +34,22 @@ AppHolidayRequest = (function($){
 				dates.not( this ).datepicker( "option", option, date );
 			}
 			});
+			var lang = $("#locale-lang").html();
+			var country = $("#locale-country").html();
+			$.datepicker.setDefaults($.datepicker.regional[lang+"-"+country]);
 		},
 		render: function(){
 			return this;
 		},
 		buildCalendarAndPicker: function(){
+			console.log(build);
 			$.ajax({
 				type: "GET",
 				url:"/holiday/request/interval",
 				data: {date1: dates[0].value, date2: dates[1].value},
 				dataType:"json",
 				success: function(data){
+					console.log(data);
 					// Clean the div content
 					$('#calendarContent').html("");
 					$('#colorSelector').html("");
