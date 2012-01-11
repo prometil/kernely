@@ -64,13 +64,13 @@ public class HolidayAdminController extends AbstractController {
 	public Response getPluginAdminPanel(){
 		Response page;
 		if (userService.currentUserIsAdministrator()){
-			page = ok(templateRenderer.create("/templates/gsp/holiday_admin.gsp").withLayout(TemplateRenderer.ADMIN_LAYOUT));
+			page = ok(templateRenderer.create("/templates/gsp/holiday_admin.gsp").addCss("/css/holiday_admin.css").withLayout(TemplateRenderer.ADMIN_LAYOUT));
 		} else{
 			page = ok(templateRenderer.create("/templates/gsp/home.gsp"));
 		}
-
 		return page;
 	}
+	
 	/**
 	 * Display the list of holiday for the table
 	 * @return List of holiday 

@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 	<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 	<title>Kernely</title>
 	
 	<!-- js files -->
@@ -34,12 +35,12 @@
 							{{fullname}} ({{username}})<br/>
 							{{mail}}<br/>
 							<br/>
-							<a href="/user/{{username}}/profile">Profile</a>
+							<a href="/user/{{username}}/profile"><%= i18n.t("profile") %></a>
 						</div>
 					</div>
 					<div id="profilePU-footer" style="height:30px;text-align:center;">
 						<hr/>
-						<a href="/user/logout">logout</a>
+						<a href="/user/logout"><%= i18n.t("logout") %></a>
 					</div>
 				</div>
 			</script>

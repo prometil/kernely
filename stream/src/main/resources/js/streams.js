@@ -41,13 +41,29 @@ App = (function($){
 		initialize: function(message){
 			this.message = message;
 		},
-		render:function(){			
+		render:function(){
+			var dateTemplate;
+			var dateView;
+			var localisedDate;
+			if (this.message.timeToDisplay != "seconds" &&
+					this.message.timeToDisplay != "minutes" &&
+					this.message.timeToDisplay != "hours" &&
+					this.message.timeToDisplay != "days"){
+				localisedDate = this.message.timeToDisplay;
+			} else {
+				console.log(this.message.timeToDisplay);
+				dateTemplate = $("#date-"+this.message.timeToDisplay+"-template").html();
+				console.log(dateTemplate);
+
+				dateView = {value: this.message.timeValue}
+				localisedDate = Mustache.to_html(dateTemplate, dateView);
+				console.log(localisedDate);
+			}
 			var template = $("#message-template").html();
-			
-			var view = {id: this.message.id, message : this.message.message, stream: this.message.streamName, author: this.message.author, date: this.message.timeToDisplay, comments: this.message.nbComments};
+			var view = {id: this.message.id, message : this.message.message, stream: this.message.streamName, author: this.message.author, date: localisedDate, comments: this.message.nbComments};
 			var html = Mustache.to_html(template, view);
 			$(this.el).html(html);
-			
+
 			if (this.message.deletion == "false"){
 				var chain = "#delete"+this.message.id;
 				this.$(chain).remove();
@@ -58,12 +74,17 @@ App = (function($){
 			if(!this.commentLoaded){
 				this.loadComment();
 			}
-			$("#input_comment"+this.message.id).html("<textarea class='comment-input' id='comment-input"+this.message.id+"' style='width:540px; margin-bottom:10px;'></textarea><a style='cursor:pointer;' class='cancelButton'>Cancel</a>  <a class='button share-comment' href='javascript:void(0)' >Comment</a>");
+			var template = $("#input_comment-template").html();
+			var view = {commentInputId: "comment-input"+this.message.id};
+			var html = Mustache.to_html(template,view);
+
+			$("#input_comment"+this.message.id).html(html);
 			$("#comment-input"+this.message.id).focus();
 			
 		},
 		hideInputComment: function(){
-			$("#input_comment"+this.message.id).html("<input type='text' value='Comment this message here...' class='input-comment-field-dis' style='width:100%;' />");
+			var html = $("#comment-here-template").html();
+			$("#input_comment"+this.message.id).html(html);
 		},
 		loadComment: function(){
 			var parent = this;
@@ -91,11 +112,15 @@ App = (function($){
 			else{
 				$("#comments-" + parent.message.id).slideDown(1000);
 			}
-			$("#other_comment" + parent.message.id).html("<span style='cursor:pointer;color:grey;' class='hidecomment'>Hide the comment(s)<span/>");
+			var html = $("#hide-comments-template").html();
+			$("#other_comment" + parent.message.id).html(html);
 		},
 		hideComment: function(){
 			$("#comments-" + this.message.id).slideUp(1000);
-			$("#other_comment" + this.message.id).html("<span style='cursor:pointer;color:grey;' class='loadcomment'>View the "+this.message.nbComments+" comment(s)<span/>");
+			var template = $("#view-comments-template").html();
+			var view = {comments: this.message.nbComments};
+			var html = Mustache.to_html(template, view);
+			$("#other_comment" + this.message.id).html(html);
 			parent.commentLoaded = false;
 		},
 		showButtons: function(){
@@ -114,7 +139,9 @@ App = (function($){
 			var parent = this
 			if ($("#comment-input"+this.message.id).val()=="")
 			{
-				alert("You can't send an empty message!");
+				var html = $("#alert-empty-message-template").html();
+				alert(html);
+
 				$("#comment-input"+this.message.id).val("");
 	    		$("#comment-input"+this.message.id).prop('disabled', false);
 			}
@@ -146,7 +173,8 @@ App = (function($){
 			if (this.message.deletion == "false"){
 				alert("You can't delete this message.");
 			} else {
-				var answer = confirm("Do yo really want to delete this message ?");
+				var html = $("#confirm-deletion-template").html();
+				var answer = confirm(html);
 				if (answer){
 					$.ajax({
 						type:"POST",
@@ -177,9 +205,27 @@ App = (function($){
 			this.comment = comment
 		},
 		render:function(){			
+			
+			var dateTemplate;
+			var dateView;
+			var localisedDate;
+			if (this.comment.timeToDisplay != "seconds" &&
+					this.comment.timeToDisplay != "minutes" &&
+					this.comment.timeToDisplay != "hours" &&
+					this.comment.timeToDisplay != "days"){
+				localisedDate = this.comment.timeToDisplay;
+			} else {
+				console.log(this.comment.timeToDisplay);
+				dateTemplate = $("#date-"+this.comment.timeToDisplay+"-template").html();
+				console.log(dateTemplate);
+
+				dateView = {value: this.comment.timeValue}
+				localisedDate = Mustache.to_html(dateTemplate, dateView);
+				console.log(localisedDate);
+			}
 			var template = $("#comment-template").html();
 			
-			var view = {id: this.comment.id, commentPicture: "/img/picture.png", comment : this.comment.message, author: this.comment.author, date: this.comment.timeToDisplay};
+			var view = {id: this.comment.id, commentPicture: "/img/picture.png", comment : this.comment.message, author: this.comment.author, date: localisedDate};
 			var html = Mustache.to_html(template, view);
 			$(this.el).html(html);
 			
@@ -207,7 +253,8 @@ App = (function($){
 			if (this.comment.deletion == "false"){
 				alert("You can't delete this comment.");
 			} else {
-				var answer = confirm("Do yo really want to delete this comment?");
+				var html = $("#confirm-deletion-comment-template").html();
+				var answer = confirm(html);
 				if (answer){
 					$.ajax({
 						type:"POST",
@@ -234,7 +281,7 @@ App = (function($){
 			"click .share-message" : "send"
 		},
 		initialize:function(){
-			var parent = this
+			var parent = this;
 			$.ajax({
 				type: 'GET',
 				url:'/streams/current/nb',
@@ -271,7 +318,9 @@ App = (function($){
 			var parent = this
 			if ($("#message-input").val()=="")
 			{
-				alert("You can't send an empty message!");
+				var html = $("#alert-empty-message-template").html();
+				
+				alert(html);
 				$("#message-input").val("");
 	    		$("#message-input").prop('disabled', false);
 			}
@@ -344,8 +393,7 @@ App = (function($){
 						else{
 							option = '<option value="' + data.streamDTO.id + '">'+ data.streamDTO.title +'</option>' ;
 						}
-						$("#combo").append('<select name="stream-choice" id="combobox">' + option + '</select>');
-						$("#combo").append('<a id="share-message"  class="button share-message" href="javascript:void(0)" >Share</a>');
+						$("#combo").prepend('<select name="stream-choice" id="combobox">' + option + '</select>');
 					}
 				}
 			});

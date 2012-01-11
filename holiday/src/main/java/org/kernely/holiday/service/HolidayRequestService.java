@@ -166,7 +166,7 @@ public class HolidayRequestService extends AbstractService{
 		try{
 			List<HolidayRequest> requests = (List<HolidayRequest>) query.getResultList();
 			List<HolidayRequestDTO> requestsDTO = new ArrayList<HolidayRequestDTO>();
-			for(HolidayRequest r : requests){
+			for(HolidayRequest r : requests){				
 				requestsDTO.add(new HolidayRequestDTO(r));
 			}
 
@@ -263,6 +263,35 @@ public class HolidayRequestService extends AbstractService{
 		request.setStatus(HolidayRequest.DENIED_STATUS);
 		em.get().merge(request);
 		log.debug("Holiday request with id {} has been denied", idRequest);
+	}
+	
+	/**
+	 * Cancel a waiting request
+	 * @param idRequest
+	 */
+	@Transactional 
+	public void cancelRequest(int idRequest){
+		log.debug("CANCEL : Retrieving holiday request with id {}", idRequest);
+		HolidayRequest request = em.get().find(HolidayRequest.class, idRequest);
+		Set<HolidayRequestDetail> holidayRequestDetails = request.getDetails();
+		for (HolidayRequestDetail hrd : holidayRequestDetails){
+			em.get().remove(hrd);
+		}
+		em.get().remove(request);
+		log.debug("Holiday request with id {} has been canceled", idRequest);
+	}
+	
+	/**
+	 * Add a manager commentary to the request 
+	 * @param idRequest The request to comment
+	 * @param managerComment the comment of the manager
+	 */
+	@Transactional
+	public void addManagerComentary(int idRequest, String managerComment){
+		HolidayRequest request = em.get().find(HolidayRequest.class, idRequest);
+		request.setManagerComment(managerComment);
+		em.get().merge(request);
+		log.debug("Holiday request with id {} has been commented", idRequest);
 	}
 	
 	/**

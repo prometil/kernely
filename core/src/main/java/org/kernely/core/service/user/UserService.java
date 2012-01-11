@@ -484,4 +484,21 @@ public class UserService extends AbstractService {
 		return collection;
 	}
 
+	/**
+	 * Verify if the user is a manager 
+	 * @param user String username
+	 * @return true if the user is a manager
+	 */
+	@Transactional
+	public boolean isManager(String user){
+		Set<String> allManagerUsername = new HashSet<String>();
+		for (ManagerDTO manager : this.getAllManager()){
+			allManagerUsername.add(manager.name);
+		}
+		if (allManagerUsername.contains(user)){
+			return true;
+		}
+		return false; 
+	}
+	
 }

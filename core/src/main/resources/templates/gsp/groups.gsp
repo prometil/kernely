@@ -1,4 +1,4 @@
-This is the groups page.
+<%= i18n.t("groups_page_text") %>
 <br/>
 <div id="users">
 

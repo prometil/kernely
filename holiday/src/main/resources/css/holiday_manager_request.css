@@ -1,0 +1,46 @@
+/* Common */
+#mask{
+	position:absolute;
+	z-index:9000;
+	background-color:#000;
+	display:none;
+	top:0;
+	left:0;
+}
+
+#modal_window_holiday_request{
+	position:absolute;
+	width:440px;
+	height:300px;
+	display:none;
+	z-index:9999;
+	padding:20px;
+	top:0;
+	left:0;
+}
+
+#main_title{
+	text-align:center;
+	font-size:16px;
+	font-weight:bold;
+}
+
+#holiday_notifications{
+	text-align:center;
+	display:none;
+	color:green;
+}
+
+.closeModal{
+	right:0;
+}
+
+#manager_pending_request_table{
+	cursor:pointer;
+	width:100%
+}
+
+#manager_request_table{
+	cursor:pointer;
+	width:100%
+}

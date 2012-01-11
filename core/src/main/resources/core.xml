@@ -31,7 +31,7 @@
 	</server>
 	<locale>
 		<lang>en</lang>
-		<coubtry>EN</coubtry>
+		<country>US</country>
 	</locale>
 	<workpath>
 		<url>../workstation</url>

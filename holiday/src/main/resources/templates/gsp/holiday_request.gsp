@@ -1,7 +1,7 @@
 <script type="text/javascript" src="/js/holiday_request.js"></script>
 
 <script type="text/html" id="balance-cell-template">
-		<span style="font-weight:bold;">{{name}}</span><br/>
+		<span id="balance-cell-name">{{name}}</span><br/>
 		Available : <span class="available-cpt">{{available}}</span>
 </script>
 
@@ -12,7 +12,7 @@
 		<input id="submitPeriod" type="button" value="Generate"/>
 	</div>
 	<div id="calendarRequest">
-		<div style="height:50px;">
+		<div id="requester-comment-div">
 			<textarea id="requester-comment"></textarea>
 			<input type="button" id="validate-holidays" value="Submit"/>
 		</div>

@@ -310,27 +310,18 @@ public class HolidayBalanceService extends AbstractService {
 
 			if (today.withZone(DateTimeZone.UTC).toDateMidnight().isEqual(beginTime.withZone(DateTimeZone.UTC).plusHours(1).toDateMidnight())){
 
-				log.debug("JE PASSE");
-				
 				// Calculate the amount of days of this request
 				for (HolidayDetailDTO detail : request.details){
-					log.debug("ET DE UN !");
 
 					if(!days.containsKey(detail.type)){
-						log.debug("NOUVEAU TYPE : "+detail.type);
-
 						days.put(detail.type, 0F);
 						balances.put(detail.type, detail.balanceId);
 					}
 					
 					if (detail.am){
-						log.debug("PAS UN LEVE TOT ");
-
 						days.put(detail.type, Float.valueOf(days.get(detail.type) + HALF_DAY));
 					}
 					if (detail.pm){
-						log.debug("COUCHE TARD");
-
 						days.put(detail.type, Float.valueOf(days.get(detail.type) + HALF_DAY));
 					}
 				}

@@ -48,6 +48,7 @@ public class I18n {
 		List<String> names = new ArrayList<String>();
 		names.add("core");
 		names.add("stream");
+		names.add("holiday");
 		messages = new Messages(pLocale, names);
 		locale = pLocale;
 	}

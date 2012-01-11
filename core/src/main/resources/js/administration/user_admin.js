@@ -57,12 +57,17 @@
                                 }
                         }
                         lineSelected = this;
+                        
+                        // Update text of the lock button
+                        
+                        var template = null;
                         if(this.vlocked == "true"){
-                                $(".lockButton").val('Unlock');
+                        	template = $("#unlock-button-template").html();;
                         }
                         else{
-                                $(".lockButton").val('Lock');
+                    		template = $("#lock-button-template").html();;
                         }
+                        $(".lockButton").val(template);
                 },
                 overLine : function(){
                         if(lineSelected != this){
@@ -100,7 +105,10 @@
 		},
 		initialize:function(){
 			var parent = this;
-			$(this.el).html("<tr><th></th><th>Name</th><th>First name</th><th>Login</th><th>Mail</th></tr>");
+			
+			var tableHeader = $("#table-header-template").html();
+			
+			$(this.el).html(tableHeader);
 			$.ajax({
 				type:"GET",
 				url:"/admin/users/all",
@@ -187,12 +195,17 @@
 		},
 		
 		lockuser: function(){
-			var answer = confirm(lineSelected.vlastname + " " + lineSelected.vfirstname + " (" + lineSelected.vlogin + ") will be disabled. Do you want to continue ?");
+			var template = $("#user-change-state-confirm-template").html();
+			var view = {name : lineSelected.vlastname, firstname : lineSelected.vfirstname, username : lineSelected.vlogin};
+			var html = Mustache.to_html(template, view);
+			
+			var answer = confirm(html);
 			if (answer){
 				$.ajax({
 					url:"/admin/users/lock/" + lineSelected.vid,
 					success: function(){
-						$("#users_notifications").text("Operation completed successfully !");
+						var successHtml = $("#success-message-template").html();
+						$("#users_notifications").text(successHtml);
 						$("#users_notifications").fadeIn(1000);
 						$("#users_notifications").fadeOut(3000);
 						tableView.reload();
@@ -244,7 +257,9 @@
 				  if (data.result == "ok"){
 					$('#modal_window_user').hide();
 	       			$('#mask').hide();
-					$("#users_notifications").text("Operation completed successfully !");
+
+	       			var successHtml = $("#success-message-template").html();
+					$("#users_notifications").text(successHtml);
 					$("#users_notifications").fadeIn(1000);
 					$("#users_notifications").fadeOut(3000);
 					tableView.reload();
@@ -333,7 +348,9 @@
 					if (data.result == "ok"){
 						$('#modal_window_user').hide();
 						$('#mask').hide();
-						$("#users_notifications").text("Operation completed successfully !");
+
+						var successHtml = $("#success-message-template").html();
+						$("#users_notifications").text(successHtml);
 						$("#users_notifications").fadeIn(1000);
 						$("#users_notifications").fadeOut(3000);
 						tableView.reload();

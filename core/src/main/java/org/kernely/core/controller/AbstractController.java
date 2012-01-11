@@ -58,6 +58,7 @@ public abstract class AbstractController {
 	 * @return the response
 	 */
 	public Response ok(KernelyTemplate template){
-		return Response.ok(template.render()).build();
+		String render = template.render();
+		return Response.ok(render).build();
 	}
 }

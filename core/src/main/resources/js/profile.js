@@ -82,7 +82,7 @@ AppProfile= (function($){
 
 		
 		render:function(){
-			var template = $("#profile").html();
+			var template = $("#profile-"+this.vinput+"-template").html();
 			var view = {input : this.vinput, data : this.vuser};
 			var html = Mustache.to_html(template, view);
 			$(this.el).html(html);
@@ -183,6 +183,7 @@ AppProfile= (function($){
 				}
 			});
 			$("#button_"+this.vinput).html("<img class='button edit_button' src='/images/icons/edit.png' style='margin-left : 15px;'/>");
+			
 			$("#profile_"+this.vinput).html($("#edit_"+this.vinput+"_field").text());
 			$("#profile_"+this.vinput).addClass("span_profile");
 						
