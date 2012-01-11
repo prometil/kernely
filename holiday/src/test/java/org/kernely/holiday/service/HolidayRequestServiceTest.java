@@ -196,6 +196,34 @@ public class HolidayRequestServiceTest extends AbstractServiceTest{
 	}
 	
 	@Test
+	public void commentManagerRequestTest(){
+		HolidayDTO hdto = this.createHolidayTypeForTest();
+
+		UserDTO udto = this.createUserForTest();
+		authenticateAs(USERNAME);
+
+		holidayBalanceService.createHolidayBalance(udto.id, hdto.id);
+
+		HolidayDetailCreationRequestDTO detailDTO1 = new HolidayDetailCreationRequestDTO();
+		detailDTO1.day = DATE1;
+		detailDTO1.typeId = hdto.id;
+		
+		List<HolidayDetailCreationRequestDTO> list = new ArrayList<HolidayDetailCreationRequestDTO>();
+		list.add(detailDTO1);
+		HolidayRequestCreationRequestDTO request = new HolidayRequestCreationRequestDTO();
+		request.details = list;
+		request.requesterComment = R_COMMENT;
+
+		holidayRequestService.registerRequestAndDetails(request);
+
+		List<HolidayRequestDTO> dtos = holidayRequestService.getAllRequestsWithStatus(HolidayRequest.PENDING_STATUS);
+		holidayRequestService.addManagerComentary(dtos.get(0).id, "managerComment");
+		
+		dtos = holidayRequestService.getAllRequestsWithStatus(HolidayRequest.PENDING_STATUS);
+		assertEquals("managerComment",dtos.get(0).managerComment);
+	}
+	
+	@Test
 	public void denyRequestTest(){
 		HolidayDTO hdto = this.createHolidayTypeForTest();
 

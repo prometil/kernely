@@ -136,3 +136,11 @@ height:43px;
 .separation-part{
 	height:20px;
 }
+
+#balance-cell-name{
+	font-weight:bold;
+}
+
+#requester-comment-div{
+	height:50px;
+}

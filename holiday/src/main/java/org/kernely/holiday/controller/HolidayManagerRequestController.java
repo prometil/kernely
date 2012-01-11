@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -41,7 +42,7 @@ public class HolidayManagerRequestController extends AbstractController {
 	@GET
 	@Produces( { MediaType.TEXT_HTML })
 	public Response getHolidayRequestPage(){
-		return ok(templateRenderer.create("/templates/gsp/holiday_manager_request.gsp"));
+		return ok(templateRenderer.create("/templates/gsp/holiday_manager_request.gsp").addCss("/css/holiday_manager_request.css"));
 	}
 	
 	/**
@@ -75,6 +76,55 @@ public class HolidayManagerRequestController extends AbstractController {
 			lhr.addAll(holidayRequestService.getAllRequestsWithStatus(HolidayRequest.ACCEPTED_STATUS));
 			lhr.addAll(holidayRequestService.getAllRequestsWithStatus(HolidayRequest.DENIED_STATUS));
 			return lhr; 
+		}
+		return null;
+	}
+	
+	/**
+	 * Accept a request
+	 * @param idRequest
+	 * @return ok
+	 */
+	@GET
+	@Path("/accept/{id}")
+	@Produces({MediaType.TEXT_HTML})
+	public String acceptHoliday(@PathParam("id")int idRequest){
+		if (userService.isManager(userService.getAuthenticatedUserDTO().username)){
+			holidayRequestService.acceptRequest(idRequest);
+			return "{\"result\":\"Ok\"}"; 			
+		}
+		return null;
+	}
+	
+	/**
+	 * deny a request
+	 * @param idRequest
+	 * @return ok
+	 */
+	@GET
+	@Path("/deny/{id}")
+	@Produces({MediaType.TEXT_HTML})
+	public String denyHoliday(@PathParam("id")int idRequest){
+		if (userService.isManager(userService.getAuthenticatedUserDTO().username)){
+			holidayRequestService.denyRequest(idRequest);
+			return "{\"result\":\"Ok\"}"; 			
+		}
+		return null;
+	}
+	
+	/**
+	 * comment a request
+	 * @param idRequest
+	 * @param the comment of the manager
+	 * @return ok
+	 */
+	@GET
+	@Path("/comment/{id}/{comment}")
+	@Produces({MediaType.TEXT_HTML})
+	public String managerCommentHoliday(@PathParam("id")int idRequest, @PathParam("comment")String managerComment){
+		if (userService.isManager(userService.getAuthenticatedUserDTO().username)){
+			holidayRequestService.addManagerComentary(idRequest, managerComment);
+			return "{\"result\":\"Ok\"}"; 			
 		}
 		return null;
 	}

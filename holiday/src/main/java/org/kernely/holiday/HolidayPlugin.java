@@ -24,6 +24,7 @@ import org.kernely.core.plugin.AbstractPlugin;
 import org.kernely.holiday.controller.HolidayAdminController;
 import org.kernely.holiday.controller.HolidayManagerRequestController;
 import org.kernely.holiday.controller.HolidayRequestController;
+import org.kernely.holiday.controller.HolidayUserViewController;
 import org.kernely.holiday.job.HolidaysJob;
 import org.kernely.holiday.migrations.Migration01;
 import org.kernely.holiday.model.HolidayBalance;
@@ -55,6 +56,7 @@ public class HolidayPlugin extends AbstractPlugin {
 		registerController(HolidayAdminController.class);
 		registerController(HolidayRequestController.class);
 		registerController(HolidayManagerRequestController.class);
+		registerController(HolidayUserViewController.class);
 		registerModel(HolidayType.class);
 		registerModel(HolidayBalance.class);
 		registerModel(HolidayRequest.class);

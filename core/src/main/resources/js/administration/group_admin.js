@@ -17,6 +17,7 @@
  * License along with Kernely.
  * If not, see <http://www.gnu.org/licenses/>.
  */
+
 AppGroupAdmin = (function($){
 	var lineSelected = null;
 	var tableView = null;
@@ -79,6 +80,7 @@ AppGroupAdmin = (function($){
 		events:{
 		
 		},
+		
 		initialize:function(){
 			var parent = this;
 			var html= $("#table-header-template").html();
