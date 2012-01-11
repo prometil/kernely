@@ -266,6 +266,48 @@ public class HolidayRequestServiceTest extends AbstractServiceTest{
 	}
 	
 	@Test
+	public void cancelRequestTest(){
+		HolidayDTO hdto = this.createHolidayTypeForTest();
+
+		UserDTO udto = this.createUserForTest();
+		authenticateAs(USERNAME);
+
+		holidayBalanceService.createHolidayBalance(udto.id, hdto.id);
+
+		HolidayDetailCreationRequestDTO detailDTO1 = new HolidayDetailCreationRequestDTO();
+		HolidayDetailCreationRequestDTO detailDTO2 = new HolidayDetailCreationRequestDTO();
+		HolidayDetailCreationRequestDTO detailDTO3 = new HolidayDetailCreationRequestDTO();
+		detailDTO1.day = DATE1;
+		detailDTO2.day = DATE2;
+		detailDTO3.day = DATE3;
+
+		detailDTO1.typeId = hdto.id;
+		detailDTO2.typeId = hdto.id;
+		detailDTO3.typeId = hdto.id;
+
+		List<HolidayDetailCreationRequestDTO> list = new ArrayList<HolidayDetailCreationRequestDTO>();
+		list.add(detailDTO1);
+		list.add(detailDTO2);
+		list.add(detailDTO3);
+
+		HolidayRequestCreationRequestDTO request = new HolidayRequestCreationRequestDTO();
+		request.details = list;
+		request.requesterComment = R_COMMENT;
+
+		holidayRequestService.registerRequestAndDetails(request);
+
+		List<HolidayRequestDTO> dtos = holidayRequestService.getAllRequestsWithStatus(HolidayRequest.PENDING_STATUS);
+		assertEquals(1, dtos.size());
+		
+		holidayRequestService.cancelRequest(dtos.get(0).id);
+		dtos = holidayRequestService.getAllRequestsWithStatus(HolidayRequest.PENDING_STATUS);
+		dtos.addAll(holidayRequestService.getAllRequestsWithStatus(HolidayRequest.DENIED_STATUS));
+		dtos.addAll(holidayRequestService.getAllRequestsWithStatus(HolidayRequest.ACCEPTED_STATUS));
+		assertEquals(0, dtos.size());
+		
+	}
+	
+	@Test
 	public void getCalendarIntervalTest(){
 		this.createUserForTest();
 		authenticateAs(USERNAME);

@@ -17,6 +17,7 @@ AppHolidayUserRequest = (function($){
 		render:function(){
 			tableView1 = new HolidayUserRequestPendingTableView();
 			tableView2 = new HolidayUserRequestTableView();
+			buttonView = new HolidayUserButtonsView();
 		}
 	})
 	
@@ -43,6 +44,7 @@ AppHolidayUserRequest = (function($){
 		},
 		
 		selectLine : function(){
+			$("#button_canceled").removeAttr('disabled');
 			$(this.el).css("background-color", "#8AA5A1");
 			if(typeof(lineSelected) != "undefined"){
 				if(lineSelected != this && lineSelected != null){
@@ -214,6 +216,61 @@ AppHolidayUserRequest = (function($){
 		render: function(){
 			return this;
 		}
+	})
+	
+	HolidayUserButtonsView = Backbone.View.extend({
+		el:"#holiday_button_container",		
+		
+		viewCancel : null,
+		vid: null,
+		vrequesterComment : null,
+		vbegin : null,
+		vend : null,
+		
+		
+		initialize:function(id, beginDate, endDate, requesterComment){
+			this.vid=id;
+			this.vbegin=beginDate;
+			this.vend=endDate;
+			this.vrequesterComment=requesterComment;
+		},
+		
+		events: {
+			"click #button_canceled" : "canceled",
+		},
+		
+		setFields:function(id, beginDate, endDate,requesterComment){
+			this.vid=id;
+			this.vbegin=beginDate;
+			this.vend=endDate;
+			this.vrequesterComment=requesterComment;
+		},
+		
+	
+		render:function(){
+			
+		},
+		
+		canceled:function(){
+			var template = $("#cancel-ask-template").html();
+			var view = {};
+			var html = Mustache.to_html(template, view);
+			
+			var answer = confirm(html);
+			if (answer){
+				$.ajax({
+					url:"/holiday/users/request/cancel/" + lineSelected.vid,
+					success: function(){
+						var successHtml = $("#holiday-canceled-template").html();	
+						$("#holiday_notifications").text(successHtml);
+						$("#holiday_notifications").fadeIn(1000);
+						$("#holiday_notifications").fadeOut(3000);
+						tableView1.reload();
+					}
+				});
+			}	
+		}
+		
 	})
 	
 	var self = {};

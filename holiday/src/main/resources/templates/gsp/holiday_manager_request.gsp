@@ -3,7 +3,7 @@
 
 <div id="mask"></div>
 
-<div id="modal_window_holiday_request"">
+<div id="modal_window_holiday_request">
 </div>
 
  <script type="text/html" id="status-denied-template">

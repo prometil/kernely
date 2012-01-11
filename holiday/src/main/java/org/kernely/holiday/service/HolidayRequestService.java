@@ -235,6 +235,22 @@ public class HolidayRequestService extends AbstractService{
 	}
 	
 	/**
+	 * Cancel a waiting request
+	 * @param idRequest
+	 */
+	@Transactional 
+	public void cancelRequest(int idRequest){
+		log.debug("CANCEL : Retrieving holiday request with id {}", idRequest);
+		HolidayRequest request = em.get().find(HolidayRequest.class, idRequest);
+		Set<HolidayRequestDetail> holidayRequestDetails = request.getDetails();
+		for (HolidayRequestDetail hrd : holidayRequestDetails){
+			em.get().remove(hrd);
+		}
+		em.get().remove(request);
+		log.debug("Holiday request with id {} has been canceled", idRequest);
+	}
+	
+	/**
 	 * Add a manager commentary to the request 
 	 * @param idRequest The request to comment
 	 * @param managerComment the comment of the manager

@@ -96,8 +96,9 @@ public class TemplateRenderer {
 
 	/**
 	 * The template handler
+	 * 
 	 * @author b.grandperret
-	 *
+	 * 
 	 */
 	public class KernelyTemplate {
 
@@ -121,7 +122,7 @@ public class TemplateRenderer {
 		private SimpleTemplateEngine engine;
 
 		/**
-		 *  
+		 * 
 		 * @param pTemplate
 		 * @param pEngine
 		 */
@@ -217,7 +218,7 @@ public class TemplateRenderer {
 		 * TemplateRenderer constant. Note that the layout must have a template
 		 * variable called "extension", where the page will be included.
 		 * 
-		 * @return The html content.
+		 * @return The htmlbinding.put("content", body); content.
 		 */
 		public String render() {
 			URL kernelyLayout = TemplateRenderer.class.getResource("/templates/gsp/layout.gsp");
@@ -229,7 +230,7 @@ public class TemplateRenderer {
 				binding.put("content", body);
 				try {
 					if (otherLayout != null) {
-						return create(otherLayout).with("extension", body).render();
+						return create(otherLayout).with(binding).with("extension", body).render();
 					}
 					return engine.createTemplate(kernelyLayout).make(binding).toString();
 				} catch (CompilationFailedException e) {
@@ -268,15 +269,16 @@ public class TemplateRenderer {
 				binding.put("admin", "");
 			}
 			Subject subject = SecurityUtils.getSubject();
-			if(subject.getPrincipal() != null){
-				
+			if (subject.getPrincipal() != null) {
+
 				binding.put("currentUser", subject.getPrincipal().toString());
 			}
-			binding.put("css", cssFiles);
+			if (!binding.containsKey("css")) {
+				binding.put("css", cssFiles);
+			}
 			String lang = configuration.getString("locale.lang");
 			String country = configuration.getString("locale.country");
 			binding.put("i18n", new I18n(new Locale(lang,country)));
-
 			return binding;
 		}
 	}
