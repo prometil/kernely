@@ -31,7 +31,6 @@ public class HolidayMainController extends AbstractController {
 	@Produces( { MediaType.TEXT_HTML })
 	public Response getHolidayRequestPage(){
 		String isManager = "";
-		System.out.println(userService.isManager(userService.getAuthenticatedUserDTO().username));
 		if (userService.isManager(userService.getAuthenticatedUserDTO().username)){
 			isManager = "manager";
 		}
