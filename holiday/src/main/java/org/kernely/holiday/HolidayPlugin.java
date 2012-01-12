@@ -22,6 +22,7 @@ package org.kernely.holiday;
 
 import org.kernely.core.plugin.AbstractPlugin;
 import org.kernely.holiday.controller.HolidayAdminController;
+import org.kernely.holiday.controller.HolidayMainController;
 import org.kernely.holiday.controller.HolidayManagerRequestController;
 import org.kernely.holiday.controller.HolidayManagerUserController;
 import org.kernely.holiday.controller.HolidayRequestController;
@@ -55,6 +56,7 @@ public class HolidayPlugin extends AbstractPlugin {
 	@SuppressWarnings({ "unchecked" })
 	public HolidayPlugin(){
 		super("Holiday", "/holiday");
+		registerController(HolidayMainController.class);
 		registerController(HolidayAdminController.class);
 		registerController(HolidayRequestController.class);
 		registerController(HolidayManagerUserController.class);

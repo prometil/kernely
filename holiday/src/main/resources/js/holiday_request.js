@@ -34,6 +34,9 @@ AppHolidayRequest = (function($){
 				dates.not( this ).datepicker( "option", option, date );
 			}
 			});
+			var lang = $("#locale-lang").html();
+			var country = $("#locale-country").html();
+			$.datepicker.setDefaults($.datepicker.regional[lang+"-"+country]);
 		},
 		render: function(){
 			return this;

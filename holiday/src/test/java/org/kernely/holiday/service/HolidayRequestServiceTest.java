@@ -215,7 +215,7 @@ public class HolidayRequestServiceTest extends AbstractServiceTest{
 		holidayRequestService.registerRequestAndDetails(request);
 
 		List<HolidayRequestDTO> dtos = holidayRequestService.getAllRequestsWithStatus(HolidayRequest.PENDING_STATUS);
-		holidayRequestService.addManagerComentary(dtos.get(0).id, "managerComment");
+		holidayRequestService.addManagerCommentary(dtos.get(0).id, "managerComment");
 		
 		dtos = holidayRequestService.getAllRequestsWithStatus(HolidayRequest.PENDING_STATUS);
 		assertEquals("managerComment",dtos.get(0).managerComment);

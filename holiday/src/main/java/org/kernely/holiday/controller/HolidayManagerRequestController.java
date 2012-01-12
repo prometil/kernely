@@ -56,7 +56,7 @@ public class HolidayManagerRequestController extends AbstractController {
 	{
 		if (userService.isManager(userService.getAuthenticatedUserDTO().username)){
 			log.debug("Call to GET on all holiday request pending");
-			return holidayRequestService.getAllRequestsWithStatus(HolidayRequest.PENDING_STATUS);
+			return holidayRequestService.getSpecificRequestsForManagers(HolidayRequest.PENDING_STATUS);
 		}
 		return null;
 	}
@@ -73,8 +73,8 @@ public class HolidayManagerRequestController extends AbstractController {
 		if (userService.isManager(userService.getAuthenticatedUserDTO().username)){
 			log.debug("Call to GET on all holiday request accepted or denied");
 			List<HolidayRequestDTO> lhr = new ArrayList<HolidayRequestDTO>();
-			lhr.addAll(holidayRequestService.getAllRequestsWithStatus(HolidayRequest.ACCEPTED_STATUS));
-			lhr.addAll(holidayRequestService.getAllRequestsWithStatus(HolidayRequest.DENIED_STATUS));
+			lhr.addAll(holidayRequestService.getSpecificRequestsForManagers(HolidayRequest.ACCEPTED_STATUS));
+			lhr.addAll(holidayRequestService.getSpecificRequestsForManagers(HolidayRequest.DENIED_STATUS));
 			return lhr; 
 		}
 		return null;
@@ -123,7 +123,7 @@ public class HolidayManagerRequestController extends AbstractController {
 	@Produces({MediaType.TEXT_HTML})
 	public String managerCommentHoliday(@PathParam("id")int idRequest, @PathParam("comment")String managerComment){
 		if (userService.isManager(userService.getAuthenticatedUserDTO().username)){
-			holidayRequestService.addManagerComentary(idRequest, managerComment);
+			holidayRequestService.addManagerCommentary(idRequest, managerComment);
 			return "{\"result\":\"Ok\"}"; 			
 		}
 		return null;
