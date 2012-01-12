@@ -57,8 +57,9 @@ AppHolidayManagerUsers = (function($){
 		},
 		render: function(){
 			var template = $("#calendarSelector").html();
-			var template2 = $("#"+ monthSelected+1 +"-month-template").html();
-			var view = {month : template2};
+			var monthTemp = monthSelected+1;
+			var template2 = $("#"+ monthTemp +"-month-template").html();
+			var view = {month : template2, year: yearSelected};
 			var html = Mustache.to_html(template, view);
 			$(this.el).html(html);
 			return this;
@@ -71,9 +72,8 @@ AppHolidayManagerUsers = (function($){
 				yearSelected ++;
 			}
 			var template = $("#"+ monthSelected +"-month-template").html();
-			$("#month_current").text(template);
+			$("#month_current").text(template + " " + yearSelected);
 			mainView.reloadTable();
-			
 		},
 		minusMonth: function(){
 			monthSelected --;
@@ -83,7 +83,7 @@ AppHolidayManagerUsers = (function($){
 				yearSelected --;
 			}
 			var template = $("#"+ monthSelected +"-month-template").html();
-			$("#month_current").text(template);
+			$("#month_current").text(template + " " + yearSelected);
 			mainView.reloadTable();
 		}
 	})

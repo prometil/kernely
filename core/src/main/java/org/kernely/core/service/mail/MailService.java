@@ -72,9 +72,7 @@ public class MailService extends AbstractService implements Mailer {
 	}
 
 	/**
-	 * 
-	 * @author g.breton
-	 * 
+	 * Build a model of a mail 
 	 */
 	public class JavaMailBuilder implements MailBuilder {
 
@@ -99,41 +97,80 @@ public class MailService extends AbstractService implements Mailer {
 			builder = pBuilder;
 		}
 
+		/**
+		 * Set the subject of the mail
+		 * @param pSubject The subject of the mail
+		 * @return The mail builder
+		 */
 		public MailBuilder subject(String pSubject) {
 			subject = pSubject;
 			return this;
 		}
 
+		/**
+		 * Set the recipients of the mail
+		 * @param addresses The addresses of the recipients of this mail
+		 * @return The mail builder
+		 */
 		public MailBuilder to(String addresses) {
 			recipients.add(addresses);
 			return this;
 		}
 		
+		/**
+		 * Set the recipients of the mail
+		 * @param addresses A list of all recipients' addresses
+		 * @return The mail builder
+		 */
 		public MailBuilder to(List<String> addresses){
 			//recipients.addAll(addresses);
 			return this;
 		}
 
+		/**
+		 * Set the CC of the mail
+		 * @param addresses Recipients' addresses to put in copy of this mail
+		 * @return The mail builder
+		 */
 		public MailBuilder cc(String addresses) {
 			ccs.add(addresses);
 			return this;
 		}
 		
+		/**
+		 * Set the CC of the mail
+		 * @param addresses List of recipients' addresses to put in copy of this mail
+		 * @return The mail builder
+		 */
 		public MailBuilder cc(List<String> addresses) {
 			ccs.addAll(addresses);
 			return this;
 		}
 
+		/**
+		 * Fill the content of the mail
+		 * @param content Map containing association key - value for the content of the mail
+		 * @return The mail builder
+		 */
 		public MailBuilder with(Map<String, Object> content) {
 			builder.with(content);
 			return this;
 		}
 
+		/**
+		 * Fill the content of the mail
+		 * @param content Containing association key - value for the content of the mail
+		 * @return The mail builder
+		 */
 		public MailBuilder with(String key, String value) {
 			builder.with(key, value);
 			return this;
 		}
 		
+		/**
+		 * Save the mail in BDD, waiting to be processed by the batch.
+		 * @return The result of the operation
+		 */
 		@Transactional
 		public boolean registerMail(){
 			String body = builder.withoutLayout().render();
@@ -210,6 +247,10 @@ public class MailService extends AbstractService implements Mailer {
 
 		MimeMessage message = new MimeMessage(session);
 		try {
+			if(mail.getRecipients() == null || mail.getRecipients() == ""){
+				throw new IllegalArgumentException("Recipients are undefined.");
+			}
+			
 			String[] rec = mail.getRecipients().split(",");
 			for (String to : rec) {
 				message.addRecipient(Message.RecipientType.TO, new InternetAddress(to));
@@ -231,6 +272,9 @@ public class MailService extends AbstractService implements Mailer {
 			return true;
 		} catch (MessagingException ex) {
 			log.error("Cannot send mail", ex);
+			return false;
+		} catch (IllegalArgumentException ex){
+			log.error("Impossible to send mails", ex);
 			return false;
 		}
 

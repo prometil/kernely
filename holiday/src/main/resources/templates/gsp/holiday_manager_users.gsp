@@ -6,7 +6,7 @@
 
 <script type="text/html" id="calendarSelector">
 		<img class="minusMonth" src="/images/previous.png"/>
-		<span id="month_current" style="width:100px;">{{month}}</span>
+		<span id="month_current" style="width:100px;">{{month}} {{year}}</span>
 		<img class="plusMonth" src="/images/next.png"/>
 </script>
 

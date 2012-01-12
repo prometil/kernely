@@ -81,8 +81,7 @@ public class HolidayBalanceServiceTest extends AbstractServiceTest {
 		request.quantity = QUANTITY;
 		request.unity = HolidayType.PERIOD_MONTH;
 		request.effectiveMonth = HolidayType.ALL_MONTH;
-		holidayService.createHoliday(request);
-		return holidayService.getAllHoliday().get(0);
+		return holidayService.createHoliday(request);
 	}
 
 	private UserDTO createUserForTest() {
@@ -92,8 +91,7 @@ public class HolidayBalanceServiceTest extends AbstractServiceTest {
 		UserCreationRequestDTO request = new UserCreationRequestDTO();
 		request.username = USERNAME;
 		request.password = TEST_STRING;
-		userService.createUser(request);
-		return userService.getAllUsers().get(0);
+		return userService.createUser(request);
 	}
 
 	@Test (expected=IllegalArgumentException.class)

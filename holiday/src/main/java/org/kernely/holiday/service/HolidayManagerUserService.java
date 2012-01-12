@@ -6,11 +6,11 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
-import javax.persistence.Query;
-
+import org.apache.shiro.authz.UnauthorizedException;
 import org.joda.time.DateTime;
 import org.kernely.core.model.User;
 import org.kernely.core.service.AbstractService;
+import org.kernely.core.service.user.UserService;
 import org.kernely.holiday.dto.CalendarBalanceDetailDTO;
 import org.kernely.holiday.dto.HolidayDetailDTO;
 import org.kernely.holiday.dto.HolidayManagedDetailsDTO;
@@ -29,20 +29,26 @@ import com.google.inject.persist.Transactional;
  */
 @Singleton
 public class HolidayManagerUserService extends AbstractService{
-	
+
 	@Inject
 	private HolidayRequestService holidayRequestService;
-	
-	
+
+	@Inject
+	private UserService userService;
+
+
 	/**
 	 * Retrieves all holidays for all users managed by the current user for the given month
-	 * @param month The number corresponding to the month needed, IE : January = 1, February = 2 ...
+	 * @param month The number corresponding to the month needed, IE : January = 1, February = 2 ..., if 0, this is the current month
+	 * @param year The year needed, if 0, this is the current year.
+	 * @throws UnauthorizedException if the current user is not manager
 	 */
 	@Transactional
 	public HolidayUsersManagerDTO getHolidayForAllManagedUsersForMonth(int month, int year){
-		// =============== Verify Manager !!! ================//
-		
-		
+		if(!userService.isManager(this.getAuthenticatedUserModel().getUsername())){	
+			throw new UnauthorizedException("Only managers can access to this functionality !");
+		}
+
 		int monthNeeded;
 		int yearNeeded;
 		if(month == 0){
@@ -51,28 +57,28 @@ public class HolidayManagerUserService extends AbstractService{
 		else{
 			monthNeeded = month;
 		}
-		
+
 		if(year == 0){
 			yearNeeded = new DateTime().getYear();
 		}
 		else{
 			yearNeeded = year;
 		}
-		
+
 		// Retrieve the first day and the last day of the month
 		DateTime monthDate = new DateTime().withMonthOfYear(monthNeeded).withYear(yearNeeded);
 		DateTime first = monthDate.withDayOfMonth(1);
 		DateTime last = monthDate.withDayOfMonth(monthDate.dayOfMonth().getMaximumValue());
-		
+
 		List<HolidayUserManagedDTO> managedDTO = new ArrayList<HolidayUserManagedDTO>();
 		Set<CalendarBalanceDetailDTO> balancesDTO = new HashSet<CalendarBalanceDetailDTO>();
-		
+
 		Set<User> usersManaged = this.getAuthenticatedUserModel().getUsers();
 
 		List<HolidayDetailDTO> detailsDTO = new ArrayList<HolidayDetailDTO>();
-		
+
 		Set<HolidayManagedDetailsDTO> detailManagedDTO = new TreeSet<HolidayManagedDetailsDTO>();
-		
+
 		for(User u : usersManaged){
 			// Clear all the list for the new user
 			detailsDTO = new ArrayList<HolidayDetailDTO>();
@@ -98,8 +104,9 @@ public class HolidayManagerUserService extends AbstractService{
 		mainDTO.month = monthNeeded;
 		mainDTO.year = yearNeeded;
 		return mainDTO;
+
 	}
-	
+
 	private HolidayType getHolidayTypeFromBalanceId(int id){
 		HolidayBalance balance = em.get().find(HolidayBalance.class, id);
 		return balance.getHolidayType();

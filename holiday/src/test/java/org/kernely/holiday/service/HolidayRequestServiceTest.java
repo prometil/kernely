@@ -62,8 +62,7 @@ public class HolidayRequestServiceTest extends AbstractServiceTest{
 		UserCreationRequestDTO request = new UserCreationRequestDTO();
 		request.username = USERNAME;
 		request.password = USERNAME;
-		userService.createUser(request);
-		return userService.getAllUsers().get(0);
+		return userService.createUser(request);
 	}
 
 
@@ -72,8 +71,7 @@ public class HolidayRequestServiceTest extends AbstractServiceTest{
 		request.type = TEST_STRING;
 		request.quantity = QUANTITY;
 		request.unity = HolidayType.PERIOD_MONTH;
-		holidayService.createHoliday(request);
-		return holidayService.getAllHoliday().get(0);
+		return holidayService.createHoliday(request);
 	}
 
 	@Test

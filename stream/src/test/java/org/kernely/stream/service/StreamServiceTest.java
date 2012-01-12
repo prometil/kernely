@@ -28,6 +28,7 @@ import org.junit.Test;
 import org.kernely.core.common.AbstractServiceTest;
 import org.kernely.core.dto.RoleDTO;
 import org.kernely.core.dto.UserCreationRequestDTO;
+import org.kernely.core.dto.UserDTO;
 import org.kernely.core.dto.UserDetailsUpdateRequestDTO;
 import org.kernely.core.event.UserCreationEvent;
 import org.kernely.core.model.Role;
@@ -86,13 +87,13 @@ public class StreamServiceTest extends AbstractServiceTest {
 		request.password = USERNAME;
 		request.firstname = USERNAME;
 		request.lastname = USERNAME;
-		userService.createUser(request);
+		UserDTO userDTO = userService.createUser(request);
 
 		UserDetailsUpdateRequestDTO request2 = new UserDetailsUpdateRequestDTO();
 		request2.email = "test@test.com";
 		request2.id = userService.getUserDetails(USERNAME).id;
 		userService.updateUserProfile(request2);
-		return userService.getAllUsers().get(0).id;
+		return userDTO.id;
 	}
 
 	private void creationOfSecondTestUser() {
