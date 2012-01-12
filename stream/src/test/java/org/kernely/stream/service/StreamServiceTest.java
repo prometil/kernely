@@ -548,5 +548,4 @@ public class StreamServiceTest extends AbstractServiceTest {
 		permissionService.grantPermission(userId, Stream.RIGHT_WRITE, Stream.STREAM_RESOURCE, streamId);	
 		assertEquals(Long.valueOf(0), streamService.getCurrentNbMessages());
 	}
-	
 }
