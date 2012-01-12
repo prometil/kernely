@@ -266,6 +266,7 @@ AppHolidayUserRequest = (function($){
 						$("#holiday_notifications").fadeIn(1000);
 						$("#holiday_notifications").fadeOut(3000);
 						tableView1.reload();
+						$("#button_canceled").attr('disabled','disabled');
 					}
 				});
 			}	

@@ -343,6 +343,8 @@ AppHolidayManagerRequest = (function($){
 							$("#holiday_notifications").fadeOut(3000);
 							tableView1.reload();
 							tableView2.reload();
+							$("#button_accepted").attr('disabled', 'disabled');
+							$("#button_denied").attr('disabled', 'disabled');
 						}
 					});
 				}
@@ -408,6 +410,8 @@ AppHolidayManagerRequest = (function($){
 							$("#holiday_notifications").fadeOut(3000);
 							tableView1.reload();
 							tableView2.reload();
+							$("#button_accepted").attr('disabled', 'disabled');
+							$("#button_denied").attr('disabled', 'disabled');
 						}
 					});
 				}

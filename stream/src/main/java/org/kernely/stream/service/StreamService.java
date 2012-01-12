@@ -367,6 +367,9 @@ public class StreamService extends AbstractService {
 		int cFlag =flag;
 		if (flag == 0) {
 			Query query = em.get().createQuery("SELECT max(id) FROM Message m");
+			if ((Integer) query.getSingleResult() == null){
+				return null;
+			}
 			cFlag = (Integer) query.getSingleResult();
 			// We add 1 to flag to consider the last id too in the request with
 			// '<'
@@ -447,10 +450,14 @@ public class StreamService extends AbstractService {
 	 */
 	public Long getCurrentNbMessages() {
 		List<Stream> streams = this.getCurrentUserStreamModel();
+		if (streams.get(0)==null){
+			return Long.valueOf(0); 
+		}
 		if (!streams.isEmpty()){
 			Query query = em.get().createQuery("SELECT count(m) FROM Message m  WHERE message is null AND stream in (:streamSet)");
 			query.setParameter("streamSet", streams);
 			return ((Long) query.getSingleResult());
+			
 		}
 		return Long.valueOf(0); 
 	}
