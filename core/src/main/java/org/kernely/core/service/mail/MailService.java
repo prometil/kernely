@@ -283,6 +283,9 @@ public class MailService extends AbstractService implements Mailer {
 	private class Authenticator extends javax.mail.Authenticator {
 		private PasswordAuthentication authentication;
 
+		/**
+		 * Default constructor
+		 */
 		public Authenticator() {
 			authentication = new PasswordAuthentication(configuration.getString("mail.smtp.user"), configuration.getString("mail.smtp.password"));
 		}

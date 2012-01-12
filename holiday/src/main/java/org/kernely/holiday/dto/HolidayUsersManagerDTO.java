@@ -5,6 +5,9 @@ import java.util.Set;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
+/**
+ * DTO containing all informations about managed users and their requests
+ */
 @XmlRootElement
 public class HolidayUsersManagerDTO {
 	/**

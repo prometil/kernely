@@ -13,6 +13,9 @@ import org.kernely.holiday.service.HolidayManagerUserService;
 
 import com.google.inject.Inject;
 
+/**
+ * Controller for the managed users holidays
+ */
 @Path("holiday/manager/users")
 public class HolidayManagerUserController extends AbstractController{
 	@Inject
