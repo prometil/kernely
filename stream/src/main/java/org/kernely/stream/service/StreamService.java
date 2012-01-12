@@ -332,8 +332,14 @@ public class StreamService extends AbstractService {
 		List<PermissionDTO> permissions = permissionService.getTypeOfPermissionForOneUser(current.getId(), "streams");
 		List<Stream> streams = new ArrayList<Stream>();
 		for (PermissionDTO p : permissions) {
-			streams.add(em.get().find(Stream.class, Integer.parseInt(p.resourceId)));
+			if (em.get().find(Stream.class, Integer.parseInt(p.resourceId)) !=null){
+				streams.add(em.get().find(Stream.class, Integer.parseInt(p.resourceId)));
+			}
 		}
+		if (streams.isEmpty()){
+			return null;
+		}
+			
 		return streams;
 	}
 
@@ -450,7 +456,7 @@ public class StreamService extends AbstractService {
 	 */
 	public Long getCurrentNbMessages() {
 		List<Stream> streams = this.getCurrentUserStreamModel();
-		if (streams.get(0)==null){
+		if (streams==null){
 			return Long.valueOf(0); 
 		}
 		if (!streams.isEmpty()){
