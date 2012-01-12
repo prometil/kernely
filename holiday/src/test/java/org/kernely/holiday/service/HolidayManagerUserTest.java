@@ -30,8 +30,8 @@ public class HolidayManagerUserTest extends AbstractServiceTest  {
 	private static final String USERNAME_USER1 = "test_user1";
 	private static final String USERNAME_USER2 = "test_user2";
 	
-	private static final String DATE1_USER1 = "01/01/2012";
-	private static final String DATE2_USER1 = "01/02/2012";
+	private static final String DATE1_USER = "01/01/2012";
+	private static final String DATE2_USER = "01/02/2012";
 	
 	private static final String R_COMMENT = "I want my holidays !";
 	
@@ -94,8 +94,8 @@ public class HolidayManagerUserTest extends AbstractServiceTest  {
 		HolidayDetailCreationRequestDTO detailDTO1 = new HolidayDetailCreationRequestDTO();
 		HolidayDetailCreationRequestDTO detailDTO2 = new HolidayDetailCreationRequestDTO();
 		
-		detailDTO1.day = DATE1_USER1;
-		detailDTO2.day = DATE2_USER1;
+		detailDTO1.day = DATE1_USER;
+		detailDTO2.day = DATE2_USER;
 		
 		detailDTO1.typeId = typeId;
 		detailDTO2.typeId = typeId;

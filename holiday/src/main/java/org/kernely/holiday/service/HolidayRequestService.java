@@ -160,6 +160,32 @@ public class HolidayRequestService extends AbstractService{
 	}
 	
 	/**
+	 * Retrieve all the request with a given status for the current user
+	 * @param status the status of the request needed
+	 * @return A list of DTO corresponding to all request with the given status
+	 */
+	@SuppressWarnings("unchecked")
+	@Transactional
+	public List<HolidayRequestDTO> getAllRequestsWithStatusForCurrentUser(int status){
+		Query query = em.get().createQuery("SELECT  r from HolidayRequest r WHERE  status = :status AND user = :user");
+		query.setParameter("status", status);
+		query.setParameter("user", this.getAuthenticatedUserModel());
+		try{
+			List<HolidayRequest> requests = (List<HolidayRequest>) query.getResultList();
+			List<HolidayRequestDTO> requestsDTO = new ArrayList<HolidayRequestDTO>();
+			for(HolidayRequest r : requests){				
+				requestsDTO.add(new HolidayRequestDTO(r));
+			}
+
+			return requestsDTO;
+		}
+		catch(NoResultException e){
+			log.debug("There is no holiday waiting requests");
+			return null;
+		}
+	}
+	
+	/**
 	 * Retrieve all the request with a given status
 	 * @param status the status of the request needed
 	 * @return A list of DTO corresponding to all request with the given status
@@ -251,6 +277,9 @@ public class HolidayRequestService extends AbstractService{
 	 */
 	@Transactional
 	public void acceptRequest(int idRequest){
+		if(!userService.isManager(this.getAuthenticatedUserModel().getUsername())){	
+			throw new UnauthorizedException("Only managers can access to this functionality !");
+		}
 		log.debug("ACCEPT : Retrieving holiday request with id {}", idRequest);
 		HolidayRequest request = em.get().find(HolidayRequest.class, idRequest);
 		request.setStatus(HolidayRequest.ACCEPTED_STATUS);
@@ -264,6 +293,9 @@ public class HolidayRequestService extends AbstractService{
 	 */
 	@Transactional
 	public void denyRequest(int idRequest){
+		if(!userService.isManager(this.getAuthenticatedUserModel().getUsername())){	
+			throw new UnauthorizedException("Only managers can access to this functionality !");
+		}
 		log.debug("DENY : Retrieving holiday request with id {}", idRequest);
 		HolidayRequest request = em.get().find(HolidayRequest.class, idRequest);
 		request.setStatus(HolidayRequest.DENIED_STATUS);
@@ -294,6 +326,9 @@ public class HolidayRequestService extends AbstractService{
 	 */
 	@Transactional
 	public void addManagerCommentary(int idRequest, String managerComment){
+		if(!userService.isManager(this.getAuthenticatedUserModel().getUsername())){	
+			throw new UnauthorizedException("Only managers can access to this functionality !");
+		}
 		HolidayRequest request = em.get().find(HolidayRequest.class, idRequest);
 		request.setManagerComment(managerComment);
 		em.get().merge(request);

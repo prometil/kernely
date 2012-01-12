@@ -357,6 +357,12 @@ public class HolidayBalanceServiceTest extends AbstractServiceTest {
 		
 		HolidayDTO type = createHolidayTypeForTest();
 		UserDTO user = createUserForTest();
+		
+		List<UserDTO> managed = new ArrayList<UserDTO>();
+		managed.add(user);
+		userService.updateManager(USERNAME, managed);
+		
+		
 		holidayBalanceService.createHolidayBalance(user.id, type.id);
 		HolidayBalanceDTO balance = holidayBalanceService.getHolidayBalance(user.id, type.id);
 
