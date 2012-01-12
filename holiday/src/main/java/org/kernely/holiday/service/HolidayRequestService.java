@@ -272,6 +272,43 @@ public class HolidayRequestService extends AbstractService{
 	}
 	
 	/**
+	 * Gets all the request for the given user between the two given dates
+	 * @param date1 beginning of the needed interval
+	 * @param date2 ending of the needed interval
+	 * @param user user concerned by the request
+	 * @return A list of DTO corresponding to the request located in the interval
+	 */
+	@SuppressWarnings("unchecked")
+	@Transactional
+	public List<HolidayRequestDTO> getRequestBetweenDatesWithStatus(Date date1, Date date2, User user, int ... status){
+		Query query = em.get().createQuery("SELECT  r from HolidayRequest r WHERE (beginDate between :date1 and :date2" +
+										" OR endDate between :date1 and :date2)" +
+										" AND user = :user" +
+										" AND status in :status");
+		query.setParameter("date1", date1);
+		query.setParameter("date2", date2);
+		query.setParameter("user", user);
+		List<Integer> statusList = new ArrayList<Integer>();
+		for(int i : status){
+			statusList.add(i);
+		}
+		query.setParameter("status", statusList);
+		try{
+			List<HolidayRequest> requests = (List<HolidayRequest>) query.getResultList();
+			List<HolidayRequestDTO> requestsDTO = new ArrayList<HolidayRequestDTO>();
+			for(HolidayRequest r : requests){
+				requestsDTO.add(new HolidayRequestDTO(r));
+			}
+
+			return requestsDTO;
+		}
+		catch(NoResultException e){
+			log.debug("There is no holiday request for these dates");
+			return null;
+		}
+	}
+	
+	/**
 	 * Accept a waiting request
 	 * @param idRequest The request to accept
 	 */

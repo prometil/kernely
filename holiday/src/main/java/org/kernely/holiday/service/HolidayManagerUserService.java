@@ -18,6 +18,7 @@ import org.kernely.holiday.dto.HolidayRequestDTO;
 import org.kernely.holiday.dto.HolidayUserManagedDTO;
 import org.kernely.holiday.dto.HolidayUsersManagerDTO;
 import org.kernely.holiday.model.HolidayBalance;
+import org.kernely.holiday.model.HolidayRequest;
 import org.kernely.holiday.model.HolidayType;
 
 import com.google.inject.Inject;
@@ -83,7 +84,7 @@ public class HolidayManagerUserService extends AbstractService{
 			// Clear all the list for the new user
 			detailsDTO = new ArrayList<HolidayDetailDTO>();
 			detailManagedDTO = new TreeSet<HolidayManagedDetailsDTO>();
-			List<HolidayRequestDTO> requests = holidayRequestService.getRequestBetweenDates(first.toDate(), last.toDate(), u);
+			List<HolidayRequestDTO> requests = holidayRequestService.getRequestBetweenDatesWithStatus(first.toDate(), last.toDate(), u, HolidayRequest.PENDING_STATUS, HolidayRequest.ACCEPTED_STATUS);
 			for(HolidayRequestDTO req : requests){
 				detailsDTO.addAll(req.details);
 			}
