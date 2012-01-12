@@ -38,6 +38,9 @@ public class StreamPlugin extends AbstractPlugin {
 
 	@Inject
 	private EventBus eventBus;
+	
+	@Inject
+	private UserEventHandler userEventHandler;
 
 	/**
 	 * Default constructor
@@ -55,7 +58,8 @@ public class StreamPlugin extends AbstractPlugin {
 
 	@Override
 	public void start() {
-		eventBus.register(UserEventHandler.class);
+		
+		eventBus.register(userEventHandler);
 	}
 
 	@Override

@@ -81,11 +81,16 @@ public class GuiceServletConfig extends GuiceServletContextListener {
 		}
 		list.add(new KernelyServletModule(plugins, combinedConfiguration));
 		list.add(new ServletModule());
-		
-		//create injector
-		Injector injector = Guice.createInjector(list);
 
-		//get all jobs
+		// create injector
+		Injector injector = Guice.createInjector(list);
+		for (AbstractPlugin plugin : plugins) {
+			injector.injectMembers(plugin);
+			plugin.start();
+		}
+		
+
+		// get all jobs
 		Scheduler scheduler = injector.getInstance(Scheduler.class);
 		GuiceSchedulerFactory guiceSchedulerFactory = injector.getInstance(GuiceSchedulerFactory.class);
 		try {

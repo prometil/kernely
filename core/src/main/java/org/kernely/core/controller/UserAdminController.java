@@ -50,7 +50,7 @@ public class UserAdminController extends AbstractController{
 
 	@Inject
 	private UserService userService;
-
+		
 	/**
 	 * Display the user page administration
 	 * @return the user administration page
