@@ -3,8 +3,7 @@ package org.kernely.holiday.dto;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
- * The dto for calendar detail
- * @author b.grandperret
+ * The dto corresponding to a cell of holiday Type available in the holiday request page
  *
  */
 @XmlRootElement
@@ -47,4 +46,46 @@ public class CalendarBalanceDetailDTO {
 		this.nbAvailable = available;
 		this.idOfType = idType;
 	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + idOfType;
+		result = prime * result + ((nameOfType == null) ? 0 : nameOfType.hashCode());
+		return result;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
+			return false;
+		}
+		CalendarBalanceDetailDTO other = (CalendarBalanceDetailDTO) obj;
+		if (idOfType != other.idOfType) {
+			return false;
+		}
+		if (nameOfType == null) {
+			if (other.nameOfType != null) {
+				return false;
+			}
+		} else if (!nameOfType.equals(other.nameOfType)) {
+			return false;
+		}
+		return true;
+	}
+	
+	
 }

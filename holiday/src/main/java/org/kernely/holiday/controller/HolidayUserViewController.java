@@ -52,15 +52,8 @@ public class HolidayUserViewController extends AbstractController{
 	@Produces({MediaType.APPLICATION_JSON})
 	public List<HolidayRequestDTO> displayAllHolidayRequestPending()
 	{
-		List<HolidayRequestDTO> userRequest = holidayRequestService.getAllRequestsForCurrentUser(); 
-		List<HolidayRequestDTO> pendingRequest = holidayRequestService.getAllRequestsWithStatus(HolidayRequest.PENDING_STATUS);
-		List<HolidayRequestDTO> userPendingRequest = new ArrayList<HolidayRequestDTO>();
-		for (HolidayRequestDTO hrdto : userRequest){
-			if (pendingRequest.contains(hrdto)){
-				userPendingRequest.add(hrdto);
-			}
-		}
-		return userPendingRequest;
+		List<HolidayRequestDTO> pendingRequest = holidayRequestService.getAllRequestsWithStatusForCurrentUser(HolidayRequest.PENDING_STATUS);
+		return pendingRequest;
 	}
 	
 	/**
@@ -72,17 +65,10 @@ public class HolidayUserViewController extends AbstractController{
 	@Produces({MediaType.APPLICATION_JSON})
 	public List<HolidayRequestDTO> displayAllHolidayRequestStatus()
 	{
-		List<HolidayRequestDTO> userRequest = holidayRequestService.getAllRequestsForCurrentUser();
 		List<HolidayRequestDTO> lhr = new ArrayList<HolidayRequestDTO>();
-		lhr.addAll(holidayRequestService.getAllRequestsWithStatus(HolidayRequest.ACCEPTED_STATUS));
-		lhr.addAll(holidayRequestService.getAllRequestsWithStatus(HolidayRequest.DENIED_STATUS));
-		List<HolidayRequestDTO> userStatuedRequest = new ArrayList<HolidayRequestDTO>();
-		for (HolidayRequestDTO hrdto : userRequest){
-			if (lhr.contains(hrdto)){
-				userStatuedRequest.add(hrdto);
-			}
-		}
-		return userStatuedRequest;
+		lhr.addAll(holidayRequestService.getAllRequestsWithStatusForCurrentUser(HolidayRequest.ACCEPTED_STATUS));
+		lhr.addAll(holidayRequestService.getAllRequestsWithStatusForCurrentUser(HolidayRequest.DENIED_STATUS));
+		return lhr;
 	}
 	
 	

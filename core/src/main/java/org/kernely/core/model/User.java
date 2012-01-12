@@ -42,7 +42,7 @@ import org.kernely.core.hibernate.AbstractModel;
  */
 @Entity
 @Table(name = "kernely_user")
-public class User extends AbstractModel {
+public class User extends AbstractModel implements Comparable<User> {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -354,6 +354,27 @@ public class User extends AbstractModel {
 			return false;
 		}
 		return true;
+	}
+
+
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Comparable#compareTo(java.lang.Object)
+	 */
+	@Override
+	public int compareTo(User other) {
+		if(this.userDetails != null && other.getUserDetails() != null
+				&& this.userDetails.getName() != null && other.getUserDetails().getName() != null){
+			if(!this.userDetails.getName().equals(other.getUserDetails().getName())){
+				return this.userDetails.getName().compareTo(other.getUserDetails().getName());
+			}
+			else{
+				return this.userDetails.getFirstname().compareTo(other.getUserDetails().getFirstname());
+			}
+		}
+		else{
+			return 1;
+		}
 	}
 
 }

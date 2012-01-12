@@ -26,6 +26,7 @@ import javax.persistence.Query;
 
 import org.kernely.core.dto.RoleDTO;
 import org.kernely.core.model.Role;
+import org.kernely.core.model.User;
 import org.kernely.core.service.AbstractService;
 
 import com.google.inject.Singleton;
@@ -61,8 +62,27 @@ public class RoleService extends AbstractService {
 	 * Use for unit test, create a new role 
 	 * @param request a role dto
 	 */
+	@SuppressWarnings("unchecked")
 	@Transactional
 	public void createRole(RoleDTO request) {
+		if (request == null) {
+			throw new IllegalArgumentException("Request cannot be null ");
+		}
+
+		if ("".equals(request.name)) {
+			throw new IllegalArgumentException("Role name cannot be null ");
+		}
+
+		if ("".equals(request.name.trim())) {
+			throw new IllegalArgumentException("Role name cannot be space character only ");
+		}
+
+		Query verifExist = em.get().createQuery("SELECT r FROM Role r WHERE name=:name");
+		verifExist.setParameter("name", request.name);
+		List<User> list = (List<User>) verifExist.getResultList();
+		if (!list.isEmpty()) {
+			throw new IllegalArgumentException("Another role with this name already exists");
+		}
 		Role role = new Role();
 		role.setName(request.name.trim());
 		em.get().persist(role);

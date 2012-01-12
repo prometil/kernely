@@ -66,8 +66,7 @@ public class UserServiceTest extends AbstractServiceTest{
 		request.password = STRING_TEST;
 		request.firstname = STRING_TEST;
 		request.lastname = STRING_TEST;
-		service.createUser(request);
-		return service.getAllUsers().get(0);
+		return service.createUser(request);
 	}
 	
 	@Test

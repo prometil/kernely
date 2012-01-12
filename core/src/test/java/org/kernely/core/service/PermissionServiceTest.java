@@ -60,8 +60,8 @@ public class PermissionServiceTest extends AbstractServiceTest {
 		request.password = TEST_STRING;
 		request.firstname = TEST_STRING;
 		request.lastname = TEST_STRING;
-		userService.createUser(request);
-		return userService.getAllUsers().get(0).id;
+		UserDTO userDTO = userService.createUser(request);
+		return userDTO.id;
 	}
 	
 	private PermissionDTO createPermissionDTO(String pName){

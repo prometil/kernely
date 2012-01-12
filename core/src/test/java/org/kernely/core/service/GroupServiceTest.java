@@ -59,8 +59,8 @@ public class GroupServiceTest extends AbstractServiceTest{
 		request.password = TEST_STRING;
 		request.firstname = TEST_STRING;
 		request.lastname = TEST_STRING;
-		serviceUser.createUser(request);
-		return serviceUser.getAllUsers().get(0).id;
+		UserDTO userDTO = serviceUser.createUser(request);
+		return userDTO.id;
 	}
 		
 	@Test

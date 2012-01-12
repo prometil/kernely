@@ -40,6 +40,11 @@ public class HolidayDetailDTO {
 	public int balanceId;
 	
 	/**
+	 * The color associated to the type of balance
+	 */
+	public String color;
+	
+	/**
 	 * Default constructor
 	 */
 	public HolidayDetailDTO(){
@@ -56,5 +61,6 @@ public class HolidayDetailDTO {
 		this.am = detail.isAm();
 		this.type = detail.getBalance().getHolidayType().getName();
 		this.balanceId = detail.getBalance().getId();
+		this.color = detail.getBalance().getHolidayType().getColor();
 	}
 }

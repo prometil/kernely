@@ -22,6 +22,8 @@ package org.kernely.holiday.dto;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.kernely.holiday.model.HolidayType;
+
 
 /**
  * dto for holiday  
@@ -92,6 +94,20 @@ public class HolidayDTO {
 		this.anticipation = anticipation;
 		this.effectiveMonth = effectiveMonth;
 		this.color = color;
+	}
+	
+	/**
+	 * Contruct with a HolidayType as parameter
+	 * @param type The model HolidayType to construct the DTO
+	 */
+	public HolidayDTO(HolidayType type){
+		this.id = type.getId();
+		this.name = type.getName();
+		this.quantity = type.getQuantity();
+		this.periodUnit = type.getPeriodUnit();
+		this.anticipation = type.isAnticipated();
+		this.effectiveMonth = type.getEffectiveMonth();
+		this.color = type.getColor();
 	}
 	
 }

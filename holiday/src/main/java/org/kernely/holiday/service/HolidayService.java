@@ -105,7 +105,7 @@ public class HolidayService extends AbstractService {
 	 */
 	@SuppressWarnings("unchecked")
 	@Transactional
-	public void createHoliday(HolidayCreationRequestDTO request) {
+	public HolidayDTO createHoliday(HolidayCreationRequestDTO request) {
 		if (request == null) {
 			throw new IllegalArgumentException("Request cannot be null ");
 		}
@@ -133,6 +133,8 @@ public class HolidayService extends AbstractService {
 		holiday.setColor(request.color);
 
 		em.get().persist(holiday);
+		
+		return new HolidayDTO(holiday);
 	}
 
 	/**

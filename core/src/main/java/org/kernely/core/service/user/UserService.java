@@ -69,7 +69,7 @@ public class UserService extends AbstractService {
 	 */
 	@SuppressWarnings("unchecked")
 	@Transactional
-	public void createUser(UserCreationRequestDTO request) {
+	public UserDTO createUser(UserCreationRequestDTO request) {
 		if (request == null) {
 			throw new IllegalArgumentException("Request cannot be null ");
 		}
@@ -123,6 +123,11 @@ public class UserService extends AbstractService {
 		em.get().persist(user);
 
 		eventBus.post(new UserCreationEvent(user.getId(), user.getUsername()));
+		
+		// Return a DTO of the new user created
+		UserDTO userDTO = new UserDTO(user);
+		userDTO.userDetails = new UserDetailsDTO(userdetails);
+		return userDTO;
 
 	}
 

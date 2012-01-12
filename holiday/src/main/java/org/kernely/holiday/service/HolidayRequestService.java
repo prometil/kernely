@@ -160,6 +160,32 @@ public class HolidayRequestService extends AbstractService{
 	}
 	
 	/**
+	 * Retrieve all the request with a given status for the current user
+	 * @param status the status of the request needed
+	 * @return A list of DTO corresponding to all request with the given status
+	 */
+	@SuppressWarnings("unchecked")
+	@Transactional
+	public List<HolidayRequestDTO> getAllRequestsWithStatusForCurrentUser(int status){
+		Query query = em.get().createQuery("SELECT  r from HolidayRequest r WHERE  status = :status AND user = :user");
+		query.setParameter("status", status);
+		query.setParameter("user", this.getAuthenticatedUserModel());
+		try{
+			List<HolidayRequest> requests = (List<HolidayRequest>) query.getResultList();
+			List<HolidayRequestDTO> requestsDTO = new ArrayList<HolidayRequestDTO>();
+			for(HolidayRequest r : requests){				
+				requestsDTO.add(new HolidayRequestDTO(r));
+			}
+
+			return requestsDTO;
+		}
+		catch(NoResultException e){
+			log.debug("There is no holiday waiting requests");
+			return null;
+		}
+	}
+	
+	/**
 	 * Retrieve all the request with a given status
 	 * @param status the status of the request needed
 	 * @return A list of DTO corresponding to all request with the given status
@@ -193,8 +219,8 @@ public class HolidayRequestService extends AbstractService{
 	@SuppressWarnings("unchecked")
 	@Transactional
 	public List<HolidayRequestDTO> getRequestBetweenDatesForCurrentUser(Date date1, Date date2){
-		Query query = em.get().createQuery("SELECT  r from HolidayRequest r WHERE beginDate between :date1 and :date2" +
-										" OR endDate between :date1 and :date2" +
+		Query query = em.get().createQuery("SELECT  r from HolidayRequest r WHERE (beginDate between :date1 and :date2" +
+										" OR endDate between :date1 and :date2)" +
 										" and user = :user");
 		query.setParameter("date1", date1);
 		query.setParameter("date2", date2);
@@ -209,7 +235,38 @@ public class HolidayRequestService extends AbstractService{
 			return requestsDTO;
 		}
 		catch(NoResultException e){
-			log.debug("There is no holiday request for this date");
+			log.debug("There is no holiday request for these dates");
+			return null;
+		}
+	}
+	
+	/**
+	 * Gets all the request for the given user between the two given dates
+	 * @param date1 beginning of the needed interval
+	 * @param date2 ending of the needed interval
+	 * @param user user concerned by the request
+	 * @return A list of DTO corresponding to the request located in the interval
+	 */
+	@SuppressWarnings("unchecked")
+	@Transactional
+	public List<HolidayRequestDTO> getRequestBetweenDates(Date date1, Date date2, User user){
+		Query query = em.get().createQuery("SELECT  r from HolidayRequest r WHERE (beginDate between :date1 and :date2" +
+										" OR endDate between :date1 and :date2)" +
+										" AND user = :user");
+		query.setParameter("date1", date1);
+		query.setParameter("date2", date2);
+		query.setParameter("user", user);
+		try{
+			List<HolidayRequest> requests = (List<HolidayRequest>) query.getResultList();
+			List<HolidayRequestDTO> requestsDTO = new ArrayList<HolidayRequestDTO>();
+			for(HolidayRequest r : requests){
+				requestsDTO.add(new HolidayRequestDTO(r));
+			}
+
+			return requestsDTO;
+		}
+		catch(NoResultException e){
+			log.debug("There is no holiday request for these dates");
 			return null;
 		}
 	}
@@ -220,6 +277,9 @@ public class HolidayRequestService extends AbstractService{
 	 */
 	@Transactional
 	public void acceptRequest(int idRequest){
+		if(!userService.isManager(this.getAuthenticatedUserModel().getUsername())){	
+			throw new UnauthorizedException("Only managers can access to this functionality !");
+		}
 		log.debug("ACCEPT : Retrieving holiday request with id {}", idRequest);
 		HolidayRequest request = em.get().find(HolidayRequest.class, idRequest);
 		request.setStatus(HolidayRequest.ACCEPTED_STATUS);
@@ -233,6 +293,9 @@ public class HolidayRequestService extends AbstractService{
 	 */
 	@Transactional
 	public void denyRequest(int idRequest){
+		if(!userService.isManager(this.getAuthenticatedUserModel().getUsername())){	
+			throw new UnauthorizedException("Only managers can access to this functionality !");
+		}
 		log.debug("DENY : Retrieving holiday request with id {}", idRequest);
 		HolidayRequest request = em.get().find(HolidayRequest.class, idRequest);
 		request.setStatus(HolidayRequest.DENIED_STATUS);
@@ -263,6 +326,9 @@ public class HolidayRequestService extends AbstractService{
 	 */
 	@Transactional
 	public void addManagerCommentary(int idRequest, String managerComment){
+		if(!userService.isManager(this.getAuthenticatedUserModel().getUsername())){	
+			throw new UnauthorizedException("Only managers can access to this functionality !");
+		}
 		HolidayRequest request = em.get().find(HolidayRequest.class, idRequest);
 		request.setManagerComment(managerComment);
 		em.get().merge(request);
