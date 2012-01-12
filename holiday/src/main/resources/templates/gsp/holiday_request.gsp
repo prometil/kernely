@@ -5,11 +5,16 @@
 		Available : <span class="available-cpt">{{available}}</span>
 </script>
 
+<script type="text/html" id="locale-lang"><%= i18n.t("locale_lang") %></script>
+
+<script type="text/html" id="locale-country"><%= i18n.t("locale_country") %></script>
+
+
 <div id="request-main">  
 	<div id="period">
-		<label for="from">From </label><input readonly="readonly" type="text" id="from" name="from"/>
-		<label for="to">to </label><input readonly="readonly" type="text" id="to" name="to"/>
-		<input id="submitPeriod" type="button" value="Generate"/>
+		<label for="from"><%= i18n.t("from_date") %> </label><input readonly="readonly" type="text" id="from" name="from"/>
+		<label for="to"> <%= i18n.t("to_date") %> </label><input readonly="readonly" type="text" id="to" name="to"/>
+		<input id="submitPeriod" type="button" value="<%= i18n.t("generate") %>"/>
 	</div>
 	<div id="calendarRequest">
 		<div id="requester-comment-div">
@@ -17,7 +22,12 @@
 			<input type="button" id="validate-holidays" value="Submit"/>
 		</div>
 		<table id="calendarTable" border="0">
-			<tr><th>Mo</th><th>Tu</th><th>We</th><th>Th</th><th>Fr</th></tr>
+			<tr>
+				<th><%= i18n.t("day_1_short") %></th>
+				<th><%= i18n.t("day_2_short") %></th>
+				<th><%= i18n.t("day_3_short") %></th>
+				<th><%= i18n.t("day_4_short") %></th>
+				<th><%= i18n.t("day_5_short") %></th></tr>
 			<tbody id="calendarContent">
 			<tbody>
 		</table>

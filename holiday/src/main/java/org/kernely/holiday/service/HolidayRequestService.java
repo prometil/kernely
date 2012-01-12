@@ -29,12 +29,14 @@ import java.util.TreeSet;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
+import org.apache.shiro.authz.UnauthorizedException;
 import org.joda.time.DateTime;
 import org.joda.time.Days;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.kernely.core.model.User;
 import org.kernely.core.service.AbstractService;
+import org.kernely.core.service.user.UserService;
 import org.kernely.holiday.dto.CalendarBalanceDetailDTO;
 import org.kernely.holiday.dto.CalendarDayDTO;
 import org.kernely.holiday.dto.CalendarRequestDTO;
@@ -49,6 +51,7 @@ import org.kernely.holiday.model.HolidayType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.google.inject.persist.Transactional;
 
@@ -62,6 +65,9 @@ public class HolidayRequestService extends AbstractService{
 	
 	private static final int DAYS_IN_WEEK = 6;
 	protected final Logger log = LoggerFactory.getLogger(this.getClass());
+	
+	@Inject
+	private UserService userService;
 
 	/**
 	 * Construct a HolidayRequest
@@ -256,7 +262,7 @@ public class HolidayRequestService extends AbstractService{
 	 * @param managerComment the comment of the manager
 	 */
 	@Transactional
-	public void addManagerComentary(int idRequest, String managerComment){
+	public void addManagerCommentary(int idRequest, String managerComment){
 		HolidayRequest request = em.get().find(HolidayRequest.class, idRequest);
 		request.setManagerComment(managerComment);
 		em.get().merge(request);
@@ -265,15 +271,20 @@ public class HolidayRequestService extends AbstractService{
 	
 	/**
 	 * Get all request to process for a manager
+	 * @param status The status of requests : pending, accepted or denied. User HolidayRequest constants.
 	 * @return A list of DTO corresponding to all request done by managed users of the current user manager
 	 */
 	@SuppressWarnings("unchecked")
 	@Transactional
-	public List<HolidayRequestDTO> getAllRequestToProcess(){
+	public List<HolidayRequestDTO> getSpecificRequestsForManagers(int status){
+		if(!userService.isManager(this.getAuthenticatedUserModel().getUsername())){        
+			throw new UnauthorizedException("Only managers can access to this functionality!");
+		}
+		
 		User current = this.getAuthenticatedUserModel();
 		Set<User> managed = current.getUsers();
 		Query query = em.get().createQuery("SELECT  r from HolidayRequest r WHERE  status = :status AND user in :users");
-		query.setParameter("status", HolidayRequest.PENDING_STATUS);
+		query.setParameter("status", status);
 		query.setParameter("users", managed);
 		try{
 			List<HolidayRequest> requests = (List<HolidayRequest>) query.getResultList();
@@ -403,4 +414,5 @@ public class HolidayRequestService extends AbstractService{
 			return null;
 		}
 	}
+	
 }

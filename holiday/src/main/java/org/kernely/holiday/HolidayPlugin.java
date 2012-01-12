@@ -22,6 +22,7 @@ package org.kernely.holiday;
 
 import org.kernely.core.plugin.AbstractPlugin;
 import org.kernely.holiday.controller.HolidayAdminController;
+import org.kernely.holiday.controller.HolidayMainController;
 import org.kernely.holiday.controller.HolidayManagerRequestController;
 import org.kernely.holiday.controller.HolidayRequestController;
 import org.kernely.holiday.controller.HolidayUserViewController;
@@ -35,10 +36,10 @@ import org.kernely.holiday.service.HolidayRequestService;
 import org.kernely.holiday.service.HolidayService;
 import org.quartz.CronScheduleBuilder;
 import org.quartz.DateBuilder;
-import org.quartz.DateBuilder.IntervalUnit;
 import org.quartz.ScheduleBuilder;
 import org.quartz.Trigger;
 import org.quartz.TriggerBuilder;
+import org.quartz.DateBuilder.IntervalUnit;
 
 /**
  * The Plugin for holiday
@@ -53,6 +54,7 @@ public class HolidayPlugin extends AbstractPlugin {
 	@SuppressWarnings({ "unchecked" })
 	public HolidayPlugin(){
 		super("Holiday", "/holiday");
+		registerController(HolidayMainController.class);
 		registerController(HolidayAdminController.class);
 		registerController(HolidayRequestController.class);
 		registerController(HolidayManagerRequestController.class);
