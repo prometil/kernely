@@ -42,14 +42,12 @@ AppHolidayRequest = (function($){
 			return this;
 		},
 		buildCalendarAndPicker: function(){
-			console.log(build);
 			$.ajax({
 				type: "GET",
 				url:"/holiday/request/interval",
 				data: {date1: dates[0].value, date2: dates[1].value},
 				dataType:"json",
 				success: function(data){
-					console.log(data);
 					// Clean the div content
 					$('#calendarContent').html("");
 					$('#colorSelector').html("");
