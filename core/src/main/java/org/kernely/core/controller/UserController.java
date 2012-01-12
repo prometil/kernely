@@ -81,7 +81,7 @@ public class UserController extends AbstractController {
 	/**
 	 * Displays the login page.
 	 * 
-	 * @return The html content of the login page.
+	 * @return The html content of the login page.details
 	 */
 	@GET
 	@Path("/login")
@@ -135,6 +135,9 @@ public class UserController extends AbstractController {
 			template = "/templates/gsp/profile_editable.gsp";
 		}
 		UserDetailsDTO uddto = userService.getUserDetails(userLogin);
+		if(uddto.image==null){
+			uddto.image="default_user.png";
+		}
 
 		return ok(templateRenderer.create(template).with("details", uddto));
 	}
