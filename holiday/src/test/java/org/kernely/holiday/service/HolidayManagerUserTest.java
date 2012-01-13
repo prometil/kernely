@@ -90,7 +90,6 @@ public class HolidayManagerUserTest extends AbstractServiceTest  {
 		return holidayService.createHoliday(request);
 	}
 	private void createHolidayRequestForUser(long userId, int typeId){
-		holidayBalanceService.createHolidayBalance(userId, typeId);
 		HolidayDetailCreationRequestDTO detailDTO1 = new HolidayDetailCreationRequestDTO();
 		HolidayDetailCreationRequestDTO detailDTO2 = new HolidayDetailCreationRequestDTO();
 		

@@ -92,7 +92,6 @@ public class HolidayRequestServiceTest extends AbstractServiceTest{
 	}
 	
 	private void createHolidayRequestForUser(long userId, int typeId){
-		holidayBalanceService.createHolidayBalance(userId, typeId);
 		HolidayDetailCreationRequestDTO detailDTO1 = new HolidayDetailCreationRequestDTO();
 		HolidayDetailCreationRequestDTO detailDTO2 = new HolidayDetailCreationRequestDTO();
 		
