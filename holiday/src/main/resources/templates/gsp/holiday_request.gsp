@@ -2,7 +2,7 @@
 
 <script type="text/html" id="balance-cell-template">
 		<span id="balance-cell-name">{{name}}</span><br/>
-		Available : <span class="available-cpt">{{available}}</span>
+		<%= i18n.t("holiday_balance_available") %>: <span class="available-cpt">{{available}}</span>
 </script>
 
 <script type="text/html" id="locale-lang"><%= i18n.t("locale_lang") %></script>
