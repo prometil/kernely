@@ -247,7 +247,7 @@ public class MailService extends AbstractService implements Mailer {
 
 		MimeMessage message = new MimeMessage(session);
 		try {
-			if(mail.getRecipients() == null || mail.getRecipients() == ""){
+			if(mail.getRecipients() == null || mail.getRecipients().equals("")){
 				throw new IllegalArgumentException("Recipients are undefined.");
 			}
 			
