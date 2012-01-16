@@ -36,6 +36,6 @@
 	
 	<table id="user_request_table">
 	    <caption><b><u><%= i18n.t("title_table_2")%></u></b></caption>
-		</th><th><%= i18n.t("requester_comment") %></th><th><%= i18n.t("manager_comment") %></th><th><%= i18n.t("begin_date")%></th><th><%= i18n.t("end_date")%></th><th><%= i18n.t("status")%></th></tr>
+		<th><%= i18n.t("manager") %></th><th><%= i18n.t("requester_comment") %></th><th><%= i18n.t("manager_comment") %></th><th><%= i18n.t("begin_date")%></th><th><%= i18n.t("end_date")%></th><th><%= i18n.t("status")%></th></tr>
 	</table>
 </div>
