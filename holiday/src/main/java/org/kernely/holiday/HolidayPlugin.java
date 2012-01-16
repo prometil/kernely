@@ -43,13 +43,21 @@ import org.quartz.Trigger;
 import org.quartz.TriggerBuilder;
 import org.quartz.DateBuilder.IntervalUnit;
 
+import com.google.common.eventbus.EventBus;
+import com.google.inject.Inject;
+
 /**
  * The Plugin for holiday
- * @author b.grandperret
- *
  */
 public class HolidayPlugin extends AbstractPlugin {
 
+
+	@Inject
+	private EventBus eventBus;
+	
+	@Inject
+	private HolidayUserEventHandler userEventHandler;
+	
 	/**
 	 * Default constructor
 	 */
@@ -78,7 +86,6 @@ public class HolidayPlugin extends AbstractPlugin {
 		// *  : every month
 		// ?  : the day of the week is not important
 		// *  : every year
-		
         ScheduleBuilder holidaysSchedule = CronScheduleBuilder.cronSchedule("0 0 23 L * ? *");
 
         // Create the holidays trigger
@@ -92,8 +99,8 @@ public class HolidayPlugin extends AbstractPlugin {
 	}
 	
 	@Override
-	public void start(){
-
+	public void start() {
+		eventBus.register(userEventHandler);
 	}
 	
 	@Override

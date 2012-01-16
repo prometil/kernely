@@ -25,7 +25,9 @@ import java.util.List;
 
 import javax.persistence.Query;
 
+import org.kernely.core.dto.UserDTO;
 import org.kernely.core.service.AbstractService;
+import org.kernely.core.service.user.UserService;
 import org.kernely.holiday.dto.HolidayCreationRequestDTO;
 import org.kernely.holiday.dto.HolidayDTO;
 import org.kernely.holiday.dto.HolidayUpdateRequestDTO;
@@ -33,6 +35,7 @@ import org.kernely.holiday.model.HolidayType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.google.inject.persist.Transactional;
 
@@ -43,6 +46,12 @@ import com.google.inject.persist.Transactional;
  */
 @Singleton
 public class HolidayService extends AbstractService {
+	
+	@Inject
+	UserService userService;
+	
+	@Inject
+	HolidayBalanceService balanceService;
 
 	protected final Logger log = LoggerFactory.getLogger(this.getClass());
 
@@ -134,9 +143,31 @@ public class HolidayService extends AbstractService {
 
 		em.get().persist(holiday);
 		
+		
+		// Create a balance with this holiday type, for each user
+		int holidayId = this.getHolidayDTO(request.type.trim()).id;
+		
+		for (UserDTO user : userService.getAllUsers()){
+			balanceService.createHolidayBalance(user.id, holidayId);
+		}
+		
 		return new HolidayDTO(holiday);
 	}
 
+	/**
+	 * Get a holiday type with its name
+	 * @name The name of the holiday
+	 */
+	@SuppressWarnings("unchecked")
+	@Transactional
+	public HolidayDTO getHolidayDTO(String holidayName){
+		Query verifExist = em.get().createQuery("SELECT h FROM HolidayType h WHERE name=:name");
+		verifExist.setParameter("name", holidayName);
+		
+		HolidayType holiday= (HolidayType) verifExist.getSingleResult();
+		return new HolidayDTO(holiday);
+	}
+	
 	/**
 	 * Update an existing holiday in database
 	 * 

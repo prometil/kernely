@@ -165,7 +165,6 @@ public class HolidayBalanceServiceTest extends AbstractServiceTest {
 		holidayService.createHoliday(request);
 		HolidayDTO specificHoliday = holidayService.getAllHoliday().get(0);
 
-		holidayBalanceService.createHolidayBalance(user.id, specificHoliday.id);
 		HolidayBalanceDTO balance = holidayBalanceService.getHolidayBalance(user.id, specificHoliday.id);
 
 		assertEquals(0F, balance.availableBalance, 0);
@@ -191,8 +190,6 @@ public class HolidayBalanceServiceTest extends AbstractServiceTest {
 		holidayService.createHoliday(request);
 		HolidayDTO monthlyHoliday = holidayService.getAllHoliday().get(0);
 
-		holidayBalanceService.createHolidayBalance(user.id, monthlyHoliday.id);
-
 		HolidayBalanceDTO balance = holidayBalanceService.getHolidayBalance(user.id, monthlyHoliday.id);
 
 		assertEquals(0F, balance.availableBalance, 0);
@@ -217,8 +214,6 @@ public class HolidayBalanceServiceTest extends AbstractServiceTest {
 		request.effectiveMonth = HolidayType.ALL_MONTH;
 		holidayService.createHoliday(request);
 		HolidayDTO monthlyHoliday = holidayService.getAllHoliday().get(0);
-
-		holidayBalanceService.createHolidayBalance(user.id, monthlyHoliday.id);
 
 		HolidayBalanceDTO balance = holidayBalanceService.getHolidayBalance(user.id, monthlyHoliday.id);
 
@@ -248,8 +243,6 @@ public class HolidayBalanceServiceTest extends AbstractServiceTest {
 
 		holidayService.createHoliday(request);
 		HolidayDTO holidayType = holidayService.getAllHoliday().get(0);
-
-		holidayBalanceService.createHolidayBalance(user.id, holidayType.id);
 
 		HolidayBalanceDTO balance = holidayBalanceService.getHolidayBalance(user.id, holidayType.id);
 
