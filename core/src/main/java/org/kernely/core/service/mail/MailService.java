@@ -204,6 +204,7 @@ public class MailService extends AbstractService implements Mailer {
 				mail.setRecipients(recipInString);
 			}
 			mail.setSubject(subject);
+			mail.setStatus(Mail.MAIL_WAITING);
 			
 			em.get().persist(mail);
 			return true;
@@ -221,7 +222,8 @@ public class MailService extends AbstractService implements Mailer {
 	 */
 	@SuppressWarnings("unchecked")
 	public List<Mail> getMailsToSend(){
-		Query query = em.get().createQuery("SELECT m FROM Mail m");
+		Query query = em.get().createQuery("SELECT m FROM Mail m WHERE status = :status");
+		query.setParameter("status", Mail.MAIL_WAITING);
 		return (List<Mail>) query.getResultList();
 	}
 	
@@ -269,12 +271,18 @@ public class MailService extends AbstractService implements Mailer {
 			Transport.send(message);
 			this.deleteMail(mail);
 			log.debug("Mail sended ! ");
+			mail.setStatus(Mail.MAIL_SENDED);
+			em.get().merge(mail);
 			return true;
 		} catch (MessagingException ex) {
 			log.error("Cannot send mail", ex);
+			mail.setStatus(Mail.MAIL_ERROR);
+			em.get().merge(mail);
 			return false;
 		} catch (IllegalArgumentException ex){
 			log.error("Impossible to send mails", ex);
+			mail.setStatus(Mail.MAIL_ERROR);
+			em.get().merge(mail);
 			return false;
 		}
 
