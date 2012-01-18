@@ -28,6 +28,11 @@
 	height:560px;
 }
 
+#image_name{
+	max-width:295px;
+	max-height: 245px;
+}
+
 #profile_image{
 	padding-top:10px;
 	height:550px;
@@ -45,6 +50,10 @@
 	border-left:1px solid black; 
 	border-top:1px solid black; 
 	padding:15px;
+}
+
+.edit_button{
+	margin-left : 15px;
 }
 
 #profile_bottom_container{

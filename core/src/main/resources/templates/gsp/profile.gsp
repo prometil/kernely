@@ -1,10 +1,10 @@
 <div id="profile_header" style="height:50px;text-align:center;font-size:20px;font-weight:bold;"><%= i18n.t("profile_page_of") %> ${details.firstname} ${details.lastname}</div>
 <div id="profile_top_container" style="height:560px;">
 
-	<div id="profile_image" style="padding-top:10px;height:550px;width:380px;float:left;text-align:center;border-top:1px solid black;">
-		<img src="/images/${details.image}" id="image_name" name="${details.image}" style="max-width:295px; max-height: 245px;"/>
+	<div id="profile_image">
+		<img src="/images/${details.image}" id="image_name" name="${details.image}"/>
 	</div>
-	<div id="profile_information" style="height:550px;width:545px;float:left;text-align:left;border-left:1px solid black; border-top:1px solid black; padding:15px;">
+	<div id="profile_information">
 		<table style="width:100%">
 			<tr><td><%= i18n.t("civility") %></td><td><span id="profile_civility">
 				<% if (details.civility == 1 ){ %>

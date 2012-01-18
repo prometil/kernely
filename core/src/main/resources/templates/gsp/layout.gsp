@@ -28,19 +28,19 @@
 	</head>
 	<body>
 			<script type="text/html" id="profile-template">
-				<div id='profilePU-content' style="border:1px solid black; padding:5px;">
-					<div id='profilePU-main' style="height:80px;">
-						<div id='profilePU-image' style="height:80px;width:125px;float:left;">
-							<img id="profilePU-img" src='{{image}}' style="max-width:120px; max-height:80px;"/>
+				<div id='profilePU-content'>
+					<div id='profilePU-main'>
+						<div id='profilePU-image'>
+							<img id="profilePU-img" src='{{image}}'/>
 						</div>
-						<div id='profilePU-information' style="height:80px;width:173px;float:left;">
+						<div id='profilePU-information'>
 							{{fullname}} ({{username}})<br/>
 							{{mail}}<br/>
 							<br/>
 							<a href="/user/{{username}}/profile"><%= i18n.t("profile") %></a>
 						</div>
 					</div>
-					<div id="profilePU-footer" style="height:30px;text-align:center;">
+					<div id="profilePU-footer">
 						<hr/>
 						<a href="/user/logout"><%= i18n.t("logout") %></a>
 					</div>
@@ -59,12 +59,12 @@
 						<a href="/admin">${admin}</a>
 					<% } %>
 				</div>
-				<div id="menu_header_profile" style="right:5px;	height: 30px; position: absolute;top: 0;">
+				<div id="menu_header_profile">
 					<a id="username_menu" href="javascript:void(0)" class="button displayProfilePU"></a>
 					<a id="userimg_menu" href="javascript:void(0)" class="button displayProfilePU"></a>
 				</div>
 			</div>
-			<div id="profile_popup" style="display:none;right:5px;position:absolute;top:29px;width:310px;height:135px;background-color:#FFFFFF;"></div>
+			<div id="profile_popup"></div>
 			<div id="container">
 				<%= content %>
 			</div>

@@ -139,7 +139,7 @@ public class UserController extends AbstractController {
 			uddto.image="default_user.png";
 		}
 
-		return ok(templateRenderer.create(template).with("details", uddto));
+		return ok(templateRenderer.create(template).with("details", uddto).addCss("/css/profile.css"));
 	}
 
 	/**
@@ -178,7 +178,7 @@ public class UserController extends AbstractController {
 	public Response uploadFile(@FormDataParam("file") InputStream uploadedInputStream, @FormDataParam("file") FormDataContentDisposition fileDetail) {
 		if (fileDetail.getFileName().equals("")) {
 			String template="/templates/gsp/profile_editable.gsp";
-			return ok(templateRenderer.create(template).with("details", userService.getUserDetails(userService.getAuthenticatedUserDTO().username)));
+			return ok(templateRenderer.create(template).with("details", userService.getUserDetails(userService.getAuthenticatedUserDTO().username)).addCss("/css/profile.css"));
 		}
 		// get extension
 		String[] extension = fileDetail.getFileName().split("\\.");

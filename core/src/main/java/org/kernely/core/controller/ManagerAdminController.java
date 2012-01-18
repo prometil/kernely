@@ -61,7 +61,7 @@ public class ManagerAdminController extends AbstractController {
 	@Produces({ MediaType.TEXT_HTML })
 	public Response displayPage() {
 		if (userService.currentUserIsAdministrator()) {
-			return ok(templateRenderer.create("/templates/gsp/administration/manager_admin.gsp").withLayout(TemplateRenderer.ADMIN_LAYOUT));
+			return ok(templateRenderer.create("/templates/gsp/administration/manager_admin.gsp").withLayout(TemplateRenderer.ADMIN_LAYOUT).addCss("/css/admin.css"));
 		}
 		return ok(templateRenderer.create("/templates/gsp/home.gsp"));
 	}
