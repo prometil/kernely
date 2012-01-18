@@ -2,8 +2,8 @@ package org.kernely.holiday.controller;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import org.kernely.core.controller.AbstractController;
@@ -41,9 +41,9 @@ public class HolidayManagerUserController extends AbstractController{
 	 * @return calendarRequestDTO
 	 */
 	@GET
-	@Path("/all/{month}/{year}")
+	@Path("/all")
 	@Produces( {MediaType.APPLICATION_JSON} )
-	public HolidayUsersManagerDTO getAllRequestsOfAllUsers(@PathParam("month") int month, @PathParam("year") int year){
+	public HolidayUsersManagerDTO getAllRequestsOfAllUsers(@QueryParam("month") int month, @QueryParam("year") int year){
 		HolidayUsersManagerDTO test = holidayManagerService.getHolidayForAllManagedUsersForMonth(month, year);
 		return test;
 	}

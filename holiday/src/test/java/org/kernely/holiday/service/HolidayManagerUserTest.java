@@ -51,9 +51,6 @@ public class HolidayManagerUserTest extends AbstractServiceTest  {
 	private HolidayService holidayService;
 	
 	@Inject
-	private HolidayBalanceService holidayBalanceService;
-	
-	@Inject
 	private HolidayRequestService holidayRequestService;
 	
 	private void createUserRoleForTest(){
