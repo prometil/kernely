@@ -48,6 +48,11 @@ public class HolidayRequestDTO {
 	public String user;
 	
 	/**
+	 * The manager who post the comment
+	 */
+	public String manager;
+	
+	/**
 	 * The comment of the manager
 	 */
 	public String managerComment;
@@ -75,6 +80,7 @@ public class HolidayRequestDTO {
 		this.status = request.getStatus();
 		this.requesterComment = request.getRequesterComment();
 		this.user = request.getUser().getUsername();
+		this.manager = request.getManager();
 		this.managerComment = request.getManagerComment(); 
 		for(HolidayRequestDetail hd : request.getDetails()){
 			this.details.add(new HolidayDetailDTO(hd));

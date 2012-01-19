@@ -81,6 +81,7 @@ AppHolidayUserRequest = (function($){
 		className:"user_request_table_line",
 		
 		vid: null,
+		vmanager : null,
 		vrequesterComment : null,
 		vmanagerComment : null,
 		vbegin : null,
@@ -93,12 +94,13 @@ AppHolidayUserRequest = (function($){
 			"mouseout" : "outLine"
 		},
 		
-		initialize: function(id, beginDate, endDate, requesterComment, managerComment, status){
+		initialize: function(id, manager, beginDate, endDate, requesterComment, managerComment, status){
 			this.vid=id;
+			this.vmanager=manager;
 			this.vbegin=beginDate;
 			this.vend=endDate;
 			this.vrequesterComment=requesterComment;
-			this.vmanagerComment = managerComment
+			this.vmanagerComment = managerComment;
 			this.vstatus = status;
 		},
 		
@@ -131,8 +133,8 @@ AppHolidayUserRequest = (function($){
 			else {
 				statusTemplate=$("#status-accepted-template").html();
 			}
-			var template = '<td>{{requesterComment}}</td><td>{{managerComment}}</td><td>{{beginDate}}</td><td>{{endDate}}</td><td>{{status}}</td>';
-			var view = {from : this.vto, requesterComment : this.vrequesterComment, managerComment : this.vmanagerComment, beginDate : this.vbegin, endDate : this.vend, status : statusTemplate};
+			var template = '<td>{{manager}}</td><td>{{requesterComment}}</td><td>{{managerComment}}</td><td>{{beginDate}}</td><td>{{endDate}}</td><td>{{status}}</td>';
+			var view = {manager : this.vmanager, requesterComment : this.vrequesterComment, managerComment : this.vmanagerComment, beginDate : this.vbegin, endDate : this.vend, status : statusTemplate};
 			var html = Mustache.to_html(template, view);
 			$(this.el).html(html);
 			$(this.el).appendTo($("#user_request_table"));
@@ -194,12 +196,12 @@ AppHolidayUserRequest = (function($){
 					if(data != null){
 						if(data.holidayRequestDTO.length > 1 ){
 							$.each(data.holidayRequestDTO, function (){
-								var view = new HolidayUserRequestTableLineView(this.id, this.beginDate, this.endDate, this.requesterComment, this.managerComment, this.status);
+								var view = new HolidayUserRequestTableLineView(this.id, this.manager, this.beginDate, this.endDate, this.requesterComment, this.managerComment, this.status);
 								view.render();
 							});
 						}
 						else{
-							var view = new HolidayUserRequestTableLineView(data.holidayRequestDTO.id, data.holidayRequestDTO.beginDate, data.holidayRequestDTO.endDate, data.holidayRequestDTO.requesterComment, data.holidayRequestDTO.managerComment, data.holidayRequestDTO.status);
+							var view = new HolidayUserRequestTableLineView(data.holidayRequestDTO.id, data.holidayRequestDTO.manager, data.holidayRequestDTO.beginDate, data.holidayRequestDTO.endDate, data.holidayRequestDTO.requesterComment, data.holidayRequestDTO.managerComment, data.holidayRequestDTO.status);
 							view.render();
 						}
 					}

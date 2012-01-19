@@ -263,6 +263,7 @@ public class Migration01 extends Migration {
 		mail.column("content", "text");
 		mail.column("recipients", "text");
 		mail.column("cc", "text");
+		mail.column("status","int");
 		
 		commands.add(mail);
 		

@@ -347,6 +347,7 @@ public class HolidayRequestService extends AbstractService {
 		log.debug("ACCEPT : Retrieving holiday request with id {}", idRequest);
 		HolidayRequest request = em.get().find(HolidayRequest.class, idRequest);
 		request.setStatus(HolidayRequest.ACCEPTED_STATUS);
+		request.setManager(this.getAuthenticatedUserModel().getUsername());
 		em.get().merge(request);
 		log.debug("Holiday request with id {} has been accepted", idRequest);
 	}
@@ -365,6 +366,7 @@ public class HolidayRequestService extends AbstractService {
 		log.debug("DENY : Retrieving holiday request with id {}", idRequest);
 		HolidayRequest request = em.get().find(HolidayRequest.class, idRequest);
 		request.setStatus(HolidayRequest.DENIED_STATUS);
+		request.setManager(this.getAuthenticatedUserModel().getUsername());
 		em.get().merge(request);
 		log.debug("Holiday request with id {} has been denied", idRequest);
 	}

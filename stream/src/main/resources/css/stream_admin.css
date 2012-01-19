@@ -1,0 +1,29 @@
+#streams_modal_window{
+	position:absolute;
+	width:440px;
+	height:250px;
+	display:none;
+	z-index:9999;
+	padding:20px;
+	top:0;
+	left:0;
+}
+
+.closeModal{
+	right:0;
+}
+
+#usersToRight{
+	height:150px;
+	overflow-y:auto;
+}
+
+#stream_admin_table{
+	cursor:pointer;
+	width:100%;
+}
+
+#streams_notifications{
+	display:none;
+	color:green;
+}

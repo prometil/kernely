@@ -91,6 +91,7 @@ public class HolidayUpdateRequestDTO {
 		this.unity = newUnity;
 		this.effectiveMonth = effectiveMonth;
 		this.anticipation = anticipation;
+		this.color=color;
 	}
 
 }

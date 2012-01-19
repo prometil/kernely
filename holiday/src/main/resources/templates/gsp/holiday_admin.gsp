@@ -85,7 +85,7 @@
 
 <!-- Template for the edit view  -->
 <script type="text/html" id="popup-holiday-admin-update-template">
-	<input type="button" value="<%= i18n.t("close") %>" class="closeModal" id="modal_window_holiday"/><br/>
+	<input type="button" value="<%= i18n.t("close") %>" class="closeModal"/><br/>
 	<fieldset id="create_fieldset">
 		<legend><%= i18n.t("holiday_informations") %></legend>
 		<div id="main_create_div">

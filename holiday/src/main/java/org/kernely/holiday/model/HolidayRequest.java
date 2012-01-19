@@ -74,6 +74,8 @@ public class HolidayRequest extends AbstractModel {
 	@Column(name="manager_comment")
 	private String managerComment;
 
+	private String manager;
+	
 	@ManyToOne
 	@JoinColumn(name = "user_id")
 	private User user;
@@ -200,5 +202,17 @@ public class HolidayRequest extends AbstractModel {
 		this.details = details;
 	}
 
-	
+	/**
+	 * @return the manager
+	 */
+	public String getManager() {
+		return manager;
+	}
+
+	/**
+	 * @param manager the manager to set
+	 */
+	public void setManager(String manager) {
+		this.manager = manager;
+	}
 }

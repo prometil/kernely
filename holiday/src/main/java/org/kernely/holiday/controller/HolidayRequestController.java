@@ -59,19 +59,19 @@ public class HolidayRequestController extends AbstractController {
 	
 	/**
 	 * Create a holiday request
-	 * @param request the hliday request creation DTO
+	 * @param request the holiday request creation DTO
 	 * @return ok 
 	 */
 	@POST
 	@Path("/create")
-	@Produces({"application/json"})
+	@Produces({MediaType.APPLICATION_JSON})
 	public String createRequest(HolidayRequestCreationRequestDTO request){
 		// Check if request is not null.
 		// We check the value of the first element of details because Jersey create a list with one empty element
 		if(request.details.get(0).day != null && !request.details.get(0).day.equals("")){
 			holidayRequestService.registerRequestAndDetails(request);
 		}
-		return "'result':'Ok'";
+		return "{\"result\":\"Ok\"}";
 		
 	}
 }

@@ -20,7 +20,8 @@ AppHolidayManagerUsers = (function($){
 		
 		render: function(){
 			$.ajax({
-				url:"/holiday/manager/users/all/" + monthSelected + "/" + yearSelected,
+				url:"/holiday/manager/users/all",
+				data: {month: monthSelected, year: yearSelected},
 				dataType: "json",
 				success: function(data){
 					new HolidayManagerUserTableView(data).render();
@@ -35,7 +36,8 @@ AppHolidayManagerUsers = (function($){
 		},
 		reloadTable: function(){
 			$.ajax({
-				url:"/holiday/manager/users/all/" + monthSelected + "/" + yearSelected,
+				url:"/holiday/manager/users/all",
+				data: {month: monthSelected, year: yearSelected},
 				dataType: "json",
 				success: function(data){
 					new HolidayManagerUserTableView(data).reload();

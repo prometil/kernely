@@ -30,12 +30,26 @@ import org.kernely.core.hibernate.AbstractModel;
 
 /**
  * The mail model
- * @author b.grandperret
- *
  */
 @Entity
 @Table(name = "kernely_mail")
 public class Mail extends AbstractModel {
+	
+	/**
+	 * Error status for a mail
+	 */
+	public static final int MAIL_ERROR = 2;
+	
+	/**
+	 * Sended status for a mail
+	 */
+	public static final int MAIL_SENDED = 1;
+	
+	/**
+	 * Waiting status for a mail
+	 */
+	public static final int MAIL_WAITING = 0;
+	
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "mail_id")
@@ -45,6 +59,7 @@ public class Mail extends AbstractModel {
 	private String content;
 	private String recipients;
 	private String cc;
+	private int status;
 
 	/**
 	 * @return the id
@@ -121,4 +136,18 @@ public class Mail extends AbstractModel {
 		this.cc = cc;
 	}
 
+	/**
+	 * @return the status
+	 */
+	public int getStatus() {
+		return status;
+	}
+
+	/**
+	 * @param status the status to set
+	 */
+	public void setStatus(int status) {
+		this.status = status;
+	}
+	
 }
