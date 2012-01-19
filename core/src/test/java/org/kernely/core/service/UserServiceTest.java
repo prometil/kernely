@@ -51,27 +51,32 @@ public class UserServiceTest extends AbstractServiceTest{
 
 	private static final String STRING_TEST = "test";
 
+	private static final String STRING_TEST2 = "test2";
+
 	@Inject
 	private UserService service;
 	
 	@Inject
 	private RoleService roleService;
 	
-	private UserDTO creationOfTestUser() {
+	private void createUserRole(){
 		RoleDTO requestRole = new RoleDTO(1, Role.ROLE_USER);
 		roleService.createRole(requestRole);
-
+	}
+	
+	private UserDTO creationOfTestUser(String username) {
 		UserCreationRequestDTO request = new UserCreationRequestDTO();
-		request.username = STRING_TEST;
-		request.password = STRING_TEST;
-		request.firstname = STRING_TEST;
-		request.lastname = STRING_TEST;
+		request.username = username;
+		request.password = username;
+		request.firstname = username;
+		request.lastname = username;
 		return service.createUser(request);
 	}
 	
 	@Test
 	public void  createUser(){
-		UserDTO userdto = creationOfTestUser();
+		createUserRole();
+		UserDTO userdto = creationOfTestUser(STRING_TEST);
 		UserDetailsDTO uddto = new UserDetailsDTO();
 		uddto = service.getUserDetails(userdto.username);
 		assertEquals(STRING_TEST, userdto.username);
@@ -93,7 +98,8 @@ public class UserServiceTest extends AbstractServiceTest{
 	
 	@Test
 	public void getUserDetails(){
-		UserDTO userdto = creationOfTestUser();
+		createUserRole();
+		UserDTO userdto = creationOfTestUser(STRING_TEST);
 		
 		UserDetailsDTO uddto = new UserDetailsDTO();
 		uddto = service.getUserDetails(userdto.username);
@@ -104,7 +110,8 @@ public class UserServiceTest extends AbstractServiceTest{
 	
 	@Test
 	public void updateUserDetails(){
-		UserDTO userdto = creationOfTestUser();
+		createUserRole();
+		UserDTO userdto = creationOfTestUser(STRING_TEST);
 		
 		UserDetailsUpdateRequestDTO request = new UserDetailsUpdateRequestDTO();
 		request.birth="18/12/1990";
@@ -157,6 +164,7 @@ public class UserServiceTest extends AbstractServiceTest{
 	 
 	@Test(expected=IllegalArgumentException.class)
 	public void createUserWithSameUsernam(){
+		createUserRole();
 		RoleDTO requestRole = new RoleDTO(1, Role.ROLE_USER);
 		roleService.createRole(requestRole);
 		
@@ -178,6 +186,7 @@ public class UserServiceTest extends AbstractServiceTest{
 	
 	@Test(expected=IllegalArgumentException.class)
 	public void createUserWithEmptyPassword(){
+		createUserRole();
 		UserCreationRequestDTO request = new UserCreationRequestDTO();
 		request.username=STRING_TEST;
 		request.password="";
@@ -186,6 +195,7 @@ public class UserServiceTest extends AbstractServiceTest{
 	
 	@Test(expected=IllegalArgumentException.class)
 	public void createUserWithEmptyUsernameAndPassword(){
+		createUserRole();
 		UserCreationRequestDTO request = new UserCreationRequestDTO();
 		request.username="";
 		request.password="";
@@ -195,6 +205,7 @@ public class UserServiceTest extends AbstractServiceTest{
 	
 	@Test(expected=IllegalArgumentException.class)
 	public void createUserWithSpace(){
+		createUserRole();
 		UserCreationRequestDTO request = new UserCreationRequestDTO();
 		request.username="         ";
 		request.password="         ";
@@ -203,14 +214,16 @@ public class UserServiceTest extends AbstractServiceTest{
 	
 	@Test
 	public void  getUser(){
-		creationOfTestUser();
+		createUserRole();
+		creationOfTestUser(STRING_TEST);
 		assertEquals(1,service.getAllUsers().size());
 		assertEquals(1,service.getAllUserDetails().size());
 	}
 	
 	@Test
 	public void lockedUser(){
-		UserDTO userdto = creationOfTestUser();
+		createUserRole();
+		UserDTO userdto = creationOfTestUser(STRING_TEST);
 		assertEquals(false, userdto.locked);
 		UserDetailsDTO uddto = new UserDetailsDTO();
 		uddto = service.getUserDetails(userdto.username);
@@ -221,7 +234,8 @@ public class UserServiceTest extends AbstractServiceTest{
 	
 	@Test
 	public void updateUser(){
-		UserDTO userdto = creationOfTestUser();
+		createUserRole();
+		UserDTO userdto = creationOfTestUser(STRING_TEST);
 		UserDetailsDTO uddto = new UserDetailsDTO();
 		uddto = service.getUserDetails(userdto.username);
 		UserCreationRequestDTO ucr = new UserCreationRequestDTO();
@@ -245,7 +259,8 @@ public class UserServiceTest extends AbstractServiceTest{
 	
 	@Test(expected=IllegalArgumentException.class)
 	public void updateWithNullUsername(){
-		UserDTO userdto = creationOfTestUser();
+		createUserRole();
+		UserDTO userdto = creationOfTestUser(STRING_TEST);
 		UserDetailsDTO uddto = new UserDetailsDTO();
 		uddto = service.getUserDetails(userdto.username);
 		UserCreationRequestDTO ucr = new UserCreationRequestDTO();
@@ -259,7 +274,8 @@ public class UserServiceTest extends AbstractServiceTest{
 	@
 	Test(expected=IllegalArgumentException.class)
 	public void updateUserWithExistingUsername(){
-		UserDTO userdto = creationOfTestUser();
+		createUserRole();
+		UserDTO userdto = creationOfTestUser(STRING_TEST);
 		UserDetailsDTO uddto = new UserDetailsDTO();
 		uddto = service.getUserDetails(userdto.username);
 		UserCreationRequestDTO ucr = new UserCreationRequestDTO();
@@ -280,7 +296,8 @@ public class UserServiceTest extends AbstractServiceTest{
 	
 	@Test(expected=IllegalArgumentException.class)
 	public void updateWithVoidUsername(){
-		UserDTO userdto = creationOfTestUser();
+		createUserRole();
+		UserDTO userdto = creationOfTestUser(STRING_TEST);
 		UserDetailsDTO uddto = new UserDetailsDTO();
 		uddto = service.getUserDetails(userdto.username);
 		UserCreationRequestDTO ucr = new UserCreationRequestDTO();
@@ -301,7 +318,8 @@ public class UserServiceTest extends AbstractServiceTest{
 	
 	@Test
 	public void getAuthenticatedUser() {
-		creationOfTestUser();
+		createUserRole();
+		creationOfTestUser(STRING_TEST);
 		authenticateAs(STRING_TEST);
 		UserDTO currentUser = service.getAuthenticatedUserDTO();
 		assertEquals(STRING_TEST, currentUser.username);
@@ -314,7 +332,8 @@ public class UserServiceTest extends AbstractServiceTest{
 	
 	@Test(expected = IllegalArgumentException.class)
 	public void updateManagerWithNullList(){
-		creationOfTestUser(); 
+		createUserRole();
+		creationOfTestUser(STRING_TEST); 
 		UserCreationRequestDTO request2 = new UserCreationRequestDTO();
 		request2.username = TEST_MODIFIED_1;
 		request2.password = TEST_MODIFIED_1;
@@ -326,7 +345,8 @@ public class UserServiceTest extends AbstractServiceTest{
 	
 	@Test(expected=IllegalArgumentException.class)
 	public void updateManagerEmptyManager(){
-		creationOfTestUser();
+		createUserRole();
+		creationOfTestUser(STRING_TEST);
 		List<UserDTO> users = service.getAllUsers() ;
 		service.updateManager("", users);
 	}
@@ -334,7 +354,8 @@ public class UserServiceTest extends AbstractServiceTest{
 	
 	@Test
 	public void getUsersTest(){
-		creationOfTestUser();
+		createUserRole();
+		creationOfTestUser(STRING_TEST);
 		List<UserDTO> users = service.getAllUsers() ; 
 		UserCreationRequestDTO request2 = new UserCreationRequestDTO();
 		request2.username = TEST_MODIFIED_1;
@@ -360,7 +381,8 @@ public class UserServiceTest extends AbstractServiceTest{
 	
 	@Test
 	public void deleteManagerTest(){
-		creationOfTestUser();
+		createUserRole();
+		creationOfTestUser(STRING_TEST);
 		List<UserDTO> users = service.getAllUsers() ; 
 		UserCreationRequestDTO request2 = new UserCreationRequestDTO();
 		request2.username = TEST_MODIFIED_1;
@@ -386,7 +408,8 @@ public class UserServiceTest extends AbstractServiceTest{
 	
 	@Test 
 	public void getAllManagerTest(){
-		creationOfTestUser();
+		createUserRole();
+		creationOfTestUser(STRING_TEST);
 		List<UserDTO> users = service.getAllUsers() ; 
 		UserCreationRequestDTO request2 = new UserCreationRequestDTO();
 		request2.username = TEST_MODIFIED_1;
@@ -400,7 +423,8 @@ public class UserServiceTest extends AbstractServiceTest{
 
 	@Test
 	public void isManagerTest(){
-		creationOfTestUser();
+		createUserRole();
+		creationOfTestUser(STRING_TEST);
 		List<UserDTO> users = service.getAllUsers() ; 
 		UserCreationRequestDTO request2 = new UserCreationRequestDTO();
 		request2.username = TEST_MODIFIED_1;
@@ -413,19 +437,18 @@ public class UserServiceTest extends AbstractServiceTest{
 		assertEquals(true, service.isManager(TEST_MODIFIED_1));
 	}
 	
-/*	@Test
-	public void getAllRoleTest(){
-		RoleDTO requestRole = new RoleDTO(1, Role.ROLE_USER);
-		roleService.createRole(requestRole);
-		assertEquals(1, roleService.getAllRoles().size());
-	}*/
-	
-	/*@Test
-	public void getRoleTest(){
-		UserDTO udto = creationOfTestUser();
-		UserDetailsDTO  uddto = service.getUserDetails(udto.username);
-		assertEquals(1, service.getUserRoles(uddto.id).size()); 
-	}*/
-	
-	
+	@Test
+	public void getManagersTest(){
+		createUserRole();
+		UserDTO manager = creationOfTestUser(STRING_TEST); // manager
+		UserDTO user = creationOfTestUser(STRING_TEST2); // user
+		List<UserDTO> managedUsers = new ArrayList<UserDTO>();
+		managedUsers.add(user);
+
+		service.updateManager(manager.username, managedUsers);
+
+		List<UserDTO> managers = service.getManagers(STRING_TEST2);
+		assertEquals(1, managers.size());
+		assertEquals(STRING_TEST, managers.get(0).username);
+	}
 }

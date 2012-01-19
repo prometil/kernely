@@ -51,13 +51,10 @@ App = (function($){
 					this.message.timeToDisplay != "days"){
 				localisedDate = this.message.timeToDisplay;
 			} else {
-				console.log(this.message.timeToDisplay);
 				dateTemplate = $("#date-"+this.message.timeToDisplay+"-template").html();
-				console.log(dateTemplate);
 
 				dateView = {value: this.message.timeValue}
 				localisedDate = Mustache.to_html(dateTemplate, dateView);
-				console.log(localisedDate);
 			}
 			var template = $("#message-template").html();
 			var view = {id: this.message.id, message : this.message.message, stream: this.message.streamName, author: this.message.author, date: localisedDate, comments: this.message.nbComments};
@@ -215,13 +212,10 @@ App = (function($){
 					this.comment.timeToDisplay != "days"){
 				localisedDate = this.comment.timeToDisplay;
 			} else {
-				console.log(this.comment.timeToDisplay);
 				dateTemplate = $("#date-"+this.comment.timeToDisplay+"-template").html();
-				console.log(dateTemplate);
 
 				dateView = {value: this.comment.timeValue}
 				localisedDate = Mustache.to_html(dateTemplate, dateView);
-				console.log(localisedDate);
 			}
 			var template = $("#comment-template").html();
 			

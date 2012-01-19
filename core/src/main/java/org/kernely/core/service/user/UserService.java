@@ -123,7 +123,7 @@ public class UserService extends AbstractService {
 		em.get().persist(user);
 
 		eventBus.post(new UserCreationEvent(user.getId(), user.getUsername()));
-		
+
 		// Return a DTO of the new user created
 		UserDTO userDTO = new UserDTO(user);
 		userDTO.userDetails = new UserDetailsDTO(userdetails);
@@ -143,7 +143,7 @@ public class UserService extends AbstractService {
 			throw new IllegalArgumentException("Request cannot be null ");
 		}
 		if (u.birth != null && u.birth.equals("")) {
-				throw new IllegalArgumentException("A birth date must be like dd/MM/yyyy");
+			throw new IllegalArgumentException("A birth date must be like dd/MM/yyyy");
 		}
 
 		// parse the string date in class Date
@@ -220,7 +220,7 @@ public class UserService extends AbstractService {
 
 		// Retrieve the role User, automatically given to a user.
 		Query query = em.get().createQuery("SELECT r FROM Role r WHERE name=:role");
-		query.setParameter("role",Role.ROLE_USER);
+		query.setParameter("role", Role.ROLE_USER);
 		Role roleUser = (Role) query.getSingleResult();
 
 		Set<Role> roles = new HashSet<Role>();
@@ -257,7 +257,7 @@ public class UserService extends AbstractService {
 		return dtos;
 
 	}
-
+	
 	/**
 	 * Get the details about the user specified
 	 * 
@@ -287,7 +287,7 @@ public class UserService extends AbstractService {
 	@Transactional
 	public UserDetailsDTO getUserDetails(String login) {
 		Query query = em.get().createQuery("SELECT e FROM User  e WHERE username=:login");
-		query.setParameter("login", login);		
+		query.setParameter("login", login);
 		User u = (User) query.getSingleResult();
 		query = em.get().createQuery("SELECT e FROM UserDetails e , User u WHERE e.user = u AND u.id =:id");
 		query.setParameter("id", u.getId());
@@ -335,8 +335,10 @@ public class UserService extends AbstractService {
 	}
 
 	/**
-	 * Retrieve the list of RoleDTO from an userdetails id 
-	 * @param id of userDetails
+	 * Retrieve the list of RoleDTO from an userdetails id
+	 * 
+	 * @param id
+	 *            of userDetails
 	 * @return list of RoleDTO
 	 */
 	@Transactional
@@ -400,9 +402,9 @@ public class UserService extends AbstractService {
 		if (manager.equals("")) {
 			throw new IllegalArgumentException("Manager cannot be an empty string");
 		}
-		if (list.get(0).id == 0){
+		if (list.get(0).id == 0) {
 			deleteManager(manager);
-			return ;
+			return;
 		}
 		Set<User> users = new HashSet<User>();
 		Query query = em.get().createQuery("Select u FROM User u WHERE u.username=:manager");
@@ -417,25 +419,25 @@ public class UserService extends AbstractService {
 			User userManaged = (User) query2.getSingleResult();
 			users.add(userManaged);
 		}
-		
+
 		Set<User> ancientManaged = userManager.getUsers();
-		if (ancientManaged != null){
+		if (ancientManaged != null) {
 			for (User user : ancientManaged) {
 				user.getManagers().remove(userManager);
 			}
 		}
-		
+
 		// add the manager for each user
-	 	for (User user : users) {
-	 		Set<User> temp = new HashSet<User>();
-	 		if (user.getManagers() != null){
-		 		temp = user.getManagers() ;
+		for (User user : users) {
+			Set<User> temp = new HashSet<User>();
+			if (user.getManagers() != null) {
+				temp = user.getManagers();
 			}
 			temp.add(userManager);
-			user.setManager(temp);		 			
+			user.setManager(temp);
 			em.get().merge(user);
 		}
-	 	
+
 		// add the new users
 		userManager.setUsers(users);
 		em.get().merge(userManager);
@@ -485,25 +487,49 @@ public class UserService extends AbstractService {
 				usersList.add(new UserDTO(user.getUsername(), user.getId()));
 			}
 			collection.add(new ManagerDTO(manager.getUsername(), usersList));
-		} 
+		}
 		return collection;
 	}
 
 	/**
-	 * Verify if the user is a manager 
-	 * @param user String username
+	 * Verify if the user is a manager
+	 * 
+	 * @param user
+	 *            String username
 	 * @return true if the user is a manager
 	 */
 	@Transactional
-	public boolean isManager(String user){
+	public boolean isManager(String user) {
 		Set<String> allManagerUsername = new HashSet<String>();
-		for (ManagerDTO manager : this.getAllManager()){
+		for (ManagerDTO manager : this.getAllManager()) {
 			allManagerUsername.add(manager.name);
 		}
-		if (allManagerUsername.contains(user)){
+		if (allManagerUsername.contains(user)) {
 			return true;
 		}
-		return false; 
+		return false;
 	}
-	
+
+	/**
+	 * Get all users that manage the user.
+	 * 
+	 * @param username
+	 *            of the user
+	 */
+	@SuppressWarnings("unchecked")
+	@Transactional
+	public List<UserDTO> getManagers(String username) {
+		Query query = em.get().createQuery("SELECT u.managers FROM User u WHERE u.username=:username");
+		query.setParameter("username", username);
+
+		List<User> managers = (List<User>) query.getResultList();
+		
+		List<UserDTO> managersDTO = new ArrayList<UserDTO>();
+		
+		for (User manager : managers){
+			managersDTO.add(new UserDTO(manager));
+		}
+		
+		return managersDTO;
+	}
 }

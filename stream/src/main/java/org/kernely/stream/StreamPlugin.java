@@ -36,6 +36,8 @@ import com.google.inject.Inject;
  */
 public class StreamPlugin extends AbstractPlugin {
 
+	public static final String NAME = "stream";
+	
 	@Inject
 	private EventBus eventBus;
 	
@@ -46,7 +48,7 @@ public class StreamPlugin extends AbstractPlugin {
 	 * Default constructor
 	 */
 	public StreamPlugin() {
-		super("Stream", "/streams");
+		super(NAME, "/streams");
 		registerController(StreamController.class);
 		registerController(StreamAdminController.class);
 		registerModel(Message.class);

@@ -107,11 +107,11 @@ public class StreamService extends AbstractService {
 			List<String> recipients = new ArrayList<String>();
 			for (UserDTO u : subscribers) {
 				recipients.add(u.userDetails.email);
-				log.debug("Adds {} in the mail recipients !", u.userDetails.email);
+				log.debug("Adds {} in the mail recipients!", u.userDetails.email);
 			}
 			mailService.create("/templates/gsp/mail.gsp").with("content", contentString).subject(
 					"[Kernely] Someone posted on " + parent.getTitle()).to(recipients).registerMail();
-			log.debug("Mail registered !");
+			log.debug("Mail registered.");
 		}
 
 		StreamMessageDTO messageDTO = new StreamMessageDTO(message);

@@ -170,6 +170,7 @@ public class KernelyBootstrap {
 		// Bind all Jersey resources detected in plugins
 		for (AbstractPlugin plugin : plugins) {
 			String filepath = plugin.getName()+".xml";
+			log.debug("Searching configuration file {}",filepath);
 			if (filepath != null) {
 				try {
 					AbstractConfiguration configuration;

@@ -20,6 +20,7 @@
 
 package org.kernely.holiday;
 
+import org.joda.time.DateTime;
 import org.kernely.core.plugin.AbstractPlugin;
 import org.kernely.holiday.controller.HolidayAdminController;
 import org.kernely.holiday.controller.HolidayMainController;
@@ -27,7 +28,8 @@ import org.kernely.holiday.controller.HolidayManagerRequestController;
 import org.kernely.holiday.controller.HolidayManagerUserController;
 import org.kernely.holiday.controller.HolidayRequestController;
 import org.kernely.holiday.controller.HolidayUserViewController;
-import org.kernely.holiday.job.HolidaysJob;
+import org.kernely.holiday.job.HolidaysDailyJob;
+import org.kernely.holiday.job.HolidaysMonthlyJob;
 import org.kernely.holiday.migrations.Migration01;
 import org.kernely.holiday.model.HolidayBalance;
 import org.kernely.holiday.model.HolidayRequest;
@@ -39,6 +41,7 @@ import org.kernely.holiday.service.HolidayService;
 import org.quartz.CronScheduleBuilder;
 import org.quartz.DateBuilder;
 import org.quartz.ScheduleBuilder;
+import org.quartz.SimpleScheduleBuilder;
 import org.quartz.Trigger;
 import org.quartz.TriggerBuilder;
 import org.quartz.DateBuilder.IntervalUnit;
@@ -51,6 +54,7 @@ import com.google.inject.Inject;
  */
 public class HolidayPlugin extends AbstractPlugin {
 
+	public static final String NAME = "holiday";
 
 	@Inject
 	private EventBus eventBus;
@@ -63,7 +67,7 @@ public class HolidayPlugin extends AbstractPlugin {
 	 */
 	@SuppressWarnings({ "unchecked" })
 	public HolidayPlugin(){
-		super("Holiday", "/holiday");
+		super(NAME, "/holiday");
 		registerController(HolidayMainController.class);
 		registerController(HolidayAdminController.class);
 		registerController(HolidayRequestController.class);
@@ -94,8 +98,23 @@ public class HolidayPlugin extends AbstractPlugin {
                 withSchedule(holidaysSchedule).
                 startAt(DateBuilder.futureDate(15, IntervalUnit.SECOND)).build();
         
-        registerJob(HolidaysJob.class, holidaysTrigger);
-		
+        registerJob(HolidaysMonthlyJob.class, holidaysTrigger);
+
+		 // create the Mail schedule, run every 5 minutes
+        ScheduleBuilder dailySchedule = SimpleScheduleBuilder.
+                simpleSchedule().
+                withIntervalInHours(24).
+                repeatForever();
+ 
+        // Create the Mail trigger
+        Trigger mailTrigger = TriggerBuilder.
+                newTrigger().
+                withSchedule(dailySchedule).
+              startAt(DateTime.now().toDateMidnight().toDate()).build();
+        
+        registerJob(HolidaysDailyJob.class, mailTrigger);
+
+        
 	}
 	
 	@Override

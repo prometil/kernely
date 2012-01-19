@@ -173,7 +173,7 @@ public class MailService extends AbstractService implements Mailer {
 		 */
 		@Transactional
 		public boolean registerMail(){
-			String body = builder.withoutLayout().render();
+			String body = builder.forMail().render();
 			StringBuilder recipString = new StringBuilder("");
 			String recipInString="";
 			for (String to : recipients) {

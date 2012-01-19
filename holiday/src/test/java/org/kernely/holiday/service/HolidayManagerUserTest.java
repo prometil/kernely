@@ -51,9 +51,6 @@ public class HolidayManagerUserTest extends AbstractServiceTest  {
 	private HolidayService holidayService;
 	
 	@Inject
-	private HolidayBalanceService holidayBalanceService;
-	
-	@Inject
 	private HolidayRequestService holidayRequestService;
 	
 	private void createUserRoleForTest(){
@@ -140,7 +137,6 @@ public class HolidayManagerUserTest extends AbstractServiceTest  {
 		assertEquals(dto.usersManaged.size(), 2);
 		assertEquals(dto.usersManaged.get(0).details.size(), 2);
 		assertEquals(dto.usersManaged.get(1).details.size(), 2);
-		
 	}
 	
 	@Test(expected = UnauthorizedException.class)

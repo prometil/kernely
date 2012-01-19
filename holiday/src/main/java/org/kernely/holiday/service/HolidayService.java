@@ -158,7 +158,6 @@ public class HolidayService extends AbstractService {
 	 * Get a holiday type with its name
 	 * @name The name of the holiday
 	 */
-	@SuppressWarnings("unchecked")
 	@Transactional
 	public HolidayDTO getHolidayDTO(String holidayName){
 		Query verifExist = em.get().createQuery("SELECT h FROM HolidayType h WHERE name=:name");
