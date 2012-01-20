@@ -68,10 +68,10 @@
 <%= i18n.t("stream_updated") %>
 </script>
 
-<script type="text/html" id="stream-rights-combo-template">
+<script type="text/html" id="stream-groups-rights-combo-template">
 <tr>
-	<td>{{lastname}} {{firstname}}</td>
-	<td><select id="{{id}}">
+	<td>{{name}}</td>
+	<td><select class="groupscombo" id="{{id}}">
 			<option value="nothing"><%= i18n.t("no_right") %></option>
 			<option value="read"><%= i18n.t("read_right") %></option>
 			<option value="write"><%= i18n.t("read_write_right") %></option>
@@ -81,12 +81,33 @@
 </tr>
 </script>
 
-<!-- Template for the rights view  -->
+<script type="text/html" id="stream-users-rights-combo-template">
+<tr>
+	<td>{{lastname}} {{firstname}}</td>
+	<td><select class="userscombo" id="{{id}}">
+			<option value="nothing"><%= i18n.t("no_right") %></option>
+			<option value="read"><%= i18n.t("read_right") %></option>
+			<option value="write"><%= i18n.t("read_write_right") %></option>
+			<option value="delete"><%= i18n.t("read_write_delete_right") %></option>
+		</select><br/>
+	</td>
+</tr>
+</script>
+
+
+
+<!-- Template for the user rights view  -->
 <script type="text/html" id="popup-stream-rights-update-template">
 	<input type="button" value="<%= i18n.t("close") %>" class="closeModal"/><br/>
+	<div class="selectedTab" id="usersTab"><%= i18n.t("stream_users_rights_tab") %></div>
+	<div class="tab" id="groupsTab"><%= i18n.t("stream_groups_rights_tab") %></div>
+	<br/>
 	<fieldset>
 	<legend><%= i18n.t("stream_rights_text") %> {{title}}</legend>
-		<div id="usersToRight">
+		<div class="tabContent" id="usersToRight">
+			<!-- Filled by ajax  -->
+		</div>
+		<div class="tabHiddenContent" id="groupsToRight">
 			<!-- Filled by ajax  -->
 		</div>
 	</fieldset>
@@ -100,7 +121,8 @@
 		<input type="button" class="editButton" value="<%= i18n.t("edit") %>" disabled="disabled"/>
 		<input type="button" class="lockButton" value="<%= i18n.t("lock") %>" disabled="disabled"/>
 		<input type="button" class="unlockButton" value="<%= i18n.t("unlock") %>" disabled="disabled"/>
-		<input type="button" class="rightsButton" value="<%= i18n.t("rights") %>" disabled="disabled"/>
+		<input type="button" class="rightsButton" value="<%= i18n.t("stream_users_rights_tab") %>" disabled="disabled"/>
+		<input type="button" class="groupRightsButton" value="<%= i18n.t("stream_groups_rights_tab") %>" disabled="disabled"/>
 		<span id="streams_notifications"></span>
 	</div>
 	<table id="stream_admin_table">

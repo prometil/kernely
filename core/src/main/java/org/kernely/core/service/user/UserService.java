@@ -246,6 +246,8 @@ public class UserService extends AbstractService {
 	 * @return the list of all users contained in the database.
 	 */
 	@SuppressWarnings("unchecked")
+	// Setting this method @Transactional causes an exception when modifying rights on stream ("Cannot commit when autoCommit is enabled.")
+	// Bug KERN-292
 	@Transactional
 	public List<UserDTO> getAllUsers() {
 		Query query = em.get().createQuery("SELECT e FROM User e");
@@ -313,7 +315,6 @@ public class UserService extends AbstractService {
 	 * 
 	 * @return A list of DTO associated to all details stored in the database
 	 */
-	@Transactional
 	@SuppressWarnings("unchecked")
 	public List<UserDetailsDTO> getAllUserDetails() {
 		Query query = em.get().createQuery("SELECT e FROM UserDetails e");
@@ -532,4 +533,5 @@ public class UserService extends AbstractService {
 		
 		return managersDTO;
 	}
+
 }
