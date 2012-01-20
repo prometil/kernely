@@ -174,12 +174,12 @@ AppStreamAdmin = (function($){
       		var winW = $(window).width();
 
         	//Set the popup window to center
-       		$("#modal_window").css('top',  winH/2-$("#modal_window").height()/2);
-     		$("#modal_window").css('left', winW/2-$("#modal_window").width()/2);
-     		$("#modal_window").css('background-color', "#EEEEEE");
+       		$("#streams_modal_window").css('top',  winH/2-$("#streams_modal_window").height()/2);
+     		$("#streams_modal_window").css('left', winW/2-$("#streams_modal_window").width()/2);
+     		$("#streams_modal_window").css('background-color', "#EEEEEE");
      		$("input:text").each(function(){this.value="";});
      		//transition effect
-     		$("#modal_window").fadeIn(500);
+     		$("#streams_modal_window").fadeIn(500);
 		},
 		
 		createstream: function(){
@@ -246,7 +246,7 @@ AppStreamAdmin = (function($){
 	})
 	
 	StreamRightsUpdateView = Backbone.View.extend({
-		el: "#modal_window",
+		el: "#streams_modal_window",
 		
 		events:{
 			"click .closeModal" : "closemodal",
@@ -279,7 +279,7 @@ AppStreamAdmin = (function($){
 		},
 		
 		closemodal: function(){
-			$('#modal_window').hide();
+			$('#streams_modal_window').hide();
        		$('#mask').hide();
 		},
 		updatestreamrights: function(){
@@ -313,7 +313,7 @@ AppStreamAdmin = (function($){
 				contentType: "application/json; charset=utf-8",
 				success: function(data){
 					if (data.result == "ok"){
-						$('#modal_window').hide();
+						$('#streams_modal_window').hide();
 						$('#mask').hide();
 						
 						var successHtml = $("#rights-updated-template").html();
@@ -398,7 +398,7 @@ AppStreamAdmin = (function($){
 	})
 	
 	StreamAdminCreateView = Backbone.View.extend({
-		el: "#modal_window",
+		el: "#streams_modal_window",
 		
 		vid: null,
 		vname: null,
@@ -425,7 +425,7 @@ AppStreamAdmin = (function($){
 		},
 		
 		closemodal: function(){
-			$('#modal_window').hide();
+			$('#streams_modal_window').hide();
        		$('#mask').hide();
 		},
 		
@@ -439,7 +439,7 @@ AppStreamAdmin = (function($){
 				contentType: "application/json; charset=utf-8",
 				success: function(data){
 					if (data.result == "ok"){
-						$('#modal_window').hide();
+						$('#streams_modal_window').hide();
 	       				$('#mask').hide();
 
 	       				var html = $("#stream-created-template").html();
@@ -460,7 +460,7 @@ AppStreamAdmin = (function($){
 	
 		
 	StreamAdminUpdateView = Backbone.View.extend({
-		el: "#modal_window",
+		el: "#streams_modal_window",
 		
 		vid: null,
 		vname: null,
@@ -500,7 +500,7 @@ AppStreamAdmin = (function($){
 		},
 		
 		closemodal: function(){
-			$('#modal_window').hide();
+			$('#streams_modal_window').hide();
        		$('#mask').hide();
 		},
 		
@@ -514,7 +514,7 @@ AppStreamAdmin = (function($){
 				contentType: "application/json; charset=utf-8",
 				success: function(data){
 					if (data.result == "ok"){
-						$('#modal_window').hide();
+						$('#streams_modal_window').hide();
 	       				$('#mask').hide();
 	       				
 	       				var html = $("#stream-updated-template").html();

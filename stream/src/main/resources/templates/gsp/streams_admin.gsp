@@ -1,12 +1,12 @@
 <script type="text/javascript" src="/js/streams_admin.js"></script>
 
-<div id="group_header" style=""></div>
-<div id="mask" style="position:absolute;z-index:9000;background-color:#000;display:none;top:0;left:0;"></div>
-<div id="modal_window" style=" position:absolute;width:440px;height:250px;display:none;z-index:9999;padding:20px;top:0;left:0;">
+<div id="stream_header"></div>
+<div id="mask"></div>
+<div id="streams_modal_window">
 </div>
 
 <script type="text/html" id="popup-stream-admin-template">
-	<input type="button" value="<%= i18n.t("close") %>" class="closeModal" style="right:0;"/><br/>
+	<input type="button" value="<%= i18n.t("close") %>" class="closeModal"/><br/>
 	<fieldset>
 	<legend><%= i18n.t("stream_informations") %></legend>
 	<%= i18n.t("name") %>: <input type="text" name="name" value="{{name}}"/><br/>
@@ -19,11 +19,11 @@
 	</fieldset>
 	<br/>
 	<input type="button" value="<%= i18n.t("create") %>" class="sendStream"/><br/>
-	<span id="streams_errors" style="display:none;font-weight:bold;color:red;"></span>
+	<span id="errors_message"></span>
 </script>
 
 <script type="text/html" id="popup-stream-admin-update-template">
-	<input type="button" value="<%= i18n.t("close") %>" class="closeModal" style="right:0;"/><br/>
+	<input type="button" value="<%= i18n.t("close") %>" class="closeModal"/><br/>
 	<fieldset>
 	<legend><%= i18n.t("stream_informations") %></legend>
 	<%= i18n.t("name") %>: <input type="text" name="name" value="{{name}}"/><br/>
@@ -37,7 +37,7 @@
 	</fieldset>
 	<br/>
 	<input type="button" value="<%= i18n.t("update") %>" class="updateDataStream"/><br/>
-	<span id="streams_errors" style="display:none;font-weight:bold;color:red;"></span>
+	<span id="errors_message"></span>
 </script>
 
 <script type="text/html" id="confirm-stream-lock-template">
@@ -83,10 +83,10 @@
 
 <!-- Template for the rights view  -->
 <script type="text/html" id="popup-stream-rights-update-template">
-	<input type="button" value="<%= i18n.t("close") %>" class="closeModal" style="right:0;"/><br/>
+	<input type="button" value="<%= i18n.t("close") %>" class="closeModal"/><br/>
 	<fieldset>
 	<legend><%= i18n.t("stream_rights_text") %> {{title}}</legend>
-		<div id="usersToRight" style="height:150px;overflow-y:auto;">
+		<div id="usersToRight">
 			<!-- Filled by ajax  -->
 		</div>
 	</fieldset>
@@ -101,9 +101,9 @@
 		<input type="button" class="lockButton" value="<%= i18n.t("lock") %>" disabled="disabled"/>
 		<input type="button" class="unlockButton" value="<%= i18n.t("unlock") %>" disabled="disabled"/>
 		<input type="button" class="rightsButton" value="<%= i18n.t("rights") %>" disabled="disabled"/>
-		<span id="streams_notifications" style="display:none;color:green;"></span>
+		<span id="streams_notifications"></span>
 	</div>
-	<table id="stream_admin_table" style="cursor:pointer;width:100%">
+	<table id="stream_admin_table">
 		
 	</table>
 </div>

@@ -340,7 +340,6 @@ AppHolidayManagerRequest = (function($){
 					$.ajax({
 						url : "/holiday/managers/request/comment/" + parent.vid + "/" + $("#comment").val(),
 						success : function(){
-							console.log("Sucess function");
 							var successHtml = $("#holiday-accept-template").html();				
 							$("#holiday_notifications").text(successHtml);
 							$("#holiday_notifications").fadeIn(1000);
@@ -496,9 +495,6 @@ AppHolidayManagerRequest = (function($){
 			this.data = data;
 			this.details = details;
 			this.listDays = listDays; 
-			console.log(data);
-			console.log(details);
-			console.log(listDays);
 		},
 		
 		

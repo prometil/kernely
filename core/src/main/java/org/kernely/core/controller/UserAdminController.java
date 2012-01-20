@@ -60,7 +60,7 @@ public class UserAdminController extends AbstractController{
 	public Response displayPage()
 	{
 		if (userService.currentUserIsAdministrator()){
-			return ok(templateRenderer.create("/templates/gsp/administration/user_admin.gsp").withLayout(TemplateRenderer.ADMIN_LAYOUT));
+			return ok(templateRenderer.create("/templates/gsp/administration/user_admin.gsp").withLayout(TemplateRenderer.ADMIN_LAYOUT).addCss("/css/admin.css"));
 		}
 		return ok(templateRenderer.create("/templates/gsp/home.gsp"));
 	}

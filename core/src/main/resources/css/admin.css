@@ -32,6 +32,26 @@ a.loader{
 	left:0;
 }
 
+.closeModal{
+	right:0;
+}
+
+#errors_message{
+	display:none;
+	font-weight:bold;
+	color:red;
+}
+
+#span_notifications{
+	display:none;
+	color:green;
+}
+
+#user_admin_table, #manager_admin_table, #group_admin_table{
+	cursor:pointer;
+	width:100%;
+}
+
 /* User page*/
 #modal_window_user{
 	position:absolute;
@@ -44,16 +64,11 @@ a.loader{
 	left:0;
 }
 
-#users_errors_create, #users_errors_update{
-	display:none;
-	font-weight:bold;
-	color:red;
+#rolesToLink{
+	height:150px;
+	overflow-y:auto;
 }
 
-#user_admin_table{
-	cursor:pointer;
-	width:100%;
-}
 /* Group page*/
 #modal_window_group{
 	position:absolute;
@@ -72,7 +87,42 @@ a.loader{
 	color:red;
 }
 
-#group_admin_table{
-	cursor:pointer;
-	width:100%;
+#usersToLink{
+	height:150px;
+	overflow-y:auto;
+}
+
+/* Manager page */
+#modal_window_manager{
+	position:absolute;
+	width:440px;
+	height:300px;
+	display:none;
+	z-index:9999;
+	padding:20px;
+	top:0;
+	left:0;
+}
+
+#usersToLink{
+	height:150px;
+	overflow-y:auto;
+}
+
+/* Main admin layout page */
+#admin_panel_container{
+	width:710px;
+	float:left;
+}
+
+#admin_header{
+	height:50px;
+	text-align:center;
+	font-size:20px;
+	font-weight:bold;
+}
+
+#admin_sidebar_container{
+	width:250px;
+	float:left;
 }

@@ -78,7 +78,7 @@ public class StreamAdminController extends AbstractController {
 	public Response getPluginAdminPanel() {
 		Response page;
 		if (userService.currentUserIsAdministrator()) {
-			page = ok(templateRenderer.create("/templates/gsp/streams_admin.gsp").withLayout(TemplateRenderer.ADMIN_LAYOUT));
+			page = ok(templateRenderer.create("/templates/gsp/streams_admin.gsp").withLayout(TemplateRenderer.ADMIN_LAYOUT).addCss("/css/admin.css").addCss("/css/stream_admin.css"));
 		} else {
 			page = ok(templateRenderer.create("/templates/gsp/home.gsp"));
 		}
