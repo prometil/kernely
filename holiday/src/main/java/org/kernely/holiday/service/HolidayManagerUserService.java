@@ -105,9 +105,8 @@ public class HolidayManagerUserService extends AbstractService{
 		mainDTO.month = monthNeeded;
 		mainDTO.year = yearNeeded;
 		return mainDTO;
-
 	}
-
+	
 	private HolidayType getHolidayTypeFromBalanceId(int id){
 		HolidayBalance balance = em.get().find(HolidayBalance.class, id);
 		return balance.getHolidayType();

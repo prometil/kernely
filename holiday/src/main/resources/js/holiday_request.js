@@ -244,10 +244,10 @@ AppHolidayRequest = (function($){
 			// Store the view into the array of all cell day views
 			if(this.viewRank != -1){
 				allDayCells[this.viewRank] = this;
-			}
-			
+			}			
 			this.partOfDay = part;
 		},
+		
 		colorTheWorld : function(event){
 			if(currentCellPickerSelected != null && !this.isHeader && this.available == "true"){
 				if(this.selectedBy != currentCellPickerSelected.idType){

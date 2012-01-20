@@ -21,6 +21,7 @@
 package org.kernely.holiday.service;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -134,7 +135,43 @@ public class HolidayRequestService extends AbstractService{
 			return null;
 		}
 	}
+	
+	/**
+	 * Get the holiday detail from his id
+	 * @param idRequest
+	 * @return an holidaydetaildto
+	 */
+	@Transactional
+	public List<HolidayDetailDTO> getHolidayRequestDetails(int idRequest){
+		Query holidayRequest = em.get().createQuery("SELECT h FROM HolidayRequest h WHERE id=:idRequest");
+		holidayRequest.setParameter("idRequest",idRequest);
+		HolidayRequest holiday = (HolidayRequest) holidayRequest.getSingleResult();
+		Set<HolidayRequestDetail> holidayDetails  =  holiday.getDetails();
+		ArrayList<HolidayDetailDTO> list = new ArrayList<HolidayDetailDTO>();
+		for (HolidayRequestDetail hrd : holidayDetails){
+			list.add(new HolidayDetailDTO(hrd));
+		}
+		return list;
+	}
 
+	/**
+	 * Get the holiday detail by order
+	 * @param idRequest
+	 * @return an holiday detail DTO
+	 */
+	@Transactional
+	public List<HolidayDetailDTO> getHolidayRequestDetailsByOrder(int idRequest){
+		Query holidayRequest = em.get().createQuery("SELECT h FROM HolidayRequest h WHERE id=:idRequest");
+		holidayRequest.setParameter("idRequest",idRequest);
+		HolidayRequest holiday = (HolidayRequest) holidayRequest.getSingleResult();
+		Set<HolidayRequestDetail> holidayDetails  =  holiday.getDetails();
+		ArrayList<HolidayDetailDTO> list = new ArrayList<HolidayDetailDTO>();
+		for (HolidayRequestDetail hrd : holidayDetails){
+			list.add(new HolidayDetailDTO(hrd));
+		}		
+		Collections.sort(list);
+		return list;
+	}
 	/**
 	 * Retrieve all request done by the current user
 	 * @return A list of DTO corresponding to the request done by the current user
@@ -320,7 +357,7 @@ public class HolidayRequestService extends AbstractService{
 		log.debug("ACCEPT : Retrieving holiday request with id {}", idRequest);
 		HolidayRequest request = em.get().find(HolidayRequest.class, idRequest);
 		request.setStatus(HolidayRequest.ACCEPTED_STATUS);
-		request.setManager(this.getAuthenticatedUserModel().getUsername());
+		request.setManager(this.getAuthenticatedUserModel());
 		em.get().merge(request);
 		log.debug("Holiday request with id {} has been accepted", idRequest);
 	}
@@ -337,7 +374,7 @@ public class HolidayRequestService extends AbstractService{
 		log.debug("DENY : Retrieving holiday request with id {}", idRequest);
 		HolidayRequest request = em.get().find(HolidayRequest.class, idRequest);
 		request.setStatus(HolidayRequest.DENIED_STATUS);
-		request.setManager(this.getAuthenticatedUserModel().getUsername());
+		request.setManager(this.getAuthenticatedUserModel());
 		em.get().merge(request);
 		log.debug("Holiday request with id {} has been denied", idRequest);
 	}

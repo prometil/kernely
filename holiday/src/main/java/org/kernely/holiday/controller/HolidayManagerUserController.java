@@ -44,7 +44,6 @@ public class HolidayManagerUserController extends AbstractController{
 	@Path("/all/{month}/{year}")
 	@Produces( {MediaType.APPLICATION_JSON} )
 	public HolidayUsersManagerDTO getAllRequestsOfAllUsers(@PathParam("month") int month, @PathParam("year") int year){
-		HolidayUsersManagerDTO test = holidayManagerService.getHolidayForAllManagedUsersForMonth(month, year);
-		return test;
+		return holidayManagerService.getHolidayForAllManagedUsersForMonth(month, year);
 	}
 }

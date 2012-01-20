@@ -80,7 +80,9 @@ public class HolidayRequestDTO {
 		this.status = request.getStatus();
 		this.requesterComment = request.getRequesterComment();
 		this.user = request.getUser().getUsername();
-		this.manager = request.getManager();
+		if (request.getManager() != null){
+			this.manager = request.getManager().getUsername();
+		}
 		this.managerComment = request.getManagerComment(); 
 		for(HolidayRequestDetail hd : request.getDetails()){
 			this.details.add(new HolidayDetailDTO(hd));

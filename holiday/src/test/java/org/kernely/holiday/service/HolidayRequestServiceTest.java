@@ -381,6 +381,5 @@ public class HolidayRequestServiceTest extends AbstractServiceTest{
 		
 		DateTimeFormatter fmt = DateTimeFormat.forPattern("MM/dd/yyyy");
 		holidayRequestService.getCalendarRequest(fmt.parseDateTime(DATE5), fmt.parseDateTime(DATE4));
-	}
-	
+	}	
 }

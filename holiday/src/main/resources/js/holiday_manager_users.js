@@ -42,8 +42,6 @@ AppHolidayManagerUsers = (function($){
 				}
 			});
 		}
-		
-		
 	})
 	
 	HolidayManagerMonthSelectorView = Backbone.View.extend({
