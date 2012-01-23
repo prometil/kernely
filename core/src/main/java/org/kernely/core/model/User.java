@@ -143,8 +143,10 @@ public class User extends AbstractModel implements Comparable<User> {
 	public final Set<Role> getAllRoles() {
 		Set<Role> allRoles = new HashSet<Role>();
 		allRoles.addAll(roles);
-		for (Group g : groups) {
-			allRoles.addAll(g.getRoles());
+		if (groups != null){
+			for (Group g : groups) {
+				allRoles.addAll(g.getRoles());
+			}	
 		}
 		return allRoles;
 	}

@@ -60,7 +60,6 @@ import org.slf4j.LoggerFactory;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.google.inject.persist.Transactional;
-import com.mchange.v2.resourcepool.ResourcePool.Manager;
 
 /**
  * The service for holiday request pages

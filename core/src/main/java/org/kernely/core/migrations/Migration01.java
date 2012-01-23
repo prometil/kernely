@@ -170,10 +170,14 @@ public class Migration01 extends Migration {
 		Insert adminRole = Insert.into("kernely_role");
 		adminRole.set("id","4");
 		adminRole.set("name","Administrator");
+		
+		Insert rhRole = Insert.into("Kernely_role");
+		rhRole.set("id", "5");
+		rhRole.set("name", "Human resource");
 				
 		commands.add(userRole);
 		commands.add(adminRole);
-		
+		commands.add(rhRole);
 		
 		//the table group permision
 		CreateTable groupPermission = CreateTable.name("kernely_group_permissions");

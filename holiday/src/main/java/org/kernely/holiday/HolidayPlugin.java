@@ -23,6 +23,7 @@ package org.kernely.holiday;
 import org.joda.time.DateTime;
 import org.kernely.core.plugin.AbstractPlugin;
 import org.kernely.holiday.controller.HolidayAdminController;
+import org.kernely.holiday.controller.HolidayHumanResourceController;
 import org.kernely.holiday.controller.HolidayMainController;
 import org.kernely.holiday.controller.HolidayManagerRequestController;
 import org.kernely.holiday.controller.HolidayManagerUserController;
@@ -74,6 +75,7 @@ public class HolidayPlugin extends AbstractPlugin {
 		registerController(HolidayManagerUserController.class);
 		registerController(HolidayManagerRequestController.class);
 		registerController(HolidayUserViewController.class);
+		registerController(HolidayHumanResourceController.class);
 		registerModel(HolidayType.class);
 		registerModel(HolidayBalance.class);
 		registerModel(HolidayRequest.class);

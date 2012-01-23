@@ -175,6 +175,13 @@ public class UserService extends AbstractService {
 		}
 	}
 
+	@Transactional
+	public User getUserByUsername(String username){
+		Query query = em.get().createQuery("SELECT u FROM User u WHERE username=:username");
+		query.setParameter("username", username);
+		return (User) query.getSingleResult();
+	}
+	
 	/**
 	 * Lock the user who has the id 'id'
 	 * 
@@ -335,6 +342,14 @@ public class UserService extends AbstractService {
 	}
 
 	/**
+	 * Verify if the current user has the role of human resource
+	 * @return true if the current user has the role of human resource, false otherwise.
+	 */
+	public boolean currentUserIsHumanResource(){
+		return SecurityUtils.getSubject().hasRole(Role.ROLE_HUMANRESOURCE); 
+	}
+	
+	/**
 	 * Retrieve the list of RoleDTO from an userdetails id
 	 * 
 	 * @param id
@@ -356,7 +371,6 @@ public class UserService extends AbstractService {
 		for (Role role : userRoles) {
 			dtos.add(new RoleDTO(role.getId(), role.getName()));
 		}
-
 		return dtos;
 	}
 
