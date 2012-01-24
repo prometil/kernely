@@ -62,6 +62,8 @@
 			<tbody>
 		</table>
 	</div>
+	<input type="button" id="button_accepted" value="<%=i18n.t("accepted")%>"/> <input type="button" id="button_denied" value="<%=i18n.t("denied")%>" />
+	
 </script>
 
 <script type="text/html" id="popup-denied-template">

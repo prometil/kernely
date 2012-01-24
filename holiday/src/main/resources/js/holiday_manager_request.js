@@ -10,6 +10,8 @@ AppHolidayManagerRequest = (function($){
 	var cellDayAfternoonCounter = 1;
 	var MORNING_PART = 1;
 	var AFTERNOON_PART = 2;
+	var viewAccept =null;
+	var viewDeny = null;
 	
 	HolidayManagerRequestPageView = Backbone.View.extend({
 		el:"#request-manager-main",
@@ -101,9 +103,6 @@ AppHolidayManagerRequest = (function($){
 		vstatus : null,
 		
 		events: {
-			"click" : "selectLine",
-			"mouseover" : "overLine",
-			"mouseout" : "outLine"
 		},
 		
 		initialize: function(id, beginDate, endDate, user, requesterComment, managerComment, status){
@@ -114,27 +113,6 @@ AppHolidayManagerRequest = (function($){
 			this.vrequesterComment=requesterComment;
 			this.vmanagerComment = managerComment
 			this.vstatus = status;
-		},
-		
-		selectLine : function(){
-			$(this.el).css("background-color", "#8AA5A1");
-			if(typeof(lineSelected) != "undefined"){
-				if(lineSelected != this && lineSelected != null){
-					$(lineSelected.el).css("background-color", "transparent");
-				}
-			}
-			lineSelected = this;
-		},
-		
-		overLine : function(){
-			if(lineSelected != this){
-				$(this.el).css("background-color", "#EEEEEE");
-			}
-		},
-		outLine : function(){
-			if(lineSelected != this){
-				$(this.el).css("background-color", "transparent");
-			}
 		},
 		
 		render:function(){
@@ -236,10 +214,7 @@ AppHolidayManagerRequest = (function($){
 
 	HolidayManagerButtonsView = Backbone.View.extend({
 		el:"#holiday_button_container",		
-		
-		viewAccept : null,
-		viewDeny : null,
-				
+						
 		events: {
 			"click #button_accepted" : "acceptModal",
 			"click #button_denied" : "denyModal",
@@ -247,8 +222,8 @@ AppHolidayManagerRequest = (function($){
 		},
 		
 		initialize:function(){
-			this.viewAccept = new HolidayRequestAcceptView();
-			this.viewDeny = new HolidayRequestDenyView();
+			viewAccept = new HolidayRequestAcceptView();
+			viewDeny = new HolidayRequestDenyView();
 			viewVisualize = new HolidayManagerVisualizeView();
 		},
 		
@@ -279,14 +254,14 @@ AppHolidayManagerRequest = (function($){
 		
 		acceptModal:function(){
 			this.showModalWindow();
-			this.viewAccept.setFields(lineSelected.vid);
-			this.viewAccept.render();
+			viewAccept.setFields(lineSelected.vid);
+			viewAccept.render();
 		},
 		
 		denyModal:function(){
  			this.showModalWindow();
- 			this.viewDeny.setFields(lineSelected.vid);
-			this.viewDeny.render();
+ 			viewDeny.setFields(lineSelected.vid);
+			viewDeny.render();
 		},
 		
 		visualizeModal:function(){
@@ -404,7 +379,6 @@ AppHolidayManagerRequest = (function($){
 							$("#holiday_notifications").text(successHtml);
 							$("#holiday_notifications").fadeIn(1000);
 							$("#holiday_notifications").fadeOut(3000);
-							return this;
 							tableView1.reload();
 							tableView2.reload();
 							$("#button_visualize").attr('disabled', 'disabled');
@@ -425,13 +399,16 @@ AppHolidayManagerRequest = (function($){
 		vid : null,
 		data : null,
 		listDay : null,
+		viewAccept : null,
+		viewDeny : null, 
 		
 		events:{
 			"click .closeModal" : "closemodal",
+			"click #button_accepted" : "acceptModal",
+			"click #button_denied" : "denyModal"			
 		},
 		
 		initialize: function(){
-		
 		},
 		
 		setFields:function(id){
@@ -441,6 +418,31 @@ AppHolidayManagerRequest = (function($){
 		closemodal: function(){
 			$('#modal_window_holiday_request').hide();
 	   		$('#mask').hide();
+		},
+		
+		showModalWindow: function(){
+			//Get the screen height and width
+       		var maskHeight = $(window).height();
+       		var maskWidth = $(window).width();
+
+       		//Set height and width to mask to fill up the whole screen
+       		$('#mask').css({'width':maskWidth,'height':maskHeight});
+
+       		//transition effect    
+       		$('#mask').fadeIn(500);   
+       		$('#mask').fadeTo("fast",0.7); 
+
+       		//Get the window height and width
+       		var winH = $(window).height();
+      		var winW = $(window).width(); 
+
+        	//Set the popup window to center
+       		$("#modal_window_holiday_request").css('top',  winH/2-$("#modal_window_holiday_request").height()/2);
+     		$("#modal_window_holiday_request").css('left', winW/2-$("#modal_window_holiday_request").width()/2);
+     		$("#modal_window_holiday_request").css('background-color', "#EEEEEE");
+     		$("input:text").each(function(){this.value="";});
+     		//transition effect
+     		$("#modal_window_holiday_request").fadeIn(500);
 		},
 		
 		render: function(){
@@ -478,7 +480,19 @@ AppHolidayManagerRequest = (function($){
 				}
 			});
 			return this;
-		}
+		},
+		
+		acceptModal:function(){
+			this.showModalWindow();
+			viewAccept.setFields(lineSelected.vid);
+			viewAccept.render();
+		},
+		
+		denyModal:function(){
+ 			this.showModalWindow();
+ 			viewDeny.setFields(lineSelected.vid);
+			viewDeny.render();
+		}		
 	})
 
 	HolidayRequestCalendarView = Backbone.View.extend({
