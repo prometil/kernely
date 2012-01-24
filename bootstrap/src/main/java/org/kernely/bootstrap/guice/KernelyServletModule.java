@@ -135,6 +135,7 @@ public class KernelyServletModule extends JerseyServletModule {
 		bind(DefaultServlet.class).in(Singleton.class);
 		bind(MediaServlet.class).in(Singleton.class);
 
+		serve("*.ico").with(MediaServlet.class);
 		serve("*.js").with(MediaServlet.class);
 		serve("*.css").with(MediaServlet.class);
 		serve("*.png").with(MediaServlet.class);
