@@ -22,50 +22,39 @@ package org.kernely.stream.dto;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
- * the stream dto for the write
- * @author b.grandperret
- *
+ * Group rights on stream DTO 
  */
 @XmlRootElement
-public class RightOnStreamDTO {
+public class GroupRightOnStreamDTO {
 
 	/**
-	 * The user or group id 
+	 * The group id 
 	 */
-	public int id;
-
-	/**
-	 * The type of id : "group" or "user"
-	 */
-	public String idType;
+	public int groupid;
 	
 	/**
 	 * The type of permission for the user 
 	 */
 	public String permission;
 
-	
 	/**
 	 * Default constructor
 	 */
-	public RightOnStreamDTO() {
+	public GroupRightOnStreamDTO() {
 
 	}
 
 	/**
-	 * Creates a RightOnStreamDTO
+	 * Creates a GroupRightOnStreamDTO
 	 * 
-	 * @param id
-	 *            Id of the user or group
-	 * @param idType
-	 *            The type of id : "group" or "user"
+	 * @param groupid
+	 *            Id of the group
 	 * @param permission
-	 *            Permission granted to the user ou group
+	 *            Permission granted to the group
 	 */
-	public RightOnStreamDTO(int id, String idType, String permission) {
-		this.id = id;
+	public GroupRightOnStreamDTO(int groupid, String permission) {
+		this.groupid = groupid;
 		this.permission = permission;
-		this.idType=idType;
 	}
 
 }
