@@ -42,6 +42,7 @@ import org.kernely.core.hibernate.AbstractModel;
 public class Role extends AbstractModel {
 	public static final String ROLE_USER = "User";
 	public static final String ROLE_ADMINISTRATOR = "Administrator";
+	public static final String ROLE_HUMANRESOURCE = "Human resource";
 
 	/**
 	 * Role's id
