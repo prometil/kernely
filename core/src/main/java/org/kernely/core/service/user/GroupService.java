@@ -50,9 +50,7 @@ public class GroupService extends AbstractService {
 	 * @return the list of all groups contained in the database.
 	 */
 	@SuppressWarnings("unchecked")
-	// Setting this method @Transactional causes an exception when modifying rights on stream ("Cannot commit when autoCommit is enabled.")
-	// Bug KERN-292
-//	@Transactional
+	@Transactional
 	public List<GroupDTO> getAllGroups() {
 		Query query = em.get().createQuery("SELECT e FROM Group e");
 		List<Group> collection = (List<Group>) query.getResultList();
