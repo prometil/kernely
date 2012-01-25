@@ -36,11 +36,9 @@ import org.kernely.core.service.user.GroupService;
 import org.kernely.core.service.user.PermissionService;
 import org.kernely.core.service.user.UserService;
 import org.kernely.core.template.TemplateRenderer;
-import org.kernely.stream.dto.GroupRightOnStreamDTO;
 import org.kernely.stream.dto.RightOnStreamDTO;
 import org.kernely.stream.dto.StreamCreationRequestDTO;
 import org.kernely.stream.dto.StreamDTO;
-import org.kernely.stream.dto.StreamGroupRightsUpdateRequestDTO;
 import org.kernely.stream.dto.StreamRightsUpdateRequestDTO;
 import org.kernely.stream.model.Stream;
 import org.kernely.stream.service.StreamService;
@@ -48,7 +46,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.inject.Inject;
-import com.sun.mail.imap.Rights;
 
 /**
  * Controller for the stream admin page

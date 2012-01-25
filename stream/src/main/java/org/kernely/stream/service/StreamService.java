@@ -68,11 +68,9 @@ public class StreamService extends AbstractService {
 	private UserService userService;
 
 	/**
-	 * Add a message to the database in a stream, the current user is the
-	 * author.
+	 * Add a message to the database in a stream, the current user is the author.
 	 * 
-	 * @return the created message if the user can write on the stream, null
-	 *         otherwise
+	 * @return the created message if the user can write on the stream, null otherwise
 	 * @throws IllegalAccessException
 	 */
 	@Transactional
@@ -109,8 +107,8 @@ public class StreamService extends AbstractService {
 				recipients.add(u.userDetails.email);
 				log.debug("Adds {} in the mail recipients!", u.userDetails.email);
 			}
-			mailService.create("/templates/gsp/mail.gsp").with("content", contentString).subject(
-					"[Kernely] Someone posted on " + parent.getTitle()).to(recipients).registerMail();
+			mailService.create("/templates/gsp/mail.gsp").with("content", contentString).subject("[Kernely] Someone posted on " + parent.getTitle())
+					.to(recipients).registerMail();
 			log.debug("Mail registered.");
 		}
 
@@ -332,23 +330,21 @@ public class StreamService extends AbstractService {
 		List<PermissionDTO> permissions = permissionService.getTypeOfPermissionForOneUser(current.getId(), "streams");
 		List<Stream> streams = new ArrayList<Stream>();
 		for (PermissionDTO p : permissions) {
-			if (em.get().find(Stream.class, Integer.parseInt(p.resourceId)) !=null){
+			if (em.get().find(Stream.class, Integer.parseInt(p.resourceId)) != null) {
 				streams.add(em.get().find(Stream.class, Integer.parseInt(p.resourceId)));
 			}
 		}
-		if (streams.isEmpty()){
+		if (streams.isEmpty()) {
 			return null;
 		}
-			
+
 		return streams;
 	}
 
 	/**
-	 * Get all streams DTO for which the current user has one permission (read,
-	 * write or delete).
+	 * Get all streams DTO for which the current (or groups of the user) user has one permission (read, write or delete).
 	 * 
-	 * @return a list of stream DTO. If the user has right to read, or write, or
-	 *         delete on a stream, the stream will be returned.
+	 * @return a list of stream DTO. If the user has right to read, or write, or delete on a stream, the stream will be returned.
 	 */
 	@Transactional
 	public List<StreamDTO> getCurrentUserStreams() {
@@ -365,15 +361,14 @@ public class StreamService extends AbstractService {
 	 * 
 	 * @param flag
 	 *            The max id of messages returned.
-	 * @return 9 messages, which id is inferior to the flag passed in parameter.
-	 *         Messages are ordered by descendant id.
+	 * @return 9 messages, which id is inferior to the flag passed in parameter. Messages are ordered by descendant id.
 	 */
 	@SuppressWarnings("unchecked")
 	public List<StreamMessageDTO> getAllMessagesForCurrentUser(int flag) {
-		int cFlag =flag;
+		int cFlag = flag;
 		if (flag == 0) {
 			Query query = em.get().createQuery("SELECT max(id) FROM Message m");
-			if ((Integer) query.getSingleResult() == null){
+			if ((Integer) query.getSingleResult() == null) {
 				return null;
 			}
 			cFlag = (Integer) query.getSingleResult();
@@ -383,7 +378,7 @@ public class StreamService extends AbstractService {
 		}
 		List<Stream> streams = this.getCurrentUserStreamModel();
 		TreeSet<Message> messages = new TreeSet<Message>(new MessageComparator());
-		if (!streams.isEmpty()){
+		if (!streams.isEmpty()) {
 			Query query = em.get().createQuery(
 					"SELECT m FROM Message m  WHERE message is null AND stream in (:streamSet) AND id < :flag ORDER BY id DESC");
 			query.setParameter("streamSet", streams);
@@ -398,7 +393,7 @@ public class StreamService extends AbstractService {
 			}
 			return messagesdto;
 		}
-		return null; 
+		return null;
 	}
 
 	/**
@@ -456,15 +451,15 @@ public class StreamService extends AbstractService {
 	 */
 	public Long getCurrentNbMessages() {
 		List<Stream> streams = this.getCurrentUserStreamModel();
-		if (streams==null){
-			return Long.valueOf(0); 
+		if (streams == null) {
+			return Long.valueOf(0);
 		}
-		if (!streams.isEmpty()){
+		if (!streams.isEmpty()) {
 			Query query = em.get().createQuery("SELECT count(m) FROM Message m  WHERE message is null AND stream in (:streamSet)");
 			query.setParameter("streamSet", streams);
 			return ((Long) query.getSingleResult());
-			
+
 		}
-		return Long.valueOf(0); 
+		return Long.valueOf(0);
 	}
 }
