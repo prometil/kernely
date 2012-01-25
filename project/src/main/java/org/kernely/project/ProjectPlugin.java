@@ -20,7 +20,7 @@ public class ProjectPlugin extends AbstractPlugin {
 		super(NAME, "/project");
 		registerController(ProjectAdminController.class);
 		registerModel(Project.class);
-		registerAdminPage("Project admin", "/admin/project");
+		registerAdminPage("Project admin", "/admin/projects");
 		registerMigration(new Migration01());
 	}
 
