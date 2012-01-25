@@ -63,7 +63,6 @@ public class GroupService extends AbstractService {
 			dtos.add(new GroupDTO(group.getName(), group.getId(), users));
 		}
 		return dtos;
-
 	}
 
 	/**

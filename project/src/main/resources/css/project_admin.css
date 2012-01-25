@@ -1,20 +1,9 @@
+/* Common */
 #mask{
 	position:absolute;
 	z-index:9000;
 	background-color:#000;
-	display:none;
-	top:0;
-	left:0;
-}
-
-#modal_window_project{
-	position:absolute;
-	width:450px;
-	height:300px;
-	display:none;
-	z-index:9999;
-	padding:20px;
-	top:0;
+	display:none;top:0;
 	left:0;
 }
 
@@ -22,11 +11,30 @@
 	right:0;
 }
 
-#create_fieldset{
-	height:210px;
+#errors_message{
+	display:none;
+	font-weight:bold;
+	color:red;
 }
 
-#main_create_div{
-	width:225px;
-	float:left;
+#span_notifications{
+	display:none;
+	color:green;
+}
+
+#project_admin_table{
+	cursor:pointer;
+	width:100%;
+}
+
+/* Group page*/
+#modal_window_project{
+	position:absolute;
+	width:440px;
+	height:300px;
+	display:none;
+	z-index:9999;
+	padding:20px;
+	top:0;
+	left:0;
 }

@@ -49,6 +49,7 @@ public class I18n {
 		names.add("core");
 		names.add("stream");
 		names.add("holiday");
+		names.add("project");
 		messages = new Messages(pLocale, names);
 		locale = pLocale;
 	}

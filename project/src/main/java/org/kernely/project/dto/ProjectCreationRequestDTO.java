@@ -3,11 +3,10 @@ package org.kernely.project.dto;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
- * The project DTO
+ * Creation request DTO
  */
 @XmlRootElement
-public class ProjectDTO {
-	
+public class ProjectCreationRequestDTO {
 	/**
 	 * The id of the project
 	 */
@@ -21,14 +20,14 @@ public class ProjectDTO {
 	/**
 	 * Default constructor
 	 */
-	public ProjectDTO(){
+	public ProjectCreationRequestDTO(){
 		
 	}
 	
 	/**
 	 * Constructor
 	 */
-	public ProjectDTO(String newName, int newId){
+	public ProjectCreationRequestDTO(String newName, int newId){
 		this.id = newId;
 		this.name = newName;
 	}
