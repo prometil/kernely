@@ -78,5 +78,16 @@ public class ProjectService extends AbstractService {
 		em.get().persist(project);
 	}
 
+	/**
+	 * Delete an existing Project in database
+	 * 
+	 * @param id
+	 *            The id of the project to delete
+	 */
+	@Transactional
+	public void deleteProject(int id) {
+		Project project = em.get().find(Project.class, id);
+		em.get().remove(project);
+	}
 
 }

@@ -19,6 +19,12 @@
 	<span id="errors_message"></span>
 </script>
 
+
+<script type="text/html" id="confirm-project-deletion-template">
+<%= i18n.t("confirm_project_deletion") %>
+</script>
+
+
 <script type="text/html" id="table-header-template">
 <tr><th><%= i18n.t("project_name") %></th></tr>
 </script>

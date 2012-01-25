@@ -6,6 +6,7 @@ import org.junit.Test;
 import org.kernely.core.common.AbstractServiceTest;
 import org.kernely.project.dto.ProjectCreationRequestDTO;
 import org.kernely.project.dto.ProjectDTO;
+import org.omg.PortableServer.POA;
 
 import com.google.inject.Inject;
 
@@ -15,13 +16,17 @@ public class ProjectServiceTest extends AbstractServiceTest {
 	
 	@Inject
 	private ProjectService projectService; 
-		
-	@Test
-	public void creationProjectTest(){
+	
+	private ProjectDTO createProject(){
 		ProjectCreationRequestDTO proj = new ProjectCreationRequestDTO();
 		proj.name= NAME;
 		projectService.createProject(proj);
-		ProjectDTO projDTO = projectService.getAllProjects().get(0);
+		return projectService.getAllProjects().get(0);
+	}
+	
+	@Test
+	public void creationProjectTest(){
+		ProjectDTO projDTO = this.createProject();
 		assertEquals(NAME, projDTO.name);
 	}
 	
@@ -42,5 +47,12 @@ public class ProjectServiceTest extends AbstractServiceTest {
 		ProjectCreationRequestDTO proj = new ProjectCreationRequestDTO();
 		proj.name= "  ";
 		projectService.createProject(proj);
+	}
+	
+	@Test
+	public void deleteProjectTest(){
+		ProjectDTO projDTO = this.createProject();
+		projectService.deleteProject(projDTO.id);
+		assertEquals(0, projectService.getAllProjects().size());
 	}
 }

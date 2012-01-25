@@ -5,6 +5,7 @@ import java.util.List;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -88,4 +89,20 @@ public class ProjectAdminController extends AbstractController {
 		return null;
 	}
 
+	/**
+	 * Delete the project which has the id 'id'
+	 * @param id The id of the project to delete
+	 * @return The result of the operation
+	 */
+	@GET
+	@Path("/delete/{id}")
+	@Produces( { MediaType.TEXT_HTML })
+	public String deleteProject(@PathParam("id") int id){
+		if (userService.currentUserIsAdministrator()){
+			projectService.deleteProject(id);
+			return "Ok";
+		}
+		return null;
+	}
+	
 }

@@ -95,7 +95,6 @@ public class GroupAdminController extends AbstractController {
 	@Produces({MediaType.APPLICATION_JSON})
 	public String create(GroupCreationRequestDTO group)
 	{
-		
 		if (userService.currentUserIsAdministrator()){
 			try{
 				log.debug("Create a user");
