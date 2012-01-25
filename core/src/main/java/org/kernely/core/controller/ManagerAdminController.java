@@ -76,7 +76,7 @@ public class ManagerAdminController extends AbstractController {
 	@Produces({ MediaType.APPLICATION_JSON })
 	public List<UserDTO> getListUsers() {
 		Set<ManagerDTO> manager = userService.getAllManager();
-		List<UserDTO> allUser = userService.getAllUsers();
+		List<UserDTO> allUser = userService.getEnabledUsers();
 		List<UserDTO> removeUser = new ArrayList<UserDTO>();
 		for (ManagerDTO man : manager) {
 			for (UserDTO usr : allUser) {

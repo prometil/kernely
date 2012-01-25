@@ -152,6 +152,10 @@ public class PermissionService extends AbstractService {
 		Query permissionQuery = em.get().createQuery("SELECT p FROM Permission p WHERE name = :permission");
 		permissionQuery.setParameter("permission", permission);
 		User user = em.get().find(User.class, (long) userId);
+		// Avoid granting permissions to locked user
+		if(user.isLocked()){
+			throw new IllegalArgumentException("The user with id "+ userId +" is disabled, impossible to grant permissions.");
+		}
 		log.debug("Grant permission {} to user id : {}", permission, userId);
 		Permission p;
 		try {

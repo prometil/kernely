@@ -34,7 +34,7 @@ public class Migration01 extends Migration {
 		stream.column("category", "varchar(50)");
 		stream.column("title", "varchar(50)");
 		stream.column("locked", "boolean DEFAULT false");
-		stream.column("user_id", "int");
+		stream.column("user_id", "bigint");
 		RawSql streamForeignKey= new RawSql("ALTER TABLE kernely_stream ADD CONSTRAINT fk_user_id FOREIGN KEY (user_id) REFERENCES kernely_user (id)");
 		
 		commands.add(stream);

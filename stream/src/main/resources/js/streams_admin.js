@@ -350,7 +350,7 @@ AppStreamAdmin = (function($){
 			// Build the table
 			$.ajax({
 				type: "GET",
-				url:"/admin/users/all",
+				url:"/admin/users/enabled",
 				dataType:"json",
 				success: function(data){
 					if(data != null){

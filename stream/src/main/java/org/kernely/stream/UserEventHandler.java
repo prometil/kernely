@@ -20,6 +20,8 @@
 package org.kernely.stream;
 
 import org.kernely.core.event.UserCreationEvent;
+import org.kernely.core.event.UserLockedEvent;
+import org.kernely.stream.dto.StreamDTO;
 import org.kernely.stream.model.Stream;
 import org.kernely.stream.service.StreamService;
 
@@ -42,6 +44,22 @@ public class UserEventHandler {
 	 */
 	@Subscribe
 	public void onUserCreation(UserCreationEvent event) {
-		streamService.createStream("Stream of " + event.getUsername(), Stream.CATEGORY_USERS);
+		streamService.createStreamForUser("Stream of " + event.getUsername(), Stream.CATEGORY_USERS, event.getId());
+	}
+	
+	/**
+	 * Detect the lock event of an user and lock the stream associated to this user
+	 * @param event
+	 * 			  The event, containing user data : id, username, lock or unlock...
+	 */
+	@Subscribe
+	public void onUserLocked(UserLockedEvent event){
+		StreamDTO sdto = streamService.getStreamForUser(event.getId());
+		if(event.isLocked()){
+			streamService.lockStream(sdto.id);
+		}
+		else{
+			streamService.unlockStream(sdto.id);
+		}
 	}
 }

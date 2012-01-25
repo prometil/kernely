@@ -67,7 +67,7 @@ public class KernelyRealm extends AuthorizingRealm {
 			if (username == null) {
 				throw new AccountException("Null usernames are not allowed by this realm.");
 			}
-			Query query = em.createQuery("SELECT e FROM User e where username='" + username + "'");
+			Query query = em.createQuery("SELECT e FROM User e where username='" + username + "' AND locked = false");
 			
 			User userModel = (User) query.getResultList().get(0);
 			byte[] password = Base64.decode(userModel.getPassword());
@@ -78,6 +78,7 @@ public class KernelyRealm extends AuthorizingRealm {
 		} catch (Exception e) {
 			//TODO we should log this 
 			log.error("", e);
+			em.getTransaction().commit();
 			return null;
 		}
 

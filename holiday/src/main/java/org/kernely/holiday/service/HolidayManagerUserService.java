@@ -8,6 +8,7 @@ import java.util.TreeSet;
 
 import org.apache.shiro.authz.UnauthorizedException;
 import org.joda.time.DateTime;
+import org.kernely.core.dto.UserDTO;
 import org.kernely.core.model.User;
 import org.kernely.core.service.AbstractService;
 import org.kernely.core.service.user.UserService;
@@ -74,7 +75,11 @@ public class HolidayManagerUserService extends AbstractService{
 		List<HolidayUserManagedDTO> managedDTO = new ArrayList<HolidayUserManagedDTO>();
 		Set<CalendarBalanceDetailDTO> balancesDTO = new HashSet<CalendarBalanceDetailDTO>();
 
-		Set<User> usersManaged = new TreeSet<User>(this.getAuthenticatedUserModel().getUsers());
+		Set<UserDTO> authorizedManaged = userService.getUsersAuthorizedManaged();
+		Set<User> usersManaged = new TreeSet<User>();
+		for(UserDTO udto : authorizedManaged){
+			usersManaged.add(em.get().find(User.class, udto.id));
+		}
 
 		List<HolidayDetailDTO> detailsDTO = new ArrayList<HolidayDetailDTO>();
 

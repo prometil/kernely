@@ -22,17 +22,19 @@ package org.kernely.stream.model;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.Cascade;
 import org.kernely.core.hibernate.AbstractModel;
+import org.kernely.core.model.User;
 
 /**
  * The stream model
@@ -52,26 +54,27 @@ public class Stream extends AbstractModel {
 		this.locked = false;
 		this.messages = new HashSet<Message>();
 		this.title = "";
-		this.userId = 1;
+		this.user = null;
 	}
 
-	@Column(name="user_id")
-	private int userId;
+	@OneToOne
+	@JoinColumn(name = "user_id")
+	private User user;
 
 	/**
      * get the userid associated to this stream
      * @return : the userid associated
      */
-	public int getUserId() {
-		return userId;
+	public User getUser() {
+		return user;
 	}
 
 	/**
      * set the userid associated to this stream
      * @param : the userid associated
      */
-	public void setUserId(int userId) {
-		this.userId = userId;
+	public void setUser(User user) {
+		this.user = user;
 	}
 
 	/**

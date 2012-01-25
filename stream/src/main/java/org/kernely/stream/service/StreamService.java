@@ -227,7 +227,6 @@ public class StreamService extends AbstractService {
 	 *            The title of this stream.
 	 * @param category
 	 *            The category of this stream (use Stream class constants).
-	 * @return the unique id of the stream.
 	 */
 	@Transactional
 	public void createStream(String title, String category) {
@@ -238,6 +237,41 @@ public class StreamService extends AbstractService {
 		newStream.setTitle(title);
 		newStream.setCategory(category);
 		em.get().persist(newStream);
+	}
+	
+	/**
+	 * Create a new stream associated to an user.
+	 * 
+	 * @param title
+	 *            The title of this stream.
+	 * @param category
+	 *            The category of this stream (use Stream class constants).
+	 * @param userId
+	 * 			  The user id associated to this stream
+	 */
+	@Transactional
+	public void createStreamForUser(String title, String category, long userId) {
+		if (this.getStream(title, category) != null) {
+			throw new IllegalArgumentException("Stream with the same title and the same category already exists.");
+		}
+		Stream newStream = new Stream();
+		newStream.setTitle(title);
+		newStream.setCategory(category);
+		newStream.setUser(em.get().find(User.class, userId));
+		em.get().persist(newStream);
+	}
+	
+	/**
+	 * Retrieve the stream associated to a specific user.
+	 * @param userId The user needed with this id
+	 * @return A DTO according to the Stream model returned.
+	 */
+	@Transactional
+	public StreamDTO getStreamForUser(long userId){
+		Query query = em.get().createQuery("SELECT s FROM Stream s WHERE user = :user");
+		query.setParameter("user", em.get().find(User.class, userId));
+		Stream s = (Stream) query.getSingleResult();
+		return new StreamDTO(s);
 	}
 
 	/**

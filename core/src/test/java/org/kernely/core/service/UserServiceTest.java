@@ -217,6 +217,7 @@ public class UserServiceTest extends AbstractServiceTest{
 		service.lockUser(uddto.id);
 		userdto = service.getAllUsers().get(0);
 		assertEquals(true, userdto.locked);
+		assertEquals(0, service.getEnabledUserDetails().size());
 	}
 	
 	@Test

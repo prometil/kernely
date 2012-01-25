@@ -364,7 +364,7 @@ AppGroupAdmin = (function($){
 			var parent = this;
 			$.ajax({
 				type: "GET",
-				url:"/admin/users/all",
+				url:"/admin/users/enabled",
 				dataType:"json",
 				success: function(data){
 					if(data.userDetailsDTO.length > 1){

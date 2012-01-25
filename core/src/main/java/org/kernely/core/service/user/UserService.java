@@ -31,6 +31,7 @@ import java.util.Set;
 import javax.persistence.Query;
 
 import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authz.UnauthorizedException;
 import org.apache.shiro.crypto.RandomNumberGenerator;
 import org.apache.shiro.crypto.SecureRandomNumberGenerator;
 import org.apache.shiro.crypto.hash.Sha256Hash;
@@ -41,6 +42,7 @@ import org.kernely.core.dto.UserDTO;
 import org.kernely.core.dto.UserDetailsDTO;
 import org.kernely.core.dto.UserDetailsUpdateRequestDTO;
 import org.kernely.core.event.UserCreationEvent;
+import org.kernely.core.event.UserLockedEvent;
 import org.kernely.core.model.Role;
 import org.kernely.core.model.User;
 import org.kernely.core.model.UserDetails;
@@ -186,8 +188,11 @@ public class UserService extends AbstractService {
 		UserDetails ud = em.get().find(UserDetails.class, id);
 		User u = em.get().find(User.class, ud.getUser().getId());
 		u.setLocked(!u.isLocked());
+		UserLockedEvent ule = new UserLockedEvent(u.getId(), u.getUsername(), u.isLocked());
+		ule.setUser(u);
+		eventBus.post(ule);
 	}
-
+	
 	/**
 	 * Update an user from the administration
 	 * 
@@ -257,6 +262,24 @@ public class UserService extends AbstractService {
 		return dtos;
 
 	}
+	
+	/**
+	 * Gets the lists of all users contained in the database.
+	 * 
+	 * @return the list of all users contained in the database.
+	 */
+	@SuppressWarnings("unchecked")
+	@Transactional
+	public List<UserDTO> getEnabledUsers() {
+		Query query = em.get().createQuery("SELECT e FROM User e WHERE locked = false");
+		List<User> collection = (List<User>) query.getResultList();
+		List<UserDTO> dtos = new ArrayList<UserDTO>();
+		for (User user : collection) {
+			dtos.add(new UserDTO(user.getUsername(), user.isLocked(), user.getId()));
+		}
+		return dtos;
+
+	}
 
 	/**
 	 * Get the details about the user specified
@@ -317,6 +340,23 @@ public class UserService extends AbstractService {
 	@SuppressWarnings("unchecked")
 	public List<UserDetailsDTO> getAllUserDetails() {
 		Query query = em.get().createQuery("SELECT e FROM UserDetails e");
+		List<UserDetails> collection = (List<UserDetails>) query.getResultList();
+		List<UserDetailsDTO> dtos = new ArrayList<UserDetailsDTO>();
+		for (UserDetails user : collection) {
+			dtos.add(new UserDetailsDTO(user));
+		}
+		return dtos;
+	}
+	
+	/**
+	 * Get all Details about all users enabled in the database
+	 * 
+	 * @return A list of DTO associated to all details stored in the database
+	 */
+	@Transactional
+	@SuppressWarnings("unchecked")
+	public List<UserDetailsDTO> getEnabledUserDetails() {
+		Query query = em.get().createQuery("SELECT e FROM UserDetails e, User u WHERE e.user.id = u.id and u.locked = false");
 		List<UserDetails> collection = (List<UserDetails>) query.getResultList();
 		List<UserDetailsDTO> dtos = new ArrayList<UserDetailsDTO>();
 		for (UserDetails user : collection) {
@@ -475,7 +515,7 @@ public class UserService extends AbstractService {
 	@SuppressWarnings("unchecked")
 	@Transactional
 	public Set<ManagerDTO> getAllManager() {
-		Query query = em.get().createQuery("SELECT u.managers FROM User u");
+		Query query = em.get().createQuery("SELECT DISTINCT u.managers FROM User u");
 		List<User> idManager = (List<User>) query.getResultList();
 		Set<ManagerDTO> collection = new HashSet<ManagerDTO>();
 		for (User manager : idManager) {
@@ -506,4 +546,21 @@ public class UserService extends AbstractService {
 		return false; 
 	}
 	
+	/**
+	 * Retrieve all users managed by the current user authorized to access the application
+	 * @return A set of DTO according to all user authorized managed
+	 */
+	@Transactional
+	public Set<UserDTO> getUsersAuthorizedManaged(){
+		if(!this.isManager(this.getAuthenticatedUserModel().getUsername())){        
+			throw new UnauthorizedException("Only managers can access to this functionality!");
+		}
+		Set<UserDTO> managedCleaned = new HashSet<UserDTO>();
+		for(User u : this.getAuthenticatedUserModel().getUsers()){
+			if(!u.isLocked()){
+				managedCleaned.add(new UserDTO(u));
+			}
+		}
+		return managedCleaned;
+	}
 }

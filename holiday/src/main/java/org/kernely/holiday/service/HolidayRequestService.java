@@ -34,6 +34,7 @@ import org.joda.time.DateTime;
 import org.joda.time.Days;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
+import org.kernely.core.dto.UserDTO;
 import org.kernely.core.model.User;
 import org.kernely.core.service.AbstractService;
 import org.kernely.core.service.user.UserService;
@@ -155,6 +156,37 @@ public class HolidayRequestService extends AbstractService{
 		}
 		catch(NoResultException e){
 			log.debug("There is no holiday request for current user");
+			return null;
+		}
+	}
+	
+	/**
+	 * Retrieve all request done by the specified user
+	 * @return A list of DTO corresponding to the request done by the current user
+	 */
+	@SuppressWarnings("unchecked")
+	@Transactional
+	public List<HolidayRequestDTO> getAllRequestsForSpecificUser(long userId){
+		try{
+			Query query = em.get().createQuery("SELECT  r from HolidayRequest r WHERE  user=:user");
+			User u = em.get().find(User.class, userId);
+			if(u.isLocked()){
+				query.setParameter("user", u);
+			}
+			List<HolidayRequest> requests = (List<HolidayRequest>) query.getResultList();
+			List<HolidayRequestDTO> requestsDTO = new ArrayList<HolidayRequestDTO>();
+			for(HolidayRequest r : requests){
+				requestsDTO.add(new HolidayRequestDTO(r));
+			}
+
+			return requestsDTO;
+		}
+		catch(NoResultException e){
+			log.debug("There is no holiday request for this user");
+			return null;
+		}
+		catch(IllegalArgumentException e){
+			log.debug("This user is locked, impossible to access to his requests");
 			return null;
 		}
 	}
@@ -309,6 +341,41 @@ public class HolidayRequestService extends AbstractService{
 	}
 	
 	/**
+	 * Gets all the request for the given user after the given date
+	 * @param date1 date where to start research
+	 * @param user user concerned by the request
+	 * @return A list of DTO corresponding to the request located in the search
+	 */
+	@SuppressWarnings("unchecked")
+	@Transactional
+	public List<HolidayRequestDTO> getRequestAfterDateWithStatus(Date date, User user, int ... status){
+		Query query = em.get().createQuery("SELECT  r from HolidayRequest r WHERE (beginDate > :date" +
+										" OR endDate > :date)" +
+										" AND user = :user" +
+										" AND status in :status");
+		query.setParameter("date", date);
+		query.setParameter("user", user);
+		List<Integer> statusList = new ArrayList<Integer>();
+		for(int i : status){
+			statusList.add(i);
+		}
+		query.setParameter("status", statusList);
+		try{
+			List<HolidayRequest> requests = (List<HolidayRequest>) query.getResultList();
+			List<HolidayRequestDTO> requestsDTO = new ArrayList<HolidayRequestDTO>();
+			for(HolidayRequest r : requests){
+				requestsDTO.add(new HolidayRequestDTO(r));
+			}
+
+			return requestsDTO;
+		}
+		catch(NoResultException e){
+			log.debug("There is no holiday request for these dates");
+			return null;
+		}
+	}
+	
+	/**
 	 * Accept a waiting request
 	 * @param idRequest The request to accept
 	 */
@@ -385,9 +452,11 @@ public class HolidayRequestService extends AbstractService{
 		if(!userService.isManager(this.getAuthenticatedUserModel().getUsername())){        
 			throw new UnauthorizedException("Only managers can access to this functionality!");
 		}
-		
-		User current = this.getAuthenticatedUserModel();
-		Set<User> managed = current.getUsers();
+		Set<UserDTO> managedDTO = userService.getUsersAuthorizedManaged();
+		Set<User> managed = new TreeSet<User>();
+		for(UserDTO udto : managedDTO){
+			managed.add(em.get().find(User.class, udto.id));
+		}
 		Query query = em.get().createQuery("SELECT  r from HolidayRequest r WHERE  status = :status AND user in :users");
 		query.setParameter("status", status);
 		query.setParameter("users", managed);
@@ -427,7 +496,7 @@ public class HolidayRequestService extends AbstractService{
 		
 		DateTime dtmaj;
 		
-		List<HolidayRequestDTO> currentRequests = this.getRequestBetweenDatesForCurrentUser(date1.toDate(), date2.toDate());
+		List<HolidayRequestDTO> currentRequests = this.getRequestBetweenDatesWithStatus(date1.toDate(), date2.toDate(), this.getAuthenticatedUserModel(), HolidayRequest.PENDING_STATUS, HolidayRequest.ACCEPTED_STATUS);
 		
 		List<HolidayDetailDTO> allDayReserved = new ArrayList<HolidayDetailDTO>();
 		

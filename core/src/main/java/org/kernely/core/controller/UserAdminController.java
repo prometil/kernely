@@ -80,6 +80,22 @@ public class UserAdminController extends AbstractController{
 		}
 		return null;
 	}
+	
+	/**
+	 * Get all users stored in database in order to display them
+	 * @return A list of all DTO associated to the users stored in the database
+	 */
+	@GET
+	@Path("/enabled")
+	@Produces({MediaType.APPLICATION_JSON})
+	public List<UserDetailsDTO> displayEnabledUsers()
+	{
+		if (userService.currentUserIsAdministrator()){
+			log.debug("Call to GET on enabled users");
+			return userService.getEnabledUserDetails();
+		}
+		return null;
+	}
 
 	/**
 	 * Create a new user with the informations contained in the DTO
