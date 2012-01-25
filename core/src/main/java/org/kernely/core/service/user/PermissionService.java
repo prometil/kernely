@@ -41,16 +41,19 @@ import org.kernely.core.service.AbstractService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.google.inject.persist.Transactional;
 
 /**
  * The permission service
- * @author b.grandperret
- *
+ * 
  */
 @Singleton
 public class PermissionService extends AbstractService {
+
+	@Inject
+	UserService userService;
 
 	private static Logger log = LoggerFactory.getLogger(PermissionService.class);
 
@@ -79,7 +82,7 @@ public class PermissionService extends AbstractService {
 	}
 
 	/**
-	 * Verify if a specific user has a specific permission.
+	 * Verify if a specific user has a specific permission, by himself or by his groups.
 	 * 
 	 * @param userId
 	 *            The id of the user.
@@ -102,11 +105,22 @@ public class PermissionService extends AbstractService {
 		try {
 			Permission p = (Permission) query.getSingleResult();
 
+			// Verify if the user is associated to the permission
 			for (User u : p.getUsers()) {
+
 				if (u.getId() == id) {
 					return true;
 				}
 			}
+
+			for (Group g : p.getGroups()) {
+				for (User u : g.getUsers()) {
+					if (u.getId() == id) {
+						return true;
+					}
+				}
+			}
+
 			return false;
 		} catch (NoResultException nre) {
 			return false;
@@ -115,7 +129,7 @@ public class PermissionService extends AbstractService {
 			return false;
 		}
 	}
-	
+
 	/**
 	 * Verify if a specific group has a specific permission.
 	 * 
@@ -208,7 +222,7 @@ public class PermissionService extends AbstractService {
 			em.get().persist(p);
 			log.debug("Creation of the permission {}", permission);
 		}
-		log.debug("User with id {}: {}",userId,user);
+		log.debug("User with id {}: {}", userId, user);
 		Set<Permission> userPermissions = user.getPermissions();
 		if (userPermissions == null) {
 			userPermissions = new HashSet<Permission>();
@@ -220,7 +234,7 @@ public class PermissionService extends AbstractService {
 		em.get().merge(user);
 		em.get().merge(p);
 	}
-	
+
 	/**
 	 * Grant a right on a resource to a specific user.
 	 * 
@@ -257,7 +271,7 @@ public class PermissionService extends AbstractService {
 			em.get().persist(p);
 			log.debug("Creation of the permission {}", permission);
 		}
-		log.debug("Group with id {}: {}",groupId,group);
+		log.debug("Group with id {}: {}", groupId, group);
 		Set<Permission> groupPermissions = group.getPermissions();
 		if (groupPermissions == null) {
 			groupPermissions = new HashSet<Permission>();
@@ -307,7 +321,7 @@ public class PermissionService extends AbstractService {
 			// If there is no such permission, there is nothing to do : the user has already not the permission.
 		}
 	}
-	
+
 	/**
 	 * Ungrant a specific permission for a specific group.
 	 * 
@@ -358,6 +372,16 @@ public class PermissionService extends AbstractService {
 	public List<PermissionDTO> getTypeOfPermissionForOneUser(long userId, String resourceType) {
 		User user = em.get().find(User.class, userId);
 		Set<Permission> permissions = user.getPermissions();
+
+		if (user.getGroups() != null) {
+			// Add permissions of the user groups
+			for (Group group : user.getGroups()) {
+				for (Permission groupPermission : group.getPermissions()) {
+					permissions.add(groupPermission);
+				}
+			}
+		}
+
 		Set<Permission> filteredPermissions = this.filterPermissionByType(permissions, resourceType);
 		List<PermissionDTO> list = new ArrayList<PermissionDTO>();
 		for (Permission p : filteredPermissions) {
@@ -369,8 +393,11 @@ public class PermissionService extends AbstractService {
 
 	/**
 	 * Filter the permission by type
-	 * @param collection all the permission
-	 * @param type the filter
+	 * 
+	 * @param collection
+	 *            all the permission
+	 * @param type
+	 *            the filter
 	 * @return a set of permission
 	 */
 	private Set<Permission> filterPermissionByType(Collection<Permission> collection, String type) {
@@ -385,6 +412,7 @@ public class PermissionService extends AbstractService {
 
 	/**
 	 * Create a permission with is right, type, id
+	 * 
 	 * @param right
 	 * @param resourceType
 	 * @param resourceId

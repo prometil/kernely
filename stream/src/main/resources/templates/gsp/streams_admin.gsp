@@ -121,8 +121,7 @@
 		<input type="button" class="editButton" value="<%= i18n.t("edit") %>" disabled="disabled"/>
 		<input type="button" class="lockButton" value="<%= i18n.t("lock") %>" disabled="disabled"/>
 		<input type="button" class="unlockButton" value="<%= i18n.t("unlock") %>" disabled="disabled"/>
-		<input type="button" class="rightsButton" value="<%= i18n.t("stream_users_rights_tab") %>" disabled="disabled"/>
-		<input type="button" class="groupRightsButton" value="<%= i18n.t("stream_groups_rights_tab") %>" disabled="disabled"/>
+		<input type="button" class="rightsButton" value="<%= i18n.t("stream_rights") %>" disabled="disabled"/>
 		<span id="streams_notifications"></span>
 	</div>
 	<table id="stream_admin_table">
