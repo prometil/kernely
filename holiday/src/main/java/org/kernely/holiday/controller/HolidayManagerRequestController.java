@@ -135,6 +135,11 @@ public class HolidayManagerRequestController extends AbstractController {
 		return null;
 	}
 	
+	/**
+	 * Get the first and last date of the holiday request
+	 * @param idRequest
+	 * @return the firs element is the first date, the second is the second date
+	 */
 	@GET
 	@Path("/get/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -147,19 +152,15 @@ public class HolidayManagerRequestController extends AbstractController {
 			HolidayDetailDTO lastHoliday = hddto.get(0);
 			
 			for (HolidayDetailDTO holiday : hddto){
-				if (holiday.day.equals(firstHoliday)){
-					if (holiday.am == true){
+				if (holiday.day.equals(firstHoliday.day) && (holiday.am == true)){
 						firstHoliday = holiday;
-					}
 				}
 				if (holiday.day.before(firstDay)){
 					firstDay = holiday.day;
 					firstHoliday = holiday;
 				}
-				if (holiday.day.equals(lastHoliday)){
-					if (holiday.pm == true){
+				if (holiday.day.equals(lastHoliday.day) && (holiday.pm == true)){
 						lastHoliday = holiday;
-					}
 				}
 				if (holiday.day.after(lastDay)){
 					lastDay = holiday.day;
@@ -174,6 +175,11 @@ public class HolidayManagerRequestController extends AbstractController {
 		return null;
 	}
 	
+	/**
+	 * Get the holiday request details by order (first date to last date)
+	 * @param idRequest
+	 * @return The list ordered of the holiday request details
+	 */
 	@GET
 	@Path("/details/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -184,6 +190,12 @@ public class HolidayManagerRequestController extends AbstractController {
 		return null;
 	}
 	
+	/**
+	 * Construct the calendar in function of the begin date and end date   
+	 * @param dateBegin
+	 * @param dateEnd
+	 * @return Calendar request
+	 */
 	@GET
 	@Path("construct/{dateBegin}/{dateEnd}")
 	@Produces(MediaType.APPLICATION_JSON)

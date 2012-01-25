@@ -1,0 +1,32 @@
+#mask{
+	position:absolute;
+	z-index:9000;
+	background-color:#000;
+	display:none;
+	top:0;
+	left:0;
+}
+
+#modal_window_project{
+	position:absolute;
+	width:450px;
+	height:300px;
+	display:none;
+	z-index:9999;
+	padding:20px;
+	top:0;
+	left:0;
+}
+
+.closeModal{
+	right:0;
+}
+
+#create_fieldset{
+	height:210px;
+}
+
+#main_create_div{
+	width:225px;
+	float:left;
+}

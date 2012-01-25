@@ -98,6 +98,7 @@
 		<module>core</module>
 		<module>stream</module>
 		<module>holiday</module>
+		<module>project</module>
 	</modules>
 
 	<dependencies>

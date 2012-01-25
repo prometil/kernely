@@ -76,9 +76,9 @@ public class HolidayManagerUserService extends AbstractService{
 
 		Set<User> usersManaged = new TreeSet<User>(this.getAuthenticatedUserModel().getUsers());
 
-		List<HolidayDetailDTO> detailsDTO = new ArrayList<HolidayDetailDTO>();
+		List<HolidayDetailDTO> detailsDTO ;
 
-		Set<HolidayManagedDetailsDTO> detailManagedDTO = new TreeSet<HolidayManagedDetailsDTO>();
+		Set<HolidayManagedDetailsDTO> detailManagedDTO ;
 
 		for(User u : usersManaged){
 			// Clear all the list for the new user

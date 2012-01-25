@@ -175,6 +175,11 @@ public class UserService extends AbstractService {
 		}
 	}
 
+	/**
+	 * Get the user model from his username
+	 * @param username
+	 * @return user model
+	 */
 	@Transactional
 	public User getUserByUsername(String username){
 		Query query = em.get().createQuery("SELECT u FROM User u WHERE username=:username");
