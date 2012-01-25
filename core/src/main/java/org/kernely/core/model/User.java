@@ -84,6 +84,13 @@ public class User extends AbstractModel implements Comparable<User> {
 	@OneToOne(fetch=FetchType.LAZY, mappedBy="user")
 	private UserDetails userDetails;
 
+
+	public User(){
+		this.username = "";
+		this.password = "";
+		this.locked = false;
+	}
+	
 	/**
 	 * Get the id of the user.
 	 * 
@@ -143,8 +150,10 @@ public class User extends AbstractModel implements Comparable<User> {
 	public final Set<Role> getAllRoles() {
 		Set<Role> allRoles = new HashSet<Role>();
 		allRoles.addAll(roles);
-		for (Group g : groups) {
-			allRoles.addAll(g.getRoles());
+		if (groups != null){
+			for (Group g : groups) {
+				allRoles.addAll(g.getRoles());
+			}	
 		}
 		return allRoles;
 	}

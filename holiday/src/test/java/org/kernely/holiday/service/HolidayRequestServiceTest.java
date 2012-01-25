@@ -39,9 +39,9 @@ public class HolidayRequestServiceTest extends AbstractServiceTest{
 	private static final String DATE1_USER = "01/01/2012";
 	private static final String DATE2_USER = "01/02/2012";
 	
-	private static final String R_COMMENT = "I want my holidays !";
+	private static final String R_COMMENT = "I want my holidays!";
 	
-	private static final String MANAGER_COMMENT = "I'll give you your holidays !";
+	private static final String MANAGER_COMMENT = "I'll give you your holidays!";
 	
 	private static final String USERNAME_MANAGER = "test_manager";
 	private static final String USERNAME_USER1 = "test_user1";
@@ -111,6 +111,7 @@ public class HolidayRequestServiceTest extends AbstractServiceTest{
 		
 		holidayRequestService.registerRequestAndDetails(request);
 	}
+	
 
 	@Test
 	public void registerRequestTest(){
@@ -349,7 +350,7 @@ public class HolidayRequestServiceTest extends AbstractServiceTest{
 		
 		DateTimeFormatter fmt = DateTimeFormat.forPattern("MM/dd/yyyy");
 		CalendarRequestDTO calendar = holidayRequestService.getCalendarRequest(fmt.parseDateTime(DATE3), fmt.parseDateTime(DATE5));
-		// Verify there is 4 different weeks in the interval
+		// Verify there is 3 different weeks in the interval
 		assertEquals(3, calendar.nbWeeks);
 		// 01/01/2012 is the Sunday of the 52th week of 2011
 		assertEquals(1, calendar.startWeek);
@@ -381,6 +382,5 @@ public class HolidayRequestServiceTest extends AbstractServiceTest{
 		
 		DateTimeFormatter fmt = DateTimeFormat.forPattern("MM/dd/yyyy");
 		holidayRequestService.getCalendarRequest(fmt.parseDateTime(DATE5), fmt.parseDateTime(DATE4));
-	}
-	
+	}	
 }

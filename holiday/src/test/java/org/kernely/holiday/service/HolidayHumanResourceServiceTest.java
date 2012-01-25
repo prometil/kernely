@@ -19,43 +19,92 @@ import org.kernely.holiday.dto.HolidayCreationRequestDTO;
 import org.kernely.holiday.dto.HolidayDTO;
 import org.kernely.holiday.dto.HolidayDetailCreationRequestDTO;
 import org.kernely.holiday.dto.HolidayRequestCreationRequestDTO;
+import org.kernely.holiday.dto.HolidayRequestDTO;
 import org.kernely.holiday.dto.HolidayUsersManagerDTO;
+import org.kernely.holiday.model.HolidayRequest;
 import org.kernely.holiday.model.HolidayType;
 
 import com.google.inject.Inject;
 
-public class HolidayManagerUserTest extends AbstractServiceTest  {
-	
+public class HolidayHumanResourceServiceTest extends AbstractServiceTest {
 	private static final String USERNAME_MANAGER = "test_manager";
 	private static final String USERNAME_USER1 = "test_user1";
 	private static final String USERNAME_USER2 = "test_user2";
-	
+
 	private static final String DATE1_USER = "01/01/2012";
 	private static final String DATE2_USER = "01/02/2012";
-	
+
 	private static final String R_COMMENT = "I want my holidays !";
-	
+
 	private static final String TEST_STRING = "type";
 	private static final int QUANTITY = 3;
-	
+
 	@Inject
-	private HolidayManagerUserService managerUserService;
-	
+	private HolidayHumanResourceService holidayHumanResourceForTest;
+
+	@Inject
+	private HolidayService holidayService;
+
 	@Inject
 	private UserService userService;
 
 	@Inject
 	private RoleService roleService;
-	
+
 	@Inject
-	private HolidayService holidayService;
-	
-	@Inject
-	private HolidayRequestService holidayRequestService;
-	
-	private void createUserRoleForTest(){
+	private HolidayRequestService requestService;
+
+	private void createUserRoleForTest() {
 		RoleDTO requestRole = new RoleDTO(1, Role.ROLE_USER);
 		roleService.createRole(requestRole);
+	}
+
+	private void createHumanRoleForTest() {
+		RoleDTO requestRole = new RoleDTO(1, Role.ROLE_HUMANRESOURCE);
+		roleService.createRole(requestRole);
+	}
+
+	private UserDTO createUser1ForTest() {
+		UserCreationRequestDTO request = new UserCreationRequestDTO();
+		request.username = USERNAME_USER1;
+		request.password = USERNAME_USER1;
+		return userService.createUser(request);
+	}
+
+	private UserDTO createUser2ForTest() {
+		UserCreationRequestDTO request = new UserCreationRequestDTO();
+		request.username = USERNAME_USER2;
+		request.password = USERNAME_USER2;
+		return userService.createUser(request);
+	}
+
+	private HolidayDTO createHolidayTypeForTest() {
+		HolidayCreationRequestDTO request = new HolidayCreationRequestDTO();
+		request.type = TEST_STRING;
+		request.quantity = QUANTITY;
+		request.unity = HolidayType.PERIOD_MONTH;
+		return holidayService.createHoliday(request);
+	}
+
+	private void createHolidayRequestForUser(long userId, int typeId) {
+		HolidayDetailCreationRequestDTO detailDTO1 = new HolidayDetailCreationRequestDTO();
+		HolidayDetailCreationRequestDTO detailDTO2 = new HolidayDetailCreationRequestDTO();
+
+		detailDTO1.day = DATE1_USER;
+		detailDTO2.day = DATE2_USER;
+
+		detailDTO1.typeId = typeId;
+		detailDTO2.typeId = typeId;
+
+		List<HolidayDetailCreationRequestDTO> list = new ArrayList<HolidayDetailCreationRequestDTO>();
+		list.add(detailDTO1);
+		list.add(detailDTO2);
+
+		HolidayRequestCreationRequestDTO request = new HolidayRequestCreationRequestDTO();
+		request.details = list;
+		request.requesterComment = R_COMMENT;
+
+		requestService.registerRequestAndDetails(request);
 	}
 	
 	private UserDTO createManagerForTest(){
@@ -65,86 +114,56 @@ public class HolidayManagerUserTest extends AbstractServiceTest  {
 		return userService.createUser(request);
 	}
 	
-	private UserDTO createUser1ForTest(){
-		UserCreationRequestDTO request = new UserCreationRequestDTO();
-		request.username = USERNAME_USER1;
-		request.password = USERNAME_USER1;
-		return userService.createUser(request);
-	}
-	
-	private UserDTO createUser2ForTest(){
-		UserCreationRequestDTO request = new UserCreationRequestDTO();
-		request.username = USERNAME_USER2;
-		request.password = USERNAME_USER2;
-		return userService.createUser(request);
-	}
-	
-	private HolidayDTO createHolidayTypeForTest(){
-		HolidayCreationRequestDTO request = new HolidayCreationRequestDTO();
-		request.type = TEST_STRING;
-		request.quantity = QUANTITY;
-		request.unity = HolidayType.PERIOD_MONTH;
-		return holidayService.createHoliday(request);
-	}
-	
-	private void createHolidayRequestForUser(long userId, int typeId){
-		HolidayDetailCreationRequestDTO detailDTO1 = new HolidayDetailCreationRequestDTO();
-		HolidayDetailCreationRequestDTO detailDTO2 = new HolidayDetailCreationRequestDTO();
-		
-		detailDTO1.day = DATE1_USER;
-		detailDTO2.day = DATE2_USER;
-		
-		detailDTO1.typeId = typeId;
-		detailDTO2.typeId = typeId;
-		
-		List<HolidayDetailCreationRequestDTO> list = new ArrayList<HolidayDetailCreationRequestDTO>();
-		list.add(detailDTO1);
-		list.add(detailDTO2);
-		
-		HolidayRequestCreationRequestDTO request = new HolidayRequestCreationRequestDTO();
-		request.details = list;
-		request.requesterComment = R_COMMENT;
-		
-		holidayRequestService.registerRequestAndDetails(request);
-	}
-	
-	@Test
-	public void getHolidayForAllManagedTestWithCurrentManager(){
+	@Test 
+	public void getHolidayForAllUsersForMonthTest(){
+		this.createHumanRoleForTest();
 		this.createUserRoleForTest();
-		this.createManagerForTest();
-		UserDTO user1DTO = this.createUser1ForTest();
-		UserDTO user2DTO = this.createUser2ForTest();
+
+		UserDTO user1DTO = this.createUser1ForTest();              
+		List<RoleDTO> r =  roleService.getAllRoles();
+		UserCreationRequestDTO user = new UserCreationRequestDTO((int)user1DTO.id, user1DTO.userDetails.firstname, user1DTO.userDetails.lastname, user1DTO.username,USERNAME_USER1, user1DTO.locked, r);
+		userService.updateUser(user);
+		List<UserDTO> usr = userService.getAllUsers();
+		user1DTO = usr.get(0); 
 		
+		this.createManagerForTest();
+		UserDTO user2DTO = this.createUser2ForTest();
 		List<UserDTO> managed = new ArrayList<UserDTO>();
 		managed.add(user1DTO);
 		managed.add(user2DTO);
 		userService.updateManager(USERNAME_MANAGER, managed);
-		
+				
 		HolidayDTO type = this.createHolidayTypeForTest();
+
+		authenticateAs(USERNAME_USER2);
+		this.createHolidayRequestForUser(user2DTO.id, type.id);
 		
 		authenticateAs(USERNAME_USER1);
 		this.createHolidayRequestForUser(user1DTO.id, type.id);
 		
-		authenticateAs(USERNAME_USER2);
-		this.createHolidayRequestForUser(user2DTO.id, type.id);
-		
 		authenticateAs(USERNAME_MANAGER);
-		HolidayUsersManagerDTO dto = managerUserService.getHolidayForAllManagedUsersForMonth(0, 0);
+		userService.currentUserIsHumanResource();
+		
+		List<HolidayRequestDTO> hrdto = requestService.getAllRequestsWithStatus(HolidayRequest.PENDING_STATUS);
+		requestService.acceptRequest(hrdto.get(0).id);
+		requestService.acceptRequest(hrdto.get(1).id);
+		
+		authenticateAs(user1DTO.username);
+		HolidayUsersManagerDTO dto = holidayHumanResourceForTest.getHolidayForAllUsersForMonth(0, 0);
 		DateTime currentDate = new DateTime();
 		
 		assertEquals(dto.month, currentDate.getMonthOfYear());
 		assertEquals(dto.year, currentDate.getYear());
 		assertEquals(dto.nbDays, currentDate.dayOfMonth().getMaximumValue());
-		assertEquals(dto.usersManaged.size(), 2);
-		assertEquals(dto.usersManaged.get(0).details.size(), 2);
-		assertEquals(dto.usersManaged.get(1).details.size(), 2);
+		assertEquals(dto.usersManaged.size(), 3);
 	}
-	
+
 	@Test(expected = UnauthorizedException.class)
-	public void getHolidayWithCurrentNotManager(){
+	public void getHolidayForAllUsersForMonthUnauthorizedTest() {
 		this.createUserRoleForTest();
 		this.createUser1ForTest();
-		authenticateAs(USERNAME_USER1);
-		managerUserService.getHolidayForAllManagedUsersForMonth(0, 0);
+		this.authenticateAs(USERNAME_USER1);
+		holidayHumanResourceForTest.getHolidayForAllUsersForMonth(0, 0);
 	}
+
 }

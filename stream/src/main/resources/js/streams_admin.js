@@ -251,6 +251,8 @@ AppStreamAdmin = (function($){
 		events:{
 			"click .closeModal" : "closemodal",
 			"click .updateStream" : "updatestreamrights",
+			"click #usersTab" : "showUsersRights",
+			"click #groupsTab" : "showGroupsRights"
 		},
 		
 		vid: null,
@@ -274,7 +276,7 @@ AppStreamAdmin = (function($){
 			$(this.el).html(html);
 			
 			new UserSelectView(this.vid).render();
-			
+			new GroupSelectView(this.vid).render();
 			return this;
 		},
 		
@@ -282,21 +284,47 @@ AppStreamAdmin = (function($){
 			$('#streams_modal_window').hide();
        		$('#mask').hide();
 		},
+
+		showUsersRights: function(){
+			$("#usersToRight").removeClass("tabHiddenContent").addClass("tabContent").show();
+			$("#groupsToRight").removeClass("tabContent").addClass("tabHiddenContent").show();
+			$("#usersTab").removeClass("tab").addClass("selectedTab").show();
+			$("#groupsTab").removeClass("selectedTab").addClass("tab").show();
+		},
+		
+		showGroupsRights: function(){
+			$("#usersToRight").removeClass("tabContent").addClass("tabHiddenContent").show();
+			$("#groupsToRight").removeClass("tabHiddenContent").addClass("tabContent").show();
+			$("#groupsTab").removeClass("tab").addClass("selectedTab").show();
+			$("#usersTab").removeClass("selectedTab").addClass("tab").show();
+		},
+	
 		updatestreamrights: function(){
-			var usersSelect = $("select");
+			var usersSelect = $("select.userscombo");
+			var groupsSelect = $("select.groupscombo");
 			var count = 0;
-			var users = "";
-				
-			if(usersSelect.length > 0){
+			if(usersSelect.length + groupsSelect.length > 0){
 				rights = '"rights":[';
 				
 				$.each(usersSelect, function(){
-					rights += '{"userid":'+this.id+',"permission":"'+$("#"+this.id+" :selected").val()+'"}';
+					rights += '{"id":'+this.id+',"idType":"user", "permission":"'+$("#"+this.id+" :selected").val()+'"}';
 					count++;
 					if(count<usersSelect.length){
 						rights += ',';
 					}
 				});
+				if (groupsSelect.length > 0){
+					rights += ',';
+				}
+				count  = 0;
+				$.each(groupsSelect, function(){
+					rights += '{"id":'+this.id+', "idType":"group", "permission":"'+$("#"+this.id+" :selected").val()+'"}';
+					count++;
+					if(count<groupsSelect.length){
+						rights += ',';
+					}
+				});
+
 				rights += "]";
 			}
 			else{
@@ -331,6 +359,7 @@ AppStreamAdmin = (function($){
 		}
 	})
 	
+	
 	UserSelectView = Backbone.View.extend({
 		el:"#usersToRight",
 		
@@ -358,7 +387,7 @@ AppStreamAdmin = (function($){
 							$(parent.el).append("<table>")
 				    		$.each(data.userDetailsDTO, function() {
 				    			
-				    			var template = $("#stream-rights-combo-template").html();
+				    			var template = $("#stream-users-rights-combo-template").html();
 				    			
 				    			var view = {lastname: this.lastname, firstname: this.firstname, id: this.user.id};
 				    			var html = Mustache.to_html(template, view);
@@ -368,7 +397,7 @@ AppStreamAdmin = (function($){
 						}
 						// In the case when there is only one user.
 						else{
-			    			var template = $("#stream-rights-combo-template").html();
+			    			var template = $("#stream-users-rights-combo-template").html();
 			    			
 			    			var view = {lastname: data.userDetailsDTO.lastname, firstname: data.userDetailsDTO.firstname, id: data.userDetailsDTO.user.id};
 			    			var html = Mustache.to_html(template, view);
@@ -386,7 +415,76 @@ AppStreamAdmin = (function($){
 						success: function(data){
 							if(data != null && typeof(data) != "undefined"){
 					    		$.each(data.permission, function() {
-									$('#' + this.user+" option[value='"+this.right+"']").attr("selected", "selected");
+					    			if (this.user != null){
+					    				$('#' + this.user+" option[value='"+this.right+"']").attr("selected", "selected");
+					    			}
+					    		});
+							}
+						}
+					});
+				}
+			});
+			return this;
+		}
+	})
+	
+	GroupSelectView = Backbone.View.extend({
+		el:"#groupsToRight",
+		
+		streamId: null,
+		
+		events:{
+		
+		},
+		
+		initialize:function(streamid){
+			this.streamId = streamid;
+		},
+		
+		render: function(){
+			var parent = this;
+
+			// Build the table
+			$.ajax({
+				type: "GET",
+				url:"/admin/groups/all",
+				dataType:"json",
+				success: function(data){
+					if(data != null){
+						if(data.groupDTO.length > 1){
+							$(parent.el).append("<table>")
+				    		$.each(data.groupDTO, function() {
+				    			
+				    			var template = $("#stream-groups-rights-combo-template").html();
+				    			
+				    			var view = {name: this.name, id: this.id};
+				    			var html = Mustache.to_html(template, view);
+				    			
+				    			$(parent.el).append(html);
+				    		});
+						}
+						// In the case when there is only one user.
+						else{
+			    			var template = $("#stream-groups-rights-combo-template").html();
+			    			var view = {name: data.groupDTO.name, id: data.groupDTO.id};
+			    			var html = Mustache.to_html(template, view);
+			    			
+			    			$(parent.el).append(html);
+						}
+					}
+					$(parent.el).append("</table>");
+					
+					// Select existing rights
+					$.ajax({
+						type: "GET",
+						url:"/admin/streams/rights/"+parent.streamId,
+						dataType:"json",
+						success: function(data){
+							if(data != null && typeof(data) != "undefined"){
+					    		$.each(data.permission, function() {
+					    			if (this.group != null){
+										$('#' + this.group+" option[value='"+this.right+"']").attr("selected", "selected");					    				
+					    			}
 					    		});
 							}
 						}

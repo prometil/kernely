@@ -1,4 +1,4 @@
-AppHolidayManagerUsers = (function($){
+AppHolidayHumanResource = (function($){
 	
 	// Initialize with January
 	var monthSelected = 0;
@@ -8,8 +8,8 @@ AppHolidayManagerUsers = (function($){
 	// How many days in the month
 	var nbDays = 0;
 	
-	HolidayManagerUserMainView = Backbone.View.extend({
-		el:"#main-manager-page-content",
+	HolidayHumanResourceMainView = Backbone.View.extend({
+		el:"#main-human-page-content",
 		events:{
 		
 		},
@@ -20,13 +20,13 @@ AppHolidayManagerUsers = (function($){
 		
 		render: function(){
 			$.ajax({
-				url:"/holiday/manager/users/all",
+				url:"/holiday/human/resource/all",
 				data: {month: monthSelected, year: yearSelected},
 				dataType: "json",
 				success: function(data){
-					new HolidayManagerUserTableView(data).render();
-					new HolidayManagerColorPartView(data).render();
-					new HolidayManagerMonthSelectorView().render();
+					new HolidayHumanResourceTableView(data).render();
+					new HolidayHumanResourceColorPartView(data).render();
+					new HolidayHumanResourceMonthSelectorView().render();
 					monthSelected = data.month;
 					yearSelected = data.year;
 				}
@@ -36,17 +36,17 @@ AppHolidayManagerUsers = (function($){
 		},
 		reloadTable: function(){
 			$.ajax({
-				url:"/holiday/manager/users/all",
+				url:"/holiday/human/resource/all",
 				data: {month: monthSelected, year: yearSelected},
 				dataType: "json",
 				success: function(data){
-					new HolidayManagerUserTableView(data).reload();
+					new HolidayHumanResourceTableView(data).reload();
 				}
 			});
 		}
 	})
 	
-	HolidayManagerMonthSelectorView = Backbone.View.extend({
+	HolidayHumanResourceMonthSelectorView = Backbone.View.extend({
 		el:"#monthSelector",
 		events:{
 			"click .minusMonth" : "minusMonth",
@@ -88,7 +88,7 @@ AppHolidayManagerUsers = (function($){
 		}
 	})
 	
-	HolidayManagerUserTableLineView = Backbone.View.extend({
+	HolidayHumanResourceTableLineView = Backbone.View.extend({
 		tagName: "tr",
 		
 		user : null,
@@ -150,7 +150,7 @@ AppHolidayManagerUsers = (function($){
 		}
 	})
 
-	HolidayManagerUserTableView = Backbone.View.extend({
+	HolidayHumanResourceTableView = Backbone.View.extend({
 		el:"#usersHoliday",
 		
 		data: null,
@@ -191,17 +191,17 @@ AppHolidayManagerUsers = (function($){
 			
 			if(this.data.usersManaged.length > 1){
 				$.each(this.data.usersManaged, function(){
-                  $(parent.el).append(new HolidayManagerUserTableLineView(this).render().el);
+                  $(parent.el).append(new HolidayHumanResourceTableLineView(this).render().el);
 				});
 			}
 			else{
-				$(parent.el).append(new HolidayManagerUserTableLineView(this.data.usersManaged).render().el);
+				$(parent.el).append(new HolidayHumanResourceTableLineView(this.data.usersManaged).render().el);
 			}
 			return this;
 		}
 	})
 	
-	HolidayManagerColorPartView = Backbone.View.extend({
+	HolidayHumanResourceColorPartView = Backbone.View.extend({
 		el:"#color-legend",
 		
 		events:{
@@ -219,11 +219,11 @@ AppHolidayManagerUsers = (function($){
 			if(typeof(this.data.balances) != "undefined"){
 				if(this.data.balances.length > 1){
 					$.each(this.data.balances, function(){
-	                    $(parent.el).append(new HolidayManagerColorCellView(this.nameOfType, this.color, this.idOfType).render().el);
+	                    $(parent.el).append(new HolidayHumanResourceColorCellView(this.nameOfType, this.color, this.idOfType).render().el);
 					});
 				}
 				else{
-					$(parent.el).append(new HolidayManagerColorCellView(this.data.balances.nameOfType, this.data.balances.color, this.data.balances.idOfType).render().el);
+					$(parent.el).append(new HolidayHumanResourceColorCellView(this.data.balances.nameOfType, this.data.balances.color, this.data.balances.idOfType).render().el);
 				}
 			}
 			return this;
@@ -231,7 +231,7 @@ AppHolidayManagerUsers = (function($){
 	})
 	
 	
-	HolidayManagerColorCellView = Backbone.View.extend({
+	HolidayHumanResourceColorCellView = Backbone.View.extend({
 		tagName:"div",
 		className: "balance-cell-legend",
 		
@@ -260,12 +260,12 @@ AppHolidayManagerUsers = (function($){
 	
 	var self = {};
 	self.start = function(){
-		mainView = new HolidayManagerUserMainView().render();
+		mainView = new HolidayHumanResourceMainView().render();
 	}
 	return self;
 })
 
 $( function() {
-	console.log("Starting holiday manager users application")
-	new AppHolidayManagerUsers(jQuery).start();
+	console.log("Starting holiday human resource application")
+	new AppHolidayHumanResource(jQuery).start();
 })

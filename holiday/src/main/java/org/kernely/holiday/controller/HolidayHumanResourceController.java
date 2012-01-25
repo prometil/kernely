@@ -1,3 +1,4 @@
+
 package org.kernely.holiday.controller;
 
 import javax.ws.rs.GET;
@@ -9,20 +10,17 @@ import javax.ws.rs.core.MediaType;
 import org.kernely.core.controller.AbstractController;
 import org.kernely.core.template.TemplateRenderer;
 import org.kernely.holiday.dto.HolidayUsersManagerDTO;
-import org.kernely.holiday.service.HolidayManagerUserService;
+import org.kernely.holiday.service.HolidayHumanResourceService;
 
 import com.google.inject.Inject;
 
-/**
- * Controller for the managed users holidays
- */
-@Path("holiday/manager/users")
-public class HolidayManagerUserController extends AbstractController{
+@Path("holiday/human/resource")
+public class HolidayHumanResourceController extends AbstractController{
 	@Inject
 	private TemplateRenderer templateRenderer;
 	
 	@Inject
-	private HolidayManagerUserService holidayManagerService;
+	private HolidayHumanResourceService holidayHumanResourceService;
 	
 	/**
 	 * Get the template for holiday manager page
@@ -31,7 +29,7 @@ public class HolidayManagerUserController extends AbstractController{
 	@GET
 	@Produces( { MediaType.TEXT_HTML })
 	public String getHolidayManagerUsersPanel(){
-		return templateRenderer.create("/templates/gsp/holiday_manager_users.gsp").addCss("/css/holiday_manager_users.css").render();
+		return templateRenderer.create("/templates/gsp/holiday_human_resource.gsp").addCss("/css/holiday_human_resource.css").render();
 	}
 	
 	/**
@@ -44,6 +42,7 @@ public class HolidayManagerUserController extends AbstractController{
 	@Path("/all")
 	@Produces( {MediaType.APPLICATION_JSON} )
 	public HolidayUsersManagerDTO getAllRequestsOfAllUsers(@QueryParam("month") int month, @QueryParam("year") int year){
-		return  holidayManagerService.getHolidayForAllManagedUsersForMonth(month, year);
-	}
+		return holidayHumanResourceService.getHolidayForAllUsersForMonth(month,year);
+	}	
+
 }

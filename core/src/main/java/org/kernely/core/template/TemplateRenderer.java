@@ -119,6 +119,8 @@ public class TemplateRenderer {
 
 		private boolean withLayout = true;
 
+		private boolean forMail = false;
+		
 		private SimpleTemplateEngine engine;
 
 		/**
@@ -211,6 +213,17 @@ public class TemplateRenderer {
 			this.otherLayout = otherLayout;
 			return this;
 		}
+		
+		/**
+		 * A Template for mails don't care about connected users and don't have a layout.
+		 * @return the template builder
+		 */
+		public KernelyTemplate forMail() {
+			this.forMail = true;
+			this.withLayout = false;
+			return this;
+		}
+		
 
 		/**
 		 * Render the page with the default layout. If you want to insert the
@@ -222,7 +235,9 @@ public class TemplateRenderer {
 		 */
 		public String render() {
 			URL kernelyLayout = TemplateRenderer.class.getResource("/templates/gsp/layout.gsp");
-			binding = enhanceBinding((HashMap<String, Object>) binding);
+			if (! forMail){
+				binding = enhanceBinding((HashMap<String, Object>) binding);
+			}
 			if (body == null) {
 				body = template.make(binding).toString();
 			}
@@ -278,6 +293,7 @@ public class TemplateRenderer {
 			}
 			String lang = configuration.getString("locale.lang");
 			String country = configuration.getString("locale.country");
+
 			binding.put("i18n", new I18n(new Locale(lang,country)));
 			return binding;
 		}

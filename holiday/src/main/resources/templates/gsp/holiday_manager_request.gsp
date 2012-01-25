@@ -26,6 +26,15 @@
  	 	<td>{{from}}</td><td>{{requesterComment}}</td><td>{{beginDate}}</td><td>{{endDate}}</td>
  </script>
 
+<script type="text/html" id="balance-cell-template">
+		<span id="balance-cell-name">{{name}}</span><br/>
+		<%= i18n.t("holiday_balance_available") %>: <span class="available-cpt">{{available}}</span>
+</script>
+
+<script type="text/html" id="locale-lang"><%= i18n.t("locale_lang") %></script>
+
+<script type="text/html" id="locale-country"><%= i18n.t("locale_country") %></script>
+
 <script type="text/html" id="popup-accepted-template">
 	<input type="button" value="<%= i18n.t("close") %>" class="closeModal"/><br/>
 	<fieldset>	
@@ -34,6 +43,27 @@
 	</fieldset>
 	<br/>
 	<input type="button" value="<%= i18n.t("holiday_request_create") %>" class="validateHolidayRequest"/>
+</script>
+
+<script type="text/html" id="popup-visualize-request">
+	<input type="button" value="<%= i18n.t("close") %>" class="closeModal"/><br/>
+	
+	<div id="request-main">  
+	<div id="calendarRequest">
+		<table id="calendarTable" border="0">
+			<tr>
+				<th><%= i18n.t("day_1_short") %></th>
+				<th><%= i18n.t("day_2_short") %></th>
+				<th><%= i18n.t("day_3_short") %></th>
+				<th><%= i18n.t("day_4_short") %></th>
+				<th><%= i18n.t("day_5_short") %></th>
+			</tr>
+			<tbody id="calendarContent">
+			<tbody>
+		</table>
+	</div>
+	<input type="button" id="button_accepted" value="<%=i18n.t("accepted")%>"/> <input type="button" id="button_denied" value="<%=i18n.t("denied")%>" />
+	
 </script>
 
 <script type="text/html" id="popup-denied-template">
@@ -52,7 +82,7 @@
 
 <div id="request-manager-main">
 	<div id="holiday_button_container">
-		<input type="button" id="button_accepted" value="<%=i18n.t("accepted")%>" disabled="disabled"/> <input type="button" id="button_denied" value="<%=i18n.t("denied")%>" disabled="disabled"/>
+		<input type="button" id="button_accepted" value="<%=i18n.t("accepted")%>" disabled="disabled"/> <input type="button" id="button_denied" value="<%=i18n.t("denied")%>" disabled="disabled"/> <input type="button" id="button_visualize" value="<%=i18n.t("visualize")%>" disabled="disabled"/>
 	</div>
 	<table id="manager_pending_request_table">
 		  <caption><b><u><%=i18n.t("title_table_1")%></u></b></caption>

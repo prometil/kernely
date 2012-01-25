@@ -61,7 +61,7 @@ public class Migration01 extends Migration {
 		holidayRequest.column("begin_date", "timestamp");
 		holidayRequest.column("end_date", "timestamp");
 		holidayRequest.column("status", "int");
-		holidayRequest.column("manager", "varchar(30)");
+		holidayRequest.column("manager", "bigint");
 		holidayRequest.column("requester_comment", "varchar(500)");
 		holidayRequest.column("manager_comment", "varchar(500)");
 		holidayRequest.column("user_id", "bigint");

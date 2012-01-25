@@ -7,6 +7,7 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import org.apache.shiro.authz.UnauthorizedException;
+import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.joda.time.DateTime;
 import org.kernely.core.dto.UserDTO;
 import org.kernely.core.model.User;
@@ -26,11 +27,12 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.google.inject.persist.Transactional;
 
+
 /**
- * Service managing the manager page for users' holidays
+ * Service managing the human resource page for users' holidays
  */
 @Singleton
-public class HolidayManagerUserService extends AbstractService{
+public class HolidayHumanResourceService extends AbstractService{
 
 	@Inject
 	private HolidayRequestService holidayRequestService;
@@ -40,15 +42,15 @@ public class HolidayManagerUserService extends AbstractService{
 
 
 	/**
-	 * Retrieves all holidays for all users managed by the current user for the given month
+	 * Retrieves all holidays for all users by the current human resource for the given month
 	 * @param month The number corresponding to the month needed, IE : January = 1, February = 2 ..., if 0, this is the current month
 	 * @param year The year needed, if 0, this is the current year.
-	 * @throws UnauthorizedException if the current user is not manager
+	 * @throws UnauthorizedException if the current user is not human resource  
 	 */
 	@Transactional
-	public HolidayUsersManagerDTO getHolidayForAllManagedUsersForMonth(int month, int year){
-		if(!userService.isManager(this.getAuthenticatedUserModel().getUsername())){	
-			throw new UnauthorizedException("Only managers can access to this functionality !");
+	public HolidayUsersManagerDTO getHolidayForAllUsersForMonth(int month, int year){
+		if(!userService.currentUserIsHumanResource()){	
+			throw new UnauthorizedException("Only human resource can access to this functionality !");
 		}
 
 		int monthNeeded;
@@ -75,21 +77,18 @@ public class HolidayManagerUserService extends AbstractService{
 		List<HolidayUserManagedDTO> managedDTO = new ArrayList<HolidayUserManagedDTO>();
 		Set<CalendarBalanceDetailDTO> balancesDTO = new HashSet<CalendarBalanceDetailDTO>();
 
-		Set<UserDTO> authorizedManaged = userService.getUsersAuthorizedManaged();
-		Set<User> usersManaged = new TreeSet<User>();
-		for(UserDTO udto : authorizedManaged){
-			usersManaged.add(em.get().find(User.class, udto.id));
-		}
+		Set<UserDTO> users = new HashSet<UserDTO>(userService.getAllUsers());
 
 		List<HolidayDetailDTO> detailsDTO = new ArrayList<HolidayDetailDTO>();
 
 		Set<HolidayManagedDetailsDTO> detailManagedDTO = new TreeSet<HolidayManagedDetailsDTO>();
 
-		for(User u : usersManaged){
+		for(UserDTO u : users){
 			// Clear all the list for the new user
 			detailsDTO = new ArrayList<HolidayDetailDTO>();
 			detailManagedDTO = new TreeSet<HolidayManagedDetailsDTO>();
-			List<HolidayRequestDTO> requests = holidayRequestService.getRequestBetweenDatesWithStatus(first.toDate(), last.toDate(), u, HolidayRequest.PENDING_STATUS, HolidayRequest.ACCEPTED_STATUS);
+			User us = em.get().find(User.class, u.id);
+			List<HolidayRequestDTO> requests = holidayRequestService.getRequestBetweenDatesWithStatus(first.toDate(), last.toDate(), us,  HolidayRequest.ACCEPTED_STATUS);
 			for(HolidayRequestDTO req : requests){
 				detailsDTO.addAll(req.details);
 			}
@@ -102,7 +101,7 @@ public class HolidayManagerUserService extends AbstractService{
 				HolidayType type = this.getHolidayTypeFromBalanceId(det.balanceId);
 				balancesDTO.add(new CalendarBalanceDetailDTO(type.getName(), 0, type.getColor() , type.getId()));
 			}
-			String fullname = u.getUserDetails().getFirstname() + " " + u.getUserDetails().getName();
+			String fullname = us.getUserDetails().getFirstname() + " " + us.getUserDetails().getName();
 			managedDTO.add(new HolidayUserManagedDTO(fullname, detailManagedDTO));
 		}
 		HolidayUsersManagerDTO mainDTO = new HolidayUsersManagerDTO(managedDTO, balancesDTO);

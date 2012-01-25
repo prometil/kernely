@@ -71,7 +71,6 @@ public class HolidayUserViewController extends AbstractController{
 		return lhr;
 	}
 	
-	
 	/**
 	 * cancel a request
 	 * @param idRequest

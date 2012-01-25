@@ -34,6 +34,7 @@ import org.apache.shiro.authz.AuthorizationException;
 import org.kernely.core.dto.PermissionDTO;
 import org.kernely.core.dto.UserDTO;
 import org.kernely.core.dto.UserDetailsDTO;
+import org.kernely.core.model.Group;
 import org.kernely.core.model.Permission;
 import org.kernely.core.model.User;
 import org.kernely.core.service.AbstractService;
@@ -114,6 +115,44 @@ public class PermissionService extends AbstractService {
 			return false;
 		}
 	}
+	
+	/**
+	 * Verify if a specific group has a specific permission.
+	 * 
+	 * @param groupId
+	 *            The id of the group.
+	 * @param right
+	 *            The right on the resource for example "write", or "delete".
+	 * @param resourceType
+	 *            The type of the resource, for example "user" or "stream"
+	 * @param resourceId
+	 *            The unique identifier for the resource
+	 * 
+	 * @return true if the group has the permission.
+	 */
+
+	@Transactional
+	public boolean groupHasPermission(int groupId, String right, String resourceType, Object resourceId) {
+		String permission = this.createPermissionString(right, resourceType, resourceId.toString());
+
+		Query query = em.get().createQuery("SELECT p FROM Permission p WHERE name = :permission");
+		query.setParameter("permission", permission);
+		try {
+			Permission p = (Permission) query.getSingleResult();
+
+			for (Group g : p.getGroups()) {
+				if (g.getId() == groupId) {
+					return true;
+				}
+			}
+			return false;
+		} catch (NoResultException nre) {
+			return false;
+		} catch (NonUniqueResultException nure) {
+			log.error(nure.getMessage());
+			return false;
+		}
+	}
 
 	/**
 	 * Gets the lists of all permissions contained in the database.
@@ -121,6 +160,7 @@ public class PermissionService extends AbstractService {
 	 * @return the list of all permissions contained in the database.
 	 */
 	@SuppressWarnings("unchecked")
+	@Transactional
 	public List<PermissionDTO> getAllPermissions() {
 		Query query = em.get().createQuery("SELECT e FROM Permission e");
 		List<Permission> collection = (List<Permission>) query.getResultList();
@@ -148,10 +188,13 @@ public class PermissionService extends AbstractService {
 	public void grantPermission(int userId, String right, String resourceType, Object resourceId) {
 		// Verify if the permission already exists
 		String permission = this.createPermissionString(right, resourceType, resourceId.toString());
-
 		Query permissionQuery = em.get().createQuery("SELECT p FROM Permission p WHERE name = :permission");
 		permissionQuery.setParameter("permission", permission);
 		User user = em.get().find(User.class, (long) userId);
+		if(user == null){
+			throw new IllegalArgumentException("The user with id "+ userId +" doesn't exist, impossible to grant permissions.");
+		}
+		
 		// Avoid granting permissions to locked user
 		if(user.isLocked()){
 			throw new IllegalArgumentException("The user with id "+ userId +" is disabled, impossible to grant permissions.");
@@ -171,6 +214,7 @@ public class PermissionService extends AbstractService {
 			em.get().persist(p);
 			log.debug("Creation of the permission {}", permission);
 		}
+		log.debug("User with id {}: {}",userId,user);
 		Set<Permission> userPermissions = user.getPermissions();
 		if (userPermissions == null) {
 			userPermissions = new HashSet<Permission>();
@@ -180,6 +224,55 @@ public class PermissionService extends AbstractService {
 		p.getUsers().add(user);
 
 		em.get().merge(user);
+		em.get().merge(p);
+	}
+	
+	/**
+	 * Grant a right on a resource to a specific user.
+	 * 
+	 * @param groupId
+	 *            The id of the user which has this permission.
+	 * @param right
+	 *            The right on the resource for example "write", or "delete".
+	 * @param resourceType
+	 *            The type of the resource, for example "user" or "stream"
+	 * @param resourceId
+	 *            The unique identifier for the resource
+	 */
+	@Transactional
+	public void grantPermissionToGroup(int groupId, String right, String resourceType, Object resourceId) {
+		// Verify if the permission already exists
+		String permission = this.createPermissionString(right, resourceType, resourceId.toString());
+
+		Query permissionQuery = em.get().createQuery("SELECT p FROM Permission p WHERE name = :permission");
+		permissionQuery.setParameter("permission", permission);
+		Group group = em.get().find(Group.class, (int) groupId);
+
+		log.debug("Grant permission {} to group id : {}", permission, groupId);
+		Permission p;
+		try {
+			p = (Permission) permissionQuery.getSingleResult();
+		} catch (NoResultException nre) {
+			// If there is no permission, we create it
+			String[] result = permission.split(":");
+			if (result.length > 3) {
+				throw new IllegalArgumentException("The permission " + permission + " is malformed");
+			}
+			p = new Permission();
+			p.setName(permission);
+			em.get().persist(p);
+			log.debug("Creation of the permission {}", permission);
+		}
+		log.debug("Group with id {}: {}",groupId,group);
+		Set<Permission> groupPermissions = group.getPermissions();
+		if (groupPermissions == null) {
+			groupPermissions = new HashSet<Permission>();
+		}
+		groupPermissions.add(p);
+		group.setPermissions(groupPermissions);
+		p.getGroups().add(group);
+
+		em.get().merge(group);
 		em.get().merge(p);
 	}
 
@@ -215,6 +308,44 @@ public class PermissionService extends AbstractService {
 
 			// Remove the user from the permission
 			p.getUsers().remove(user);
+			em.get().merge(p);
+		} catch (NoResultException nre) {
+			// If there is no such permission, there is nothing to do : the user has already not the permission.
+		}
+	}
+	
+	/**
+	 * Ungrant a specific permission for a specific group.
+	 * 
+	 * @param groupId
+	 *            The id of the group which has this permission.
+	 * @param right
+	 *            The right on the resource for example "write", or "delete".
+	 * @param resourceType
+	 *            The type of the resource, for example "user" or "stream"
+	 * @param resourceId
+	 *            The unique identifier for the resource
+	 */
+	@Transactional
+	public void ungrantPermissionForGroup(int groupId, String right, String resourceType, Object resourceId) {
+		String permission = this.createPermissionString(right, resourceType, resourceId.toString());
+
+		// Verify if the permission already exists
+		Query permissionQuery = em.get().createQuery("SELECT p FROM Permission p WHERE name = :permission");
+		permissionQuery.setParameter("permission", permission);
+		Permission p;
+		Group group = em.get().find(Group.class, (int) groupId);
+		try {
+			log.debug("Ungrant permission {} to group id : {}", permission, groupId);
+			p = (Permission) permissionQuery.getSingleResult();
+
+			// Remove the permission from the user
+			Set<Permission> permissions = group.getPermissions();
+			permissions.remove(p);
+			em.get().merge(group);
+
+			// Remove the user from the permission
+			p.getGroups().remove(group);
 			em.get().merge(p);
 		} catch (NoResultException nre) {
 			// If there is no such permission, there is nothing to do : the user has already not the permission.
@@ -280,6 +411,7 @@ public class PermissionService extends AbstractService {
 	 *            Id of the resource needed
 	 * @return A list of DTO corresponding to the users who have this permission
 	 */
+	@Transactional
 	public List<UserDTO> getUsersWithPermission(String right, String resourceType, Object resourceId) {
 		String permission = this.createPermissionString(right, resourceType, resourceId.toString());
 

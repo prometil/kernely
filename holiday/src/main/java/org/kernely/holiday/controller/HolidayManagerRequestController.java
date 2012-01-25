@@ -1,6 +1,7 @@
 package org.kernely.holiday.controller;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.ws.rs.GET;
@@ -10,9 +11,14 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import org.kernely.core.controller.AbstractController;
 import org.kernely.core.service.user.UserService;
 import org.kernely.core.template.TemplateRenderer;
+import org.kernely.holiday.dto.CalendarRequestDTO;
+import org.kernely.holiday.dto.HolidayDetailDTO;
 import org.kernely.holiday.dto.HolidayRequestDTO;
 import org.kernely.holiday.model.HolidayRequest;
 import org.kernely.holiday.service.HolidayRequestService;
@@ -34,7 +40,7 @@ public class HolidayManagerRequestController extends AbstractController {
 	
 	@Inject
 	private HolidayRequestService holidayRequestService ; 
-
+	
 	/**
 	 * Set the template
 	 * @return the page 
@@ -127,5 +133,64 @@ public class HolidayManagerRequestController extends AbstractController {
 			return "{\"result\":\"Ok\"}"; 			
 		}
 		return null;
+	}
+	
+	@GET
+	@Path("/get/{id}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public List<HolidayDetailDTO> getDetailsInterval(@PathParam("id")int idRequest){
+		if (userService.isManager(userService.getAuthenticatedUserDTO().username)){
+			List<HolidayDetailDTO> hddto =  holidayRequestService.getHolidayRequestDetails(idRequest);
+			Date firstDay = hddto.get(0).day;
+			Date lastDay = hddto.get(0).day;
+			HolidayDetailDTO firstHoliday = hddto.get(0);
+			HolidayDetailDTO lastHoliday = hddto.get(0);
+			
+			for (HolidayDetailDTO holiday : hddto){
+				if (holiday.day.equals(firstHoliday)){
+					if (holiday.am == true){
+						firstHoliday = holiday;
+					}
+				}
+				if (holiday.day.before(firstDay)){
+					firstDay = holiday.day;
+					firstHoliday = holiday;
+				}
+				if (holiday.day.equals(lastHoliday)){
+					if (holiday.pm == true){
+						lastHoliday = holiday;
+					}
+				}
+				if (holiday.day.after(lastDay)){
+					lastDay = holiday.day;
+					lastHoliday = holiday;
+				}
+			}
+			hddto.clear();
+			hddto.add(firstHoliday);
+			hddto.add(lastHoliday);
+			return hddto;
+		}
+		return null;
+	}
+	
+	@GET
+	@Path("/details/{id}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public List<HolidayDetailDTO> getDetails(@PathParam("id")int idRequest){
+		if (userService.isManager(userService.getAuthenticatedUserDTO().username)){
+			return holidayRequestService.getHolidayRequestDetailsByOrder(idRequest);
+		}
+		return null;
+	}
+	
+	@GET
+	@Path("construct/{dateBegin}/{dateEnd}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public CalendarRequestDTO constructCalendar(@PathParam("dateBegin")String dateBegin,@PathParam("dateEnd")String dateEnd){
+		DateTimeFormatter fmt = DateTimeFormat.forPattern("yyyy-MM-dd");
+		DateTime d1 = DateTime.parse(dateBegin, fmt);
+		DateTime d2 = DateTime.parse(dateEnd, fmt);
+		return holidayRequestService.getCalendarRequest(d1, d2);
 	}
 }

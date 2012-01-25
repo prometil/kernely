@@ -21,10 +21,12 @@
 package org.kernely.holiday.service;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TimeZone;
 import java.util.Map.Entry;
 
 import javax.persistence.NoResultException;
@@ -331,6 +333,28 @@ public class HolidayBalanceService extends AbstractService {
 				removeAvailableDays(balances.get(set.getKey()), days.get(set.getKey()));
 			}
 
+		}
+	}
+
+	/**
+	 * Calculate holidays: increment all balances.
+	 */
+	public void computeHolidays() {
+		List<HolidayBalanceDTO> allBalances = this.getAllHolidayBalances();
+		
+	    Date curDate = new Date ();
+	    TimeZone zone = TimeZone.getTimeZone("UTC");
+	    Calendar calendar = Calendar.getInstance (zone);
+	    calendar.setTime (curDate);
+	    int curMonth = calendar.get(Calendar.MONTH);
+
+		for (HolidayBalanceDTO balance : allBalances) {
+			this.incrementBalance(balance.id);
+			
+			// Transfer future balance into available balance if needeed
+			if (balance.effectiveMonth == curMonth){
+				this.transferFutureBalance(balance.id);
+			}
 		}
 	}
 

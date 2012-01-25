@@ -19,6 +19,8 @@
  */
 package org.kernely.core.common;
 
+import java.util.Set;
+
 import javax.persistence.EntityManager;
 
 import org.apache.shiro.SecurityUtils;
@@ -32,6 +34,9 @@ import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.Rule;
+import org.kernely.core.model.Role;
+import org.kernely.core.model.User;
+import org.kernely.core.service.user.UserService;
 import org.mockito.Mockito;
 
 import com.google.guiceberry.junit4.GuiceBerryRule;
@@ -56,6 +61,9 @@ public abstract class AbstractServiceTest {
 	@Inject
 	PersistService service;
 
+	@Inject
+	UserService userService;
+	
 	private static ThreadState subjectThreadState;
 
 	@Before
@@ -133,9 +141,14 @@ public abstract class AbstractServiceTest {
 
 	public void authenticateAs(String username) {
 		doClearSubject();
+		User u = userService.getUserByUsername(username);
+		Set<Role> roles = u.getAllRoles();
 		Subject s = Mockito.mock(Subject.class);
 		Mockito.when(s.isAuthenticated()).thenReturn(true);
 		Mockito.when(s.getPrincipal()).thenReturn(username);
+		for (Role role : roles){
+			Mockito.when(s.hasRole(role.getName())).thenReturn(u.getAllRoles().contains(role));
+		}
 		setSubject(s);
 	}
 }

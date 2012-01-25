@@ -31,10 +31,14 @@ public class HolidayMainController extends AbstractController {
 	@Produces( { MediaType.TEXT_HTML })
 	public Response getHolidayRequestPage(){
 		String isManager = "";
+		String isHumanResource ="";
 		if (userService.isManager(userService.getAuthenticatedUserDTO().username)){
 			isManager = "manager";
 		}
-		return ok(templateRenderer.create("/templates/gsp/holiday_main_page.gsp").with("manager",isManager).addCss("/css/holiday_main.css"));
+		if (userService.currentUserIsHumanResource()){
+			isHumanResource = "HumanResource";
+		}
+		return ok(templateRenderer.create("/templates/gsp/holiday_main_page.gsp").with("manager",isManager).with("human_resource", isHumanResource).addCss("/css/holiday_main.css"));
 	}
 	
 }

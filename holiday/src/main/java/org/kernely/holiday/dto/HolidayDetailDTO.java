@@ -12,7 +12,7 @@ import org.kernely.holiday.model.HolidayRequestDetail;
  *
  */
 @XmlRootElement
-public class HolidayDetailDTO {
+public class HolidayDetailDTO implements Comparable<HolidayDetailDTO>{
 
 	/**
 	 * The day of holiday 
@@ -62,5 +62,15 @@ public class HolidayDetailDTO {
 		this.type = detail.getBalance().getHolidayType().getName();
 		this.balanceId = detail.getBalance().getId();
 		this.color = detail.getBalance().getHolidayType().getColor();
+	}
+
+	/**
+	 * @param another
+	 * @return
+	 * @see java.util.Date#compareTo(java.util.Date)
+	 */
+	@Override
+	public int compareTo(HolidayDetailDTO another) {
+		return this.day. compareTo(another.day);
 	}
 }
