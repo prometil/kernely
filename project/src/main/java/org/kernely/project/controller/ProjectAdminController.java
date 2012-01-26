@@ -11,6 +11,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.kernely.core.controller.AbstractController;
+import org.kernely.core.dto.UserDTO;
 import org.kernely.core.service.user.UserService;
 import org.kernely.core.template.TemplateRenderer;
 import org.kernely.project.dto.ProjectCreationRequestDTO;
@@ -109,5 +110,21 @@ public class ProjectAdminController extends AbstractController {
 		}
 		return null;
 	}
+	
+	/**
+	 * Get all users associated to the project which has the id 'id'
+	 * @param id The id of the project
+	 * @return A list of all DTO associated to the users contained in this project
+	 */
+	@GET
+	@Path("/{id}/users")
+	@Produces({MediaType.APPLICATION_JSON})
+	public List<UserDTO> getProjectUsers(@PathParam("id") int id){
+		if (userService.currentUserIsAdministrator()){
+			return projectService.getProjectUsers(id);
+		}
+		return null;
+	}
+
 	
 }

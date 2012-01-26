@@ -30,16 +30,19 @@ AppProjectAdmin = (function($){
 		
 		vid: null,
 		vname : null,
-		
+		vnbmembers : null,
+
 		events: {
 			"click" : "selectLine",
 			"mouseover" : "overLine",
 			"mouseout" : "outLine"
 		},
 		
-		initialize: function(id, name){
+		
+		initialize: function(id, name, members){
 			this.vid = id;
 			this.vname = name;
+			this.vnbmembers = members;
 		},
 		
 		selectLine : function(){
@@ -64,8 +67,8 @@ AppProjectAdmin = (function($){
 			}
 		},
 		render:function(){
-			var template = '<td>{{name}}</td>';
-			var view = {name : this.vname};
+			var template = '<td>{{name}}</td><td>{{members}}</td>';
+			var view = {name : this.vname, members: this.vnbmembers};
 			var html = Mustache.to_html(template, view);
 			
 			$(this.el).html(html);
@@ -95,13 +98,26 @@ AppProjectAdmin = (function($){
 					if(data != null){
 						if(data.projectDTO.length > 1){
 				    		$.each(data.projectDTO, function() {
-				    			var view = new ProjectAdminTableLineView(this.id, this.name);
+				    			var users = 0;
+				    			if(this.users != null && typeof(this.users) != "undefined"){
+				    				if(typeof(this.users.length) != "undefined"){
+				    					users = this.users.length;
+				    				}
+				    				else{
+				    					users = 1;
+				    				}
+				    			}
+				    			var view = new ProjectAdminTableLineView(this.id, this.name, users);
 				    			view.render();
 				    		});
 						}
 					   	// In the case when there is only one element
 			    		else{
-			    			var view = new ProjectAdminTableLineView(data.projectDTO.id, data.projectDTO.name);
+			    			var users = 0;
+			    			if(data.projectDTO.users != null && typeof(data.projectDTO.users) != "undefined"){
+			    				users = data.projectDTO.users.length;
+			    			}
+							var view = new ProjectAdminTableLineView(data.projectDTO.id, data.projectDTO.name, users);
 			    			view.render();
 						}
 					}
@@ -276,6 +292,7 @@ AppProjectAdmin = (function($){
 			var view = {name : this.vname};
 			var html = Mustache.to_html(template, view);
 			$(this.el).html(html);
+			new UserCBListView(this.vid).render();
 			return this;
 		},
 		
@@ -285,7 +302,26 @@ AppProjectAdmin = (function($){
 		},
 		
 		updateproject: function(){
-			var json = '{"id":"'+this.vid+'", "name":"'+$('input[name*="name"]').val() +'"}';
+			var usersCB = $("input:checked");
+			var count = 0;
+			var users = "";
+				
+			if(usersCB.length > 0){
+				users = '"users":[';
+				
+				$.each(usersCB, function(){
+					users += '{"id":"'+ $(this).attr('id') +'", "username":"null", "locked":"false"}';
+					count++;
+					if(count<usersCB.length){
+						users += ',';
+					}
+				});
+				users += "]";
+			}
+			else{
+				users = '"users":{}';
+			}
+			var json = '{"id":"'+this.vid+'", "name":"'+$('input[name*="name"]').val() + '", '+ users +'}';
 			$.ajax({
 				url:"/admin/projects/create",
 				data: json,
@@ -313,6 +349,62 @@ AppProjectAdmin = (function($){
 			});
 		}
 	}) 
+	
+	
+	UserCBListView = Backbone.View.extend({
+		el:"#usersToLink",
+		
+		projectId: null,
+		
+		events:{
+		
+		},
+		
+		initialize:function(projectid){
+			this.projectId = projectid;
+		},
+		
+		render: function(){
+			var parent = this;
+			$.ajax({
+				type: "GET",
+				url:"/admin/users/all",
+				dataType:"json",
+				success: function(data){
+					if(data.userDetailsDTO.length > 1){
+			    		$.each(data.userDetailsDTO, function() {
+			    			$(parent.el).append('<input type="checkbox" id="'+ this.user.id +'">'+ this.lastname + ' ' + this.firstname+'</input><br/>');
+			    		});
+					}
+					// In the case when there is only one user.
+					else{
+						$(parent.el).append('<input type="checkbox" id="'+ data.userDetailsDTO.user.id +'">'+ data.userDetailsDTO.lastname + ' ' + data.userDetailsDTO.firstname + ' ('+ data.userDetailsDTO.user.username +')'+'</input><br/>');
+					}
+					
+					$.ajax({
+						type: "GET",
+						url:"/admin/projects/" + parent.projectId + "/users",
+						dataType:"json",
+						success: function(data){
+							if(data != null && typeof(data) != "undefined"){
+								if(data.userDTO.length > 1){
+						    		$.each(data.userDTO, function() {
+						    			$('#' + this.id).attr("checked", "checked");
+						    		});
+								}
+								// In the case when there is only one user.
+								else{
+									$('#' + data.userDTO.id).attr("checked", "checked");
+								}
+							}
+						}
+					});
+				}
+			});
+			return this;
+		}
+	})
+	
 	
 	// define the application initialization
 	var self = {};

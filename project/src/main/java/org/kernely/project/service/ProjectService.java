@@ -7,7 +7,7 @@ import java.util.Set;
 
 import javax.persistence.Query;
 
-import org.kernely.core.dto.GroupCreationRequestDTO;
+import org.kernely.core.dto.GroupDTO;
 import org.kernely.core.dto.UserDTO;
 import org.kernely.core.model.Group;
 import org.kernely.core.model.User;
@@ -46,7 +46,11 @@ public class ProjectService extends AbstractService {
 		List<Project> collection = (List<Project>) query.getResultList();
 		List<ProjectDTO> dtos = new ArrayList<ProjectDTO>();
 		for (Project project : collection) {
-			dtos.add(new ProjectDTO(project.getName(), project.getId()));
+			List<UserDTO> users = new ArrayList<UserDTO>();
+			for (User u : project.getUsers()) {
+				users.add(new UserDTO(u.getUsername(), u.isLocked(), u.getId()));
+			}
+			dtos.add(new ProjectDTO(project.getName(), project.getId(), users));
 		}
 		return dtos;
 	}
@@ -112,8 +116,21 @@ public class ProjectService extends AbstractService {
 		if (!list.isEmpty()) {
 			throw new IllegalArgumentException("Another project with this name already exists");
 		}
+		Set<User> users = null;
+		if (!request.users.isEmpty() && (!(request.users.get(0).username == null))) {
+			users = new HashSet<User>();
+			for (UserDTO u : request.users) {
+				users.add(em.get().find(User.class, u.id));
+			}
+		}
 		Project project = em.get().find(Project.class, request.id);
 		project.setName(request.name);
+
+		if (users == null) {
+			project.getUsers().clear();
+		} else {
+			project.setUsers(users);
+		}
 	}
 
 
@@ -129,4 +146,21 @@ public class ProjectService extends AbstractService {
 		em.get().remove(project);
 	}
 
+	/**
+	 * Get all users from a project.
+	 * 
+	 * @param id
+	 *            The id of the project.
+	 * @return the list of users which are in the project.
+	 */
+	@Transactional
+	public List<UserDTO> getProjectUsers(int id) {
+		Project g = em.get().find(Project.class, id);
+		List<UserDTO> dtos = new ArrayList<UserDTO>();
+		for (User user : g.getUsers()) {
+			dtos.add(new UserDTO(user.getUsername(), user.isLocked(), user.getId()));
+		}
+		return dtos;
+	}
+	
 }

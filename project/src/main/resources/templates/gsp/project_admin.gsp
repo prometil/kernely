@@ -26,6 +26,12 @@
 	<legend><%= i18n.t("project_informations") %></legend>
 	<%= i18n.t("project_name") %>: <input type="text" name="name" value="{{name}}"/><br/>
 	</fieldset>
+	<fieldset>
+	<legend><%= i18n.t("project_users") %></legend>
+		<div id="usersToLink">
+			<!-- Filled by ajax  -->
+		</div>
+	</fieldset>
 	<br/>
 	<input type="button" value="<%= i18n.t("update") %>" class="updateProject"/>
 	<span id="errors_message"></span>
@@ -45,7 +51,7 @@
 </script>
 
 <script type="text/html" id="table-header-template">
-<tr><th><%= i18n.t("project_name") %></th></tr>
+<tr><th><%= i18n.t("project_name") %><th><%= i18n.t("project_users") %></th></tr>
 </script>
 
 <div id="project_admin_container">
