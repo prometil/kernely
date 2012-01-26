@@ -41,7 +41,6 @@ import org.kernely.core.service.AbstractService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.google.inject.persist.Transactional;
 
@@ -52,8 +51,6 @@ import com.google.inject.persist.Transactional;
 @Singleton
 public class PermissionService extends AbstractService {
 
-	@Inject
-	UserService userService;
 
 	private static Logger log = LoggerFactory.getLogger(PermissionService.class);
 
@@ -455,7 +452,6 @@ public class PermissionService extends AbstractService {
 				dto.userDetails = new UserDetailsDTO(u.getUserDetails());
 				usersDTO.add(dto);
 			}
-			
 			// Add all users which inherit permission by their groups
 			for (Group g : p.getGroups()){
 				for (User u : g.getUsers()){
