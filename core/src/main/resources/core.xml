@@ -7,6 +7,7 @@
                         <username>postgres</username>
                         <password>kernely</password>
                         <pool_size>10</pool_size>
+                        <autocommit>false</autocommit>
                 </connection>
                 <hbm2ddl>
                         <auto>validate</auto>
