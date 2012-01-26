@@ -79,7 +79,12 @@ public class ProjectAdminController extends AbstractController {
 	{
 		if (userService.currentUserIsAdministrator()){
 			try{
-				projectService.createProject(project);
+				if(project.id==0){
+					projectService.createProject(project);
+				}
+				else{
+					projectService.updateProject(project);
+				}
 				return "{\"result\":\"ok\"}";
 			} catch (IllegalArgumentException iae) {
 				log.debug(iae.getMessage());

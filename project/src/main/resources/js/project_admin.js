@@ -132,7 +132,7 @@ AppProjectAdmin = (function($){
 		
 		initialize: function(){
 			this.viewCreate = new ProjectAdminCreateView();
-	//		this.viewUpdate = new ProjectAdminUpdateView("", 0);
+			this.viewUpdate = new ProjectAdminUpdateView("", 0);
 		},
 		
 		showModalWindow: function(){
@@ -253,6 +253,67 @@ AppProjectAdmin = (function($){
 		}
 	}) 
 
+	ProjectAdminUpdateView = Backbone.View.extend({
+		el: "#modal_window_project",
+		
+		events:{
+			"click .closeModal" : "closemodal",
+			"click .updateProject" : "updateproject"
+		},
+		
+		initialize:function(name, id){
+			this.vid = id;
+			this.vname = name;
+		},
+		
+		setFields: function(name, id){
+			this.vid = id;
+			this.vname = name;
+		},
+		
+		render : function(){
+			var template = $("#popup-project-admin-update-template").html();
+			var view = {name : this.vname};
+			var html = Mustache.to_html(template, view);
+			$(this.el).html(html);
+			return this;
+		},
+		
+		closemodal: function(){
+			$('#modal_window_project').hide();
+       		$('#mask').hide();
+		},
+		
+		updateproject: function(){
+			var json = '{"id":"'+this.vid+'", "name":"'+$('input[name*="name"]').val() +'"}';
+			$.ajax({
+				url:"/admin/projects/create",
+				data: json,
+				type: "POST",
+				dataType: "json",
+				processData: false,
+				contentType: "application/json; charset=utf-8",
+				success: function(data){
+					if (data.result == "ok"){
+						$('#modal_window_project').hide();
+						$('#mask').hide();
+						
+						var successHtml= $("#project-created-updated-template").html();
+
+						$("#projects_notifications").text(successHtml);
+						$("#projects_notifications").fadeIn(1000);
+						$("#projects_notifications").fadeOut(3000);
+						tableView.reload();
+					} else {
+						$("#projects_errors_update").text(data.result);
+						$("#projects_errors_update").fadeIn(1000);
+						$("#projects_errors_update").fadeOut(3000);
+					}
+				}
+			});
+		}
+	}) 
+	
 	// define the application initialization
 	var self = {};
 	self.start = function(){

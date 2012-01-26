@@ -12,7 +12,8 @@ import com.google.inject.Inject;
 
 
 public class ProjectServiceTest extends AbstractServiceTest {
-	private static final String NAME="name"; 
+	private static final String NAME="name";
+	private static final String NAME_2="name2"; 
 	
 	@Inject
 	private ProjectService projectService; 
@@ -54,5 +55,32 @@ public class ProjectServiceTest extends AbstractServiceTest {
 		ProjectDTO projDTO = this.createProject();
 		projectService.deleteProject(projDTO.id);
 		assertEquals(0, projectService.getAllProjects().size());
+	}
+	
+	@Test
+	public void updateProjectTes(){
+		ProjectDTO projDTO = this.createProject();
+		ProjectCreationRequestDTO proj = new ProjectCreationRequestDTO(NAME_2, projDTO.id);
+		projectService.updateProject(proj);
+		assertEquals(NAME_2, projectService.getAllProjects().get(0).name);
+	}
+	
+	@Test(expected = IllegalArgumentException.class)
+	public void updateProjectWithNullRequest(){
+		projectService.updateProject(null);
+	}
+	
+	@Test(expected = IllegalArgumentException.class)
+	public void updateProjectWithNullName(){
+		ProjectDTO projDTO = this.createProject();
+		ProjectCreationRequestDTO proj = new ProjectCreationRequestDTO(null, projDTO.id);
+		projectService.updateProject(proj);
+	}
+	
+	@Test(expected = IllegalArgumentException.class)
+	public void updateProjectWithVoidName(){
+		ProjectDTO projDTO = this.createProject();
+		ProjectCreationRequestDTO proj = new ProjectCreationRequestDTO("      ", projDTO.id);
+		projectService.updateProject(proj);
 	}
 }

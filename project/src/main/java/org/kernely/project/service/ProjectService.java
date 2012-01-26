@@ -1,10 +1,16 @@
 package org.kernely.project.service;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.Query;
 
+import org.kernely.core.dto.GroupCreationRequestDTO;
+import org.kernely.core.dto.UserDTO;
+import org.kernely.core.model.Group;
+import org.kernely.core.model.User;
 import org.kernely.core.service.AbstractService;
 import org.kernely.core.service.user.UserService;
 import org.kernely.project.dto.ProjectCreationRequestDTO;
@@ -77,6 +83,39 @@ public class ProjectService extends AbstractService {
 		project.setName(request.name.trim());
 		em.get().persist(project);
 	}
+	
+	/**
+	 * Update an existing project in database
+	 * 
+	 * @param request
+	 *            The request, containing project name and id of the needed project
+	 */
+	@SuppressWarnings("unchecked")
+	@Transactional
+	public void updateProject(ProjectCreationRequestDTO request) {
+		if (request == null) {
+			throw new IllegalArgumentException("Request cannot be null ");
+		}
+
+		if (request.name==null) {
+			throw new IllegalArgumentException("Project name cannot be null ");
+		}
+
+		if ("".equals(request.name.trim())) {
+			throw new IllegalArgumentException("Project name cannot be space character only ");
+		}
+
+		Query verifExist = em.get().createQuery("SELECT g FROM Project g WHERE name=:name AND id !=:id");
+		verifExist.setParameter("name", request.name);
+		verifExist.setParameter("id", request.id);
+		List<Project> list = (List<Project>) verifExist.getResultList();
+		if (!list.isEmpty()) {
+			throw new IllegalArgumentException("Another project with this name already exists");
+		}
+		Project project = em.get().find(Project.class, request.id);
+		project.setName(request.name);
+	}
+
 
 	/**
 	 * Delete an existing Project in database

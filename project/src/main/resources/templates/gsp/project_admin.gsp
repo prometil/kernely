@@ -19,11 +19,30 @@
 	<span id="errors_message"></span>
 </script>
 
+<!-- Template for the edit view  -->
+<script type="text/html" id="popup-project-admin-update-template">
+	<input type="button" value="<%= i18n.t("close") %>" class="closeModal"/><br/>
+	<fieldset>
+	<legend><%= i18n.t("project_informations") %></legend>
+	<%= i18n.t("project_name") %>: <input type="text" name="name" value="{{name}}"/><br/>
+	</fieldset>
+	<br/>
+	<input type="button" value="<%= i18n.t("update") %>" class="updateProject"/>
+	<span id="errors_message"></span>
+</script>
+
 
 <script type="text/html" id="confirm-project-deletion-template">
 <%= i18n.t("confirm_project_deletion") %>
 </script>
 
+<script type="text/html" id="project-deleted-template">
+<%= i18n.t("project_deleted") %>
+</script>
+
+<script type="text/html" id="project-created-updated-template">
+<%= i18n.t("project_created_updated") %>
+</script>
 
 <script type="text/html" id="table-header-template">
 <tr><th><%= i18n.t("project_name") %></th></tr>
