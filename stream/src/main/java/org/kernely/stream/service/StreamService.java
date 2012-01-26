@@ -397,7 +397,7 @@ public class StreamService extends AbstractService {
 	}
 
 	/**
-	 * Check if the current user has a specific right on a stream.
+	 * Check if the current user has a specific right on a stream, including by his groups.
 	 * 
 	 * @param right
 	 *            The right : use Stream constants.
@@ -407,7 +407,7 @@ public class StreamService extends AbstractService {
 	 */
 	public boolean currentUserHasRightsOnStream(String right, int streamId) {
 		User current = this.getAuthenticatedUserModel();
-		return permissionService.userHasPermission((int) current.getId(), right, Stream.STREAM_RESOURCE, streamId);
+		return permissionService.userHasPermission((int) current.getId(), true, right, Stream.STREAM_RESOURCE, streamId);
 	}
 
 	/**
