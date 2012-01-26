@@ -163,7 +163,7 @@ public class UserServiceTest extends AbstractServiceTest{
 	}
 	 
 	@Test(expected=IllegalArgumentException.class)
-	public void createUserWithSameUsernam(){
+	public void createUserWithSameUsername(){
 		createUserRole();
 		RoleDTO requestRole = new RoleDTO(1, Role.ROLE_USER);
 		roleService.createRole(requestRole);

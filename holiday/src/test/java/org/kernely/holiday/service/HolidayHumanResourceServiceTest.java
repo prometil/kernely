@@ -15,7 +15,6 @@ import org.kernely.core.dto.RoleDTO;
 import org.kernely.core.dto.UserCreationRequestDTO;
 import org.kernely.core.dto.UserDTO;
 import org.kernely.core.model.Role;
-import org.kernely.core.model.User;
 import org.kernely.core.service.user.RoleService;
 import org.kernely.core.service.user.UserService;
 import org.kernely.holiday.dto.HolidayCreationRequestDTO;
