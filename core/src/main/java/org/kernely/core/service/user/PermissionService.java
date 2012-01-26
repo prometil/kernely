@@ -86,6 +86,8 @@ public class PermissionService extends AbstractService {
 	 * 
 	 * @param userId
 	 *            The id of the user.
+	 * @param includingGroups
+	 *            If true, include permissions of the groups of the user. If false, only strictly user permissions are checked.
 	 * @param right
 	 *            The right on the resource for example "write", or "delete".
 	 * @param resourceType
@@ -97,7 +99,7 @@ public class PermissionService extends AbstractService {
 	 */
 
 	@Transactional
-	public boolean userHasPermission(int id, String right, String resourceType, Object resourceId) {
+	public boolean userHasPermission(int id, boolean includingGroups, String right, String resourceType, Object resourceId) {
 		String permission = this.createPermissionString(right, resourceType, resourceId.toString());
 
 		Query query = em.get().createQuery("SELECT p FROM Permission p WHERE name = :permission");
@@ -112,11 +114,12 @@ public class PermissionService extends AbstractService {
 					return true;
 				}
 			}
-
-			for (Group g : p.getGroups()) {
-				for (User u : g.getUsers()) {
-					if (u.getId() == id) {
-						return true;
+			if (includingGroups) {
+				for (Group g : p.getGroups()) {
+					for (User u : g.getUsers()) {
+						if (u.getId() == id) {
+							return true;
+						}
 					}
 				}
 			}
@@ -361,7 +364,7 @@ public class PermissionService extends AbstractService {
 	}
 
 	/**
-	 * Get all permissions matching a permission type, for a specific user.
+	 * Get all permissions matching a permission type, for a specific user, including permissions given by his groups.
 	 * 
 	 * @param userId
 	 *            The id of the user.
@@ -423,7 +426,7 @@ public class PermissionService extends AbstractService {
 	}
 
 	/**
-	 * Retrieves all users who have the given permission
+	 * Retrieves all users who have the given permission, including permissions given by their group.
 	 * 
 	 * @param right
 	 *            Right needed on the permission
@@ -434,22 +437,34 @@ public class PermissionService extends AbstractService {
 	 * @return A list of DTO corresponding to the users who have this permission
 	 */
 	@Transactional
-	public List<UserDTO> getUsersWithPermission(String right, String resourceType, Object resourceId) {
+	public Set<UserDTO> getUsersWithPermission(String right, String resourceType, Object resourceId) {
 		String permission = this.createPermissionString(right, resourceType, resourceId.toString());
 
 		Query permissionQuery = em.get().createQuery("SELECT p FROM Permission p WHERE name = :permission");
 		permissionQuery.setParameter("permission", permission);
-		List<UserDTO> usersDTO = new ArrayList<UserDTO>();
+		Set<UserDTO> usersDTO = new HashSet<UserDTO>();
 		try {
 			Permission p = (Permission) permissionQuery.getSingleResult();
 			Set<User> users = p.getUsers();
 
 			UserDTO dto;
+			
+			// Add all users which have directly the permission
 			for (User u : users) {
 				dto = new UserDTO(u.getUsername(), u.getId());
 				dto.userDetails = new UserDetailsDTO(u.getUserDetails());
 				usersDTO.add(dto);
 			}
+			
+			// Add all users which inherit permission by their groups
+			for (Group g : p.getGroups()){
+				for (User u : g.getUsers()){
+					dto = new UserDTO(u.getUsername(), u.getId());
+					dto.userDetails = new UserDetailsDTO(u.getUserDetails());
+					usersDTO.add(dto);
+				}
+			}
+
 			return usersDTO;
 		} catch (NoResultException nre) {
 			log.debug("No permission founded for {}", permission);

@@ -85,10 +85,10 @@ public class PermissionServiceTest extends AbstractServiceTest {
 	public void grantPermission() {
 		long userId = this.creationOfTestUser();
 
-		assertEquals(false, permissionService.userHasPermission((int) userId, FAKE_RIGHT,FAKE_RESOURCE_TYPE1,1));
+		assertEquals(false, permissionService.userHasPermission((int) userId, false, FAKE_RIGHT,FAKE_RESOURCE_TYPE1,1));
 		permissionService.grantPermission((int) userId, FAKE_RIGHT,FAKE_RESOURCE_TYPE1,1);
 
-		assertEquals(true, permissionService.userHasPermission((int) userId, FAKE_RIGHT,FAKE_RESOURCE_TYPE1,1));
+		assertEquals(true, permissionService.userHasPermission((int) userId, false, FAKE_RIGHT,FAKE_RESOURCE_TYPE1,1));
 	}
 	
 	@Test
@@ -114,10 +114,10 @@ public class PermissionServiceTest extends AbstractServiceTest {
 	public void ungrantPermission() {
 		long userId = this.creationOfTestUser();
 
-		assertEquals(false, permissionService.userHasPermission((int) userId, FAKE_RIGHT,FAKE_RESOURCE_TYPE1,1));
+		assertEquals(false, permissionService.userHasPermission((int) userId, false, FAKE_RIGHT,FAKE_RESOURCE_TYPE1,1));
 		permissionService.grantPermission((int) userId, FAKE_RIGHT,FAKE_RESOURCE_TYPE1,1);
 		permissionService.ungrantPermission((int) userId, FAKE_RIGHT,FAKE_RESOURCE_TYPE1,1);
-		assertEquals(false, permissionService.userHasPermission((int) userId, FAKE_RIGHT,FAKE_RESOURCE_TYPE1,1));
+		assertEquals(false, permissionService.userHasPermission((int) userId, false, FAKE_RIGHT,FAKE_RESOURCE_TYPE1,1));
 	}
 	
 	@Test
@@ -171,7 +171,6 @@ public class PermissionServiceTest extends AbstractServiceTest {
 		long userId = this.creationOfTestUser();
 		permissionService.grantPermission((int) userId, FAKE_RIGHT, FAKE_RESOURCE_TYPE1, 1);
 		UserDTO udto = new UserDTO(TEST_STRING, userId);
-		assertEquals(udto.id, permissionService.getUsersWithPermission(FAKE_RIGHT, FAKE_RESOURCE_TYPE1, 1).get(0).id);
-		assertEquals(udto.username, permissionService.getUsersWithPermission(FAKE_RIGHT, FAKE_RESOURCE_TYPE1, 1).get(0).username);
+		assertEquals(true, permissionService.getUsersWithPermission(FAKE_RIGHT, FAKE_RESOURCE_TYPE1, 1).contains(udto));
 	}
 }
