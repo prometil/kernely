@@ -7,7 +7,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.kernely.core.dto.UserDTO;
 
 /**
- * Creation request DTO
+ * Creation request DTO of project
  */
 @XmlRootElement
 public class ProjectCreationRequestDTO {

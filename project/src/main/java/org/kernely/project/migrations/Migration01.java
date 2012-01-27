@@ -26,11 +26,26 @@ public class Migration01 extends Migration {
 	 */
 	@Override
 	public List<Command> getList() {
+		//the table kernely_project
 		ArrayList<Command> commands = new ArrayList<Command>();
 		CreateTable project = CreateTable.name("kernely_project");
 		project.column("id", "int primary key");
 		project.column("name", "varchar(50)");
 		commands.add(project);
+		
+		//the table kernely_client
+		CreateTable client = CreateTable.name("kernely_client");
+		client.column("id", "int primary key");
+		client.column("name", "varchar(50)");
+		client.column("address", "varchar(200)");
+		client.column("email", "varchar(50)");
+		client.column("zip", "varchar(5)");
+		client.column("city", "varchar(50)");
+		client.column("phone", "varchar(10)");
+		client.column("fax", "varchar(10)");
+		client.column("active", "int");
+		
+		commands.add(client);
 		
 		//  the table user_project 
 		CreateTable userProject = CreateTable.name("kernely_user_project"); 
