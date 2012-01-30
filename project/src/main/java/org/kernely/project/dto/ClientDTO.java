@@ -55,10 +55,17 @@ public class ClientDTO {
 	 */
 	public int active;
 	
+	/**
+	 * Default constructor
+	 */
 	public ClientDTO(){
 		
 	}
 	
+	/**
+	 *  constructor
+	 * @param client
+	 */
 	public ClientDTO(Client client){
 		this.active=client.getActive();
 		this.address=client.getAddress();

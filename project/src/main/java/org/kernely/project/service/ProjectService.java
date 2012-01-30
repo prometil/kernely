@@ -7,9 +7,7 @@ import java.util.Set;
 
 import javax.persistence.Query;
 
-import org.kernely.core.dto.GroupDTO;
 import org.kernely.core.dto.UserDTO;
-import org.kernely.core.model.Group;
 import org.kernely.core.model.User;
 import org.kernely.core.service.AbstractService;
 import org.kernely.core.service.user.UserService;

@@ -5,6 +5,7 @@ import java.util.List;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -82,7 +83,7 @@ public class ClientAdminController extends AbstractController {
 					clientService.createClient(client);
 				}
 				else{
-//					clientService.updateClient(client);
+					clientService.updateClient(client);
 				}
 				return "{\"result\":\"ok\"}";
 			} catch (IllegalArgumentException iae) {
@@ -93,5 +94,21 @@ public class ClientAdminController extends AbstractController {
 		return null;
 	}
 
+	
+	/**
+	 * Delete the client which has the id 'id'
+	 * @param id The id of the client to delete
+	 * @return The result of the operation
+	 */
+	@GET
+	@Path("/delete/{id}")
+	@Produces( { MediaType.TEXT_HTML })
+	public String deleteClient(@PathParam("id") int id){
+		if (userService.currentUserIsAdministrator()){
+			clientService.deleteClient(id);
+			return "Ok";
+		}
+		return null;
+	}
 	
 }

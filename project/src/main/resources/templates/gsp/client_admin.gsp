@@ -25,6 +25,23 @@
 	<span id="errors_message"></span>
 </script>
 
+<!-- Template for the update view  -->
+<script type="text/html" id="popup-client-admin-update-template">
+	<input type="button" value="<%= i18n.t("close") %>" class="closeModal"/><br/>
+	<fieldset>
+	<legend><%= i18n.t("client_informations") %></legend>
+	<%= i18n.t("client_name") %>: <input type="text" name="name" value="{{name}}"/><br/>
+	<%= i18n.t("client_address") %>: <input type="text" name="address" value="{{address}}"/><br/>
+	<%= i18n.t("client_email") %>: <input type="text" name="email" value="{{email}}"/><br/>
+	<%= i18n.t("client_zip") %>: <input type="text" name="zip" maxlenght="5" value="{{zip}}"/><br/>
+	<%= i18n.t("client_city") %>: <input type="text" name="city" value="{{city}}"/><br/>
+	<%= i18n.t("client_phone") %>: <input type="text" name="phone" maxlenght="10" value="{{phone}}"/><br/>
+	<%= i18n.t("client_fax") %>: <input type="text" name="fax" maxlenght="10" value="{{fax}}"/><br/>
+	</fieldset>
+	<br/>
+	<input type="button" value="<%= i18n.t("update") %>" class="updateClient"/>
+	<span id="errors_message"></span>
+</script>
 
 <script type="text/html" id="confirm-client-deletion-template">
 <%= i18n.t("confirm_client_deletion") %>

@@ -2,8 +2,6 @@ package org.kernely.project.dto;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.kernely.project.model.Client;
-
 /**
  * Creation request DTO of client
  */
@@ -50,11 +48,24 @@ public class ClientCreationRequestDTO {
 	public String fax;
 	
 
-	
+	/**
+	 * Default constructor
+	 */
 	public ClientCreationRequestDTO(){
 		
 	}
 	
+	/**
+	 * constructor
+	 * @param id
+	 * @param name
+	 * @param address
+	 * @param email
+	 * @param zip
+	 * @param city
+	 * @param phone
+	 * @param fax
+	 */
 	public ClientCreationRequestDTO(int id, String name, String address, String email, String zip, String city, String phone, String fax){
 		this.address=address;
 		this.city=city;

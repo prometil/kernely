@@ -44,7 +44,7 @@ AppClientAdmin = (function($){
 		},
 		
 		
-		initialize: function(id, name, email, address, city, zip, phone, fax){
+		initialize: function(id, name, address, email, zip, city, phone, fax){
 			this.vid = id;
 			this.vname = name;
 			this.vemail = email;
@@ -144,7 +144,7 @@ AppClientAdmin = (function($){
 		
 		initialize: function(){
 			this.viewCreate = new  ClientAdminCreateView();
-			//this.viewUpdate = new  ClientAdminUpdateView("", 0);
+			this.viewUpdate = new  ClientAdminUpdateView("", 0);
 		},
 		
 		showModalWindow: function(){
@@ -179,7 +179,7 @@ AppClientAdmin = (function($){
 		
 		editclient: function(){
 			this.showModalWindow();
-			this.viewUpdate.setFields(lineSelected.vname, lineSelected.vid);
+			this.viewUpdate.setFields(lineSelected.vid, lineSelected.vname, lineSelected.vemail, lineSelected.vaddress, lineSelected.vzip, lineSelected.vcity, lineSelected.vphone, lineSelected.vfax);
 			this.viewUpdate.render();
 		},
 		
@@ -265,6 +265,80 @@ AppClientAdmin = (function($){
 		}
 	}) 
 
+	ClientAdminUpdateView = Backbone.View.extend({
+		el: "#modal_window_client",
+		
+		events:{
+			"click .closeModal" : "closemodal",
+			"click .updateClient" : "updateclient"
+		},
+		
+		initialize:function(id, name, email, address, zip, city, phone, fax){
+			this.vid = id;
+			this.vname = name;
+			this.vemail = email;
+			this.vaddress = address;
+			this.vcity=city;
+			this.vzip=zip;
+			this.vphone=phone;
+			this.vfax=fax;
+		},
+		
+		setFields: function(id, name, email, address, zip, city, phone, fax){
+			this.vid = id;
+			this.vname = name;
+			this.vemail = email;
+			this.vaddress = address;
+			this.vcity=city;
+			this.vzip=zip;
+			this.vphone=phone;
+			this.vfax=fax;
+		},
+		
+		render : function(){
+			var template = $("#popup-client-admin-update-template").html();
+			var view = {name : this.vname, address : this.vaddress, email : this.vemail, zip : this.vzip, city : this.vcity, phone : this.vphone, fax : this.vfax};
+			var html = Mustache.to_html(template, view);
+			$(this.el).html(html);
+			return this;
+		},
+		
+		closemodal: function(){
+			$('#modal_window_client').hide();
+       		$('#mask').hide();
+		},
+		
+		updateclient: function(){
+			var json = '{"id":"0", "name":"'+$('input[name*="name"]').val()+'",'+ '"address":"'+$('input[name*="address"]').val() +'",'+ '"email":"'+$('input[name*="email"]').val() +'",'+
+			'"zip":"'+$('input[name*="zip"]').val()+'",' + '"city":"'+$('input[name*="city"]').val() +'",' + '"phone":"'+$('input[name*="phone"]').val()  +'",'+ '"fax":"'+$('input[name*="fax"]').val() +'"}';
+			$.ajax({
+				url:"/admin/clients/create",
+				data: json,
+				type: "POST",
+				dataType: "json",
+				processData: false,
+				contentType: "application/json; charset=utf-8",
+				success: function(data){
+					if (data.result == "ok"){
+						$('#modal_window_client').hide();
+						$('#mask').hide();
+						
+						var successHtml= $("#client-created-updated-template").html();
+
+						$("#clients_notifications").text(successHtml);
+						$("#clients_notifications").fadeIn(1000);
+						$("#clients_notifications").fadeOut(3000);
+						tableView.reload();
+					} else {
+						$("#clients_errors_update").text(data.result);
+						$("#clients_errors_update").fadeIn(1000);
+						$("#clients_errors_update").fadeOut(3000);
+					}
+				}
+			});
+		}
+	}) 
+	
 	// define the application initialization
 	var self = {};
 	self.start = function(){

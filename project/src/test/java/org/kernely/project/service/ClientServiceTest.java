@@ -2,6 +2,8 @@ package org.kernely.project.service;
 
 import static org.junit.Assert.assertEquals;
 
+import java.util.ArrayList;
+
 import org.junit.Test;
 import org.kernely.core.common.AbstractServiceTest;
 import org.kernely.core.dto.RoleDTO;
@@ -79,5 +81,39 @@ public class ClientServiceTest extends AbstractServiceTest {
 		ClientCreationRequestDTO proj = new ClientCreationRequestDTO();
 		proj.name = "  ";
 		clientService.createClient(proj);
+	}
+	
+	@Test
+	public void deleteClientTest() {
+		ClientDTO clientDTO = this.createClient();
+		clientService.deleteClient(clientDTO.id);
+		assertEquals(0, clientService.getAllClients().size());
+	}
+	
+	@Test
+	public void updateClientTest() {
+		ClientDTO clientDTO = this.createClient();
+		ClientCreationRequestDTO proj = new ClientCreationRequestDTO(clientDTO.id, NAME_2, clientDTO.address, clientDTO.email, clientDTO.zip, clientDTO.city, clientDTO.phone, clientDTO.fax);
+		clientService.updateClient(proj);
+		assertEquals(NAME_2, clientService.getAllClients().get(0).name);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void updateClientWithNullRequest() {
+		clientService.updateClient(null);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void updateClientWithNullName() {
+		ClientDTO clientDTO = this.createClient();
+		ClientCreationRequestDTO proj = new ClientCreationRequestDTO(clientDTO.id, null, clientDTO.address, clientDTO.email, clientDTO.zip, clientDTO.city, clientDTO.phone, clientDTO.fax);
+		clientService.updateClient(proj);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void updateClientWithVoidName() {
+		ClientDTO clientDTO = this.createClient();
+		ClientCreationRequestDTO proj = new ClientCreationRequestDTO(clientDTO.id, "      ", clientDTO.address, clientDTO.email, clientDTO.zip, clientDTO.city, clientDTO.phone, clientDTO.fax);
+		clientService.updateClient(proj);
 	}
 }

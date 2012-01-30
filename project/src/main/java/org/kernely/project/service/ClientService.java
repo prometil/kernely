@@ -77,11 +77,64 @@ public class ClientService extends AbstractService{
 		Client client = new Client();
 		client.setName(request.name);
 		client.setAddress(request.address);
+		client.setZip(request.zip);
 		client.setCity(request.city);
 		client.setEmail(request.email);
 		client.setFax(request.fax);
 		client.setPhone(request.phone);
 		em.get().persist(client);
+	}
+	
+	
+	/**
+	 * Update an existing  client in database
+	 * 
+	 * @param request
+	 *            The request, containing  client name and id of the needed  client
+	 */
+	@SuppressWarnings("unchecked")
+	@Transactional
+	public void updateClient(ClientCreationRequestDTO request) {
+		if (request == null) {
+			throw new IllegalArgumentException("Request cannot be null ");
+		}
+
+		if (request.name==null) {
+			throw new IllegalArgumentException("Client name cannot be null ");
+		}
+
+		if ("".equals(request.name.trim())) {
+			throw new IllegalArgumentException("Client name cannot be space character only ");
+		}
+
+		Query verifExist = em.get().createQuery("SELECT g FROM Client g WHERE name=:name AND id !=:id");
+		verifExist.setParameter("name", request.name);
+		verifExist.setParameter("id", request.id);
+		List<Client> list = (List<Client>) verifExist.getResultList();
+		if (!list.isEmpty()) {
+			throw new IllegalArgumentException("Another  client with this name already exists");
+		}
+		
+		Client client = em.get().find(Client.class, request.id);
+		client.setName(request.name);
+		client.setAddress(request.address);
+		client.setCity(request.city);
+		client.setEmail(request.email);
+		client.setZip(request.zip);
+		client.setFax(request.fax);
+		client.setPhone(request.phone);
+	}
+	
+	/**
+	 * Delete an existing Client in database
+	 * 
+	 * @param id
+	 *            The id of the client to delete
+	 */
+	@Transactional
+	public void deleteClient(int id) {
+		Client client = em.get().find(Client.class, id);
+		em.get().remove(client);
 	}
 	
 }
