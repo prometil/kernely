@@ -52,7 +52,7 @@
 				<div id="menu">
 					<div id="title"><%= i18n.t("title") %></div>
 					<% menu.each() { key, value -> %>
-						<a href="${value}">${key}</a>
+						<a href="${value}"><%= i18n.t(key)%></a>
 					<% };%>
 					
 					<% if (admin != ""){ %>
