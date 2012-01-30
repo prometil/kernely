@@ -20,7 +20,11 @@ public class ProjectPlugin extends AbstractPlugin {
 	 */
 	@SuppressWarnings({ "unchecked" })
 	public ProjectPlugin() {
-		super(NAME, "/project");
+		super();
+		registerName(NAME);
+		registerName("client");
+		registerPath("/project");
+		registerPath("/client");
 		registerController(ProjectAdminController.class);
 		registerController(ClientAdminController.class);
 		registerModel(Project.class);

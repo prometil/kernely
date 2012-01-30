@@ -272,9 +272,15 @@ public class TemplateRenderer {
 		private Map<String, Object> enhanceBinding(HashMap<String, Object> binding) {
 			Map<String, String> menu = new HashMap<String, String>();
 			for (AbstractPlugin plugin : pluginsLoader.getPlugins()) {
-				String path = plugin.getPath();
-				if (path != null) {
-					menu.put(plugin.getName(), path);
+				if (plugin.getPath() != null){
+					List<String> path = plugin.getPath();
+					int i=0;
+					for (String pPath : path){
+						if (pPath != null) {
+								menu.put(plugin.getName().get(i), pPath);
+								i++;
+						}
+					}
 				}
 			}
 			binding.put("menu", menu);

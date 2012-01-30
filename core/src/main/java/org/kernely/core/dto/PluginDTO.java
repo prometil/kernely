@@ -39,12 +39,12 @@ public class PluginDTO {
 	/**
 	 * The name of the plugin 
 	 */
-	public String name;
+	public List<String> name;
 	
 	/**
 	 * The path of the plugin
 	 */
-	public String path;
+	public List<String> path;
 	
 	/**
 	 * The image associated with the plugin
@@ -75,7 +75,7 @@ public class PluginDTO {
 	 * @param adminPages
 	 *            Administration pages associated to the current plugin
 	 */
-	public PluginDTO(String name, String path, String img, List<AdminPageDTO> adminPages) {
+	public PluginDTO(List<String> name, List<String> path, String img, List<AdminPageDTO> adminPages) {
 		this.name = name;
 		this.path = path;
 		this.img = img;

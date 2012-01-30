@@ -48,7 +48,9 @@ public class StreamPlugin extends AbstractPlugin {
 	 * Default constructor
 	 */
 	public StreamPlugin() {
-		super(NAME, "/streams");
+		super();
+		registerPath("/streams");
+		registerName(NAME);
 		registerController(StreamController.class);
 		registerController(StreamAdminController.class);
 		registerModel(Message.class);
