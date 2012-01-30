@@ -115,8 +115,12 @@ AppProjectAdmin = (function($){
 			    		else{
 			    			var users = 0;
 			    			if(data.projectDTO.users != null && typeof(data.projectDTO.users) != "undefined"){
-			    				users = data.projectDTO.users.length;
-			    			}
+			    				if(typeof(data.projectDTO.users.length) != "undefined"){
+			    					users = data.projectDTO.users.length;
+			    				}
+			    				else{
+			    					users = 1;
+			    				}			    			}
 							var view = new ProjectAdminTableLineView(data.projectDTO.id, data.projectDTO.name, users);
 			    			view.render();
 						}
