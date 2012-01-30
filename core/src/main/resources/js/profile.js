@@ -59,10 +59,10 @@ AppProfile= (function($){
 	InputView = Backbone.View.extend({	 
 		events:{
 			"click .span_profile" : "edit",
-			"click .edit_button" : "edit",
-			"click .valid_button" : "save",
 			"keypress input[type=text]": "filterOnEnter",
-			 "blur input[type=text]" : "onBlur"
+			"blur input[type=text]" : "onBlur",
+			"mouseover .span_profile" : "overLine",
+			"mouseout .span_profile" : "outLine"
 		},
 		
 		tagName: 'tr', 
@@ -80,6 +80,14 @@ AppProfile= (function($){
 			this.vuser=user;
 		},
 
+		overLine : function(){
+			$("#profile_"+this.vinput).css("background-color", "#DDDDDD");
+			$("#profile_"+this.vinput).css("cursor", "pointer");
+		},
+		outLine : function(){
+			$("#profile_"+this.vinput).css("background-color", "transparent");
+			$("#profile_"+this.vinput).css("cursor", "auto");
+		},
 		
 		render:function(){
 			var template = $("#profile-"+this.vinput+"-template").html();
@@ -181,16 +189,13 @@ AppProfile= (function($){
 						}
 					});
 				}
-			});
-			$("#button_"+this.vinput).html("<img class='button edit_button' src='/images/icons/edit.png' style='margin-left : 15px;'/>");
-			
+			});			
 			$("#profile_"+this.vinput).html($("#edit_"+this.vinput+"_field").text());
 			$("#profile_"+this.vinput).addClass("span_profile");
 						
 		},
 		
 		edit:function(){
-			$("#button_input").html("<img class='button valid_button' src='/images/icons/save.png' style='margin-left : 15px;'/>");
 			$("#profile_"+this.vinput).removeClass("span_profile");
 			$("#profile_"+this.vinput).html("<input id='edit_"+this.vinput+"_field' name='"+this.vinput+"' class='profile_"+this.vinput+"' type='text' MAXLENGTH="+this.vlength+" value='" + $("#profile_" + this.vinput).text() + "'/>");
 			document.getElementById("edit_"+this.vinput+"_field").focus();
