@@ -9,9 +9,8 @@
 				<img class="project-icon" src="/images/<%print proj.icon%>"/>
 			</div>
 			<div id="project-info">
-				<span id="project_name" class="span_project"><%print proj.name%></span>		
+				<span id="project_name" class="span_project"><a href="/project/<%print proj.name%>"><%print proj.name%></a></span>		
 			</div>
 		</div>
 	<%}%>	
-	
 </div>

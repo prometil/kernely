@@ -55,6 +55,19 @@ public class ProjectService extends AbstractService {
 	}
 	
 	/**
+	 * Get the project with the specific name 
+	 * @param name the name of the project
+	 * @return the project DTO
+	 */
+	public ProjectDTO getProject(String name){
+		Query query = em.get().createQuery("Select e FROM Project e WHERE name=:name");
+		query.setParameter("name", name);
+		Project proj = (Project)query.getSingleResult();
+		ProjectDTO dto = new ProjectDTO(proj.getName(), proj.getId(), proj.getIcon(), new ArrayList(proj.getUsers()));
+		return dto; 
+	}
+	
+	/**
 	 * Create a new Project in database
 	 * 
 	 * @param request
