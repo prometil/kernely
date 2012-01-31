@@ -26,6 +26,10 @@ public class ProjectCreationRequestDTO {
 	 */
 	public List<UserDTO> users;
 
+	/**
+	 * The icon of the project
+	 */
+	public String icon ;
 	
 	/**
 	 * Default constructor
@@ -37,9 +41,10 @@ public class ProjectCreationRequestDTO {
 	/**
 	 * Constructor
 	 */
-	public ProjectCreationRequestDTO(String newName, int newId, List<UserDTO> newUsers){
+	public ProjectCreationRequestDTO(String newName, int newId, List<UserDTO> newUsers, String newIcon){
 		this.id = newId;
 		this.name = newName;
 		this.users  = newUsers;
+		this.icon = newIcon; 
 	}
 }

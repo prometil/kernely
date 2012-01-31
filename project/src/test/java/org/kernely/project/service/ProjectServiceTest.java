@@ -88,9 +88,16 @@ public class ProjectServiceTest extends AbstractServiceTest {
 	@Test
 	public void updateProjectTest() {
 		ProjectDTO projDTO = this.createProject();
-		ProjectCreationRequestDTO proj = new ProjectCreationRequestDTO(NAME_2, projDTO.id, new ArrayList<UserDTO>());
+		ProjectCreationRequestDTO proj = new ProjectCreationRequestDTO(NAME_2, projDTO.id, new ArrayList<UserDTO>(), projDTO.icon);
 		projectService.updateProject(proj);
 		assertEquals(NAME_2, projectService.getAllProjects().get(0).name);
+	}
+	
+	@Test
+	public void updateProjectIconTest() {
+		ProjectDTO projDTO = this.createProject();
+		projectService.updateProjectIcon(projDTO.name, NAME_2);
+		assertEquals(NAME_2, projectService.getAllProjects().get(0).icon);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
@@ -101,14 +108,14 @@ public class ProjectServiceTest extends AbstractServiceTest {
 	@Test(expected = IllegalArgumentException.class)
 	public void updateProjectWithNullName() {
 		ProjectDTO projDTO = this.createProject();
-		ProjectCreationRequestDTO proj = new ProjectCreationRequestDTO(null, projDTO.id, new ArrayList<UserDTO>());
+		ProjectCreationRequestDTO proj = new ProjectCreationRequestDTO(null, projDTO.id, new ArrayList<UserDTO>(), projDTO.icon);
 		projectService.updateProject(proj);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void updateProjectWithVoidName() {
 		ProjectDTO projDTO = this.createProject();
-		ProjectCreationRequestDTO proj = new ProjectCreationRequestDTO("      ", projDTO.id, projDTO.users);
+		ProjectCreationRequestDTO proj = new ProjectCreationRequestDTO("      ", projDTO.id, projDTO.users, projDTO.icon);
 		projectService.updateProject(proj);
 	}
 
@@ -125,7 +132,7 @@ public class ProjectServiceTest extends AbstractServiceTest {
 
 		List<UserDTO> users = new ArrayList<UserDTO>();
 		users.add(userdto);
-		ProjectCreationRequestDTO gcr = new ProjectCreationRequestDTO(projectdto.name, projectdto.id, users);
+		ProjectCreationRequestDTO gcr = new ProjectCreationRequestDTO(projectdto.name, projectdto.id, users, projectdto.icon);
 		projectService.updateProject(gcr);
 
 		assertEquals(1, projectService.getProjectUsers(projectdto.id).size());
@@ -146,14 +153,14 @@ public class ProjectServiceTest extends AbstractServiceTest {
 
 		List<UserDTO> users = new ArrayList<UserDTO>();
 		users.add(userdto);
-		ProjectCreationRequestDTO gcr = new ProjectCreationRequestDTO(projectdto.name, projectdto.id, users);
+		ProjectCreationRequestDTO gcr = new ProjectCreationRequestDTO(projectdto.name, projectdto.id, users, projectdto.icon);
 		projectService.updateProject(gcr);
 
 		projectdto = projectService.getAllProjects().get(0);
 		assertEquals(1, projectdto.users.size());
 		assertEquals(TEST_STRING, projectdto.users.get(0).username);
 
-		gcr = new ProjectCreationRequestDTO(projectdto.name, projectdto.id, new ArrayList<UserDTO>());
+		gcr = new ProjectCreationRequestDTO(projectdto.name, projectdto.id, new ArrayList<UserDTO>(), projectdto.icon);
 		projectService.updateProject(gcr);
 
 		projectdto = projectService.getAllProjects().get(0);

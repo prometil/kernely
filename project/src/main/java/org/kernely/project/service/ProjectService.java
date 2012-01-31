@@ -138,7 +138,8 @@ public class ProjectService extends AbstractService {
 		}
 		Project project = em.get().find(Project.class, request.id);
 		project.setName(request.name);
-
+		project.setIcon(request.icon); 
+		
 		if (users == null) {
 			project.getUsers().clear();
 		} else {
@@ -146,6 +147,17 @@ public class ProjectService extends AbstractService {
 		}
 	}
 
+	/**
+	 * Update the project icon
+	 * @param projectName
+	 * @param projectIcon
+	 */
+	@Transactional
+	public void updateProjectIcon(String projectName, String projectIcon){
+		ProjectDTO proj = this.getProject(projectName);
+		Project project = em.get().find(Project.class, proj.id);
+		project.setIcon(projectIcon);
+	}
 
 	/**
 	 * Delete an existing Project in database

@@ -38,6 +38,20 @@
 </script>
 
 
+<!-- Template for the icon view  -->
+<script type="text/html" id="popup-project-admin-icon-template">
+	<input type="button" value="<%= i18n.t("close") %>" class="closeModal"/><br/>
+	<fieldset>
+	<legend><%= i18n.t("project_informations") %></legend>
+		<img src="/images/{{icon}}" id="image_name" name="{{icon}}"/>
+		<form action="/admin/projects/upload/{{name}}" method="post" enctype="multipart/form-data">
+ 			<input type="file" name="file"/>
+		   <input type="submit" value="<%= i18n.t("upload") %>" />
+		</form>
+	</fieldset> <br/>
+</script>
+
+
 <script type="text/html" id="confirm-project-deletion-template">
 <%= i18n.t("confirm_project_deletion") %>
 </script>
@@ -59,6 +73,7 @@
 		<input type="button" class="createButton" value="<%= i18n.t("create") %>"/>
 		<input type="button" class="editButton" value="<%= i18n.t("edit") %>" disabled="disabled"/>
 		<input type="button" class="deleteButton" value="<%= i18n.t("delete") %>" disabled="disabled"/>
+		<input type="button" class="imageButton" value="<%= i18n.t("image") %>"  disabled="disabled"/>
 		<span id="span_notifications"></span>
 	</div>
 	<table id="project_admin_table">

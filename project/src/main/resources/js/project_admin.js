@@ -31,6 +31,7 @@ AppProjectAdmin = (function($){
 		vid: null,
 		vname : null,
 		vnbmembers : null,
+		vicon : null,
 
 		events: {
 			"click" : "selectLine",
@@ -39,15 +40,17 @@ AppProjectAdmin = (function($){
 		},
 		
 		
-		initialize: function(id, name, members){
+		initialize: function(id, name, members, icon){
 			this.vid = id;
 			this.vname = name;
 			this.vnbmembers = members;
+			this.vicon = icon;
 		},
 		
 		selectLine : function(){
 			$(".editButton").removeAttr('disabled');
 			$(".deleteButton").removeAttr('disabled');
+			$(".imageButton").removeAttr('disabled');
 			$(this.el).css("background-color", "#8AA5A1");
 			if(typeof(lineSelected) != "undefined"){
 				if(lineSelected != this && lineSelected != null){
@@ -107,7 +110,7 @@ AppProjectAdmin = (function($){
 				    					users = 1;
 				    				}
 				    			}
-				    			var view = new ProjectAdminTableLineView(this.id, this.name, users);
+				    			var view = new ProjectAdminTableLineView(this.id, this.name, users, this.icon);
 				    			view.render();
 				    		});
 						}
@@ -122,7 +125,7 @@ AppProjectAdmin = (function($){
 			    					users = 1;
 			    				}			    			
 			    			}
-							var view = new ProjectAdminTableLineView(data.projectDTO.id, data.projectDTO.name, users);
+							var view = new ProjectAdminTableLineView(data.projectDTO.id, data.projectDTO.name, users, data.projectDTO.icon);
 			    			view.render();
 						}
 					}
@@ -145,15 +148,18 @@ AppProjectAdmin = (function($){
 		events: {
 			"click .createButton" : "createproject",
 			"click .editButton" : "editproject",
-			"click .deleteButton" : "deleteproject"
+			"click .deleteButton" : "deleteproject",
+			"click .imageButton" : "iconproject"
 		},
 		
 		viewCreate:null,
 		viewUpdate:null,
+		viewIcon:null,
 		
 		initialize: function(){
 			this.viewCreate = new ProjectAdminCreateView();
-			this.viewUpdate = new ProjectAdminUpdateView("", 0);
+			this.viewUpdate = new ProjectAdminUpdateView("", "", 0);
+			this.viewIcon = new ProjectAdminIconView("","",0);
 		},
 		
 		showModalWindow: function(){
@@ -188,7 +194,7 @@ AppProjectAdmin = (function($){
 		
 		editproject: function(){
 			this.showModalWindow();
-			this.viewUpdate.setFields(lineSelected.vname, lineSelected.vid);
+			this.viewUpdate.setFields(lineSelected.vname, lineSelected.vicon, lineSelected.vid);
 			this.viewUpdate.render();
 		},
 		
@@ -212,6 +218,12 @@ AppProjectAdmin = (function($){
 					}
 				});
 			}
+		},
+		
+		iconproject: function(){
+			this.showModalWindow();
+			this.viewIcon.setFields(lineSelected.vname, lineSelected.vicon, lineSelected.vid)
+			this.viewIcon.render();
 		},
 		
 		render:function(){
@@ -282,14 +294,16 @@ AppProjectAdmin = (function($){
 			"click .updateProject" : "updateproject"
 		},
 		
-		initialize:function(name, id){
+		initialize:function(name, icon, id){
 			this.vid = id;
 			this.vname = name;
+			this.vicon = icon;
 		},
 		
-		setFields: function(name, id){
+		setFields: function(name, icon, id){
 			this.vid = id;
 			this.vname = name;
+			this.vicon = icon;
 		},
 		
 		render : function(){
@@ -326,7 +340,8 @@ AppProjectAdmin = (function($){
 			else{
 				users = '"users":{}';
 			}
-			var json = '{"id":"'+this.vid+'", "name":"'+$('input[name*="name"]').val() + '", '+ users +'}';
+			var json = '{"id":"'+this.vid+'", "name":"'+$('input[name*="name"]').val() + '", '+ users + ', "icon":"'+this.vicon +'"}';
+			console.log(json);
 			$.ajax({
 				url:"/admin/projects/create",
 				data: json,
@@ -355,6 +370,39 @@ AppProjectAdmin = (function($){
 		}
 	}) 
 	
+	ProjectAdminIconView = Backbone.View.extend({
+		el: "#modal_window_project",
+		
+		events:{
+			"click .closeModal" : "closemodal",
+		},
+		
+		initialize:function(name, icon, id){
+			this.vid = id;
+			this.vname = name;
+			this.vicon = icon;
+		},
+		
+		setFields: function(name, icon, id){
+			this.vid = id;
+			this.vname = name;
+			this.vicon = icon;
+		},
+		
+		render : function(){
+			var template = $("#popup-project-admin-icon-template").html();
+			var view = {icon : this.vicon, name : this.vname};
+			var html = Mustache.to_html(template, view);
+			$(this.el).html(html);
+			return this;
+		},
+		
+		closemodal: function(){
+			$('#modal_window_project').hide();
+       		$('#mask').hide();
+		},
+		
+	}) 
 	
 	UserCBListView = Backbone.View.extend({
 		el:"#usersToLink",
