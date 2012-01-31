@@ -31,6 +31,7 @@ public class Migration01 extends Migration {
 		CreateTable project = CreateTable.name("kernely_project");
 		project.column("id", "int primary key");
 		project.column("name", "varchar(50)");
+		project.column("icon", "varchar(100)");
 		commands.add(project);
 		
 		//the table kernely_client

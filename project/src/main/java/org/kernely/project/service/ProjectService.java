@@ -30,6 +30,7 @@ public class ProjectService extends AbstractService {
 	@Inject
 	UserService userService;
 
+	private static final String ICON = "default.png";
 	protected final Logger log = LoggerFactory.getLogger(this.getClass());
 
 	/**
@@ -48,7 +49,7 @@ public class ProjectService extends AbstractService {
 			for (User u : project.getUsers()) {
 				users.add(new UserDTO(u.getUsername(), u.isLocked(), u.getId()));
 			}
-			dtos.add(new ProjectDTO(project.getName(), project.getId(), users));
+			dtos.add(new ProjectDTO(project.getName(), project.getId(),  project.getIcon(), users));
 		}
 		return dtos;
 	}
@@ -83,6 +84,7 @@ public class ProjectService extends AbstractService {
 
 		Project project = new Project();
 		project.setName(request.name.trim());
+		project.setIcon(ICON);
 		em.get().persist(project);
 	}
 	
@@ -159,6 +161,24 @@ public class ProjectService extends AbstractService {
 			dtos.add(new UserDTO(user.getUsername(), user.isLocked(), user.getId()));
 		}
 		return dtos;
+	}
+	
+
+	/**
+	 * Returns the total of projects for the current user
+	 * 
+	 * @return the value of the total of projects for the current user
+	 */
+	public Long getCurrentNbProjects() {
+		List<ProjectDTO> projDTO = this.getAllProjects();
+		if (projDTO == null) {
+			return Long.valueOf(0);
+		}
+		if (!projDTO.isEmpty()) {
+			Query query = em.get().createQuery("SELECT count(p) FROM Project p");
+			return ((Long) query.getSingleResult());
+		}
+		return Long.valueOf(0);
 	}
 	
 }

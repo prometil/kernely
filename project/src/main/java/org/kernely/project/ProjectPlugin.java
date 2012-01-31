@@ -3,6 +3,7 @@ package org.kernely.project;
 import org.kernely.core.plugin.AbstractPlugin;
 import org.kernely.project.controller.ClientAdminController;
 import org.kernely.project.controller.ProjectAdminController;
+import org.kernely.project.controller.ProjectListController;
 import org.kernely.project.migrations.Migration01;
 import org.kernely.project.model.Client;
 import org.kernely.project.model.Project;
@@ -27,6 +28,7 @@ public class ProjectPlugin extends AbstractPlugin {
 		registerPath("/client");
 		registerController(ProjectAdminController.class);
 		registerController(ClientAdminController.class);
+		registerController(ProjectListController.class);
 		registerModel(Project.class);
 		registerModel(Client.class);
 		registerAdminPage("Project admin", "/admin/projects");

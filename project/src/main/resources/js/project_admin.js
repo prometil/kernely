@@ -120,7 +120,8 @@ AppProjectAdmin = (function($){
 			    				}
 			    				else{
 			    					users = 1;
-			    				}			    			}
+			    				}			    			
+			    			}
 							var view = new ProjectAdminTableLineView(data.projectDTO.id, data.projectDTO.name, users);
 			    			view.render();
 						}

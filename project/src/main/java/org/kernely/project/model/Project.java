@@ -30,6 +30,8 @@ public class Project extends AbstractModel {
 
 	private String name;
 	
+	private String icon;
+	
 	/**
 	 * Users in the project
 	 */
@@ -45,6 +47,7 @@ public class Project extends AbstractModel {
 	public Project(){
 		this.id=0;
 		this.name="";
+		this.icon="";
 		this.users = new HashSet<User>();
 	}
 	
@@ -91,6 +94,22 @@ public class Project extends AbstractModel {
 	 */
 	public void setUsers(Set<User> users) {
 		this.users = users;
+	}
+
+
+	/**
+	 * @return the icon
+	 */
+	public String getIcon() {
+		return icon;
+	}
+
+
+	/**
+	 * @param icon the icon to set
+	 */
+	public void setIcon(String icon) {
+		this.icon = icon;
 	}
 
 }
