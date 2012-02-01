@@ -41,7 +41,6 @@ import com.google.inject.persist.Transactional;
 
 /**
  * The service for holiday pages 
- * @author b.grandperret
  *
  */
 @Singleton

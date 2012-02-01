@@ -14,6 +14,10 @@ import org.kernely.holiday.service.HolidayHumanResourceService;
 
 import com.google.inject.Inject;
 
+/**
+ * The holiday controller for the
+ * human resource role
+ */
 @Path("holiday/human/resource")
 public class HolidayHumanResourceController extends AbstractController{
 	@Inject

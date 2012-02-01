@@ -81,9 +81,9 @@ public class HolidayManagerUserService extends AbstractService{
 			usersManaged.add(em.get().find(User.class, udto.id));
 		}
 
-		List<HolidayDetailDTO> detailsDTO = new ArrayList<HolidayDetailDTO>();
+		List<HolidayDetailDTO> detailsDTO ;
 
-		Set<HolidayManagedDetailsDTO> detailManagedDTO = new TreeSet<HolidayManagedDetailsDTO>();
+		Set<HolidayManagedDetailsDTO> detailManagedDTO ;
 
 		for(User u : usersManaged){
 			// Clear all the list for the new user

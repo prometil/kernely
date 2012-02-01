@@ -11,8 +11,6 @@ import org.kernely.core.migrations.migrator.RawSql;
 /**
  * Holiday migration script
  * 
- * @author b.grandperret
- * 
  */
 public class Migration01 extends Migration {
 	/**

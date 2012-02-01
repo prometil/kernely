@@ -129,7 +129,7 @@ public class Migrator {
 			rs.close();
 
 			for (AbstractPlugin plugin : plugins) {
-				SortedSet<Version> versions = getCurrentSchemaVersion(conn, plugin.getName());
+				SortedSet<Version> versions = getCurrentSchemaVersion(conn, plugin.getName().get(0));
 				if (versions.size() > 0) {
 					Version currentVersion = versions.last();
 					log.info("{} plugin schema is in version {}", plugin.getName(), currentVersion);
@@ -139,7 +139,7 @@ public class Migrator {
 							log.info("Applying version {} for plugin {}", migration.getVersion(), plugin.getName());
 							if (migration.apply(conn)) {
 
-								addVersion(conn, migration.getVersion(), plugin.getName());
+								addVersion(conn, migration.getVersion(), plugin.getName().get(0));
 							} else {
 								log.error("Cannot apply migration {} due to previous errors", migration.getVersion());
 								return;
@@ -150,7 +150,7 @@ public class Migrator {
 					for (Migration migration : plugin.getMigrations()) {
 						log.info("Applying version {} for plugin {}", migration.getVersion(), plugin.getName());
 						if (migration.apply(conn)) {
-							addVersion(conn, migration.getVersion(), plugin.getName());
+							addVersion(conn, migration.getVersion(), plugin.getName().get(0));
 						} else {
 							log.error("Cannot apply migration {} due to previous errors", migration.getVersion());
 							return;

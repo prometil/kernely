@@ -6,73 +6,61 @@
 <script type="text/html" id="profile-mail-template">
 	<td><%= i18n.t("email") %></td>
 	<td><span id="profile_{{input}}" class="span_profile">{{data}}</span></td>
-	<td><span id="button_{{input}}"><img class="button edit_button" src="/images/icons/edit.png"/></span></td>
 </script>
 
 <script type="text/html" id="profile-lastname-template">
 	<td><%= i18n.t("name") %></td>
 	<td><span id="profile_{{input}}" class="span_profile">{{data}}</span></td>
-	<td><span id="button_{{input}}"><img class="button edit_button" src="/images/icons/edit.png"/></span></td>
 </script>
 
 <script type="text/html" id="profile-firstname-template">
 	<td><%= i18n.t("firstname") %></td>
 	<td><span id="profile_{{input}}" class="span_profile">{{data}}</span></td>
-	<td><span id="button_{{input}}"><img class="button edit_button" src="/images/icons/edit.png"/></span></td>
 </script>
 
 <script type="text/html" id="profile-city-template">
 	<td><%= i18n.t("city") %></td>
 	<td><span id="profile_{{input}}" class="span_profile">{{data}}</span></td>
-	<td><span id="button_{{input}}"><img class="button edit_button" src="/images/icons/edit.png"/></span></td>
 </script>
 
 <script type="text/html" id="profile-zip-template">
 	<td><%= i18n.t("zip") %></td>
 	<td><span id="profile_{{input}}" class="span_profile">{{data}}</span></td>
-	<td><span id="button_{{input}}"><img class="button edit_button" src="/images/icons/edit.png"/></span></td>
 </script>
 
 <script type="text/html" id="profile-adress-template">
 	<td><%= i18n.t("address") %></td>
 	<td><span id="profile_{{input}}" class="span_profile">{{data}}</span></td>
-	<td><span id="button_{{input}}"><img class="button edit_button" src="/images/icons/edit.png"/></span></td>
 </script>
 
 <script type="text/html" id="profile-nationality-template">
 	<td><%= i18n.t("nationality") %></td>
 	<td><span id="profile_{{input}}" class="span_profile">{{data}}</span></td>
-	<td><span id="button_{{input}}"><img class="button edit_button" src="/images/icons/edit.png"/></span></td>
 </script>
 
 <script type="text/html" id="profile-homephone-template">
 	<td><%= i18n.t("phone.home") %></td>
 	<td><span id="profile_{{input}}" class="span_profile">{{data}}</span></td>
-	<td><span id="button_{{input}}"><img class="button edit_button" src="/images/icons/edit.png"/></span></td>
 </script>
 
 <script type="text/html" id="profile-mobilephone-template">
 	<td><%= i18n.t("phone.mobile") %></td>
 	<td><span id="profile_{{input}}" class="span_profile">{{data}}</span></td>
-	<td><span id="button_{{input}}"><img class="button edit_button" src="/images/icons/edit.png"/></span></td>
 </script>
 
 <script type="text/html" id="profile-businessphone-template">
 	<td><%= i18n.t("phone.business") %></td>
 	<td><span id="profile_{{input}}" class="span_profile">{{data}}</span></td>
-	<td><span id="button_{{input}}"><img class="button edit_button" src="/images/icons/edit.png"/></span></td>
 </script>
 
 <script type="text/html" id="profile-ssn-template">
 	<td><%= i18n.t("security_social_number") %></td>
 	<td><span id="profile_{{input}}" class="span_profile">{{data}}</span></td>
-	<td><span id="button_{{input}}"><img class="button edit_button" src="/images/icons/edit.png"/></span></td>
 </script>
 
 <script type="text/html" id="profile-birth-template">
 	<td><%= i18n.t("birthday") %></td>
 	<td><span id="profile_{{input}}" class="span_profile">{{data}}</span></td>
-	<td><span id="button_{{input}}"><img class="button edit_button" src="/images/icons/edit.png"/></span></td>
 </script>
 
 

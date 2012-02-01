@@ -7,7 +7,6 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import org.apache.shiro.authz.UnauthorizedException;
-import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.joda.time.DateTime;
 import org.kernely.core.dto.UserDTO;
 import org.kernely.core.model.User;
@@ -79,9 +78,9 @@ public class HolidayHumanResourceService extends AbstractService{
 
 		Set<UserDTO> users = new HashSet<UserDTO>(userService.getAllUsers());
 
-		List<HolidayDetailDTO> detailsDTO = new ArrayList<HolidayDetailDTO>();
+		List<HolidayDetailDTO> detailsDTO ;
 
-		Set<HolidayManagedDetailsDTO> detailManagedDTO = new TreeSet<HolidayManagedDetailsDTO>();
+		Set<HolidayManagedDetailsDTO> detailManagedDTO;
 
 		for(UserDTO u : users){
 			// Clear all the list for the new user

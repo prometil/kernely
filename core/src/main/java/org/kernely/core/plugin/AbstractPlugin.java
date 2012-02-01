@@ -60,10 +60,10 @@ public abstract class AbstractPlugin extends AbstractModule {
 	private Map<Class<? extends Job>, Trigger> jobs;
 
 	// the name of the abstract plugin
-	private String name;
+	private List<String> name;
 
 	// the path of the plugin
-	private String path;
+	private List<String> path;
 
 	/**
 	 * the constructor
@@ -71,9 +71,9 @@ public abstract class AbstractPlugin extends AbstractModule {
 	 * @param pName
 	 * @param pPath
 	 */
-	public AbstractPlugin(String pName, String pPath) {
-		name = pName;
-		path = pPath;
+	public AbstractPlugin() {
+		name = new ArrayList<String>();
+		path = new ArrayList<String>();
 		controllers = new ArrayList<Class<? extends AbstractController>>();
 		models = new ArrayList<Class<? extends AbstractModel>>();
 		adminPages = new ArrayList<AdminPageDTO>();
@@ -118,6 +118,23 @@ public abstract class AbstractPlugin extends AbstractModule {
 	protected void registerController(Class<? extends AbstractController> controller) {
 		controllers.add(controller);
 	}
+	
+	/**
+	 * Register a new path
+	 * @param String path
+	 */
+	protected void registerPath(String path){
+		this.path.add(path);
+	}
+	
+	/**
+	 * Register a new name
+	 * @param String name
+	 */
+	protected void registerName(String name){
+		this.name.add(name);
+	}
+	
 
 	/**
 	 * return the module
@@ -132,7 +149,7 @@ public abstract class AbstractPlugin extends AbstractModule {
 	 * 
 	 * @return the name of the plugin
 	 */
-	public String getName() {
+	public List<String> getName() {
 		return name;
 	}
 
@@ -145,7 +162,7 @@ public abstract class AbstractPlugin extends AbstractModule {
 	 * @return the path to the plugin main page, or null if the plugin does'nt
 	 *         have a main page.
 	 */
-	public String getPath() {
+	public List<String> getPath() {
 		return path;
 	}
 

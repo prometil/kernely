@@ -1,0 +1,20 @@
+#project-image{
+	float: left;
+	height: 48px;
+	overflow: hidden;
+	width: 48px;
+	margin-top: 3px;
+}
+
+#project-info{
+	margin-left:0px;
+	width:548px;
+	min-height:60px;
+	height:auto;
+}
+
+.proj{
+	height:auto;
+	width:300px;
+	border-top:1px solid grey;	
+}

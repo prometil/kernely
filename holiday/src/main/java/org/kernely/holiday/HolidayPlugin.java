@@ -68,7 +68,9 @@ public class HolidayPlugin extends AbstractPlugin {
 	 */
 	@SuppressWarnings({ "unchecked" })
 	public HolidayPlugin(){
-		super(NAME, "/holiday");
+		super();
+		registerPath("/holiday");
+		registerName(NAME);
 		registerController(HolidayMainController.class);
 		registerController(HolidayAdminController.class);
 		registerController(HolidayRequestController.class);

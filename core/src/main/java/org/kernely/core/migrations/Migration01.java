@@ -220,6 +220,7 @@ public class Migration01 extends Migration {
 		commands.add(userGroupUser);
 		commands.add(userGroupGroup);
 		commands.add(userGroupPrimaryKey);
+				
 		
 		// the table user_permission
 		CreateTable userPermission = CreateTable.name("kernely_user_permissions"); 

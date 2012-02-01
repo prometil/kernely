@@ -40,9 +40,7 @@ import org.kernely.holiday.service.HolidayService;
 
 import com.google.inject.Inject;
 /**
- * 
- * @author b.grandperret
- *
+ * Admin controller for holiday
  */
 @Path("/admin/holiday")
 public class HolidayAdminController extends AbstractController {

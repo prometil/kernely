@@ -50,7 +50,7 @@ public abstract class Migration implements Comparable<Migration> {
 	 * Apply the migration
 	 * 
 	 * @param conn
-	 *            the Jdbc connection on which migration wil be applied
+	 *            the Jdbc connection on which migration will be applied
 	 * @throws SQLException
 	 */
 	public boolean apply(Connection conn) throws SQLException {

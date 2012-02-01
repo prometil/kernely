@@ -36,11 +36,9 @@ import org.kernely.core.service.user.GroupService;
 import org.kernely.core.service.user.PermissionService;
 import org.kernely.core.service.user.UserService;
 import org.kernely.core.template.TemplateRenderer;
-import org.kernely.stream.dto.GroupRightOnStreamDTO;
 import org.kernely.stream.dto.RightOnStreamDTO;
 import org.kernely.stream.dto.StreamCreationRequestDTO;
 import org.kernely.stream.dto.StreamDTO;
-import org.kernely.stream.dto.StreamGroupRightsUpdateRequestDTO;
 import org.kernely.stream.dto.StreamRightsUpdateRequestDTO;
 import org.kernely.stream.model.Stream;
 import org.kernely.stream.service.StreamService;
@@ -48,7 +46,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.inject.Inject;
-import com.sun.mail.imap.Rights;
 
 /**
  * Controller for the stream admin page
@@ -201,9 +198,9 @@ public class StreamAdminController extends AbstractController {
 		List<GroupDTO> allGroups = groupService.getAllGroups();
 
 		for (UserDTO user : allUsers) {
-			boolean read = permissionService.userHasPermission((int) user.id, Stream.RIGHT_READ, Stream.STREAM_RESOURCE, id);
-			boolean write = permissionService.userHasPermission((int) user.id, Stream.RIGHT_WRITE, Stream.STREAM_RESOURCE, id);
-			boolean delete = permissionService.userHasPermission((int) user.id, Stream.RIGHT_DELETE, Stream.STREAM_RESOURCE, id);
+			boolean read = permissionService.userHasPermission((int) user.id, false, Stream.RIGHT_READ, Stream.STREAM_RESOURCE, id);
+			boolean write = permissionService.userHasPermission((int) user.id, false, Stream.RIGHT_WRITE, Stream.STREAM_RESOURCE, id);
+			boolean delete = permissionService.userHasPermission((int) user.id, false, Stream.RIGHT_DELETE, Stream.STREAM_RESOURCE, id);
 
 			if (delete) {
 				jsonBuilder.append("{\"user\":");
@@ -259,17 +256,17 @@ public class StreamAdminController extends AbstractController {
 		for (RightOnStreamDTO right : request.rights) {
 			if (right.idType.equals("user")){
 				log.debug("Right {} for user with id {}",right.permission,right.id);
-				boolean correct = permissionService.userHasPermission(right.id, right.permission, Stream.STREAM_RESOURCE, request.streamid);
+				boolean correct = permissionService.userHasPermission(right.id, false, right.permission, Stream.STREAM_RESOURCE, request.streamid);
 				if (!correct) {
 					// The right requested is not the same than the existing right :
 					// delete permissions on the stream for the user
-					if (permissionService.userHasPermission((int) right.id, Stream.RIGHT_READ, Stream.STREAM_RESOURCE, request.streamid)) {
+					if (permissionService.userHasPermission((int) right.id, false, Stream.RIGHT_READ, Stream.STREAM_RESOURCE, request.streamid)) {
 						permissionService.ungrantPermission(right.id, Stream.RIGHT_READ, Stream.STREAM_RESOURCE, request.streamid);
 					}
-					if (permissionService.userHasPermission((int) right.id, Stream.RIGHT_WRITE, Stream.STREAM_RESOURCE, request.streamid)) {
+					if (permissionService.userHasPermission((int) right.id, false, Stream.RIGHT_WRITE, Stream.STREAM_RESOURCE, request.streamid)) {
 						permissionService.ungrantPermission(right.id, Stream.RIGHT_WRITE, Stream.STREAM_RESOURCE, request.streamid);
 					}
-					if (permissionService.userHasPermission((int) right.id, Stream.RIGHT_DELETE, Stream.STREAM_RESOURCE, request.streamid)) {
+					if (permissionService.userHasPermission((int) right.id, false, Stream.RIGHT_DELETE, Stream.STREAM_RESOURCE, request.streamid)) {
 						permissionService.ungrantPermission(right.id, Stream.RIGHT_DELETE, Stream.STREAM_RESOURCE, request.streamid);
 					}
 					if (!right.permission.equals("nothing")) {

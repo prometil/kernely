@@ -22,6 +22,9 @@ package org.kernely.core.service;
 
 import static org.junit.Assert.assertEquals;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.junit.Test;
 import org.kernely.core.common.AbstractServiceTest;
 import org.kernely.core.dto.GroupCreationRequestDTO;
@@ -41,10 +44,10 @@ import com.google.inject.Inject;
 public class PermissionServiceTest extends AbstractServiceTest {
 
 	@Inject
-	private UserService userService;
+	private PermissionService permissionService;
 
 	@Inject
-	private PermissionService permissionService;
+	private UserService userService;
 
 	@Inject
 	private GroupService groupService;
@@ -57,7 +60,7 @@ public class PermissionServiceTest extends AbstractServiceTest {
 	private final String FAKE_RESOURCE_TYPE2 = "secondresource";
 	private final String FAKE_RIGHT = "doing";
 
-	private long creationOfTestUser() {
+	private UserDTO creationOfTestUser() {
 		RoleDTO requestRole = new RoleDTO(1, Role.ROLE_USER);
 		roleService.createRole(requestRole);
 
@@ -67,7 +70,7 @@ public class PermissionServiceTest extends AbstractServiceTest {
 		request.firstname = TEST_STRING;
 		request.lastname = TEST_STRING;
 		UserDTO userDTO = userService.createUser(request);
-		return userDTO.id;
+		return userDTO;
 	}
 	
 	private GroupDTO creationOfTestGroup() {
@@ -83,12 +86,12 @@ public class PermissionServiceTest extends AbstractServiceTest {
 
 	@Test
 	public void grantPermission() {
-		long userId = this.creationOfTestUser();
+		long userId = this.creationOfTestUser().id;
 
-		assertEquals(false, permissionService.userHasPermission((int) userId, FAKE_RIGHT,FAKE_RESOURCE_TYPE1,1));
+		assertEquals(false, permissionService.userHasPermission((int) userId, false, FAKE_RIGHT,FAKE_RESOURCE_TYPE1,1));
 		permissionService.grantPermission((int) userId, FAKE_RIGHT,FAKE_RESOURCE_TYPE1,1);
 
-		assertEquals(true, permissionService.userHasPermission((int) userId, FAKE_RIGHT,FAKE_RESOURCE_TYPE1,1));
+		assertEquals(true, permissionService.userHasPermission((int) userId, false, FAKE_RIGHT,FAKE_RESOURCE_TYPE1,1));
 	}
 	
 	@Test
@@ -103,7 +106,7 @@ public class PermissionServiceTest extends AbstractServiceTest {
 
 	@Test
 	public void currentUserHasPermission(){
-		long userId = this.creationOfTestUser();
+		long userId = this.creationOfTestUser().id;
 		authenticateAs(userService.getAllUsers().get(0).username);
 	    //assertEquals(false,permissionService.currentUserHasPermission(FAKE_RIGHT, FAKE_RESOURCE_TYPE1, 1));
 		permissionService.grantPermission((int) userId, FAKE_RIGHT,FAKE_RESOURCE_TYPE1,1);
@@ -112,12 +115,12 @@ public class PermissionServiceTest extends AbstractServiceTest {
 	
 	@Test
 	public void ungrantPermission() {
-		long userId = this.creationOfTestUser();
+		long userId = this.creationOfTestUser().id;
 
-		assertEquals(false, permissionService.userHasPermission((int) userId, FAKE_RIGHT,FAKE_RESOURCE_TYPE1,1));
+		assertEquals(false, permissionService.userHasPermission((int) userId, false, FAKE_RIGHT,FAKE_RESOURCE_TYPE1,1));
 		permissionService.grantPermission((int) userId, FAKE_RIGHT,FAKE_RESOURCE_TYPE1,1);
 		permissionService.ungrantPermission((int) userId, FAKE_RIGHT,FAKE_RESOURCE_TYPE1,1);
-		assertEquals(false, permissionService.userHasPermission((int) userId, FAKE_RIGHT,FAKE_RESOURCE_TYPE1,1));
+		assertEquals(false, permissionService.userHasPermission((int) userId, false, FAKE_RIGHT,FAKE_RESOURCE_TYPE1,1));
 	}
 	
 	@Test
@@ -133,7 +136,7 @@ public class PermissionServiceTest extends AbstractServiceTest {
 
 	@Test
 	public void typeOfPermissionForOneUser() {
-		long userId = this.creationOfTestUser();
+		long userId = this.creationOfTestUser().id;
 		permissionService.grantPermission((int) userId, FAKE_RIGHT, FAKE_RESOURCE_TYPE1, 1);
 		permissionService.grantPermission((int) userId, FAKE_RIGHT, FAKE_RESOURCE_TYPE2, 1);
 		permissionService.grantPermission((int) userId, FAKE_RIGHT, FAKE_RESOURCE_TYPE2, 2);
@@ -157,7 +160,7 @@ public class PermissionServiceTest extends AbstractServiceTest {
 
 	@Test
 	public void getAllPermissionTest(){
-		long userId = this.creationOfTestUser();
+		long userId = this.creationOfTestUser().id;
 		permissionService.grantPermission((int) userId, FAKE_RIGHT, FAKE_RESOURCE_TYPE1, 1);
 		permissionService.grantPermission((int) userId, FAKE_RIGHT, FAKE_RESOURCE_TYPE2, 1);
 		PermissionDTO pDto1 = createPermissionDTO(FAKE_RIGHT + ":" + FAKE_RESOURCE_TYPE1 + ":1");
@@ -168,10 +171,35 @@ public class PermissionServiceTest extends AbstractServiceTest {
 	
 	@Test 
 	public void getUserWithPermissionTest(){
-		long userId = this.creationOfTestUser();
+		long userId = this.creationOfTestUser().id;
 		permissionService.grantPermission((int) userId, FAKE_RIGHT, FAKE_RESOURCE_TYPE1, 1);
 		UserDTO udto = new UserDTO(TEST_STRING, userId);
-		assertEquals(udto.id, permissionService.getUsersWithPermission(FAKE_RIGHT, FAKE_RESOURCE_TYPE1, 1).get(0).id);
-		assertEquals(udto.username, permissionService.getUsersWithPermission(FAKE_RIGHT, FAKE_RESOURCE_TYPE1, 1).get(0).username);
+		assertEquals(true, permissionService.getUsersWithPermission(FAKE_RIGHT, FAKE_RESOURCE_TYPE1, 1).contains(udto));
+	}
+	
+	@Test
+	public void getUserPermissionWithGroup(){
+		UserDTO user = this.creationOfTestUser();
+		List<UserDTO> groupUsers = new ArrayList<UserDTO>();
+		groupUsers.add(user);
+		GroupDTO group = creationOfTestGroup();
+		groupService.updateGroup(new GroupCreationRequestDTO(group.id, group.name, groupUsers));
+
+		permissionService.grantPermissionToGroup(group.id, FAKE_RIGHT, FAKE_RESOURCE_TYPE1, 1);
+		
+		assertEquals(true,permissionService.userHasPermission((int) user.id, true, FAKE_RIGHT, FAKE_RESOURCE_TYPE1, 1));
+	}
+	
+	@Test
+	public void getUserPermissionWithoutGroup(){
+		UserDTO user = this.creationOfTestUser();
+		List<UserDTO> groupUsers = new ArrayList<UserDTO>();
+		groupUsers.add(user);
+		GroupDTO group = creationOfTestGroup();
+		groupService.updateGroup(new GroupCreationRequestDTO(group.id, group.name, groupUsers));
+
+		permissionService.grantPermissionToGroup(group.id, FAKE_RIGHT, FAKE_RESOURCE_TYPE1, 1);
+		
+		assertEquals(false,permissionService.userHasPermission((int) user.id, false, FAKE_RIGHT, FAKE_RESOURCE_TYPE1, 1));
 	}
 }

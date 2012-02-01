@@ -169,7 +169,7 @@ public class KernelyBootstrap {
 		CombinedConfiguration combinedConfiguration = new CombinedConfiguration();
 		// Bind all Jersey resources detected in plugins
 		for (AbstractPlugin plugin : plugins) {
-			String filepath = plugin.getName()+".xml";
+			String filepath = plugin.getName().get(0)+".xml";
 			log.debug("Searching configuration file {}",filepath);
 			if (filepath != null) {
 				try {

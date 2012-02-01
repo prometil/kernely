@@ -69,7 +69,9 @@ public class CorePlugin extends AbstractPlugin {
 	 */
 	@SuppressWarnings({ "unchecked" })
 	public CorePlugin() {
-		super(NAME, null);
+		super();
+		registerPath(null);
+		registerName(NAME);
 		registerController(MainController.class);
 		registerController(UserController.class);
 		registerController(GroupController.class);

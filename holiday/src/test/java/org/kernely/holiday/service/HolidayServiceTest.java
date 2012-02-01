@@ -55,8 +55,7 @@ public class HolidayServiceTest extends AbstractServiceTest {
 		cdto.type = TYPE;
 		cdto.quantity = QUANTITY;
 		holidayService.createHoliday(cdto);
-		HolidayDTO hdto = new HolidayDTO();
-		hdto = holidayService.getAllHoliday().get(0);
+		HolidayDTO hdto = holidayService.getAllHoliday().get(0);
 		assertEquals(TYPE, hdto.name);
 		assertEquals(QUANTITY, hdto.quantity, 0.0);
 	}
