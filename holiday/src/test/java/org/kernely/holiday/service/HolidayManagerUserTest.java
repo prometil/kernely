@@ -129,14 +129,14 @@ public class HolidayManagerUserTest extends AbstractServiceTest  {
 		this.createHolidayRequestForUser(user2DTO.id, type.id);
 		
 		authenticateAs(USERNAME_MANAGER);
-		HolidayUsersManagerDTO dto = managerUserService.getHolidayForAllManagedUsersForMonth(0, 0);
+		HolidayUsersManagerDTO dto = managerUserService.getHolidayForAllManagedUsersForMonth(1, 2012);
 		DateTime currentDate = new DateTime();
 		
-		assertEquals(dto.month, currentDate.getMonthOfYear());
+		assertEquals(dto.month, 1);
 		assertEquals(dto.year, currentDate.getYear());
-		assertEquals(dto.nbDays, currentDate.dayOfMonth().getMaximumValue());
+		assertEquals(dto.nbDays, 31);
 		assertEquals(dto.usersManaged.size(), 2);
-		assertEquals(dto.usersManaged.get(0).details.size(), 2);
+		assertEquals(2, dto.usersManaged.get(0).details.size());
 		assertEquals(dto.usersManaged.get(1).details.size(), 2);
 	}
 	

@@ -301,7 +301,6 @@ public class StreamAdminController extends AbstractController {
 
 	/**
 	 * Display the good category when the administrator edit streams
-	 * 
 	 * @return
 	 */
 	@GET
