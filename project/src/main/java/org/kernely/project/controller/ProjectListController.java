@@ -10,6 +10,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.kernely.core.controller.AbstractController;
+import org.kernely.core.service.user.UserService;
 import org.kernely.core.template.TemplateRenderer;
 import org.kernely.project.dto.ProjectDTO;
 import org.kernely.project.service.ProjectService;
@@ -26,6 +27,9 @@ public class ProjectListController extends AbstractController {
 
 	@Inject
 	private ProjectService projectService;
+	
+	@Inject 
+	private UserService userService;
 
 	/**
 	 * Set the template
@@ -35,8 +39,11 @@ public class ProjectListController extends AbstractController {
 	@GET
 	@Produces({ MediaType.TEXT_HTML })
 	public Response getProjectListPage() {
-		List<ProjectDTO> projDTO = projectService.getAllProjects();
-		return ok(templateRenderer.create("/templates/gsp/project_list.gsp").with("project", projDTO).addCss("/css/project_list.css"));
+		if (userService.currentUserIsProjectManager()) {
+			List<ProjectDTO> projDTO = projectService.getAllProjects();
+			return ok(templateRenderer.create("/templates/gsp/project_list.gsp").with("project", projDTO).addCss("/css/project_list.css"));
+		}
+		return ok(templateRenderer.create("/templates/gsp/project_list.gsp").with("project", null).addCss("/css/project_list.css"));
 	}
 
 	/**

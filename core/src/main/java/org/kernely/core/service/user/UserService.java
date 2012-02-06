@@ -397,6 +397,22 @@ public class UserService extends AbstractService {
 	}
 	
 	/**
+	 * Verify if the current user has the role of project manager
+	 * @return true if the current user has the role of project manager, false otherwise.
+	 */
+	public boolean currentUserIsProjectManager(){
+		return SecurityUtils.getSubject().hasRole(Role.ROLE_PROJECTMANAGER); 
+	}
+	
+	/**
+	 * Verify if the current user has the role of client
+	 * @return true if the current user has the role of client, false otherwise.
+	 */
+	public boolean currentUserIsClient(){
+		return SecurityUtils.getSubject().hasRole(Role.ROLE_CLIENT); 
+	}
+	
+	/**
 	 * Retrieve the list of RoleDTO from an userdetails id
 	 * 
 	 * @param id

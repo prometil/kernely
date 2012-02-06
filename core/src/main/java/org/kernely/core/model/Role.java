@@ -43,6 +43,8 @@ public class Role extends AbstractModel {
 	public static final String ROLE_USER = "User";
 	public static final String ROLE_ADMINISTRATOR = "Administrator";
 	public static final String ROLE_HUMANRESOURCE = "Human resource";
+	public static final String ROLE_PROJECTMANAGER = "Project manager";
+	public static final String ROLE_CLIENT = "Client";
 
 	/**
 	 * Role's id
