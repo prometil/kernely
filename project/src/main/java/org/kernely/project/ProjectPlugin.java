@@ -1,13 +1,13 @@
 package org.kernely.project;
 
 import org.kernely.core.plugin.AbstractPlugin;
-import org.kernely.project.controller.ClientAdminController;
+import org.kernely.project.controller.OrganizationAdminController;
 import org.kernely.project.controller.ProjectAdminController;
 import org.kernely.project.controller.ProjectListController;
 import org.kernely.project.migrations.Migration01;
-import org.kernely.project.model.Client;
+import org.kernely.project.model.Organization;
 import org.kernely.project.model.Project;
-import org.kernely.project.service.ClientService;
+import org.kernely.project.service.OrganizationService;
 import org.kernely.project.service.ProjectService;
 
 /**
@@ -23,16 +23,16 @@ public class ProjectPlugin extends AbstractPlugin {
 	public ProjectPlugin() {
 		super();
 		registerName(NAME);
-		registerName("client");
+		registerName("organization");
 		registerPath("/project");
-		registerPath("/client");
+		registerPath("/organization");
 		registerController(ProjectAdminController.class);
-		registerController(ClientAdminController.class);
+		registerController(OrganizationAdminController.class);
 		registerController(ProjectListController.class);
 		registerModel(Project.class);
-		registerModel(Client.class);
+		registerModel(Organization.class);
 		registerAdminPage("Project admin", "/admin/projects");
-		registerAdminPage("Client admin", "/admin/clients");
+		registerAdminPage("organization admin", "/admin/organizations");
 		registerMigration(new Migration01());
 	}
 
@@ -44,7 +44,7 @@ public class ProjectPlugin extends AbstractPlugin {
 	@Override
 	protected void configure() {
 		bind(ProjectService.class);
-		bind(ClientService.class);
+		bind(OrganizationService.class);
 	}
 
 }

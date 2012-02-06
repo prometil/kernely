@@ -1,29 +1,33 @@
 package org.kernely.project.dto;
 
+import java.util.List;
+
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.kernely.core.dto.UserDTO;
+
 /**
- * Creation request DTO of client
+ * Creation request DTO of organization
  */
 @XmlRootElement
-public class ClientCreationRequestDTO {
+public class OrganizationCreationRequestDTO {
 	/**
-	 * The id of the client
+	 * The id of the organization
 	 */
 	public int id;
 	
 	/**
-	 * The name of the client
+	 * The name of the organization
 	 */
 	public String name;
 	
 	/**
-	 * The address of the client
+	 * The address of the organization
 	 */
 	public String address;
 	
 	/**
-	 * The email of the client
+	 * The email of the organization
 	 */
 	public String email;
 	
@@ -33,25 +37,29 @@ public class ClientCreationRequestDTO {
 	public String zip;
 	
 	/**
-	 * The city of  the  client
+	 * The city of  the  organization
 	 */
 	public String city;
 	
 	/**
-	 * The phone of  the client 
+	 * The phone of  the organization 
 	 */
 	public String phone;
 	
 	/**
-	 * the fax of the client 
+	 * the fax of the organization 
 	 */
 	public String fax;
 	
+	/**
+	 * The list of member of the project
+	 */
+	public List<UserDTO> users;
 
 	/**
 	 * Default constructor
 	 */
-	public ClientCreationRequestDTO(){
+	public OrganizationCreationRequestDTO(){
 		
 	}
 	
@@ -66,7 +74,7 @@ public class ClientCreationRequestDTO {
 	 * @param phone
 	 * @param fax
 	 */
-	public ClientCreationRequestDTO(int id, String name, String address, String email, String zip, String city, String phone, String fax){
+	public OrganizationCreationRequestDTO(int id, String name, String address, String email, String zip, String city, String phone, String fax, List<UserDTO> list){
 		this.address=address;
 		this.city=city;
 		this.email=email;
@@ -75,6 +83,7 @@ public class ClientCreationRequestDTO {
 		this.name=name;
 		this.phone=phone;
 		this.zip=zip;
+		this.users=list;
 	}
 
 }

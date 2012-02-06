@@ -19,14 +19,14 @@
  */
 
 
-AppClientAdmin = (function($){
+AppOrganizationAdmin = (function($){
 	var lineSelected = null;
 	var tableView = null;
 	
 
-	ClientAdminTableLineView = Backbone.View.extend({
+	OrganizationAdminTableLineView = Backbone.View.extend({
 		tagName: "tr",
-		className: 'client_list_line',
+		className: 'organization_list_line',
 		
 		vid: null,
 		vname : null,
@@ -83,14 +83,14 @@ AppClientAdmin = (function($){
 			var html = Mustache.to_html(template, view);
 			
 			$(this.el).html(html);
-			$(this.el).appendTo($("#client_admin_table"));
+			$(this.el).appendTo($("#organization_admin_table"));
 			return this;
 		}
 		
 	})
 	
-	ClientAdminTableView = Backbone.View.extend({
-		el:"#client_admin_table",
+	OrganizationAdminTableView = Backbone.View.extend({
+		el:"#organization_admin_table",
 		events:{
 		
 		},
@@ -102,19 +102,19 @@ AppClientAdmin = (function($){
 			$(this.el).html(html);
 			$.ajax({
 				type:"GET",
-				url:"/admin/clients/all",
+				url:"/admin/organizations/all",
 				dataType:"json",
 				success: function(data){
 					if(data != null){
-						if(data.clientDTO.length > 1){
-				    		$.each(data.clientDTO, function() {
-				    			var view = new ClientAdminTableLineView(this.id, this.name, this.address, this.email, this.zip, this.city, this.phone, this.fax);
+						if(data.organizationDTO.length > 1){
+				    		$.each(data.organizationDTO, function() {
+				    			var view = new OrganizationAdminTableLineView(this.id, this.name, this.address, this.email, this.zip, this.city, this.phone, this.fax);
 				    			view.render();
 				    		});
 						}
 					   	// In the case when there is only one element
 			    		else{
-							var view = new ClientAdminTableLineView(data.clientDTO.id, data.clientDTO.name, data.clientDTO.address, data.clientDTO.email, data.clientDTO.zip, data.clientDTO.city, data.clientDTO.phone, data.clientDTO.fax);
+							var view = new OrganizationAdminTableLineView(data.organizationDTO.id, data.organizationDTO.name, data.organizationDTO.address, data.organizationDTO.email, data.organizationDTO.zip, data.organizationDTO.city, data.organizationDTO.phone, data.organizationDTO.fax);
 			    			view.render();
 						}
 					}
@@ -130,21 +130,21 @@ AppClientAdmin = (function($){
 		}
 	})	
 
-	 ClientAdminButtonsView = Backbone.View.extend({
-		el:"#client_admin_container",
+	 OrganizationAdminButtonsView = Backbone.View.extend({
+		el:"#organization_admin_container",
 		
 		events: {
-			"click .createButton" : "createclient",
-			"click .editButton" : "editclient",
-			"click .deleteButton" : "deleteclient"
+			"click .createButton" : "createorganization",
+			"click .editButton" : "editorganization",
+			"click .deleteButton" : "deleteorganization"
 		},
 		
 		viewCreate:null,
 		viewUpdate:null,
 		
 		initialize: function(){
-			this.viewCreate = new  ClientAdminCreateView();
-			this.viewUpdate = new  ClientAdminUpdateView("", 0);
+			this.viewCreate = new  OrganizationAdminCreateView();
+			this.viewUpdate = new  OrganizationAdminUpdateView("", 0);
 		},
 		
 		showModalWindow: function(){
@@ -164,27 +164,27 @@ AppClientAdmin = (function($){
       		var winW = $(window).width();
 
         	//Set the popup window to center
-       		$("#modal_window_client").css('top',  winH/2-$("#modal_window_client").height()/2);
-     		$("#modal_window_client").css('left', winW/2-$("#modal_window_client").width()/2);
-     		$("#modal_window_client").css('background-color', "#EEEEEE");
+       		$("#modal_window_organization").css('top',  winH/2-$("#modal_window_organization").height()/2);
+     		$("#modal_window_organization").css('left', winW/2-$("#modal_window_organization").width()/2);
+     		$("#modal_window_organization").css('background-color', "#EEEEEE");
      		$("input:text").each(function(){this.value="";});
      		//transition effect
-     		$("#modal_window_client").fadeIn(500);
+     		$("#modal_window_organization").fadeIn(500);
 		},
 		
-		createclient: function(){
+		createorganization: function(){
 			this.showModalWindow();
 			this.viewCreate.render();
 		},
 		
-		editclient: function(){
+		editorganization: function(){
 			this.showModalWindow();
 			this.viewUpdate.setFields(lineSelected.vid, lineSelected.vname, lineSelected.vemail, lineSelected.vaddress, lineSelected.vzip, lineSelected.vcity, lineSelected.vphone, lineSelected.vfax);
 			this.viewUpdate.render();
 		},
 		
-		deleteclient: function(){
-			var template = $("#confirm-client-deletion-template").html();
+		deleteorganization: function(){
+			var template = $("#confirm-organization-deletion-template").html();
 			
 			var view = {name: lineSelected.vname};
 			var html = Mustache.to_html(template, view);
@@ -192,13 +192,13 @@ AppClientAdmin = (function($){
 			var answer = confirm(html);
 			if (answer){
 				$.ajax({
-					url:"/admin/clients/delete/" + lineSelected.vid,
+					url:"/admin/organizations/delete/" + lineSelected.vid,
 					success: function(){
-						var successHtml = $("#client-deleted-template").html();
+						var successHtml = $("#organization-deleted-template").html();
 					
-						$("#clients_notifications").text(successHtml);
-						$("#clients_notifications").fadeIn(1000);
-						$("#clients_notifications").fadeOut(3000);
+						$("#organizations_notifications").text(successHtml);
+						$("#organizations_notifications").fadeIn(1000);
+						$("#organizations_notifications").fadeOut(3000);
 						tableView.reload();
 					}
 				});
@@ -210,19 +210,19 @@ AppClientAdmin = (function($){
 		}
 	})
 	
-	ClientAdminCreateView = Backbone.View.extend({
-		el: "#modal_window_client",
+	OrganizationAdminCreateView = Backbone.View.extend({
+		el: "#modal_window_organization",
 		
 		events:{
 			"click .closeModal" : "closemodal",
-			"click .createClient" : "registerclient"
+			"click .createOrganization" : "registerorganization"
 		},
 		
 		initialize:function(){
 		},
 		
 		render : function(){
-			var template = $("#popup-client-admin-create-template").html();
+			var template = $("#popup-organization-admin-create-template").html();
 			
 			var view = {};
 			var html = Mustache.to_html(template, view);
@@ -231,15 +231,15 @@ AppClientAdmin = (function($){
 		},
 		
 		closemodal: function(){
-			$('#modal_window_client').hide();
+			$('#modal_window_organization').hide();
        		$('#mask').hide();
 		},
 		
-		registerclient: function(){
+		registerorganization: function(){
 			var json = '{"id":"0", "name":"'+$('input[name*="name"]').val()+'",'+ '"address":"'+$('input[name*="address"]').val() +'",'+ '"email":"'+$('input[name*="email"]').val() +'",'+
 			'"zip":"'+$('input[name*="zip"]').val()+'",' + '"city":"'+$('input[name*="city"]').val() +'",' + '"phone":"'+$('input[name*="phone"]').val()  +'",'+ '"fax":"'+$('input[name*="fax"]').val() +'"}';
 			$.ajax({
-				url:"/admin/clients/create",
+				url:"/admin/organizations/create",
 				data: json,
 				type: "POST",
 				dataType : "json",
@@ -247,30 +247,30 @@ AppClientAdmin = (function($){
 				contentType: "application/json; charset=utf-8",
 				success: function(data){
 					if (data.result == "ok"){
-						$('#modal_window_client').hide();
+						$('#modal_window_organization').hide();
 						$('#mask').hide();
 						
-						var successHtml = $("#client-created-updated-template").html();
+						var successHtml = $("#organization-created-updated-template").html();
 						tableView.reload();
-						$("#clients_notifications").text(successHtml);
-						$("#clients_notifications").fadeIn(1000);
-						$("#clients_notifications").fadeOut(3000);
+						$("#organizations_notifications").text(successHtml);
+						$("#organizations_notifications").fadeIn(1000);
+						$("#organizations_notifications").fadeOut(3000);
 					} else {
-						$("#clients_errors_create").text(data.result);
-						$("#clients_errors_create").fadeIn(1000);
-						$("#clients_errors_create").fadeOut(3000);
+						$("#organizations_errors_create").text(data.result);
+						$("#organizations_errors_create").fadeIn(1000);
+						$("#organizations_errors_create").fadeOut(3000);
 					}
 				}
 			});
 		}
 	}) 
 
-	ClientAdminUpdateView = Backbone.View.extend({
-		el: "#modal_window_client",
+	OrganizationAdminUpdateView = Backbone.View.extend({
+		el: "#modal_window_organization",
 		
 		events:{
 			"click .closeModal" : "closemodal",
-			"click .updateClient" : "updateclient"
+			"click .updateOrganization" : "updateorganization"
 		},
 		
 		initialize:function(id, name, email, address, zip, city, phone, fax){
@@ -296,23 +296,43 @@ AppClientAdmin = (function($){
 		},
 		
 		render : function(){
-			var template = $("#popup-client-admin-update-template").html();
+			var template = $("#popup-organization-admin-update-template").html();
 			var view = {name : this.vname, address : this.vaddress, email : this.vemail, zip : this.vzip, city : this.vcity, phone : this.vphone, fax : this.vfax};
 			var html = Mustache.to_html(template, view);
 			$(this.el).html(html);
+			new UserCBListView(this.vid).render();
 			return this;
 		},
 		
 		closemodal: function(){
-			$('#modal_window_client').hide();
+			$('#modal_window_organization').hide();
        		$('#mask').hide();
 		},
 		
-		updateclient: function(){
-			var json = '{"id":"0", "name":"'+$('input[name*="name"]').val()+'",'+ '"address":"'+$('input[name*="address"]').val() +'",'+ '"email":"'+$('input[name*="email"]').val() +'",'+
-			'"zip":"'+$('input[name*="zip"]').val()+'",' + '"city":"'+$('input[name*="city"]').val() +'",' + '"phone":"'+$('input[name*="phone"]').val()  +'",'+ '"fax":"'+$('input[name*="fax"]').val() +'"}';
+		updateorganization: function(){
+			var usersCB = $("input:checked");
+			var count = 0;
+			var users = "";
+				
+			if(usersCB.length > 0){
+				users = '"users":[';
+				
+				$.each(usersCB, function(){
+					users += '{"id":"'+ $(this).attr('id') +'", "username":"null", "locked":"false"}';
+					count++;
+					if(count<usersCB.length){
+						users += ',';
+					}
+				});
+				users += "]";
+			}
+			else{
+				users = '"users":{}';
+			}
+			var json = '{"id":"' +this.vid +'", "name":"'+$('input[name*="name"]').val()+'",'+ '"address":"'+$('input[name*="address"]').val() +'",'+ '"email":"'+$('input[name*="email"]').val() +'",'+
+			'"zip":"'+$('input[name*="zip"]').val()+'",' + '"city":"'+$('input[name*="city"]').val() +'",' + '"phone":"'+$('input[name*="phone"]').val()  +'",'+ '"fax":"'+$('input[name*="fax"]').val() + '", ' +users+'}';
 			$.ajax({
-				url:"/admin/clients/create",
+				url:"/admin/organizations/create",
 				data: json,
 				type: "POST",
 				dataType: "json",
@@ -320,34 +340,90 @@ AppClientAdmin = (function($){
 				contentType: "application/json; charset=utf-8",
 				success: function(data){
 					if (data.result == "ok"){
-						$('#modal_window_client').hide();
+						$('#modal_window_organization').hide();
 						$('#mask').hide();
 						
-						var successHtml= $("#client-created-updated-template").html();
+						var successHtml= $("#organization-created-updated-template").html();
 
-						$("#clients_notifications").text(successHtml);
-						$("#clients_notifications").fadeIn(1000);
-						$("#clients_notifications").fadeOut(3000);
+						$("#organizations_notifications").text(successHtml);
+						$("#organizations_notifications").fadeIn(1000);
+						$("#organizations_notifications").fadeOut(3000);
 						tableView.reload();
 					} else {
-						$("#clients_errors_update").text(data.result);
-						$("#clients_errors_update").fadeIn(1000);
-						$("#clients_errors_update").fadeOut(3000);
+						$("#organizations_errors_update").text(data.result);
+						$("#organizations_errors_update").fadeIn(1000);
+						$("#organizations_errors_update").fadeOut(3000);
 					}
 				}
 			});
 		}
 	}) 
 	
+	UserCBListView = Backbone.View.extend({
+		el:"#usersToLink",
+		
+		organizationId: null,
+		
+		events:{
+		
+		},
+		
+		initialize:function(organizationid){
+			this.organizationId = organizationid;
+		},
+		
+		render: function(){
+			var parent = this;
+			$.ajax({
+				type: "GET",
+				url:"/admin/users/client",
+				dataType:"json",
+				success: function(data){
+					if(data != null){
+						if(data.userDetailsDTO.length > 1){
+				    		$.each(data.userDetailsDTO, function() {
+				    			$(parent.el).append('<input type="checkbox" id="'+ this.user.id +'">'+ this.lastname + ' ' + this.firstname+'</input><br/>');
+				    		});
+						}
+						// In the case when there is only one user.
+						else{
+							$(parent.el).append('<input type="checkbox" id="'+ data.userDetailsDTO.user.id +'">'+ data.userDetailsDTO.lastname + ' ' + data.userDetailsDTO.firstname + ' ('+ data.userDetailsDTO.user.username +')'+'</input><br/>');
+						}
+						
+						$.ajax({
+							type: "GET",
+							url:"/admin/organizations/" + parent.organizationId + "/users",
+							dataType:"json",
+							success: function(data){
+								if(data != null && typeof(data) != "undefined"){
+									if(data.userDTO.length > 1){
+							    		$.each(data.userDTO, function() {
+							    			$('#' + this.id).attr("checked", "checked");
+							    		});
+									}
+									// In the case when there is only one user.
+									else{
+										$('#' + data.userDTO.id).attr("checked", "checked");
+									}
+								}
+							}
+						});
+					}
+				}
+			});
+			return this;
+		}
+	})
+	
 	// define the application initialization
 	var self = {};
 	self.start = function(){
-		tableView = new ClientAdminTableView().render();
-		new ClientAdminButtonsView().render();
+		tableView = new OrganizationAdminTableView().render();
+		new OrganizationAdminButtonsView().render();
 	}
 	return self;
 })
 $( function() {
-	console.log("Starting client administration application")
-	new AppClientAdmin(jQuery).start();
+	console.log("Starting organization administration application")
+	new AppOrganizationAdmin(jQuery).start();
 })

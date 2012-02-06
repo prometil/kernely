@@ -21,10 +21,11 @@
 package org.kernely.core.service;
 
 import static org.junit.Assert.assertEquals;
-import org.junit.*;
+
 import java.util.ArrayList;
 import java.util.List;
 
+import org.junit.Assert;
 import org.junit.Test;
 import org.kernely.core.common.AbstractServiceTest;
 import org.kernely.core.dto.RoleDTO;
@@ -33,6 +34,7 @@ import org.kernely.core.dto.UserDTO;
 import org.kernely.core.dto.UserDetailsDTO;
 import org.kernely.core.dto.UserDetailsUpdateRequestDTO;
 import org.kernely.core.model.Role;
+import org.kernely.core.model.User;
 import org.kernely.core.service.user.RoleService;
 import org.kernely.core.service.user.UserService;
 
@@ -219,7 +221,7 @@ public class UserServiceTest extends AbstractServiceTest{
 		assertEquals(1,service.getAllUsers().size());
 		assertEquals(1,service.getAllUserDetails().size());
 	}
-	
+		
 	@Test
 	public void lockedUser(){
 		createUserRole();

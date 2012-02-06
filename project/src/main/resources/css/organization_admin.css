@@ -22,13 +22,13 @@
 	color:green;
 }
 
-#client_admin_table{
+#organization_admin_table{
 	cursor:pointer;
 	width:100%;
 }
 
 /* Group page*/
-#modal_window_client{
+#modal_window_organization{
 	position:absolute;
 	width:440px;
 	height:300px;
@@ -37,4 +37,5 @@
 	padding:20px;
 	top:0;
 	left:0;
+	overflow-y:auto;
 }

@@ -20,8 +20,6 @@ import org.apache.commons.configuration.AbstractConfiguration;
 import org.apache.commons.io.FileUtils;
 import org.kernely.core.controller.AbstractController;
 import org.kernely.core.dto.UserDTO;
-import org.kernely.core.dto.UserDetailsDTO;
-import org.kernely.core.dto.UserDetailsUpdateRequestDTO;
 import org.kernely.core.service.user.UserService;
 import org.kernely.core.template.TemplateRenderer;
 import org.kernely.project.dto.ProjectCreationRequestDTO;

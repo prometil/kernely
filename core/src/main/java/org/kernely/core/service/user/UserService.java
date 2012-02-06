@@ -265,9 +265,7 @@ public class UserService extends AbstractService {
 	 */
 	@SuppressWarnings("unchecked")
 	@Transactional
-	public List<UserDTO> getAllUsers() {
-		
-		
+	public List<UserDTO> getAllUsers() {	
 		Query query = em.get().createQuery("SELECT e FROM User e");
 		List<User> collection = (List<User>) query.getResultList();
 		List<UserDTO> dtos = new ArrayList<UserDTO>();
@@ -275,8 +273,34 @@ public class UserService extends AbstractService {
 			dtos.add(new UserDTO(user.getUsername(), user.isLocked(), user.getId()));
 		}
 		return dtos;
-
 	}
+	
+	/**
+	 * Gets the lists of all clients contained in the database.
+	 * 
+	 * @return the list of all clients contained in the database.
+	 */
+	@SuppressWarnings("unchecked")
+	@Transactional
+	public List<UserDetailsDTO> getAllClients() {			
+		Query query = em.get().createQuery("SELECT e FROM User e");
+		List<User> collection = (List<User>) query.getResultList();
+		List<UserDTO> dtos = new ArrayList<UserDTO>();
+		for (User user : collection) {
+			for(Role role : user.getAllRoles()){
+				if (role.getName().equals(Role.ROLE_CLIENT)){
+					dtos.add(new UserDTO(user.getUsername(), user.isLocked(), user.getId()));
+				}
+			}
+		}
+		List<UserDetailsDTO> userDetailsDTO = new ArrayList<UserDetailsDTO>();
+		for (UserDTO user : dtos) {
+			userDetailsDTO.add(this.getUserDetails(user.username));
+		}
+		return userDetailsDTO;
+	}
+	
+	
 	
 	/**
 	 * Gets the lists of all users contained in the database.

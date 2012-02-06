@@ -80,6 +80,23 @@ public class UserAdminController extends AbstractController{
 		}
 		return null;
 	}
+
+	/**
+	 * Get all clients stored in database in order to display them
+	 * @return A list of all DTO associated to the clients stored in the database
+	 */
+	@GET
+	@Path("/client")
+	@Produces({MediaType.APPLICATION_JSON})
+	public List<UserDetailsDTO> displayAllClients()
+	{
+		if (userService.currentUserIsAdministrator()){
+			log.debug("Call to GET on all users");
+			return userService.getAllClients();
+		}	
+		return null;
+	}
+	
 	
 	/**
 	 * Get all users stored in database in order to display them
