@@ -31,11 +31,6 @@ public class OrganizationDTO {
 	public String address;
 	
 	/**
-	 * The email of the organization
-	 */
-	public String email;
-	
-	/**
 	* The zip code of the address
  	*/
 	public String zip;
@@ -56,11 +51,6 @@ public class OrganizationDTO {
 	public String fax;
 	
 	/**
-	 * The activity of the organization
-	 */
-	public int active;
-	
-	/**
 	 * The list of member of the project
 	 */
 	public List<UserDTO> users;
@@ -77,10 +67,8 @@ public class OrganizationDTO {
 	 * @param organization
 	 */
 	public OrganizationDTO(Organization organization){
-		this.active=organization.getActive();
 		this.address=organization.getAddress();
 		this.city=organization.getCity();
-		this.email=organization.getEmail();
 		this.fax=organization.getFax();
 		this.id=organization.getId();
 		this.name=organization.getName();

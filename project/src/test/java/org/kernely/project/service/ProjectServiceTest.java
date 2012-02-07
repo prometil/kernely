@@ -13,6 +13,8 @@ import org.kernely.core.dto.UserDTO;
 import org.kernely.core.model.Role;
 import org.kernely.core.service.user.RoleService;
 import org.kernely.core.service.user.UserService;
+import org.kernely.project.dto.OrganizationCreationRequestDTO;
+import org.kernely.project.dto.OrganizationDTO;
 import org.kernely.project.dto.ProjectCreationRequestDTO;
 import org.kernely.project.dto.ProjectDTO;
 
@@ -28,6 +30,9 @@ public class ProjectServiceTest extends AbstractServiceTest {
 	@Inject
 	private UserService userService;
 
+	@Inject
+	private OrganizationService  organizationService;
+	
 	@Inject
 	private RoleService roleService;
 
@@ -45,10 +50,24 @@ public class ProjectServiceTest extends AbstractServiceTest {
 		UserDTO userDTO = userService.createUser(request);
 		return userDTO.id;
 	}
+	
+	private OrganizationDTO createOrganization(){
+		OrganizationCreationRequestDTO organization = new OrganizationCreationRequestDTO();
+		organization.address=NAME;
+		organization.city=NAME;
+		organization.fax=NAME;
+		organization.name=NAME;
+		organization.phone=NAME;
+		organization.zip=NAME;
+		organizationService.createOrganization(organization);
+		return organizationService.getAllOrganizations().get(0);		
+	}
 
-	private ProjectDTO createProject() {
+	private ProjectDTO createProject(){
+		createOrganization();
 		ProjectCreationRequestDTO proj = new ProjectCreationRequestDTO();
 		proj.name = NAME;
+		proj.organization=NAME;
 		projectService.createProject(proj);
 		return projectService.getAllProjects().get(0);
 	}
@@ -88,7 +107,7 @@ public class ProjectServiceTest extends AbstractServiceTest {
 	@Test
 	public void updateProjectTest() {
 		ProjectDTO projDTO = this.createProject();
-		ProjectCreationRequestDTO proj = new ProjectCreationRequestDTO(NAME_2, projDTO.id, new ArrayList<UserDTO>(), projDTO.icon);
+		ProjectCreationRequestDTO proj = new ProjectCreationRequestDTO(NAME_2, projDTO.id, new ArrayList<UserDTO>(), projDTO.icon, projDTO.organization.name);
 		projectService.updateProject(proj);
 		assertEquals(NAME_2, projectService.getAllProjects().get(0).name);
 	}
@@ -108,14 +127,14 @@ public class ProjectServiceTest extends AbstractServiceTest {
 	@Test(expected = IllegalArgumentException.class)
 	public void updateProjectWithNullName() {
 		ProjectDTO projDTO = this.createProject();
-		ProjectCreationRequestDTO proj = new ProjectCreationRequestDTO(null, projDTO.id, new ArrayList<UserDTO>(), projDTO.icon);
+		ProjectCreationRequestDTO proj = new ProjectCreationRequestDTO(null, projDTO.id, new ArrayList<UserDTO>(), projDTO.icon,  projDTO.organization.name);
 		projectService.updateProject(proj);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void updateProjectWithVoidName() {
 		ProjectDTO projDTO = this.createProject();
-		ProjectCreationRequestDTO proj = new ProjectCreationRequestDTO("      ", projDTO.id, projDTO.users, projDTO.icon);
+		ProjectCreationRequestDTO proj = new ProjectCreationRequestDTO("      ", projDTO.id, projDTO.users, projDTO.icon, projDTO.organization.name);
 		projectService.updateProject(proj);
 	}
 
@@ -132,7 +151,7 @@ public class ProjectServiceTest extends AbstractServiceTest {
 
 		List<UserDTO> users = new ArrayList<UserDTO>();
 		users.add(userdto);
-		ProjectCreationRequestDTO gcr = new ProjectCreationRequestDTO(projectdto.name, projectdto.id, users, projectdto.icon);
+		ProjectCreationRequestDTO gcr = new ProjectCreationRequestDTO(projectdto.name, projectdto.id, users, projectdto.icon,  projectdto.organization.name);
 		projectService.updateProject(gcr);
 
 		assertEquals(1, projectService.getProjectUsers(projectdto.id).size());
@@ -140,12 +159,7 @@ public class ProjectServiceTest extends AbstractServiceTest {
 
 	@Test
 	public void addProjectUser() {
-		ProjectCreationRequestDTO request = new ProjectCreationRequestDTO();
-		request.name = "Test Project";
-		projectService.createProject(request);
-		ProjectDTO projectdto = new ProjectDTO();
-		projectdto = projectService.getAllProjects().get(0);
-
+		ProjectDTO projectdto = this.createProject();
 		this.creationOfTestUser();
 
 		UserDTO userdto = new UserDTO();
@@ -153,14 +167,14 @@ public class ProjectServiceTest extends AbstractServiceTest {
 
 		List<UserDTO> users = new ArrayList<UserDTO>();
 		users.add(userdto);
-		ProjectCreationRequestDTO gcr = new ProjectCreationRequestDTO(projectdto.name, projectdto.id, users, projectdto.icon);
+		ProjectCreationRequestDTO gcr = new ProjectCreationRequestDTO(projectdto.name, projectdto.id, users, projectdto.icon, projectdto.organization.name);
 		projectService.updateProject(gcr);
 
 		projectdto = projectService.getAllProjects().get(0);
 		assertEquals(1, projectdto.users.size());
 		assertEquals(TEST_STRING, projectdto.users.get(0).username);
 
-		gcr = new ProjectCreationRequestDTO(projectdto.name, projectdto.id, new ArrayList<UserDTO>(), projectdto.icon);
+		gcr = new ProjectCreationRequestDTO(projectdto.name, projectdto.id, new ArrayList<UserDTO>(), projectdto.icon,  projectdto.organization.name);
 		projectService.updateProject(gcr);
 
 		projectdto = projectService.getAllProjects().get(0);

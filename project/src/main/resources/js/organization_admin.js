@@ -31,7 +31,6 @@ AppOrganizationAdmin = (function($){
 		vid: null,
 		vname : null,
 		vaddress : null,
-		vemail :null,
 		vzip : null,
 		vcity : null,
 		vphone : null,
@@ -44,10 +43,9 @@ AppOrganizationAdmin = (function($){
 		},
 		
 		
-		initialize: function(id, name, address, email, zip, city, phone, fax){
+		initialize: function(id, name, address, zip, city, phone, fax){
 			this.vid = id;
 			this.vname = name;
-			this.vemail = email;
 			this.vaddress = address;
 			this.vcity=city;
 			this.vzip=zip;
@@ -78,8 +76,8 @@ AppOrganizationAdmin = (function($){
 		},
 
 		render:function(){
-			var template = '<td>{{name}}</td><td>{{email}}</td><td>{{phone}}</td>';
-			var view = {name : this.vname, email: this.vemail, phone : this.vphone};
+			var template = '<td>{{name}}</td>';
+			var view = {name : this.vname};
 			var html = Mustache.to_html(template, view);
 			
 			$(this.el).html(html);
@@ -108,13 +106,13 @@ AppOrganizationAdmin = (function($){
 					if(data != null){
 						if(data.organizationDTO.length > 1){
 				    		$.each(data.organizationDTO, function() {
-				    			var view = new OrganizationAdminTableLineView(this.id, this.name, this.address, this.email, this.zip, this.city, this.phone, this.fax);
+				    			var view = new OrganizationAdminTableLineView(this.id, this.name, this.address, this.zip, this.city, this.phone, this.fax);
 				    			view.render();
 				    		});
 						}
 					   	// In the case when there is only one element
 			    		else{
-							var view = new OrganizationAdminTableLineView(data.organizationDTO.id, data.organizationDTO.name, data.organizationDTO.address, data.organizationDTO.email, data.organizationDTO.zip, data.organizationDTO.city, data.organizationDTO.phone, data.organizationDTO.fax);
+							var view = new OrganizationAdminTableLineView(data.organizationDTO.id, data.organizationDTO.name, data.organizationDTO.address, data.organizationDTO.zip, data.organizationDTO.city, data.organizationDTO.phone, data.organizationDTO.fax);
 			    			view.render();
 						}
 					}
@@ -179,7 +177,7 @@ AppOrganizationAdmin = (function($){
 		
 		editorganization: function(){
 			this.showModalWindow();
-			this.viewUpdate.setFields(lineSelected.vid, lineSelected.vname, lineSelected.vemail, lineSelected.vaddress, lineSelected.vzip, lineSelected.vcity, lineSelected.vphone, lineSelected.vfax);
+			this.viewUpdate.setFields(lineSelected.vid, lineSelected.vname, lineSelected.vaddress, lineSelected.vzip, lineSelected.vcity, lineSelected.vphone, lineSelected.vfax);
 			this.viewUpdate.render();
 		},
 		
@@ -236,8 +234,7 @@ AppOrganizationAdmin = (function($){
 		},
 		
 		registerorganization: function(){
-			var json = '{"id":"0", "name":"'+$('input[name*="name"]').val()+'",'+ '"address":"'+$('input[name*="address"]').val() +'",'+ '"email":"'+$('input[name*="email"]').val() +'",'+
-			'"zip":"'+$('input[name*="zip"]').val()+'",' + '"city":"'+$('input[name*="city"]').val() +'",' + '"phone":"'+$('input[name*="phone"]').val()  +'",'+ '"fax":"'+$('input[name*="fax"]').val() +'"}';
+			var json = '{"id":"0", "name":"'+$('input[name*="name"]').val()+'",'+ '"address":"'+$('input[name*="address"]').val() +'",'+ '"zip":"'+$('input[name*="zip"]').val()+'",' + '"city":"'+$('input[name*="city"]').val() +'",' + '"phone":"'+$('input[name*="phone"]').val()  +'",'+ '"fax":"'+$('input[name*="fax"]').val() +'"}';
 			$.ajax({
 				url:"/admin/organizations/create",
 				data: json,
@@ -273,10 +270,9 @@ AppOrganizationAdmin = (function($){
 			"click .updateOrganization" : "updateorganization"
 		},
 		
-		initialize:function(id, name, email, address, zip, city, phone, fax){
+		initialize:function(id, name, address, zip, city, phone, fax){
 			this.vid = id;
 			this.vname = name;
-			this.vemail = email;
 			this.vaddress = address;
 			this.vcity=city;
 			this.vzip=zip;
@@ -284,10 +280,9 @@ AppOrganizationAdmin = (function($){
 			this.vfax=fax;
 		},
 		
-		setFields: function(id, name, email, address, zip, city, phone, fax){
+		setFields: function(id, name, address, zip, city, phone, fax){
 			this.vid = id;
 			this.vname = name;
-			this.vemail = email;
 			this.vaddress = address;
 			this.vcity=city;
 			this.vzip=zip;
@@ -297,7 +292,7 @@ AppOrganizationAdmin = (function($){
 		
 		render : function(){
 			var template = $("#popup-organization-admin-update-template").html();
-			var view = {name : this.vname, address : this.vaddress, email : this.vemail, zip : this.vzip, city : this.vcity, phone : this.vphone, fax : this.vfax};
+			var view = {name : this.vname, address : this.vaddress, zip : this.vzip, city : this.vcity, phone : this.vphone, fax : this.vfax};
 			var html = Mustache.to_html(template, view);
 			$(this.el).html(html);
 			new UserCBListView(this.vid).render();
@@ -329,8 +324,7 @@ AppOrganizationAdmin = (function($){
 			else{
 				users = '"users":{}';
 			}
-			var json = '{"id":"' +this.vid +'", "name":"'+$('input[name*="name"]').val()+'",'+ '"address":"'+$('input[name*="address"]').val() +'",'+ '"email":"'+$('input[name*="email"]').val() +'",'+
-			'"zip":"'+$('input[name*="zip"]').val()+'",' + '"city":"'+$('input[name*="city"]').val() +'",' + '"phone":"'+$('input[name*="phone"]').val()  +'",'+ '"fax":"'+$('input[name*="fax"]').val() + '", ' +users+'}';
+			var json = '{"id":"' +this.vid +'", "name":"'+$('input[name*="name"]').val()+'",'+ '"address":"'+$('input[name*="address"]').val() +'",'+ '"zip":"'+$('input[name*="zip"]').val()+'",' + '"city":"'+$('input[name*="city"]').val() +'",' + '"phone":"'+$('input[name*="phone"]').val()  +'",'+ '"fax":"'+$('input[name*="fax"]').val() + '", ' +users+'}';
 			$.ajax({
 				url:"/admin/organizations/create",
 				data: json,

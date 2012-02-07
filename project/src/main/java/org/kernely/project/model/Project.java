@@ -12,6 +12,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import org.kernely.core.hibernate.AbstractModel;
@@ -40,6 +41,10 @@ public class Project extends AbstractModel {
 			joinColumns=@JoinColumn(name="project_id"),
 			inverseJoinColumns=@JoinColumn(name="user_id"))
 	private Set<User> users; 
+	
+	@OneToOne
+	@JoinColumn(name="organization_id")
+	private Organization organization ;
 	
 	/**
  	*	initialize a project with default value
@@ -110,6 +115,22 @@ public class Project extends AbstractModel {
 	 */
 	public void setIcon(String icon) {
 		this.icon = icon;
+	}
+
+
+	/**
+	 * @return the organization
+	 */
+	public Organization getOrganization() {
+		return organization;
+	}
+
+
+	/**
+	 * @param organization the organization to set
+	 */
+	public void setOrganization(Organization organization) {
+		this.organization = organization;
 	}
 
 }

@@ -1,4 +1,4 @@
-<script type="text/javascript" src="/js/streams_admin.js"></script>
+ <script type="text/javascript" src="/js/streams_admin.js"></script>
 
 <div id="stream_header"></div>
 <div id="mask"></div>

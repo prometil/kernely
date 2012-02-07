@@ -47,13 +47,18 @@ public class OrganizationServiceTest extends AbstractServiceTest {
 		OrganizationCreationRequestDTO organization = new OrganizationCreationRequestDTO();
 		organization.address=NAME;
 		organization.city=NAME;
-		organization.email=NAME;
 		organization.fax=NAME;
 		organization.name=NAME;
 		organization.phone=NAME;
 		organization.zip=NAME;
 		organizationService.createOrganization(organization);
 		return organizationService.getAllOrganizations().get(0);		
+	}
+	
+	@Test
+	public void getOrganizationByNameTest(){
+		createOrganization();
+		assertEquals(NAME, organizationService.getOrganizationByName(NAME).getName());
 	}
 	
 	@Test
@@ -91,7 +96,7 @@ public class OrganizationServiceTest extends AbstractServiceTest {
 	@Test
 	public void updateOrganizationTest() {
 		OrganizationDTO organizationDTO = this.createOrganization();
-		OrganizationCreationRequestDTO proj = new OrganizationCreationRequestDTO(organizationDTO.id, NAME_2, organizationDTO.address, organizationDTO.email, organizationDTO.zip, organizationDTO.city, organizationDTO.phone, organizationDTO.fax, organizationDTO.users);
+		OrganizationCreationRequestDTO proj = new OrganizationCreationRequestDTO(organizationDTO.id, NAME_2, organizationDTO.address, organizationDTO.zip, organizationDTO.city, organizationDTO.phone, organizationDTO.fax, organizationDTO.users);
 		organizationService.updateOrganization(proj);
 		assertEquals(NAME_2, organizationService.getAllOrganizations().get(0).name);
 	}
@@ -104,14 +109,14 @@ public class OrganizationServiceTest extends AbstractServiceTest {
 	@Test(expected = IllegalArgumentException.class)
 	public void updateOrganizationWithNullName() {
 		OrganizationDTO organizationDTO = this.createOrganization();
-		OrganizationCreationRequestDTO proj = new OrganizationCreationRequestDTO(organizationDTO.id, null, organizationDTO.address, organizationDTO.email, organizationDTO.zip, organizationDTO.city, organizationDTO.phone, organizationDTO.fax, organizationDTO.users);
+		OrganizationCreationRequestDTO proj = new OrganizationCreationRequestDTO(organizationDTO.id, null, organizationDTO.address, organizationDTO.zip, organizationDTO.city, organizationDTO.phone, organizationDTO.fax, organizationDTO.users);
 		organizationService.updateOrganization(proj);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void updateOrganizationWithVoidName() {
 		OrganizationDTO organizationDTO = this.createOrganization();
-		OrganizationCreationRequestDTO proj = new OrganizationCreationRequestDTO(organizationDTO.id, "      ", organizationDTO.address, organizationDTO.email, organizationDTO.zip, organizationDTO.city, organizationDTO.phone, organizationDTO.fax, organizationDTO.users);
+		OrganizationCreationRequestDTO proj = new OrganizationCreationRequestDTO(organizationDTO.id, "      ", organizationDTO.address, organizationDTO.zip, organizationDTO.city, organizationDTO.phone, organizationDTO.fax, organizationDTO.users);
 		organizationService.updateOrganization(proj);
 	}
 }

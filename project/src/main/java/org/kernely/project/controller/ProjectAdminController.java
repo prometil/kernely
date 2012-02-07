@@ -22,8 +22,10 @@ import org.kernely.core.controller.AbstractController;
 import org.kernely.core.dto.UserDTO;
 import org.kernely.core.service.user.UserService;
 import org.kernely.core.template.TemplateRenderer;
+import org.kernely.project.dto.OrganizationDTO;
 import org.kernely.project.dto.ProjectCreationRequestDTO;
 import org.kernely.project.dto.ProjectDTO;
+import org.kernely.project.service.OrganizationService;
 import org.kernely.project.service.ProjectService;
 
 import com.google.inject.Inject;
@@ -40,12 +42,15 @@ public class ProjectAdminController extends AbstractController {
 
 	@Inject
 	private AbstractConfiguration configuration;
-	
+
 	@Inject
 	private UserService userService;
 
 	@Inject
 	private ProjectService projectService;
+
+	@Inject
+	private OrganizationService organizationService;
 
 	/**
 	 * Set the template
@@ -72,7 +77,7 @@ public class ProjectAdminController extends AbstractController {
 	 */
 	@GET
 	@Path("/all")
-	@Produces({MediaType.APPLICATION_JSON})
+	@Produces({ MediaType.APPLICATION_JSON })
 	public List<ProjectDTO> displayAllProjects() {
 		if (userService.currentUserIsAdministrator()) {
 			log.debug("Call to GET on all projects");
@@ -80,29 +85,45 @@ public class ProjectAdminController extends AbstractController {
 		}
 		return null;
 	}
-	
+
+	/**
+	 * Create the list for the combobox
+	 * 
+	 * @return a json which contains all the organization
+	 */
+	@GET
+	@Path("/combobox")
+	@Produces({ MediaType.APPLICATION_JSON })
+	public List<OrganizationDTO> getLists() {
+		if (userService.currentUserIsAdministrator()) {
+			log.debug("Call to GET on all organization");
+			return organizationService.getAllOrganizations();
+		}
+		return null;
+	}
+
 	/**
 	 * Create a new project with the given informations
-	 * @param project The DTO containing all informations about the new project
+	 * 
+	 * @param project
+	 *            The DTO containing all informations about the new project
 	 * @return A JSON string containing the result of the operation
 	 */
 	@POST
 	@Path("/create")
-	@Produces({MediaType.APPLICATION_JSON})
-	public String create(ProjectCreationRequestDTO project)
-	{
-		if (userService.currentUserIsAdministrator()){
-			try{
-				if(project.id==0){
+	@Produces({ MediaType.APPLICATION_JSON })
+	public String create(ProjectCreationRequestDTO project) {
+		if (userService.currentUserIsAdministrator()) {
+			try {
+				if (project.id == 0) {
 					projectService.createProject(project);
-				}
-				else{
+				} else {
 					projectService.updateProject(project);
 				}
 				return "{\"result\":\"ok\"}";
 			} catch (IllegalArgumentException iae) {
 				log.debug(iae.getMessage());
-				return "{\"result\":\""+iae.getMessage()+"\"}";
+				return "{\"result\":\"" + iae.getMessage() + "\"}";
 			}
 		}
 		return null;
@@ -110,35 +131,40 @@ public class ProjectAdminController extends AbstractController {
 
 	/**
 	 * Delete the project which has the id 'id'
-	 * @param id The id of the project to delete
+	 * 
+	 * @param id
+	 *            The id of the project to delete
 	 * @return The result of the operation
 	 */
 	@GET
 	@Path("/delete/{id}")
-	@Produces( { MediaType.TEXT_HTML })
-	public String deleteProject(@PathParam("id") int id){
-		if (userService.currentUserIsAdministrator()){
+	@Produces({ MediaType.TEXT_HTML })
+	public String deleteProject(@PathParam("id") int id) {
+		if (userService.currentUserIsAdministrator()) {
 			projectService.deleteProject(id);
 			return "Ok";
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Get all users associated to the project which has the id 'id'
-	 * @param id The id of the project
-	 * @return A list of all DTO associated to the users contained in this project
+	 * 
+	 * @param id
+	 *            The id of the project
+	 * @return A list of all DTO associated to the users contained in this
+	 *         project
 	 */
 	@GET
 	@Path("/{id}/users")
-	@Produces({MediaType.APPLICATION_JSON})
-	public List<UserDTO> getProjectUsers(@PathParam("id") int id){
-		if (userService.currentUserIsAdministrator()){
+	@Produces({ MediaType.APPLICATION_JSON })
+	public List<UserDTO> getProjectUsers(@PathParam("id") int id) {
+		if (userService.currentUserIsAdministrator()) {
 			return projectService.getProjectUsers(id);
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Upload a specified file
 	 * 
@@ -150,7 +176,7 @@ public class ProjectAdminController extends AbstractController {
 	@POST
 	@Path("/upload/{name}")
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
-	@Produces({MediaType.TEXT_HTML})
+	@Produces({ MediaType.TEXT_HTML })
 	public Response uploadFile(@FormDataParam("file") InputStream uploadedInputStream, @FormDataParam("file") FormDataContentDisposition fileDetail, @PathParam("name") String projectName) {
 		if (fileDetail.getFileName().equals("")) {
 			if (userService.currentUserIsAdministrator()) {
@@ -176,18 +202,15 @@ public class ProjectAdminController extends AbstractController {
 		}
 
 		// up to date the database
-				
+
 		projectService.updateProjectIcon(projectName, fileName);
-		
-		//get the dto modified
+
+		// get the dto modified
 		if (userService.currentUserIsAdministrator()) {
 			return ok(templateRenderer.create("/templates/gsp/project_admin.gsp").addCss("/css/admin.css").addCss("/css/project_admin.css").withLayout(TemplateRenderer.ADMIN_LAYOUT));
-		}
-		else{
+		} else {
 			return ok(templateRenderer.create("/templates/gsp/home.gsp"));
 		}
 	}
-	
 
-	
 }

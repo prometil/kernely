@@ -14,7 +14,6 @@
 	<legend><%= i18n.t("organization_informations") %></legend>
 	<%= i18n.t("organization_name") %>: <input type="text" name="name"/><br/>
 	<%= i18n.t("organization_address") %>: <input type="text" name="address"/><br/>
-	<%= i18n.t("organization_email") %>: <input type="text" name="email"/><br/>
 	<%= i18n.t("organization_zip") %>: <input type="text" name="zip" maxlenght="5"/><br/>
 	<%= i18n.t("organization_city") %>: <input type="text" name="city"/><br/>
 	<%= i18n.t("organization_phone") %>: <input type="text" name="phone" maxlenght="10"/><br/>
@@ -32,7 +31,6 @@
 	<legend><%= i18n.t("organization_informations") %></legend>
 	<%= i18n.t("organization_name") %>: <input type="text" name="name" value="{{name}}"/><br/>
 	<%= i18n.t("organization_address") %>: <input type="text" name="address" value="{{address}}"/><br/>
-	<%= i18n.t("organization_email") %>: <input type="text" name="email" value="{{email}}"/><br/>
 	<%= i18n.t("organization_zip") %>: <input type="text" name="zip" maxlenght="5" value="{{zip}}"/><br/>
 	<%= i18n.t("organization_city") %>: <input type="text" name="city" value="{{city}}"/><br/>
 	<%= i18n.t("organization_phone") %>: <input type="text" name="phone" maxlenght="10" value="{{phone}}"/><br/>
@@ -62,7 +60,7 @@
 </script>
 
 <script type="text/html" id="table-header-template">
-<tr><th><%= i18n.t("organization_name") %><th><%= i18n.t("organization_email") %></th><th><%= i18n.t("organization_phone")%></th></tr>
+<tr><th><%= i18n.t("organization_name") %></tr>
 </script>
 
 <div id="organization_admin_container">

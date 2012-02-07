@@ -33,6 +33,11 @@ public class ProjectDTO {
 	public List<UserDTO> users;
 	
 	/**
+	 * The organization that the project belong
+	 */
+	public OrganizationDTO organization;
+	
+	/**
 	 * Default constructor
 	 */
 	public ProjectDTO(){
@@ -42,10 +47,11 @@ public class ProjectDTO {
 	/**
 	 * Constructor
 	 */
-	public ProjectDTO(String newName, int newId, String newIcon, List<UserDTO> newUsers){
+	public ProjectDTO(String newName, int newId, String newIcon, List<UserDTO> newUsers, OrganizationDTO newOrganization){
 		this.id = newId;
 		this.name = newName;
 		this.users  = newUsers;
 		this.icon = newIcon;
+		this.organization  = newOrganization;
 	}
 }

@@ -29,12 +29,11 @@ public class Organization extends AbstractModel {
 	private int id;
 	private String name;
 	private String address;
-	private String email;
 	private String zip;
 	private String city;
 	private String phone;
 	private String fax;
-	private int active;
+	
 
 	/**
 	 * client of the organization
@@ -44,11 +43,9 @@ public class Organization extends AbstractModel {
 	private Set<User> users;
 
 	public Organization() {
-		this.active = 0;
 		this.users = new HashSet<User>();
 		this.address="";
 		this.city="";
-		this.email="";
 		this.fax="";
 		this.id=0;
 		this.name="";
@@ -99,21 +96,6 @@ public class Organization extends AbstractModel {
 	 */
 	public void setAddress(String address) {
 		this.address = address;
-	}
-
-	/**
-	 * @return the email
-	 */
-	public String getEmail() {
-		return email;
-	}
-
-	/**
-	 * @param email
-	 *            the email to set
-	 */
-	public void setEmail(String email) {
-		this.email = email;
 	}
 
 	/**
@@ -174,21 +156,6 @@ public class Organization extends AbstractModel {
 	 */
 	public void setFax(String fax) {
 		this.fax = fax;
-	}
-
-	/**
-	 * @return the active
-	 */
-	public int getActive() {
-		return active;
-	}
-
-	/**
-	 * @param active
-	 *            the active to set
-	 */
-	public void setActive(int active) {
-		this.active = active;
 	}
 
 	/**

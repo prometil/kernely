@@ -32,6 +32,7 @@ AppProjectAdmin = (function($){
 		vname : null,
 		vnbmembers : null,
 		vicon : null,
+		vorganization : null,
 
 		events: {
 			"click" : "selectLine",
@@ -40,11 +41,12 @@ AppProjectAdmin = (function($){
 		},
 		
 		
-		initialize: function(id, name, members, icon){
+		initialize: function(id, name, members, icon, organization){
 			this.vid = id;
 			this.vname = name;
 			this.vnbmembers = members;
 			this.vicon = icon;
+			this.vorganization = organization;
 		},
 		
 		selectLine : function(){
@@ -110,7 +112,7 @@ AppProjectAdmin = (function($){
 				    					users = 1;
 				    				}
 				    			}
-				    			var view = new ProjectAdminTableLineView(this.id, this.name, users, this.icon);
+				    			var view = new ProjectAdminTableLineView(this.id, this.name, users, this.icon, this.organization);
 				    			view.render();
 				    		});
 						}
@@ -125,7 +127,7 @@ AppProjectAdmin = (function($){
 			    					users = 1;
 			    				}			    			
 			    			}
-							var view = new ProjectAdminTableLineView(data.projectDTO.id, data.projectDTO.name, users, data.projectDTO.icon);
+							var view = new ProjectAdminTableLineView(data.projectDTO.id, data.projectDTO.name, users, data.projectDTO.icon, data.projectDTO.organization);
 			    			view.render();
 						}
 					}
@@ -194,7 +196,7 @@ AppProjectAdmin = (function($){
 		
 		editproject: function(){
 			this.showModalWindow();
-			this.viewUpdate.setFields(lineSelected.vname, lineSelected.vicon, lineSelected.vid);
+			this.viewUpdate.setFields(lineSelected.vname, lineSelected.vicon, lineSelected.vid, lineSelected.vorganization);
 			this.viewUpdate.render();
 		},
 		
@@ -222,7 +224,7 @@ AppProjectAdmin = (function($){
 		
 		iconproject: function(){
 			this.showModalWindow();
-			this.viewIcon.setFields(lineSelected.vname, lineSelected.vicon, lineSelected.vid)
+			this.viewIcon.setFields(lineSelected.vname, lineSelected.vicon, lineSelected.vid, lineSelected.vorganization)
 			this.viewIcon.render();
 		},
 		
@@ -244,7 +246,25 @@ AppProjectAdmin = (function($){
 		
 		render : function(){
 			var template = $("#popup-project-admin-create-template").html();
-			
+			$.ajax({
+				type: "GET",
+				url:"/admin/projects/combobox",
+				dataType:"json",
+				success: function(data){
+					if(data != null){
+						var option = "";
+						if (data.organizationDTO.length > 1){
+							$.each(data.organizationDTO, function(index, value){
+								option = option + '<option value="' + this.name + '">'+ this.name +'</option>' ;
+							});
+							$("#combo").append('<select name="organization-choice" id="combobox">' + option + '</select>');
+						}
+						else{
+							option = option + '<option value="' + data.organizationDTO.name + '">'+ data.organizationDTO.name +'</option>' ;
+						}
+					}
+				}
+			});
 			var view = {};
 			var html = Mustache.to_html(template, view);
 			$(this.el).html(html);
@@ -257,7 +277,7 @@ AppProjectAdmin = (function($){
 		},
 		
 		registerproject: function(){
-			var json = '{"id":"0", "name":"'+$('input[name*="name"]').val() + '"}';
+			var json = '{"id":"0", "name":"'+$('input[name*="name"]').val() +'",' +'"organization":"'+$('#combobox').val() + '"}';
 			$.ajax({
 				url:"/admin/projects/create",
 				data: json,
@@ -294,20 +314,48 @@ AppProjectAdmin = (function($){
 			"click .updateProject" : "updateproject"
 		},
 		
-		initialize:function(name, icon, id){
+		initialize:function(name, icon, id, organization){
 			this.vid = id;
 			this.vname = name;
 			this.vicon = icon;
+			this.vorganization = organization;
+			
 		},
 		
-		setFields: function(name, icon, id){
+		setFields: function(name, icon, id, organization){
 			this.vid = id;
 			this.vname = name;
 			this.vicon = icon;
+			this.vorganization = organization;
 		},
 		
 		render : function(){
 			var template = $("#popup-project-admin-update-template").html();
+			var parent = this;
+			$.ajax({
+				type: "GET",
+				url:"/admin/projects/combobox",
+				dataType:"json",
+				success: function(data){
+					if(data != null){
+						var option = "";
+						if (data.organizationDTO.length > 1){
+							$.each(data.organizationDTO, function(index, value){
+								if (this.name==parent.vorganization.name){
+									option = option + '<option value="' + this.name + '"selected="selected">'+ this.name +'</option>' ;
+								}
+								else{
+									option = option + '<option value="' + this.name + '">'+ this.name +'</option>' ;
+								}
+							});
+						}
+						else{
+							option = option + '<option value="' + data.organizationDTO.name + '">'+ data.organizationDTO.name +'</option>' ;
+						}
+						$("#combo").append('<select name="organization-choice" id="combobox">' + option + '</select>');
+					}
+				}
+			});
 			var view = {name : this.vname};
 			var html = Mustache.to_html(template, view);
 			$(this.el).html(html);
@@ -340,7 +388,7 @@ AppProjectAdmin = (function($){
 			else{
 				users = '"users":{}';
 			}
-			var json = '{"id":"'+this.vid+'", "name":"'+$('input[name*="name"]').val() + '", '+ users + ', "icon":"'+this.vicon +'"}';
+			var json = '{"id":"'+this.vid+'", "name":"'+$('input[name*="name"]').val() + '", '+ users + ', "icon":"'+this.vicon + '", "organization":"'+$('#combobox').val() +'"}';
 			console.log(json);
 			$.ajax({
 				url:"/admin/projects/create",

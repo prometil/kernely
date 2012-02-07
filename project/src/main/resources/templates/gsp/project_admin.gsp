@@ -14,6 +14,12 @@
 	<legend><%= i18n.t("project_informations") %></legend>
 	<%= i18n.t("project_name") %>: <input type="text" name="name"/><br/>
 	</fieldset>
+	<fieldset>
+	<legend><%= i18n.t("project_organizations") %></legend>
+	<div id="combo"><%= i18n.t("organization") %>:
+	
+	</div>	
+	</fieldset>
 	<br/>
 	<input type="button" value="<%= i18n.t("create") %>" class="createProject"/>
 	<span id="errors_message"></span>
@@ -25,6 +31,12 @@
 	<fieldset>
 	<legend><%= i18n.t("project_informations") %></legend>
 	<%= i18n.t("project_name") %>: <input type="text" name="name" value="{{name}}"/><br/>
+	</fieldset>
+	<fieldset>
+	<legend><%= i18n.t("project_organizations") %></legend>
+	<div id="combo"><%= i18n.t("organization") %>:
+	
+	</div>	
 	</fieldset>
 	<fieldset>
 	<legend><%= i18n.t("project_users") %></legend>

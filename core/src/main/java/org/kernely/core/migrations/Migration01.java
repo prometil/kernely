@@ -186,6 +186,7 @@ public class Migration01 extends Migration {
 		commands.add(userRole);
 		commands.add(adminRole);
 		commands.add(rhRole);
+		commands.add(projectManagerRole);
 		commands.add(clientRole);
 		
 		//the table group permision

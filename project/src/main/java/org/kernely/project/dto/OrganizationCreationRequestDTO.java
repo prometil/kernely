@@ -27,11 +27,6 @@ public class OrganizationCreationRequestDTO {
 	public String address;
 	
 	/**
-	 * The email of the organization
-	 */
-	public String email;
-	
-	/**
 	* The zip code of the address
  	*/
 	public String zip;
@@ -74,10 +69,9 @@ public class OrganizationCreationRequestDTO {
 	 * @param phone
 	 * @param fax
 	 */
-	public OrganizationCreationRequestDTO(int id, String name, String address, String email, String zip, String city, String phone, String fax, List<UserDTO> list){
+	public OrganizationCreationRequestDTO(int id, String name, String address, String zip, String city, String phone, String fax, List<UserDTO> list){
 		this.address=address;
 		this.city=city;
-		this.email=email;
 		this.fax=fax;
 		this.id=id;
 		this.name=name;

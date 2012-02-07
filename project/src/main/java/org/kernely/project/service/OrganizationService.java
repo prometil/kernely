@@ -83,7 +83,6 @@ public class OrganizationService extends AbstractService{
 		organization.setAddress(request.address);
 		organization.setZip(request.zip);
 		organization.setCity(request.city);
-		organization.setEmail(request.email);
 		organization.setFax(request.fax);
 		organization.setPhone(request.phone);
 		em.get().persist(organization);
@@ -131,7 +130,6 @@ public class OrganizationService extends AbstractService{
 		organization.setName(request.name);
 		organization.setAddress(request.address);
 		organization.setCity(request.city);
-		organization.setEmail(request.email);
 		organization.setZip(request.zip);
 		organization.setFax(request.fax);
 		organization.setPhone(request.phone);
@@ -172,5 +170,15 @@ public class OrganizationService extends AbstractService{
 		return dtos;
 	}
 	
-	
+	/**
+	 * Get an organisation by her name
+	 * @param the name of the organization
+	 * @return the organization
+	 */
+	@Transactional
+	public Organization getOrganizationByName(String name){
+		Query query = em.get().createQuery("SELECT o FROM Organization o WHERE name=:name");
+		query.setParameter("name", name);
+		return (Organization) query.getSingleResult();
+	}
 }

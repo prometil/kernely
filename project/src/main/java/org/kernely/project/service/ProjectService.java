@@ -11,6 +11,7 @@ import org.kernely.core.dto.UserDTO;
 import org.kernely.core.model.User;
 import org.kernely.core.service.AbstractService;
 import org.kernely.core.service.user.UserService;
+import org.kernely.project.dto.OrganizationDTO;
 import org.kernely.project.dto.ProjectCreationRequestDTO;
 import org.kernely.project.dto.ProjectDTO;
 import org.kernely.project.model.Project;
@@ -29,6 +30,9 @@ import com.google.inject.persist.Transactional;
 public class ProjectService extends AbstractService {
 	@Inject
 	UserService userService;
+
+	@Inject
+	OrganizationService organizationService;
 
 	private static final String ICON = "default.png";
 	protected final Logger log = LoggerFactory.getLogger(this.getClass());
@@ -49,24 +53,26 @@ public class ProjectService extends AbstractService {
 			for (User u : project.getUsers()) {
 				users.add(new UserDTO(u.getUsername(), u.isLocked(), u.getId()));
 			}
-			dtos.add(new ProjectDTO(project.getName(), project.getId(),  project.getIcon(), users));
+			dtos.add(new ProjectDTO(project.getName(), project.getId(), project.getIcon(), users, new OrganizationDTO(project.getOrganization())));
 		}
 		return dtos;
 	}
-	
+
 	/**
-	 * Get the project with the specific name 
-	 * @param name the name of the project
+	 * Get the project with the specific name
+	 * 
+	 * @param name
+	 *            the name of the project
 	 * @return the project DTO
 	 */
-	public ProjectDTO getProject(String name){
+	public ProjectDTO getProject(String name) {
 		Query query = em.get().createQuery("Select e FROM Project e WHERE name=:name");
 		query.setParameter("name", name);
-		Project proj = (Project)query.getSingleResult();
-		ProjectDTO dto = new ProjectDTO(proj.getName(), proj.getId(), proj.getIcon(), new ArrayList(proj.getUsers()));
-		return dto; 
+		Project proj = (Project) query.getSingleResult();
+		ProjectDTO dto = new ProjectDTO(proj.getName(), proj.getId(), proj.getIcon(), new ArrayList(proj.getUsers()), new OrganizationDTO(proj.getOrganization()));
+		return dto;
 	}
-	
+
 	/**
 	 * Create a new Project in database
 	 * 
@@ -80,7 +86,7 @@ public class ProjectService extends AbstractService {
 			throw new IllegalArgumentException("Request cannot be null ");
 		}
 
-		if (request.name==null) {
+		if (request.name == null) {
 			throw new IllegalArgumentException("Project name cannot be null ");
 		}
 
@@ -98,14 +104,16 @@ public class ProjectService extends AbstractService {
 		Project project = new Project();
 		project.setName(request.name.trim());
 		project.setIcon(ICON);
+		project.setOrganization(organizationService.getOrganizationByName(request.organization));
 		em.get().persist(project);
 	}
-	
+
 	/**
 	 * Update an existing project in database
 	 * 
 	 * @param request
-	 *            The request, containing project name and id of the needed project
+	 *            The request, containing project name and id of the needed
+	 *            project
 	 */
 	@SuppressWarnings("unchecked")
 	@Transactional
@@ -114,7 +122,7 @@ public class ProjectService extends AbstractService {
 			throw new IllegalArgumentException("Request cannot be null ");
 		}
 
-		if (request.name==null) {
+		if (request.name == null) {
 			throw new IllegalArgumentException("Project name cannot be null ");
 		}
 
@@ -138,8 +146,8 @@ public class ProjectService extends AbstractService {
 		}
 		Project project = em.get().find(Project.class, request.id);
 		project.setName(request.name);
-		project.setIcon(request.icon); 
-		
+		project.setIcon(request.icon);
+		project.setOrganization(organizationService.getOrganizationByName(request.organization));
 		if (users == null) {
 			project.getUsers().clear();
 		} else {
@@ -149,11 +157,12 @@ public class ProjectService extends AbstractService {
 
 	/**
 	 * Update the project icon
+	 * 
 	 * @param projectName
 	 * @param projectIcon
 	 */
 	@Transactional
-	public void updateProjectIcon(String projectName, String projectIcon){
+	public void updateProjectIcon(String projectName, String projectIcon) {
 		ProjectDTO proj = this.getProject(projectName);
 		Project project = em.get().find(Project.class, proj.id);
 		project.setIcon(projectIcon);
@@ -187,7 +196,6 @@ public class ProjectService extends AbstractService {
 		}
 		return dtos;
 	}
-	
 
 	/**
 	 * Returns the total of projects for the current user
@@ -205,5 +213,5 @@ public class ProjectService extends AbstractService {
 		}
 		return Long.valueOf(0);
 	}
-	
+
 }

@@ -26,27 +26,31 @@ public class Migration01 extends Migration {
 	 */
 	@Override
 	public List<Command> getList() {
-		//the table kernely_project
 		ArrayList<Command> commands = new ArrayList<Command>();
-		CreateTable project = CreateTable.name("kernely_project");
-		project.column("id", "int primary key");
-		project.column("name", "varchar(50)");
-		project.column("icon", "varchar(100)");
-		commands.add(project);
 		
 		//the table kernely_organization
 		CreateTable organization = CreateTable.name("kernely_organization");
 		organization.column("id", "int primary key");
 		organization.column("name", "varchar(50)");
 		organization.column("address", "varchar(200)");
-		organization.column("email", "varchar(50)");
 		organization.column("zip", "varchar(5)");
 		organization.column("city", "varchar(50)");
 		organization.column("phone", "varchar(10)");
 		organization.column("fax", "varchar(10)");
-		organization.column("active", "int");
 		
 		commands.add(organization);
+		
+		//the table kernely_project
+		CreateTable project = CreateTable.name("kernely_project");
+		project.column("id", "int primary key");
+		project.column("name", "varchar(50)");
+		project.column("icon", "varchar(100)");
+		project.column("organization_id", "int");
+		RawSql projectForeignKey= new RawSql("ALTER TABLE kernely_project ADD CONSTRAINT fk_organization_id FOREIGN KEY (organization_id) REFERENCES kernely_organization (id)");
+		
+		commands.add(project);
+		commands.add(projectForeignKey);
+
 		
 		//  the table user_project 
 		CreateTable userProject = CreateTable.name("kernely_user_project"); 
