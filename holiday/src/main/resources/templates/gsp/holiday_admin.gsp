@@ -9,6 +9,7 @@
 <script type="text/html" id="table-header">
 <tr>
 	<th><%= i18n.t("holiday_name") %></th>
+	<th><%= i18n.t("unlimited_holidays") %></th>
 	<th><%= i18n.t("holiday_quantity") %></th>
 	<th><%= i18n.t("holiday_each") %></th>
 	<th><%= i18n.t("holiday_effective_month") %></th>
@@ -51,6 +52,8 @@
 	<legend><%= i18n.t("holiday_informations") %></legend>
 		<div id="main_create_div">
 			<%= i18n.t("holiday_name") %>: <input type="text" name="type" value="{{type}}" id="holiday-type"/><br/><br/>
+			<input type="checkbox" name="unlimited" id="holiday-unlimited"><%= i18n.t("unlimited_holidays") %></input>
+			<br/><br/>
 			<input type="text" name="quantity" value="{{quantity}}" id="holiday-quantity" size="2" maxlength="4" /> <%= i18n.t("holiday_days_every") %>
 			<select name="unity" id="unity">
 				<option value="12"><%= i18n.t("month") %></option>
@@ -72,7 +75,7 @@
 				<option value="10"><%= i18n.t("november") %></option>
 				<option value="11"><%= i18n.t("december") %></option>
 			</select>
-			<br/><input name="anticipated" type="checkbox"><%= i18n.t("can_be_anticipated") %></input>
+			<br/><input id="anticipated" name="anticipated" type="checkbox"><%= i18n.t("can_be_anticipated") %></input>
 			<br/><br/><input type="text" id="color" name="color" value="#000000" />
 		</div>
 		<div id="colorpicker"></div>
@@ -90,6 +93,8 @@
 		<legend><%= i18n.t("holiday_informations") %></legend>
 		<div id="main_create_div">
 			<%= i18n.t("holiday_name") %>: <input type="text" name="type" value="{{type}}" id="holiday-type" /><br/><br/>
+			<input type="checkbox" name="unlimited" id="holiday-unlimited"><%= i18n.t("unlimited_holidays") %></input>
+			<br/><br/>
 			<input type="text" name="quantity" value="{{quantity}}" id="holiday-quantity" size="2" maxlength="4" /> <%= i18n.t("holiday_days_every") %>
 			<select name="unity" id="unity">
 				<option value="12"><%= i18n.t("month") %></option>

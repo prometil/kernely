@@ -68,7 +68,7 @@ public class HolidayService extends AbstractService {
 		List<HolidayDTO> dtos = new ArrayList<HolidayDTO>();
 		log.debug("HolidayService found {} holiday types", collection.size());
 		for (HolidayType holiday : collection) {
-			dtos.add(new HolidayDTO(holiday.getName(), holiday.getQuantity(), holiday.getPeriodUnit(), holiday.getId(), holiday.isAnticipated(),
+			dtos.add(new HolidayDTO(holiday.getName(), holiday.isUnlimited(), holiday.getQuantity(), holiday.getPeriodUnit(), holiday.getId(), holiday.isAnticipated(),
 					holiday.getEffectiveMonth(), holiday.getColor()));
 			log.debug("Creation of Holiday Type {}", holiday.getName());
 		}
@@ -87,7 +87,7 @@ public class HolidayService extends AbstractService {
 		Query query = em.get().createQuery("SELECT  h from HolidayType h WHERE  h.id=:id");
 		query.setParameter("id", id);
 		HolidayType holiday = (HolidayType) query.getSingleResult();
-		HolidayDTO hdto = new HolidayDTO(holiday.getName(), holiday.getQuantity(), holiday.getPeriodUnit(), holiday.getId(), holiday.isAnticipated(),
+		HolidayDTO hdto = new HolidayDTO(holiday.getName(), holiday.isUnlimited(), holiday.getQuantity(), holiday.getPeriodUnit(), holiday.getId(), holiday.isAnticipated(),
 				holiday.getEffectiveMonth(), holiday.getColor());
 
 		return hdto;
@@ -134,10 +134,13 @@ public class HolidayService extends AbstractService {
 
 		HolidayType holiday = new HolidayType();
 		holiday.setName(request.type.trim());
-		holiday.setQuantity(request.quantity);
-		holiday.setPeriodUnit(request.unity);
-		holiday.setEffectiveMonth(request.effectiveMonth);
-		holiday.setAnticipated(request.anticipation);
+		holiday.setUnlimited(request.unlimited);
+		if (! request.unlimited){ // These fields are useless if the type is unlimited
+			holiday.setQuantity(request.quantity);
+			holiday.setPeriodUnit(request.unity);
+			holiday.setEffectiveMonth(request.effectiveMonth);
+			holiday.setAnticipated(request.anticipation);
+		}
 		holiday.setColor(request.color);
 
 		em.get().persist(holiday);
@@ -205,10 +208,15 @@ public class HolidayService extends AbstractService {
 		}
 
 		holiday.setName(request.type);
-		holiday.setQuantity(request.quantity);
-		holiday.setPeriodUnit(request.unity);
-		holiday.setEffectiveMonth(request.effectiveMonth);
-		holiday.setAnticipated(request.anticipation);
+		
+		holiday.setUnlimited(request.unlimited);
+		if (! request.unlimited){ // These fields are useless if the type is unlimited
+			holiday.setQuantity(request.quantity);
+			holiday.setPeriodUnit(request.unity);
+			holiday.setEffectiveMonth(request.effectiveMonth);
+			holiday.setAnticipated(request.anticipation);
+		}
+
 		holiday.setColor(request.color);
 		em.get().merge(holiday);
 	}

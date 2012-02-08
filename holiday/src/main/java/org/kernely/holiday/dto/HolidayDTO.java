@@ -44,6 +44,12 @@ public class HolidayDTO {
 	public String name;
 	
 	/**
+	 * An unlimited holiday type should not have quantity or period unit set.
+	 * Unlimited holiday types are for example maternity leave or sick leave.
+	 */
+	public boolean unlimited;
+	
+	/**
 	 * the quantity of day earn by month / year
 	 */
 	public int quantity;
@@ -84,11 +90,12 @@ public class HolidayDTO {
 	 * @param anticipation
 	 * @param effectiveMonth
 	 */
-	public HolidayDTO(String name, int quantity, int periodUnit, int id, boolean anticipation, int effectiveMonth, String color) {
+	public HolidayDTO(String name, boolean unlimited, int quantity, int periodUnit, int id, boolean anticipation, int effectiveMonth, String color) {
 		super();
 		
 		this.id = id;
 		this.name = name;
+		this.unlimited = unlimited;
 		this.quantity = quantity;
 		this.periodUnit = periodUnit;
 		this.anticipation = anticipation;
