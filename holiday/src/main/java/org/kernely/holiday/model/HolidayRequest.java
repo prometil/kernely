@@ -52,6 +52,7 @@ public class HolidayRequest extends AbstractModel {
 	public static final int DENIED_STATUS = 0;
 	public static final int ACCEPTED_STATUS = 1;
 	public static final int PENDING_STATUS = 2;
+	public static final int PAST_STATUS = 3;
 	
 	
 	@Id

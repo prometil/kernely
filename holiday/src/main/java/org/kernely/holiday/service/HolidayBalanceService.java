@@ -251,8 +251,6 @@ public class HolidayBalanceService extends AbstractService {
 
 	/**
 	 * Remove days or half days to the available balance.
-	 */
-	/**
 	 * Verify if the balance has the amount of days.
 	 * 
 	 * @param holidayBalanceId
@@ -290,11 +288,14 @@ public class HolidayBalanceService extends AbstractService {
 	 */
 	@Transactional
 	public void removePastHolidays() {
-		List<HolidayRequestDTO> requests = holidayRequestService.getAllRequestsWithStatus(HolidayRequest.ACCEPTED_STATUS);
 		
 		log.debug("Removing past holidays");
 		
-		for (HolidayRequestDTO request : requests){
+		List<HolidayRequestDTO> acceptedRequests = holidayRequestService.getAllRequestsWithStatus(HolidayRequest.ACCEPTED_STATUS);
+		
+		log.debug("{} requests with accepted status.",acceptedRequests.size());
+		
+		for (HolidayRequestDTO request : acceptedRequests){
 			
 			// Days for each type of holidays
 			Map<String,Float> days = new HashMap<String,Float>();
@@ -307,11 +308,10 @@ public class HolidayBalanceService extends AbstractService {
 			DateTimeZone zoneUTC = DateTimeZone.UTC;
 			DateTime today = new DateTime().withZone(zoneUTC);
 
-			log.debug("Begin: "+beginTime.withZone(DateTimeZone.UTC));
-			log.debug("Today: "+today.withZone(DateTimeZone.UTC).toDateMidnight());
-
-			if (today.withZone(DateTimeZone.UTC).toDateMidnight().isEqual(beginTime.withZone(DateTimeZone.UTC).plusHours(1).toDateMidnight())){
-
+			log.debug("Begin: {}",beginTime.withZone(DateTimeZone.UTC));
+			log.debug("Today: {}",today.withZone(DateTimeZone.UTC).toDateMidnight());
+			// Update balances by removing days of accepted holidays that have been accepted and that are passed
+			if (today.withZone(DateTimeZone.UTC).toDateMidnight().isAfter(beginTime.withZone(DateTimeZone.UTC).toDateMidnight())){
 				// Calculate the amount of days of this request
 				for (HolidayDetailDTO detail : request.details){
 
@@ -327,12 +327,17 @@ public class HolidayBalanceService extends AbstractService {
 						days.put(detail.type, Float.valueOf(days.get(detail.type) + HALF_DAY));
 					}
 				}
+				
+				// Consider this requests as "past"
+				holidayRequestService.archiveRequest(request.id);
+
 			}
 
+			// Remove days from all concerned balances
 			for (Entry<String, Float> set : days.entrySet()){
 				removeAvailableDays(balances.get(set.getKey()), days.get(set.getKey()));
 			}
-
+			
 		}
 	}
 

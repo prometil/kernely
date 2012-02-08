@@ -472,6 +472,21 @@ public class HolidayRequestService extends AbstractService {
 		em.get().merge(request);
 		log.debug("Holiday request with id {} has been denied", idRequest);
 	}
+	
+	/**
+	 * Archive a request (set it as "past")
+	 * 
+	 * @param idRequest
+	 *            The request to archive
+	 */
+	@Transactional
+	public void archiveRequest(int idRequest) {
+		log.debug("ARCHIVE : Retrieving holiday request with id {}", idRequest);
+		HolidayRequest request = em.get().find(HolidayRequest.class, idRequest);
+		request.setStatus(HolidayRequest.PAST_STATUS);
+		em.get().merge(request);
+		log.debug("Holiday request with id {} has been archived", idRequest);
+	}
 
 	/**
 	 * Cancel a waiting request

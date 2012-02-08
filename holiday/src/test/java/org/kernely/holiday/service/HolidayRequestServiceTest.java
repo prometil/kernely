@@ -343,6 +343,30 @@ public class HolidayRequestServiceTest extends AbstractServiceTest{
 	}
 	
 	@Test
+	public void archiveRequestTest(){
+		this.createUserRoleForTest();
+		UserDTO user1DTO = this.createUser1ForTest();
+		
+		HolidayDTO type = this.createHolidayTypeForTest();
+		
+		authenticateAs(USERNAME_USER1);
+		
+		this.createHolidayRequestForUser(user1DTO.id, type.id);
+
+		List<HolidayRequestDTO> dtos = holidayRequestService.getAllRequestsWithStatusForCurrentUser(HolidayRequest.PENDING_STATUS);
+		assertEquals(1, dtos.size());
+		
+		holidayRequestService.archiveRequest(dtos.get(0).id);
+		
+		dtos = holidayRequestService.getAllRequestsWithStatusForCurrentUser(HolidayRequest.PENDING_STATUS);
+		dtos.addAll(holidayRequestService.getAllRequestsWithStatusForCurrentUser(HolidayRequest.DENIED_STATUS));
+		dtos.addAll(holidayRequestService.getAllRequestsWithStatusForCurrentUser(HolidayRequest.ACCEPTED_STATUS));
+		assertEquals(0, dtos.size());
+		assertEquals(1,holidayRequestService.getAllRequestsWithStatusForCurrentUser(HolidayRequest.PAST_STATUS).size());
+
+	}
+	
+	@Test
 	public void getCalendarIntervalTest(){
 		this.createUserRoleForTest();
 		this.createUser1ForTest();

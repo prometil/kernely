@@ -57,6 +57,7 @@ public class HolidayBalanceServiceTest extends AbstractServiceTest {
 	private static final String USERNAME= "username";
 	private static final int QUANTITY = 3;
 	
+	private static final Date DATE_YESTERDAY = new DateTime().minusDays(1).withZone(DateTimeZone.UTC).toDate();
 	private static final Date DATE_TODAY = new DateTime().withZone(DateTimeZone.UTC).toDate();
 	private static final Date DATE_TOMORROW = new DateTime().plusDays(1).withZone(DateTimeZone.UTC).toDate();
 
@@ -401,6 +402,127 @@ public class HolidayBalanceServiceTest extends AbstractServiceTest {
 		
 		balance = holidayBalanceService.getHolidayBalance(user.id, type.id);
 		assertEquals(QUANTITY - 1.5,balance.availableBalance,0); // The user has take "today" complete and "tomorrow" morning
+		assertEquals(0,balance.futureBalance,0);
+	}
+	
+	@Test
+	public void removePastHolidaysTwoTimes(){
+		HolidayDTO type = createHolidayTypeForTest();
+		UserDTO user = createUserForTest();
+		
+		List<UserDTO> managed = new ArrayList<UserDTO>();
+		managed.add(user);
+		userService.updateManager(USERNAME, managed);
+
+		authenticateAs(USERNAME);
+		holidayBalanceService.createHolidayBalance(user.id, type.id);
+		HolidayBalanceDTO balance = holidayBalanceService.getHolidayBalance(user.id, type.id);
+
+		assertEquals(0,balance.availableBalance,0);
+		assertEquals(0,balance.futureBalance,0);
+
+		// Get some holidays
+		holidayBalanceService.incrementBalance(balance.id);
+
+		balance = holidayBalanceService.getHolidayBalance(user.id, type.id);
+		assertEquals(QUANTITY,balance.availableBalance,0);
+		assertEquals(0,balance.futureBalance,0);
+		
+		HolidayDetailCreationRequestDTO detailDTO1 = new HolidayDetailCreationRequestDTO();
+		HolidayDetailCreationRequestDTO detailDTO2 = new HolidayDetailCreationRequestDTO();
+
+		DateTimeFormatter fmt = DateTimeFormat.forPattern("MM/dd/yyyy");
+		detailDTO1.day = new DateTime(DATE_TODAY).toString(fmt);
+		detailDTO2.day = new DateTime(DATE_TOMORROW).toString(fmt);
+
+		detailDTO1.typeId = type.id;
+		detailDTO2.typeId = type.id;
+		
+		detailDTO1.am = true;
+		detailDTO1.pm = true;
+		
+		detailDTO2.am = true;
+
+		List<HolidayDetailCreationRequestDTO> list = new ArrayList<HolidayDetailCreationRequestDTO>();
+		list.add(detailDTO1);
+		list.add(detailDTO2);
+
+		HolidayRequestCreationRequestDTO request = new HolidayRequestCreationRequestDTO();
+		request.details = list;
+		request.requesterComment = "";
+
+		requestService.registerRequestAndDetails(request);
+		
+		// Get and accept request
+		List<HolidayRequestDTO> dtos = requestService.getAllRequestsWithStatus(HolidayRequest.PENDING_STATUS);
+		requestService.acceptRequest(dtos.get(0).id);
+
+		// Remove holidays
+		holidayBalanceService.removePastHolidays();
+		
+		balance = holidayBalanceService.getHolidayBalance(user.id, type.id);
+		assertEquals(QUANTITY - 1.5,balance.availableBalance,0); // The user has take "today" complete and "tomorrow" morning
+		assertEquals(0,balance.futureBalance,0);
+		
+		// Remove holidays a second time
+		holidayBalanceService.removePastHolidays();
+		
+		balance = holidayBalanceService.getHolidayBalance(user.id, type.id);
+		assertEquals(QUANTITY - 1.5,balance.availableBalance,0); // Nothing should have change
+		assertEquals(0,balance.futureBalance,0);
+	}
+	
+	@Test
+	public void notRemoveTomorrowRequest(){
+		HolidayDTO type = createHolidayTypeForTest();
+		UserDTO user = createUserForTest();
+		
+		List<UserDTO> managed = new ArrayList<UserDTO>();
+		managed.add(user);
+		userService.updateManager(USERNAME, managed);
+
+		authenticateAs(USERNAME);
+		holidayBalanceService.createHolidayBalance(user.id, type.id);
+		HolidayBalanceDTO balance = holidayBalanceService.getHolidayBalance(user.id, type.id);
+
+		assertEquals(0,balance.availableBalance,0);
+		assertEquals(0,balance.futureBalance,0);
+
+		// Get some holidays
+		holidayBalanceService.incrementBalance(balance.id);
+
+		balance = holidayBalanceService.getHolidayBalance(user.id, type.id);
+		assertEquals(QUANTITY,balance.availableBalance,0);
+		assertEquals(0,balance.futureBalance,0);
+		
+		HolidayDetailCreationRequestDTO detailDTO1 = new HolidayDetailCreationRequestDTO();
+		HolidayDetailCreationRequestDTO detailDTO2 = new HolidayDetailCreationRequestDTO();
+
+		DateTimeFormatter fmt = DateTimeFormat.forPattern("MM/dd/yyyy");
+		detailDTO1.day = new DateTime(DATE_TOMORROW).toString(fmt);
+
+		detailDTO1.typeId = type.id;
+		
+		detailDTO1.am = true;
+		
+		List<HolidayDetailCreationRequestDTO> list = new ArrayList<HolidayDetailCreationRequestDTO>();
+		list.add(detailDTO1);
+
+		HolidayRequestCreationRequestDTO request = new HolidayRequestCreationRequestDTO();
+		request.details = list;
+		request.requesterComment = "";
+
+		requestService.registerRequestAndDetails(request);
+		
+		// Get and accept request
+		List<HolidayRequestDTO> dtos = requestService.getAllRequestsWithStatus(HolidayRequest.PENDING_STATUS);
+		requestService.acceptRequest(dtos.get(0).id);
+
+		// Remove holidays
+		holidayBalanceService.removePastHolidays();
+		
+		balance = holidayBalanceService.getHolidayBalance(user.id, type.id);
+		assertEquals(QUANTITY,balance.availableBalance,0); // Nothing should have been decremented
 		assertEquals(0,balance.futureBalance,0);
 	}
 	
