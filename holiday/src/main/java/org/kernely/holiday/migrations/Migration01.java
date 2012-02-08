@@ -31,6 +31,7 @@ public class Migration01 extends Migration {
 		CreateTable holidayType = CreateTable.name("kernely_holiday_type");
 		holidayType.column("id", "int primary key");
 		holidayType.column("name", "varchar(50)");
+		holidayType.column("unlimited", "bool");
 		holidayType.column("quantity", "int");
 		holidayType.column("period_unit", "int");
 		holidayType.column("effective_month", "int");

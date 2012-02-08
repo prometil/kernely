@@ -152,14 +152,14 @@ public class HolidayManagerRequestController extends AbstractController {
 			HolidayDetailDTO lastHoliday = hddto.get(0);
 			
 			for (HolidayDetailDTO holiday : hddto){
-				if (holiday.day.equals(firstHoliday.day) && (holiday.am == true)){
+				if (holiday.day.equals(firstHoliday.day) && (holiday.am)){
 						firstHoliday = holiday;
 				}
 				if (holiday.day.before(firstDay)){
 					firstDay = holiday.day;
 					firstHoliday = holiday;
 				}
-				if (holiday.day.equals(lastHoliday.day) && (holiday.pm == true)){
+				if (holiday.day.equals(lastHoliday.day) && (holiday.pm)){
 						lastHoliday = holiday;
 				}
 				if (holiday.day.after(lastDay)){

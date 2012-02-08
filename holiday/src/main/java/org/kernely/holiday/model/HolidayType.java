@@ -55,6 +55,8 @@ public class HolidayType extends AbstractModel {
 	
 	private boolean anticipated;
 	
+	private boolean unlimited;
+	
 	@OneToMany(mappedBy = "holidayType")
 	private Set<HolidayBalance> balances;
 	
@@ -194,6 +196,20 @@ public class HolidayType extends AbstractModel {
 	 */
 	public void setColor(String color) {
 		this.color = color;
+	}
+
+	/**
+	 * @return the unlimited
+	 */
+	public boolean isUnlimited() {
+		return unlimited;
+	}
+
+	/**
+	 * @param unlimited the unlimited to set
+	 */
+	public void setUnlimited(boolean unlimited) {
+		this.unlimited = unlimited;
 	}
 	
 	
