@@ -250,7 +250,7 @@ AppHolidayRequest = (function($){
 		colorTheWorld : function(event){
 			if(currentCellPickerSelected != null && !this.isHeader && this.available == "true"){
 				if(this.selectedBy != currentCellPickerSelected.idType){
-					if(currentCellPickerSelected.nbAvailable > 0){
+					if(currentCellPickerSelected.nbAvailable >= 0.5){
 						// Color the cell with the Balance color
 						$(this.el).css('background-color', currentCellPickerSelected.color);
 						// decrease balance's available days
@@ -383,12 +383,12 @@ AppHolidayRequest = (function($){
 		},
 		
 		decrease: function(){
-			this.nbAvailable -= 0.5;
+			this.nbAvailable = Math.round((this.nbAvailable - 0.5)*10)/10;
 			this.updateCounter();
 		},
 		
 		increase: function(){
-			this.nbAvailable += 0.5;
+			this.nbAvailable = Math.round((this.nbAvailable + 0.5)*10)/10;			
 			this.updateCounter();
 		},
 		

@@ -131,6 +131,7 @@ public class HolidayBalanceService extends AbstractService {
 		balance.setUser(user);
 		balance.setHolidayType(type);
 		balance.setAvailableBalance(0);
+		balance.setAvailableBalanceUpdated(0);
 		balance.setFutureBalance(0);
 		DateTimeZone zoneUTC = DateTimeZone.UTC;
 		balance.setLastUpdate(new DateTime().withZone(zoneUTC).toDate());
@@ -190,13 +191,16 @@ public class HolidayBalanceService extends AbstractService {
 		quantity = quantity * balance.getHolidayType().getPeriodUnit();
 
 		int newBalance;
+		int newBalanceUpdated;
 
 		// If there is no effective month of the type of holidays, the available balance is incremented, otherwise the future balance is incremented.
 		if (balance.getHolidayType().getEffectiveMonth() == HolidayType.ALL_MONTH) {
 			newBalance = balance.getAvailableBalance() + quantity;
+			newBalanceUpdated = balance.getAvailableBalanceUpdated() + quantity;
 			log.debug("Holiday (id:{}) had available balance: {}", holidayBalanceId, balance.getAvailableBalance());
 			log.debug("Holiday (id:{}) incremented by {}", holidayBalanceId, quantity);
 			balance.setAvailableBalance(newBalance);
+			balance.setAvailableBalanceUpdated(newBalanceUpdated);
 			log.debug("Holiday (id:{}) new balance: {}", holidayBalanceId, balance.getAvailableBalance());
 
 		} else {
@@ -228,6 +232,7 @@ public class HolidayBalanceService extends AbstractService {
 		HolidayBalance balance = em.get().find(HolidayBalance.class, holidayBalanceId);
 
 		balance.setAvailableBalance(balance.getAvailableBalance() + balance.getFutureBalance());
+		balance.setAvailableBalanceUpdated(balance.getAvailableBalanceUpdated() + balance.getFutureBalance());
 
 		// Reset future balance
 		balance.setFutureBalance(0);

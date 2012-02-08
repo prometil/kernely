@@ -42,6 +42,7 @@ public class Migration01 extends Migration {
 		CreateTable holidayBalance = CreateTable.name("kernely_holiday_balance");
 		holidayBalance.column("id", "int primary key");
 		holidayBalance.column("available_balance", "int");
+		holidayBalance.column("available_balance_updated", "int");
 		holidayBalance.column("future_balance", "int");
 		holidayBalance.column("last_update", "timestamp");
 		holidayBalance.column("holiday_type_id", "int");

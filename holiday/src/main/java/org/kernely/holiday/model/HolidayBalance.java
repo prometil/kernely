@@ -52,6 +52,9 @@ public class HolidayBalance extends AbstractModel {
 
 	@Column(name = "available_balance")
 	private int availableBalance;
+	
+	@Column(name = "available_balance_updated")
+	private int availableBalanceUpdated;
 
 	@Column(name = "future_balance")
 	private int futureBalance;
@@ -99,6 +102,20 @@ public class HolidayBalance extends AbstractModel {
 	 */
 	public void setAvailableBalance(int availableBalance) {
 		this.availableBalance = availableBalance;
+	}
+
+	/**
+	 * @return the availableBalanceUpdated
+	 */
+	public int getAvailableBalanceUpdated() {
+		return availableBalanceUpdated;
+	}
+
+	/**
+	 * @param availableBalanceUpdated the availableBalanceUpdated to set
+	 */
+	public void setAvailableBalanceUpdated(int availableBalanceUpdated) {
+		this.availableBalanceUpdated = availableBalanceUpdated;
 	}
 
 	/**
