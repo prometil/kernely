@@ -36,7 +36,7 @@ public class CalendarBalanceDetailDTO {
 	/**
 	 * Constructor
 	 * @param name
-	 * @param available
+	 * @param available days. If set to -1, the balance is unlimited
 	 * @param color
 	 * @param idType
 	 */

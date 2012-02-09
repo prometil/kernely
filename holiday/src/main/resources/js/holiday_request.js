@@ -250,7 +250,7 @@ AppHolidayRequest = (function($){
 		colorTheWorld : function(event){
 			if(currentCellPickerSelected != null && !this.isHeader && this.available == "true"){
 				if(this.selectedBy != currentCellPickerSelected.idType){
-					if(currentCellPickerSelected.nbAvailable > 0){
+					if((currentCellPickerSelected.nbAvailable == -1) || (currentCellPickerSelected.nbAvailable > 0)){
 						// Color the cell with the Balance color
 						$(this.el).css('background-color', currentCellPickerSelected.color);
 						// decrease balance's available days
@@ -364,8 +364,15 @@ AppHolidayRequest = (function($){
 		},
 		
 		render : function(){
-			var template = $("#balance-cell-template").html();
-            var view = {name: this.name, available: this.nbAvailable};
+			var template;
+            var view;
+			if (this.nbAvailable == -1){
+				template = $("#balance-unlimited-cell-template").html();
+				view =  {name: this.name};
+			} else {
+				template = $("#balance-cell-template").html();
+				view =  {name: this.name, available: this.nbAvailable};
+			}
             var html = Mustache.to_html(template, view);
             $(this.el).html(html);
             $(this.el).css('background-color', this.color);
@@ -383,13 +390,17 @@ AppHolidayRequest = (function($){
 		},
 		
 		decrease: function(){
-			this.nbAvailable -= 0.5;
-			this.updateCounter();
+			if (this.nbAvailable != -1){ // Unlimited balances are not modified
+				this.nbAvailable -= 0.5;
+				this.updateCounter();
+			}
 		},
 		
 		increase: function(){
-			this.nbAvailable += 0.5;
-			this.updateCounter();
+			if (this.nbAvailable != -1){ // Unlimited balances are not modified
+				this.nbAvailable += 0.5;
+				this.updateCounter();
+			}
 		},
 		
 		updateCounter : function(){
