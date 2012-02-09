@@ -750,9 +750,17 @@ public class HolidayRequestService extends AbstractService {
 			List<HolidayBalance> balance = (List<HolidayBalance>) balanceRequest.getResultList();
 
 			List<CalendarBalanceDetailDTO> details = new ArrayList<CalendarBalanceDetailDTO>();
+			
+			float availableDays;
+			
 			for (HolidayBalance b : balance) {
-				BigDecimal avail = new BigDecimal(((float)b.getAvailableBalanceUpdated())/12.0F).setScale(1, BigDecimal.ROUND_HALF_UP);
-				details.add(new CalendarBalanceDetailDTO(b.getHolidayType().getName(), avail.floatValue() , b.getHolidayType().getColor(), b
+				if (b.getHolidayType().isUnlimited()){
+					availableDays = -1F;
+				} else {
+					BigDecimal avail = new BigDecimal(((float)b.getAvailableBalanceUpdated())/12.0F).setScale(1, BigDecimal.ROUND_HALF_UP);
+					availableDays = avail.floatValue();
+				}
+				details.add(new CalendarBalanceDetailDTO(b.getHolidayType().getName(), availableDays, b.getHolidayType().getColor(), b
 						.getHolidayType().getId()));
 			}
 			return details;

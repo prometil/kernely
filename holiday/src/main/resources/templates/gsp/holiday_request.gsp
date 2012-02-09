@@ -5,6 +5,10 @@
 		<%= i18n.t("holiday_balance_available") %>: <span class="available-cpt">{{available}}</span>
 </script>
 
+<script type="text/html" id="balance-unlimited-cell-template">
+	<span id="balance-cell-name">{{name}}</span>
+</script>
+
 <script type="text/html" id="locale-lang"><%= i18n.t("locale_lang") %></script>
 
 <script type="text/html" id="locale-country"><%= i18n.t("locale_country") %></script>
