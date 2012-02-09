@@ -238,6 +238,30 @@ public class HolidayBalanceServiceTest extends AbstractServiceTest {
 		assertEquals(0, balance.futureBalance, 0);
 	}
 	
+
+	@Test
+	public void incrementUnlimitedMonthlyHolidayBalance() {
+		UserDTO user = createUserForTest();
+
+		HolidayCreationRequestDTO request = new HolidayCreationRequestDTO();
+		request.type = TEST_STRING;
+		request.unlimited = true;
+		HolidayDTO unlimitedHoliday = holidayService.createHoliday(request);
+
+		HolidayBalanceDTO balance = holidayBalanceService.getHolidayBalance(user.id, unlimitedHoliday.id);
+
+		assertEquals(0, balance.availableBalance, 0);
+		assertEquals(0, balance.availableBalanceUpdated, 0);
+		assertEquals(0, balance.futureBalance, 0);
+		
+		holidayBalanceService.incrementBalance(balance.id);
+
+		balance = holidayBalanceService.getHolidayBalance(user.id, unlimitedHoliday.id);
+
+		assertEquals(0, balance.availableBalance, 0);
+		assertEquals(0, balance.availableBalanceUpdated, 0);
+		assertEquals(0, balance.futureBalance, 0);
+	}
 	
 	@Test
 	public void transferFutureToAvailableBalance() {

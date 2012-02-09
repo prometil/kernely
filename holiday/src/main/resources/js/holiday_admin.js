@@ -86,6 +86,8 @@ AppHolidayAdmin = (function($){
 			var stringmonth = $("#"+this.veffectivemonth+"-month-template").html();
 
 			var stringanticipation ="Undefined";
+			var stringunlimited ="Undefined";
+
 			if (parseInt(this.veffectivemonth) == 12){
 				stringanticipation = "-";
 			} else if (this.vanticipation == "true") {
@@ -93,9 +95,14 @@ AppHolidayAdmin = (function($){
 			} else {
 				stringanticipation = $("#no-template").html();
 			}
-
+			if (this.vunlimited == "true"){
+				stringunlimited = $("#yes-template").html()
+				p
+			} else {
+				stringunlimited = $("#no-template").html();
+			}
 			
-			var view = {type : this.vtype, unlimited:this.vunlimited, quantity: this.vquantity, unity : stringunity, effectivemonth: stringmonth, anticipation: stringanticipation};
+			var view = {type : this.vtype, unlimited:stringunlimited, quantity: this.vquantity, unity : stringunity, effectivemonth: stringmonth, anticipation: stringanticipation};
 			var html = Mustache.to_html(template, view);
 			
 			$(this.el).html(html);
