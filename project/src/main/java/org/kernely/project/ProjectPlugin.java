@@ -19,7 +19,6 @@ public class ProjectPlugin extends AbstractPlugin {
 	/**
 	 * Default constructor
 	 */
-	@SuppressWarnings({ "unchecked" })
 	public ProjectPlugin() {
 		super();
 		registerName(NAME);
