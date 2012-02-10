@@ -6,6 +6,7 @@ import java.util.List;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.joda.time.DateTime;
 import org.kernely.holiday.model.HolidayRequest;
 import org.kernely.holiday.model.HolidayRequestDetail;
 
@@ -16,6 +17,7 @@ import org.kernely.holiday.model.HolidayRequestDetail;
  */
 @XmlRootElement
 public class HolidayRequestDTO {
+	private final static String dateFormat = "MM/dd/yyyy";
 
 	/**
 	 * The id of the holiday request DTO 
@@ -23,14 +25,24 @@ public class HolidayRequestDTO {
 	public int id;
 	
 	/**
-	 * The begin date of holiday
+	 * The begin date of the request
 	 */
 	public Date beginDate;
 	
 	/**
-	 * The end date of holiday
+	 * The end date of the request
 	 */
 	public Date endDate;
+	
+	/**
+	 * The begin date stringified of holiday
+	 */
+	public String beginDateString;
+	
+	/**
+	 * The end date stringified of holiday
+	 */
+	public String endDateString;
 	
 	/**
 	 * The status of the request
@@ -77,6 +89,8 @@ public class HolidayRequestDTO {
 		this.id = request.getId();
 		this.beginDate = request.getBeginDate();
 		this.endDate = request.getEndDate();
+		this.beginDateString = new DateTime(request.getBeginDate()).toString(dateFormat);
+		this.endDateString = new DateTime(request.getEndDate()).toString(dateFormat);
 		this.status = request.getStatus();
 		this.requesterComment = request.getRequesterComment();
 		this.user = request.getUser().getUsername();
