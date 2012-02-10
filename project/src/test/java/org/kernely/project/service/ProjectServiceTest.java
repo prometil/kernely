@@ -2,21 +2,20 @@ package org.kernely.project.service;
 
 import static org.junit.Assert.assertEquals;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.junit.Test;
 import org.kernely.core.common.AbstractServiceTest;
 import org.kernely.core.dto.RoleDTO;
 import org.kernely.core.dto.UserCreationRequestDTO;
 import org.kernely.core.dto.UserDTO;
 import org.kernely.core.model.Role;
+import org.kernely.core.service.user.PermissionService;
 import org.kernely.core.service.user.RoleService;
 import org.kernely.core.service.user.UserService;
 import org.kernely.project.dto.OrganizationCreationRequestDTO;
 import org.kernely.project.dto.OrganizationDTO;
 import org.kernely.project.dto.ProjectCreationRequestDTO;
 import org.kernely.project.dto.ProjectDTO;
+import org.kernely.project.model.Project;
 
 import com.google.inject.Inject;
 
@@ -35,6 +34,9 @@ public class ProjectServiceTest extends AbstractServiceTest {
 	
 	@Inject
 	private RoleService roleService;
+	
+	@Inject
+	private PermissionService permissionService; 
 
 	private final String TEST_STRING = "test_string";
 
@@ -107,7 +109,7 @@ public class ProjectServiceTest extends AbstractServiceTest {
 	@Test
 	public void updateProjectTest() {
 		ProjectDTO projDTO = this.createProject();
-		ProjectCreationRequestDTO proj = new ProjectCreationRequestDTO(NAME_2, projDTO.id, new ArrayList<UserDTO>(), projDTO.icon, projDTO.organization.name);
+		ProjectCreationRequestDTO proj = new ProjectCreationRequestDTO(NAME_2, projDTO.id, projDTO.icon, projDTO.organization.name);
 		projectService.updateProject(proj);
 		assertEquals(NAME_2, projectService.getAllProjects().get(0).name);
 	}
@@ -127,58 +129,36 @@ public class ProjectServiceTest extends AbstractServiceTest {
 	@Test(expected = IllegalArgumentException.class)
 	public void updateProjectWithNullName() {
 		ProjectDTO projDTO = this.createProject();
-		ProjectCreationRequestDTO proj = new ProjectCreationRequestDTO(null, projDTO.id, new ArrayList<UserDTO>(), projDTO.icon,  projDTO.organization.name);
+		ProjectCreationRequestDTO proj = new ProjectCreationRequestDTO(null, projDTO.id, projDTO.icon,  projDTO.organization.name);
 		projectService.updateProject(proj);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void updateProjectWithVoidName() {
 		ProjectDTO projDTO = this.createProject();
-		ProjectCreationRequestDTO proj = new ProjectCreationRequestDTO("      ", projDTO.id, projDTO.users, projDTO.icon, projDTO.organization.name);
+		ProjectCreationRequestDTO proj = new ProjectCreationRequestDTO("      ", projDTO.id, projDTO.icon, projDTO.organization.name);
 		projectService.updateProject(proj);
 	}
 
 	@Test
-	public void getProjectUser() {
-		this.createProject();
-		ProjectDTO projectdto = new ProjectDTO();
-		projectdto = projectService.getAllProjects().get(0);
-
+	public void testUserHasNoRight() {
 		this.creationOfTestUser();
+		ProjectDTO proj = this.createProject();
+		authenticateAs(TEST_STRING);
 
-		UserDTO userdto = new UserDTO();
-		userdto = userService.getAllUsers().get(0);
-
-		List<UserDTO> users = new ArrayList<UserDTO>();
-		users.add(userdto);
-		ProjectCreationRequestDTO gcr = new ProjectCreationRequestDTO(projectdto.name, projectdto.id, users, projectdto.icon,  projectdto.organization.name);
-		projectService.updateProject(gcr);
-
-		assertEquals(1, projectService.getProjectUsers(projectdto.id).size());
+		assertEquals(false, projectService.currentUserHasRightsOnProject(Project.RIGHT_CLIENT, proj.id));
+		assertEquals(false, projectService.currentUserHasRightsOnProject(Project.RIGHT_CONTRIBUTOR, proj.id));
+		assertEquals(false, projectService.currentUserHasRightsOnProject(Project.RIGHT_PROJECTMANAGER, proj.id));
 	}
-
+	
 	@Test
-	public void addProjectUser() {
-		ProjectDTO projectdto = this.createProject();
-		this.creationOfTestUser();
-
-		UserDTO userdto = new UserDTO();
-		userdto = userService.getAllUsers().get(0);
-
-		List<UserDTO> users = new ArrayList<UserDTO>();
-		users.add(userdto);
-		ProjectCreationRequestDTO gcr = new ProjectCreationRequestDTO(projectdto.name, projectdto.id, users, projectdto.icon, projectdto.organization.name);
-		projectService.updateProject(gcr);
-
-		projectdto = projectService.getAllProjects().get(0);
-		assertEquals(1, projectdto.users.size());
-		assertEquals(TEST_STRING, projectdto.users.get(0).username);
-
-		gcr = new ProjectCreationRequestDTO(projectdto.name, projectdto.id, new ArrayList<UserDTO>(), projectdto.icon,  projectdto.organization.name);
-		projectService.updateProject(gcr);
-
-		projectdto = projectService.getAllProjects().get(0);
-		assertEquals(0, projectdto.users.size());
-		assertEquals(1, userService.getAllUsers().size());
+	public void testUserHasRight(){
+		long id = this.creationOfTestUser();
+		ProjectDTO proj = this.createProject();
+		authenticateAs(TEST_STRING);
+		
+		permissionService.grantPermission((int)id, Project.RIGHT_CLIENT, Project.PROJECT_RESOURCE, proj.id);
+		assertEquals(true, projectService.currentUserHasRightsOnProject(Project.RIGHT_CLIENT, proj.id));	
 	}
+	
 }

@@ -47,6 +47,28 @@ public class Project extends AbstractModel {
 	private Organization organization ;
 	
 	/**
+	 * The right for an user to be a contributor on the project
+	 */
+	public static final String RIGHT_CONTRIBUTOR = "contributor";
+
+	/**
+	 * The right for an user to be a project manager on the project
+	 */
+	public static final String RIGHT_PROJECTMANAGER = "project_manager";
+
+	/**
+	 * The right for an user to be  a client on  the project
+	 */
+	public static final String RIGHT_CLIENT = "client";
+	
+	/**
+	 * The resource for project to give rights on the project.
+	 */
+	public static final String PROJECT_RESOURCE = "projects";
+
+
+	
+	/**
  	*	initialize a project with default value
  	*/ 
 	public Project(){
@@ -55,7 +77,6 @@ public class Project extends AbstractModel {
 		this.icon="";
 		this.users = new HashSet<User>();
 	}
-	
 	
 	/**
 	 * @return the id

@@ -1,16 +1,14 @@
 package org.kernely.project.service;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import javax.persistence.Query;
 
 import org.kernely.core.dto.UserDTO;
 import org.kernely.core.model.User;
 import org.kernely.core.service.AbstractService;
-import org.kernely.core.service.user.UserService;
+import org.kernely.core.service.user.PermissionService;
 import org.kernely.project.dto.OrganizationDTO;
 import org.kernely.project.dto.ProjectCreationRequestDTO;
 import org.kernely.project.dto.ProjectDTO;
@@ -28,11 +26,12 @@ import com.google.inject.persist.Transactional;
  */
 @Singleton
 public class ProjectService extends AbstractService {
+	
 	@Inject
-	UserService userService;
+	private PermissionService permissionService;
 
 	@Inject
-	OrganizationService organizationService;
+	private OrganizationService organizationService;
 
 	private static final String ICON = "default.png";
 	protected final Logger log = LoggerFactory.getLogger(this.getClass());
@@ -137,22 +136,10 @@ public class ProjectService extends AbstractService {
 		if (!list.isEmpty()) {
 			throw new IllegalArgumentException("Another project with this name already exists");
 		}
-		Set<User> users = null;
-		if (!request.users.isEmpty() && (!(request.users.get(0).username == null))) {
-			users = new HashSet<User>();
-			for (UserDTO u : request.users) {
-				users.add(em.get().find(User.class, u.id));
-			}
-		}
 		Project project = em.get().find(Project.class, request.id);
 		project.setName(request.name);
 		project.setIcon(request.icon);
 		project.setOrganization(organizationService.getOrganizationByName(request.organization));
-		if (users == null) {
-			project.getUsers().clear();
-		} else {
-			project.setUsers(users);
-		}
 	}
 
 	/**
@@ -214,4 +201,20 @@ public class ProjectService extends AbstractService {
 		return Long.valueOf(0);
 	}
 
+	/**
+	 * Check if the current user has a specific right on a project, including by his groups.
+	 * 
+	 * @param right
+	 *            The right : use Project constant constants.
+	 * @param projectid
+	 *            : The id of the project
+	 * @return true if the user has this right, false otherwise.
+	 */
+	public boolean currentUserHasRightsOnProject(String right, int projectId) {
+		User current = this.getAuthenticatedUserModel();
+		return permissionService.userHasPermission((int) current.getId(), true, right, Project.PROJECT_RESOURCE, projectId);
+	}
+	
+	
+	
 }

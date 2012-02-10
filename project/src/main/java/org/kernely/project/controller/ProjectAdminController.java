@@ -19,12 +19,18 @@ import javax.ws.rs.core.Response;
 import org.apache.commons.configuration.AbstractConfiguration;
 import org.apache.commons.io.FileUtils;
 import org.kernely.core.controller.AbstractController;
+import org.kernely.core.dto.GroupDTO;
 import org.kernely.core.dto.UserDTO;
+import org.kernely.core.service.user.GroupService;
+import org.kernely.core.service.user.PermissionService;
 import org.kernely.core.service.user.UserService;
 import org.kernely.core.template.TemplateRenderer;
 import org.kernely.project.dto.OrganizationDTO;
 import org.kernely.project.dto.ProjectCreationRequestDTO;
 import org.kernely.project.dto.ProjectDTO;
+import org.kernely.project.dto.ProjectRightsUpdateRequestDTO;
+import org.kernely.project.dto.RightOnProjectDTO;
+import org.kernely.project.model.Project;
 import org.kernely.project.service.OrganizationService;
 import org.kernely.project.service.ProjectService;
 
@@ -48,6 +54,12 @@ public class ProjectAdminController extends AbstractController {
 
 	@Inject
 	private ProjectService projectService;
+
+	@Inject
+	private PermissionService permissionService;
+	
+	@Inject
+	private GroupService groupService;
 
 	@Inject
 	private OrganizationService organizationService;
@@ -213,4 +225,105 @@ public class ProjectAdminController extends AbstractController {
 		}
 	}
 
+	/**
+	 * Gets all rights associated to a project
+	 * 
+	 * @param id
+	 *            The id of the project
+	 * @return A JSON String containing the rights of all users for the project
+	 */
+	@GET
+	@Path("/rights/{id}")
+	@Produces({ MediaType.APPLICATION_JSON })
+	public String getStreamRights(@PathParam("id") int id) {
+		StringBuilder jsonBuilder = new StringBuilder();
+		jsonBuilder.append("{\"permission\":[");
+		List<UserDTO> allUsers = userService.getAllUsers();
+		List<GroupDTO> allGroups = groupService.getAllGroups();
+
+		for (UserDTO user : allUsers) {
+			boolean contributor = permissionService.userHasPermission((int) user.id, false, Project.RIGHT_CONTRIBUTOR, Project.PROJECT_RESOURCE, id);
+			boolean manager = permissionService.userHasPermission((int) user.id, false, Project.RIGHT_PROJECTMANAGER, Project.PROJECT_RESOURCE, id);
+			boolean client = permissionService.userHasPermission((int) user.id, false, Project.RIGHT_CLIENT, Project.PROJECT_RESOURCE, id);
+
+			if (contributor) {
+				jsonBuilder.append("{\"user\":\"");
+				jsonBuilder.append(user.id+"\"");
+				jsonBuilder.append(",\"right\":\"contributor\"},");
+			} 
+			if (manager) {
+				jsonBuilder.append("{\"user\":\"");
+				jsonBuilder.append(user.id+"\"");
+				jsonBuilder.append(",\"right\":\"project_manager\"},");
+			} 
+			if (client) {
+				jsonBuilder.append("{\"user\":\"");
+				jsonBuilder.append(user.id+"\"");
+				jsonBuilder.append(",\"right\":\"client\"},");
+			}
+		}
+		for (GroupDTO group : allGroups) {
+			boolean contributor = permissionService.groupHasPermission((int) group.id, Project.RIGHT_CONTRIBUTOR, Project.PROJECT_RESOURCE, id);
+			boolean manager = permissionService.groupHasPermission((int) group.id, Project.RIGHT_PROJECTMANAGER, Project.PROJECT_RESOURCE, id);
+			boolean client = permissionService.groupHasPermission((int) group.id, Project.RIGHT_CLIENT, Project.PROJECT_RESOURCE, id);
+
+			if (contributor) {
+				jsonBuilder.append("{\"group\":\"");
+				jsonBuilder.append(group.id+"\"");
+				jsonBuilder.append(",\"right\":\"contributor\"},");
+			} if (manager) {
+				jsonBuilder.append("{\"group\":\"");
+				jsonBuilder.append(group.id+"\"");
+				jsonBuilder.append(",\"right\":\"project_manager\"},");
+			} if (client) {
+				jsonBuilder.append("{\"group\":\"");
+				jsonBuilder.append(group.id+"\"");
+				jsonBuilder.append(",\"right\":\"client\"},");
+			}
+		}
+		String json = jsonBuilder.toString();
+		if(json.charAt(json.length()-1) == ','){
+			json = json.substring(0, json.length() - 1);
+		}
+		json += "]}";
+		log.debug(json);
+		return json;
+	}
+
+	
+	/**
+	 * Update right on a project
+	 * 
+	 */
+	@POST
+	@Path("/updaterights")
+	@Produces({ MediaType.APPLICATION_JSON })
+	public String updateRights(ProjectRightsUpdateRequestDTO request) {
+		log.debug("Update {} rights of the project : {}", request.rights.size(), request.projectid);
+
+		// delete permissions on the project for the user
+		List<UserDTO> allUsers= userService.getEnabledUsers();
+		for (UserDTO user : allUsers){
+			permissionService.ungrantPermission((int)user.id, Project.RIGHT_CONTRIBUTOR, Project.PROJECT_RESOURCE, request.projectid);
+			permissionService.ungrantPermission((int)user.id, Project.RIGHT_PROJECTMANAGER, Project.PROJECT_RESOURCE, request.projectid);
+			permissionService.ungrantPermission((int)user.id, Project.RIGHT_CLIENT, Project.PROJECT_RESOURCE, request.projectid);
+		}
+		
+		for (RightOnProjectDTO right : request.rights) {
+			if (right.idType.equals("user")) {
+				log.debug("Right {} for user with id {}", right.permission, right.id);
+				boolean correct = permissionService.userHasPermission(right.id, false, right.permission, Project.PROJECT_RESOURCE, request.projectid);
+				if (!correct) {
+					// The right requested is not the same than the existing
+					// right :
+
+					if (!right.permission.equals("nothing")) {
+						// Add the requested permission
+						permissionService.grantPermission(right.id, right.permission, Project.PROJECT_RESOURCE, request.projectid);
+					}
+				}
+			}
+		}
+		return "{\"result\":\"ok\"}";
+	}
 }
