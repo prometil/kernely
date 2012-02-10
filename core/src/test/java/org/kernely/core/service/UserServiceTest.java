@@ -34,7 +34,6 @@ import org.kernely.core.dto.UserDTO;
 import org.kernely.core.dto.UserDetailsDTO;
 import org.kernely.core.dto.UserDetailsUpdateRequestDTO;
 import org.kernely.core.model.Role;
-import org.kernely.core.model.User;
 import org.kernely.core.service.user.RoleService;
 import org.kernely.core.service.user.UserService;
 

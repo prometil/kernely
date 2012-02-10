@@ -46,6 +46,11 @@ public class HolidayBalanceDTO {
 	public float availableBalance;
 	
 	/**
+	 * Available balance updated with pending and accepted requests
+	 */
+	public float availableBalanceUpdated;
+	
+	/**
 	 * The future balance
 	 */
 	public float futureBalance;
@@ -76,6 +81,7 @@ public class HolidayBalanceDTO {
 		
 		// Divide balances by 12 because in database, balances are in twelths of days.
 		this.availableBalance = ((float) balance.getAvailableBalance()) / 12.0F;
+		this.availableBalanceUpdated = ((float) balance.getAvailableBalanceUpdated()) / 12.0F;
 		this.futureBalance = ((float) balance.getFutureBalance()) / 12.0F;
 		this.lastUpdate = balance.getLastUpdate();
 		this.effectiveMonth = balance.getHolidayType().getEffectiveMonth();

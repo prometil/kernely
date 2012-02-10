@@ -4,12 +4,6 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 import org.kernely.core.common.AbstractServiceTest;
-import org.kernely.core.dto.RoleDTO;
-import org.kernely.core.dto.UserCreationRequestDTO;
-import org.kernely.core.dto.UserDTO;
-import org.kernely.core.model.Role;
-import org.kernely.core.service.user.RoleService;
-import org.kernely.core.service.user.UserService;
 import org.kernely.project.dto.OrganizationCreationRequestDTO;
 import org.kernely.project.dto.OrganizationDTO;
 
@@ -22,26 +16,6 @@ public class OrganizationServiceTest extends AbstractServiceTest {
 	@Inject
 	private OrganizationService  organizationService;
 
-	@Inject
-	private UserService userService;
-
-	@Inject
-	private RoleService roleService;
-
-	private final String TEST_STRING = "test_string";
-
-	private long creationOfTestUser() {
-		RoleDTO requestRole = new RoleDTO(1, Role.ROLE_USER);
-		roleService.createRole(requestRole);
-
-		UserCreationRequestDTO request = new UserCreationRequestDTO();
-		request.username = TEST_STRING;
-		request.password = TEST_STRING;
-		request.firstname = TEST_STRING;
-		request.lastname = TEST_STRING;
-		UserDTO userDTO = userService.createUser(request);
-		return userDTO.id;
-	}
 	
 	private OrganizationDTO createOrganization(){
 		OrganizationCreationRequestDTO organization = new OrganizationCreationRequestDTO();

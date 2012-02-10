@@ -64,6 +64,7 @@ public class ProjectService extends AbstractService {
 	 *            the name of the project
 	 * @return the project DTO
 	 */
+	@SuppressWarnings("unchecked")
 	public ProjectDTO getProject(String name) {
 		Query query = em.get().createQuery("Select e FROM Project e WHERE name=:name");
 		query.setParameter("name", name);

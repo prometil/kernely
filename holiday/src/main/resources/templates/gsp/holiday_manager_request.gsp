@@ -12,7 +12,7 @@
 
 <script type="text/html" id="status-accepted-template">
  	<%=i18n.t("accepted")%>
- </script>
+</script>
 
 <script type="text/html" id="holiday-accept-template">
  	<%=i18n.t("accepted_done")%>
@@ -23,8 +23,8 @@
  </script>
  
 <script type="text/html" id="status-accepted-or-denied-template">
- 	 	<td>{{from}}</td><td>{{requesterComment}}</td><td>{{beginDate}}</td><td>{{endDate}}</td>
- </script>
+ 	 	<td>{{from}}</td><td>{{requesterComment}}</td><td>{{beginDate}}</td><td>{{endDate}}</td><td><input type="button" class="button_accepted" value="<%=i18n.t("accepted")%>"/></td><td><input type="button" class="button_denied" value="<%=i18n.t("denied")%>"/></td><td><input type="button" class="button_visualize" value="<%=i18n.t("visualize")%>"/></td>
+</script>
 
 <script type="text/html" id="balance-cell-template">
 		<span id="balance-cell-name">{{name}}</span><br/>
@@ -81,15 +81,13 @@
 </div>
 
 <div id="request-manager-main">
-	<div id="holiday_button_container">
-		<input type="button" id="button_accepted" value="<%=i18n.t("accepted")%>" disabled="disabled"/> <input type="button" id="button_denied" value="<%=i18n.t("denied")%>" disabled="disabled"/> <input type="button" id="button_visualize" value="<%=i18n.t("visualize")%>" disabled="disabled"/>
-	</div>
+	<hr/>
 	<table id="manager_pending_request_table">
 		  <caption><b><u><%=i18n.t("title_table_1")%></u></b></caption>
-		  <th><%= i18n.t("from") %></th><th><%= i18n.t("requester_comment") %></th><th><%= i18n.t("begin_date")%></th><th><%= i18n.t("end_date")%></th><th></th>
+		  <tr><th><%= i18n.t("from") %></th><th><%= i18n.t("requester_comment") %></th><th><%= i18n.t("begin_date")%></th><th><%= i18n.t("end_date")%></th><th></th><th></th><th></th></tr>
 	</table>
 	<span id="holiday_notifications"></span>
-	
+	<hr/>	
 	<table id="manager_request_table">
 	    <caption><b><u><%= i18n.t("title_table_2")%></u></b></caption>
 		<tr><th><%= i18n.t("from") %></th><th><%= i18n.t("requester_comment") %></th><th><%= i18n.t("manager_comment") %></th><th><%= i18n.t("begin_date")%></th><th><%= i18n.t("end_date")%></th><th><%= i18n.t("status")%></th></tr>

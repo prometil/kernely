@@ -131,6 +131,7 @@ public class HolidayBalanceService extends AbstractService {
 		balance.setUser(user);
 		balance.setHolidayType(type);
 		balance.setAvailableBalance(0);
+		balance.setAvailableBalanceUpdated(0);
 		balance.setFutureBalance(0);
 		DateTimeZone zoneUTC = DateTimeZone.UTC;
 		balance.setLastUpdate(new DateTime().withZone(zoneUTC).toDate());
@@ -181,40 +182,47 @@ public class HolidayBalanceService extends AbstractService {
 	public void incrementBalance(int holidayBalanceId) {
 		HolidayBalance balance = em.get().find(HolidayBalance.class, holidayBalanceId);
 
-		// Quantity of time (in days) earned each period
-		int quantity = balance.getHolidayType().getQuantity();
+		// Only limited balances are incremented
+		if (! balance.getHolidayType().isUnlimited()){
+			
+			// Quantity of time (in days) earned each period
+			int quantity = balance.getHolidayType().getQuantity();
 
-		// Adjust quantity: balances contains twelths of days
-		// Multiply quantity by the ratio of the period.
-		// The period unit is 12 for months, 1 for years (constants in HolidayType class).
-		quantity = quantity * balance.getHolidayType().getPeriodUnit();
+			// Adjust quantity: balances contains twelths of days
+			// Multiply quantity by the ratio of the period.
+			// The period unit is 12 for months, 1 for years (constants in HolidayType class).
+			quantity = quantity * balance.getHolidayType().getPeriodUnit();
 
-		int newBalance;
+			int newBalance;
+			int newBalanceUpdated;
 
-		// If there is no effective month of the type of holidays, the available balance is incremented, otherwise the future balance is incremented.
-		if (balance.getHolidayType().getEffectiveMonth() == HolidayType.ALL_MONTH) {
-			newBalance = balance.getAvailableBalance() + quantity;
-			log.debug("Holiday (id:{}) had available balance: {}", holidayBalanceId, balance.getAvailableBalance());
-			log.debug("Holiday (id:{}) incremented by {}", holidayBalanceId, quantity);
-			balance.setAvailableBalance(newBalance);
-			log.debug("Holiday (id:{}) new balance: {}", holidayBalanceId, balance.getAvailableBalance());
+			// If there is no effective month of the type of holidays, the available balance is incremented, otherwise the future balance is incremented.
+			if (balance.getHolidayType().getEffectiveMonth() == HolidayType.ALL_MONTH) {
+				newBalance = balance.getAvailableBalance() + quantity;
+				newBalanceUpdated = balance.getAvailableBalanceUpdated() + quantity;
+				log.debug("Holiday (id:{}) had available balance: {}", holidayBalanceId, balance.getAvailableBalance());
+				log.debug("Holiday (id:{}) incremented by {}", holidayBalanceId, quantity);
+				balance.setAvailableBalance(newBalance);
+				balance.setAvailableBalanceUpdated(newBalanceUpdated);
+				log.debug("Holiday (id:{}) new balance: {}", holidayBalanceId, balance.getAvailableBalance());
 
-		} else {
-			// If there is a specific month when future balance is added to available balance, adds the quantity to the future balance
-			log.debug("Holiday (id:{}) had future balance: {}", holidayBalanceId, balance.getAvailableBalance());
-			log.debug("Holiday (id:{}) incremented by {}", holidayBalanceId, quantity);
-			newBalance = balance.getFutureBalance() + quantity;
-			balance.setFutureBalance(newBalance);
-			log.debug("Holiday (id:{}) future balance: {}", holidayBalanceId, balance.getAvailableBalance());
+			} else {
+				// If there is a specific month when future balance is added to available balance, adds the quantity to the future balance
+				log.debug("Holiday (id:{}) had future balance: {}", holidayBalanceId, balance.getAvailableBalance());
+				log.debug("Holiday (id:{}) incremented by {}", holidayBalanceId, quantity);
+				newBalance = balance.getFutureBalance() + quantity;
+				balance.setFutureBalance(newBalance);
+				log.debug("Holiday (id:{}) future balance: {}", holidayBalanceId, balance.getAvailableBalance());
+			}
+
+			DateTimeZone zoneUTC = DateTimeZone.UTC;
+			Date today = new DateTime().withZone(zoneUTC).toDate();
+
+			// Actualize date
+			balance.setLastUpdate(today);
+
+			em.get().merge(balance);
 		}
-
-		DateTimeZone zoneUTC = DateTimeZone.UTC;
-		Date today = new DateTime().withZone(zoneUTC).toDate();
-
-		// Actualize date
-		balance.setLastUpdate(today);
-
-		em.get().merge(balance);
 	}
 
 	/**
@@ -228,6 +236,7 @@ public class HolidayBalanceService extends AbstractService {
 		HolidayBalance balance = em.get().find(HolidayBalance.class, holidayBalanceId);
 
 		balance.setAvailableBalance(balance.getAvailableBalance() + balance.getFutureBalance());
+		balance.setAvailableBalanceUpdated(balance.getAvailableBalanceUpdated() + balance.getFutureBalance());
 
 		// Reset future balance
 		balance.setFutureBalance(0);
@@ -251,8 +260,6 @@ public class HolidayBalanceService extends AbstractService {
 
 	/**
 	 * Remove days or half days to the available balance.
-	 */
-	/**
 	 * Verify if the balance has the amount of days.
 	 * 
 	 * @param holidayBalanceId
@@ -290,11 +297,14 @@ public class HolidayBalanceService extends AbstractService {
 	 */
 	@Transactional
 	public void removePastHolidays() {
-		List<HolidayRequestDTO> requests = holidayRequestService.getAllRequestsWithStatus(HolidayRequest.ACCEPTED_STATUS);
 		
 		log.debug("Removing past holidays");
 		
-		for (HolidayRequestDTO request : requests){
+		List<HolidayRequestDTO> acceptedRequests = holidayRequestService.getAllRequestsWithStatus(HolidayRequest.ACCEPTED_STATUS);
+		
+		log.debug("{} requests with accepted status.",acceptedRequests.size());
+		
+		for (HolidayRequestDTO request : acceptedRequests){
 			
 			// Days for each type of holidays
 			Map<String,Float> days = new HashMap<String,Float>();
@@ -307,11 +317,10 @@ public class HolidayBalanceService extends AbstractService {
 			DateTimeZone zoneUTC = DateTimeZone.UTC;
 			DateTime today = new DateTime().withZone(zoneUTC);
 
-			log.debug("Begin: "+beginTime.withZone(DateTimeZone.UTC));
-			log.debug("Today: "+today.withZone(DateTimeZone.UTC).toDateMidnight());
-
-			if (today.withZone(DateTimeZone.UTC).toDateMidnight().isEqual(beginTime.withZone(DateTimeZone.UTC).plusHours(1).toDateMidnight())){
-
+			log.debug("Begin: {}",beginTime.withZone(DateTimeZone.UTC));
+			log.debug("Today: {}",today.withZone(DateTimeZone.UTC).toDateMidnight());
+			// Update balances by removing days of accepted holidays that have been accepted and that are passed
+			if (today.withZone(DateTimeZone.UTC).toDateMidnight().isAfter(beginTime.withZone(DateTimeZone.UTC).toDateMidnight())){
 				// Calculate the amount of days of this request
 				for (HolidayDetailDTO detail : request.details){
 
@@ -327,12 +336,17 @@ public class HolidayBalanceService extends AbstractService {
 						days.put(detail.type, Float.valueOf(days.get(detail.type) + HALF_DAY));
 					}
 				}
+				
+				// Consider this requests as "past"
+				holidayRequestService.archiveRequest(request.id);
+
 			}
 
+			// Remove days from all concerned balances
 			for (Entry<String, Float> set : days.entrySet()){
 				removeAvailableDays(balances.get(set.getKey()), days.get(set.getKey()));
 			}
-
+			
 		}
 	}
 

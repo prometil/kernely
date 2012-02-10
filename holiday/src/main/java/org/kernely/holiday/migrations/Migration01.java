@@ -31,6 +31,7 @@ public class Migration01 extends Migration {
 		CreateTable holidayType = CreateTable.name("kernely_holiday_type");
 		holidayType.column("id", "int primary key");
 		holidayType.column("name", "varchar(50)");
+		holidayType.column("unlimited", "bool");
 		holidayType.column("quantity", "int");
 		holidayType.column("period_unit", "int");
 		holidayType.column("effective_month", "int");
@@ -42,6 +43,7 @@ public class Migration01 extends Migration {
 		CreateTable holidayBalance = CreateTable.name("kernely_holiday_balance");
 		holidayBalance.column("id", "int primary key");
 		holidayBalance.column("available_balance", "int");
+		holidayBalance.column("available_balance_updated", "int");
 		holidayBalance.column("future_balance", "int");
 		holidayBalance.column("last_update", "timestamp");
 		holidayBalance.column("holiday_type_id", "int");

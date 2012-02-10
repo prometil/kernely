@@ -21,7 +21,7 @@ public class CalendarBalanceDetailDTO {
 	/**
 	 * Number of day of holiday still available
 	 */
-	public int nbAvailable;
+	public float nbAvailable;
 	
 	/**
 	 * Id of type of holiday
@@ -35,12 +35,12 @@ public class CalendarBalanceDetailDTO {
 	
 	/**
 	 * Constructor
-	 * @param name
-	 * @param available
-	 * @param color
-	 * @param idType
+	 * @param name Name of the balance
+	 * @param available Quantity available. If set to -1, the balance is unlimited
+	 * @param color Color associated to this balance
+	 * @param idType HolidayType associated to this balance
 	 */
-	public CalendarBalanceDetailDTO(String name, int available, String color, int idType){
+	public CalendarBalanceDetailDTO(String name, float available, String color, int idType){
 		this.color = color;
 		this.nameOfType = name;
 		this.nbAvailable = available;

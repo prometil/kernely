@@ -104,13 +104,13 @@ public class HolidayPlugin extends AbstractPlugin {
         
         registerJob(HolidaysMonthlyJob.class, holidaysTrigger);
 
-		 // create the Mail schedule, run every 5 minutes
+        // create the holiday daily schedule, run every 24 hours
         ScheduleBuilder dailySchedule = SimpleScheduleBuilder.
                 simpleSchedule().
                 withIntervalInHours(24).
                 repeatForever();
  
-        // Create the Mail trigger
+        // Create the holidays daily trigger
         Trigger mailTrigger = TriggerBuilder.
                 newTrigger().
                 withSchedule(dailySchedule).

@@ -34,6 +34,11 @@ public class HolidayCreationRequestDTO {
 	 * The type of holiday
 	 */
 	public String type;
+
+	/**
+	 * Is this type of holiday unlimited ?
+	 */
+	public boolean unlimited;
 	
 	/**
 	 * The quantity of day of holiday per month/year
@@ -72,8 +77,9 @@ public class HolidayCreationRequestDTO {
 	 * @param newType
 	 * @param newFrequency
 	 */
-	public HolidayCreationRequestDTO(String newType, int newQuantity, int newUnity, int effectiveMonth, boolean anticipation, String color){
+	public HolidayCreationRequestDTO(String newType, boolean unlimited, int newQuantity, int newUnity, int effectiveMonth, boolean anticipation, String color){
 		this.type=newType;
+		this.unlimited=unlimited;
 		this.quantity = newQuantity;
 		this.unity = newUnity;
 		this.effectiveMonth = effectiveMonth;
