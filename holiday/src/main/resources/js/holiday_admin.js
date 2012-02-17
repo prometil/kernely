@@ -97,7 +97,7 @@ AppHolidayAdmin = (function($){
 			}
 			if (this.vunlimited == "true"){
 				stringunlimited = $("#yes-template").html()
-				p
+				
 			} else {
 				stringunlimited = $("#no-template").html();
 			}
