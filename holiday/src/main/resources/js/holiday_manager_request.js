@@ -1,15 +1,10 @@
 AppHolidayManagerRequest = (function($){
-	var lineSelected = null;
+	
+	var mainView = null;
 	var tableView1 = null;
 	var tableView2 = null;
-	var buttonView = null;
 	var viewVisualize = null;
 	var dates = new Array();
-	var allDayCells = new Array();
-	var cellDayMorningCounter = 0;
-	var cellDayAfternoonCounter = 1;
-	var MORNING_PART = 1;
-	var AFTERNOON_PART = 2;
 	var viewAccept =null;
 	var viewDeny = null;
 	
@@ -20,13 +15,39 @@ AppHolidayManagerRequest = (function($){
 		},
 	
 		initialize: function(){
-			
+			viewAccept = new HolidayRequestAcceptView();
+			viewDeny = new HolidayRequestDenyView();
+			viewVisualize = new HolidayManagerVisualizeView();
+		},
+		
+		showModalWindow: function(){
+			//Get the screen height and width
+       		var maskHeight = $(window).height();
+       		var maskWidth = $(window).width();
+
+       		//Set height and width to mask to fill up the whole screen
+       		$('#mask').css({'width':maskWidth,'height':maskHeight});
+
+       		//transition effect    
+       		$('#mask').fadeIn(500);   
+       		$('#mask').fadeTo("fast",0.7); 
+
+       		//Get the window height and width
+       		var winH = $(window).height();
+      		var winW = $(window).width(); 
+
+        	//Set the popup window to center
+       		$("#modal_window_holiday_request").css('top',  winH/2-$("#modal_window_holiday_request").height()/2);
+     		$("#modal_window_holiday_request").css('left', winW/2-$("#modal_window_holiday_request").width()/2);
+     		$("#modal_window_holiday_request").css('background-color', "#EEEEEE");
+     		$("input:text").each(function(){this.value="";});
+     		//transition effect
+     		$("#modal_window_holiday_request").fadeIn(500);
 		},
 		
 		render:function(){
-			tableView1 = new HolidayManagerRequestPendingTableView();
-			tableView2 = new HolidayManagerRequestTableView();
-			buttonView = new HolidayManagerButtonsView();
+			tableView1 = new HolidayManagerRequestPendingTableView().render();
+			tableView2 = new HolidayManagerRequestTableView().render();
 		}
 	})
 	
@@ -41,9 +62,9 @@ AppHolidayManagerRequest = (function($){
 		vend : null,
 		
 		events: {
-			"click" : "selectLine",
-			"mouseover" : "overLine",
-			"mouseout" : "outLine"
+			"click .button_accepted" : "acceptModal",
+			"click .button_denied" : "denyModal",
+			"click .button_visualize" : "visualizeModal"
 		},
 		
 		initialize: function(id, beginDate, endDate, user, requesterComment){
@@ -54,28 +75,22 @@ AppHolidayManagerRequest = (function($){
 			this.vrequesterComment=requesterComment;		
 		},
 		
-		selectLine : function(){
-			$("#button_accepted").removeAttr('disabled');
-			$("#button_denied").removeAttr('disabled');
-			$("#button_visualize").removeAttr('disabled');
-			$(this.el).css("background-color", "#8AA5A1");
-			if(typeof(lineSelected) != "undefined"){
-				if(lineSelected != this && lineSelected != null){
-					$(lineSelected.el).css("background-color", "transparent");
-				}
-			}
-			lineSelected = this;
+		acceptModal:function(){
+			mainView.showModalWindow();
+			viewAccept.setFields(this.vid);
+			viewAccept.render();
 		},
 		
-		overLine : function(){
-			if(lineSelected != this){
-				$(this.el).css("background-color", "#EEEEEE");
-			}
+		denyModal:function(){
+			mainView.showModalWindow();
+ 			viewDeny.setFields(this.vid);
+			viewDeny.render();
 		},
-		outLine : function(){
-			if(lineSelected != this){
-				$(this.el).css("background-color", "transparent");
-			}
+		
+		visualizeModal:function(){
+			mainView.showModalWindow();
+			viewVisualize.setFields(this.vid);
+			viewVisualize.render();
 		},
 
 		render:function(){
@@ -86,6 +101,8 @@ AppHolidayManagerRequest = (function($){
 			$(this.el).appendTo($("#manager_pending_request_table"));
 			return this;
 		}
+		
+		
 	})
 	
 		
@@ -117,14 +134,17 @@ AppHolidayManagerRequest = (function($){
 		
 		render:function(){
 			var statusTemplate="";
+			var styleStatusTemplate;
 			if (this.vstatus==0){
 				 statusTemplate=$("#status-denied-template").html();
+				 styleStatusTemplate = "status_denied_request";
 			}
 			else {
 				statusTemplate=$("#status-accepted-template").html();
+				styleStatusTemplate = "status_accepted_request";
 			}
-			var template = '<td>{{from}}</td><td>{{requesterComment}}</td><td>{{managerComment}}</td><td>{{beginDate}}</td><td>{{endDate}}</td><td>{{status}}</td>';
-			var view = {from : this.vfrom, requesterComment : this.vrequesterComment, managerComment : this.vmanagerComment, beginDate : this.vbegin, endDate : this.vend, status : statusTemplate};
+			var template = '<td>{{from}}</td><td>{{requesterComment}}</td><td>{{managerComment}}</td><td>{{beginDate}}</td><td>{{endDate}}</td><td><span class="{{styleStatus}}">{{status}}</span></td>';
+			var view = {from : this.vfrom, requesterComment : this.vrequesterComment, managerComment : this.vmanagerComment, beginDate : this.vbegin, endDate : this.vend, styleStatus :styleStatusTemplate, status : statusTemplate};
 			var html = Mustache.to_html(template, view);
 			$(this.el).html(html);
 			$(this.el).appendTo($("#manager_request_table"));
@@ -139,6 +159,14 @@ AppHolidayManagerRequest = (function($){
 		
 		},
 		initialize:function(){
+		},
+		
+		reload: function(){
+			$(".manager_pending_request_table_line").html("");
+			this.render();
+		},
+		
+		render: function(){
 			var parent = this;
 			$.ajax({
 				type:"GET",
@@ -148,26 +176,17 @@ AppHolidayManagerRequest = (function($){
 					if(data != null){
 						if(data.holidayRequestDTO.length > 1 ){
 							$.each(data.holidayRequestDTO, function (){
-								var view = new HolidayManagerRequestPendingTableLineView(this.id, this.beginDate, this.endDate, this.user, this.requesterComment);	
+								var view = new HolidayManagerRequestPendingTableLineView(this.id, this.beginDateString, this.endDateString, this.user, this.requesterComment);	
 								view.render();
 							});
 						}
 						else{
-							var view = new HolidayManagerRequestPendingTableLineView(data.holidayRequestDTO.id, data.holidayRequestDTO.beginDate, data.holidayRequestDTO.endDate, data.holidayRequestDTO.user, data.holidayRequestDTO.requesterComment);
+							var view = new HolidayManagerRequestPendingTableLineView(data.holidayRequestDTO.id, data.holidayRequestDTO.beginDateString, data.holidayRequestDTO.endDateString, data.holidayRequestDTO.user, data.holidayRequestDTO.requesterComment);
 							view.render();
 						}
 					}
 				}
 			});
-		},
-		
-		reload: function(){
-			$(".manager_pending_request_table_line").html("");
-			this.initialize();
-			this.render();
-		},
-		
-		render: function(){
 			return this;
 		}
 	})
@@ -179,6 +198,15 @@ AppHolidayManagerRequest = (function($){
 		},
 		
 		initialize:function(){
+			
+		},
+		
+		reload: function(){
+			$(".manager_request_table_line").html("");
+			this.render();
+		},
+		
+		render: function(){
 			var parent = this;
 			$.ajax({
 				type:"GET",
@@ -188,93 +216,20 @@ AppHolidayManagerRequest = (function($){
 					if(data != null){
 						if(data.holidayRequestDTO.length > 1 ){
 							$.each(data.holidayRequestDTO, function (){
-								var view = new HolidayManagerRequestTableLineView(this.id, this.beginDate, this.endDate, this.user, this.requesterComment, this.managerComment, this.status);
+								var view = new HolidayManagerRequestTableLineView(this.id, this.beginDateString, this.endDateString, this.user, this.requesterComment, this.managerComment, this.status);
 								view.render();
 							});
 						}
 						else{
-							var view = new HolidayManagerRequestTableLineView(data.holidayRequestDTO.id, data.holidayRequestDTO.beginDate, data.holidayRequestDTO.endDate, data.holidayRequestDTO.user, data.holidayRequestDTO.requesterComment, data.holidayRequestDTO.managerComment, data.holidayRequestDTO.status);
+							var view = new HolidayManagerRequestTableLineView(data.holidayRequestDTO.id, data.holidayRequestDTO.beginDateString, data.holidayRequestDTO.endDateString, data.holidayRequestDTO.user, data.holidayRequestDTO.requesterComment, data.holidayRequestDTO.managerComment, data.holidayRequestDTO.status);
 							view.render();
 						}
 					}
 				}
 			});
-		},
-		
-		reload: function(){
-			$(".manager_request_table_line").html("");
-			this.initialize();
-			this.render();
-		},
-		
-		render: function(){
 			return this;
 		}
 	})
-
-	HolidayManagerButtonsView = Backbone.View.extend({
-		el:"#holiday_button_container",		
-						
-		events: {
-			"click #button_accepted" : "acceptModal",
-			"click #button_denied" : "denyModal",
-			"click #button_visualize" : "visualizeModal"
-		},
-		
-		initialize:function(){
-			viewAccept = new HolidayRequestAcceptView();
-			viewDeny = new HolidayRequestDenyView();
-			viewVisualize = new HolidayManagerVisualizeView();
-		},
-		
-		showModalWindow: function(){
-			//Get the screen height and width
-       		var maskHeight = $(window).height();
-       		var maskWidth = $(window).width();
-
-       		//Set height and width to mask to fill up the whole screen
-       		$('#mask').css({'width':maskWidth,'height':maskHeight});
-
-       		//transition effect    
-       		$('#mask').fadeIn(500);   
-       		$('#mask').fadeTo("fast",0.7); 
-
-       		//Get the window height and width
-       		var winH = $(window).height();
-      		var winW = $(window).width(); 
-
-        	//Set the popup window to center
-       		$("#modal_window_holiday_request").css('top',  winH/2-$("#modal_window_holiday_request").height()/2);
-     		$("#modal_window_holiday_request").css('left', winW/2-$("#modal_window_holiday_request").width()/2);
-     		$("#modal_window_holiday_request").css('background-color', "#EEEEEE");
-     		$("input:text").each(function(){this.value="";});
-     		//transition effect
-     		$("#modal_window_holiday_request").fadeIn(500);
-		},
-		
-		acceptModal:function(){
-			this.showModalWindow();
-			viewAccept.setFields(lineSelected.vid);
-			viewAccept.render();
-		},
-		
-		denyModal:function(){
- 			this.showModalWindow();
- 			viewDeny.setFields(lineSelected.vid);
-			viewDeny.render();
-		},
-		
-		visualizeModal:function(){
-			this.showModalWindow();
-			viewVisualize.setFields(lineSelected.vid);
-			viewVisualize.render();
-		},
-		
-		render:function(){
-			
-		}
-	})
-
 	
 	HolidayRequestAcceptView = Backbone.View.extend({
 		el: "#modal_window_holiday_request",
@@ -420,31 +375,6 @@ AppHolidayManagerRequest = (function($){
 	   		$('#mask').hide();
 		},
 		
-		showModalWindow: function(){
-			//Get the screen height and width
-       		var maskHeight = $(window).height();
-       		var maskWidth = $(window).width();
-
-       		//Set height and width to mask to fill up the whole screen
-       		$('#mask').css({'width':maskWidth,'height':maskHeight});
-
-       		//transition effect    
-       		$('#mask').fadeIn(500);   
-       		$('#mask').fadeTo("fast",0.7); 
-
-       		//Get the window height and width
-       		var winH = $(window).height();
-      		var winW = $(window).width(); 
-
-        	//Set the popup window to center
-       		$("#modal_window_holiday_request").css('top',  winH/2-$("#modal_window_holiday_request").height()/2);
-     		$("#modal_window_holiday_request").css('left', winW/2-$("#modal_window_holiday_request").width()/2);
-     		$("#modal_window_holiday_request").css('background-color', "#EEEEEE");
-     		$("input:text").each(function(){this.value="";});
-     		//transition effect
-     		$("#modal_window_holiday_request").fadeIn(500);
-		},
-		
 		render: function(){
 			var parent =this;
 			var template = $("#popup-visualize-request").html();
@@ -483,14 +413,14 @@ AppHolidayManagerRequest = (function($){
 		},
 		
 		acceptModal:function(){
-			this.showModalWindow();
-			viewAccept.setFields(lineSelected.vid);
+			mainView.showModalWindow();
+			viewAccept.setFields(this.vid);
 			viewAccept.render();
 		},
 		
 		denyModal:function(){
- 			this.showModalWindow();
- 			viewDeny.setFields(lineSelected.vid);
+			mainView.showModalWindow();
+ 			viewDeny.setFields(this.vid);
 			viewDeny.render();
 		}		
 	})
@@ -593,7 +523,7 @@ AppHolidayManagerRequest = (function($){
 				});
 				// Adds all the headers for the week
 				while(cptHeaderList < 5){
-					lineHeader.append($(new HolidayRequestDayView(headerList[cptHeaderList + (nPath * 5)], true, null, true, false, -1).render().el));
+					lineHeader.append($(new HolidayRequestDayView(headerList[cptHeaderList + (nPath * 5)], true, true, false, -1).render().el));
 					cptHeaderList ++;
 				}
 				$(parent.el).append(lineHeader);
@@ -606,8 +536,7 @@ AppHolidayManagerRequest = (function($){
 				
 				// Adds all the mornings for the week
 				while(cptMorningList < 5){
-					lineMorning.append($(new HolidayRequestDayView(headerList[cptHeaderList + (nPath * 5)], morningList[cptMorningList + (nPath * 5)], null, false, true, cellDayMorningCounter, MORNING_PART, dateTake, parent.listDays).render().el));
-					cellDayMorningCounter += 2;
+					lineMorning.append($(new HolidayRequestDayView(headerList[cptHeaderList + (nPath * 5)], morningList[cptMorningList + (nPath * 5)], false, true, dateTake, parent.listDays).render().el));
 					cptMorningList ++;
 					cptHeaderList++;
 				}
@@ -622,8 +551,7 @@ AppHolidayManagerRequest = (function($){
 				
 				// Adds all the afternoons for the week
 				while(cptAfternoonList < 5){
-					lineAfternoon.append($(new HolidayRequestDayView(headerList[cptHeaderList + (nPath * 5)], afternoonList[cptAfternoonList + (nPath * 5)], null, false, false, cellDayAfternoonCounter, AFTERNOON_PART, dateTake, parent.listDays).render().el));
-					cellDayAfternoonCounter += 2;
+					lineAfternoon.append($(new HolidayRequestDayView(headerList[cptHeaderList + (nPath * 5)], afternoonList[cptAfternoonList + (nPath * 5)], false, false, dateTake, parent.listDays).render().el));
 					cptAfternoonList ++;
 					cptHeaderList ++;
 				}
@@ -653,28 +581,21 @@ AppHolidayManagerRequest = (function($){
 		day : null,
 		details:null,
 		available : null,
-		week : null,
 		color : null,
 		isHeader: false,
 		// We just specify if morning, if this is false, and header too ,this is afternoon
 		isMorning: false,
 		isColored : false,
-		partOfDay: null,
-		selectedBy: -1,
-		// An id only reserved to the view to allow the shift + clic event.
-		viewRank: -1,
 		
 
 		events:{
 		},
 
-		initialize: function(day, available, week, header, morning, rank, part, take, details){
+		initialize: function(day, available, header, morning, take, details){
 			this.day = day;
 			this.details = details;
 			this.available = available;
-			this.week = week;
 			this.isHeader = header;
-			this.viewRank = rank;
 			this.isMorning = morning;
 			for (xDate in take){
 				if (this.details.holidayDetailDTO.length > 1){
@@ -690,11 +611,6 @@ AppHolidayManagerRequest = (function($){
 					}
 				}
 			}
-			// Store the view into the array of all cell day views
-			if(this.viewRank != -1){
-				allDayCells[this.viewRank] = this;
-			}			
-			this.partOfDay = part;
 		},
 		
 			
@@ -731,7 +647,8 @@ AppHolidayManagerRequest = (function($){
 	
 	var self = {};
 	self.start = function(){
-		new HolidayManagerRequestPageView().render();
+		mainView = new HolidayManagerRequestPageView();
+		mainView.render();
 	}
 	return self;
 })

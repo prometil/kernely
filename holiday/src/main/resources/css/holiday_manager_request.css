@@ -36,12 +36,10 @@
 }
 
 #manager_pending_request_table{
-	cursor:pointer;
 	width:100%
 }
 
 #manager_request_table{
-	cursor:pointer;
 	width:100%
 }
 #period{
@@ -182,4 +180,12 @@ padding:0px;
 
 #requester-comment-div{
 	height:50px;
+}
+
+.status_denied_request{
+	color : red;
+}
+
+.status_accepted_request{
+	color : green;
 }

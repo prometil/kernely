@@ -30,7 +30,6 @@ AppProjectAdmin = (function($){
 		
 		vid: null,
 		vname : null,
-		vnbmembers : null,
 		vicon : null,
 		vorganization : null,
 
@@ -41,10 +40,9 @@ AppProjectAdmin = (function($){
 		},
 		
 		
-		initialize: function(id, name, members, icon, organization){
+		initialize: function(id, name, icon, organization){
 			this.vid = id;
 			this.vname = name;
-			this.vnbmembers = members;
 			this.vicon = icon;
 			this.vorganization = organization;
 		},
@@ -72,8 +70,8 @@ AppProjectAdmin = (function($){
 			}
 		},
 		render:function(){
-			var template = '<td>{{name}}</td><td>{{members}}</td>';
-			var view = {name : this.vname, members: this.vnbmembers};
+			var template = '<td>{{name}}</td>';
+			var view = {name : this.vname};
 			var html = Mustache.to_html(template, view);
 			
 			$(this.el).html(html);
@@ -103,31 +101,13 @@ AppProjectAdmin = (function($){
 					if(data != null){
 						if(data.projectDTO.length > 1){
 				    		$.each(data.projectDTO, function() {
-				    			var users = 0;
-				    			if(this.users != null && typeof(this.users) != "undefined"){
-				    				if(typeof(this.users.length) != "undefined"){
-				    					users = this.users.length;
-				    				}
-				    				else{
-				    					users = 1;
-				    				}
-				    			}
-				    			var view = new ProjectAdminTableLineView(this.id, this.name, users, this.icon, this.organization);
+				    			var view = new ProjectAdminTableLineView(this.id, this.name, this.icon, this.organization);
 				    			view.render();
 				    		});
 						}
 					   	// In the case when there is only one element
 			    		else{
-			    			var users = 0;
-			    			if(data.projectDTO.users != null && typeof(data.projectDTO.users) != "undefined"){
-			    				if(typeof(data.projectDTO.users.length) != "undefined"){
-			    					users = data.projectDTO.users.length;
-			    				}
-			    				else{
-			    					users = 1;
-			    				}			    			
-			    			}
-							var view = new ProjectAdminTableLineView(data.projectDTO.id, data.projectDTO.name, users, data.projectDTO.icon, data.projectDTO.organization);
+							var view = new ProjectAdminTableLineView(data.projectDTO.id, data.projectDTO.name, data.projectDTO.icon, data.projectDTO.organization);
 			    			view.render();
 						}
 					}
@@ -308,7 +288,7 @@ AppProjectAdmin = (function($){
 
 	ProjectAdminUpdateView = Backbone.View.extend({
 		el: "#modal_window_project",
-		
+				
 		events:{
 			"click .closeModal" : "closemodal",
 			"click .updateProject" : "updateproject"
@@ -359,7 +339,7 @@ AppProjectAdmin = (function($){
 			var view = {name : this.vname};
 			var html = Mustache.to_html(template, view);
 			$(this.el).html(html);
-			new UserCBListView(this.vid).render();
+			new ProjectUserTableView(this.vid).render();
 			return this;
 		},
 		
@@ -369,26 +349,10 @@ AppProjectAdmin = (function($){
 		},
 		
 		updateproject: function(){
-			var usersCB = $("input:checked");
 			var count = 0;
 			var users = "";
-				
-			if(usersCB.length > 0){
-				users = '"users":[';
-				
-				$.each(usersCB, function(){
-					users += '{"id":"'+ $(this).attr('id') +'", "username":"null", "locked":"false"}';
-					count++;
-					if(count<usersCB.length){
-						users += ',';
-					}
-				});
-				users += "]";
-			}
-			else{
-				users = '"users":{}';
-			}
-			var json = '{"id":"'+this.vid+'", "name":"'+$('input[name*="name"]').val() + '", '+ users + ', "icon":"'+this.vicon + '", "organization":"'+$('#combobox').val() +'"}';
+			var parent=this;
+			var json = '{"id":"'+this.vid+'", "name":"'+$('input[name*="name"]').val() + '", "icon":"'+this.vicon + '", "organization":"'+$('#combobox').val() +'"}';
 			console.log(json);
 			$.ajax({
 				url:"/admin/projects/create",
@@ -399,6 +363,40 @@ AppProjectAdmin = (function($){
 				contentType: "application/json; charset=utf-8",
 				success: function(data){
 					if (data.result == "ok"){
+						var rights ;
+						var right ;
+						if($("input:checkbox:checked.contributor").length > 0 || $("input:checkbox:checked.project_manager").length > 0 || $("input:checkbox:checked.client").length>0){
+							rights = '"rights":[';
+							$("input:checkbox:checked.contributor").each(function(){
+								rights += '{"id":"'+this.value+'","idType":"user", "permission":"contributor"},';
+							});
+							$("input:checkbox:checked.project_manager").each(function(){
+								rights += '{"id":"'+this.value+'","idType":"user", "permission":"project_manager"},';
+							});
+							$("input:checkbox:checked.client").each(function(){
+								rights += '{"id":"'+this.value+'","idType":"user", "permission":"client"},';
+							}); 
+							right = rights.substring(0,rights.length - 1);
+							right += "]"
+						}
+						else{
+							right = '"rights":{}';
+						}
+						console.log(parent.vid);
+						var json2 = '{"projectid":"'+parent.vid+'",'+ right +'}';
+						console.log(json2);
+						$.ajax({
+							url:"/admin/projects/updaterights",
+							data: json2,
+							type: "POST",
+							dataType: "json",
+							processData: false,
+							contentType: "application/json; charset=utf-8",
+							success: function(data){
+								
+							}
+						});
+						
 						$('#modal_window_project').hide();
 						$('#mask').hide();
 						
@@ -452,59 +450,176 @@ AppProjectAdmin = (function($){
 		
 	}) 
 	
-	UserCBListView = Backbone.View.extend({
-		el:"#usersToLink",
+	UserCBTableView = Backbone.View.extend({
+		tagName:"tr",
+		className:'project_list_line',
 		
-		projectId: null,
+		vname : null,
+		vcontributor:null,
+		vproject_manager:null,
+		vclient:null,
+		vid:null,
+		
+		events:{
+		
+		},
+		
+		initialize:function(name, id , contributor, project_manager, client){
+			this.vname=name;
+			this.vcontributor=contributor; 
+			this.vproject_manager=project_manager;
+			this.vclient=client;
+			this.vid=id;
+		},
+		
+		render:function(){
+			var checkCont ="";
+			var checkClient = "";
+			var checkProj ="";
+			if (this.vcontributor==1){
+				checkCont = '<input type="checkbox" value="'+this.vid+'" class="contributor" checked></input>';
+			}else{
+				checkCont = '<input type="checkbox" value="'+this.vid+'" class="contributor"></input>';
+			}
+			if (this.vclient==1){
+				checkClient = '<input type="checkbox" value="'+this.vid+'" class="client" checked></input>';
+			}else{
+				checkClient = '<input type="checkbox" value="'+this.vid+'" class="client"></input>';
+			}
+			if (this.vproject_manager==1){
+				checkProj = '<input type="checkbox" value="'+this.vid+'" class="project_manager" checked></input>';
+			}else {
+				checkProj = '<input type="checkbox" value="'+this.vid+'" class="project_manager"></input>';
+			}
+			var template = '<td>{{name}}</td><td>'+checkCont+'</td><td>'+checkProj+'</td><td>'+checkClient+'</td>';
+			var view = {name : this.vname};
+			var html = Mustache.to_html(template, view);
+			
+			$(this.el).html(html);
+			$(this.el).appendTo($("#project_user_table"));
+			return this;
+		}
+	})
+	
+	ProjectUserTableView = Backbone.View.extend({
+		el:"#project_user_table",
+		
+		vprojectid : null,
+		vcontributor:null,
+		vclient:null,
+		vprojectmanager : null,
+		vtable :null,
+		vtableid:null,
 		
 		events:{
 		
 		},
 		
 		initialize:function(projectid){
-			this.projectId = projectid;
-		},
-		
-		render: function(){
+			this.vprojectid=projectid;			
+			this.vcontributor=0;
+			this.vclient=0;
+			this.vprojectmanager=0;
 			var parent = this;
+			var html= $("#table-header-template2").html();
+
 			$.ajax({
 				type: "GET",
-				url:"/admin/users/all",
+				url:"/admin/projects/rights/"+parent.vprojectid,
 				dataType:"json",
 				success: function(data){
-					if(data.userDetailsDTO.length > 1){
-			    		$.each(data.userDetailsDTO, function() {
-			    			$(parent.el).append('<input type="checkbox" id="'+ this.user.id +'">'+ this.lastname + ' ' + this.firstname+'</input><br/>');
+					if(data != null && typeof(data) != "undefined"){
+						parent.vtable = new Array(); //4 = type de permission +1
+						var i = 0; 
+						$.each(data.permission, function() {
+							parent.vtable[i] = new Array();
+							i++;
+						});
+						parent.vtableid = new Array(data.permission.length);
+						i=0;
+			    		$.each(data.permission, function() {
+			    			if (this.user != null){
+			    				if (this.right=="contributor"){
+			    					parent.vcontributor=1;
+			    				}
+			    				if(this.right=="project_manager"){
+			    					parent.vprojectmanager=1;
+			    				}
+			    				if(this.right=="client"){
+			    					parent.vclient=1;
+			    				}
+			    			}
+			    			var exist = $.inArray(this.user, parent.vtableid);
+			    			if (exist != -1){
+			    				if (parent.vtable[exist][1]==0){
+					    			parent.vtable[exist][1] = parent.vcontributor;
+			    				}
+			    				if (parent.vtable[exist][2]==0){
+			    					parent.vtable[exist][2] = parent.vprojectmanager;
+			    				}
+								if (parent.vtable[exist][3]==0){
+					    			parent.vtable[exist][3] = parent.vclient;
+								}
+			    			}else{
+				    			parent.vtableid[i] = this.user;
+				    			parent.vtable[i][0] = this.user;
+				    			parent.vtable[i][1] = parent.vcontributor;
+				    			parent.vtable[i][2] = parent.vprojectmanager;
+				    			parent.vtable[i][3] = parent.vclient;
+				    			i++; 
+			    			}
+			    			parent.vcontributor=0;
+			    			parent.vclient=0;
+			    			parent.vprojectmanager=0;
 			    		});
+		    			console.log(parent.vtable);
+		    			console.log(parent.vtableid);
 					}
-					// In the case when there is only one user.
-					else{
-						$(parent.el).append('<input type="checkbox" id="'+ data.userDetailsDTO.user.id +'">'+ data.userDetailsDTO.lastname + ' ' + data.userDetailsDTO.firstname + ' ('+ data.userDetailsDTO.user.username +')'+'</input><br/>');
-					}
-					
 					$.ajax({
 						type: "GET",
-						url:"/admin/projects/" + parent.projectId + "/users",
+						url:"/admin/users/enabled",
 						dataType:"json",
 						success: function(data){
-							if(data != null && typeof(data) != "undefined"){
-								if(data.userDTO.length > 1){
-						    		$.each(data.userDTO, function() {
-						    			$('#' + this.id).attr("checked", "checked");
-						    		});
-								}
-								// In the case when there is only one user.
-								else{
-									$('#' + data.userDTO.id).attr("checked", "checked");
-								}
+							if(data.userDetailsDTO.length > 1){
+					    		$.each(data.userDetailsDTO, function() {
+					    			var index = $.inArray(this.user.id, parent.vtableid);
+					    			if (index != -1){
+					    				var view = new UserCBTableView(this.lastname + ' ' + this.firstname, this.user.id ,parent.vtable[index][1],parent.vtable[index][2],parent.vtable[index][3]);
+					    				view.render();
+					    			}
+					    			else {
+					    				var view = new UserCBTableView(this.lastname + ' ' + this.firstname, this.user.id,0,0,0);
+					    				view.render(); 
+					    			}
+					    		});
 							}
+							// In the case when there is only one user.
+							else{
+								var index = JQuery.inArray(data.userDetailsDTO.user.id, parent.vtableid);
+				    			if (index != -1){
+				    				var view = new UserCBTableView(data.userDetailsDTO.lastname + ' ' +data.userDetailsDTO.firstname, data.userDetailsDTO.user.id ,parent.vtable[index][1],parent.vtable[index][2],parent.vtable[index][3]);
+				    				view.render();
+				    			}
+								var view = new UserCBTableView(data.userDetailsDTO.lastname + ' ' + data.userDetailsDTO.firstname,  data.userDetailsDTO.user.id, 0, 0, 0);
+								view.render();
+							}		
 						}
 					});
 				}
-			});
+			});		
+		
+						
+			$(this.el).html(html);
+		},
+		
+		reload: function(){
+			this.initialize();
+			this.render();
+		},
+		render: function(){
 			return this;
 		}
-	})
+	})	
 	
 	
 	// define the application initialization
