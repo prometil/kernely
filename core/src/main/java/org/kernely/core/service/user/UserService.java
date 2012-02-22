@@ -319,25 +319,6 @@ public class UserService extends AbstractService {
 		return dtos;
 
 	}
-	
-	/**
-	 * Get the details about the user specified
-	 * 
-	 * @param u
-	 *            The User that details are needed
-	 * @return The DTO associated to the details of this user
-	 */
-	@Transactional
-	public UserDetailsDTO getUserDetails(User u) {
-		Query query = em.get().createQuery("SELECT e FROM UserDetails, User WHERE User.id =:id");
-		query.setParameter("id", u.getId());
-		UserDetails ud = (UserDetails) query.getResultList().get(0);
-
-		UserDetailsDTO dto = new UserDetailsDTO(ud);
-
-		return dto;
-
-	}
 
 	/**
 	 * Get the details about the user who has the specified login

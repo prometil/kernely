@@ -73,6 +73,7 @@ import com.google.inject.persist.Transactional;
 public class HolidayRequestService extends AbstractService {
 
 	private static final int DAYS_IN_WEEK = 6;
+	private static final int HALF_DAY = 6; // We're counting in 12th of a day, so 6 represents a half day 
 	protected final Logger log = LoggerFactory.getLogger(this.getClass());
 
 	@Inject
@@ -128,10 +129,10 @@ public class HolidayRequestService extends AbstractService {
 			int taken = 0;
 			// We increase the value by 6 because we're counting in 12th of a day, so 6 represents an half day.
 			if(detail.isAm()){
-				taken += 6;
+				taken += HALF_DAY;
 			}
 			if(detail.isPm()){
-				taken += 6;
+				taken += HALF_DAY;
 			}
 			if(balanceToUpdate.containsKey(balance)){
 				balanceToUpdate.put(balance, balanceToUpdate.get(balance)+taken);
@@ -505,10 +506,10 @@ public class HolidayRequestService extends AbstractService {
 			int taken = 0;
 			// We increase the value by 6 because we're counting in 12th of a day, so 6 represents an half day.
 			if(d.isAm()){
-				taken += 6;
+				taken += HALF_DAY;
 			}
 			if(d.isPm()){
-				taken += 6;
+				taken += HALF_DAY;
 			}
 			if(balanceToUpdate.containsKey(d.getBalance())){
 				balanceToUpdate.put(d.getBalance(), balanceToUpdate.get(d.getBalance())+taken);
@@ -561,10 +562,10 @@ public class HolidayRequestService extends AbstractService {
 			int taken = 0;
 			// We increase the value by 6 because we're counting in 12th of a day, so 6 represents an half day.
 			if(d.isAm()){
-				taken += 6;
+				taken += HALF_DAY;
 			}
 			if(d.isPm()){
-				taken += 6;
+				taken += HALF_DAY;
 			}
 			if(balanceToUpdate.containsKey(d.getBalance())){
 				balanceToUpdate.put(d.getBalance(), balanceToUpdate.get(d.getBalance())+taken);

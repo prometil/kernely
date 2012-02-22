@@ -78,8 +78,7 @@ public class UserServiceTest extends AbstractServiceTest{
 	public void  createUser(){
 		createUserRole();
 		UserDTO userdto = creationOfTestUser(STRING_TEST);
-		UserDetailsDTO uddto = new UserDetailsDTO();
-		uddto = service.getUserDetails(userdto.username);
+		UserDetailsDTO uddto = service.getUserDetails(userdto.username);
 		assertEquals(STRING_TEST, userdto.username);
 		assertEquals(STRING_TEST, uddto.firstname);
 		assertEquals(STRING_TEST, uddto.lastname);

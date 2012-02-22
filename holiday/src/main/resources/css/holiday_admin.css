@@ -9,7 +9,7 @@
 
 #modal_window_holiday{
 	position:absolute;
-	width:450px;
+	width:900px;
 	height:300px;
 	display:none;
 	z-index:9999;
@@ -60,4 +60,27 @@
 #holiday_admin_table{
 	cursor:pointer;
 	width:100%;
+}
+
+#out-listbox, #in-listbox {
+     width:200px;
+}
+
+#holiday-users-boxes{
+	height:180px;
+}
+
+#out-listbox-div{
+	float:left;
+}
+#in-out-buttons{
+	float:left;
+}
+#int-listbox-div{
+	float:left;
+}
+
+#holiday-table-div{
+	height:220px;
+	overflow-y:auto;
 }

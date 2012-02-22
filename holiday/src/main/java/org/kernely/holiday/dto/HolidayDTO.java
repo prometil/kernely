@@ -113,6 +113,7 @@ public class HolidayDTO {
 		this.quantity = type.getQuantity();
 		this.periodUnit = type.getPeriodUnit();
 		this.anticipation = type.isAnticipated();
+		this.unlimited = type.isUnlimited();
 		this.effectiveMonth = type.getEffectiveMonth();
 		this.color = type.getColor();
 	}

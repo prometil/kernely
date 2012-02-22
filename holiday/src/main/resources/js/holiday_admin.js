@@ -52,8 +52,6 @@ AppHolidayAdmin = (function($){
 			this.vcolor = color;
 		},
 		selectLine : function(){
-			
-			
 			$(".editButton").removeAttr('disabled');
 			$(".deleteButton").removeAttr('disabled');
 			$(this.el).css("background-color", "#8AA5A1");
@@ -97,7 +95,6 @@ AppHolidayAdmin = (function($){
 			}
 			if (this.vunlimited == "true"){
 				stringunlimited = $("#yes-template").html()
-				p
 			} else {
 				stringunlimited = $("#no-template").html();
 			}
@@ -123,7 +120,7 @@ AppHolidayAdmin = (function($){
 			$(this.el).html(html);
 			$.ajax({
 				type:"GET",
-				url:"/admin/holiday/all",
+				url:"/admin/previousholiday/all",
 				dataType:"json",
 				success: function(data){
 					if (data != null){
@@ -262,7 +259,7 @@ AppHolidayAdmin = (function($){
 			}
 			var json = '{"type":"'+$('input[name*="type"]').val() + '", "unlimited":'+ unlimited + ', "quantity":"' + $('input[name*="quantity"]').val() +'", "frequency":"'+$('input[name*="frequency"]').val() + '", "unity":"'+$('#unity').val()+ '", "effectiveMonth":"' + $('#effectivemonth').val() + '", "anticipation":'+ anticipation +', "color":"'+ $('#color').val() +'"}';
 			$.ajax({
-				url:"/admin/holiday/create",
+				url:"/admin/previousholiday/create",
 				data: json,
 				type: "POST",
 				dataType : "json",
@@ -275,7 +272,6 @@ AppHolidayAdmin = (function($){
 						
 						var successHtml = $("#holiday-success-message-template").html();
 										
-						$("#holidays_notifications").text(successHtml);
 						$("#holidays_notifications").fadeIn(1000);
 						$("#holidays_notifications").fadeOut(3000);
 						tableView.reload();
@@ -332,7 +328,7 @@ AppHolidayAdmin = (function($){
 			
 			$.ajax({
 				type: "GET",
-				url : "/admin/holiday/combo/" + this.vid,
+				url : "/admin/previousholiday/combo/" + this.vid,
 				dataType:"json",
 				success: function(data){
 					if(data != null){
@@ -391,7 +387,7 @@ AppHolidayAdmin = (function($){
 
 			var json = '{"id":"'+this.vid+'", "type":"'+$('input[name*="type"]').val() + '", "unlimited":'+unlimited+', "quantity":"' + $('input[name*="quantity"]').val() + '", "frequency":"'+$('input[name*="frequency"]').val()+ '", "unity":"'+$('#unity').val() + '", "effectiveMonth":"' + $('#effectivemonth').val() + '", "anticipation":"' + anticipation + '", "color":"'+ $('#color').val() +'"}';
 			$.ajax({
-				url:"/admin/holiday/update",
+				url:"/admin/previousholiday/update",
 				data: json,
 				type: "POST",
 				dataType: "json",

@@ -15,8 +15,7 @@
 	<script type="text/javascript" src="/js/jquery-ui-1.8.16.min.js"></script>
 	<script type="text/javascript" src="/js/jquery.ui.datepicker-en-US.js"></script>
 	<script type="text/javascript" src="/js/jquery.ui.datepicker-fr-FR.js"></script>
-	<script type="text/javascript" src="/js/farbtastic.js"></script>
-	
+	<script type="text/javascript" src="/js/jscolor/jscolor.js"></script>
 	<!-- css files -->
 	<link rel="stylesheet" type="text/css" href="/css/style.css"/>
 	<link rel="stylesheet" type="text/css" href="/css/jquery-ui.css"/>

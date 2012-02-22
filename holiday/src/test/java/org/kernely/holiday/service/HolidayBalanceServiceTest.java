@@ -77,11 +77,11 @@ public class HolidayBalanceServiceTest extends AbstractServiceTest {
 
 	private HolidayDTO createHolidayTypeForTest() {
 		HolidayCreationRequestDTO request = new HolidayCreationRequestDTO();
-		request.type = TEST_STRING;
+		request.name = TEST_STRING;
 		request.quantity = QUANTITY;
 		request.unity = HolidayType.PERIOD_MONTH;
 		request.effectiveMonth = HolidayType.ALL_MONTH;
-		return holidayService.createHoliday(request);
+		return holidayService.createOrUpdateHoliday(request);
 	}
 
 	private UserDTO createUserForTest() {
@@ -160,13 +160,15 @@ public class HolidayBalanceServiceTest extends AbstractServiceTest {
 		UserDTO user = createUserForTest();
 
 		HolidayCreationRequestDTO request = new HolidayCreationRequestDTO();
-		request.type = TEST_STRING;
+		request.name = TEST_STRING;
 		request.quantity = QUANTITY;
 		request.unity = HolidayType.PERIOD_MONTH;
 		request.effectiveMonth = HolidayType.FEBRUARY;
-		holidayService.createHoliday(request);
+		holidayService.createOrUpdateHoliday(request);
 		HolidayDTO specificHoliday = holidayService.getAllHoliday().get(0);
 
+		holidayBalanceService.createHolidayBalance(user.id, specificHoliday.id);
+		
 		HolidayBalanceDTO balance = holidayBalanceService.getHolidayBalance(user.id, specificHoliday.id);
 
 		assertEquals(0F, balance.availableBalance, 0);
@@ -187,13 +189,16 @@ public class HolidayBalanceServiceTest extends AbstractServiceTest {
 		UserDTO user = createUserForTest();
 
 		HolidayCreationRequestDTO request = new HolidayCreationRequestDTO();
-		request.type = TEST_STRING;
+		request.name = TEST_STRING;
 		request.quantity = QUANTITY;
 		request.unity = HolidayType.PERIOD_MONTH;
 		request.effectiveMonth = HolidayType.ALL_MONTH;
-		holidayService.createHoliday(request);
+		holidayService.createOrUpdateHoliday(request);
 		HolidayDTO monthlyHoliday = holidayService.getAllHoliday().get(0);
 
+		holidayBalanceService.createHolidayBalance(user.id, monthlyHoliday.id);
+
+		
 		HolidayBalanceDTO balance = holidayBalanceService.getHolidayBalance(user.id, monthlyHoliday.id);
 
 		assertEquals(0F, balance.availableBalance, 0);
@@ -214,13 +219,16 @@ public class HolidayBalanceServiceTest extends AbstractServiceTest {
 		UserDTO user = createUserForTest();
 
 		HolidayCreationRequestDTO request = new HolidayCreationRequestDTO();
-		request.type = TEST_STRING;
+		request.name = TEST_STRING;
 		request.quantity = QUANTITY;
 		request.unity = HolidayType.PERIOD_MONTH;
 		request.effectiveMonth = HolidayType.ALL_MONTH;
-		holidayService.createHoliday(request);
+		holidayService.createOrUpdateHoliday(request);
 		HolidayDTO monthlyHoliday = holidayService.getAllHoliday().get(0);
 
+		holidayBalanceService.createHolidayBalance(user.id, monthlyHoliday.id);
+
+		
 		HolidayBalanceDTO balance = holidayBalanceService.getHolidayBalance(user.id, monthlyHoliday.id);
 
 		assertEquals(0F, balance.availableBalance, 0);
@@ -244,10 +252,13 @@ public class HolidayBalanceServiceTest extends AbstractServiceTest {
 		UserDTO user = createUserForTest();
 
 		HolidayCreationRequestDTO request = new HolidayCreationRequestDTO();
-		request.type = TEST_STRING;
+		request.name = TEST_STRING;
 		request.unlimited = true;
-		HolidayDTO unlimitedHoliday = holidayService.createHoliday(request);
+		HolidayDTO unlimitedHoliday = holidayService.createOrUpdateHoliday(request);
 
+		holidayBalanceService.createHolidayBalance(user.id, unlimitedHoliday.id);
+
+		
 		HolidayBalanceDTO balance = holidayBalanceService.getHolidayBalance(user.id, unlimitedHoliday.id);
 
 		assertEquals(0, balance.availableBalance, 0);
@@ -268,14 +279,17 @@ public class HolidayBalanceServiceTest extends AbstractServiceTest {
 		UserDTO user = createUserForTest();
 
 		HolidayCreationRequestDTO request = new HolidayCreationRequestDTO();
-		request.type = TEST_STRING;
+		request.name = TEST_STRING;
 		request.quantity = QUANTITY;
 		request.unity = HolidayType.PERIOD_MONTH;
 		request.effectiveMonth = HolidayType.FEBRUARY;
 
-		holidayService.createHoliday(request);
+		holidayService.createOrUpdateHoliday(request);
 		HolidayDTO holidayType = holidayService.getAllHoliday().get(0);
 
+		holidayBalanceService.createHolidayBalance(user.id, holidayType.id);
+
+		
 		HolidayBalanceDTO balance = holidayBalanceService.getHolidayBalance(user.id, holidayType.id);
 
 		holidayBalanceService.incrementBalance(balance.id);

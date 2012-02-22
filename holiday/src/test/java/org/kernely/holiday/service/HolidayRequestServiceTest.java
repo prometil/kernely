@@ -86,11 +86,11 @@ public class HolidayRequestServiceTest extends AbstractServiceTest{
 
 	private HolidayDTO createHolidayTypeForTest(){
 		HolidayCreationRequestDTO request = new HolidayCreationRequestDTO();
-		request.type = TEST_STRING;
+		request.name = TEST_STRING;
 		request.quantity = QUANTITY;
 		request.unity = HolidayType.PERIOD_MONTH;
 		request.effectiveMonth = HolidayType.ALL_MONTH;
-		return holidayService.createHoliday(request);
+		return holidayService.createOrUpdateHoliday(request);
 	}
 	
 	private void createHolidayRequestForUser(long userId, int typeId){
@@ -256,11 +256,14 @@ public class HolidayRequestServiceTest extends AbstractServiceTest{
 		this.createManagerForTest();
 		UserDTO user1DTO = this.createUser1ForTest();
 		
+		
 		List<UserDTO> managed = new ArrayList<UserDTO>();
 		managed.add(user1DTO);
 		userService.updateManager(USERNAME_MANAGER, managed);
 		
 		HolidayDTO type = this.createHolidayTypeForTest();
+		holidayBalanceService.createHolidayBalance(user1DTO.id, type.id);
+		
 		HolidayBalanceDTO balance = holidayBalanceService.getHolidayBalance(user1DTO.id, type.id);
 		holidayBalanceService.incrementBalance(balance.id);
 		holidayBalanceService.incrementBalance(balance.id);
@@ -313,6 +316,7 @@ public class HolidayRequestServiceTest extends AbstractServiceTest{
 		HolidayDTO type = this.createHolidayTypeForTest();
 		
 		authenticateAs(USERNAME_USER1);
+		holidayBalanceService.createHolidayBalance(user1DTO.id, type.id);
 		this.createHolidayRequestForUser(user1DTO.id, type.id);
 
 		List<HolidayRequestDTO> dtos = holidayRequestService.getAllRequestsWithStatusForCurrentUser(HolidayRequest.PENDING_STATUS);
@@ -334,6 +338,7 @@ public class HolidayRequestServiceTest extends AbstractServiceTest{
 		HolidayDTO type = this.createHolidayTypeForTest();
 		
 		authenticateAs(USERNAME_USER1);
+		holidayBalanceService.createHolidayBalance(user1DTO.id, type.id);
 		this.createHolidayRequestForUser(user1DTO.id, type.id);
 
 		authenticateAs(USERNAME_MANAGER);
@@ -354,6 +359,8 @@ public class HolidayRequestServiceTest extends AbstractServiceTest{
 		HolidayDTO type = this.createHolidayTypeForTest();
 		
 		authenticateAs(USERNAME_USER1);
+		holidayBalanceService.createHolidayBalance(user1DTO.id, type.id);
+		
 		this.createHolidayRequestForUser(user1DTO.id, type.id);
 
 		List<HolidayRequestDTO> dtos = holidayRequestService.getSpecificRequestsForManagers(HolidayRequest.PENDING_STATUS);
@@ -371,6 +378,9 @@ public class HolidayRequestServiceTest extends AbstractServiceTest{
 		userService.updateManager(USERNAME_MANAGER, managed);
 		
 		HolidayDTO type = this.createHolidayTypeForTest();
+		
+		holidayBalanceService.createHolidayBalance(user1DTO.id, type.id);
+		
 		HolidayBalanceDTO balance = holidayBalanceService.getHolidayBalance(user1DTO.id, type.id);
 		holidayBalanceService.incrementBalance(balance.id);
 		holidayBalanceService.incrementBalance(balance.id);
@@ -419,6 +429,8 @@ public class HolidayRequestServiceTest extends AbstractServiceTest{
 		
 		HolidayDTO type = this.createHolidayTypeForTest();
 		
+		holidayBalanceService.createHolidayBalance(user1DTO.id, type.id);
+		
 		authenticateAs(USERNAME_USER1);
 		this.createHolidayRequestForUser(user1DTO.id, type.id);
 
@@ -433,6 +445,9 @@ public class HolidayRequestServiceTest extends AbstractServiceTest{
 		UserDTO user1DTO = this.createUser1ForTest();
 		
 		HolidayDTO type = this.createHolidayTypeForTest();
+		
+		holidayBalanceService.createHolidayBalance(user1DTO.id, type.id);
+		
 		HolidayBalanceDTO balance = holidayBalanceService.getHolidayBalance(user1DTO.id, type.id);
 		holidayBalanceService.incrementBalance(balance.id);
 		holidayBalanceService.incrementBalance(balance.id);
@@ -476,6 +491,8 @@ public class HolidayRequestServiceTest extends AbstractServiceTest{
 		UserDTO user1DTO = this.createUser1ForTest();
 		
 		HolidayDTO type = this.createHolidayTypeForTest();
+		
+		holidayBalanceService.createHolidayBalance(user1DTO.id, type.id);
 		
 		authenticateAs(USERNAME_USER1);
 		

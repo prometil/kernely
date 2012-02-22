@@ -28,6 +28,23 @@ public class Migration01 extends Migration {
 	public List<Command> getList() {
 		ArrayList<Command> commands = new ArrayList<Command>();
 
+		CreateTable holidayProfile = CreateTable.name("kernely_holiday_profile");
+		holidayProfile.column("id", "int primary key");
+		holidayProfile.column("name", "varchar(50)");
+		
+		commands.add(holidayProfile);
+		
+		CreateTable holidayProfileUsers = CreateTable.name("kernely_holiday_profile_users");
+		holidayProfileUsers.column("holiday_profile_id", "int");
+		holidayProfileUsers.column("user_id", "bigint");
+
+		RawSql holidayProfileForeignKey = new RawSql("ALTER TABLE kernely_holiday_profile_users ADD CONSTRAINT fk_holiday_profile FOREIGN KEY (holiday_profile_id) REFERENCES kernely_holiday_profile (id)");
+		RawSql userForeignKey = new RawSql("ALTER TABLE kernely_holiday_profile_users ADD CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES kernely_user (id)");
+
+		commands.add(holidayProfileUsers);
+		commands.add(holidayProfileForeignKey);
+		commands.add(userForeignKey);
+		
 		CreateTable holidayType = CreateTable.name("kernely_holiday_type");
 		holidayType.column("id", "int primary key");
 		holidayType.column("name", "varchar(50)");
@@ -37,8 +54,12 @@ public class Migration01 extends Migration {
 		holidayType.column("effective_month", "int");
 		holidayType.column("anticipated", "bool");
 		holidayType.column("color", "varchar(10)");
+		holidayType.column("holiday_profile_id", "int");
+
+		RawSql holidayTypeForeignKey = new RawSql("ALTER TABLE kernely_holiday_type ADD CONSTRAINT fk_holiday_profile FOREIGN KEY (holiday_profile_id) REFERENCES kernely_holiday_profile (id)");
 
 		commands.add(holidayType);
+		commands.add(holidayTypeForeignKey);
 
 		CreateTable holidayBalance = CreateTable.name("kernely_holiday_balance");
 		holidayBalance.column("id", "int primary key");
@@ -85,7 +106,7 @@ public class Migration01 extends Migration {
 		commands.add(holidayRequestDetail);
 		commands.add(holidayRequestDetailRequestForeignKey);
 		commands.add(holidayRequestDetailBalanceForeignKey);
-
+		
 		return commands;
 	}
 }

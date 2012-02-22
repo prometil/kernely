@@ -27,15 +27,20 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.kernely.core.controller.AbstractController;
+import org.kernely.core.dto.UserDetailsDTO;
 import org.kernely.core.service.user.UserService;
 import org.kernely.core.template.TemplateRenderer;
 import org.kernely.holiday.dto.HolidayCreationRequestDTO;
 import org.kernely.holiday.dto.HolidayDTO;
-import org.kernely.holiday.dto.HolidayUpdateRequestDTO;
+import org.kernely.holiday.dto.HolidayProfileCreationRequestDTO;
+import org.kernely.holiday.dto.HolidayProfileDTO;
+import org.kernely.holiday.dto.HolidayProfileUpdateUsersRequestDTO;
+import org.kernely.holiday.dto.HolidayProfileUsersDTO;
 import org.kernely.holiday.service.HolidayService;
 
 import com.google.inject.Inject;
@@ -62,7 +67,7 @@ public class HolidayAdminController extends AbstractController {
 	public Response getPluginAdminPanel(){
 		Response page;
 		if (userService.currentUserIsAdministrator()){
-			page = ok(templateRenderer.create("/templates/gsp/holiday_admin.gsp").addCss("/css/admin.css").addCss("/css/holiday_admin.css").withLayout(TemplateRenderer.ADMIN_LAYOUT));
+			page = ok(templateRenderer.create("/templates/gsp/holiday_profile_admin.gsp").addCss("/css/admin.css").addCss("/css/holiday_admin.css").withLayout(TemplateRenderer.ADMIN_LAYOUT));
 		} else{
 			page = ok(templateRenderer.create("/templates/gsp/home.gsp"));
 		}
@@ -70,16 +75,16 @@ public class HolidayAdminController extends AbstractController {
 	}
 	
 	/**
-	 * Display the list of holiday for the table
+	 * Display the list of holiday profiles
 	 * @return List of holiday 
 	 */
 	@GET
 	@Path("/all")
 	@Produces({MediaType.APPLICATION_JSON})
-	public List<HolidayDTO> displayAllHoliday(){
+	public List<HolidayProfileDTO> displayAllHoliday(){
 		if (userService.currentUserIsAdministrator()){
-			log.debug("Call to GET on all holidays");
-			return holidayService.getAllHoliday();
+			log.debug("Call to GET on all holiday profiles");
+			return holidayService.getAllProfiles();
 		}
 		return null;
 	}
@@ -99,53 +104,69 @@ public class HolidayAdminController extends AbstractController {
 	}
 
 	/**
-	 * Delete the holiday which has the id 'id'
-	 * @param id The id of the holiday to delete
-	 * @return The result of the operation
-	 */
-	@GET
-	@Path("/delete/{id}")
-	@Produces( { MediaType.TEXT_HTML })
-	public String deleteHoliday(@PathParam("id") int id){
-		
-		
-		if (userService.currentUserIsAdministrator()){
-			holidayService.deleteHoliday(id);
-			return "{\"result\":\"Ok\"}"; 
-		}
-		return null;
-	}
-	
-	/**
-	 * Create a new holiday with the given informations
-	 * @param holiday The DTO containing all informations about the new holiday
+	 * Create a new holiday profile with the given informations
+	 * @param holiday The DTO containing all informations about the new holiday profile
 	 * @return A JSON string containing the result of the operation
 	 */
 	@POST
 	@Path("/create")
 	@Produces({MediaType.APPLICATION_JSON})
-	public String create(HolidayCreationRequestDTO holiday){
+	public String create(HolidayProfileCreationRequestDTO holiday){
 		if (userService.currentUserIsAdministrator()){
-			holidayService.createHoliday(holiday);
-			return "{\"result\":\"Ok\"}"; 
+			holidayService.createOrUpdateHolidayProfile(holiday);
+			return "{\"result\":\"Ok\"}";
 		}
 		return null;		
 	}
 	
-
 	/**
-	 *  Update a new holiday with the given informations
-	 * @param holiday The DTO containing all informations about the new holiday
+	 * Create a new holiday type with the given informations
+	 * @param holiday The DTO containing all informations about the new holiday type
 	 * @return A JSON string containing the result of the operation
 	 */
 	@POST
-	@Path("/update")
+	@Path("/createtype")
 	@Produces({MediaType.APPLICATION_JSON})
-	public String update(HolidayUpdateRequestDTO holiday){
+	public HolidayDTO createType(HolidayCreationRequestDTO holiday){
 		if (userService.currentUserIsAdministrator()){
-			holidayService.updateHoliday(holiday);
-			return "{\"result\":\"Ok\"}"; 
+			return holidayService.createOrUpdateHoliday(holiday);
 		}
-		return null;
+		return null;		
 	}
+	
+	/**
+	 * Get all users and separates those who are associated to the profile and those who are not
+	 * @param id the id of the concerned profile
+	 * @return A JSON string containing the result of the operation
+	 */
+	@GET
+	@Path("/profile/users")
+	@Produces({MediaType.APPLICATION_JSON})
+	public HolidayProfileUsersDTO getProfileUsers(@QueryParam("id") int id){
+		if (userService.currentUserIsAdministrator()){
+			List<UserDetailsDTO> in = holidayService.getUsersInProfile(id);
+			List<UserDetailsDTO> out = holidayService.getUsersNotInProfile(id);
+			log.debug("Profile {} is associated to {} users",id,in.size());
+			return new HolidayProfileUsersDTO(id,in,out);
+		}
+		System.out.println("null");
+		return null;		
+	}
+	
+	/**
+	 * Create a holiday request
+	 * @param request the holiday request creation DTO
+	 * @return ok 
+	 */
+	@POST
+	@Path("/profile/users/update")
+	@Produces({MediaType.APPLICATION_JSON})
+	public String updateUsers(HolidayProfileUpdateUsersRequestDTO request){
+		// Check if request is not null.
+		if(request != null){
+			holidayService.updateProfileUsers(request.id,request.usernames);
+		}
+		return "{\"result\":\"Ok\"}";
+	}
+
 }

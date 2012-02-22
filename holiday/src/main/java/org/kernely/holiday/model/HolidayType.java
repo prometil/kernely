@@ -27,6 +27,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
@@ -44,6 +46,10 @@ public class HolidayType extends AbstractModel {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private int id;
 
+	@ManyToOne
+	@JoinColumn(name = "holiday_profile_id")
+	private HolidayProfile holidayProfile;
+	
 	private String name;
 	private int quantity;
 	
@@ -65,19 +71,19 @@ public class HolidayType extends AbstractModel {
 	public static final int PERIOD_YEAR = 1;
 	public static final int PERIOD_MONTH = 12;
 	
-	public static final int JANUARY = 0;
-	public static final int FEBRUARY = 1;
-	public static final int MARCH = 2;
-	public static final int APRIL = 3;
-	public static final int MAY = 4;
-	public static final int JUNE = 5;
-	public static final int JULY = 6;
-	public static final int AUGUST = 7;
-	public static final int SEPTEMBER = 8;
-	public static final int OCTOBER = 9;
-	public static final int NOVEMBER = 10;
-	public static final int DECEMBER = 11;
-	public static final int ALL_MONTH = 12;
+	public static final int JANUARY = 1;
+	public static final int FEBRUARY = 2;
+	public static final int MARCH = 3;
+	public static final int APRIL = 4;
+	public static final int MAY = 5;
+	public static final int JUNE = 6;
+	public static final int JULY = 7;
+	public static final int AUGUST = 8;
+	public static final int SEPTEMBER = 9;
+	public static final int OCTOBER = 10;
+	public static final int NOVEMBER = 11;
+	public static final int DECEMBER = 12;
+	public static final int ALL_MONTH = 0;
 
 	/**
 	 * @return the id
@@ -210,6 +216,20 @@ public class HolidayType extends AbstractModel {
 	 */
 	public void setUnlimited(boolean unlimited) {
 		this.unlimited = unlimited;
+	}
+
+	/**
+	 * @return the profile
+	 */
+	public HolidayProfile getProfile() {
+		return holidayProfile;
+	}
+
+	/**
+	 * @param profile the profile to set
+	 */
+	public void setProfile(HolidayProfile profile) {
+		this.holidayProfile = profile;
 	}
 	
 	
