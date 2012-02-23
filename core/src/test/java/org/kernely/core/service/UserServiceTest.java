@@ -23,8 +23,10 @@ package org.kernely.core.service;
 import static org.junit.Assert.assertEquals;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
+import org.joda.time.DateTime;
 import org.junit.Assert;
 import org.junit.Test;
 import org.kernely.core.common.AbstractServiceTest;
@@ -53,6 +55,10 @@ public class UserServiceTest extends AbstractServiceTest{
 	private static final String STRING_TEST = "test";
 
 	private static final String STRING_TEST2 = "test2";
+	
+	private static final Date HIRE_DATE_TEST = DateTime.now().toDate();
+	
+	private static final Date HIRE_DATE_TEST_MODIFIED = DateTime.now().plusDays(1).toDate();
 
 	@Inject
 	private UserService service;
@@ -71,6 +77,7 @@ public class UserServiceTest extends AbstractServiceTest{
 		request.password = username;
 		request.firstname = username;
 		request.lastname = username;
+		request.hire = HIRE_DATE_TEST;
 		return service.createUser(request);
 	}
 	
@@ -83,6 +90,7 @@ public class UserServiceTest extends AbstractServiceTest{
 		assertEquals(STRING_TEST, userdto.username);
 		assertEquals(STRING_TEST, uddto.firstname);
 		assertEquals(STRING_TEST, uddto.lastname);
+		assertEquals(HIRE_DATE_TEST, uddto.hire);
 	}
 	
 	@Test(expected=IllegalArgumentException.class)
@@ -107,6 +115,7 @@ public class UserServiceTest extends AbstractServiceTest{
 		
 		assertEquals(uddto.firstname, service.getUserDetails(userdto.username).firstname);
 		assertEquals(uddto.lastname,service.getUserDetails(userdto.username).lastname);
+		assertEquals(uddto.hire, service.getUserDetails(userdto.username).hire);
 	}
 	
 	@Test
@@ -245,6 +254,7 @@ public class UserServiceTest extends AbstractServiceTest{
 		ucr.username = TEST_MODIFIED_1;
 		ucr.firstname = TEST_MODIFIED_2;
 		ucr.lastname = TEST_MODIFIED_3;
+		ucr.hire = HIRE_DATE_TEST_MODIFIED;
 		ucr.roles = new ArrayList<RoleDTO>();
 		service.updateUser(ucr);
 		userdto = service.getAllUsers().get(0);
@@ -252,6 +262,7 @@ public class UserServiceTest extends AbstractServiceTest{
 		assertEquals(TEST_MODIFIED_1, userdto.username);
 		assertEquals(TEST_MODIFIED_2, uddto.firstname);
 		assertEquals(TEST_MODIFIED_3, uddto.lastname);
+		assertEquals(HIRE_DATE_TEST_MODIFIED, uddto.hire);
 	}
 	
 	@Test(expected=IllegalArgumentException.class)

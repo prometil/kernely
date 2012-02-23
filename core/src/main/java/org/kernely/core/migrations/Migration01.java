@@ -114,6 +114,7 @@ public class Migration01 extends Migration {
 		userDetails.column("ssn", "varchar(20)");
 		userDetails.column("civility", "int");
 		userDetails.column("birth", "timestamp");
+		userDetails.column("hire", "timestamp");
 		RawSql  userDetailsForeignKey= new RawSql("ALTER TABLE kernely_user_details ADD CONSTRAINT fk_user_id FOREIGN KEY (user_id) REFERENCES kernely_user (id)");
 	
 		Insert insertJohnDetails = Insert.into("kernely_user_details");

@@ -21,7 +21,6 @@
 package org.kernely.holiday.model;
 
 import java.util.Date;
-import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -30,7 +29,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -56,12 +54,17 @@ public class HolidayBalance extends AbstractModel {
 	@Column(name = "available_balance_updated")
 	private int availableBalanceUpdated;
 
-	@Column(name = "future_balance")
-	private int futureBalance;
-
 	@Column(name = "last_update")
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date lastUpdate;
+	
+	@Column(name = "begin_date")
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date beginDate;
+	
+	@Column(name = "end_date")
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date endDate;
 
 	@ManyToOne
 	@JoinColumn(name = "holiday_type_id")
@@ -70,9 +73,6 @@ public class HolidayBalance extends AbstractModel {
 	@ManyToOne
 	@JoinColumn(name = "user_id")
 	private User user;
-	
-	@OneToMany(mappedBy = "balance")
-	private Set<HolidayRequestDetail> details;
 
 	/**
 	 * @return the id
@@ -149,21 +149,6 @@ public class HolidayBalance extends AbstractModel {
 	}
 
 	/**
-	 * @return the futureBalance
-	 */
-	public int getFutureBalance() {
-		return futureBalance;
-	}
-
-	/**
-	 * @param futureBalance
-	 *            the futureBalance to set
-	 */
-	public void setFutureBalance(int futureBalance) {
-		this.futureBalance = futureBalance;
-	}
-
-	/**
 	 * @return the lastUpdate
 	 */
 	public Date getLastUpdate() {
@@ -177,19 +162,33 @@ public class HolidayBalance extends AbstractModel {
 	public void setLastUpdate(Date lastUpdate) {
 		this.lastUpdate = (Date)lastUpdate.clone();
 	}
-	
+
 	/**
-	 * @return the details
+	 * @return the beginDate
 	 */
-	public Set<HolidayRequestDetail> getDetails() {
-		return details;
+	public Date getBeginDate() {
+		return beginDate;
 	}
 
 	/**
-	 * @param details the details to set
+	 * @param beginDate the beginDate to set
 	 */
-	public void setDetails(Set<HolidayRequestDetail> details) {
-		this.details = details;
+	public void setBeginDate(Date beginDate) {
+		this.beginDate = beginDate;
+	}
+
+	/**
+	 * @return the endDate
+	 */
+	public Date getEndDate() {
+		return endDate;
+	}
+
+	/**
+	 * @param endDate the endDate to set
+	 */
+	public void setEndDate(Date endDate) {
+		this.endDate = endDate;
 	}
 
 }

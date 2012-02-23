@@ -30,6 +30,7 @@
                 vlogin: null,
                 vfirstname: null,
                 vlastname: null,
+                vhire : null,
                 vlocked: null,
                 vmail:null,
                 
@@ -39,13 +40,14 @@
                         "mouseout" : "outLine"
                 },
                 
-                initialize: function(id, lastname, firstname, login, mail, locked){
+                initialize: function(id, lastname, firstname, login, mail, locked, hire){
                         this.vid = id;
                         this.vlogin = login;
                         this.vfirstname = firstname;
                         this.vlastname = lastname;
                         this.vmail = mail;
                         this.vlocked = locked;
+                        this.vhire = hire;
                 },
                 selectLine : function(){
                         $(".editButton").removeAttr('disabled');
@@ -190,7 +192,7 @@
 		
 		edituser: function(){
 			this.showModalWindow();
-			this.viewUpdate.setFields(lineSelected.vlogin,lineSelected.vfirstname,lineSelected.vlastname,lineSelected.vid);
+			this.viewUpdate.setFields(lineSelected.vlogin,lineSelected.vfirstname,lineSelected.vlastname, lineSelected.vhire, lineSelected.vid);
 			this.viewUpdate.render();
 		},
 		
@@ -245,7 +247,7 @@
 		},
 		
 		registeruser: function(){
-			var json = '{"id":"0", "firstname":"'+$('input[name*="firstname"]').val()+'","lastname":"'+$('input[name*="lastname"]').val()+'", "username":"'+$('input[name*="login"]').val()+'", "password":"'+$('input[name*="password"]').val()+'"}';
+			var json = '{"id":"0", "firstname":"'+$('input[name*="firstname"]').val()+'","lastname":"'+$('input[name*="lastname"]').val()+'", "username":"'+$('input[name*="login"]').val()+'", "password":"'+$('input[name*="password"]').val()+'", "hire":"'+$('input[name*="hire"]')+'"}';
 			$.ajax({
 				url:"/admin/users/create",
 				data: json,
@@ -280,30 +282,33 @@
 		vlogin: null,
 		vfirstname: null,
 		vlastname: null,
+		vhire: null,
 		
 		events:{
 			"click .closeModal" : "closemodal",
 			"click .updateUser" : "updateuser"
 		},
 		
-		initialize:function(login, firstname, lastname, id){
+		initialize:function(login, firstname, lastname, hire, id){
 			this.vid = id;
 			this.vlogin = login;
 			this.vfirstname = firstname;
 			this.vlastname = lastname;
+			this.vhire = hire;
 		},
 		
-		setFields: function(login, firstname, lastname, id){
+		setFields: function(login, firstname, lastname, hire, id){
 			this.vid = id;
 			this.vlogin = login;
 			this.vfirstname = firstname;
 			this.vlastname = lastname;
+			this.vhire = hire;
 		},
 		
 		render : function(){
 			var template = $("#popup-user-admin-update-template").html();
 			
-			var view = {login : this.vlogin, firstname: this.vfirstname, lastname: this.vlastname};
+			var view = {login : this.vlogin, firstname: this.vfirstname, lastname: this.vlastname, hire: this.vhire};
 			var html = Mustache.to_html(template, view);
 			$(this.el).html(html);
 			
@@ -336,7 +341,7 @@
 			else{
 				roles = '"roles":{}';
 			}
-			var json = '{"id":"'+this.vid+'", "firstname":"'+$('input[name*="firstname"]').val()+'","lastname":"'+$('input[name*="lastname"]').val()+'", "username":"'+$('input[name*="login"]').val()+'", "password":"'+$('input[name*="password"]').val()+'", ' + roles + '}';
+			var json = '{"id":"'+this.vid+'", "firstname":"'+$('input[name*="firstname"]').val()+'","lastname":"'+$('input[name*="lastname"]').val()+'", "username":"'+$('input[name*="login"]').val()+'", "hire":"'+$('input[name*="hire"]')+'", ' + roles + '}';
 			$.ajax({
 				url:"/admin/users/create",
 				data: json,

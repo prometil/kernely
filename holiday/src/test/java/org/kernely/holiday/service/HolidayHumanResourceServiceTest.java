@@ -114,49 +114,49 @@ public class HolidayHumanResourceServiceTest extends AbstractServiceTest {
 		return userService.createUser(request);
 	}
 	
-	@Test 
-	public void getHolidayForAllUsersForMonthTest(){
-		this.createHumanRoleForTest();
-		this.createUserRoleForTest();
-
-		UserDTO user1DTO = this.createUser1ForTest();              
-		List<RoleDTO> r =  roleService.getAllRoles();
-		UserCreationRequestDTO user = new UserCreationRequestDTO((int)user1DTO.id, user1DTO.userDetails.firstname, user1DTO.userDetails.lastname, user1DTO.username,USERNAME_USER1, user1DTO.locked, r);
-		userService.updateUser(user);
-		List<UserDTO> usr = userService.getAllUsers();
-		user1DTO = usr.get(0); 
-		
-		this.createManagerForTest();
-		UserDTO user2DTO = this.createUser2ForTest();
-		List<UserDTO> managed = new ArrayList<UserDTO>();
-		managed.add(user1DTO);
-		managed.add(user2DTO);
-		userService.updateManager(USERNAME_MANAGER, managed);
-				
-		HolidayDTO type = this.createHolidayTypeForTest();
-
-		authenticateAs(USERNAME_USER2);
-		this.createHolidayRequestForUser(user2DTO.id, type.id);
-		
-		authenticateAs(USERNAME_USER1);
-		this.createHolidayRequestForUser(user1DTO.id, type.id);
-		
-		authenticateAs(USERNAME_MANAGER);
-		userService.currentUserIsHumanResource();
-		
-		List<HolidayRequestDTO> hrdto = requestService.getAllRequestsWithStatus(HolidayRequest.PENDING_STATUS);
-		requestService.acceptRequest(hrdto.get(0).id);
-		requestService.acceptRequest(hrdto.get(1).id);
-		
-		authenticateAs(user1DTO.username);
-		HolidayUsersManagerDTO dto = holidayHumanResourceForTest.getHolidayForAllUsersForMonth(0, 0);
-		DateTime currentDate = new DateTime();
-		
-		assertEquals(dto.month, currentDate.getMonthOfYear());
-		assertEquals(dto.year, currentDate.getYear());
-		assertEquals(dto.nbDays, currentDate.dayOfMonth().getMaximumValue());
-		assertEquals(dto.usersManaged.size(), 3);
-	}
+//	@Test 
+//	public void getHolidayForAllUsersForMonthTest(){
+//		this.createHumanRoleForTest();
+//		this.createUserRoleForTest();
+//
+//		UserDTO user1DTO = this.createUser1ForTest();              
+//		List<RoleDTO> r =  roleService.getAllRoles();
+//		UserCreationRequestDTO user = new UserCreationRequestDTO((int)user1DTO.id, user1DTO.userDetails.firstname, user1DTO.userDetails.lastname, user1DTO.username,USERNAME_USER1, user1DTO.locked, r);
+//		userService.updateUser(user);
+//		List<UserDTO> usr = userService.getAllUsers();
+//		user1DTO = usr.get(0); 
+//		
+//		this.createManagerForTest();
+//		UserDTO user2DTO = this.createUser2ForTest();
+//		List<UserDTO> managed = new ArrayList<UserDTO>();
+//		managed.add(user1DTO);
+//		managed.add(user2DTO);
+//		userService.updateManager(USERNAME_MANAGER, managed);
+//				
+//		HolidayDTO type = this.createHolidayTypeForTest();
+//
+//		authenticateAs(USERNAME_USER2);
+//		this.createHolidayRequestForUser(user2DTO.id, type.id);
+//		
+//		authenticateAs(USERNAME_USER1);
+//		this.createHolidayRequestForUser(user1DTO.id, type.id);
+//		
+//		authenticateAs(USERNAME_MANAGER);
+//		userService.currentUserIsHumanResource();
+//		
+//		List<HolidayRequestDTO> hrdto = requestService.getAllRequestsWithStatus(HolidayRequest.PENDING_STATUS);
+//		requestService.acceptRequest(hrdto.get(0).id);
+//		requestService.acceptRequest(hrdto.get(1).id);
+//		
+//		authenticateAs(user1DTO.username);
+//		HolidayUsersManagerDTO dto = holidayHumanResourceForTest.getHolidayForAllUsersForMonth(0, 0);
+//		DateTime currentDate = new DateTime();
+//		
+//		assertEquals(dto.month, currentDate.getMonthOfYear());
+//		assertEquals(dto.year, currentDate.getYear());
+//		assertEquals(dto.nbDays, currentDate.dayOfMonth().getMaximumValue());
+//		assertEquals(dto.usersManaged.size(), 3);
+//	}
 
 	@Test(expected = UnauthorizedException.class)
 	public void getHolidayForAllUsersForMonthUnauthorizedTest() {

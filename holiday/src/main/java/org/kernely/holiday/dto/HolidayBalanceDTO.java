@@ -24,67 +24,95 @@ import java.util.Date;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.joda.time.DateTime;
 import org.kernely.holiday.model.HolidayBalance;
 
-
 /**
- * Dto for holiday  
+ * Dto for holiday
+ * 
  * @author b.grandperret
- *
+ * 
  */
 @XmlRootElement
-public class HolidayBalanceDTO {
+public class HolidayBalanceDTO implements Comparable<HolidayBalanceDTO> {
 
 	/**
 	 * The holiday id
 	 */
 	public int id;
-	
+
 	/**
 	 * Available balance for this type of holiday
 	 */
 	public float availableBalance;
-	
+
 	/**
 	 * Available balance updated with pending and accepted requests
 	 */
 	public float availableBalanceUpdated;
-	
-	/**
-	 * The future balance
-	 */
-	public float futureBalance;
-	
+
 	/**
 	 * The effective month
 	 */
 	public int effectiveMonth;
-	
+
 	/**
 	 * The last update
 	 */
 	public Date lastUpdate;
-	
+
+	/**
+	 * Begin effective date of this balance
+	 */
+	public Date beginDate;
+
+	/**
+	 * End effective date of this balance
+	 */
+	public Date endDate;
+
 	/**
 	 * Default constructor
 	 */
-	public HolidayBalanceDTO(){
-		
+	public HolidayBalanceDTO() {
+
 	}
 
 	/**
 	 * Constructor
-	 * @param balance the HolidayBalance model
+	 * 
+	 * @param balance
+	 *            the HolidayBalance model
 	 */
-	public HolidayBalanceDTO(HolidayBalance balance){
-		this.id = balance.getId() ; 
-		
-		// Divide balances by 12 because in database, balances are in twelths of days.
+	public HolidayBalanceDTO(HolidayBalance balance) {
+		this.id = balance.getId();
+
+		// Divide balances by 12 because in database, balances are in twelths of
+		// days.
 		this.availableBalance = ((float) balance.getAvailableBalance()) / 12.0F;
 		this.availableBalanceUpdated = ((float) balance.getAvailableBalanceUpdated()) / 12.0F;
-		this.futureBalance = ((float) balance.getFutureBalance()) / 12.0F;
 		this.lastUpdate = balance.getLastUpdate();
 		this.effectiveMonth = balance.getHolidayType().getEffectiveMonth();
+		this.beginDate = balance.getBeginDate();
+		this.endDate = balance.getEndDate();
 	}
-	
+
+	@Override
+	public int compareTo(HolidayBalanceDTO other) {
+		DateTime currentBegin = new DateTime(this.beginDate);
+		DateTime currentEnd = new DateTime(this.endDate);
+		DateTime otherBegin = new DateTime(other.beginDate);
+		DateTime otherEnd = new DateTime(other.endDate);
+		if (currentBegin.toDateMidnight().isBefore(otherBegin.toDateMidnight()) && currentEnd.toDateMidnight().isBefore(otherEnd.toDateMidnight())) {
+			return -1;
+		} else {
+			if (currentBegin.toDateMidnight().isAfter(otherBegin.toDateMidnight()) && currentEnd.toDateMidnight().isAfter(otherEnd.toDateMidnight())) {
+				return 1;
+			} else {
+				return 0;
+			}
+
+		}
+	}
+
 }

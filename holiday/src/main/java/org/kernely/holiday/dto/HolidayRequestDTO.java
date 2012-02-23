@@ -7,6 +7,7 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.joda.time.DateTime;
+import org.kernely.core.dto.UserDTO;
 import org.kernely.holiday.model.HolidayRequest;
 import org.kernely.holiday.model.HolidayRequestDetail;
 
@@ -75,6 +76,11 @@ public class HolidayRequestDTO {
 	public List<HolidayDetailDTO> details = new ArrayList<HolidayDetailDTO>();
 	
 	/**
+	 * The DTO associated to the owner of this request
+	 */
+	public UserDTO userDTO;
+	
+	/**
 	 * Default constructor 
 	 */
 	public HolidayRequestDTO(){
@@ -94,6 +100,7 @@ public class HolidayRequestDTO {
 		this.status = request.getStatus();
 		this.requesterComment = request.getRequesterComment();
 		this.user = request.getUser().getUsername();
+		this.userDTO = new UserDTO(request.getUser());
 		if (request.getManager() != null){
 			this.manager = request.getManager().getUsername();
 		}

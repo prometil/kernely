@@ -15,8 +15,9 @@
 	<br/>
 	<fieldset>
 	<legend><%= i18n.t("user_informations") %></legend>
-	<%= i18n.t("name") %>:<input type="text" name="lastname" value="{{lastname}}"/><br/>
-	<%= i18n.t("firstname") %>: <input type="text" name="firstname" value="{{firstname}}"/>
+	<%= i18n.t("name") %>:<input type="text" name="lastname"/><br/>
+	<%= i18n.t("firstname") %>: <input type="text" name="firstname"/>
+	<%= i18n.t("hiredate") %>: <input type="text" name="hire"/>
 	</fieldset>
 	<br/>
 	
@@ -29,13 +30,13 @@
 	<fieldset>
 	<legend><%= i18n.t("connection_informations") %></legend>
 	<%= i18n.t("login") %>: <input type="text" name="login" value="{{login}}"/><br/>
-	<%= i18n.t("password") %>: <input type="text" name="password"/>
 	</fieldset>
 	<br/>
 	<fieldset>
 	<legend><%= i18n.t("user_informations") %></legend>
 	<%= i18n.t("name") %>: <input type="text" name="lastname" value="{{lastname}}"/><br/>
 	<%= i18n.t("firstname") %>: <input type="text" name="firstname" value="{{firstname}}"/>
+	<%= i18n.t("hiredate") %>: <input type="text" name="hire" value="{{hire}}"/>
 	</fieldset>
 	<fieldset>
 	<legend><%= i18n.t("user_roles") %></legend>

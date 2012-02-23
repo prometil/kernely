@@ -19,6 +19,7 @@
  */
 package org.kernely.core.dto;
 
+import java.util.Date;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlRootElement;
@@ -60,6 +61,11 @@ public class UserCreationRequestDTO {
 	public boolean locked;
 	
 	/**
+	 * Hire date of this user
+	 */
+	public Date hire;
+	
+	/**
 	 * the list of   roles of an user
 	 */
 	public List<RoleDTO> roles;
@@ -78,16 +84,18 @@ public class UserCreationRequestDTO {
 	 * @param lName
 	 * @param username
 	 * @param password
+	 * @param hire
 	 * @param locked
 	 * @param roles
 	 */
-	public UserCreationRequestDTO(int id, String fName, String lName, String username, String password, boolean locked, List<RoleDTO> roles) {
+	public UserCreationRequestDTO(int id, String fName, String lName, String username, String password, Date hire, boolean locked, List<RoleDTO> roles) {
 		this.id = id;
 		this.firstname = fName;
 		this.lastname = lName;
 		this.username = username;
 		this.password = password;
 		this.locked = locked;
+		this.hire = hire;
 		this.roles = roles;
 	}
 

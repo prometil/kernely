@@ -113,6 +113,16 @@ public class UserDetailsDTO {
 	 * The user link to the user detail 
 	 */
 	public UserDTO user;
+	
+	/**
+	 * The hire date of this user
+	 */
+	public Date hire;
+	
+	/**
+	 * The hire date in String format of this user, used fir display
+	 */
+	public String hireString = "";
 
 	/**
 	 * Default Constructor
@@ -167,6 +177,16 @@ public class UserDetailsDTO {
 		this.nationality = details.getNationality();
 		this.ssn = details.getSsn();
 		this.civility = details.getCivility();
+		this.hire = details.getHire();
+		if (details.getHire() != null) {
+			String newDateString;
+			Date date = details.getHire();
+			String newPattern = "dd/MM/yyyy";
+			newDateString = (new SimpleDateFormat(newPattern)).format(date);
+			this.hireString = newDateString;
+		} else {
+			this.hireString = "";
+		}
 		this.id = details.getIdUserDetail();
 		this.user = new UserDTO(details.getUser());
 	}

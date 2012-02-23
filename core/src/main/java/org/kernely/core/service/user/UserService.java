@@ -118,6 +118,7 @@ public class UserService extends AbstractService {
 		UserDetails userdetails = new UserDetails();
 		userdetails.setName(request.lastname);
 		userdetails.setFirstname(request.firstname);
+		userdetails.setHire(request.hire);
 		userdetails.setUser(user);
 
 		user.setUserDetails(userdetails);
@@ -252,6 +253,7 @@ public class UserService extends AbstractService {
 
 		ud.setFirstname(request.firstname);
 		ud.setName(request.lastname);
+		ud.setHire(request.hire);
 		User u = em.get().find(User.class, ud.getUser().getId());
 		u.setUsername(request.username);
 

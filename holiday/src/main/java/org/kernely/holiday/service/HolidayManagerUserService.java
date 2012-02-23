@@ -18,7 +18,6 @@ import org.kernely.holiday.dto.HolidayManagedDetailsDTO;
 import org.kernely.holiday.dto.HolidayRequestDTO;
 import org.kernely.holiday.dto.HolidayUserManagedDTO;
 import org.kernely.holiday.dto.HolidayUsersManagerDTO;
-import org.kernely.holiday.model.HolidayBalance;
 import org.kernely.holiday.model.HolidayRequest;
 import org.kernely.holiday.model.HolidayType;
 
@@ -99,7 +98,7 @@ public class HolidayManagerUserService extends AbstractService{
 				if(current.toDateMidnight().isAfter(first.toDateMidnight().minusDays(1)) && current.toDateMidnight().isBefore(last.toDateMidnight().plusDays(1))){
 					detailManagedDTO.add(new HolidayManagedDetailsDTO(det.color, current.getDayOfMonth(), det.am, det.pm));
 				}
-				HolidayType type = this.getHolidayTypeFromBalanceId(det.balanceId);
+				HolidayType type = em.get().find(HolidayType.class, det.typeId);
 				balancesDTO.add(new CalendarBalanceDetailDTO(type.getName(), 0, type.getColor() , type.getId()));
 			}
 			String fullname = u.getUserDetails().getFirstname() + " " + u.getUserDetails().getName();
@@ -110,10 +109,5 @@ public class HolidayManagerUserService extends AbstractService{
 		mainDTO.month = monthNeeded;
 		mainDTO.year = yearNeeded;
 		return mainDTO;
-	}
-	
-	private HolidayType getHolidayTypeFromBalanceId(int id){
-		HolidayBalance balance = em.get().find(HolidayBalance.class, id);
-		return balance.getHolidayType();
 	}
 }

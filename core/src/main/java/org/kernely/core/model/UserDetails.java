@@ -57,6 +57,7 @@ public class UserDetails extends AbstractModel {
 	private String nationality;
 	private String ssn;
 	private Integer civility;
+	private Date hire;
 
 	/**
 	 * Retrieve the user's image
@@ -360,5 +361,19 @@ public class UserDetails extends AbstractModel {
 	 */
 	public final void setCivility(Integer civility) {
 		this.civility = civility;
+	}
+
+	/**
+	 * @return the hire
+	 */
+	public Date getHire() {
+		return hire;
+	}
+
+	/**
+	 * @param hire the hire to set
+	 */
+	public void setHire(Date hire) {
+		this.hire = hire;
 	}
 }

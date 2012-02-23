@@ -25,7 +25,6 @@ import java.util.List;
 
 import javax.persistence.Query;
 
-import org.kernely.core.dto.UserDTO;
 import org.kernely.core.service.AbstractService;
 import org.kernely.core.service.user.UserService;
 import org.kernely.holiday.dto.HolidayCreationRequestDTO;
@@ -144,14 +143,6 @@ public class HolidayService extends AbstractService {
 		holiday.setColor(request.color);
 
 		em.get().persist(holiday);
-		
-		
-		// Create a balance with this holiday type, for each user
-		int holidayId = this.getHolidayDTO(request.type.trim()).id;
-		
-		for (UserDTO user : userService.getAllUsers()){
-			balanceService.createHolidayBalance(user.id, holidayId);
-		}
 		
 		return new HolidayDTO(holiday);
 	}

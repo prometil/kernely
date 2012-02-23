@@ -80,6 +80,9 @@ public class HolidayRequestService extends AbstractService {
 
 	@Inject
 	private MailService mailService;
+	
+	@Inject
+	private HolidayBalanceService balanceService;
 
 	@Inject
 	private AbstractConfiguration configuration;
@@ -115,7 +118,7 @@ public class HolidayRequestService extends AbstractService {
 	@Transactional
 	public void registerRequestAndDetails(HolidayRequestCreationRequestDTO request) {
 		List<HolidayRequestDetail> detailsModels = new ArrayList<HolidayRequestDetail>();
-		Map<HolidayBalance,Integer> balanceToUpdate = new HashMap<HolidayBalance, Integer>();
+		Map<HolidayType,Float> typeToUpdate = new HashMap<HolidayType, Float>();
 		for (HolidayDetailCreationRequestDTO hdcr : request.details) {
 			HolidayRequestDetail detail = new HolidayRequestDetail();
 			detail.setAm(hdcr.am);
@@ -123,21 +126,21 @@ public class HolidayRequestService extends AbstractService {
 			DateTimeFormatter fmt = DateTimeFormat.forPattern("MM/dd/yyyy");
 			DateTime day = fmt.parseDateTime(hdcr.day);
 			detail.setDay(day.toDate());
-			HolidayBalance balance = getBalanceWithTypeId(hdcr.typeId);
-			detail.setBalance(balance);
-			int taken = 0;
+			HolidayType type = em.get().find(HolidayType.class, hdcr.typeId);
+			detail.setType(type);
+			float taken = 0F;
 			// We increase the value by 6 because we're counting in 12th of a day, so 6 represents an half day.
 			if(detail.isAm()){
-				taken += 6;
+				taken += 0.5F;
 			}
 			if(detail.isPm()){
-				taken += 6;
+				taken += 0.5F;
 			}
-			if(balanceToUpdate.containsKey(balance)){
-				balanceToUpdate.put(balance, balanceToUpdate.get(balance)+taken);
+			if(typeToUpdate.containsKey(type)){
+				typeToUpdate.put(type, typeToUpdate.get(type)+taken);
 			}
 			else{
-				balanceToUpdate.put(balance, taken);
+				typeToUpdate.put(type, taken);
 			}
 			em.get().persist(detail);
 			log.debug("Holiday request detail registered for the day {}", hdcr.day);
@@ -152,30 +155,12 @@ public class HolidayRequestService extends AbstractService {
 		em.get().persist(hr);
 
 		// Update temporary balance
-		Set<Entry<HolidayBalance,Integer>> entries = balanceToUpdate.entrySet();
-		for(Entry<HolidayBalance,Integer> e : entries){
-			HolidayBalance b = e.getKey();
-			b.setAvailableBalanceUpdated(b.getAvailableBalanceUpdated() - e.getValue());
-			em.get().merge(b);
+		Set<Entry<HolidayType,Float>> entries = typeToUpdate.entrySet();
+		for(Entry<HolidayType,Float> e : entries){
+			this.balanceService.removeDaysInAvailableUpdatedFromRequest(e.getKey().getId(), hr.getUser().getId(), e.getValue());
 		}
 
 		log.debug("Holiday Request registered !");
-	}
-
-	@Transactional
-	private HolidayBalance getBalanceWithTypeId(int typeId) {
-		HolidayType type = em.get().find(HolidayType.class, typeId);
-		Query balanceRequest = em.get().createQuery("SELECT b FROM HolidayBalance b WHERE user=:user AND holidayType=:type");
-		balanceRequest.setParameter("user", this.getAuthenticatedUserModel());
-		balanceRequest.setParameter("type", type);
-		try {
-			HolidayBalance balance = (HolidayBalance) balanceRequest.getSingleResult();
-			log.debug("Balance found for the current user with the type id {}", typeId);
-			return balance;
-		} catch (NoResultException nre) {
-			log.debug("There is no balance with the type id {} for the user {}", typeId, this.getAuthenticatedUserModel().getId());
-			return null;
-		}
 	}
 
 	/**
@@ -500,30 +485,28 @@ public class HolidayRequestService extends AbstractService {
 
 		// Update the temporary balance
 		Set<HolidayRequestDetail> details = request.getDetails();
-		Map<HolidayBalance,Integer> balanceToUpdate = new HashMap<HolidayBalance, Integer>();
+		Map<HolidayType,Float> typeToUpdate = new HashMap<HolidayType, Float>();
 		for(HolidayRequestDetail d : details){
-			int taken = 0;
+			float taken = 0F;
 			// We increase the value by 6 because we're counting in 12th of a day, so 6 represents an half day.
 			if(d.isAm()){
-				taken += 6;
+				taken += 0.5F;
 			}
 			if(d.isPm()){
-				taken += 6;
+				taken += 0.5F;
 			}
-			if(balanceToUpdate.containsKey(d.getBalance())){
-				balanceToUpdate.put(d.getBalance(), balanceToUpdate.get(d.getBalance())+taken);
+			if(typeToUpdate.containsKey(d.getType())){
+				typeToUpdate.put(d.getType(), typeToUpdate.get(d.getType())+taken);
 			}
 			else{
-				balanceToUpdate.put(d.getBalance(), taken);
+				typeToUpdate.put(d.getType(), taken);
 			}
 		}
 		
 		// Update temporary balance
-		Set<Entry<HolidayBalance,Integer>> entries = balanceToUpdate.entrySet();
-		for(Entry<HolidayBalance,Integer> e : entries){
-			HolidayBalance b = e.getKey();
-			b.setAvailableBalanceUpdated(b.getAvailableBalanceUpdated() + e.getValue());
-			em.get().merge(b);
+		Set<Entry<HolidayType,Float>> entries = typeToUpdate.entrySet();
+		for(Entry<HolidayType,Float> e : entries){
+			this.balanceService.addDaysInAvailableUpdatedFromRequest(e.getKey().getId(), request.getUser().getId(), e.getValue());
 		}
 
 		log.debug("Holiday request with id {} has been denied", idRequest);
@@ -556,30 +539,28 @@ public class HolidayRequestService extends AbstractService {
 		Set<HolidayRequestDetail> holidayRequestDetails = request.getDetails();
 		
 		// Update the temporary balance
-		Map<HolidayBalance,Integer> balanceToUpdate = new HashMap<HolidayBalance, Integer>();
+		Map<HolidayType,Float> typeToUpdate = new HashMap<HolidayType, Float>();
 		for(HolidayRequestDetail d : holidayRequestDetails){
-			int taken = 0;
+			float taken = 0F;
 			// We increase the value by 6 because we're counting in 12th of a day, so 6 represents an half day.
 			if(d.isAm()){
-				taken += 6;
+				taken += 0.5F;
 			}
 			if(d.isPm()){
-				taken += 6;
+				taken += 0.5F;
 			}
-			if(balanceToUpdate.containsKey(d.getBalance())){
-				balanceToUpdate.put(d.getBalance(), balanceToUpdate.get(d.getBalance())+taken);
+			if(typeToUpdate.containsKey(d.getType())){
+				typeToUpdate.put(d.getType(), typeToUpdate.get(d.getType())+taken);
 			}
 			else{
-				balanceToUpdate.put(d.getBalance(), taken);
+				typeToUpdate.put(d.getType(), taken);
 			}
 		}
 		
 		// Update temporary balance
-		Set<Entry<HolidayBalance,Integer>> entries = balanceToUpdate.entrySet();
-		for(Entry<HolidayBalance,Integer> e : entries){
-			HolidayBalance b = e.getKey();
-			b.setAvailableBalanceUpdated(b.getAvailableBalanceUpdated() + e.getValue());
-			em.get().merge(b);
+		Set<Entry<HolidayType,Float>> entries = typeToUpdate.entrySet();
+		for(Entry<HolidayType,Float> e : entries){
+			this.balanceService.addDaysInAvailableUpdatedFromRequest(e.getKey().getId(), request.getUser().getId(), e.getValue());
 		}
 		
 		for (HolidayRequestDetail hrd : holidayRequestDetails) {

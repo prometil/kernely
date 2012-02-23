@@ -62,7 +62,7 @@ public class HolidayUserEventHandler {
 		
 		// Create a balance associated to this user for each holiday type.
 		for (HolidayDTO type : holidayTypes){
-			balanceService.createHolidayBalance(userId, type.id);
+			//balanceService.createHolidayBalance(userId, type.id);
 		}
 	}	
 	
