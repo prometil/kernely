@@ -24,16 +24,19 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  * The dto for Holiday version  
- * @author b.grandperret
- *
  */
 @XmlRootElement
 public class HolidayCreationRequestDTO {
 	
 	/**
-	 * The type of holiday
+	 * The id of holiday type
 	 */
-	public String type;
+	public int id;
+	
+	/**
+	 * The name of the holiday type
+	 */
+	public String name;
 
 	/**
 	 * Is this type of holiday unlimited ?
@@ -73,15 +76,20 @@ public class HolidayCreationRequestDTO {
 	}
 	
 	/**
-	 * create an holiday request
-	 * @param newType
-	 * @param newFrequency
+	 * DTO for the creation or update of a holiday type
+	 * @param name The name of the type.
+	 * @param unlimited Is this type of holidays unlimited (can be take at will) ?
+	 * @param quantity Quantity, in days, of earn (each unity)
+	 * @param unity year or month. Use HolidayType constants.
+	 * @param effectiveMonth The month when earned days become available. Use HolidayType constants.
+	 * @param anticipation Can users take this type of holiday with anticipation ?
+	 * @param color The color of the holiday, displayed when the user make a request for holidays. Hexadecimal value (#FFFFFF for example).
 	 */
-	public HolidayCreationRequestDTO(String newType, boolean unlimited, int newQuantity, int newUnity, int effectiveMonth, boolean anticipation, String color){
-		this.type=newType;
+	public HolidayCreationRequestDTO(String name, boolean unlimited, int quantity, int unity, int effectiveMonth, boolean anticipation, String color){
+		this.name=name;
 		this.unlimited=unlimited;
-		this.quantity = newQuantity;
-		this.unity = newUnity;
+		this.quantity = quantity;
+		this.unity = unity;
 		this.effectiveMonth = effectiveMonth;
 		this.anticipation = anticipation;
 		this.color = color;

@@ -41,7 +41,9 @@
 	<fieldset>
 	<legend><%= i18n.t("project_users") %></legend>
 		<div id="usersToLink">
-			<!-- Filled by ajax  -->
+			<table id="project_user_table">
+		
+			</table>
 		</div>
 	</fieldset>
 	<br/>
@@ -76,9 +78,14 @@
 <%= i18n.t("project_created_updated") %>
 </script>
 
-<script type="text/html" id="table-header-template">
-<tr><th><%= i18n.t("project_name") %><th><%= i18n.t("project_users") %></th></tr>
+<script type="text/html" id="table-header-template" class="table_header">
+<tr><th><%= i18n.t("project_name") %></tr>
 </script>
+
+<script type="text/html" id="table-header-template2" class="table_header">
+<tr><th></th><th><%= i18n.t("contributor") %><th><%= i18n.t("project_manager") %></th><th><%= i18n.t("client") %></th></tr>
+</script>
+
 
 <div id="project_admin_container">
 	<div id="project_admin_buttons">

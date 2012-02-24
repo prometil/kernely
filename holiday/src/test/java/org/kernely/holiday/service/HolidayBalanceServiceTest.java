@@ -107,57 +107,57 @@ public class HolidayBalanceServiceTest extends AbstractServiceTest {
 
 	private HolidayDTO createHolidayTypeAllMonthForTest() {
 		HolidayCreationRequestDTO request = new HolidayCreationRequestDTO();
-		request.type = TEST_STRING;
+		request.name = TEST_STRING;
 		request.quantity = QUANTITY;
 		request.unity = HolidayType.PERIOD_MONTH;
 		request.effectiveMonth = HolidayType.ALL_MONTH;
 		request.anticipation = false;
 		request.unlimited = false;
-		return holidayService.createHoliday(request);
+		return holidayService.createOrUpdateHoliday(request);
 	}
 
 	private HolidayDTO createHolidayTypeUnlimitedForTest() {
 		HolidayCreationRequestDTO request = new HolidayCreationRequestDTO();
-		request.type = TEST_STRING;
+		request.name = TEST_STRING;
 		request.quantity = QUANTITY;
 		request.unity = HolidayType.PERIOD_MONTH;
 		request.effectiveMonth = HolidayType.ALL_MONTH;
 		request.anticipation = true;
 		request.unlimited = true;
-		return holidayService.createHoliday(request);
+		return holidayService.createOrUpdateHoliday(request);
 	}
 
 	private HolidayDTO createHolidayTypeAllMonthAnticipatedForTest() {
 		HolidayCreationRequestDTO request = new HolidayCreationRequestDTO();
-		request.type = TEST_STRING;
+		request.name = TEST_STRING;
 		request.quantity = QUANTITY;
 		request.unity = HolidayType.PERIOD_MONTH;
 		request.effectiveMonth = HolidayType.ALL_MONTH;
 		request.unlimited = false;
 		request.anticipation = true;
-		return holidayService.createHoliday(request);
+		return holidayService.createOrUpdateHoliday(request);
 	}
 
 	private HolidayDTO createHolidayTypeSpecificMonthForTest() {
 		HolidayCreationRequestDTO request = new HolidayCreationRequestDTO();
-		request.type = TEST_STRING;
+		request.name = TEST_STRING;
 		request.quantity = QUANTITY;
 		request.unity = HolidayType.PERIOD_MONTH;
 		request.effectiveMonth = EFFECTIVE_MONTH;
 		request.anticipation = false;
 		request.unlimited = false;
-		return holidayService.createHoliday(request);
+		return holidayService.createOrUpdateHoliday(request);
 	}
 
 	private HolidayDTO createHolidayTypeSpecificMonthAnticipatedForTest() {
 		HolidayCreationRequestDTO request = new HolidayCreationRequestDTO();
-		request.type = TEST_STRING;
+		request.name = TEST_STRING;
 		request.quantity = QUANTITY;
 		request.unity = HolidayType.PERIOD_MONTH;
 		request.effectiveMonth = EFFECTIVE_MONTH;
 		request.anticipation = true;
 		request.unlimited = false;
-		return holidayService.createHoliday(request);
+		return holidayService.createOrUpdateHoliday(request);
 	}
 
 	private UserDTO createUserNewHiredForTest() {
@@ -515,7 +515,7 @@ public class HolidayBalanceServiceTest extends AbstractServiceTest {
 		assertEquals(this.getNextCompleteMonth() , actualBalance.beginDate);
 		assertEquals(END_DATE_ALL_MONTH_TYPE_CURRENT_YEAR , actualBalance.endDate);
 	}
-
+	
 	@Test
 	public void incrementSeveralBalanceForAllMonthTest(){
 		UserDTO user = createUserOldHiredForTest();

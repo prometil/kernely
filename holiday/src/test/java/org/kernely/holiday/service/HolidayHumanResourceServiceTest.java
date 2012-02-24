@@ -49,6 +49,9 @@ public class HolidayHumanResourceServiceTest extends AbstractServiceTest {
 	private UserService userService;
 
 	@Inject
+	private HolidayBalanceService holidayBalanceService;
+	
+	@Inject
 	private RoleService roleService;
 
 	@Inject
@@ -80,10 +83,10 @@ public class HolidayHumanResourceServiceTest extends AbstractServiceTest {
 
 	private HolidayDTO createHolidayTypeForTest() {
 		HolidayCreationRequestDTO request = new HolidayCreationRequestDTO();
-		request.type = TEST_STRING;
+		request.name = TEST_STRING;
 		request.quantity = QUANTITY;
 		request.unity = HolidayType.PERIOD_MONTH;
-		return holidayService.createHoliday(request);
+		return holidayService.createOrUpdateHoliday(request);
 	}
 
 	private void createHolidayRequestForUser(long userId, int typeId) {

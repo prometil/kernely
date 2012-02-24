@@ -72,6 +72,5 @@ public class HolidayRequestController extends AbstractController {
 			holidayRequestService.registerRequestAndDetails(request);
 		}
 		return "{\"result\":\"Ok\"}";
-		
 	}
 }

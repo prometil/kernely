@@ -49,7 +49,10 @@ public class HolidayManagerUserTest extends AbstractServiceTest  {
 	
 	@Inject
 	private HolidayService holidayService;
-	
+
+	@Inject
+	private HolidayBalanceService holidayBalanceService;
+
 	@Inject
 	private HolidayRequestService holidayRequestService;
 	
@@ -81,10 +84,10 @@ public class HolidayManagerUserTest extends AbstractServiceTest  {
 	
 	private HolidayDTO createHolidayTypeForTest(){
 		HolidayCreationRequestDTO request = new HolidayCreationRequestDTO();
-		request.type = TEST_STRING;
+		request.name = TEST_STRING;
 		request.quantity = QUANTITY;
 		request.unity = HolidayType.PERIOD_MONTH;
-		return holidayService.createHoliday(request);
+		return holidayService.createOrUpdateHoliday(request);
 	}
 	
 	private void createHolidayRequestForUser(long userId, int typeId){
@@ -123,6 +126,11 @@ public class HolidayManagerUserTest extends AbstractServiceTest  {
 		HolidayDTO type = this.createHolidayTypeForTest();
 		
 		authenticateAs(USERNAME_USER1);
+		
+		holidayBalanceService.createHolidayBalance(type.id, user1DTO.id);
+		holidayBalanceService.createHolidayBalance(type.id, user2DTO.id);
+
+		
 		this.createHolidayRequestForUser(user1DTO.id, type.id);
 		
 		authenticateAs(USERNAME_USER2);
@@ -147,4 +155,6 @@ public class HolidayManagerUserTest extends AbstractServiceTest  {
 		authenticateAs(USERNAME_USER1);
 		managerUserService.getHolidayForAllManagedUsersForMonth(0, 0);
 	}
+	
+	
 }

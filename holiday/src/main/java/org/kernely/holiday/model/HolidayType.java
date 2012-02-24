@@ -27,6 +27,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
@@ -44,6 +46,10 @@ public class HolidayType extends AbstractModel {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private int id;
 
+	@ManyToOne
+	@JoinColumn(name = "holiday_profile_id")
+	private HolidayProfile holidayProfile;
+	
 	private String name;
 	private int quantity;
 	
@@ -210,6 +216,20 @@ public class HolidayType extends AbstractModel {
 	 */
 	public void setUnlimited(boolean unlimited) {
 		this.unlimited = unlimited;
+	}
+
+	/**
+	 * @return the profile
+	 */
+	public HolidayProfile getProfile() {
+		return holidayProfile;
+	}
+
+	/**
+	 * @param profile the profile to set
+	 */
+	public void setProfile(HolidayProfile profile) {
+		this.holidayProfile = profile;
 	}
 	
 	
