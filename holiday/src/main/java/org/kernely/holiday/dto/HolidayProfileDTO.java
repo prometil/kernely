@@ -12,7 +12,7 @@ import org.kernely.holiday.model.HolidayType;
  * The dto for holiday profile.
  */
 @XmlRootElement
-public class HolidayProfileDTO {
+public class HolidayProfileDTO implements Comparable<HolidayProfileDTO>{
 	
 	/**
 	 * The unique id of the profile
@@ -70,5 +70,10 @@ public class HolidayProfileDTO {
 		} else {
 			this.nbUsers = 0;
 		}
+	}
+
+	@Override
+	public int compareTo(HolidayProfileDTO dto) {
+		return this.name.compareTo(dto.name);
 	}
 }

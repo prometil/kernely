@@ -249,7 +249,7 @@ public class HolidayRequestService extends AbstractService {
 		try{
 			Query query = em.get().createQuery("SELECT  r from HolidayRequest r WHERE  user=:user");
 			User u = em.get().find(User.class, userId);
-			if(u.isLocked()){
+			if(! u.isLocked()){
 				query.setParameter("user", u);
 			}
 			List<HolidayRequest> requests = (List<HolidayRequest>) query.getResultList();
@@ -265,7 +265,7 @@ public class HolidayRequestService extends AbstractService {
 			return null;
 		}
 		catch(IllegalArgumentException e){
-			log.debug("This user is locked, impossible to access to his requests");
+			log.debug("This user is locked, impossible to access to his requests.");
 			return null;
 		}
 	}

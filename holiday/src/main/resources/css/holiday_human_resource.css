@@ -56,3 +56,27 @@ span #month_current{
 	display:block;
 	width:80px;
 }
+
+th.summary{
+	background-color:red;
+	border: 1px solid black;
+}
+
+table.holiday_summary_profile_table{
+	margin:30px;
+}
+
+th.holiday-summary-table-header{
+	min-width:100px;
+}
+
+td.holiday-summary-taken-pending{
+	text-align:center;
+}
+
+caption.holiday-summary-table-caption{
+	min-width:200px;
+	text-decoration:underline;
+	font-weight:bold;
+	text-align:left;
+}

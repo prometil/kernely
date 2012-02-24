@@ -51,7 +51,7 @@ public class RoleService extends AbstractService {
 		Query query = em.get().createQuery("SELECT e FROM Role e WHERE name !=:name ");
 		query.setParameter("name", Role.ROLE_USER);
 		List<Role> collection = (List<Role>) query.getResultList();
-		List<RoleDTO> dtos = new ArrayList<RoleDTO>();
+		List<RoleDTO> dtos = new ArrayList<RoleDTO>(0);
 		for (Role role : collection) {
 			dtos.add(new RoleDTO(role.getId(), role.getName()));
 		}
@@ -64,7 +64,7 @@ public class RoleService extends AbstractService {
 	 */
 	@SuppressWarnings("unchecked")
 	@Transactional
-	public void createRole(RoleDTO request) {
+	public RoleDTO createRole(RoleDTO request) {
 		if (request == null) {
 			throw new IllegalArgumentException("Request cannot be null ");
 		}
@@ -86,5 +86,6 @@ public class RoleService extends AbstractService {
 		Role role = new Role();
 		role.setName(request.name.trim());
 		em.get().persist(role);
+		return new RoleDTO(role.getId(),role.getName());
 	}
 }

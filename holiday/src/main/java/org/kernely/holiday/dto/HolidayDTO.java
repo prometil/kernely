@@ -31,7 +31,7 @@ import org.kernely.holiday.model.HolidayType;
  *
  */
 @XmlRootElement
-public class HolidayDTO {
+public class HolidayDTO implements Comparable<HolidayDTO> {
 
 	/**
 	 * The id of the holiday
@@ -117,5 +117,11 @@ public class HolidayDTO {
 		this.effectiveMonth = type.getEffectiveMonth();
 		this.color = type.getColor();
 	}
+
+	@Override
+	public int compareTo(HolidayDTO o) {
+		return this.name.compareTo(((HolidayDTO) o).name);
+	}
 	
+
 }
