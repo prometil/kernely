@@ -22,6 +22,7 @@ package org.kernely.holiday.service;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -367,8 +368,10 @@ public class HolidayService extends AbstractService {
 			year = DateTime.now().getYear();
 		}
 		
-		DateTime begin = new DateTime().withMonthOfYear(month).withYear(year).withDayOfMonth(1);
-		DateTime end = new DateTime().withYear(year).withMonthOfYear(month).plusMonths(1).withDayOfMonth(1).minusDays(1);
+		Date begin = new DateTime().withMonthOfYear(month).withYear(year).withDayOfMonth(1).withHourOfDay(0).withMinuteOfHour(0).withSecondOfMinute(0).minus(1).toDate();
+		Date end = new DateTime().withYear(year).withMonthOfYear(month).plusMonths(1).withDayOfMonth(1).toDateMidnight().toDate();
+		
+		log.debug("Get summary for all profiles from {} to {}",begin,end);
 		
 		List<HolidayProfileDTO> profiles = this.getAllProfiles();
 		
@@ -399,18 +402,19 @@ public class HolidayService extends AbstractService {
 				}
 				
 				// For each request, look at every detail, to add the detail to one of the types
-				requestService.getRequestBetweenDates(begin.toDate(), end.toDate(),userModel);
-				List<HolidayRequestDTO> requests = requestService.getAllRequestsForSpecificUser(userDetails.user.id);
+				List<HolidayRequestDTO> requests = requestService.getRequestBetweenDatesWithStatus(begin, end,userModel, HolidayRequest.ACCEPTED_STATUS, HolidayRequest.PAST_STATUS, HolidayRequest.PENDING_STATUS);
 				log.debug("Summary build: user {} has {} requests.",userDetails.user.id,requests.size());
 				for (HolidayRequestDTO request : requests){
 					log.debug("Summary build: Request {} contains {} details",request.id,request.details.size());
 					for (HolidayDetailDTO detail : request.details){
-						log.debug("Summary build: Detail linked to balance {} has type {}",detail.balanceId, detail.type);
-						// Add the detail to the concerned type
-						if (request.status == HolidayRequest.ACCEPTED_STATUS || request.status == HolidayRequest.PAST_STATUS){
-							taken.put(detail.type, taken.get(detail.type) + 0.5F);
-						} else if (request.status == HolidayRequest.PENDING_STATUS){
-							pending.put(detail.type, pending.get(detail.type) + 0.5F);
+						// Add the detail to the concerned type, only if the request is between the requested dates
+						if ((new DateTime(detail.day).getMonthOfYear() == month) && (new DateTime(detail.day).getYear() == year)){
+							log.debug("Summary build: Detail linked to balance {} has type {}",detail.balanceId, detail.type);
+							if (request.status == HolidayRequest.ACCEPTED_STATUS || request.status == HolidayRequest.PAST_STATUS){
+								taken.put(detail.type, taken.get(detail.type) + 0.5F);
+							} else if (request.status == HolidayRequest.PENDING_STATUS){
+								pending.put(detail.type, pending.get(detail.type) + 0.5F);
+							}
 						}
 					}
 				}
@@ -425,6 +429,8 @@ public class HolidayService extends AbstractService {
 				log.debug("Summary build: User summary for profile {} has size {}",userSummary.details.user.username,userSummary.typesSummaries.size());
 				profileSummary.usersSummaries.add(userSummary);
 			}
+			profileSummary.year = year;
+			profileSummary.month = month;
 			summary.add(profileSummary);
 		}
 		return summary;

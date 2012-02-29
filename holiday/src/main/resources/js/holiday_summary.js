@@ -20,6 +20,9 @@
 AppHolidayAdmin = (function($){
 	var lineSelected = null;
 	var tableView = null;
+	var selectorView = null;
+	var monthSelected = 0;
+	var yearSelected = 0;
 	
 	HolidaySummaryLineView = Backbone.View.extend({
 		tagName: "tr",
@@ -90,19 +93,32 @@ AppHolidayAdmin = (function($){
 			var parent = this;
 			var html = $("#table-header").html();
 			$(this.el).html(html);
+			console.log(monthSelected+" "+yearSelected);
 			$.ajax({
 				type:"GET",
 				url:"/holiday/humanresource/summary/allprofiles",
 				dataType:"json",
-				data:{month:0,year:0},
+				data:{month:monthSelected,year:yearSelected},
 				success: function(data){
 					if (data != null){
 						console.log("Building tables...");
+						var arrayData = data;
+						// Create array from single profile summary
+						if (! $.isArray(data)){
+							var newTab = new Array();
+							newTab.push(data);
+							arrayData = newTab;
+						}
+						
 						// Build each table
 						$.each(data.holidayProfilesSummaryDTO, function() {
+							// Update the date in month selector
+							monthSelected = this.month;
+							yearSelected = this.year;
 							
 							var view = new HolidayProfileTableView(this.name, this.usersSummaries);
 			    			view.render();
+			    			selectorView.actualize();
 						});
 					}
 				}
@@ -155,6 +171,7 @@ AppHolidayAdmin = (function($){
 			
 			var firstUser = this.usersSummaries[0];
 			
+			// Get all types for this profile
 			if (firstUser != null){
 				var types = firstUser.typesSummaries;
 				
@@ -166,7 +183,6 @@ AppHolidayAdmin = (function($){
 				}
 				
 				$.each(types, function() {
-					console.log('style="{background-color:'+this.type.color+'; border:border: 1px solid black;}');
 					header += '<th class="holiday-summary-table-header">' + this.type.name + '</th><th style="width:15px; background-color:'+this.type.color+'; border:1px solid black;"></th>';
 				});
 				header += "</tr>";
@@ -200,11 +216,56 @@ AppHolidayAdmin = (function($){
 		
 	})
 	
+	HolidayMonthSelectorView = Backbone.View.extend({
+		el:"#monthSelector",
+		events:{
+			"click .minusMonth" : "minusMonth",
+			"click .plusMonth" : "plusMonth",
+		},
+		initialize: function(){
+			
+		},
+		render: function(){
+			var template = $("#calendarSelector").html();
+			var monthTemp = monthSelected+1;
+			var template2 = $("#"+ monthTemp +"-month-template").html();
+			var view = {month : template2, year: yearSelected};
+			var html = Mustache.to_html(template, view);
+			$(this.el).html(html);
+			return this;
+		},
+		plusMonth: function(){
+			monthSelected ++;
+			monthSelected = ((monthSelected)%13);
+			if(monthSelected == 0){
+				monthSelected = 1;
+				yearSelected ++;
+			}
+			this.actualize();
+			tableView.reload();
+		},
+		minusMonth: function(){
+			monthSelected --;
+			monthSelected = ((monthSelected)%13);
+			if(monthSelected == 0){
+				monthSelected = 12;
+				yearSelected --;
+			}
+			this.actualize();
+			tableView.reload();
+		},
+		actualize: function(){
+			var template = $("#"+ monthSelected +"-month-template").html();
+			$("#month_current").text(template + " " + yearSelected);
+		}
+	})
+	
 
 // define the application initialization
 	var self = {};
 	self.start = function(){
 		tableView = new HolidaySummaryTableView().render();
+		selectorView = new HolidayMonthSelectorView().render();
 	}
 	return self;
 })

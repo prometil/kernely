@@ -36,13 +36,25 @@ public class HolidayProfilesSummaryDTO {
 	public String name;
 
 	/**
+	 * The requested year
+	 */
+	public int year;
+	
+	/**
+	 * The requested month
+	 */
+	public int month;
+	
+	/**
 	 * The list of users summaries
 	 */
 	public List<HolidayUserSummaryDTO> usersSummaries;
 
-	public HolidayProfilesSummaryDTO(String name, List<HolidayUserSummaryDTO> usersSummaries) {
+	public HolidayProfilesSummaryDTO(int month, int year,String name, List<HolidayUserSummaryDTO> usersSummaries) {
 		this.name = name;
 		this.usersSummaries = usersSummaries;
+		this.month = month;
+		this.year = year;
 	}
 
 	/**

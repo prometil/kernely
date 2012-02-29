@@ -82,6 +82,7 @@ public class HolidayHumanResourceController extends AbstractController{
 		if(!userService.currentUserIsHumanResource()){	
 			return null;
 		}
+		System.out.println("Summary for month "+month+" and year "+year);
 		return profileService.getSummmaryForAllProfiles(month,year);
 	}
 
