@@ -225,10 +225,16 @@ AppManagerAdmin = (function($){
 				success: function(data){
 					if(data != null){
 						var option = "";
-						$.each(data.userDTO, function(index, value){
-							option = option + '<option value="' + this.username + '">'+ this.username +'</option>' ;
-						});
-						$("#combo").append('<select name="user-choice" id="combobox">' + option + '</select>');
+						if ($.isArray(data.userDTO)){
+							$.each(data.userDTO, function(index, value){
+								option = option + '<option value="' + this.username + '">'+ this.username +'</option>' ;
+							});
+							$("#combo").append('<select name="user-choice" id="combobox">' + option + '</select>');
+						} else {
+							option = option + '<option value="' + data.userDTO.username + '">'+ data.userDTO.username +'</option>' ;
+							$("#combo").append('<select name="user-choice" id="combobox">' + option + '</select>');
+						}
+
 					}
 				}
 			});

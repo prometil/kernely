@@ -93,7 +93,6 @@ AppHolidayAdmin = (function($){
 			var parent = this;
 			var html = $("#table-header").html();
 			$(this.el).html(html);
-			console.log(monthSelected+" "+yearSelected);
 			$.ajax({
 				type:"GET",
 				url:"/holiday/humanresource/summary/allprofiles",
@@ -101,16 +100,18 @@ AppHolidayAdmin = (function($){
 				data:{month:monthSelected,year:yearSelected},
 				success: function(data){
 					if (data != null){
-						console.log("Building tables...");
-						var arrayData = data;
-						// Create array from single profile summary
-						if (! $.isArray(data)){
-							var newTab = new Array();
-							newTab.push(data);
-							arrayData = newTab;
-						}
-						
 						// Build each table
+						console.log("Building tables...");
+						// Create array from single profile summary
+						if (! $.isArray(data.holidayProfilesSummaryDTO)){
+							// Update the date in month selector
+							monthSelected = data.holidayProfilesSummaryDTO.month;
+							yearSelected = data.holidayProfilesSummaryDTO.year;
+							
+							var view = new HolidayProfileTableView(data.holidayProfilesSummaryDTO.name, data.holidayProfilesSummaryDTO.usersSummaries);
+			    			view.render();
+			    			selectorView.actualize();
+						}
 						$.each(data.holidayProfilesSummaryDTO, function() {
 							// Update the date in month selector
 							monthSelected = this.month;
@@ -171,8 +172,8 @@ AppHolidayAdmin = (function($){
 			
 			var firstUser = this.usersSummaries[0];
 			
-			// Get all types for this profile
 			if (firstUser != null){
+			// Get all types for this profile
 				var types = firstUser.typesSummaries;
 				
 				// Create array from single element

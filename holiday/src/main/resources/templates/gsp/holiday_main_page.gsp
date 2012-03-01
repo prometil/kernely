@@ -7,6 +7,7 @@
 		<a href="/holiday/manager/users"><%= i18n.t("holiday_requests_all_link") %></a><br/><br/>
 	<% } %>
 	<% if (human_resource != ""){%>
-		<a href="/holiday/human/resource"> <%= i18n.t("holiday_human_resource_link")%> </a> <br/><br/>
+		<a href="/holiday/humanresource"> <%= i18n.t("holiday_human_resource_link")%> </a> <br/><br/>
+		<a href="/holiday/humanresource/summary"> <%= i18n.t("holiday_profiles_summary_link")%> </a> <br/><br/>
 	<% } %>
 </div>

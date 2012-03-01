@@ -47,7 +47,7 @@ public class UserDetails extends AbstractModel {
 	private String firstname;
 	private String mail;
 	private String image;
-	private String adress;
+	private String address;
 	private String zip;
 	private String city;
 	private String homephone;
@@ -182,7 +182,7 @@ public class UserDetails extends AbstractModel {
 	 * @return : the adress associated
 	 */
 	public final String getAdress() {
-		return adress;
+		return address;
 	}
 
 
@@ -193,7 +193,7 @@ public class UserDetails extends AbstractModel {
 	 *            : the adress associated
 	 */
 	public final void setAdress(String adress) {
-		this.adress = adress;
+		this.address = adress;
 	}
 
 	/**
