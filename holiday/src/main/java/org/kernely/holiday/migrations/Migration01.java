@@ -113,14 +113,16 @@ public class Migration01 extends Migration {
 		holidayRequest.column("end_date", "timestamp");
 		holidayRequest.column("status", "int");
 		holidayRequest.column("manager", "bigint");
-		holidayRequest.column("requester_comment", "varchar(500)");
-		holidayRequest.column("manager_comment", "varchar(500)");
+		holidayRequest.column("requester_comment", "text");
+		holidayRequest.column("manager_comment", "text");
 		holidayRequest.column("user_id", "bigint");
 
-		RawSql holidayRequestUserForeignKey = new RawSql("ALTER TABLE kernely_holiday_request ADD CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES kernely_user (id)");
+		RawSql holidayRequestManagerForeignKey = new RawSql("ALTER TABLE kernely_holiday_request ADD CONSTRAINT fk_user FOREIGN KEY (manager) REFERENCES kernely_user (id)");
+		RawSql holidayRequestUserForeignKey = new RawSql("ALTER TABLE kernely_holiday_request ADD CONSTRAINT fk_manager FOREIGN KEY (user_id) REFERENCES kernely_user (id)");
 
 		commands.add(holidayRequest);
 		commands.add(holidayRequestUserForeignKey);
+		commands.add(holidayRequestManagerForeignKey);
 
 		CreateTable holidayRequestDetail = CreateTable.name("kernely_holiday_request_detail");
 		holidayRequestDetail.column("id", "int primary key");

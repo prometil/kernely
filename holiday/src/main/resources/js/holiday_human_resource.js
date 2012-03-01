@@ -20,7 +20,7 @@ AppHolidayHumanResource = (function($){
 		
 		render: function(){
 			$.ajax({
-				url:"/holiday/human/resource/all",
+				url:"/holiday/humanresource/all",
 				data: {month: monthSelected, year: yearSelected},
 				dataType: "json",
 				success: function(data){
@@ -36,7 +36,7 @@ AppHolidayHumanResource = (function($){
 		},
 		reloadTable: function(){
 			$.ajax({
-				url:"/holiday/human/resource/all",
+				url:"/holiday/humanresource/all",
 				data: {month: monthSelected, year: yearSelected},
 				dataType: "json",
 				success: function(data){

@@ -748,14 +748,16 @@ public class HolidayBalanceService extends AbstractService {
 	 * effective month of the holiday type, create the balance for the next year
 	 */
 	public void computeHolidays() {
-		int currentMonth = DateTime.now().getMonthOfYear();
+		DateTime now = DateTime.now().toDateMidnight().toDateTime();
 
 		for (HolidayProfile profile : holidayProfileService.getAllProfile()) {
 			for (HolidayType type : profile.getHolidayTypes()) {
 				HolidayTypeInstance currentInstance = type.getCurrentInstance();
 				for (User user : currentInstance.getUsers()) {
 					this.incrementBalance(type.getId(), user.getId());
-					if (currentMonth == type.getEffectiveMonth()) {
+					HolidayBalanceDTO balance = this.getProcessedBalance(currentInstance.getId(), user.getId());
+					DateTime endDate = new DateTime(balance.endDate);
+					if (now.isEqual(endDate) || now.isAfter(endDate)) {
 						this.createHolidayBalance(type.getId(), user.getId());
 					}
 				}

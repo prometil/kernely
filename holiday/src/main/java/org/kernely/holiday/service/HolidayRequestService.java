@@ -147,6 +147,7 @@ public class HolidayRequestService extends AbstractService {
 				typeToUpdate.put(typeInstance, typeToUpdate.get(typeInstance) + taken);
 			} else {
 				typeToUpdate.put(typeInstance, taken);
+
 			}
 			em.get().persist(detail);
 			log.debug("Holiday request detail registered for the day {}", hdcr.day);
@@ -236,8 +237,12 @@ public class HolidayRequestService extends AbstractService {
 	/**
 	 * Retrieve all request done by the specified user
 	 * 
+<<<<<<< HEAD
 	 * @return A list of DTO corresponding to the request done by the current
 	 *         user
+=======
+	 * @return A list of DTO corresponding to the request done by the current user
+>>>>>>> 3c4745c49ace39b57220d0d8dff47fb03f23b41a
 	 */
 	@SuppressWarnings("unchecked")
 	@Transactional
@@ -245,7 +250,8 @@ public class HolidayRequestService extends AbstractService {
 		try {
 			Query query = em.get().createQuery("SELECT  r from HolidayRequest r WHERE  user=:user");
 			User u = em.get().find(User.class, userId);
-			if (u.isLocked()) {
+
+			if (!u.isLocked()) {
 				query.setParameter("user", u);
 			}
 			List<HolidayRequest> requests = (List<HolidayRequest>) query.getResultList();
@@ -259,7 +265,7 @@ public class HolidayRequestService extends AbstractService {
 			log.debug("There is no holiday request for this user");
 			return null;
 		} catch (IllegalArgumentException e) {
-			log.debug("This user is locked, impossible to access to his requests");
+			log.debug("This user is locked, impossible to access to his requests.");
 			return null;
 		}
 	}
@@ -399,11 +405,14 @@ public class HolidayRequestService extends AbstractService {
 	@SuppressWarnings("unchecked")
 	@Transactional
 	public List<HolidayRequestDTO> getRequestBetweenDatesWithStatus(Date date1, Date date2, User user, int... status) {
-		Query query = em.get().createQuery(
-				"SELECT  r from HolidayRequest r WHERE (beginDate between :date1 and :date2" + " OR endDate between :date1 and :date2)"
-						+ " AND user = :user" + " AND status in :status");
-		query.setParameter("date1", date1);
-		query.setParameter("date2", date2);
+	
+		DateTime begin = new DateTime(date1).toDateMidnight().minus(1).toDateTime();
+		DateTime end = new DateTime(date2).toDateMidnight().toDateTime().plusDays(1);
+		
+		DateTime requestBeginDate;
+		DateTime requestEndDate;
+		
+		Query query = em.get().createQuery("SELECT  r from HolidayRequest r WHERE user = :user" + " AND status in :status");
 		query.setParameter("user", user);
 		List<Integer> statusList = new ArrayList<Integer>();
 		for (int i : status) {
@@ -412,9 +421,18 @@ public class HolidayRequestService extends AbstractService {
 		query.setParameter("status", statusList);
 		try {
 			List<HolidayRequest> requests = (List<HolidayRequest>) query.getResultList();
+
 			List<HolidayRequestDTO> requestsDTO = new ArrayList<HolidayRequestDTO>();
 			for (HolidayRequest r : requests) {
-				requestsDTO.add(new HolidayRequestDTO(r));
+				
+				requestBeginDate = new DateTime(r.getBeginDate());
+				requestEndDate = new DateTime(r.getEndDate());
+				
+				boolean requestBeginsBetweenDates = requestBeginDate.toDateMidnight().isAfter(begin) && requestBeginDate.toDateMidnight().isBefore(end);
+				boolean requestEndsBetweenDates = requestEndDate.toDateMidnight().isAfter(begin) && requestEndDate.toDateMidnight().isBefore(end);
+				if (requestBeginsBetweenDates || requestEndsBetweenDates){
+					requestsDTO.add(new HolidayRequestDTO(r));
+				}
 			}
 
 			return requestsDTO;
@@ -509,6 +527,7 @@ public class HolidayRequestService extends AbstractService {
 			if (d.isPm()) {
 				taken += HALF_DAY;
 			}
+
 			if (typeToUpdate.containsKey(d.getTypeInstance())) {
 				typeToUpdate.put(d.getTypeInstance(), typeToUpdate.get(d.getTypeInstance()) + taken);
 			} else {
@@ -517,6 +536,7 @@ public class HolidayRequestService extends AbstractService {
 		}
 
 		// Update temporary balance
+
 		Set<Entry<HolidayTypeInstance, Float>> entries = typeToUpdate.entrySet();
 		for (Entry<HolidayTypeInstance, Float> e : entries) {
 			this.balanceService.addDaysInAvailableUpdatedFromRequest(e.getKey().getId(), request.getUser().getId(), e.getValue());
@@ -563,6 +583,7 @@ public class HolidayRequestService extends AbstractService {
 			if (d.isPm()) {
 				taken += HALF_DAY;
 			}
+
 			if (typeToUpdate.containsKey(d.getTypeInstance())) {
 				typeToUpdate.put(d.getTypeInstance(), typeToUpdate.get(d.getTypeInstance()) + taken);
 			} else {
@@ -807,8 +828,7 @@ public class HolidayRequestService extends AbstractService {
 		List<HolidayRequestDTO> pendingRequests = this.getAllRequestsWithStatus(HolidayRequest.PENDING_STATUS);
 
 		log.debug("Pending requests: " + pendingRequests.size());
-		// The map contains, for each manager (UserDTO) a list of requests he
-		// has to respond
+		// The map contains, for each manager (UserDTO) a list of requests he has to respond
 		Map<UserDTO, List<HolidayRequestDTO>> map = new HashMap<UserDTO, List<HolidayRequestDTO>>();
 
 		for (HolidayRequestDTO request : pendingRequests) {

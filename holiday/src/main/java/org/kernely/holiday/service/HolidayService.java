@@ -21,8 +21,12 @@
 package org.kernely.holiday.service;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.persistence.NoResultException;
@@ -35,9 +39,15 @@ import org.kernely.core.service.AbstractService;
 import org.kernely.core.service.user.UserService;
 import org.kernely.holiday.dto.HolidayCreationRequestDTO;
 import org.kernely.holiday.dto.HolidayDTO;
+import org.kernely.holiday.dto.HolidayDetailDTO;
 import org.kernely.holiday.dto.HolidayProfileCreationRequestDTO;
 import org.kernely.holiday.dto.HolidayProfileDTO;
+import org.kernely.holiday.dto.HolidayProfilesSummaryDTO;
+import org.kernely.holiday.dto.HolidayRequestDTO;
+import org.kernely.holiday.dto.HolidayUserSummaryDTO;
+import org.kernely.holiday.dto.HolidayUserTypeSummaryDTO;
 import org.kernely.holiday.model.HolidayProfile;
+import org.kernely.holiday.model.HolidayRequest;
 import org.kernely.holiday.model.HolidayType;
 import org.kernely.holiday.model.HolidayTypeInstance;
 import org.slf4j.Logger;
@@ -58,6 +68,9 @@ public class HolidayService extends AbstractService {
 
 	@Inject
 	HolidayBalanceService balanceService;
+	
+	@Inject
+	HolidayRequestService requestService;
 
 	protected final Logger log = LoggerFactory.getLogger(this.getClass());
 
@@ -334,8 +347,9 @@ public class HolidayService extends AbstractService {
 			for (HolidayType type : holidayProfile.getHolidayTypes()) {
 				holidayTypes.add(new HolidayDTO(type));
 			}
-			log.debug("Detected holiday profile {} containing {} types", holidayProfile.getName(), holidayTypes.size());
-			profiles.add(new HolidayProfileDTO(holidayProfile.getId(), holidayProfile.getName(), holidayTypes, holidayProfile.getUsers().size()));
+			Collections.sort(holidayTypes);
+			log.debug("Detected holiday profile {} containing {} types", holidayProfile.getName(),holidayTypes.size());
+			profiles.add(new HolidayProfileDTO(holidayProfile.getId(),holidayProfile.getName(),holidayTypes,holidayProfile.getUsers().size()));
 		}
 		return profiles;
 	}
@@ -441,6 +455,93 @@ public class HolidayService extends AbstractService {
 			log.debug("There is no profile associated to the user with id {}", userId);
 			return null;
 		}
+	}
+	
+	/**
+	 * Get all holidays taken by users for all types for a specific month.
+	 * @param month The requested month (use HolidayType constants). If 0, will be considered as today month.
+	 * @param year The requested month. If 0, will be considered as today month.
+	 * 
+	 * @return the summary for requested the month.
+	 */
+	@Transactional
+	public List<HolidayProfilesSummaryDTO> getSummmaryForAllProfiles(int month, int year) {
+
+		List<HolidayProfilesSummaryDTO> summary = new ArrayList<HolidayProfilesSummaryDTO>();
+		
+		if (month == 0){
+			month = DateTime.now().getMonthOfYear();
+		}
+		if (year == 0){
+			year = DateTime.now().getYear();
+		}
+		
+		Date begin = new DateTime().withMonthOfYear(month).withYear(year).withDayOfMonth(1).withHourOfDay(0).withMinuteOfHour(0).withSecondOfMinute(0).minus(1).toDate();
+		Date end = new DateTime().withYear(year).withMonthOfYear(month).plusMonths(1).withDayOfMonth(1).toDateMidnight().toDate();
+		
+		log.debug("Get summary for all profiles from {} to {}",begin,end);
+		
+		List<HolidayProfileDTO> profiles = this.getAllProfiles();
+		
+		for(HolidayProfileDTO profile : profiles){
+			log.debug("Summary build: profile {}",profile.name);
+			
+			HolidayProfilesSummaryDTO profileSummary = new HolidayProfilesSummaryDTO();
+			profileSummary.name = profile.name;
+			profileSummary.usersSummaries = new ArrayList<HolidayUserSummaryDTO>();
+			List<UserDetailsDTO> users = this.getUsersInProfile(profile.id);
+			
+			for (UserDetailsDTO userDetails : users){
+				Map<String,Float> taken = new HashMap<String,Float>();
+				Map<String,Float> pending = new HashMap<String,Float>();
+				
+				HolidayUserSummaryDTO userSummary = new HolidayUserSummaryDTO();
+				
+				userSummary.details = userDetails;
+				userSummary.typesSummaries = new ArrayList<HolidayUserTypeSummaryDTO>();
+				
+				User userModel = em.get().find(User.class, userDetails.user.id);
+				
+				// Set all amounts to 0
+				for (HolidayDTO type : profile.holidayTypes){
+					log.debug("Summary build: Map taken/pending for holiday type {}",type.name);
+					taken.put(type.name, 0F);
+					pending.put(type.name, 0F);
+				}
+				
+				// For each request, look at every detail, to add the detail to one of the types
+				List<HolidayRequestDTO> requests = requestService.getRequestBetweenDatesWithStatus(begin, end,userModel, HolidayRequest.ACCEPTED_STATUS, HolidayRequest.PAST_STATUS, HolidayRequest.PENDING_STATUS);
+				log.debug("Summary build: user {} has {} requests.",userDetails.user.id,requests.size());
+				for (HolidayRequestDTO request : requests){
+					log.debug("Summary build: Request {} contains {} details",request.id,request.details.size());
+					for (HolidayDetailDTO detail : request.details){
+						// Add the detail to the concerned type, only if the request is between the requested dates
+						if ((new DateTime(detail.day).getMonthOfYear() == month) && (new DateTime(detail.day).getYear() == year)){
+							log.debug("Summary build: Detail  has type {}", detail.type);
+							if (request.status == HolidayRequest.ACCEPTED_STATUS || request.status == HolidayRequest.PAST_STATUS){
+								taken.put(detail.type, taken.get(detail.type) + 0.5F);
+							} else if (request.status == HolidayRequest.PENDING_STATUS){
+								pending.put(detail.type, pending.get(detail.type) + 0.5F);
+							}
+						}
+					}
+				}
+				
+				// Build the userSummary
+				for (HolidayDTO type : profile.holidayTypes){
+					log.debug("Summary build: Type {} has {} taken",type.name, taken.get(type.name));
+					log.debug("Summary build: Type {} has {} pending",type.name, taken.get(type.name));
+					HolidayUserTypeSummaryDTO typeSummary = new HolidayUserTypeSummaryDTO(type, taken.get(type.name), pending.get(type.name));
+					userSummary.typesSummaries.add(typeSummary);
+				}
+				log.debug("Summary build: User summary for profile {} has size {}",userSummary.details.user.username,userSummary.typesSummaries.size());
+				profileSummary.usersSummaries.add(userSummary);
+			}
+			profileSummary.year = year;
+			profileSummary.month = month;
+			summary.add(profileSummary);
+		}
+		return summary;
 	}
 
 }

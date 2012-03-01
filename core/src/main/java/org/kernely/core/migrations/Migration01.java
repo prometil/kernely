@@ -30,9 +30,6 @@ import org.kernely.core.migrations.migrator.RawSql;
 
 /**
  * Core plugin migration script for version 0.1
- * 
- * @author g.breton
- * 
  */
 public class Migration01 extends Migration {
 
@@ -79,8 +76,12 @@ public class Migration01 extends Migration {
 		CreateTable manager = CreateTable.name("kernely_user_managers");
 		manager.column("manager_id", "bigint NOT NULL");
 		manager.column("user_id", "bigint NOT NULL");
-		
+		RawSql  managedUserForeignKey= new RawSql("ALTER TABLE kernely_user_managers ADD CONSTRAINT fk_managed_id FOREIGN KEY (manager_id) REFERENCES kernely_user (id)");
+		RawSql  managerUserForeignKey= new RawSql("ALTER TABLE kernely_user_managers ADD CONSTRAINT fk_manager_id FOREIGN KEY (user_id) REFERENCES kernely_user (id)");
+
 		commands.add(manager);
+		commands.add(managedUserForeignKey);
+		commands.add(managerUserForeignKey);
 		
 		//the table kernely group
 		CreateTable group = CreateTable.name("kernely_group");
@@ -104,7 +105,7 @@ public class Migration01 extends Migration {
 		userDetails.column("mail", "varchar(50)");
 		userDetails.column("image","varchar(100)");
 		userDetails.column("user_id", "bigint");
-		userDetails.column("adress", "varchar(100)");
+		userDetails.column("address", "varchar(100)");
 		userDetails.column("zip", "varchar(5)");
 		userDetails.column("city", "varchar(30)");
 		userDetails.column("nationality", "varchar(30)");
@@ -123,7 +124,7 @@ public class Migration01 extends Migration {
 		insertJohnDetails.set("firstname", "john");
 		insertJohnDetails.set("mail", "john.doe@prometil.com");
 		insertJohnDetails.set("user_id", "2");
-		insertJohnDetails.set("adress", "frayssnet le gelat");
+		insertJohnDetails.set("address", "frayssnet le gelat");
 		insertJohnDetails.set("zip","46250");
 		insertJohnDetails.set("city","toulouse");
 		insertJohnDetails.set("nationality","french");
@@ -140,7 +141,7 @@ public class Migration01 extends Migration {
 		insertBobbyDetails.set("firstname", "bobby");
 		insertBobbyDetails.set("mail", "robert.bobby@prometil.com");
 		insertBobbyDetails.set("user_id", "1");
-		insertBobbyDetails.set("adress", "frayssnet le gelat");
+		insertBobbyDetails.set("address", "frayssnet le gelat");
 		insertBobbyDetails.set("zip","46250");
 		insertBobbyDetails.set("city","toulouse");
 		insertBobbyDetails.set("nationality","english");
