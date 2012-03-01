@@ -52,11 +52,6 @@ public class HolidayBalanceDTO implements Comparable<HolidayBalanceDTO> {
 	public float availableBalanceUpdated;
 
 	/**
-	 * The effective month
-	 */
-	public int effectiveMonth;
-
-	/**
 	 * The last update
 	 */
 	public Date lastUpdate;
@@ -92,7 +87,6 @@ public class HolidayBalanceDTO implements Comparable<HolidayBalanceDTO> {
 		this.availableBalance = ((float) balance.getAvailableBalance()) / 12.0F;
 		this.availableBalanceUpdated = ((float) balance.getAvailableBalanceUpdated()) / 12.0F;
 		this.lastUpdate = balance.getLastUpdate();
-		this.effectiveMonth = balance.getHolidayType().getEffectiveMonth();
 		this.beginDate = balance.getBeginDate();
 		this.endDate = balance.getEndDate();
 	}

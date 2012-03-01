@@ -67,8 +67,8 @@ public class HolidayBalance extends AbstractModel {
 	private Date endDate;
 
 	@ManyToOne
-	@JoinColumn(name = "holiday_type_id")
-	private HolidayType holidayType;
+	@JoinColumn(name = "holiday_type_instance_id")
+	private HolidayTypeInstance holidayTypeInstance;
 
 	@ManyToOne
 	@JoinColumn(name = "user_id")
@@ -121,16 +121,16 @@ public class HolidayBalance extends AbstractModel {
 	/**
 	 * @return the holidayType
 	 */
-	public HolidayType getHolidayType() {
-		return holidayType;
+	public HolidayTypeInstance getHolidayTypeInstance() {
+		return holidayTypeInstance;
 	}
 
 	/**
 	 * @param holidayType
 	 *            the holidayType to set
 	 */
-	public void setHolidayType(HolidayType holidayType) {
-		this.holidayType = holidayType;
+	public void setHolidayTypeInstance(HolidayTypeInstance holidayType) {
+		this.holidayTypeInstance = holidayType;
 	}
 
 	/**

@@ -57,6 +57,7 @@ import org.kernely.holiday.dto.HolidayRequestDTO;
 import org.kernely.holiday.model.HolidayRequest;
 import org.kernely.holiday.model.HolidayRequestDetail;
 import org.kernely.holiday.model.HolidayType;
+import org.kernely.holiday.model.HolidayTypeInstance;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -123,7 +124,7 @@ public class HolidayRequestService extends AbstractService {
 	@Transactional
 	public void registerRequestAndDetails(HolidayRequestCreationRequestDTO request) {
 		List<HolidayRequestDetail> detailsModels = new ArrayList<HolidayRequestDetail>();
-		Map<HolidayType, Float> typeToUpdate = new HashMap<HolidayType, Float>();
+		Map<HolidayTypeInstance, Float> typeToUpdate = new HashMap<HolidayTypeInstance, Float>();
 		for (HolidayDetailCreationRequestDTO hdcr : request.details) {
 			HolidayRequestDetail detail = new HolidayRequestDetail();
 			detail.setAm(hdcr.am);
@@ -131,21 +132,21 @@ public class HolidayRequestService extends AbstractService {
 			DateTimeFormatter fmt = DateTimeFormat.forPattern("MM/dd/yyyy");
 			DateTime day = fmt.parseDateTime(hdcr.day);
 			detail.setDay(day.toDate());
-			HolidayType type = em.get().find(HolidayType.class, hdcr.typeId);
-			detail.setType(type);
+			HolidayTypeInstance typeInstance = em.get().find(HolidayTypeInstance.class, hdcr.typeInstanceId);
+			detail.setTypeInstance(typeInstance);
 			float taken = 0F;
 			// We increase the value by 0.5 because we're counting in 12th of a
-			// day, so 6 represents an half day.
+			// day
 			if (detail.isAm()) {
 				taken += HALF_DAY;
 			}
 			if (detail.isPm()) {
 				taken += HALF_DAY;
 			}
-			if (typeToUpdate.containsKey(type)) {
-				typeToUpdate.put(type, typeToUpdate.get(type) + taken);
+			if (typeToUpdate.containsKey(typeInstance)) {
+				typeToUpdate.put(typeInstance, typeToUpdate.get(typeInstance) + taken);
 			} else {
-				typeToUpdate.put(type, taken);
+				typeToUpdate.put(typeInstance, taken);
 			}
 			em.get().persist(detail);
 			log.debug("Holiday request detail registered for the day {}", hdcr.day);
@@ -160,8 +161,8 @@ public class HolidayRequestService extends AbstractService {
 		em.get().persist(hr);
 
 		// Update temporary balance
-		Set<Entry<HolidayType, Float>> entries = typeToUpdate.entrySet();
-		for (Entry<HolidayType, Float> e : entries) {
+		Set<Entry<HolidayTypeInstance, Float>> entries = typeToUpdate.entrySet();
+		for (Entry<HolidayTypeInstance, Float> e : entries) {
 			this.balanceService.removeDaysInAvailableUpdatedFromRequest(e.getKey().getId(), hr.getUser().getId(), e.getValue());
 		}
 
@@ -497,7 +498,7 @@ public class HolidayRequestService extends AbstractService {
 
 		// Update the temporary balance
 		Set<HolidayRequestDetail> details = request.getDetails();
-		Map<HolidayType, Float> typeToUpdate = new HashMap<HolidayType, Float>();
+		Map<HolidayTypeInstance, Float> typeToUpdate = new HashMap<HolidayTypeInstance, Float>();
 		for (HolidayRequestDetail d : details) {
 			float taken = 0F;
 			// We increase the value by 6 because we're counting in 12th of a
@@ -508,16 +509,16 @@ public class HolidayRequestService extends AbstractService {
 			if (d.isPm()) {
 				taken += HALF_DAY;
 			}
-			if (typeToUpdate.containsKey(d.getType())) {
-				typeToUpdate.put(d.getType(), typeToUpdate.get(d.getType()) + taken);
+			if (typeToUpdate.containsKey(d.getTypeInstance())) {
+				typeToUpdate.put(d.getTypeInstance(), typeToUpdate.get(d.getTypeInstance()) + taken);
 			} else {
-				typeToUpdate.put(d.getType(), taken);
+				typeToUpdate.put(d.getTypeInstance(), taken);
 			}
 		}
 
 		// Update temporary balance
-		Set<Entry<HolidayType, Float>> entries = typeToUpdate.entrySet();
-		for (Entry<HolidayType, Float> e : entries) {
+		Set<Entry<HolidayTypeInstance, Float>> entries = typeToUpdate.entrySet();
+		for (Entry<HolidayTypeInstance, Float> e : entries) {
 			this.balanceService.addDaysInAvailableUpdatedFromRequest(e.getKey().getId(), request.getUser().getId(), e.getValue());
 		}
 
@@ -551,7 +552,7 @@ public class HolidayRequestService extends AbstractService {
 		Set<HolidayRequestDetail> holidayRequestDetails = request.getDetails();
 
 		// Update the temporary balance
-		Map<HolidayType, Float> typeToUpdate = new HashMap<HolidayType, Float>();
+		Map<HolidayTypeInstance, Float> typeToUpdate = new HashMap<HolidayTypeInstance, Float>();
 		for (HolidayRequestDetail d : holidayRequestDetails) {
 			float taken = 0F;
 			// We increase the value by 6 because we're counting in 12th of a
@@ -562,16 +563,16 @@ public class HolidayRequestService extends AbstractService {
 			if (d.isPm()) {
 				taken += HALF_DAY;
 			}
-			if (typeToUpdate.containsKey(d.getType())) {
-				typeToUpdate.put(d.getType(), typeToUpdate.get(d.getType()) + taken);
+			if (typeToUpdate.containsKey(d.getTypeInstance())) {
+				typeToUpdate.put(d.getTypeInstance(), typeToUpdate.get(d.getTypeInstance()) + taken);
 			} else {
-				typeToUpdate.put(d.getType(), taken);
+				typeToUpdate.put(d.getTypeInstance(), taken);
 			}
 		}
 
 		// Update temporary balance
-		Set<Entry<HolidayType, Float>> entries = typeToUpdate.entrySet();
-		for (Entry<HolidayType, Float> e : entries) {
+		Set<Entry<HolidayTypeInstance, Float>> entries = typeToUpdate.entrySet();
+		for (Entry<HolidayTypeInstance, Float> e : entries) {
 			this.balanceService.addDaysInAvailableUpdatedFromRequest(e.getKey().getId(), request.getUser().getId(), e.getValue());
 		}
 
@@ -745,26 +746,52 @@ public class HolidayRequestService extends AbstractService {
 	 * 
 	 * @return a list of calendar balance detail dto
 	 */
+	@SuppressWarnings("unchecked")
 	private List<CalendarBalanceDetailDTO> buildColorPickerForRequest() {
 		long userId = this.getAuthenticatedUserModel().getId();
-		List<HolidayProfileDTO> profiles = holidayService.getProfilesForUser(userId);
 		List<CalendarBalanceDetailDTO> details = new ArrayList<CalendarBalanceDetailDTO>();
 		float availableDays;
-		for (HolidayProfileDTO pDTO : profiles) {
-			for (HolidayDTO type : pDTO.holidayTypes) {
-				if (type.unlimited) {
-					availableDays = -1F;
-				} else {
-					availableDays = 0.0F;
-					Set<HolidayBalanceDTO> balances = balanceService.getHolidayBalancesAvailable(type.id, userId);
-					for (HolidayBalanceDTO hb : balances) {
-						availableDays += hb.availableBalanceUpdated;
+
+		Query typeRequest = em.get().createQuery("SELECT t FROM HolidayTypeInstance t WHERE :user member of t.users");
+		typeRequest.setParameter("user", this.getAuthenticatedUserModel());
+		try{
+			List<HolidayTypeInstance> types = typeRequest.getResultList();
+			// Retrieve first all limited 
+			List<HolidayBalanceDTO> balancesList;
+			HolidayBalanceDTO balanceAnticipated;
+			for (HolidayTypeInstance type : types) {
+				availableDays = 0.0F;
+				balancesList = new ArrayList<HolidayBalanceDTO>(balanceService.getHolidayBalancesAvailable(type.getId(), userId));
+				if(type.isAnticipated()){
+					balanceAnticipated = balancesList.get(balancesList.size() - 1);
+					balancesList.remove(balancesList.size() - 1);
+					details.add(new CalendarBalanceDetailDTO(type.getName() + "(anticipation)", balanceAnticipated.availableBalanceUpdated, type.getColor(), type.getId()));
+				}
+				for (HolidayBalanceDTO hb : balancesList) {
+					availableDays += hb.availableBalanceUpdated;
+				}
+				if(availableDays > 0.0F){
+					details.add(new CalendarBalanceDetailDTO(type.getName(), availableDays, type.getColor(), type.getId()));					
+				}
+			}
+			// Now, retrieve all unlimited types associated to the current profiles of the user.
+			List<HolidayProfileDTO> profiles = holidayService.getProfilesForUser(userId);
+			HolidayType type;
+			HolidayTypeInstance instance;
+			for(HolidayProfileDTO p : profiles){
+				for(HolidayDTO t : p.holidayTypes){
+					if(t.unlimited){
+						type = em.get().find(HolidayType.class, t.id);
+						instance = type.getCurrentInstance();
+						details.add(new CalendarBalanceDetailDTO(instance.getName(), -1F, instance.getColor(), instance.getId()));
 					}
 				}
-				details.add(new CalendarBalanceDetailDTO(type.name, availableDays, type.color, type.id));
 			}
+			return details;
 		}
-		return details;
+		catch(NoResultException nre){
+			return null;
+		}
 	}
 
 	/**

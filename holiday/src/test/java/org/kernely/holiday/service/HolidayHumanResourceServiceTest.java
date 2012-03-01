@@ -89,15 +89,15 @@ public class HolidayHumanResourceServiceTest extends AbstractServiceTest {
 		return holidayService.createOrUpdateHoliday(request);
 	}
 
-	private void createHolidayRequestForUser(long userId, int typeId) {
+	private void createHolidayRequestForUser(long userId, int typeInstanceId) {
 		HolidayDetailCreationRequestDTO detailDTO1 = new HolidayDetailCreationRequestDTO();
 		HolidayDetailCreationRequestDTO detailDTO2 = new HolidayDetailCreationRequestDTO();
 
 		detailDTO1.day = DATE1_USER;
 		detailDTO2.day = DATE2_USER;
 
-		detailDTO1.typeId = typeId;
-		detailDTO2.typeId = typeId;
+		detailDTO1.typeInstanceId = typeInstanceId;
+		detailDTO2.typeInstanceId = typeInstanceId;
 
 		List<HolidayDetailCreationRequestDTO> list = new ArrayList<HolidayDetailCreationRequestDTO>();
 		list.add(detailDTO1);
@@ -139,10 +139,10 @@ public class HolidayHumanResourceServiceTest extends AbstractServiceTest {
 //		HolidayDTO type = this.createHolidayTypeForTest();
 //
 //		authenticateAs(USERNAME_USER2);
-//		this.createHolidayRequestForUser(user2DTO.id, type.id);
+//		this.createHolidayRequestForUser(user2DTO.id, type.instanceId);
 //		
 //		authenticateAs(USERNAME_USER1);
-//		this.createHolidayRequestForUser(user1DTO.id, type.id);
+//		this.createHolidayRequestForUser(user1DTO.id, type.instanceId);
 //		
 //		authenticateAs(USERNAME_MANAGER);
 //		userService.currentUserIsHumanResource();

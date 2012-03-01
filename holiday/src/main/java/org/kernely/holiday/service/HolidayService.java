@@ -28,6 +28,7 @@ import java.util.Set;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
+import org.joda.time.DateTime;
 import org.kernely.core.dto.UserDetailsDTO;
 import org.kernely.core.model.User;
 import org.kernely.core.service.AbstractService;
@@ -38,6 +39,7 @@ import org.kernely.holiday.dto.HolidayProfileCreationRequestDTO;
 import org.kernely.holiday.dto.HolidayProfileDTO;
 import org.kernely.holiday.model.HolidayProfile;
 import org.kernely.holiday.model.HolidayType;
+import org.kernely.holiday.model.HolidayTypeInstance;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -79,9 +81,23 @@ public class HolidayService extends AbstractService {
 		}
 		return dtos;
 	}
+	
+	@SuppressWarnings("unchecked")
+	@Transactional
+	protected List<HolidayProfile> getAllProfile(){
+		Query query = em.get().createQuery("SELECT e FROM HolidayProfile e");
+		try{
+			List<HolidayProfile> collection = (List<HolidayProfile>) query.getResultList();
+			return collection;
+		}
+		catch(NoResultException nre){
+			return new ArrayList<HolidayProfile>();
+		}
+	}
 
 	/**
-	 * Gets the holiday DTO for the holiday type with the id passed in parameter.
+	 * Gets the holiday DTO for the holiday type with the id passed in
+	 * parameter.
 	 * 
 	 * @param id
 	 *            The id of the holiday typ
@@ -111,11 +127,12 @@ public class HolidayService extends AbstractService {
 	}
 
 	/**
-	 * Create or update a new Holiday in database.
-	 * If the id requested is 0, create a new type.
-	 * If the id is not 0, update the type with the requested id.
+	 * Create or update a new Holiday in database. If the id requested is 0,
+	 * create a new type. If the id is not 0, update the type with the requested
+	 * id.
 	 * 
-	 * @param request Request containing data to set.
+	 * @param request
+	 *            Request containing data to set.
 	 * 
 	 */
 	@Transactional
@@ -132,23 +149,36 @@ public class HolidayService extends AbstractService {
 		}
 
 		HolidayType holidayType;
-		
-		log.debug("Creation or update of Holiday Type. id:"+request.id+" name"+request.name+" qty "+request.quantity+" unlimited: "+request.unlimited+" anticipated:"+request.anticipation);
-		
+
+		log.debug("Creation or update of Holiday Type. id:" + request.id + " name" + request.name + " qty " + request.quantity + " unlimited: "
+				+ request.unlimited + " anticipated:" + request.anticipation);
+
+		String oldName = "";
+		String oldColor = "";
+		boolean oldAnticipated = false;
+		int oldQuantity = 0;
+		int oldPeriodUnit = 0;
+		int oldEffectiveMonth = 0;
+
 		int id = request.id;
-		if (id == 0){
+		if (id == 0) {
 			// Create a new type
 			holidayType = new HolidayType();
 		} else {
 			// Type is already in database
-			Query verifExist = em.get().createQuery("SELECT g FROM HolidayType g WHERE id=:id");
-			verifExist.setParameter("id", id);
-			holidayType = (HolidayType) verifExist.getSingleResult();
+			holidayType = em.get().find(HolidayType.class, id);
+			oldName = holidayType.getName();
+			oldColor = holidayType.getColor();
+			oldAnticipated = holidayType.isAnticipated();
+			oldQuantity = holidayType.getQuantity();
+			oldPeriodUnit = holidayType.getPeriodUnit();
+			oldEffectiveMonth = holidayType.getEffectiveMonth();
 		}
 
 		holidayType.setName(request.name.trim());
 		holidayType.setUnlimited(request.unlimited);
-		if (!request.unlimited) { // These fields are useless if the type is unlimited
+		if (!request.unlimited) { // These fields are useless if the type is
+									// unlimited
 			holidayType.setQuantity(request.quantity);
 			holidayType.setPeriodUnit(request.unity);
 			holidayType.setEffectiveMonth(request.effectiveMonth);
@@ -156,16 +186,46 @@ public class HolidayService extends AbstractService {
 		}
 		holidayType.setColor(request.color);
 
-		if (id == 0){
-			// Create
+		if (id == 0) {
+			// Create a new instance of this type
+			HolidayTypeInstance instance = new HolidayTypeInstance();
+			instance.setName(holidayType.getName());
+			instance.setColor(holidayType.getColor());
+			instance.setPeriodUnit(holidayType.getPeriodUnit());
+			instance.setQuantity(holidayType.getQuantity());
+			instance.setAnticipated(holidayType.isAnticipated());
+			em.get().persist(instance);
+			holidayType.setCurrentInstance(instance);
 			em.get().persist(holidayType);
-			log.debug("HolidayService: new holiday type created ({})",request.name);
+			log.debug("HolidayService: new holiday type created ({})", request.name);
 		} else {
-			// Update
+			// Update case
+			// If the effective month, quantity, the period unit or the anticipated mode has
+			// changed, we have to create a new instance of this type
+			if (oldEffectiveMonth != holidayType.getEffectiveMonth() || oldAnticipated != holidayType.isAnticipated()
+					|| oldQuantity != holidayType.getQuantity() || oldPeriodUnit != holidayType.getPeriodUnit()) {
+				HolidayTypeInstance instance = new HolidayTypeInstance();
+				instance.setName(holidayType.getName());
+				instance.setColor(holidayType.getColor());
+				instance.setPeriodUnit(holidayType.getPeriodUnit());
+				instance.setQuantity(holidayType.getQuantity());
+				instance.setAnticipated(holidayType.isAnticipated());
+				em.get().persist(instance);
+				holidayType.setCurrentInstance(instance);
+			}
+			// If only the name or the color have changed, we have to just
+			// update the existing instance of this type
+			else {
+				if (!oldName.equals(holidayType.getName()) || !oldColor.equals(holidayType.getColor())) {
+					HolidayTypeInstance currentInstance = holidayType.getCurrentInstance();
+					currentInstance.setName(holidayType.getName());
+					currentInstance.setColor(holidayType.getColor());
+				}
+			}
 			em.get().merge(holidayType);
-			log.debug("HolidayService: holiday type updated ({})",request.name);
+			log.debug("HolidayService: holiday type updated ({})", request.name);
 		}
-		
+
 		return new HolidayDTO(holidayType);
 	}
 
@@ -184,10 +244,11 @@ public class HolidayService extends AbstractService {
 	}
 
 	/**
-	 * Create a new holiday profile in database. A holiday profile contains several holiday types.
+	 * Create a new holiday profile in database. A holiday profile contains
+	 * several holiday types.
 	 * 
 	 * @param request
-	 * @return 
+	 * @return
 	 * 
 	 */
 	@Transactional
@@ -195,7 +256,7 @@ public class HolidayService extends AbstractService {
 		if (request == null) {
 			throw new IllegalArgumentException("Request cannot be null ");
 		}
-		
+
 		if (request.name == null) {
 			throw new IllegalArgumentException("holiday profile name cannot be null ");
 		}
@@ -203,24 +264,23 @@ public class HolidayService extends AbstractService {
 		if ("".equals(request.name.trim())) {
 			throw new IllegalArgumentException("holiday profile cannot be space character only ");
 		}
-		
+
 		HolidayProfile profile;
 		int id = request.id;
-		if (id == 0){
+		if (id == 0) {
 			profile = new HolidayProfile();
 		} else {
 			Query verifExist = em.get().createQuery("SELECT hp FROM HolidayProfile hp WHERE id=:id");
 			verifExist.setParameter("id", id);
 			profile = (HolidayProfile) verifExist.getSingleResult();
-			
+
 			// Detach types from profile
-			for (HolidayType type : profile.getHolidayTypes()){
+			for (HolidayType type : profile.getHolidayTypes()) {
 				type.setProfile(null);
 				em.get().merge(type);
 			}
-			
+
 		}
-		
 
 		// Get all holiday types from this holiday profile
 		Set<HolidayType> types = new HashSet<HolidayType>();
@@ -229,18 +289,18 @@ public class HolidayService extends AbstractService {
 			query.setParameter("id", typeId);
 			HolidayType holiday = (HolidayType) query.getSingleResult();
 			types.add(holiday);
-			log.debug("Added holiday type (id:{}) to holiday profile (name:{})",holiday.getId(),request.name.trim());
+			log.debug("Added holiday type (id:{}) to holiday profile (name:{})", holiday.getId(), request.name.trim());
 		}
 
 		profile.setName(request.name.trim());
 		profile.setHolidayTypes(types);
 
-		if (request.id == 0){
+		if (request.id == 0) {
 			em.get().persist(profile);
 		} else {
 			em.get().merge(profile);
 		}
-		
+
 		// Update holiday types
 		for (int typeId : request.holidayTypesId) {
 			Query query = em.get().createQuery("SELECT  h from HolidayType h WHERE  h.id=:id");
@@ -249,12 +309,15 @@ public class HolidayService extends AbstractService {
 			holiday.setProfile(profile);
 			em.get().merge(holiday);
 		}
-		
+
+		// Create
+
 		return new HolidayProfileDTO(profile);
 	}
 
 	/**
 	 * Get all holiday profiles, containing holiday types.
+	 * 
 	 * @return all holiday profiles
 	 */
 	@Transactional
@@ -264,43 +327,43 @@ public class HolidayService extends AbstractService {
 		List<HolidayProfile> collection = (List<HolidayProfile>) query.getResultList();
 		List<HolidayProfileDTO> profiles = new ArrayList<HolidayProfileDTO>();
 		log.debug("HolidayService found {} holiday profiles", collection.size());
-		
+
 		for (HolidayProfile holidayProfile : collection) {
 			// Get DTO of holiday types
 			List<HolidayDTO> holidayTypes = new ArrayList<HolidayDTO>();
-			for (HolidayType type : holidayProfile.getHolidayTypes()){
+			for (HolidayType type : holidayProfile.getHolidayTypes()) {
 				holidayTypes.add(new HolidayDTO(type));
 			}
-			log.debug("Detected holiday profile {} containing {} types", holidayProfile.getName(),holidayTypes.size());
-			profiles.add(new HolidayProfileDTO(holidayProfile.getId(),holidayProfile.getName(),holidayTypes,holidayProfile.getUsers().size()));
+			log.debug("Detected holiday profile {} containing {} types", holidayProfile.getName(), holidayTypes.size());
+			profiles.add(new HolidayProfileDTO(holidayProfile.getId(), holidayProfile.getName(), holidayTypes, holidayProfile.getUsers().size()));
 		}
 		return profiles;
 	}
-	
+
 	/**
 	 * Get all users associated to the profile.
 	 */
 	@Transactional
-	public List <UserDetailsDTO> getUsersInProfile(int profileId){
+	public List<UserDetailsDTO> getUsersInProfile(int profileId) {
 		Query query = em.get().createQuery("SELECT hp FROM HolidayProfile hp WHERE hp.id=:id");
 		query.setParameter("id", profileId);
-		
+
 		HolidayProfile profile = (HolidayProfile) query.getSingleResult();
 
 		Set<User> users = profile.getUsers();
 		// Get user details
 		List<UserDetailsDTO> usersDTO = new ArrayList<UserDetailsDTO>();
-		for (User u : users){
+		for (User u : users) {
 			usersDTO.add(userService.getUserDetails(u.getUsername()));
 		}
 
 		return usersDTO;
 	}
-	
+
 	/**
 	 * Get all users which are not associated to the profile.
 	 */
-	public List<UserDetailsDTO> getUsersNotInProfile(int profileId){
+	public List<UserDetailsDTO> getUsersNotInProfile(int profileId) {
 		List<UserDetailsDTO> users = userService.getEnabledUserDetails();
 		users.removeAll(this.getUsersInProfile(profileId));
 
@@ -308,9 +371,13 @@ public class HolidayService extends AbstractService {
 	}
 
 	/**
-	 * Associates users with a profile (and remove previous users from the profile).
-	 * @param id Id of the profile.
-	 * @param usernames The list of usernames to associate to the profile.
+	 * Associates users with a profile (and remove previous users from the
+	 * profile).
+	 * 
+	 * @param id
+	 *            Id of the profile.
+	 * @param usernames
+	 *            The list of usernames to associate to the profile.
 	 */
 	@Transactional
 	public void updateProfileUsers(int id, List<String> usernames) {
@@ -320,34 +387,57 @@ public class HolidayService extends AbstractService {
 		HolidayProfile profile = (HolidayProfile) profileQuery.getSingleResult();
 		// Get users
 		Set<User> associatedUsers = new HashSet<User>();
-		for (String username : usernames){
-			if (! username.equals("")){
+		for (String username : usernames) {
+			if (!username.equals("")) {
 				associatedUsers.add(userService.getUserByUsername(username));
 			}
 		}
-		
+
 		profile.setUsers(associatedUsers);
-	
-		em.get().persist(profile);
+		HolidayTypeInstance currentInstance;
+		for (HolidayType type : profile.getHolidayTypes()) {
+			currentInstance = type.getCurrentInstance();
+			currentInstance.setUsers(associatedUsers);
+			log
+					.debug("Type instance with id {} has been associated to the users of the profile with id {}", currentInstance.getId(), profile
+							.getId());
+			em.get().merge(currentInstance);
+		}
 		
+		// Create one balance for each type and each user.
+		DateTime hireDate;
+		for(User user : associatedUsers){
+			for(HolidayType type : profile.getHolidayTypes()){
+				hireDate = new DateTime(user.getUserDetails().getHire());
+				if(hireDate.isAfterNow()){
+					balanceService.createHolidayBalanceForNewUser(type.getId(), user.getId());
+				}
+				else{
+					balanceService.createHolidayBalance(type.getId(), user.getId());
+				}
+				log.debug("Balance created for the user {} and the type {}", user.getId(), type.getId());
+			}
+		}
+
+		em.get().persist(profile);
+
 		log.debug("Profile {} has now {} associated users", id, associatedUsers.size());
 
 	}
-	
+
 	@SuppressWarnings("unchecked")
-	public List<HolidayProfileDTO> getProfilesForUser(long userId){
+	public List<HolidayProfileDTO> getProfilesForUser(long userId) {
 		Query profileQuery = em.get().createQuery("SELECT hp FROM HolidayProfile hp WHERE :user member of hp.users");
 		profileQuery.setParameter("user", em.get().find(User.class, userId));
-		
-		try{
-			List<HolidayProfile> profiles = (List<HolidayProfile>)profileQuery.getResultList();
+
+		try {
+			List<HolidayProfile> profiles = (List<HolidayProfile>) profileQuery.getResultList();
 			List<HolidayProfileDTO> profilesDTO = new ArrayList<HolidayProfileDTO>();
-			for(HolidayProfile p : profiles){
+			for (HolidayProfile p : profiles) {
 				profilesDTO.add(new HolidayProfileDTO(p));
 			}
 			return profilesDTO;
-		}
-		catch(NoResultException nre){
+		} catch (NoResultException nre) {
 			log.debug("There is no profile associated to the user with id {}", userId);
 			return null;
 		}

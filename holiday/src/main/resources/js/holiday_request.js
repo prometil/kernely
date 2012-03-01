@@ -75,7 +75,7 @@ AppHolidayRequest = (function($){
 					else{
 						json += '"am": false, "pm": true ,';
 					}
-					json += '"typeId":' + this.selectedBy + '}';
+					json += '"typeInstanceId":' + this.selectedBy + '}';
 					
 					count++;
 					if(count<nbSelected){

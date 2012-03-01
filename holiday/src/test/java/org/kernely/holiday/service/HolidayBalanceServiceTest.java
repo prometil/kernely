@@ -20,7 +20,7 @@
 
 package org.kernely.holiday.service;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -56,6 +56,9 @@ public class HolidayBalanceServiceTest extends AbstractServiceTest {
 	private static final String USERNAME= "username";
 	private static final int QUANTITY = 3;
 	private static final int EFFECTIVE_MONTH = HolidayType.JUNE;
+	private static final int PERIOD = HolidayType.PERIOD_MONTH;
+	
+	private static final int AVAIL = QUANTITY * PERIOD;
 
 	private static final Date DATE_TODAY = new DateTime().withZone(DateTimeZone.UTC).toDate();
 	private static final Date DATE_TOMORROW = new DateTime().plusDays(1).withZone(DateTimeZone.UTC).toDate();
@@ -213,7 +216,7 @@ public class HolidayBalanceServiceTest extends AbstractServiceTest {
 		HolidayDTO type = createHolidayTypeAllMonthForTest();
 		HolidayBalanceDTO newBalance = holidayBalanceService.createHolidayBalanceForNewUser(type.id, user.id);
 		assertEquals(0, newBalance.availableBalance, 0);
-		assertEquals(0, newBalance.availableBalanceUpdated, 0);
+		assertEquals(AVAIL, newBalance.availableBalanceUpdated, 0);
 		assertEquals(NEXT_COMPLETE_MONTH_DATE_FOR_FUTURE_HIRE , newBalance.beginDate);
 		assertEquals(END_DATE_ALL_MONTH_TYPE_CURRENT_YEAR , newBalance.endDate);
 	}
@@ -224,7 +227,7 @@ public class HolidayBalanceServiceTest extends AbstractServiceTest {
 		HolidayDTO type = createHolidayTypeSpecificMonthForTest();
 		HolidayBalanceDTO newBalance = holidayBalanceService.createHolidayBalanceForNewUser(type.id, user.id);
 		assertEquals(0, newBalance.availableBalance, 0);
-		assertEquals(0, newBalance.availableBalanceUpdated, 0);
+		assertEquals(AVAIL, newBalance.availableBalanceUpdated, 0);
 		assertEquals(NEXT_COMPLETE_MONTH_DATE_FOR_FUTURE_HIRE , newBalance.beginDate);
 		assertEquals(this.getNextEndDateForNewBalance() , newBalance.endDate);
 	}
@@ -235,7 +238,7 @@ public class HolidayBalanceServiceTest extends AbstractServiceTest {
 		HolidayDTO type = createHolidayTypeAllMonthForTest();
 		HolidayBalanceDTO newBalance = holidayBalanceService.createHolidayBalance(type.id, user.id);
 		assertEquals(0, newBalance.availableBalance, 0);
-		assertEquals(0, newBalance.availableBalanceUpdated, 0);
+		assertEquals(AVAIL, newBalance.availableBalanceUpdated, 0);
 		assertEquals(this.getNextCompleteMonth() , newBalance.beginDate);
 		assertEquals(END_DATE_ALL_MONTH_TYPE_CURRENT_YEAR , newBalance.endDate);
 	}
@@ -246,7 +249,7 @@ public class HolidayBalanceServiceTest extends AbstractServiceTest {
 		HolidayDTO type = createHolidayTypeAllMonthForTest();
 		HolidayBalanceDTO newBalance = holidayBalanceService.createHolidayBalance(type.id, user.id, 2000);
 		assertEquals(0, newBalance.availableBalance, 0);
-		assertEquals(0, newBalance.availableBalanceUpdated, 0);
+		assertEquals(AVAIL, newBalance.availableBalanceUpdated, 0);
 		assertEquals(new DateTime(this.getNextCompleteMonth()).withYear(2000).toDate() , newBalance.beginDate);
 		assertEquals(new DateTime(END_DATE_ALL_MONTH_TYPE_CURRENT_YEAR).withYear(2001).toDate() , newBalance.endDate);
 	}
@@ -257,7 +260,7 @@ public class HolidayBalanceServiceTest extends AbstractServiceTest {
 		HolidayDTO type = createHolidayTypeSpecificMonthForTest();
 		HolidayBalanceDTO newBalance = holidayBalanceService.createHolidayBalance(type.id, user.id);
 		assertEquals(0, newBalance.availableBalance, 0);
-		assertEquals(0, newBalance.availableBalanceUpdated, 0);
+		assertEquals(AVAIL, newBalance.availableBalanceUpdated, 0);
 		assertEquals(this.getNextCompleteMonth() , newBalance.beginDate);
 		assertEquals(this.getNextEndDateForNewBalance() , newBalance.endDate);
 	}
@@ -274,14 +277,14 @@ public class HolidayBalanceServiceTest extends AbstractServiceTest {
 	public void createNextBalanceForAllMonthTest(){
 		UserDTO user = createUserOldHiredForTest();
 		HolidayDTO type = createHolidayTypeAllMonthForTest();
-		HolidayBalanceDTO newBalance = holidayBalanceService.createHolidayBalance(type.id, user.id);
+		HolidayBalanceDTO newBalance = holidayBalanceService.createHolidayBalance(type.id, user.id, DateTime.now().minusYears(1).getYear());
 		assertEquals(0, newBalance.availableBalance, 0);
-		assertEquals(0, newBalance.availableBalanceUpdated, 0);
-		assertEquals(this.getNextCompleteMonth() , newBalance.beginDate);
-		assertEquals(END_DATE_ALL_MONTH_TYPE_CURRENT_YEAR , newBalance.endDate);
-		HolidayBalanceDTO nextBalance = holidayBalanceService.createHolidayBalance(type.id, user.id);
+		assertEquals(AVAIL, newBalance.availableBalanceUpdated, 0);
+		assertEquals(new DateTime(this.getNextCompleteMonth()).minusYears(1).toDate() , newBalance.beginDate);
+		assertEquals(new DateTime(END_DATE_ALL_MONTH_TYPE_CURRENT_YEAR).minusYears(1).toDate() , newBalance.endDate);
+		HolidayBalanceDTO nextBalance = holidayBalanceService.createHolidayBalance(type.id, user.id, DateTime.now().minusYears(1).getYear());
 		assertEquals(0, nextBalance.availableBalance, 0);
-		assertEquals(0, nextBalance.availableBalanceUpdated, 0);
+		assertEquals(AVAIL, nextBalance.availableBalanceUpdated, 0);
 		assertEquals(newBalance.endDate , nextBalance.beginDate);
 		Date endDate = new DateTime(newBalance.endDate).plusYears(1).toDate();
 		assertEquals(endDate, nextBalance.endDate);
@@ -291,19 +294,30 @@ public class HolidayBalanceServiceTest extends AbstractServiceTest {
 	public void createNextBalanceForSpecificMonthTest(){
 		UserDTO user = createUserOldHiredForTest();
 		HolidayDTO type = createHolidayTypeSpecificMonthForTest();
-		HolidayBalanceDTO newBalance = holidayBalanceService.createHolidayBalance(type.id, user.id);
+		HolidayBalanceDTO newBalance = holidayBalanceService.createHolidayBalance(type.id, user.id, DateTime.now().minusYears(1).getYear());
 		assertEquals(0, newBalance.availableBalance, 0);
-		assertEquals(0, newBalance.availableBalanceUpdated, 0);
-		assertEquals(this.getNextCompleteMonth() , newBalance.beginDate);
-		assertEquals(this.getNextEndDateForNewBalance() , newBalance.endDate);
+		assertEquals(AVAIL, newBalance.availableBalanceUpdated, 0);
+		assertEquals(new DateTime(this.getNextCompleteMonth()).minusYears(1).toDate() , newBalance.beginDate);
+		assertEquals(new DateTime(this.getNextEndDateForNewBalance()).minusYears(1).toDate() , newBalance.endDate);
 		HolidayBalanceDTO nextBalance = holidayBalanceService.createHolidayBalance(type.id, user.id);
 		assertEquals(0, nextBalance.availableBalance, 0);
-		assertEquals(0, nextBalance.availableBalanceUpdated, 0);
+		assertEquals(AVAIL, nextBalance.availableBalanceUpdated, 0);
 		assertEquals(newBalance.endDate , nextBalance.beginDate);
 		Date endDate = new DateTime(newBalance.endDate).plusYears(1).toDate();
 		assertEquals(endDate, nextBalance.endDate);
 	}
-
+	
+	@Test
+	public void createBalanceInTheFuture(){
+		UserDTO user = createUserOldHiredForTest();
+		HolidayDTO type = createHolidayTypeSpecificMonthForTest();
+		// Will create a balance for the current year
+		holidayBalanceService.createHolidayBalance(type.id, user.id);
+		// Try to create a balance for the next year
+		HolidayBalanceDTO balance = holidayBalanceService.createHolidayBalance(type.id, user.id);	
+		assertNull(balance);
+	}
+	
 	@Test
 	public void retrieveAllAvailableBalancesWithNoAnticipationSpecMonthTest(){
 		UserDTO user = createUserOldHiredForTest();
@@ -326,7 +340,7 @@ public class HolidayBalanceServiceTest extends AbstractServiceTest {
 		assertEquals(new DateTime(m1yBalance.endDate).plusYears(1).toDate() , actualBalance.endDate);
 
 		// With this holiday type, getHolidayBalancesAvailable should return 2 balances. The third being not available for the moment
-		Set<HolidayBalanceDTO> availBalances = holidayBalanceService.getHolidayBalancesAvailable(type.id, user.id);
+		Set<HolidayBalanceDTO> availBalances = holidayBalanceService.getHolidayBalancesAvailable(type.instanceId, user.id);
 		assertEquals(2, availBalances.size());		
 	}
 
@@ -352,7 +366,7 @@ public class HolidayBalanceServiceTest extends AbstractServiceTest {
 		assertEquals(new DateTime(m1yBalance.endDate).plusYears(1).toDate() , actualBalance.endDate);
 
 		// With this holiday type, getHolidayBalancesAvailable should return 3 balances. The third (actual) being available for the moment
-		Set<HolidayBalanceDTO> availBalances = holidayBalanceService.getHolidayBalancesAvailable(type.id, user.id);
+		Set<HolidayBalanceDTO> availBalances = holidayBalanceService.getHolidayBalancesAvailable(type.instanceId, user.id);
 		assertEquals(3, availBalances.size());		
 	}
 
@@ -378,7 +392,7 @@ public class HolidayBalanceServiceTest extends AbstractServiceTest {
 		assertEquals(new DateTime(m1yBalance.endDate).plusYears(1).toDate() , actualBalance.endDate);
 
 		// With this holiday type, getHolidayBalancesAvailable should return 2 balances. The third being not available for the moment
-		Set<HolidayBalanceDTO> availBalances = holidayBalanceService.getHolidayBalancesAvailable(type.id, user.id);
+		Set<HolidayBalanceDTO> availBalances = holidayBalanceService.getHolidayBalancesAvailable(type.instanceId, user.id);
 		assertEquals(2, availBalances.size());		
 	}
 
@@ -404,7 +418,7 @@ public class HolidayBalanceServiceTest extends AbstractServiceTest {
 		assertEquals(new DateTime(m1yBalance.endDate).plusYears(1).toDate() , actualBalance.endDate);
 
 		// With this holiday type, getHolidayBalancesAvailable should return 3 balances. The third (actual) being available for the moment
-		Set<HolidayBalanceDTO> availBalances = holidayBalanceService.getHolidayBalancesAvailable(type.id, user.id);
+		Set<HolidayBalanceDTO> availBalances = holidayBalanceService.getHolidayBalancesAvailable(type.instanceId, user.id);
 		assertEquals(3, availBalances.size());		
 	}
 
@@ -416,14 +430,9 @@ public class HolidayBalanceServiceTest extends AbstractServiceTest {
 
 		//Balance for the year N => Anticipated balance in that case of holiday type.
 		holidayBalanceService.createHolidayBalance(type.id, user.id);
-		//Balance for the year N+1 => Anticipated balance in that case of holiday type.
-		holidayBalanceService.createHolidayBalance(type.id, user.id);
-		//Balance for the year N+2 => Anticipated balance in that case of holiday type.
-		holidayBalanceService.createHolidayBalance(type.id, user.id);
-
 
 		// With this holiday type, getHolidayBalancesAvailable should return 1 balance, for N. N+1 and N+2 are not considered
-		Set<HolidayBalanceDTO> availBalances = holidayBalanceService.getHolidayBalancesAvailable(type.id, user.id);
+		Set<HolidayBalanceDTO> availBalances = holidayBalanceService.getHolidayBalancesAvailable(type.instanceId, user.id);
 		assertEquals(1, availBalances.size());		
 	}
 
@@ -437,7 +446,7 @@ public class HolidayBalanceServiceTest extends AbstractServiceTest {
 		holidayBalanceService.createHolidayBalance(type.id, user.id);
 
 		// With this holiday type, getHolidayBalancesAvailable should return 0 balances.
-		Set<HolidayBalanceDTO> availBalances = holidayBalanceService.getHolidayBalancesAvailable(type.id, user.id);
+		Set<HolidayBalanceDTO> availBalances = holidayBalanceService.getHolidayBalancesAvailable(type.instanceId, user.id);
 		assertEquals(0, availBalances.size());	
 	}
 
@@ -458,7 +467,7 @@ public class HolidayBalanceServiceTest extends AbstractServiceTest {
 		assertEquals(m1yBalance.endDate , actualBalance.beginDate);
 		assertEquals(new DateTime(m1yBalance.endDate).plusYears(1).toDate() , actualBalance.endDate);
 
-		HolidayBalanceDTO processedBalance = holidayBalanceService.getProcessedBalance(type.id, user.id);
+		HolidayBalanceDTO processedBalance = holidayBalanceService.getProcessedBalance(type.instanceId, user.id);
 		assertEquals(actualBalance.beginDate, processedBalance.beginDate);
 		assertEquals(actualBalance.endDate, processedBalance.endDate);
 	}
@@ -479,16 +488,16 @@ public class HolidayBalanceServiceTest extends AbstractServiceTest {
 		//Balance for the year N => Anticipated balance in that case of holiday type.
 		HolidayBalanceDTO actualBalance = holidayBalanceService.createHolidayBalance(type.id, user.id);
 		assertEquals(0, actualBalance.availableBalance, 0);
-		assertEquals(0, actualBalance.availableBalanceUpdated, 0);
+		assertEquals(AVAIL, actualBalance.availableBalanceUpdated, 0);
 		assertEquals(this.getNextCompleteMonth() , actualBalance.beginDate);
 		assertEquals(END_DATE_ALL_MONTH_TYPE_CURRENT_YEAR , actualBalance.endDate);
 
 		holidayBalanceService.incrementBalance(type.id, user.id);
 
-		actualBalance = holidayBalanceService.getProcessedBalance(type.id, user.id);
+		actualBalance = holidayBalanceService.getProcessedBalance(type.instanceId, user.id);
 
 		assertEquals(QUANTITY, actualBalance.availableBalance, 0);
-		assertEquals(QUANTITY, actualBalance.availableBalanceUpdated, 0);
+		assertEquals(AVAIL, actualBalance.availableBalanceUpdated, 0);
 		assertEquals(this.getNextCompleteMonth() , actualBalance.beginDate);
 		assertEquals(END_DATE_ALL_MONTH_TYPE_CURRENT_YEAR , actualBalance.endDate);
 	}
@@ -501,17 +510,17 @@ public class HolidayBalanceServiceTest extends AbstractServiceTest {
 		//Balance for the year N => Anticipated balance in that case of holiday type.
 		HolidayBalanceDTO actualBalance = holidayBalanceService.createHolidayBalance(type.id, user.id);
 		assertEquals(0, actualBalance.availableBalance, 0);
-		assertEquals(0, actualBalance.availableBalanceUpdated, 0);
+		assertEquals(AVAIL, actualBalance.availableBalanceUpdated, 0);
 		assertEquals(this.getNextCompleteMonth() , actualBalance.beginDate);
 		assertEquals(END_DATE_ALL_MONTH_TYPE_CURRENT_YEAR , actualBalance.endDate);
 
 		for(int i = 0; i < 1000; i++){
 			holidayBalanceService.incrementBalance(type.id, user.id);
 		}
-		actualBalance = holidayBalanceService.getProcessedBalance(type.id, user.id);
+		actualBalance = holidayBalanceService.getProcessedBalance(type.instanceId, user.id);
 
 		assertEquals(QUANTITY * 1000, actualBalance.availableBalance, 0);
-		assertEquals(QUANTITY * 1000, actualBalance.availableBalanceUpdated, 0);
+		assertEquals(AVAIL, actualBalance.availableBalanceUpdated, 0);
 		assertEquals(this.getNextCompleteMonth() , actualBalance.beginDate);
 		assertEquals(END_DATE_ALL_MONTH_TYPE_CURRENT_YEAR , actualBalance.endDate);
 	}
@@ -525,30 +534,30 @@ public class HolidayBalanceServiceTest extends AbstractServiceTest {
 		//Balance for the year N - 2
 		HolidayBalanceDTO m2yBalance = holidayBalanceService.createHolidayBalance(type.id, user.id, DateTime.now().minusYears(2).getYear());
 		holidayBalanceService.incrementBalance(type.id, user.id);
-		m2yBalance = holidayBalanceService.getProcessedBalance(type.id, user.id);
+		m2yBalance = holidayBalanceService.getProcessedBalance(type.instanceId, user.id);
 
 		assertEquals(QUANTITY, m2yBalance.availableBalance, 0);
-		assertEquals(QUANTITY, m2yBalance.availableBalanceUpdated, 0);
+		assertEquals(AVAIL, m2yBalance.availableBalanceUpdated, 0);
 		assertEquals(new DateTime(this.getNextCompleteMonth()).minusYears(2).toDate() , m2yBalance.beginDate);
 		assertEquals(new DateTime(END_DATE_ALL_MONTH_TYPE_CURRENT_YEAR).minusYears(2).toDate() , m2yBalance.endDate);
 
 		//Balance for the year N - 1
 		HolidayBalanceDTO m1yBalance = holidayBalanceService.createHolidayBalance(type.id, user.id);
 		holidayBalanceService.incrementBalance(type.id, user.id);
-		m1yBalance = holidayBalanceService.getProcessedBalance(type.id, user.id);
+		m1yBalance = holidayBalanceService.getProcessedBalance(type.instanceId, user.id);
 
 		assertEquals(QUANTITY, m1yBalance.availableBalance, 0);
-		assertEquals(QUANTITY, m1yBalance.availableBalanceUpdated, 0);
+		assertEquals(AVAIL, m1yBalance.availableBalanceUpdated, 0);
 		assertEquals(m2yBalance.endDate , m1yBalance.beginDate);
 		assertEquals(new DateTime(m2yBalance.endDate).plusYears(1).toDate() , m1yBalance.endDate);
 
 		//Balance for the year N => Anticipated balance in that case of holiday type.
 		HolidayBalanceDTO actualBalance = holidayBalanceService.createHolidayBalance(type.id, user.id);
 		holidayBalanceService.incrementBalance(type.id, user.id);
-		actualBalance = holidayBalanceService.getProcessedBalance(type.id, user.id);
+		actualBalance = holidayBalanceService.getProcessedBalance(type.instanceId, user.id);
 
 		assertEquals(QUANTITY, actualBalance.availableBalance, 0);
-		assertEquals(QUANTITY, actualBalance.availableBalanceUpdated, 0);
+		assertEquals(AVAIL, actualBalance.availableBalanceUpdated, 0);
 		assertEquals(m1yBalance.endDate , actualBalance.beginDate);
 		assertEquals(new DateTime(m1yBalance.endDate).plusYears(1).toDate() , actualBalance.endDate);
 
@@ -567,7 +576,7 @@ public class HolidayBalanceServiceTest extends AbstractServiceTest {
 
 		holidayBalanceService.incrementBalance(type.id, user.id);
 
-		actualBalance = holidayBalanceService.getProcessedBalance(type.id, user.id);
+		actualBalance = holidayBalanceService.getProcessedBalance(type.instanceId, user.id);
 		assertEquals(0, actualBalance.availableBalance, 0);
 		assertEquals(0, actualBalance.availableBalanceUpdated, 0);
 		assertEquals(this.getNextCompleteMonth() , actualBalance.beginDate);
@@ -581,15 +590,15 @@ public class HolidayBalanceServiceTest extends AbstractServiceTest {
 		HolidayDTO type = createHolidayTypeSpecificMonthForTest();
 		HolidayBalanceDTO actualBalance = holidayBalanceService.createHolidayBalance(type.id, user.id);
 		assertEquals(0, actualBalance.availableBalance, 0);
-		assertEquals(0, actualBalance.availableBalanceUpdated, 0);
+		assertEquals(AVAIL, actualBalance.availableBalanceUpdated, 0);
 		assertEquals(this.getNextCompleteMonth() , actualBalance.beginDate);
 		assertEquals(this.getNextEndDateForNewBalance() , actualBalance.endDate);
 
 		holidayBalanceService.incrementBalance(type.id, user.id);
 
-		actualBalance = holidayBalanceService.getProcessedBalance(type.id, user.id);
+		actualBalance = holidayBalanceService.getProcessedBalance(type.instanceId, user.id);
 		assertEquals(QUANTITY, actualBalance.availableBalance, 0);
-		assertEquals(QUANTITY, actualBalance.availableBalanceUpdated, 0);
+		assertEquals(AVAIL, actualBalance.availableBalanceUpdated, 0);
 		assertEquals(this.getNextCompleteMonth() , actualBalance.beginDate);
 		assertEquals(this.getNextEndDateForNewBalance() , actualBalance.endDate);
 	}
@@ -606,7 +615,7 @@ public class HolidayBalanceServiceTest extends AbstractServiceTest {
 		//Balance for the year N => Anticipated balance in that case of holiday type.
 		holidayBalanceService.createHolidayBalance(type.id, user.id);
 
-		assertEquals(false, holidayBalanceService.hasAvailableDays(type.id, user.id, 1));
+		assertEquals(false, holidayBalanceService.hasAvailableDays(type.instanceId, user.id, 1));
 	}
 
 	@Test
@@ -622,7 +631,7 @@ public class HolidayBalanceServiceTest extends AbstractServiceTest {
 		//Balance for the year N => Anticipated balance in that case of holiday type.
 		holidayBalanceService.createHolidayBalance(type.id, user.id);
 
-		assertEquals(true, holidayBalanceService.hasAvailableDays(type.id, user.id, QUANTITY));
+		assertEquals(true, holidayBalanceService.hasAvailableDays(type.instanceId, user.id, QUANTITY));
 	}
 
 	@Test
@@ -639,7 +648,7 @@ public class HolidayBalanceServiceTest extends AbstractServiceTest {
 		//Increment balance for year N.
 		holidayBalanceService.incrementBalance(type.id, user.id);
 		// Must be false because latest balance is not available due to lack of anticipation
-		assertEquals(false, holidayBalanceService.hasAvailableDays(type.id, user.id, QUANTITY));
+		assertEquals(false, holidayBalanceService.hasAvailableDays(type.instanceId, user.id, QUANTITY));
 	}
 
 	@Test
@@ -656,7 +665,7 @@ public class HolidayBalanceServiceTest extends AbstractServiceTest {
 		//Increment balance for year N.
 		holidayBalanceService.incrementBalance(type.id, user.id);
 		// Must be false because latest balance is not available due to lack of anticipation
-		assertEquals(true, holidayBalanceService.hasAvailableDays(type.id, user.id, QUANTITY));
+		assertEquals(true, holidayBalanceService.hasAvailableDays(type.instanceId, user.id, QUANTITY));
 	}
 
 	@Test(expected = IllegalArgumentException.class)
@@ -672,7 +681,7 @@ public class HolidayBalanceServiceTest extends AbstractServiceTest {
 		//Balance for the year N => Anticipated balance in that case of holiday type.
 		holidayBalanceService.createHolidayBalance(type.id, user.id);
 
-		holidayBalanceService.removeAvailableDays(type.id, user.id, QUANTITY);
+		holidayBalanceService.removeAvailableDays(type.instanceId, user.id, QUANTITY);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
@@ -692,7 +701,7 @@ public class HolidayBalanceServiceTest extends AbstractServiceTest {
 		holidayBalanceService.createHolidayBalance(type.id, user.id);
 
 		float wrongDays =  QUANTITY+0.001F;
-		holidayBalanceService.removeAvailableDays(type.id, user.id, wrongDays);
+		holidayBalanceService.removeAvailableDays(type.instanceId, user.id, wrongDays);
 	}
 
 	@Test
@@ -707,22 +716,22 @@ public class HolidayBalanceServiceTest extends AbstractServiceTest {
 		holidayBalanceService.incrementBalance(type.id, user.id);
 		holidayBalanceService.incrementBalance(type.id, user.id);
 
-		HolidayBalanceDTO m2yBalance = holidayBalanceService.getProcessedBalance(type.id, user.id);
+		HolidayBalanceDTO m2yBalance = holidayBalanceService.getProcessedBalance(type.instanceId, user.id);
 		assertEquals(QUANTITY*2, m2yBalance.availableBalance,0);
-		assertEquals(QUANTITY*2, m2yBalance.availableBalanceUpdated,0); 
+		assertEquals(AVAIL, m2yBalance.availableBalanceUpdated,0); 
 
 		//Balance for the year N - 1
 		holidayBalanceService.createHolidayBalance(type.id, user.id);
 		//Balance for the year N => Anticipated balance in that case of holiday type.
 		holidayBalanceService.createHolidayBalance(type.id, user.id);
 
-		holidayBalanceService.removeAvailableDays(type.id, user.id, QUANTITY);
+		holidayBalanceService.removeAvailableDays(type.instanceId, user.id, QUANTITY);
 
 		// We're in a non anticipated type, and getHolidayBalancesAvailable return balances in ascending order date. So index 0 => m2yBalance and 1 => m1yBalance
-		m2yBalance = new ArrayList<HolidayBalanceDTO>(holidayBalanceService.getHolidayBalancesAvailable(type.id, user.id)).get(0);
+		m2yBalance = new ArrayList<HolidayBalanceDTO>(holidayBalanceService.getHolidayBalancesAvailable(type.instanceId, user.id)).get(0);
 
 		assertEquals(QUANTITY, m2yBalance.availableBalance, 0);
-		assertEquals(QUANTITY*2, m2yBalance.availableBalanceUpdated, 0);
+		assertEquals(AVAIL, m2yBalance.availableBalanceUpdated, 0);
 		assertEquals(new DateTime(this.getNextCompleteMonth()).minusYears(2).toDate() , m2yBalance.beginDate);
 		assertEquals(new DateTime(END_DATE_ALL_MONTH_TYPE_CURRENT_YEAR).minusYears(2).toDate() , m2yBalance.endDate);
 
@@ -742,7 +751,7 @@ public class HolidayBalanceServiceTest extends AbstractServiceTest {
 
 		HolidayBalanceDTO m2yBalance = holidayBalanceService.getProcessedBalance(type.id, user.id);
 		assertEquals(QUANTITY*2, m2yBalance.availableBalance,0);
-		assertEquals(QUANTITY*2, m2yBalance.availableBalanceUpdated,0); 
+		assertEquals(AVAIL, m2yBalance.availableBalanceUpdated,0); 
 
 		//Balance for the year N - 1
 		holidayBalanceService.createHolidayBalance(type.id, user.id);
@@ -752,7 +761,7 @@ public class HolidayBalanceServiceTest extends AbstractServiceTest {
 
 		HolidayBalanceDTO m1yBalance = holidayBalanceService.getProcessedBalance(type.id, user.id);
 		assertEquals(QUANTITY*2, m1yBalance.availableBalance,0);
-		assertEquals(QUANTITY*2, m1yBalance.availableBalanceUpdated,0);
+		assertEquals(AVAIL, m1yBalance.availableBalanceUpdated,0);
 
 		//Balance for the year N => Anticipated balance in that case of holiday type.
 		holidayBalanceService.createHolidayBalance(type.id, user.id);
@@ -763,10 +772,10 @@ public class HolidayBalanceServiceTest extends AbstractServiceTest {
 		m2yBalance = new ArrayList<HolidayBalanceDTO>(holidayBalanceService.getHolidayBalancesAvailable(type.id, user.id)).get(0);
 		m1yBalance = new ArrayList<HolidayBalanceDTO>(holidayBalanceService.getHolidayBalancesAvailable(type.id, user.id)).get(1);
 		assertEquals(0, m2yBalance.availableBalance, 0);
-		assertEquals(QUANTITY*2, m2yBalance.availableBalanceUpdated, 0);
+		assertEquals(AVAIL, m2yBalance.availableBalanceUpdated, 0);
 
 		assertEquals(QUANTITY, m1yBalance.availableBalance, 0);
-		assertEquals(QUANTITY*2, m1yBalance.availableBalanceUpdated, 0);
+		assertEquals(AVAIL, m1yBalance.availableBalanceUpdated, 0);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
@@ -783,7 +792,7 @@ public class HolidayBalanceServiceTest extends AbstractServiceTest {
 
 		HolidayBalanceDTO m2yBalance = holidayBalanceService.getProcessedBalance(type.id, user.id);
 		assertEquals(QUANTITY*2, m2yBalance.availableBalance,0);
-		assertEquals(QUANTITY*2, m2yBalance.availableBalanceUpdated,0); 
+		assertEquals(AVAIL, m2yBalance.availableBalanceUpdated,0); 
 
 		//Balance for the year N - 1
 		holidayBalanceService.createHolidayBalance(type.id, user.id);
@@ -796,7 +805,7 @@ public class HolidayBalanceServiceTest extends AbstractServiceTest {
 
 		HolidayBalanceDTO newestBalance = holidayBalanceService.getProcessedBalance(type.id, user.id);
 		assertEquals(QUANTITY*2, newestBalance.availableBalance,0);
-		assertEquals(QUANTITY*2, newestBalance.availableBalanceUpdated,0);
+		assertEquals(AVAIL, newestBalance.availableBalanceUpdated,0);
 
 		holidayBalanceService.removeAvailableDays(type.id, user.id, QUANTITY*3);
 	}
@@ -815,7 +824,7 @@ public class HolidayBalanceServiceTest extends AbstractServiceTest {
 
 		HolidayBalanceDTO m2yBalance = holidayBalanceService.getProcessedBalance(type.id, user.id);
 		assertEquals(QUANTITY*2, m2yBalance.availableBalance,0);
-		assertEquals(QUANTITY*2, m2yBalance.availableBalanceUpdated,0); 
+		assertEquals(AVAIL, m2yBalance.availableBalanceUpdated,0); 
 
 		//Balance for the year N - 1
 		holidayBalanceService.createHolidayBalance(type.id, user.id);
@@ -828,7 +837,7 @@ public class HolidayBalanceServiceTest extends AbstractServiceTest {
 
 		HolidayBalanceDTO newestBalance = holidayBalanceService.getProcessedBalance(type.id, user.id);
 		assertEquals(QUANTITY*2, newestBalance.availableBalance,0);
-		assertEquals(QUANTITY*2, newestBalance.availableBalanceUpdated,0);
+		assertEquals(AVAIL, newestBalance.availableBalanceUpdated,0);
 
 		holidayBalanceService.removeAvailableDays(type.id, user.id, QUANTITY*3);
 
@@ -836,10 +845,10 @@ public class HolidayBalanceServiceTest extends AbstractServiceTest {
 		m2yBalance = new ArrayList<HolidayBalanceDTO>(holidayBalanceService.getHolidayBalancesAvailable(type.id, user.id)).get(0);
 		newestBalance = new ArrayList<HolidayBalanceDTO>(holidayBalanceService.getHolidayBalancesAvailable(type.id, user.id)).get(2);
 		assertEquals(0, m2yBalance.availableBalance, 0);
-		assertEquals(QUANTITY*2, m2yBalance.availableBalanceUpdated, 0);
+		assertEquals(AVAIL, m2yBalance.availableBalanceUpdated, 0);
 
 		assertEquals(QUANTITY, newestBalance.availableBalance, 0);
-		assertEquals(QUANTITY*2, newestBalance.availableBalanceUpdated, 0);
+		assertEquals(AVAIL, newestBalance.availableBalanceUpdated, 0);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
@@ -855,7 +864,7 @@ public class HolidayBalanceServiceTest extends AbstractServiceTest {
 		//Balance for the year N => Anticipated balance in that case of holiday type.
 		holidayBalanceService.createHolidayBalance(type.id, user.id);
 
-		holidayBalanceService.removeDaysInAvailableUpdatedFromRequest(type.id, user.id, QUANTITY);
+		holidayBalanceService.removeDaysInAvailableUpdatedFromRequest(type.id, user.id, AVAIL * 4);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
@@ -892,7 +901,7 @@ public class HolidayBalanceServiceTest extends AbstractServiceTest {
 
 		HolidayBalanceDTO m2yBalance = holidayBalanceService.getProcessedBalance(type.id, user.id);
 		assertEquals(QUANTITY*2, m2yBalance.availableBalance,0);
-		assertEquals(QUANTITY*2, m2yBalance.availableBalanceUpdated,0); 
+		assertEquals(AVAIL, m2yBalance.availableBalanceUpdated,0); 
 
 		//Balance for the year N - 1
 		holidayBalanceService.createHolidayBalance(type.id, user.id);
@@ -905,7 +914,7 @@ public class HolidayBalanceServiceTest extends AbstractServiceTest {
 		m2yBalance = new ArrayList<HolidayBalanceDTO>(holidayBalanceService.getHolidayBalancesAvailable(type.id, user.id)).get(0);
 
 		assertEquals(QUANTITY*2, m2yBalance.availableBalance, 0);
-		assertEquals(QUANTITY, m2yBalance.availableBalanceUpdated, 0);
+		assertEquals(AVAIL - QUANTITY, m2yBalance.availableBalanceUpdated, 0);
 		assertEquals(new DateTime(this.getNextCompleteMonth()).minusYears(2).toDate() , m2yBalance.beginDate);
 		assertEquals(new DateTime(END_DATE_ALL_MONTH_TYPE_CURRENT_YEAR).minusYears(2).toDate() , m2yBalance.endDate);
 
@@ -925,20 +934,20 @@ public class HolidayBalanceServiceTest extends AbstractServiceTest {
 
 		HolidayBalanceDTO m2yBalance = holidayBalanceService.getProcessedBalance(type.id, user.id);
 		assertEquals(QUANTITY*2, m2yBalance.availableBalance,0);
-		assertEquals(QUANTITY*2, m2yBalance.availableBalanceUpdated,0); 
+		assertEquals(AVAIL, m2yBalance.availableBalanceUpdated,0); 
 
 		//Balance for the year N - 1
 		holidayBalanceService.createHolidayBalance(type.id, user.id);
 		//Balance for the year N => Anticipated balance in that case of holiday type.
 		holidayBalanceService.createHolidayBalance(type.id, user.id);
 
-		holidayBalanceService.removeDaysInAvailableUpdatedFromRequest(type.id, user.id, (QUANTITY - 0.5F));
+		holidayBalanceService.removeDaysInAvailableUpdatedFromRequest(type.id, user.id, ((QUANTITY * 2) - 0.5F));
 
 		// We're in a non anticipated type, and getHolidayBalancesAvailable return balances in ascending order date. So index 0 => m2yBalance and 1 => m1yBalance
 		m2yBalance = new ArrayList<HolidayBalanceDTO>(holidayBalanceService.getHolidayBalancesAvailable(type.id, user.id)).get(0);
 
 		assertEquals(QUANTITY*2, m2yBalance.availableBalance, 0);
-		assertEquals(QUANTITY*2 - (QUANTITY - 0.5F), m2yBalance.availableBalanceUpdated, 0);
+		assertEquals(AVAIL - ((QUANTITY * 2) - 0.5F), m2yBalance.availableBalanceUpdated, 0);
 		assertEquals(new DateTime(this.getNextCompleteMonth()).minusYears(2).toDate() , m2yBalance.beginDate);
 		assertEquals(new DateTime(END_DATE_ALL_MONTH_TYPE_CURRENT_YEAR).minusYears(2).toDate() , m2yBalance.endDate);
 
@@ -958,7 +967,7 @@ public class HolidayBalanceServiceTest extends AbstractServiceTest {
 
 		HolidayBalanceDTO m2yBalance = holidayBalanceService.getProcessedBalance(type.id, user.id);
 		assertEquals(QUANTITY*2, m2yBalance.availableBalance,0);
-		assertEquals(QUANTITY*2, m2yBalance.availableBalanceUpdated,0); 
+		assertEquals(AVAIL, m2yBalance.availableBalanceUpdated,0); 
 
 		//Balance for the year N - 1
 		holidayBalanceService.createHolidayBalance(type.id, user.id);
@@ -968,12 +977,14 @@ public class HolidayBalanceServiceTest extends AbstractServiceTest {
 
 		HolidayBalanceDTO m1yBalance = holidayBalanceService.getProcessedBalance(type.id, user.id);
 		assertEquals(QUANTITY*2, m1yBalance.availableBalance,0);
-		assertEquals(QUANTITY*2, m1yBalance.availableBalanceUpdated,0);
+		assertEquals(AVAIL, m1yBalance.availableBalanceUpdated,0);
 
 		//Balance for the year N => Anticipated balance in that case of holiday type.
-		holidayBalanceService.createHolidayBalance(type.id, user.id);
-
-		holidayBalanceService.removeDaysInAvailableUpdatedFromRequest(type.id, user.id, QUANTITY*3);
+		HolidayBalanceDTO actual = holidayBalanceService.createHolidayBalance(type.id, user.id);
+		assertEquals(0, actual.availableBalance,0);
+		assertEquals(AVAIL, actual.availableBalanceUpdated,0);
+		
+		holidayBalanceService.removeDaysInAvailableUpdatedFromRequest(type.id, user.id, AVAIL*1.5F);
 
 		// We're in a non anticipated type. So index 0 => m1yBalance and 1 => m2yBalance
 		m2yBalance = new ArrayList<HolidayBalanceDTO>(holidayBalanceService.getHolidayBalancesAvailable(type.id, user.id)).get(0);
@@ -982,7 +993,7 @@ public class HolidayBalanceServiceTest extends AbstractServiceTest {
 		assertEquals(0, m2yBalance.availableBalanceUpdated, 0);
 
 		assertEquals(QUANTITY*2, m1yBalance.availableBalance, 0);
-		assertEquals(QUANTITY, m1yBalance.availableBalanceUpdated, 0);
+		assertEquals(AVAIL/2, m1yBalance.availableBalanceUpdated, 0);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
@@ -999,7 +1010,7 @@ public class HolidayBalanceServiceTest extends AbstractServiceTest {
 
 		HolidayBalanceDTO m2yBalance = holidayBalanceService.getProcessedBalance(type.id, user.id);
 		assertEquals(QUANTITY*2, m2yBalance.availableBalance,0);
-		assertEquals(QUANTITY*2, m2yBalance.availableBalanceUpdated,0); 
+		assertEquals(AVAIL, m2yBalance.availableBalanceUpdated,0); 
 
 		//Balance for the year N - 1
 		holidayBalanceService.createHolidayBalance(type.id, user.id);
@@ -1012,9 +1023,9 @@ public class HolidayBalanceServiceTest extends AbstractServiceTest {
 
 		HolidayBalanceDTO newestBalance = holidayBalanceService.getProcessedBalance(type.id, user.id);
 		assertEquals(QUANTITY*2, newestBalance.availableBalance,0);
-		assertEquals(QUANTITY*2, newestBalance.availableBalanceUpdated,0);
+		assertEquals(AVAIL, newestBalance.availableBalanceUpdated,0);
 
-		holidayBalanceService.removeDaysInAvailableUpdatedFromRequest(type.id, user.id, QUANTITY*3);
+		holidayBalanceService.removeDaysInAvailableUpdatedFromRequest(type.id, user.id, AVAIL*3);
 	}
 
 	@Test
@@ -1031,7 +1042,7 @@ public class HolidayBalanceServiceTest extends AbstractServiceTest {
 
 		HolidayBalanceDTO m2yBalance = holidayBalanceService.getProcessedBalance(type.id, user.id);
 		assertEquals(QUANTITY*2, m2yBalance.availableBalance,0);
-		assertEquals(QUANTITY*2, m2yBalance.availableBalanceUpdated,0); 
+		assertEquals(AVAIL, m2yBalance.availableBalanceUpdated,0); 
 
 		//Balance for the year N - 1
 		holidayBalanceService.createHolidayBalance(type.id, user.id);
@@ -1044,9 +1055,9 @@ public class HolidayBalanceServiceTest extends AbstractServiceTest {
 
 		HolidayBalanceDTO newestBalance = holidayBalanceService.getProcessedBalance(type.id, user.id);
 		assertEquals(QUANTITY*2, newestBalance.availableBalance,0);
-		assertEquals(QUANTITY*2, newestBalance.availableBalanceUpdated,0);
+		assertEquals(AVAIL, newestBalance.availableBalanceUpdated,0);
 
-		holidayBalanceService.removeDaysInAvailableUpdatedFromRequest(type.id, user.id, QUANTITY*3);
+		holidayBalanceService.removeDaysInAvailableUpdatedFromRequest(type.id, user.id, AVAIL*3);
 
 		// We're in a non anticipated type. So index 0 => m1yBalance and 1 => m2yBalance
 		m2yBalance = new ArrayList<HolidayBalanceDTO>(holidayBalanceService.getHolidayBalancesAvailable(type.id, user.id)).get(0);
@@ -1055,7 +1066,7 @@ public class HolidayBalanceServiceTest extends AbstractServiceTest {
 		assertEquals(0, m2yBalance.availableBalanceUpdated, 0);
 
 		assertEquals(QUANTITY*2, newestBalance.availableBalance, 0);
-		assertEquals(QUANTITY, newestBalance.availableBalanceUpdated, 0);
+		assertEquals(0, newestBalance.availableBalanceUpdated, 0);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
@@ -1091,7 +1102,10 @@ public class HolidayBalanceServiceTest extends AbstractServiceTest {
 		//Balance for the year N => Anticipated balance in that case of holiday type.
 		HolidayBalanceDTO actual = holidayBalanceService.createHolidayBalance(type.id, user.id);
 		assertEquals(0, actual.availableBalance,0);
-		assertEquals(0, actual.availableBalanceUpdated,0);
+		assertEquals(AVAIL, actual.availableBalanceUpdated,0);
+		
+		// Clean balances
+		holidayBalanceService.removeDaysInAvailableUpdatedFromRequest(type.id, user.id, AVAIL*3);
 
 		holidayBalanceService.addDaysInAvailableUpdatedFromRequest(type.id, user.id, QUANTITY);
 
@@ -1113,22 +1127,26 @@ public class HolidayBalanceServiceTest extends AbstractServiceTest {
 		//Balance for the year N - 1
 		HolidayBalanceDTO m1yBalance = holidayBalanceService.createHolidayBalance(type.id, user.id);
 		assertEquals(0, m1yBalance.availableBalance,0);
-		assertEquals(0, m1yBalance.availableBalanceUpdated,0);
+		assertEquals(AVAIL, m1yBalance.availableBalanceUpdated,0);
 
 		//Balance for the year N => Anticipated balance in that case of holiday type.
 		HolidayBalanceDTO actual = holidayBalanceService.createHolidayBalance(type.id, user.id);
 		assertEquals(0, actual.availableBalance,0);
-		assertEquals(0, actual.availableBalanceUpdated,0);
-		holidayBalanceService.addDaysInAvailableUpdatedFromRequest(type.id, user.id, QUANTITY*15);
+		assertEquals(AVAIL, actual.availableBalanceUpdated,0);
+		
+		// Clean balances
+		holidayBalanceService.removeDaysInAvailableUpdatedFromRequest(type.id, user.id, AVAIL * 3);
+		
+		holidayBalanceService.addDaysInAvailableUpdatedFromRequest(type.id, user.id, AVAIL *1.5F);
 
 		// We're in a non anticipated type, and getHolidayBalancesAvailable return balances in ascending order date. So index 0 => m2yBalance and 1 => m1yBalance
 		List<HolidayBalanceDTO> balances = new ArrayList<HolidayBalanceDTO>(holidayBalanceService.getHolidayBalancesAvailable(type.id, user.id));
 		actual = balances.get(balances.size()-1);
 		m1yBalance = balances.get(balances.size()-2);
 		assertEquals(0, actual.availableBalance, 0);
-		assertEquals(QUANTITY*12, actual.availableBalanceUpdated, 0);
+		assertEquals(AVAIL, actual.availableBalanceUpdated, 0);
 		assertEquals(0, m1yBalance.availableBalance, 0);
-		assertEquals(QUANTITY*3, m1yBalance.availableBalanceUpdated, 0);
+		assertEquals(AVAIL/2, m1yBalance.availableBalanceUpdated, 0);
 
 	}
 
@@ -1141,7 +1159,7 @@ public class HolidayBalanceServiceTest extends AbstractServiceTest {
 		//Balance for the year N => Anticipated balance in that case of holiday type.
 		HolidayBalanceDTO actual = holidayBalanceService.createHolidayBalance(type.id, user.id);
 		assertEquals(0, actual.availableBalance,0);
-		assertEquals(0, actual.availableBalanceUpdated,0);
+		assertEquals(AVAIL, actual.availableBalanceUpdated,0);
 
 		holidayBalanceService.removePastHolidays();
 
@@ -1150,7 +1168,7 @@ public class HolidayBalanceServiceTest extends AbstractServiceTest {
 
 
 		assertEquals(0,balance.availableBalance,0);
-		assertEquals(0,balance.availableBalanceUpdated,0);
+		assertEquals(AVAIL,balance.availableBalanceUpdated,0);
 	}
 
 
@@ -1168,7 +1186,7 @@ public class HolidayBalanceServiceTest extends AbstractServiceTest {
 		//Balance for the year N => Anticipated balance in that case of holiday type.
 		HolidayBalanceDTO actual = holidayBalanceService.createHolidayBalance(type.id, user.id);
 		assertEquals(0, actual.availableBalance,0);
-		assertEquals(0, actual.availableBalanceUpdated,0);
+		assertEquals(AVAIL, actual.availableBalanceUpdated,0);
 
 		// Get some holidays
 		holidayBalanceService.incrementBalance(type.id, user.id);
@@ -1176,7 +1194,7 @@ public class HolidayBalanceServiceTest extends AbstractServiceTest {
 
 		actual = new ArrayList<HolidayBalanceDTO>(holidayBalanceService.getHolidayBalancesAvailable(type.id, user.id)).get(0);
 		assertEquals(QUANTITY*2,actual.availableBalance,0);
-		assertEquals(QUANTITY*2,actual.availableBalanceUpdated,0);
+		assertEquals(AVAIL,actual.availableBalanceUpdated,0);
 
 		HolidayDetailCreationRequestDTO detailDTO1 = new HolidayDetailCreationRequestDTO();
 		HolidayDetailCreationRequestDTO detailDTO2 = new HolidayDetailCreationRequestDTO();
@@ -1185,8 +1203,8 @@ public class HolidayBalanceServiceTest extends AbstractServiceTest {
 		detailDTO1.day = new DateTime(DATE_TODAY).toString(fmt);
 		detailDTO2.day = new DateTime(DATE_TOMORROW).toString(fmt);
 
-		detailDTO1.typeId = type.id;
-		detailDTO2.typeId = type.id;
+		detailDTO1.typeInstanceId = type.id;
+		detailDTO2.typeInstanceId = type.id;
 
 		detailDTO1.am = true;
 		detailDTO1.pm = true;
@@ -1207,7 +1225,7 @@ public class HolidayBalanceServiceTest extends AbstractServiceTest {
 
 		actual = new ArrayList<HolidayBalanceDTO>(holidayBalanceService.getHolidayBalancesAvailable(type.id, user.id)).get(0);
 		assertEquals(QUANTITY*2,actual.availableBalance,0);
-		assertEquals(QUANTITY*2 - 1.5,actual.availableBalanceUpdated,0);
+		assertEquals(AVAIL - 1.5F,actual.availableBalanceUpdated,0);
 
 		// Get and accept request
 		List<HolidayRequestDTO> dtos = requestService.getAllRequestsWithStatus(HolidayRequest.PENDING_STATUS);
@@ -1217,8 +1235,8 @@ public class HolidayBalanceServiceTest extends AbstractServiceTest {
 		holidayBalanceService.removePastHolidays();
 
 		actual = new ArrayList<HolidayBalanceDTO>(holidayBalanceService.getHolidayBalancesAvailable(type.id, user.id)).get(0);
-		assertEquals(QUANTITY*2 - 1.5,actual.availableBalance,0); // The user has take "today" complete and "tomorrow" morning
-		assertEquals(QUANTITY*2 - 1.5,actual.availableBalanceUpdated,0);
+		assertEquals(QUANTITY*2 - 1.5F,actual.availableBalance,0); // The user has take "today" complete and "tomorrow" morning
+		assertEquals(AVAIL - 1.5F,actual.availableBalanceUpdated,0);
 	}
 
 	@Test
@@ -1235,7 +1253,7 @@ public class HolidayBalanceServiceTest extends AbstractServiceTest {
 		//Balance for the year N => Anticipated balance in that case of holiday type.
 		HolidayBalanceDTO actual = holidayBalanceService.createHolidayBalance(type.id, user.id);
 		assertEquals(0, actual.availableBalance,0);
-		assertEquals(0, actual.availableBalanceUpdated,0);
+		assertEquals(AVAIL, actual.availableBalanceUpdated,0);
 
 		// Get some holidays
 		holidayBalanceService.incrementBalance(type.id, user.id);
@@ -1243,7 +1261,7 @@ public class HolidayBalanceServiceTest extends AbstractServiceTest {
 
 		actual = new ArrayList<HolidayBalanceDTO>(holidayBalanceService.getHolidayBalancesAvailable(type.id, user.id)).get(0);
 		assertEquals(QUANTITY*2,actual.availableBalance,0);
-		assertEquals(QUANTITY*2,actual.availableBalanceUpdated,0);
+		assertEquals(AVAIL,actual.availableBalanceUpdated,0);
 
 		HolidayDetailCreationRequestDTO detailDTO1 = new HolidayDetailCreationRequestDTO();
 		HolidayDetailCreationRequestDTO detailDTO2 = new HolidayDetailCreationRequestDTO();
@@ -1252,8 +1270,8 @@ public class HolidayBalanceServiceTest extends AbstractServiceTest {
 		detailDTO1.day = new DateTime(DATE_TODAY).toString(fmt);
 		detailDTO2.day = new DateTime(DATE_TOMORROW).toString(fmt);
 
-		detailDTO1.typeId = type.id;
-		detailDTO2.typeId = type.id;
+		detailDTO1.typeInstanceId = type.id;
+		detailDTO2.typeInstanceId = type.id;
 
 		detailDTO1.am = true;
 		detailDTO1.pm = true;
@@ -1279,7 +1297,7 @@ public class HolidayBalanceServiceTest extends AbstractServiceTest {
 
 		actual = new ArrayList<HolidayBalanceDTO>(holidayBalanceService.getHolidayBalancesAvailable(type.id, user.id)).get(0);
 		assertEquals(QUANTITY*2 - 1.5,actual.availableBalance,0); // The user has take "today" complete and "tomorrow" morning
-		assertEquals(QUANTITY*2 - 1.5,actual.availableBalanceUpdated,0); // The user has take "today" complete and "tomorrow" morning
+		assertEquals(AVAIL - 1.5,actual.availableBalanceUpdated,0); // The user has take "today" complete and "tomorrow" morning
 
 
 		// Remove holidays a second time
@@ -1287,7 +1305,7 @@ public class HolidayBalanceServiceTest extends AbstractServiceTest {
 
 		actual = new ArrayList<HolidayBalanceDTO>(holidayBalanceService.getHolidayBalancesAvailable(type.id, user.id)).get(0);
 		assertEquals(QUANTITY*2 - 1.5,actual.availableBalance,0); // Nothing changed
-		assertEquals(QUANTITY*2 - 1.5,actual.availableBalanceUpdated,0); 
+		assertEquals(AVAIL - 1.5,actual.availableBalanceUpdated,0); 
 	}
 
 	@Test
@@ -1304,7 +1322,7 @@ public class HolidayBalanceServiceTest extends AbstractServiceTest {
 		//Balance for the year N => Anticipated balance in that case of holiday type.
 		HolidayBalanceDTO actual = holidayBalanceService.createHolidayBalance(type.id, user.id);
 		assertEquals(0, actual.availableBalance,0);
-		assertEquals(0, actual.availableBalanceUpdated,0);
+		assertEquals(AVAIL, actual.availableBalanceUpdated,0);
 
 		// Get some holidays
 		holidayBalanceService.incrementBalance(type.id, user.id);
@@ -1312,14 +1330,14 @@ public class HolidayBalanceServiceTest extends AbstractServiceTest {
 
 		actual = new ArrayList<HolidayBalanceDTO>(holidayBalanceService.getHolidayBalancesAvailable(type.id, user.id)).get(0);
 		assertEquals(QUANTITY*2,actual.availableBalance,0);
-		assertEquals(QUANTITY*2,actual.availableBalanceUpdated,0);
+		assertEquals(AVAIL,actual.availableBalanceUpdated,0);
 
 		HolidayDetailCreationRequestDTO detailDTO1 = new HolidayDetailCreationRequestDTO();
 
 		DateTimeFormatter fmt = DateTimeFormat.forPattern("MM/dd/yyyy");
 		detailDTO1.day = new DateTime(DATE_TOMORROW).toString(fmt);
 		
-		detailDTO1.typeId = type.id;
+		detailDTO1.typeInstanceId = type.id;
 
 		detailDTO1.am = true;
 
@@ -1341,7 +1359,7 @@ public class HolidayBalanceServiceTest extends AbstractServiceTest {
 
 		actual = new ArrayList<HolidayBalanceDTO>(holidayBalanceService.getHolidayBalancesAvailable(type.id, user.id)).get(0);
 		assertEquals(QUANTITY*2,actual.availableBalance,0); // Nothing changed
-		assertEquals(QUANTITY*2 - 0.5,actual.availableBalanceUpdated,0);
+		assertEquals(AVAIL - 0.5,actual.availableBalanceUpdated,0);
 
 	}
 

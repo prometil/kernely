@@ -52,6 +52,8 @@ public class HolidayRequestServiceTest extends AbstractServiceTest{
 	private static final Date HIRE_DATE = new DateTime().withMonthOfYear(6).withDayOfMonth(15).minusYears(3).toDateMidnight().toDate();
 
 	private static final int QUANTITY = 10;
+	private static final int PERIOD = HolidayType.PERIOD_MONTH;
+	private static final int AVAIL = QUANTITY * PERIOD;
 
 	@Inject
 	private HolidayRequestService holidayRequestService;
@@ -93,7 +95,7 @@ public class HolidayRequestServiceTest extends AbstractServiceTest{
 		HolidayCreationRequestDTO request = new HolidayCreationRequestDTO();
 		request.name = TEST_STRING;
 		request.quantity = QUANTITY;
-		request.unity = HolidayType.PERIOD_MONTH;
+		request.unity = PERIOD;
 		request.effectiveMonth = HolidayType.ALL_MONTH;
 		request.unlimited = false;
 		request.anticipation = false;
@@ -104,14 +106,14 @@ public class HolidayRequestServiceTest extends AbstractServiceTest{
 		HolidayCreationRequestDTO request = new HolidayCreationRequestDTO();
 		request.name = TEST_STRING;
 		request.quantity = QUANTITY;
-		request.unity = HolidayType.PERIOD_MONTH;
+		request.unity = PERIOD;
 		request.effectiveMonth = HolidayType.ALL_MONTH;
 		request.unlimited = false;
 		request.anticipation = true;
 		return holidayService.createOrUpdateHoliday(request);
 	}
 	
-	private void createHolidayRequestForUser(long userId, int typeId){
+	private void createHolidayRequestForUser(long userId, int typeInstanceId){
 		HolidayDetailCreationRequestDTO detailDTO1 = new HolidayDetailCreationRequestDTO();
 		HolidayDetailCreationRequestDTO detailDTO2 = new HolidayDetailCreationRequestDTO();
 		
@@ -123,8 +125,8 @@ public class HolidayRequestServiceTest extends AbstractServiceTest{
 		detailDTO2.am = true;
 		detailDTO2.pm = true;
 		
-		detailDTO1.typeId = typeId;
-		detailDTO2.typeId = typeId;
+		detailDTO1.typeInstanceId = typeInstanceId;
+		detailDTO2.typeInstanceId = typeInstanceId;
 		
 		List<HolidayDetailCreationRequestDTO> list = new ArrayList<HolidayDetailCreationRequestDTO>();
 		list.add(detailDTO1);
@@ -154,7 +156,7 @@ public class HolidayRequestServiceTest extends AbstractServiceTest{
 		HolidayBalanceDTO balance = new ArrayList<HolidayBalanceDTO>(holidayBalanceService.getHolidayBalancesAvailable(hdto.id, udto.id)).get(0);
 		
 		assertEquals(QUANTITY*3, balance.availableBalance, 0);
-		assertEquals(QUANTITY*3, balance.availableBalanceUpdated, 0);
+		assertEquals(AVAIL, balance.availableBalanceUpdated, 0);
 		
 
 		HolidayDetailCreationRequestDTO detailDTO1 = new HolidayDetailCreationRequestDTO();
@@ -171,9 +173,9 @@ public class HolidayRequestServiceTest extends AbstractServiceTest{
 		detailDTO3.am = true;
 		detailDTO3.pm = true;
 
-		detailDTO1.typeId = hdto.id;
-		detailDTO2.typeId = hdto.id;
-		detailDTO3.typeId = hdto.id;
+		detailDTO1.typeInstanceId = hdto.instanceId;
+		detailDTO2.typeInstanceId = hdto.instanceId;
+		detailDTO3.typeInstanceId = hdto.instanceId;
 
 		List<HolidayDetailCreationRequestDTO> list = new ArrayList<HolidayDetailCreationRequestDTO>();
 		list.add(detailDTO1);
@@ -199,7 +201,7 @@ public class HolidayRequestServiceTest extends AbstractServiceTest{
 		balance = new ArrayList<HolidayBalanceDTO>(holidayBalanceService.getHolidayBalancesAvailable(hdto.id, udto.id)).get(0);
 		
 		// Verify that balance updated is equal to 27.5 : 30 available - 0.5 * 5 half days.
-		assertEquals(27.5, balance.availableBalanceUpdated, 0);
+		assertEquals(AVAIL - 2.5, balance.availableBalanceUpdated, 0);
 		assertEquals(30, balance.availableBalance, 0);
 	}
 	
@@ -211,7 +213,8 @@ public class HolidayRequestServiceTest extends AbstractServiceTest{
 		UserDTO udto = this.createUser1ForTest();
 		authenticateAs(USERNAME_USER1);
 
-		holidayBalanceService.createHolidayBalance(hdto.id, udto.id);		
+		holidayBalanceService.createHolidayBalance(hdto.id, udto.id);	
+		holidayBalanceService.removeDaysInAvailableUpdatedFromRequest(hdto.instanceId, udto.id, AVAIL);
 
 		HolidayDetailCreationRequestDTO detailDTO1 = new HolidayDetailCreationRequestDTO();
 		HolidayDetailCreationRequestDTO detailDTO2 = new HolidayDetailCreationRequestDTO();
@@ -227,9 +230,9 @@ public class HolidayRequestServiceTest extends AbstractServiceTest{
 		detailDTO3.am = false;
 		detailDTO3.pm = false;
 
-		detailDTO1.typeId = hdto.id;
-		detailDTO2.typeId = hdto.id;
-		detailDTO3.typeId = hdto.id;
+		detailDTO1.typeInstanceId = hdto.instanceId;
+		detailDTO2.typeInstanceId = hdto.instanceId;
+		detailDTO3.typeInstanceId = hdto.instanceId;
 
 		List<HolidayDetailCreationRequestDTO> list = new ArrayList<HolidayDetailCreationRequestDTO>();
 		list.add(detailDTO1);
@@ -267,9 +270,9 @@ public class HolidayRequestServiceTest extends AbstractServiceTest{
 		detailDTO3.am = false;
 		detailDTO3.pm = false;
 
-		detailDTO1.typeId = hdto.id;
-		detailDTO2.typeId = hdto.id;
-		detailDTO3.typeId = hdto.id;
+		detailDTO1.typeInstanceId = hdto.instanceId;
+		detailDTO2.typeInstanceId = hdto.instanceId;
+		detailDTO3.typeInstanceId = hdto.instanceId;
 
 		List<HolidayDetailCreationRequestDTO> list = new ArrayList<HolidayDetailCreationRequestDTO>();
 		list.add(detailDTO1);
@@ -300,7 +303,7 @@ public class HolidayRequestServiceTest extends AbstractServiceTest{
 		HolidayBalanceDTO balance = new ArrayList<HolidayBalanceDTO>(holidayBalanceService.getHolidayBalancesAvailable(hdto.id, udto.id)).get(0);
 		
 		assertEquals(QUANTITY*3, balance.availableBalance, 0);
-		assertEquals(QUANTITY*3, balance.availableBalanceUpdated, 0);
+		assertEquals(AVAIL, balance.availableBalanceUpdated, 0);
 
 		HolidayDetailCreationRequestDTO detailDTO1 = new HolidayDetailCreationRequestDTO();
 		HolidayDetailCreationRequestDTO detailDTO2 = new HolidayDetailCreationRequestDTO();
@@ -316,9 +319,9 @@ public class HolidayRequestServiceTest extends AbstractServiceTest{
 		detailDTO3.am = true;
 		detailDTO3.pm = false;
 
-		detailDTO1.typeId = hdto.id;
-		detailDTO2.typeId = hdto.id;
-		detailDTO3.typeId = hdto.id;
+		detailDTO1.typeInstanceId = hdto.instanceId;
+		detailDTO2.typeInstanceId = hdto.instanceId;
+		detailDTO3.typeInstanceId = hdto.instanceId;
 
 		List<HolidayDetailCreationRequestDTO> list = new ArrayList<HolidayDetailCreationRequestDTO>();
 		list.add(detailDTO1);
@@ -339,7 +342,7 @@ public class HolidayRequestServiceTest extends AbstractServiceTest{
 		
 		
 		// Verify that balance updated is equal to 28.5 : 30 available - 0.5 * 3 half days.
-		assertEquals(28.5, balance.availableBalanceUpdated, 0);
+		assertEquals(AVAIL - 1.5F, balance.availableBalanceUpdated, 0);
 		assertEquals(30, balance.availableBalance, 0);
 	}
 	
@@ -366,7 +369,7 @@ public class HolidayRequestServiceTest extends AbstractServiceTest{
 		HolidayBalanceDTO balance = new ArrayList<HolidayBalanceDTO>(holidayBalanceService.getHolidayBalancesAvailable(type.id, user1DTO.id)).get(0);
 		
 		assertEquals(QUANTITY*3, balance.availableBalance, 0);
-		assertEquals(QUANTITY*3, balance.availableBalanceUpdated, 0);
+		assertEquals(AVAIL, balance.availableBalanceUpdated, 0);
 		
 		authenticateAs(USERNAME_USER1);
 		this.createHolidayRequestForUser(user1DTO.id, type.id);
@@ -378,7 +381,7 @@ public class HolidayRequestServiceTest extends AbstractServiceTest{
 		balance = new ArrayList<HolidayBalanceDTO>(holidayBalanceService.getHolidayBalancesAvailable(type.id, user1DTO.id)).get(0);
 		
 		// Verify that balance updated is equal to 28 : 30 available - 0.5 * 4 half days.
-		assertEquals(28, balance.availableBalanceUpdated, 0);
+		assertEquals(AVAIL - 2 , balance.availableBalanceUpdated, 0);
 		assertEquals(30, balance.availableBalance, 0);
 
 		authenticateAs(USERNAME_MANAGER);
@@ -397,7 +400,7 @@ public class HolidayRequestServiceTest extends AbstractServiceTest{
 		balance = new ArrayList<HolidayBalanceDTO>(holidayBalanceService.getHolidayBalancesAvailable(type.id, user1DTO.id)).get(0);
 		
 		// Verify that balance updated is equal to 28 : 30 available - 0.5 * 4 half days.
-		assertEquals(28, balance.availableBalanceUpdated, 0);
+		assertEquals(AVAIL -2 , balance.availableBalanceUpdated, 0);
 		assertEquals(QUANTITY*3, balance.availableBalance, 0);
 	}
 
@@ -484,7 +487,7 @@ public class HolidayRequestServiceTest extends AbstractServiceTest{
 		HolidayBalanceDTO balance = new ArrayList<HolidayBalanceDTO>(holidayBalanceService.getHolidayBalancesAvailable(type.id, user1DTO.id)).get(0);
 		
 		assertEquals(QUANTITY*3, balance.availableBalance, 0);
-		assertEquals(QUANTITY*3, balance.availableBalanceUpdated, 0);
+		assertEquals(AVAIL, balance.availableBalanceUpdated, 0);
 		
 		authenticateAs(USERNAME_USER1);
 		this.createHolidayRequestForUser(user1DTO.id, type.id);
@@ -493,7 +496,7 @@ public class HolidayRequestServiceTest extends AbstractServiceTest{
 		balance = new ArrayList<HolidayBalanceDTO>(holidayBalanceService.getHolidayBalancesAvailable(type.id, user1DTO.id)).get(0);
 		
 		// Verify that balance updated is equal to 28 : 30 available - 0.5 * 4 half days.
-		assertEquals(28, balance.availableBalanceUpdated, 0);
+		assertEquals(AVAIL - 2, balance.availableBalanceUpdated, 0);
 		assertEquals(QUANTITY*3, balance.availableBalance, 0);
 
 		authenticateAs(USERNAME_MANAGER);
@@ -508,7 +511,7 @@ public class HolidayRequestServiceTest extends AbstractServiceTest{
 		balance = new ArrayList<HolidayBalanceDTO>(holidayBalanceService.getHolidayBalancesAvailable(type.id, user1DTO.id)).get(0);
 		
 		// Verify that balance updated is equal to 30.
-		assertEquals(QUANTITY*3, balance.availableBalanceUpdated, 0);
+		assertEquals(AVAIL , balance.availableBalanceUpdated, 0);
 		assertEquals(QUANTITY*3, balance.availableBalance, 0);
 		
 		authenticateAs(USERNAME_USER1);
@@ -549,7 +552,7 @@ public class HolidayRequestServiceTest extends AbstractServiceTest{
 		HolidayBalanceDTO balance = new ArrayList<HolidayBalanceDTO>(holidayBalanceService.getHolidayBalancesAvailable(type.id, user1DTO.id)).get(0);
 		
 		assertEquals(QUANTITY*3, balance.availableBalance, 0);
-		assertEquals(QUANTITY*3, balance.availableBalanceUpdated, 0);
+		assertEquals(AVAIL, balance.availableBalanceUpdated, 0);
 		
 		authenticateAs(USERNAME_USER1);
 		this.createHolidayRequestForUser(user1DTO.id, type.id);
@@ -558,7 +561,7 @@ public class HolidayRequestServiceTest extends AbstractServiceTest{
 		balance = new ArrayList<HolidayBalanceDTO>(holidayBalanceService.getHolidayBalancesAvailable(type.id, user1DTO.id)).get(0);
 		
 		assertEquals(QUANTITY*3, balance.availableBalance, 0);
-		assertEquals(28, balance.availableBalanceUpdated, 0);
+		assertEquals(AVAIL -2, balance.availableBalanceUpdated, 0);
 
 		List<HolidayRequestDTO> dtos = holidayRequestService.getAllRequestsWithStatusForCurrentUser(HolidayRequest.PENDING_STATUS);
 		assertEquals(1, dtos.size());
@@ -569,7 +572,7 @@ public class HolidayRequestServiceTest extends AbstractServiceTest{
 		balance = new ArrayList<HolidayBalanceDTO>(holidayBalanceService.getHolidayBalancesAvailable(type.id, user1DTO.id)).get(0);
 		
 		assertEquals(QUANTITY*3, balance.availableBalance, 0);
-		assertEquals(QUANTITY*3, balance.availableBalanceUpdated, 0);
+		assertEquals(AVAIL, balance.availableBalanceUpdated, 0);
 		
 		dtos = holidayRequestService.getAllRequestsWithStatusForCurrentUser(HolidayRequest.PENDING_STATUS);
 		dtos.addAll(holidayRequestService.getAllRequestsWithStatusForCurrentUser(HolidayRequest.DENIED_STATUS));

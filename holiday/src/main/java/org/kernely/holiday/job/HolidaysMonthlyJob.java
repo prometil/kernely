@@ -20,8 +20,12 @@ public class HolidaysMonthlyJob implements Job {
 
 	@Override
 	public void execute(JobExecutionContext arg0) throws JobExecutionException {
+		log.debug("/========================================/");
 		log.debug("HolidayMounthlyJob: Computing holidays...");
+		log.debug("/========================================/");
 		balanceService.computeHolidays();
-		log.debug("HolidayMounthlyJob: Computing holidays : end.");
+		log.debug("/========================================/");
+		log.debug("HolidayMounthlyJob: Computing holidays done.");
+		log.debug("/========================================/");
 	}
 }

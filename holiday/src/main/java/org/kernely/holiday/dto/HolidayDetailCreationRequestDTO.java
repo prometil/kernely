@@ -28,7 +28,7 @@ public class HolidayDetailCreationRequestDTO {
 	/**
 	 * The id of holiday type
 	 */
-	public int typeId;
+	public int typeInstanceId;
 
 	/**
 	 * Default constructor

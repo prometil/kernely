@@ -20,7 +20,7 @@
 
 package org.kernely.holiday.service;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -95,6 +95,7 @@ public class HolidayServiceTest extends AbstractServiceTest {
 		HolidayDTO hdto = holidayService.getAllHoliday().get(0);
 		assertEquals(TYPE_1, hdto.name);
 		assertEquals(QUANTITY_1, hdto.quantity, 0.0);
+		assertNotNull(hdto.instanceId);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
@@ -138,6 +139,7 @@ public class HolidayServiceTest extends AbstractServiceTest {
 		assertEquals(false,holidayType.anticipation);
 		assertEquals(COLOR_1,holidayType.color);
 		
+		
 		HolidayCreationRequestDTO update = new HolidayCreationRequestDTO();
 		
 		update.name = TYPE_2;
@@ -147,7 +149,7 @@ public class HolidayServiceTest extends AbstractServiceTest {
 		update.unity = HolidayType.PERIOD_YEAR;
 		update.anticipation = true;
 		update.color = COLOR_2;
-		
+
 		holidayType = holidayService.createOrUpdateHoliday(update);
 
 		assertEquals(TYPE_2,holidayType.name);

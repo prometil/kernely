@@ -20,8 +20,6 @@
 
 package org.kernely.holiday.model;
 
-import java.util.Set;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -29,7 +27,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import org.kernely.core.hibernate.AbstractModel;
@@ -59,12 +57,13 @@ public class HolidayType extends AbstractModel {
 	@Column(name="effective_month")
 	private int effectiveMonth;
 	
+	@OneToOne
+	@JoinColumn(name="current_instance")
+	private HolidayTypeInstance currentInstance;
+	
 	private boolean anticipated;
 	
 	private boolean unlimited;
-	
-	@OneToMany(mappedBy = "holidayType")
-	private Set<HolidayBalance> balances;
 	
 	private String color;
 	
@@ -133,19 +132,6 @@ public class HolidayType extends AbstractModel {
 		this.quantity = quantity;
 	}
 
-	/**
-	 * @return the balances associated to this type
-	 */
-	public Set<HolidayBalance> getBalances() {
-		return balances;
-	}
-
-	/**
-	 * @param balances the balances (associated to this type) to set
-	 */
-	public void setBalances(Set<HolidayBalance> balances) {
-		this.balances = balances;
-	}
 
 	/**
 	 * @return the periodUnit, a constant in this class
@@ -231,8 +217,18 @@ public class HolidayType extends AbstractModel {
 	public void setProfile(HolidayProfile profile) {
 		this.holidayProfile = profile;
 	}
-	
-	
-	
 
+	/**
+	 * @return the currentInstance
+	 */
+	public HolidayTypeInstance getCurrentInstance() {
+		return currentInstance;
+	}
+
+	/**
+	 * @param currentInstance the currentInstance to set
+	 */
+	public void setCurrentInstance(HolidayTypeInstance currentInstance) {
+		this.currentInstance = currentInstance;
+	}
 }

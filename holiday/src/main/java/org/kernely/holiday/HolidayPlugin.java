@@ -37,6 +37,7 @@ import org.kernely.holiday.model.HolidayProfile;
 import org.kernely.holiday.model.HolidayRequest;
 import org.kernely.holiday.model.HolidayRequestDetail;
 import org.kernely.holiday.model.HolidayType;
+import org.kernely.holiday.model.HolidayTypeInstance;
 import org.kernely.holiday.service.HolidayManagerUserService;
 import org.kernely.holiday.service.HolidayRequestService;
 import org.kernely.holiday.service.HolidayService;
@@ -84,6 +85,7 @@ public class HolidayPlugin extends AbstractPlugin {
 		registerModel(HolidayBalance.class);
 		registerModel(HolidayRequest.class);
 		registerModel(HolidayRequestDetail.class);
+		registerModel(HolidayTypeInstance.class);
 		registerAdminPage("Holiday profile admin", "/admin/holiday");
 		registerMigration(new Migration01());
 		
@@ -91,12 +93,12 @@ public class HolidayPlugin extends AbstractPlugin {
 		// Create the holidays computing schedule with a cron expression :
 		// 0  : at the second 0
 		// 0  : at the minute 0
-		// 23 : at 11 p.m
-		// L  : the last day of the month
+		// 00 : at midnight
+		// 1  : the first day of the month
 		// *  : every month
 		// ?  : the day of the week is not important
 		// *  : every year
-        ScheduleBuilder holidaysSchedule = CronScheduleBuilder.cronSchedule("0 0 23 L * ? *");
+        ScheduleBuilder holidaysSchedule = CronScheduleBuilder.cronSchedule("0 0 00 1 * ? *");
 
         // Create the holidays trigger
         Trigger holidaysTrigger = TriggerBuilder.

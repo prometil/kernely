@@ -59,9 +59,9 @@ public class HolidayDetailDTO implements Comparable<HolidayDetailDTO>{
 		this.day = detail.getDay();
 		this.pm = detail.isPm();
 		this.am = detail.isAm();
-		this.type = detail.getType().getName();
-		this.typeId = detail.getType().getId();
-		this.color = detail.getType().getColor();
+		this.type = detail.getTypeInstance().getName();
+		this.typeId = detail.getTypeInstance().getId();
+		this.color = detail.getTypeInstance().getColor();
 	}
 
 	/**

@@ -75,6 +75,11 @@ public class HolidayDTO {
 	public String color;
 	
 	/**
+	 * The id of the current instance of this type
+	 */
+	public int instanceId;
+	
+	/**
 	 * default constructor
 	 */
 	public HolidayDTO(){
@@ -101,10 +106,11 @@ public class HolidayDTO {
 		this.anticipation = anticipation;
 		this.effectiveMonth = effectiveMonth;
 		this.color = color;
+		this.instanceId = 0;
 	}
 	
 	/**
-	 * Contruct with a HolidayType as parameter
+	 * Construct with a HolidayType as parameter
 	 * @param type The model HolidayType to construct the DTO
 	 */
 	public HolidayDTO(HolidayType type){
@@ -116,6 +122,7 @@ public class HolidayDTO {
 		this.unlimited = type.isUnlimited();
 		this.effectiveMonth = type.getEffectiveMonth();
 		this.color = type.getColor();
+		this.instanceId = type.getCurrentInstance().getId();
 	}
 	
 }

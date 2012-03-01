@@ -57,8 +57,8 @@ public class HolidayRequestDetail extends AbstractModel implements Comparable<Ho
 	private HolidayRequest request;
 
 	@ManyToOne
-    @JoinColumn(name = "holiday_type_id")
-	private HolidayType type;
+    @JoinColumn(name = "holiday_type_instance_id")
+	private HolidayTypeInstance typeInstance;
 
 
 	/**
@@ -138,15 +138,15 @@ public class HolidayRequestDetail extends AbstractModel implements Comparable<Ho
 	/**
 	 * @return the type
 	 */
-	public HolidayType getType() {
-		return type;
+	public HolidayTypeInstance getTypeInstance() {
+		return typeInstance;
 	}
 
 	/**
 	 * @param balance the balance to set
 	 */
-	public void setType(HolidayType type) {
-		this.type = type;
+	public void setTypeInstance(HolidayTypeInstance type) {
+		this.typeInstance = type;
 	}
 
 	/**
