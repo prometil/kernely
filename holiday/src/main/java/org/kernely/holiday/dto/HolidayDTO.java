@@ -27,8 +27,6 @@ import org.kernely.holiday.model.HolidayType;
 
 /**
  * dto for holiday  
- * @author b.grandperret
- *
  */
 @XmlRootElement
 public class HolidayDTO implements Comparable<HolidayDTO> {
@@ -36,7 +34,7 @@ public class HolidayDTO implements Comparable<HolidayDTO> {
 	/**
 	 * The id of the holiday
 	 */
-	public int id;
+	public long id;
 	
 	/**
 	 * THe name of the holiday
@@ -77,7 +75,7 @@ public class HolidayDTO implements Comparable<HolidayDTO> {
 	/**
 	 * The id of the current instance of this type
 	 */
-	public int instanceId;
+	public long instanceId;
 	
 	/**
 	 * default constructor
@@ -91,14 +89,14 @@ public class HolidayDTO implements Comparable<HolidayDTO> {
 	 * @param name
 	 * @param quantity
 	 * @param periodUnit
-	 * @param id
+	 * @param typeId
 	 * @param anticipation
 	 * @param effectiveMonth
 	 */
-	public HolidayDTO(String name, boolean unlimited, int quantity, int periodUnit, int id, boolean anticipation, int effectiveMonth, String color) {
+	public HolidayDTO(String name, boolean unlimited, int quantity, int periodUnit, long typeId, boolean anticipation, int effectiveMonth, String color) {
 		super();
 		
-		this.id = id;
+		this.id = typeId;
 		this.name = name;
 		this.unlimited = unlimited;
 		this.quantity = quantity;

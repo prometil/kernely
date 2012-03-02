@@ -24,29 +24,17 @@ import java.util.Set;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
 import org.kernely.core.hibernate.AbstractModel;
 
 /**
- * The permission role
- * @author b.grandperret
- *
+ * The permission model
  */
 @Entity
 @Table(name = "kernely_permission")
 public class Permission extends AbstractModel {
-
-	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	/**
-	 * Permission's id
-	 */
-	private int id;
 
 	/**
 	 * Permission's Name (rights:resourceType:resourceID)
@@ -103,21 +91,6 @@ public class Permission extends AbstractModel {
 	 */
 	public final void setUsers(Set<User> users) {
 		this.users = users;
-	}
-
-	/**
-	 * @return the id
-	 */
-	public final int getId() {
-		return id;
-	}
-
-	/**
-	 * @param id
-	 *            the id to set
-	 */
-	public final void setId(int id) {
-		this.id = id;
 	}
 
 	/**

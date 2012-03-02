@@ -32,7 +32,7 @@ public class UserDetailsUpdateRequestDTO {
 	/**
 	 * The id of the user detail
 	 */
-	public int id;
+	public long id;
 	
 	/**
 	 * The firstname of the user
@@ -124,7 +124,7 @@ public class UserDetailsUpdateRequestDTO {
 	 * @param civility
 	 */
 	public UserDetailsUpdateRequestDTO(String fName, String lName, String img, String mail, String adress, String zip, String city, String homephone,
-			String mobilephone, String businessphone, String birth, String nationality, String ssn, int id, Integer civility) {
+			String mobilephone, String businessphone, String birth, String nationality, String ssn, long id, Integer civility) {
 		this.firstname = fName;
 		this.lastname = lName;
 		this.image = img;

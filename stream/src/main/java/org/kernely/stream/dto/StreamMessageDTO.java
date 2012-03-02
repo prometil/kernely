@@ -30,8 +30,6 @@ import org.kernely.stream.model.Message;
 
 /**
  * The message DTO
- * @author b.grandperret
- *
  */
 @XmlRootElement
 public class StreamMessageDTO {
@@ -53,12 +51,12 @@ public class StreamMessageDTO {
 	/**
 	 * The id of the message
 	 */
-	public int id;
+	public long id;
 
 	/**
 	 *  The id of the stream containing this message
 	 */
-	public int streamId;
+	public long streamId;
 
 	/**
 	 * The name of the stream

@@ -24,9 +24,6 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
@@ -38,30 +35,27 @@ import org.kernely.core.model.User;
 
 /**
  * Model holiday balance
+ * 
  * @author b.grandperret
- *
+ * 
  */
 @Entity
 @Table(name = "kernely_holiday_balance")
 public class HolidayBalance extends AbstractModel {
-	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	private int id;
-
 	@Column(name = "available_balance")
 	private int availableBalance;
-	
+
 	@Column(name = "available_balance_updated")
 	private int availableBalanceUpdated;
 
 	@Column(name = "last_update")
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date lastUpdate;
-	
+
 	@Column(name = "begin_date")
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date beginDate;
-	
+
 	@Column(name = "end_date")
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date endDate;
@@ -73,21 +67,6 @@ public class HolidayBalance extends AbstractModel {
 	@ManyToOne
 	@JoinColumn(name = "user_id")
 	private User user;
-
-	/**
-	 * @return the id
-	 */
-	public int getId() {
-		return id;
-	}
-
-	/**
-	 * @param id
-	 *            the id to set
-	 */
-	public void setId(int id) {
-		this.id = id;
-	}
 
 	/**
 	 * @return the available balance
@@ -112,7 +91,8 @@ public class HolidayBalance extends AbstractModel {
 	}
 
 	/**
-	 * @param availableBalanceUpdated the availableBalanceUpdated to set
+	 * @param availableBalanceUpdated
+	 *            the availableBalanceUpdated to set
 	 */
 	public void setAvailableBalanceUpdated(int availableBalanceUpdated) {
 		this.availableBalanceUpdated = availableBalanceUpdated;
@@ -152,7 +132,7 @@ public class HolidayBalance extends AbstractModel {
 	 * @return the lastUpdate
 	 */
 	public Date getLastUpdate() {
-		return (Date)lastUpdate.clone();
+		return (Date) lastUpdate.clone();
 	}
 
 	/**
@@ -160,7 +140,7 @@ public class HolidayBalance extends AbstractModel {
 	 *            the lastUpdate to set
 	 */
 	public void setLastUpdate(Date lastUpdate) {
-		this.lastUpdate = (Date)lastUpdate.clone();
+		this.lastUpdate = (Date) lastUpdate.clone();
 	}
 
 	/**
@@ -171,7 +151,8 @@ public class HolidayBalance extends AbstractModel {
 	}
 
 	/**
-	 * @param beginDate the beginDate to set
+	 * @param beginDate
+	 *            the beginDate to set
 	 */
 	public void setBeginDate(Date beginDate) {
 		this.beginDate = beginDate;
@@ -185,7 +166,8 @@ public class HolidayBalance extends AbstractModel {
 	}
 
 	/**
-	 * @param endDate the endDate to set
+	 * @param endDate
+	 *            the endDate to set
 	 */
 	public void setEndDate(Date endDate) {
 		this.endDate = endDate;

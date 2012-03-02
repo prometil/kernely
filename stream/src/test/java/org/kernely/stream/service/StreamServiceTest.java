@@ -401,7 +401,7 @@ public class StreamServiceTest extends AbstractServiceTest {
 		long id = this.creationOfTestUser();
 		authenticateAs(USERNAME);
 		streamService.createStream(STREAM, Stream.CATEGORY_USERS);
-		int streamId = streamService.getAllStreams().get(0).id;
+		long streamId = streamService.getAllStreams().get(0).id;
 		permissionService.grantPermission((int)id, Stream.RIGHT_DELETE , Stream.STREAM_RESOURCE, streamId);
 		
 		StreamMessageDTO smd1 = streamService.addMessage(MESSAGE, streamId);

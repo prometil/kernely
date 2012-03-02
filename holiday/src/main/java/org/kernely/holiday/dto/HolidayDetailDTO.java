@@ -8,8 +8,6 @@ import org.kernely.holiday.model.HolidayRequestDetail;
 
 /**
  * The holiday Detail dto
- * @author b.grandperret
- *
  */
 @XmlRootElement
 public class HolidayDetailDTO implements Comparable<HolidayDetailDTO>{
@@ -37,7 +35,7 @@ public class HolidayDetailDTO implements Comparable<HolidayDetailDTO>{
 	/**
 	 * The id of the type
 	 */
-	public int typeInstanceId;
+	public long typeInstanceId;
 	
 	/**
 	 * The color associated to the type of balance

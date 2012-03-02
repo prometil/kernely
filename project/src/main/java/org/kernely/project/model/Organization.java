@@ -6,9 +6,6 @@ import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
@@ -24,16 +21,12 @@ import org.kernely.core.model.User;
 @Entity
 @Table(name = "kernely_organization")
 public class Organization extends AbstractModel {
-	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	private int id;
 	private String name;
 	private String address;
 	private String zip;
 	private String city;
 	private String phone;
 	private String fax;
-	
 
 	/**
 	 * client of the organization
@@ -44,28 +37,13 @@ public class Organization extends AbstractModel {
 
 	public Organization() {
 		this.users = new HashSet<User>();
-		this.address="";
-		this.city="";
-		this.fax="";
-		this.id=0;
-		this.name="";
-		this.phone="";
-		this.zip="";
-	}
-
-	/**
-	 * @return the id
-	 */
-	public int getId() {
-		return id;
-	}
-
-	/**
-	 * @param id
-	 *            the id to set
-	 */
-	public void setId(int id) {
-		this.id = id;
+		this.address = "";
+		this.city = "";
+		this.fax = "";
+		this.id = 0;
+		this.name = "";
+		this.phone = "";
+		this.zip = "";
 	}
 
 	/**
@@ -166,7 +144,8 @@ public class Organization extends AbstractModel {
 	}
 
 	/**
-	 * @param users the users to set
+	 * @param users
+	 *            the users to set
 	 */
 	public void setUsers(Set<User> users) {
 		this.users = users;

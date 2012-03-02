@@ -30,7 +30,7 @@ public class Migration01 extends Migration {
 		
 		//the table kernely_organization
 		CreateTable organization = CreateTable.name("kernely_organization");
-		organization.column("id", "int primary key");
+		organization.column("id", "bigint primary key");
 		organization.column("name", "varchar(50)");
 		organization.column("address", "varchar(200)");
 		organization.column("zip", "varchar(5)");
@@ -42,10 +42,10 @@ public class Migration01 extends Migration {
 		
 		//the table kernely_project
 		CreateTable project = CreateTable.name("kernely_project");
-		project.column("id", "int primary key");
+		project.column("id", "bigint primary key");
 		project.column("name", "varchar(50)");
 		project.column("icon", "varchar(100)");
-		project.column("organization_id", "int");
+		project.column("organization_id", "bigint");
 		RawSql projectForeignKey= new RawSql("ALTER TABLE kernely_project ADD CONSTRAINT fk_organization_id FOREIGN KEY (organization_id) REFERENCES kernely_organization (id)");
 		
 		commands.add(project);
@@ -55,7 +55,7 @@ public class Migration01 extends Migration {
 		//  the table user_project 
 		CreateTable userProject = CreateTable.name("kernely_user_project"); 
 		userProject.column("user_id", "bigint NOT NULL");
-		userProject.column("project_id", "int NOT NULL");
+		userProject.column("project_id", "bigint NOT NULL");
 		
 		RawSql userProjectProject = new RawSql("ALTER TABLE kernely_user_project ADD CONSTRAINT fk_project_id FOREIGN KEY ( project_id) REFERENCES kernely_project (id)");
 		RawSql userProjectUser = new RawSql("ALTER TABLE kernely_user_project ADD CONSTRAINT fk_user_id FOREIGN KEY (user_id) REFERENCES kernely_user (id)");
@@ -69,7 +69,7 @@ public class Migration01 extends Migration {
 		//  the table user_organization
 		CreateTable userOrganization = CreateTable.name("kernely_user_organization"); 
 		userOrganization.column("user_id", "bigint NOT NULL");
-		userOrganization.column("organization_id", "int NOT NULL");
+		userOrganization.column("organization_id", "bigint NOT NULL");
 		
 		RawSql userOrganizationOrganization = new RawSql("ALTER TABLE kernely_user_organization ADD CONSTRAINT fk_organization_id FOREIGN KEY ( organization_id) REFERENCES kernely_organization (id)");
 		RawSql userOrganizationUser = new RawSql("ALTER TABLE kernely_user_organization ADD CONSTRAINT fk_user_id FOREIGN KEY (user_id) REFERENCES kernely_user (id)");

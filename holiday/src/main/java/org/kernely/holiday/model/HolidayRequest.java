@@ -25,9 +25,6 @@ import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
@@ -42,67 +39,43 @@ import org.kernely.core.model.User;
 
 /**
  * The holiday request model
- * @author b.grandperret
- *
  */
 @Entity
 @Table(name = "kernely_holiday_request")
 public class HolidayRequest extends AbstractModel {
-	
+
 	public static final int DENIED_STATUS = 0;
 	public static final int ACCEPTED_STATUS = 1;
 	public static final int PENDING_STATUS = 2;
 	public static final int PAST_STATUS = 3;
-	
-	
-	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	private int id;
-	
-	@Column(name="begin_date")
+
+	@Column(name = "begin_date")
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date beginDate;
-	
-	@Column(name="end_date")
+
+	@Column(name = "end_date")
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date endDate;
 
 	private int status;
-	
-	@Column(name="requester_comment")
+
+	@Column(name = "requester_comment")
 	private String requesterComment;
 
-	@Column(name="manager_comment")
+	@Column(name = "manager_comment")
 	private String managerComment;
 
 	@ManyToOne
 	@JoinColumn(name = "manager")
 	private User manager;
-	
+
 	@ManyToOne
 	@JoinColumn(name = "user_id")
 	private User user;
-	
+
 	@OneToMany(mappedBy = "request")
 	private Set<HolidayRequestDetail> details;
 
-	/**
-	 * @return the id
-	 */
-	public int getId() {
-		return id;
-	}
-
-	/**
-	 * @param id
-	 *            the id to set
-	 */
-	public void setId(int id) {
-		this.id = id;
-	}
-
-	
-	
 	/**
 	 * @return the beginDate
 	 */
@@ -111,7 +84,8 @@ public class HolidayRequest extends AbstractModel {
 	}
 
 	/**
-	 * @param beginDate the beginDate to set
+	 * @param beginDate
+	 *            the beginDate to set
 	 */
 	public void setBeginDate(Date beginDate) {
 		this.beginDate = new DateTime(beginDate).withZone(DateTimeZone.UTC).toDate();
@@ -121,14 +95,15 @@ public class HolidayRequest extends AbstractModel {
 	 * @return the endDate
 	 */
 	public Date getEndDate() {
-		return (Date)endDate.clone();
+		return (Date) endDate.clone();
 	}
 
 	/**
-	 * @param endDate the endDate to set
+	 * @param endDate
+	 *            the endDate to set
 	 */
 	public void setEndDate(Date endDate) {
-		this.endDate = (Date)endDate.clone();
+		this.endDate = (Date) endDate.clone();
 	}
 
 	/**
@@ -139,7 +114,8 @@ public class HolidayRequest extends AbstractModel {
 	}
 
 	/**
-	 * @param requesterComment the requesterComment to set
+	 * @param requesterComment
+	 *            the requesterComment to set
 	 */
 	public void setRequesterComment(String requesterComment) {
 		this.requesterComment = requesterComment;
@@ -153,7 +129,8 @@ public class HolidayRequest extends AbstractModel {
 	}
 
 	/**
-	 * @param managerComment the managerComment to set
+	 * @param managerComment
+	 *            the managerComment to set
 	 */
 	public void setManagerComment(String managerComment) {
 		this.managerComment = managerComment;
@@ -174,8 +151,6 @@ public class HolidayRequest extends AbstractModel {
 		this.status = status;
 	}
 
-	
-	
 	/**
 	 * @return the user
 	 */
@@ -199,7 +174,8 @@ public class HolidayRequest extends AbstractModel {
 	}
 
 	/**
-	 * @param details the details to set
+	 * @param details
+	 *            the details to set
 	 */
 	public void setDetails(Set<HolidayRequestDetail> details) {
 		this.details = details;
@@ -213,7 +189,8 @@ public class HolidayRequest extends AbstractModel {
 	}
 
 	/**
-	 * @param manager the manager to set
+	 * @param manager
+	 *            the manager to set
 	 */
 	public void setManager(User manager) {
 		this.manager = manager;

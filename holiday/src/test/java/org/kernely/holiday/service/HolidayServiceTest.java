@@ -217,7 +217,7 @@ public class HolidayServiceTest extends AbstractServiceTest {
 
 		HolidayProfileCreationRequestDTO profileCreation = new HolidayProfileCreationRequestDTO();
 		profileCreation.name = NAME_1;
-		List<Integer> typesId = new ArrayList<Integer>();
+		List<Long> typesId = new ArrayList<Long>();
 		typesId.add(holidayType1.id);
 		typesId.add(holidayType2.id);
 		profileCreation.holidayTypesId = typesId;
@@ -253,7 +253,7 @@ public class HolidayServiceTest extends AbstractServiceTest {
 		// Profile with only the first type
 		HolidayProfileCreationRequestDTO profileCreation = new HolidayProfileCreationRequestDTO();
 		profileCreation.name = NAME_1;
-		List<Integer> typesId = new ArrayList<Integer>();
+		List<Long> typesId = new ArrayList<Long>();
 		typesId.add(holidayType1.id);
 		profileCreation.holidayTypesId = typesId;
 
@@ -262,7 +262,7 @@ public class HolidayServiceTest extends AbstractServiceTest {
 		// Profile with only the second type
 		profileCreation = new HolidayProfileCreationRequestDTO();
 		profileCreation.name = NAME_2;
-		typesId = new ArrayList<Integer>();
+		typesId = new ArrayList<Long>();
 		typesId.add(holidayType2.id);
 		profileCreation.holidayTypesId = typesId;
 
@@ -294,7 +294,7 @@ public class HolidayServiceTest extends AbstractServiceTest {
 
 		HolidayProfileCreationRequestDTO profileCreation = new HolidayProfileCreationRequestDTO();
 		profileCreation.name = NAME_1;
-		List<Integer> typesId = new ArrayList<Integer>();
+		List<Long> typesId = new ArrayList<Long>();
 		typesId.add(holidayType1.id);
 		profileCreation.holidayTypesId = typesId;
 
@@ -330,7 +330,7 @@ public class HolidayServiceTest extends AbstractServiceTest {
 				HolidayType.DECEMBER, true, COLOR_2));
 
 		// First profile, with 3 types and 1 users
-		List<Integer> profile1Types = new ArrayList<Integer>();
+		List<Long> profile1Types = new ArrayList<Long>();
 		profile1Types.add(type1.id);
 		profile1Types.add(type2.id);
 		profile1Types.add(type3.id);
@@ -347,7 +347,7 @@ public class HolidayServiceTest extends AbstractServiceTest {
 		holidayService.updateProfileUsers(profile1.id, profile1Usernames);
 
 		// Second profile, with 1 type and 2 users
-		List<Integer> profile2Types = new ArrayList<Integer>();
+		List<Long> profile2Types = new ArrayList<Long>();
 		profile1Types.add(type4.id);
 
 		List<String> profile2Usernames = new ArrayList<String>();
@@ -366,186 +366,186 @@ public class HolidayServiceTest extends AbstractServiceTest {
 		assertEquals(2, summary.size());
 	}
 
-//	@Test
-//	public void summaryWithProfilesWithRequests() {
-//		// Creation of users
-//		this.creationOfUserRole();
-//		UserDTO user1 = this.creationOfTestUser(NAME_1);
-//		UserDTO user2 = this.creationOfTestUser(NAME_2);
-//		UserDTO user3 = this.creationOfTestUser(NAME_3);
-//
-//		// Creation of types
-//		HolidayDTO type1 = holidayService.createOrUpdateHoliday(new HolidayCreationRequestDTO(TYPE_1, false, QUANTITY_1, HolidayType.PERIOD_MONTH,
-//				HolidayType.ALL_MONTH, true, COLOR_1));
-//		HolidayDTO type2 = holidayService.createOrUpdateHoliday(new HolidayCreationRequestDTO(TYPE_2, false, QUANTITY_2, HolidayType.PERIOD_MONTH,
-//				HolidayType.JANUARY, true, COLOR_1));
-//		HolidayDTO type3 = holidayService.createOrUpdateHoliday(new HolidayCreationRequestDTO(TYPE_3, false, QUANTITY_1, HolidayType.PERIOD_YEAR,
-//				HolidayType.FEBRUARY, true, COLOR_2));
-//		HolidayDTO type4 = holidayService.createOrUpdateHoliday(new HolidayCreationRequestDTO(TYPE_4, false, QUANTITY_2, HolidayType.PERIOD_YEAR,
-//				HolidayType.DECEMBER, true, COLOR_2));
-//
-//		// First profile, with 3 types and 1 user
-//		List<Integer> profile1Types = new ArrayList<Integer>();
-//		profile1Types.add(type1.id);
-//		profile1Types.add(type2.id);
-//		profile1Types.add(type3.id);
-//
-//		List<String> profile1Usernames = new ArrayList<String>();
-//		profile1Usernames.add(user1.username);
-//
-//		HolidayProfileCreationRequestDTO profileRequest = new HolidayProfileCreationRequestDTO();
-//		profileRequest.name = PROFILE_1;
-//		profileRequest.holidayTypesId = profile1Types;
-//
-//		HolidayProfileDTO profile1 = holidayService.createOrUpdateHolidayProfile(profileRequest);
-//
-//		holidayService.updateProfileUsers(profile1.id, profile1Usernames);
-//
-//		// Creation of balances for profile 1
-//		balanceService.createHolidayBalance(user1.id, type1.id);
-//		balanceService.createHolidayBalance(user1.id, type2.id);
-//		balanceService.createHolidayBalance(user1.id, type3.id);
-//
-//		// Second profile, with 1 type and 2 users
-//		List<Integer> profile2Types = new ArrayList<Integer>();
-//		profile2Types.add(type4.id);
-//
-//		List<String> profile2Usernames = new ArrayList<String>();
-//		profile2Usernames.add(user2.username);
-//		profile2Usernames.add(user3.username);
-//
-//		profileRequest = new HolidayProfileCreationRequestDTO();
-//		profileRequest.name = PROFILE_2;
-//		profileRequest.holidayTypesId = profile2Types;
-//
-//		HolidayProfileDTO profile2 = holidayService.createOrUpdateHolidayProfile(profileRequest);
-//
-//		holidayService.updateProfileUsers(profile2.id, profile2Usernames);
-//
-//		// Creation of balances for profile 2
-//		balanceService.createHolidayBalance(user2.id, type4.id);
-//		balanceService.createHolidayBalance(user3.id, type4.id);
-//
-//		// Increment balances
-//		balanceService.incrementBalance(balanceService.getHolidayBalance(user1.id, type1.id).id);
-//		balanceService.incrementBalance(balanceService.getHolidayBalance(user1.id, type2.id).id);
-//		balanceService.incrementBalance(balanceService.getHolidayBalance(user1.id, type3.id).id);
-//		balanceService.incrementBalance(balanceService.getHolidayBalance(user2.id, type4.id).id);
-//		balanceService.incrementBalance(balanceService.getHolidayBalance(user3.id, type4.id).id);
-//
-//		// Take holidays
-//		HolidayRequestCreationRequestDTO request = new HolidayRequestCreationRequestDTO();
-//		HolidayDetailCreationRequestDTO detail1 = new HolidayDetailCreationRequestDTO();
-//		HolidayDetailCreationRequestDTO detail2 = new HolidayDetailCreationRequestDTO();
-//		HolidayDetailCreationRequestDTO detail3 = new HolidayDetailCreationRequestDTO();
-//		HolidayDetailCreationRequestDTO detail4 = new HolidayDetailCreationRequestDTO();
-//		HolidayDetailCreationRequestDTO detail5 = new HolidayDetailCreationRequestDTO();
-//		HolidayDetailCreationRequestDTO detail6 = new HolidayDetailCreationRequestDTO();
-//
-//		// Holidays for the first user
-//		authenticateAs(user1.username);
-//
-//		detail1.am = true;
-//		detail1.day = "10/10/2010";
-//		detail1.typeId = type1.id;
-//		detail2.pm = true;
-//		detail2.day = "10/10/2010";
-//		detail2.typeId = type3.id;
-//
-//		List<HolidayDetailCreationRequestDTO> details = new ArrayList<HolidayDetailCreationRequestDTO>();
-//		details.add(detail1);
-//		details.add(detail2);
-//		request.details = details;
-//
-//		requestService.registerRequestAndDetails(request);
-//
-//		detail3.am = true;
-//		detail3.day = "10/19/2010";
-//		detail3.typeId = type3.id;
-//		detail4.pm = true;
-//		detail4.day = "10/19/2010";
-//		detail4.typeId = type3.id;
-//		detail5.am = true;
-//		detail5.day = "10/20/2010";
-//		detail5.typeId = type3.id;
-//		detail6.pm = true;
-//		detail6.day = "10/20/2010";
-//		detail6.typeId = type1.id;
-//
-//		details = new ArrayList<HolidayDetailCreationRequestDTO>();
-//		details.add(detail3);
-//		details.add(detail4);
-//		details.add(detail5);
-//		details.add(detail6);
-//		request.details = details;
-//		requestService.registerRequestAndDetails(request);
-//
-//		// Holidays for the third user
-//		authenticateAs(user3.username);
-//
-//		detail1.am = true;
-//		detail1.day = "10/07/2010";
-//		detail1.typeId = type4.id;
-//		detail2.pm = true;
-//		detail2.day = "10/07/2010";
-//		detail2.typeId = type4.id;
-//		detail3.am = true;
-//		detail3.day = "10/08/2010";
-//		detail3.typeId = type4.id;
-//		detail4.pm = true;
-//		detail4.day = "10/08/2010";
-//		detail4.typeId = type4.id;
-//
-//		details = new ArrayList<HolidayDetailCreationRequestDTO>();
-//		details.add(detail1);
-//		details.add(detail2);
-//		details.add(detail3);
-//		details.add(detail4);
-//		request.details = details;
-//		requestService.registerRequestAndDetails(request);
-//
-//		List<HolidayProfilesSummaryDTO> summary = holidayService.getSummmaryForAllProfiles(10, 2010);
-//
-//		float user1Type1 = 0;
-//		float user1Type2 = 0;
-//		float user1Type3 = 0;
-//		float user2Type4 = 0;
-//		float user3Type4 = 0;
-//
-//		int user1Types = 0;
-//		int user2Types = 0;
-//		int user3Types = 0;
-//
-//		for (HolidayProfilesSummaryDTO summaryProfile : summary) {
-//			if (summaryProfile.name.equals(profile1.name)) {
-//				HolidayUserSummaryDTO userSummary = summaryProfile.usersSummaries.get(0);
-//				user1Types = userSummary.typesSummaries.size();
-//				user1Type1 = userSummary.typesSummaries.get(0).pending;
-//				user1Type2 = userSummary.typesSummaries.get(1).pending;
-//				user1Type3 = userSummary.typesSummaries.get(2).pending;
-//			} else if (summaryProfile.name.equals(profile2.name)) {
-//				for (HolidayUserSummaryDTO userSummary : summaryProfile.usersSummaries) {
-//					if (userSummary.details.user.username.equals(user2.username)) {
-//						user2Types = userSummary.typesSummaries.size();
-//						user2Type4 = userSummary.typesSummaries.get(0).pending;
-//					} else if (userSummary.details.user.username.equals(user3.username)) {
-//						user3Types = userSummary.typesSummaries.size();
-//						user3Type4 = userSummary.typesSummaries.get(0).pending;
-//					}
-//				}
-//			}
-//
-//		}
-//		assertEquals(3, user1Types);
-//		assertEquals(1, user2Types);
-//		assertEquals(1, user3Types);
-//		assertEquals(1, user1Type1, 0);
-//		assertEquals(0, user1Type2, 0);
-//		assertEquals(2, user1Type3, 0);
-//		assertEquals(0, user2Type4, 0);
-//		assertEquals(2, user3Type4, 0);
-//
-//	}
+	@Test
+	public void summaryWithProfilesWithRequests() {
+		// Creation of users
+		this.creationOfUserRole();
+		UserDTO user1 = this.creationOfTestUser(NAME_1);
+		UserDTO user2 = this.creationOfTestUser(NAME_2);
+		UserDTO user3 = this.creationOfTestUser(NAME_3);
+
+		// Creation of types
+		HolidayDTO type1 = holidayService.createOrUpdateHoliday(new HolidayCreationRequestDTO(TYPE_1, false, QUANTITY_1, HolidayType.PERIOD_MONTH,
+				HolidayType.ALL_MONTH, true, COLOR_1));
+		HolidayDTO type2 = holidayService.createOrUpdateHoliday(new HolidayCreationRequestDTO(TYPE_2, false, QUANTITY_2, HolidayType.PERIOD_MONTH,
+				HolidayType.JANUARY, true, COLOR_1));
+		HolidayDTO type3 = holidayService.createOrUpdateHoliday(new HolidayCreationRequestDTO(TYPE_3, false, QUANTITY_1, HolidayType.PERIOD_YEAR,
+				HolidayType.FEBRUARY, true, COLOR_2));
+		HolidayDTO type4 = holidayService.createOrUpdateHoliday(new HolidayCreationRequestDTO(TYPE_4, false, QUANTITY_2, HolidayType.PERIOD_YEAR,
+				HolidayType.DECEMBER, true, COLOR_2));
+
+		// First profile, with 3 types and 1 user
+		List<Long> profile1Types = new ArrayList<Long>();
+		profile1Types.add(type1.id);
+		profile1Types.add(type2.id);
+		profile1Types.add(type3.id);
+
+		List<String> profile1Usernames = new ArrayList<String>();
+		profile1Usernames.add(user1.username);
+
+		HolidayProfileCreationRequestDTO profileRequest = new HolidayProfileCreationRequestDTO();
+		profileRequest.name = PROFILE_1;
+		profileRequest.holidayTypesId = profile1Types;
+
+		HolidayProfileDTO profile1 = holidayService.createOrUpdateHolidayProfile(profileRequest);
+
+		holidayService.updateProfileUsers(profile1.id, profile1Usernames);
+
+		// Creation of balances for profile 1
+		balanceService.createHolidayBalance(type1.id,user1.id);
+		balanceService.createHolidayBalance(type2.id,user1.id);
+		balanceService.createHolidayBalance(type3.id,user1.id);
+
+		// Second profile, with 1 type and 2 users
+		List<Long> profile2Types = new ArrayList<Long>();
+		profile2Types.add(type4.id);
+
+		List<String> profile2Usernames = new ArrayList<String>();
+		profile2Usernames.add(user2.username);
+		profile2Usernames.add(user3.username);
+
+		profileRequest = new HolidayProfileCreationRequestDTO();
+		profileRequest.name = PROFILE_2;
+		profileRequest.holidayTypesId = profile2Types;
+
+		HolidayProfileDTO profile2 = holidayService.createOrUpdateHolidayProfile(profileRequest);
+
+		holidayService.updateProfileUsers(profile2.id, profile2Usernames);
+
+		// Creation of balances for profile 2
+		balanceService.createHolidayBalance(type4.id,user2.id);
+		balanceService.createHolidayBalance(type4.id,user3.id);
+
+		// Increment balances
+		balanceService.incrementBalance(type1.id,user1.id);
+		balanceService.incrementBalance(type2.id,user1.id);
+		balanceService.incrementBalance(type3.id,user1.id);
+		balanceService.incrementBalance(type4.id,user2.id);
+		balanceService.incrementBalance(type4.id,user3.id);
+
+		// Take holidays
+		HolidayRequestCreationRequestDTO request = new HolidayRequestCreationRequestDTO();
+		HolidayDetailCreationRequestDTO detail1 = new HolidayDetailCreationRequestDTO();
+		HolidayDetailCreationRequestDTO detail2 = new HolidayDetailCreationRequestDTO();
+		HolidayDetailCreationRequestDTO detail3 = new HolidayDetailCreationRequestDTO();
+		HolidayDetailCreationRequestDTO detail4 = new HolidayDetailCreationRequestDTO();
+		HolidayDetailCreationRequestDTO detail5 = new HolidayDetailCreationRequestDTO();
+		HolidayDetailCreationRequestDTO detail6 = new HolidayDetailCreationRequestDTO();
+
+		// Holidays for the first user
+		authenticateAs(user1.username);
+
+		detail1.am = true;
+		detail1.day = "10/10/2010";
+		detail1.typeInstanceId = type1.instanceId;
+		detail2.pm = true;
+		detail2.day = "10/10/2010";
+		detail2.typeInstanceId = type3.instanceId;
+
+		List<HolidayDetailCreationRequestDTO> details = new ArrayList<HolidayDetailCreationRequestDTO>();
+		details.add(detail1);
+		details.add(detail2);
+		request.details = details;
+
+		requestService.registerRequestAndDetails(request);
+
+		detail3.am = true;
+		detail3.day = "10/19/2010";
+		detail3.typeInstanceId = type3.instanceId;
+		detail4.pm = true;
+		detail4.day = "10/19/2010";
+		detail4.typeInstanceId = type3.instanceId;
+		detail5.am = true;
+		detail5.day = "10/20/2010";
+		detail5.typeInstanceId = type3.instanceId;
+		detail6.pm = true;
+		detail6.day = "10/20/2010";
+		detail6.typeInstanceId = type1.instanceId;
+
+		details = new ArrayList<HolidayDetailCreationRequestDTO>();
+		details.add(detail3);
+		details.add(detail4);
+		details.add(detail5);
+		details.add(detail6);
+		request.details = details;
+		requestService.registerRequestAndDetails(request);
+
+		// Holidays for the third user
+		authenticateAs(user3.username);
+
+		detail1.am = true;
+		detail1.day = "10/07/2010";
+		detail1.typeInstanceId = type4.instanceId;
+		detail2.pm = true;
+		detail2.day = "10/07/2010";
+		detail2.typeInstanceId = type4.instanceId;
+		detail3.am = true;
+		detail3.day = "10/08/2010";
+		detail3.typeInstanceId = type4.instanceId;
+		detail4.pm = true;
+		detail4.day = "10/08/2010";
+		detail4.typeInstanceId = type4.instanceId;
+
+		details = new ArrayList<HolidayDetailCreationRequestDTO>();
+		details.add(detail1);
+		details.add(detail2);
+		details.add(detail3);
+		details.add(detail4);
+		request.details = details;
+		requestService.registerRequestAndDetails(request);
+
+		List<HolidayProfilesSummaryDTO> summary = holidayService.getSummmaryForAllProfiles(10, 2010);
+
+		float user1Type1 = 0;
+		float user1Type2 = 0;
+		float user1Type3 = 0;
+		float user2Type4 = 0;
+		float user3Type4 = 0;
+
+		int user1Types = 0;
+		int user2Types = 0;
+		int user3Types = 0;
+
+		for (HolidayProfilesSummaryDTO summaryProfile : summary) {
+			if (summaryProfile.name.equals(profile1.name)) {
+				HolidayUserSummaryDTO userSummary = summaryProfile.usersSummaries.get(0);
+				user1Types = userSummary.typesSummaries.size();
+				user1Type1 = userSummary.typesSummaries.get(0).pending;
+				user1Type2 = userSummary.typesSummaries.get(1).pending;
+				user1Type3 = userSummary.typesSummaries.get(2).pending;
+			} else if (summaryProfile.name.equals(profile2.name)) {
+				for (HolidayUserSummaryDTO userSummary : summaryProfile.usersSummaries) {
+					if (userSummary.details.user.username.equals(user2.username)) {
+						user2Types = userSummary.typesSummaries.size();
+						user2Type4 = userSummary.typesSummaries.get(0).pending;
+					} else if (userSummary.details.user.username.equals(user3.username)) {
+						user3Types = userSummary.typesSummaries.size();
+						user3Type4 = userSummary.typesSummaries.get(0).pending;
+					}
+				}
+			}
+
+		}
+		assertEquals(3, user1Types);
+		assertEquals(1, user2Types);
+		assertEquals(1, user3Types);
+		assertEquals(1, user1Type1, 0);
+		assertEquals(0, user1Type2, 0);
+		assertEquals(2, user1Type3, 0);
+		assertEquals(0, user2Type4, 0);
+		assertEquals(2, user3Type4, 0);
+
+	}
 	
 	@Test
 	public void getProfilesForUserTest(){
@@ -565,7 +565,7 @@ public class HolidayServiceTest extends AbstractServiceTest {
 		
 		HolidayProfileCreationRequestDTO profileCreation = new HolidayProfileCreationRequestDTO();
 		profileCreation.name = NAME_1;
-		List<Integer> typesId = new ArrayList<Integer>();
+		List<Long> typesId = new ArrayList<Long>();
 		typesId.add(holidayType1.id);
 		profileCreation.holidayTypesId = typesId;
 		

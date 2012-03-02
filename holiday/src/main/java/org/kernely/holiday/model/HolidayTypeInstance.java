@@ -4,9 +4,6 @@ import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
@@ -19,46 +16,23 @@ import org.kernely.core.model.User;
 @Entity
 @Table(name = "kernely_holiday_type_instance")
 public class HolidayTypeInstance extends AbstractModel {
-
-	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	private int id;
-	
 	private String name;
-	
+
 	private String color;
-	
+
 	private boolean anticipated;
-	
+
 	private int quantity;
-	
-	@Column(name="period_unit")
+
+	@Column(name = "period_unit")
 	private int periodUnit;
-	
+
 	@OneToMany(mappedBy = "holidayTypeInstance")
 	private Set<HolidayBalance> balances;
-	
-	@ManyToMany
-	@JoinTable(
-			name="kernely_holiday_type_instance_user",
-			joinColumns = @JoinColumn( name = "type_instance_id" ),
-			inverseJoinColumns = @JoinColumn( name = "user_id" ) )
-	private Set<User> users;
-	
-	/**
-	 * @return the id
-	 */
-	public int getId() {
-		return id;
-	}
 
-	/**
-	 * @param id
-	 *            the id to set
-	 */
-	public void setId(int id) {
-		this.id = id;
-	}
+	@ManyToMany
+	@JoinTable(name = "kernely_holiday_type_instance_user", joinColumns = @JoinColumn(name = "type_instance_id"), inverseJoinColumns = @JoinColumn(name = "user_id"))
+	private Set<User> users;
 
 	/**
 	 * @return the type
@@ -74,7 +48,7 @@ public class HolidayTypeInstance extends AbstractModel {
 	public void setName(String name) {
 		this.name = name;
 	}
-	
+
 	/**
 	 * @return the color
 	 */
@@ -83,12 +57,13 @@ public class HolidayTypeInstance extends AbstractModel {
 	}
 
 	/**
-	 * @param color the color to set
+	 * @param color
+	 *            the color to set
 	 */
 	public void setColor(String color) {
 		this.color = color;
 	}
-	
+
 	/**
 	 * @return the balances associated to this type
 	 */
@@ -97,7 +72,8 @@ public class HolidayTypeInstance extends AbstractModel {
 	}
 
 	/**
-	 * @param balances the balances (associated to this type) to set
+	 * @param balances
+	 *            the balances (associated to this type) to set
 	 */
 	public void setBalances(Set<HolidayBalance> balances) {
 		this.balances = balances;
@@ -111,7 +87,8 @@ public class HolidayTypeInstance extends AbstractModel {
 	}
 
 	/**
-	 * @param users the users to set
+	 * @param users
+	 *            the users to set
 	 */
 	public void setUsers(Set<User> users) {
 		this.users = users;
@@ -125,13 +102,16 @@ public class HolidayTypeInstance extends AbstractModel {
 	}
 
 	/**
-	 * @param anticipated the anticipated to set
+	 * @param anticipated
+	 *            the anticipated to set
 	 */
 	public void setAnticipated(boolean anticipated) {
 		this.anticipated = anticipated;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#hashCode()
 	 */
 	@Override
@@ -140,12 +120,14 @@ public class HolidayTypeInstance extends AbstractModel {
 		int result = 1;
 		result = prime * result + (anticipated ? 1231 : 1237);
 		result = prime * result + ((color == null) ? 0 : color.hashCode());
-		result = prime * result + id;
+		result = (int) (prime * result + id);
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
 		return result;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	@Override
@@ -191,7 +173,8 @@ public class HolidayTypeInstance extends AbstractModel {
 	}
 
 	/**
-	 * @param quantity the quantity to set
+	 * @param quantity
+	 *            the quantity to set
 	 */
 	public void setQuantity(int quantity) {
 		this.quantity = quantity;
@@ -205,7 +188,8 @@ public class HolidayTypeInstance extends AbstractModel {
 	}
 
 	/**
-	 * @param periodUnit the periodUnit to set
+	 * @param periodUnit
+	 *            the periodUnit to set
 	 */
 	public void setPeriodUnit(int periodUnit) {
 		this.periodUnit = periodUnit;

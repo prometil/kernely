@@ -481,35 +481,35 @@ public class HolidayRequestService extends AbstractService {
 	/**
 	 * Accept a waiting request
 	 * 
-	 * @param idRequest
+	 * @param id
 	 *            The request to accept
 	 */
 	@Transactional
-	public void acceptRequest(int idRequest) {
+	public void acceptRequest(long id) {
 		if (!userService.isManager(this.getAuthenticatedUserModel().getUsername())) {
 			throw new UnauthorizedException("Only managers can access to this functionality !");
 		}
-		log.debug("ACCEPT : Retrieving holiday request with id {}", idRequest);
-		HolidayRequest request = em.get().find(HolidayRequest.class, idRequest);
+		log.debug("ACCEPT : Retrieving holiday request with id {}", id);
+		HolidayRequest request = em.get().find(HolidayRequest.class, id);
 		request.setStatus(HolidayRequest.ACCEPTED_STATUS);
 		request.setManager(this.getAuthenticatedUserModel());
 		em.get().merge(request);
-		log.debug("Holiday request with id {} has been accepted", idRequest);
+		log.debug("Holiday request with id {} has been accepted", id);
 	}
 
 	/**
 	 * Deny a waiting request
 	 * 
-	 * @param idRequest
+	 * @param id
 	 *            The request to deny
 	 */
 	@Transactional
-	public void denyRequest(int idRequest) {
+	public void denyRequest(long id) {
 		if (!userService.isManager(this.getAuthenticatedUserModel().getUsername())) {
 			throw new UnauthorizedException("Only managers can access to this functionality !");
 		}
-		log.debug("DENY : Retrieving holiday request with id {}", idRequest);
-		HolidayRequest request = em.get().find(HolidayRequest.class, idRequest);
+		log.debug("DENY : Retrieving holiday request with id {}", id);
+		HolidayRequest request = em.get().find(HolidayRequest.class, id);
 		request.setStatus(HolidayRequest.DENIED_STATUS);
 		request.setManager(this.getAuthenticatedUserModel());
 		em.get().merge(request);
@@ -542,33 +542,33 @@ public class HolidayRequestService extends AbstractService {
 			this.balanceService.addDaysInAvailableUpdatedFromRequest(e.getKey().getId(), request.getUser().getId(), e.getValue());
 		}
 
-		log.debug("Holiday request with id {} has been denied", idRequest);
+		log.debug("Holiday request with id {} has been denied", id);
 	}
 
 	/**
 	 * Archive a request (set it as "past")
 	 * 
-	 * @param idRequest
+	 * @param id
 	 *            The request to archive
 	 */
 	@Transactional
-	public void archiveRequest(int idRequest) {
-		log.debug("ARCHIVE : Retrieving holiday request with id {}", idRequest);
-		HolidayRequest request = em.get().find(HolidayRequest.class, idRequest);
+	public void archiveRequest(long id) {
+		log.debug("ARCHIVE : Retrieving holiday request with id {}", id);
+		HolidayRequest request = em.get().find(HolidayRequest.class, id);
 		request.setStatus(HolidayRequest.PAST_STATUS);
 		em.get().merge(request);
-		log.debug("Holiday request with id {} has been archived", idRequest);
+		log.debug("Holiday request with id {} has been archived", id);
 	}
 
 	/**
 	 * Cancel a waiting request
 	 * 
-	 * @param idRequest
+	 * @param id
 	 */
 	@Transactional
-	public void cancelRequest(int idRequest) {
-		log.debug("CANCEL : Retrieving holiday request with id {}", idRequest);
-		HolidayRequest request = em.get().find(HolidayRequest.class, idRequest);
+	public void cancelRequest(long id) {
+		log.debug("CANCEL : Retrieving holiday request with id {}", id);
+		HolidayRequest request = em.get().find(HolidayRequest.class, id);
 		Set<HolidayRequestDetail> holidayRequestDetails = request.getDetails();
 
 		// Update the temporary balance
@@ -601,26 +601,26 @@ public class HolidayRequestService extends AbstractService {
 			em.get().remove(hrd);
 		}
 		em.get().remove(request);
-		log.debug("Holiday request with id {} has been canceled", idRequest);
+		log.debug("Holiday request with id {} has been canceled", id);
 	}
 
 	/**
 	 * Add a manager commentary to the request
 	 * 
-	 * @param idRequest
+	 * @param id
 	 *            The request to comment
 	 * @param managerComment
 	 *            the comment of the manager
 	 */
 	@Transactional
-	public void addManagerCommentary(int idRequest, String managerComment) {
+	public void addManagerCommentary(long id, String managerComment) {
 		if (!userService.isManager(this.getAuthenticatedUserModel().getUsername())) {
 			throw new UnauthorizedException("Only managers can access to this functionality !");
 		}
-		HolidayRequest request = em.get().find(HolidayRequest.class, idRequest);
+		HolidayRequest request = em.get().find(HolidayRequest.class, id);
 		request.setManagerComment(managerComment);
 		em.get().merge(request);
-		log.debug("Holiday request with id {} has been commented", idRequest);
+		log.debug("Holiday request with id {} has been commented", id);
 	}
 
 	/**

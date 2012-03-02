@@ -198,7 +198,7 @@ public class UserService extends AbstractService {
 	 *            The id of the user to lock
 	 */
 	@Transactional
-	public void lockUser(int id) {
+	public void lockUser(long id) {
 		UserDetails ud = em.get().find(UserDetails.class, id);
 		User u = em.get().find(User.class, ud.getUser().getId());
 		u.setLocked(!u.isLocked());
@@ -427,7 +427,7 @@ public class UserService extends AbstractService {
 	 * @return list of RoleDTO
 	 */
 	@Transactional
-	public List<RoleDTO> getUserRoles(int id) {
+	public List<RoleDTO> getUserRoles(long id) {
 		UserDetails ud = em.get().find(UserDetails.class, id);
 
 		Query query = em.get().createQuery("SELECT r FROM Role r WHERE name=:role");

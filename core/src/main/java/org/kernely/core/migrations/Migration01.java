@@ -85,21 +85,21 @@ public class Migration01 extends Migration {
 		
 		//the table kernely group
 		CreateTable group = CreateTable.name("kernely_group");
-		group.column("id", "int primary  key");
+		group.column("id", "bigint primary  key");
 		group.column("name", "varchar(30)");
 		
 		commands.add(group);
 		
 		// the table kernely permission
 		CreateTable permission = CreateTable.name("kernely_permission");
-		permission.column("id", "int primary key");
+		permission.column("id", "bigint primary key");
 		permission.column("name", "varchar(30)");
 
 		commands.add(permission);
 		
 		//the table kernely_userDetails
 		CreateTable userDetails = CreateTable.name("kernely_user_details");
-		userDetails.column("id", "int primary key");
+		userDetails.column("id", "bigint primary key");
 		userDetails.column("name", "varchar(50)");
 		userDetails.column("firstname", "varchar(50)");
 		userDetails.column("mail", "varchar(50)");
@@ -160,7 +160,7 @@ public class Migration01 extends Migration {
 		
 		//the table role
 		CreateTable role = CreateTable.name("kernely_role");
-		role.column("id","int primary key");
+		role.column("id","bigint primary key");
 		role.column("name", "varchar(30)");
 		
 		commands.add(role);
@@ -193,8 +193,8 @@ public class Migration01 extends Migration {
 		
 		//the table group permision
 		CreateTable groupPermission = CreateTable.name("kernely_group_permissions");
-		groupPermission.column("group_id", "int NOT NULL");
-		groupPermission.column("permission_id", "int NOT NULL");
+		groupPermission.column("group_id", "bigint NOT NULL");
+		groupPermission.column("permission_id", "bigint NOT NULL");
 		
 		RawSql groupPermissionGroup = new RawSql("ALTER TABLE kernely_group_permissions ADD CONSTRAINT fk_group_id FOREIGN KEY (group_id) REFERENCES kernely_group (id)");
 		RawSql groupPermissionPermission = new RawSql("ALTER TABLE kernely_group_permissions ADD CONSTRAINT fk_permission_id FOREIGN KEY (permission_id) REFERENCES kernely_permission (id)");
@@ -207,8 +207,8 @@ public class Migration01 extends Migration {
 		
 		//the table group roles
 		CreateTable groupRole = CreateTable.name("kernely_group_roles");
-		groupRole.column("group_id", "int NOT NULL");
-		groupRole.column("role_id", "int NOT NULL");
+		groupRole.column("group_id", "bigint NOT NULL");
+		groupRole.column("role_id", "bigint NOT NULL");
 		
 		RawSql groupRoleGroup = new RawSql("ALTER TABLE kernely_group_roles ADD CONSTRAINT fk_group_id FOREIGN KEY (group_id) REFERENCES kernely_group (id)");
 		RawSql groupRoleRole = new RawSql("ALTER TABLE kernely_group_roles ADD CONSTRAINT fk_roles_id FOREIGN KEY (role_id) REFERENCES kernely_role (id)");
@@ -222,7 +222,7 @@ public class Migration01 extends Migration {
 		//  the table user_group 
 		CreateTable userGroup = CreateTable.name("kernely_user_group"); 
 		userGroup.column("user_id", "bigint NOT NULL");
-		userGroup.column("group_id", "int NOT NULL");
+		userGroup.column("group_id", "bigint NOT NULL");
 		
 		RawSql userGroupGroup = new RawSql("ALTER TABLE kernely_user_group ADD CONSTRAINT fk_group_id FOREIGN KEY ( group_id) REFERENCES kernely_group (id)");
 		RawSql userGroupUser = new RawSql("ALTER TABLE kernely_user_group ADD CONSTRAINT fk_user_id FOREIGN KEY (user_id) REFERENCES kernely_user (id)");
@@ -237,7 +237,7 @@ public class Migration01 extends Migration {
 		// the table user_permission
 		CreateTable userPermission = CreateTable.name("kernely_user_permissions"); 
 		userPermission.column("user_id", "bigint NOT NULL");
-		userPermission.column("permission_id", "int NOT NULL");
+		userPermission.column("permission_id", "bigint NOT NULL");
 		
 		RawSql userPermissionUser = new RawSql("ALTER TABLE kernely_user_permissions ADD CONSTRAINT fk_user_id FOREIGN KEY (user_id) REFERENCES kernely_user (id)");  
 		RawSql userPermissionPermission = new RawSql("ALTER TABLE kernely_user_permissions ADD CONSTRAINT fk_permission_id FOREIGN KEY (permission_id) REFERENCES kernely_permission (id)"); 
@@ -251,7 +251,7 @@ public class Migration01 extends Migration {
 		// the table user_permission
 		CreateTable userRoles= CreateTable.name("kernely_user_roles"); 
 		userRoles.column("user_id", "bigint NOT NULL");
-		userRoles.column("role_id", "int NOT NULL");
+		userRoles.column("role_id", "bigint NOT NULL");
 		
 		RawSql userRoleUser = new RawSql("ALTER TABLE kernely_user_roles ADD CONSTRAINT fk_user_id  FOREIGN KEY (user_id) REFERENCES kernely_user (id)");  
 		RawSql userRoleRole = new RawSql("ALTER TABLE kernely_user_roles ADD CONSTRAINT fk_role_id FOREIGN KEY (role_id ) REFERENCES kernely_role (id)");
@@ -275,7 +275,7 @@ public class Migration01 extends Migration {
 		commands.add(insertUserRole2);
 		
 		CreateTable mail = CreateTable.name("kernely_mail");
-		mail.column("mail_id", "int primary key");
+		mail.column("id", "bigint primary key");
 		mail.column("subject", "text");
 		mail.column("content", "text");
 		mail.column("recipients", "text");

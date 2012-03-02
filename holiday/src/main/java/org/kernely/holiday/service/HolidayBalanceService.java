@@ -100,7 +100,7 @@ public class HolidayBalanceService extends AbstractService {
 	 *         passed in parameter.
 	 */
 	@Transactional
-	public HolidayBalanceDTO getHolidayBalanceDTO(int id) {
+	public HolidayBalanceDTO getHolidayBalanceDTO(long id) {
 		HolidayBalance balance = em.get().find(HolidayBalance.class, id);
 		return new HolidayBalanceDTO(balance);
 	}
@@ -109,14 +109,14 @@ public class HolidayBalanceService extends AbstractService {
 	 * Create a new Holiday balance in database for the current year. Available
 	 * balance are set to 0.
 	 * 
-	 * @param holidayTypeId
+	 * @param typeId
 	 *            The holiday type of this balance.
 	 * @param userId
 	 *            The user associated to this balance.
 	 * @return A DTO representing the new balance created
 	 */
-	public HolidayBalanceDTO createHolidayBalance(int holidayTypeId, long userId) {
-		return this.createHolidayBalance(holidayTypeId, userId, DateTime.now().getYear());
+	public HolidayBalanceDTO createHolidayBalance(long typeId, long userId) {
+		return this.createHolidayBalance(typeId, userId, DateTime.now().getYear());
 	}
 
 	/**
@@ -129,7 +129,7 @@ public class HolidayBalanceService extends AbstractService {
 	 * of this function with the same association user/type will create a
 	 * balance for the year 2001, even if year is not specified
 	 * 
-	 * @param holidayTypeId
+	 * @param typeId
 	 *            The holiday type of this balance.
 	 * @param userId
 	 *            The user associated to this balance.
@@ -139,16 +139,16 @@ public class HolidayBalanceService extends AbstractService {
 	 * @return A DTO representing the new balance created
 	 */
 	@Transactional
-	public HolidayBalanceDTO createHolidayBalance(int holidayTypeId, long userId, int year) {
+	public HolidayBalanceDTO createHolidayBalance(long typeId, long userId, int year) {
 		User user = em.get().find(User.class, userId);
-		HolidayType type = em.get().find(HolidayType.class, holidayTypeId);
+		HolidayType type = em.get().find(HolidayType.class, typeId);
 
 		if (user == null) {
 			throw new IllegalArgumentException("Can not create holiday balance : user with id " + userId + " is not defined.");
 		}
 
 		if (type == null) {
-			throw new IllegalArgumentException("Can not create holiday balance : type with id " + holidayTypeId + "is not defined.");
+			throw new IllegalArgumentException("Can not create holiday balance : type with id " + typeId + "is not defined.");
 		}
 
 		HolidayBalance balance = new HolidayBalance();
@@ -218,27 +218,27 @@ public class HolidayBalanceService extends AbstractService {
 	/**
 	 * Create a new balance for a new user in function of his hire date.
 	 * 
+	 * @param typeId
+	 *            Id of the new balance's type
 	 * @param userId
 	 *            Id the the concerned user
-	 * @param holidayTypeId
-	 *            Id of the new balance's type
 	 * @return A DTO representing the new balance created
 	 */
-	public HolidayBalanceDTO createHolidayBalanceForNewUser(int holidayTypeId, long userId) {
+	public HolidayBalanceDTO createHolidayBalanceForNewUser(long typeId, long userId) {
 		User user = em.get().find(User.class, userId);
-		HolidayType type = em.get().find(HolidayType.class, holidayTypeId);
+		HolidayType type = em.get().find(HolidayType.class, typeId);
 
 		if (user == null) {
 			throw new IllegalArgumentException("Can not create holiday balance : user with id " + userId + " is not defined.");
 		}
 
 		if (type == null) {
-			throw new IllegalArgumentException("Can not create holiday balance : type with id " + holidayTypeId + "is not defined.");
+			throw new IllegalArgumentException("Can not create holiday balance : type with id " + typeId + "is not defined.");
 		}
 		// Verify if a balance has already been created for this user and this
 		// type.
 		if (getPreviousBalance(type.getCurrentInstance().getId(), userId) != null) {
-			throw new IllegalArgumentException("The user " + userId + " has already a balance for the type " + holidayTypeId
+			throw new IllegalArgumentException("The user " + userId + " has already a balance for the type " + typeId
 					+ ". Impossible to create the new balance.");
 		}
 
@@ -295,7 +295,7 @@ public class HolidayBalanceService extends AbstractService {
 	 * @return A DTO representing the previous balance, null if doesn't exist
 	 */
 	@Transactional
-	public HolidayBalanceDTO getPreviousBalance(int holidayTypeInstanceId, long userId) {
+	public HolidayBalanceDTO getPreviousBalance(long holidayTypeInstanceId, long userId) {
 		User user = em.get().find(User.class, userId);
 		HolidayTypeInstance typeInstance = em.get().find(HolidayTypeInstance.class, holidayTypeInstanceId);
 
@@ -335,7 +335,7 @@ public class HolidayBalanceService extends AbstractService {
 	 *         elsewhere.
 	 */
 	@Transactional
-	public boolean existBalanceForTimePeriod(int holidayTypeInstanceId, long userId, Date begin, Date end) {
+	public boolean existBalanceForTimePeriod(long holidayTypeInstanceId, long userId, Date begin, Date end) {
 		User user = em.get().find(User.class, userId);
 		HolidayTypeInstance typeInstance = em.get().find(HolidayTypeInstance.class, holidayTypeInstanceId);
 
@@ -373,7 +373,7 @@ public class HolidayBalanceService extends AbstractService {
 	 */
 	@SuppressWarnings("unchecked")
 	@Transactional
-	public Set<HolidayBalanceDTO> getHolidayBalancesAvailable(int holidayTypeInstanceId, long userId) {
+	public Set<HolidayBalanceDTO> getHolidayBalancesAvailable(long holidayTypeInstanceId, long userId) {
 		User user = em.get().find(User.class, userId);
 		HolidayTypeInstance typeInstance = em.get().find(HolidayTypeInstance.class, holidayTypeInstanceId);
 
@@ -420,7 +420,7 @@ public class HolidayBalanceService extends AbstractService {
 	 * @return A DTO representing the latest balance created
 	 */
 	@Transactional
-	public HolidayBalanceDTO getProcessedBalance(int holidayTypeInstanceId, long userId) {
+	public HolidayBalanceDTO getProcessedBalance(long holidayTypeInstanceId, long userId) {
 		User user = em.get().find(User.class, userId);
 		HolidayTypeInstance typeInstance = em.get().find(HolidayTypeInstance.class, holidayTypeInstanceId);
 
@@ -445,18 +445,18 @@ public class HolidayBalanceService extends AbstractService {
 	 * associated * the period unit field defined in the type associated too.
 	 * 
 	 * 
-	 * @param holidayTypeId
+	 * @param typeId
 	 *            The id of the type linked to the balance.
 	 * @param userId
 	 *            Id of the owner of the balance to increment
 	 */
 	@Transactional
-	public void incrementBalance(int holidayTypeId, long userId) {
-		HolidayType type = em.get().find(HolidayType.class, holidayTypeId);
+	public void incrementBalance(long typeId, long userId) {
+		HolidayType type = em.get().find(HolidayType.class, typeId);
 		HolidayBalanceDTO bDto = getProcessedBalance(type.getCurrentInstance().getId(), userId);
 		if (bDto == null) {
 			throw new IllegalArgumentException("There is no balance associated to the user with the type " + userId
-					+ " and the holiday type with id " + holidayTypeId);
+					+ " and the holiday type with id " + typeId);
 		}
 		HolidayBalance balance = em.get().find(HolidayBalance.class, bDto.id);
 
@@ -502,7 +502,7 @@ public class HolidayBalanceService extends AbstractService {
 	 * @return True if "days" are available, else false
 	 */
 	@Transactional
-	public boolean hasAvailableDays(int holidayTypeInstanceId, long userId, float days) {
+	public boolean hasAvailableDays(long holidayTypeInstanceId, long userId, float days) {
 		Set<HolidayBalanceDTO> balances = getHolidayBalancesAvailable(holidayTypeInstanceId, userId);
 		float availDays = 0F;
 		for (HolidayBalanceDTO b : balances) {
@@ -515,7 +515,7 @@ public class HolidayBalanceService extends AbstractService {
 	 * Verify if the balance has the amount of days considering the amount of
 	 * days updated with requests.
 	 * 
-	 * @param holidayTypeInstanceId
+	 * @param typeInstanceId
 	 *            Id of the instance of the type of holiday needed
 	 * @param userId
 	 *            User concerned by the balance needed
@@ -524,8 +524,8 @@ public class HolidayBalanceService extends AbstractService {
 	 * @return True if "days" are available, else false
 	 */
 	@Transactional
-	public boolean hasAvailableDaysUpdated(int holidayTypeInstanceId, long userId, float days) {
-		Set<HolidayBalanceDTO> balances = getHolidayBalancesAvailable(holidayTypeInstanceId, userId);
+	public boolean hasAvailableDaysUpdated(long typeInstanceId, long userId, float days) {
+		Set<HolidayBalanceDTO> balances = getHolidayBalancesAvailable(typeInstanceId, userId);
 		float availDays = 0F;
 		for (HolidayBalanceDTO b : balances) {
 			availDays += (b.availableBalanceUpdated * TWELTHS_DAYS);
@@ -545,7 +545,7 @@ public class HolidayBalanceService extends AbstractService {
 	 *            Number of days requested
 	 */
 	@Transactional
-	public void removeAvailableDays(int holidayTypeInstanceId, long userId, float days) {
+	public void removeAvailableDays(long holidayTypeInstanceId, long userId, float days) {
 		HolidayTypeInstance instance = em.get().find(HolidayTypeInstance.class, holidayTypeInstanceId);
 
 		// Can only remove days or half days.
@@ -586,7 +586,7 @@ public class HolidayBalanceService extends AbstractService {
 	 * Updates the availableBalanceUpdated field when a request is made by a
 	 * user. Removes automatically days from the oldest balance available.
 	 * 
-	 * @param holidayTypeInstanceId
+	 * @param typeInstanceId
 	 *            Id of the instance of the type of holiday needed
 	 * @param userId
 	 *            User concerned by the balance needed
@@ -594,19 +594,19 @@ public class HolidayBalanceService extends AbstractService {
 	 *            Number of days requested
 	 */
 	@Transactional
-	public void removeDaysInAvailableUpdatedFromRequest(int holidayTypeInstanceId, long userId, float days) {
+	public void removeDaysInAvailableUpdatedFromRequest(long typeInstanceId, long userId, float days) {
 		// Can only remove days or half days.
 		int entire = (int) (days / HALF_DAY);
 		if (!(Math.abs(((float) entire) * HALF_DAY - days) < RANGE)) {
 			throw new IllegalArgumentException("Can only retrieve days or half days. " + days + " is not a multiple of half day");
 		}
 
-		if (!hasAvailableDaysUpdated(holidayTypeInstanceId, userId, days)) {
-			throw new IllegalArgumentException("Can not retrieve " + days + " days: holiday balance linked to type with id " + holidayTypeInstanceId
+		if (!hasAvailableDaysUpdated(typeInstanceId, userId, days)) {
+			throw new IllegalArgumentException("Can not retrieve " + days + " days: holiday balance linked to type with id " + typeInstanceId
 					+ " for the user with id " + userId + " has not enough available days.");
 		}
 
-		Set<HolidayBalanceDTO> balances = getHolidayBalancesAvailable(holidayTypeInstanceId, userId);
+		Set<HolidayBalanceDTO> balances = getHolidayBalancesAvailable(typeInstanceId, userId);
 		int remainToRemove = (int) (days * TWELTHS_DAYS);
 		HolidayBalance currentBalanceModel;
 		for (HolidayBalanceDTO b : balances) {
@@ -633,7 +633,7 @@ public class HolidayBalanceService extends AbstractService {
 	 * available quantity can not be greater than the quantity field * the
 	 * period unit defined in the associated type.
 	 * 
-	 * @param holidayTypeInstanceId
+	 * @param typeInstanceId
 	 *            Id of the instance of the type of holiday needed
 	 * @param userId
 	 *            User concerned by the balance needed
@@ -641,14 +641,14 @@ public class HolidayBalanceService extends AbstractService {
 	 *            Number of days requested
 	 */
 	@Transactional
-	public void addDaysInAvailableUpdatedFromRequest(int holidayTypeInstanceId, long userId, float days) {
+	public void addDaysInAvailableUpdatedFromRequest(long typeInstanceId, long userId, float days) {
 		// Can only add days or half days.
 		int entire = (int) (days / HALF_DAY);
 		if (!(Math.abs(((float) entire) * HALF_DAY - days) < RANGE)) {
 			throw new IllegalArgumentException("Can only retrieve days or half days. " + days + " is not a multiple of half day");
 		}
-		HolidayTypeInstance typeInstance = em.get().find(HolidayTypeInstance.class, holidayTypeInstanceId);
-		Set<HolidayBalanceDTO> balances = getHolidayBalancesAvailable(holidayTypeInstanceId, userId);
+		HolidayTypeInstance typeInstance = em.get().find(HolidayTypeInstance.class, typeInstanceId);
+		Set<HolidayBalanceDTO> balances = getHolidayBalancesAvailable(typeInstanceId, userId);
 		// The method 'getHolidayBalancesAvailable' gives balances in descending
 		// order. We have to reverse the collection to have the ascending order.
 		List<HolidayBalanceDTO> balancesReversed = new ArrayList<HolidayBalanceDTO>(balances);
@@ -702,7 +702,7 @@ public class HolidayBalanceService extends AbstractService {
 			userId = request.userDTO.id;
 
 			// Days for each type of holidays
-			Map<Integer, Float> days = new HashMap<Integer, Float>();
+			Map<Long, Float> days = new HashMap<Long, Float>();
 
 			DateTime beginTime = new DateTime(request.beginDate);
 
@@ -734,7 +734,7 @@ public class HolidayBalanceService extends AbstractService {
 			}
 
 			// Remove days from all concerned balances
-			for (Entry<Integer, Float> entries : days.entrySet()) {
+			for (Entry<Long, Float> entries : days.entrySet()) {
 				removeAvailableDays(entries.getKey(), userId, entries.getValue());
 			}
 

@@ -133,7 +133,7 @@ public class PermissionService extends AbstractService {
 	/**
 	 * Verify if a specific group has a specific permission.
 	 * 
-	 * @param groupId
+	 * @param id
 	 *            The id of the group.
 	 * @param right
 	 *            The right on the resource for example "write", or "delete".
@@ -146,7 +146,7 @@ public class PermissionService extends AbstractService {
 	 */
 
 	@Transactional
-	public boolean groupHasPermission(int groupId, String right, String resourceType, Object resourceId) {
+	public boolean groupHasPermission(long id, String right, String resourceType, Object resourceId) {
 		String permission = this.createPermissionString(right, resourceType, resourceId.toString());
 
 		Query query = em.get().createQuery("SELECT p FROM Permission p WHERE name = :permission");
@@ -155,7 +155,7 @@ public class PermissionService extends AbstractService {
 			Permission p = (Permission) query.getSingleResult();
 
 			for (Group g : p.getGroups()) {
-				if (g.getId() == groupId) {
+				if (g.getId() == id) {
 					return true;
 				}
 			}
@@ -199,12 +199,12 @@ public class PermissionService extends AbstractService {
 	 *            The unique identifier for the resource
 	 */
 	@Transactional
-	public void grantPermission(int userId, String right, String resourceType, Object resourceId) {
+	public void grantPermission(long userId, String right, String resourceType, Object resourceId) {
 		// Verify if the permission already exists
 		String permission = this.createPermissionString(right, resourceType, resourceId.toString());
 		Query permissionQuery = em.get().createQuery("SELECT p FROM Permission p WHERE name = :permission");
 		permissionQuery.setParameter("permission", permission);
-		User user = em.get().find(User.class, (long) userId);
+		User user = em.get().find(User.class, userId);
 		if(user == null){
 			throw new IllegalArgumentException("The user with id "+ userId +" doesn't exist, impossible to grant permissions.");
 		}
@@ -244,7 +244,7 @@ public class PermissionService extends AbstractService {
 	/**
 	 * Grant a right on a resource to a specific user.
 	 * 
-	 * @param groupId
+	 * @param id
 	 *            The id of the user which has this permission.
 	 * @param right
 	 *            The right on the resource for example "write", or "delete".
@@ -254,15 +254,15 @@ public class PermissionService extends AbstractService {
 	 *            The unique identifier for the resource
 	 */
 	@Transactional
-	public void grantPermissionToGroup(int groupId, String right, String resourceType, Object resourceId) {
+	public void grantPermissionToGroup(long id, String right, String resourceType, Object resourceId) {
 		// Verify if the permission already exists
 		String permission = this.createPermissionString(right, resourceType, resourceId.toString());
 
 		Query permissionQuery = em.get().createQuery("SELECT p FROM Permission p WHERE name = :permission");
 		permissionQuery.setParameter("permission", permission);
-		Group group = em.get().find(Group.class, (int) groupId);
+		Group group = em.get().find(Group.class, id);
 
-		log.debug("Grant permission {} to group id : {}", permission, groupId);
+		log.debug("Grant permission {} to group id : {}", permission, id);
 		Permission p;
 		try {
 			p = (Permission) permissionQuery.getSingleResult();
@@ -277,7 +277,7 @@ public class PermissionService extends AbstractService {
 			em.get().persist(p);
 			log.debug("Creation of the permission {}", permission);
 		}
-		log.debug("Group with id {}: {}", groupId, group);
+		log.debug("Group with id {}: {}", id, group);
 		Set<Permission> groupPermissions = group.getPermissions();
 		if (groupPermissions == null) {
 			groupPermissions = new HashSet<Permission>();
@@ -303,14 +303,14 @@ public class PermissionService extends AbstractService {
 	 *            The unique identifier for the resource
 	 */
 	@Transactional
-	public void ungrantPermission(int userId, String right, String resourceType, Object resourceId) {
+	public void ungrantPermission(long userId, String right, String resourceType, Object resourceId) {
 		String permission = this.createPermissionString(right, resourceType, resourceId.toString());
 
 		// Verify if the permission already exists
 		Query permissionQuery = em.get().createQuery("SELECT p FROM Permission p WHERE name = :permission");
 		permissionQuery.setParameter("permission", permission);
 		Permission p;
-		User user = em.get().find(User.class, (long) userId);
+		User user = em.get().find(User.class, userId);
 		try {
 			log.debug("Ungrant permission {} to user id : {}", permission, userId);
 			p = (Permission) permissionQuery.getSingleResult();
@@ -331,7 +331,7 @@ public class PermissionService extends AbstractService {
 	/**
 	 * Ungrant a specific permission for a specific group.
 	 * 
-	 * @param groupId
+	 * @param id
 	 *            The id of the group which has this permission.
 	 * @param right
 	 *            The right on the resource for example "write", or "delete".
@@ -341,16 +341,16 @@ public class PermissionService extends AbstractService {
 	 *            The unique identifier for the resource
 	 */
 	@Transactional
-	public void ungrantPermissionForGroup(int groupId, String right, String resourceType, Object resourceId) {
+	public void ungrantPermissionForGroup(long id, String right, String resourceType, Object resourceId) {
 		String permission = this.createPermissionString(right, resourceType, resourceId.toString());
 
 		// Verify if the permission already exists
 		Query permissionQuery = em.get().createQuery("SELECT p FROM Permission p WHERE name = :permission");
 		permissionQuery.setParameter("permission", permission);
 		Permission p;
-		Group group = em.get().find(Group.class, (int) groupId);
+		Group group = em.get().find(Group.class, id);
 		try {
-			log.debug("Ungrant permission {} to group id : {}", permission, groupId);
+			log.debug("Ungrant permission {} to group id : {}", permission, id);
 			p = (Permission) permissionQuery.getSingleResult();
 
 			// Remove the permission from the user

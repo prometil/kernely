@@ -23,9 +23,6 @@ package org.kernely.holiday.model;
 import java.util.Set;
 
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.OneToMany;
@@ -40,36 +37,14 @@ import org.kernely.core.model.User;
 @Entity
 @Table(name = "kernely_holiday_profile")
 public class HolidayProfile extends AbstractModel {
-	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	private int id;
-
 	private String name;
-	
+
 	@OneToMany(mappedBy = "holidayProfile")
 	private Set<HolidayType> holidayTypes;
 
 	@OneToMany
-	@JoinTable(
-		name="kernely_holiday_profile_users",
-		joinColumns = @JoinColumn( name = "holiday_profile_id" ),
-		inverseJoinColumns = @JoinColumn( name = "user_id" ) )
+	@JoinTable(name = "kernely_holiday_profile_users", joinColumns = @JoinColumn(name = "holiday_profile_id"), inverseJoinColumns = @JoinColumn(name = "user_id"))
 	private Set<User> users;
-	
-	/**
-	 * @return the id
-	 */
-	public int getId() {
-		return id;
-	}
-
-	/**
-	 * @param id
-	 *            the id to set
-	 */
-	public void setId(int id) {
-		this.id = id;
-	}
 
 	/**
 	 * @return the type
@@ -94,7 +69,8 @@ public class HolidayProfile extends AbstractModel {
 	}
 
 	/**
-	 * @param holidayTypes the holidayTypes to set
+	 * @param holidayTypes
+	 *            the holidayTypes to set
 	 */
 	public void setHolidayTypes(Set<HolidayType> holidayTypes) {
 		this.holidayTypes = holidayTypes;
@@ -108,7 +84,8 @@ public class HolidayProfile extends AbstractModel {
 	}
 
 	/**
-	 * @param users the users to set
+	 * @param users
+	 *            the users to set
 	 */
 	public void setUsers(Set<User> users) {
 		this.users = users;

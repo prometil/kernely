@@ -22,9 +22,6 @@ package org.kernely.holiday.model;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
@@ -34,15 +31,10 @@ import org.kernely.core.hibernate.AbstractModel;
 
 /**
  * holiday type model
- * @author b.grandperret
- *
  */
 @Entity
 @Table(name = "kernely_holiday_type")
 public class HolidayType extends AbstractModel {
-	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	private int id;
 
 	@ManyToOne
 	@JoinColumn(name = "holiday_profile_id")
@@ -83,21 +75,6 @@ public class HolidayType extends AbstractModel {
 	public static final int NOVEMBER = 11;
 	public static final int DECEMBER = 12;
 	public static final int ALL_MONTH = 0;
-
-	/**
-	 * @return the id
-	 */
-	public int getId() {
-		return id;
-	}
-
-	/**
-	 * @param id
-	 *            the id to set
-	 */
-	public void setId(int id) {
-		this.id = id;
-	}
 
 	/**
 	 * @return the type

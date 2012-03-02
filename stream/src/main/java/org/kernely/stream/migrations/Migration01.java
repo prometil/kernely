@@ -10,8 +10,6 @@ import org.kernely.core.migrations.migrator.RawSql;
 
 /**
  * The migration script
- * @author b.grandperret
- *
  */
 public class Migration01 extends Migration {
 
@@ -30,7 +28,7 @@ public class Migration01 extends Migration {
 	public List<Command> getList() {
 		ArrayList<Command> commands = new ArrayList<Command>();
 		CreateTable stream = CreateTable.name("kernely_stream");
-		stream.column("id", "int primary key");
+		stream.column("id", "bigint primary key");
 		stream.column("category", "varchar(50)");
 		stream.column("title", "varchar(50)");
 		stream.column("locked", "boolean DEFAULT false");
@@ -41,10 +39,10 @@ public class Migration01 extends Migration {
 		commands.add(streamForeignKey);
 		
 		CreateTable message = CreateTable.name("kernely_message");
-		message.column("id", "int primary key");
+		message.column("id", "bigint primary key");
 		message.column("content", "text");
-		message.column("message_parent", "int");
-		message.column("stream_id", "int");
+		message.column("message_parent", "bigint");
+		message.column("stream_id", "bigint");
 		message.column("date", "timestamp");
 		message.column("commentable", "boolean not null");
 		message.column("user_id", "bigint");

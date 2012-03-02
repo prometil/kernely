@@ -148,7 +148,7 @@ public class OrganizationService extends AbstractService{
 	 *            The id of the organization to delete
 	 */
 	@Transactional
-	public void deleteOrganization(int id) {
+	public void deleteOrganization(long id) {
 		Organization organization = em.get().find(Organization.class, id);
 		em.get().remove(organization);
 	}
@@ -161,7 +161,7 @@ public class OrganizationService extends AbstractService{
 	 * @return the list of users which are in the organization.
 	 */
 	@Transactional
-	public List<UserDTO> getOrganizationUsers(int id) {
+	public List<UserDTO> getOrganizationUsers(long id) {
 		Organization g = em.get().find(Organization.class, id);
 		List<UserDTO> dtos = new ArrayList<UserDTO>();
 		for (User user : g.getUsers()) {

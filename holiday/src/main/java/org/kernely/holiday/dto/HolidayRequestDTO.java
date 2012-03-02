@@ -13,8 +13,6 @@ import org.kernely.holiday.model.HolidayRequestDetail;
 
 /**
  * Dto for holiday request 
- * @author b.grandperret
- *
  */
 @XmlRootElement
 public class HolidayRequestDTO {
@@ -23,7 +21,7 @@ public class HolidayRequestDTO {
 	/**
 	 * The id of the holiday request DTO 
 	 */
-	public int id;
+	public long id;
 	
 	/**
 	 * The begin date of the request
@@ -117,7 +115,7 @@ public class HolidayRequestDTO {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		return prime * result + id;
+		return (int) (prime * result + id);
 	}
 
 	/**

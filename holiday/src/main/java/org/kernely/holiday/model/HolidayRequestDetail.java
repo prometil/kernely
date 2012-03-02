@@ -23,9 +23,6 @@ package org.kernely.holiday.model;
 import java.util.Date;
 
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
@@ -36,16 +33,11 @@ import org.joda.time.DateTime;
 import org.kernely.core.hibernate.AbstractModel;
 
 /**
- * the holiday request model
- * @author b.grandperret
- *
+ * the holiday request details model
  */
 @Entity
 @Table(name = "kernely_holiday_request_detail")
 public class HolidayRequestDetail extends AbstractModel implements Comparable<HolidayRequestDetail> {
-	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	private int id;
 
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date day;
@@ -59,22 +51,6 @@ public class HolidayRequestDetail extends AbstractModel implements Comparable<Ho
 	@ManyToOne
     @JoinColumn(name = "holiday_type_instance_id")
 	private HolidayTypeInstance typeInstance;
-
-
-	/**
-	 * @return the id
-	 */
-	public int getId() {
-		return id;
-	}
-
-	/**
-	 * @param id
-	 *            the id to set
-	 */
-	public void setId(int id) {
-		this.id = id;
-	}
 
 	/**
 	 * @return the day
@@ -179,7 +155,7 @@ public class HolidayRequestDetail extends AbstractModel implements Comparable<Ho
 		int result = 1;
 		result = prime * result + (am ? 1231 : 1237);
 		result = prime * result + ((day == null) ? 0 : day.hashCode());
-		result = prime * result + id;
+		result = (int) (prime * result + id);
 		result = prime * result + (pm ? 1231 : 1237);
 		return result;
 	}

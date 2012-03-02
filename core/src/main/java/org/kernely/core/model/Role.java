@@ -24,9 +24,6 @@ import java.util.Set;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
@@ -34,8 +31,6 @@ import org.kernely.core.hibernate.AbstractModel;
 
 /**
  * The role model
- * @author b.grandperret
- *
  */
 @Entity
 @Table(name="kernely_role")
@@ -45,13 +40,6 @@ public class Role extends AbstractModel {
 	public static final String ROLE_HUMANRESOURCE = "Human resource";
 	public static final String ROLE_PROJECTMANAGER = "Project manager";
 	public static final String ROLE_CLIENT = "Client";
-
-	/**
-	 * Role's id
-	 */
-	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	private int id;
 
 	/**
 	 * Role Name
@@ -84,20 +72,6 @@ public class Role extends AbstractModel {
 		this.id = 0;
 		this.name = "";
 		this.users = new HashSet<User>();
-	}
-
-	/**
-	 * @return the id
-	 */
-	public final int getId() {
-		return id;
-	}
-
-	/**
-	 * @param id the id to set
-	 */
-	public final void setId(int id) {
-		this.id = id;
 	}
 
 	/**
@@ -149,7 +123,7 @@ public class Role extends AbstractModel {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + id;
+		result = (int) (prime * result + id);
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
 		return result;
 	}

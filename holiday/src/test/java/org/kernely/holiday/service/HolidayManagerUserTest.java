@@ -90,15 +90,15 @@ public class HolidayManagerUserTest extends AbstractServiceTest  {
 		return holidayService.createOrUpdateHoliday(request);
 	}
 	
-	private void createHolidayRequestForUser(long userId, int typeInstanceId){
+	private void createHolidayRequestForUser(long userId, long instanceId){
 		HolidayDetailCreationRequestDTO detailDTO1 = new HolidayDetailCreationRequestDTO();
 		HolidayDetailCreationRequestDTO detailDTO2 = new HolidayDetailCreationRequestDTO();
 		
 		detailDTO1.day = DATE1_USER;
 		detailDTO2.day = DATE2_USER;
 		
-		detailDTO1.typeInstanceId = typeInstanceId;
-		detailDTO2.typeInstanceId = typeInstanceId;
+		detailDTO1.typeInstanceId = instanceId;
+		detailDTO2.typeInstanceId = instanceId;
 		
 		List<HolidayDetailCreationRequestDTO> list = new ArrayList<HolidayDetailCreationRequestDTO>();
 		list.add(detailDTO1);

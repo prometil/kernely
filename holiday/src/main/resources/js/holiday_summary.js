@@ -93,7 +93,7 @@ AppHolidayAdmin = (function($){
 			var parent = this;
 			var html = $("#table-header").html();
 			$(this.el).html(html);
-			$.ajax({
+ 			$.ajax({
 				type:"GET",
 				url:"/holiday/humanresource/summary/allprofiles",
 				dataType:"json",
