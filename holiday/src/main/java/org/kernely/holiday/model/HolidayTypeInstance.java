@@ -26,6 +26,8 @@ public class HolidayTypeInstance extends AbstractModel {
 	private boolean anticipated;
 
 	private int quantity;
+	
+	private boolean unlimited;
 
 	@Column(name = "period_unit")
 	private int periodUnit;
@@ -196,5 +198,19 @@ public class HolidayTypeInstance extends AbstractModel {
 	 */
 	public void setPeriodUnit(int periodUnit) {
 		this.periodUnit = periodUnit;
+	}
+
+	/**
+	 * @return the unlimited
+	 */
+	public boolean isUnlimited() {
+		return unlimited;
+	}
+
+	/**
+	 * @param unlimited the unlimited to set
+	 */
+	public void setUnlimited(boolean unlimited) {
+		this.unlimited = unlimited;
 	}
 }

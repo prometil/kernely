@@ -552,43 +552,44 @@ public class HolidayBalanceService extends AbstractService {
 		if (!(Math.abs(((float) entire) * HALF_DAY - days) < RANGE)) {
 			throw new IllegalArgumentException("Can only retrieve days or half days. " + days + " is not a multiple of half day");
 		}
-
-		// If the type associated doesn't allowed anticipation, balance don't
-		// have to be negative.
-		if (!instance.isAnticipated() && !hasAvailableDays(holidayTypeInstanceId, userId, days)) {
-			throw new IllegalArgumentException("Can not retrieve " + days + " days: holiday balance linked to type with id " + holidayTypeInstanceId
-					+ " for the user with id " + userId + " has not enough available days.");
-		}
-
-		Set<HolidayBalanceDTO> balances = getHolidayBalancesAvailable(holidayTypeInstanceId, userId);
-		int remainToRemove = (int) (days * TWELTHS_DAYS);
-		HolidayBalance currentBalanceModel;
-		for (HolidayBalanceDTO b : balances) {
-			currentBalanceModel = em.get().find(HolidayBalance.class, b.id);
-			int availInThisBalance = currentBalanceModel.getAvailableBalance();
-			if (availInThisBalance > 0F) {
-				if (availInThisBalance >= remainToRemove) {
-					int newBalanceAvail = availInThisBalance - remainToRemove;
-					remainToRemove = 0;
-					currentBalanceModel.setAvailableBalance(newBalanceAvail);
-					em.get().merge(currentBalanceModel);
-					break;
-				} else {
-					currentBalanceModel.setAvailableBalance(0);
-					remainToRemove -= availInThisBalance;
-					em.get().merge(currentBalanceModel);
+		if(!instance.isUnlimited()){
+			// If the type associated doesn't allowed anticipation, balance don't
+			// have to be negative.
+			if (!instance.isAnticipated() && !hasAvailableDays(holidayTypeInstanceId, userId, days)) {
+				throw new IllegalArgumentException("Can not retrieve " + days + " days: holiday balance linked to type with id " + holidayTypeInstanceId
+						+ " for the user with id " + userId + " has not enough available days.");
+			}
+	
+			Set<HolidayBalanceDTO> balances = getHolidayBalancesAvailable(holidayTypeInstanceId, userId);
+			int remainToRemove = (int) (days * TWELTHS_DAYS);
+			HolidayBalance currentBalanceModel;
+			for (HolidayBalanceDTO b : balances) {
+				currentBalanceModel = em.get().find(HolidayBalance.class, b.id);
+				int availInThisBalance = currentBalanceModel.getAvailableBalance();
+				if (availInThisBalance > 0F) {
+					if (availInThisBalance >= remainToRemove) {
+						int newBalanceAvail = availInThisBalance - remainToRemove;
+						remainToRemove = 0;
+						currentBalanceModel.setAvailableBalance(newBalanceAvail);
+						em.get().merge(currentBalanceModel);
+						break;
+					} else {
+						currentBalanceModel.setAvailableBalance(0);
+						remainToRemove -= availInThisBalance;
+						em.get().merge(currentBalanceModel);
+					}
 				}
 			}
-		}
-		// If we are in an anticipated type, and there are yet some days to
-		// remove, we remove these days from the newest balance.
-		if (remainToRemove > 0 && instance.isAnticipated()) {
-			HolidayBalanceDTO last = this.getProcessedBalance(holidayTypeInstanceId, userId);
-			HolidayBalance lastBalance = em.get().find(HolidayBalance.class, last.id);
-
-			int newBalanceAvail = lastBalance.getAvailableBalance() - remainToRemove;
-			lastBalance.setAvailableBalance(newBalanceAvail);
-			em.get().merge(lastBalance);
+			// If we are in an anticipated type, and there are yet some days to
+			// remove, we remove these days from the newest balance.
+			if (remainToRemove > 0 && instance.isAnticipated()) {
+				HolidayBalanceDTO last = this.getProcessedBalance(holidayTypeInstanceId, userId);
+				HolidayBalance lastBalance = em.get().find(HolidayBalance.class, last.id);
+	
+				int newBalanceAvail = lastBalance.getAvailableBalance() - remainToRemove;
+				lastBalance.setAvailableBalance(newBalanceAvail);
+				em.get().merge(lastBalance);
+			}
 		}
 	}
 
@@ -605,33 +606,37 @@ public class HolidayBalanceService extends AbstractService {
 	 */
 	@Transactional
 	public void removeDaysInAvailableUpdatedFromRequest(long typeInstanceId, long userId, float days) {
+		HolidayTypeInstance instance = em.get().find(HolidayTypeInstance.class, typeInstanceId);
+		
 		// Can only remove days or half days.
 		int entire = (int) (days / HALF_DAY);
 		if (!(Math.abs(((float) entire) * HALF_DAY - days) < RANGE)) {
 			throw new IllegalArgumentException("Can only retrieve days or half days. " + days + " is not a multiple of half day");
 		}
 
-		if (!hasAvailableDaysUpdated(typeInstanceId, userId, days)) {
-			throw new IllegalArgumentException("Can not retrieve " + days + " days: holiday balance linked to type with id " + typeInstanceId
-					+ " for the user with id " + userId + " has not enough available days.");
-		}
-
-		Set<HolidayBalanceDTO> balances = getHolidayBalancesAvailable(typeInstanceId, userId);
-		int remainToRemove = (int) (days * TWELTHS_DAYS);
-		HolidayBalance currentBalanceModel;
-		for (HolidayBalanceDTO b : balances) {
-			currentBalanceModel = em.get().find(HolidayBalance.class, b.id);
-			int availInThisBalance = currentBalanceModel.getAvailableBalanceUpdated();
-			if (availInThisBalance > 0F) {
-				if (availInThisBalance >= remainToRemove) {
-					int newBalanceAvail = availInThisBalance - remainToRemove;
-					currentBalanceModel.setAvailableBalanceUpdated(newBalanceAvail);
-					em.get().merge(currentBalanceModel);
-					break;
-				} else {
-					currentBalanceModel.setAvailableBalanceUpdated(0);
-					remainToRemove -= availInThisBalance;
-					em.get().merge(currentBalanceModel);
+		if(!instance.isUnlimited()){
+			if (!hasAvailableDaysUpdated(typeInstanceId, userId, days)) {
+				throw new IllegalArgumentException("Can not retrieve " + days + " days: holiday balance linked to type with id " + typeInstanceId
+						+ " for the user with id " + userId + " has not enough available days.");
+			}
+	
+			Set<HolidayBalanceDTO> balances = getHolidayBalancesAvailable(typeInstanceId, userId);
+			int remainToRemove = (int) (days * TWELTHS_DAYS);
+			HolidayBalance currentBalanceModel;
+			for (HolidayBalanceDTO b : balances) {
+				currentBalanceModel = em.get().find(HolidayBalance.class, b.id);
+				int availInThisBalance = currentBalanceModel.getAvailableBalanceUpdated();
+				if (availInThisBalance > 0F) {
+					if (availInThisBalance >= remainToRemove) {
+						int newBalanceAvail = availInThisBalance - remainToRemove;
+						currentBalanceModel.setAvailableBalanceUpdated(newBalanceAvail);
+						em.get().merge(currentBalanceModel);
+						break;
+					} else {
+						currentBalanceModel.setAvailableBalanceUpdated(0);
+						remainToRemove -= availInThisBalance;
+						em.get().merge(currentBalanceModel);
+					}
 				}
 			}
 		}
@@ -652,41 +657,46 @@ public class HolidayBalanceService extends AbstractService {
 	 */
 	@Transactional
 	public void addDaysInAvailableUpdatedFromRequest(long typeInstanceId, long userId, float days) {
+		
 		// Can only add days or half days.
 		int entire = (int) (days / HALF_DAY);
 		if (!(Math.abs(((float) entire) * HALF_DAY - days) < RANGE)) {
 			throw new IllegalArgumentException("Can only retrieve days or half days. " + days + " is not a multiple of half day");
 		}
+		
+		
 		HolidayTypeInstance typeInstance = em.get().find(HolidayTypeInstance.class, typeInstanceId);
-		Set<HolidayBalanceDTO> balances = getHolidayBalancesAvailable(typeInstanceId, userId);
-		// The method 'getHolidayBalancesAvailable' gives balances in descending
-		// order. We have to reverse the collection to have the ascending order.
-		List<HolidayBalanceDTO> balancesReversed = new ArrayList<HolidayBalanceDTO>(balances);
-		Collections.reverse(balancesReversed);
-		int remainToAdd = (int) (days * TWELTHS_DAYS);
-		HolidayBalance currentBalanceModel;
-		int maxOfThisBalance;
-		int availInThisBalance;
-		for (HolidayBalanceDTO b : balancesReversed) {
-			currentBalanceModel = em.get().find(HolidayBalance.class, b.id);
-			// Retrieve the maximum quantity of this balance
-			maxOfThisBalance = (int) (typeInstance.getQuantity() * typeInstance.getPeriodUnit() * 12);
-			// Current available quantity
-			availInThisBalance = currentBalanceModel.getAvailableBalanceUpdated();
-			// If the balance is full, switch to the next balance, else we fill
-			// it as possible.
-			if (availInThisBalance < maxOfThisBalance) {
-				// If there is enough space in this balance to add all days
-				if (maxOfThisBalance >= (remainToAdd + availInThisBalance)) {
-					int newBalanceAvail = availInThisBalance + remainToAdd;
-					currentBalanceModel.setAvailableBalanceUpdated(newBalanceAvail);
-					em.get().merge(currentBalanceModel);
-					break;
-				} else { // Increase the balance until its maximum and decrease
-					// the remain quantity to add.
-					currentBalanceModel.setAvailableBalanceUpdated(maxOfThisBalance);
-					remainToAdd -= (maxOfThisBalance - availInThisBalance);
-					em.get().merge(currentBalanceModel);
+		if(!typeInstance.isUnlimited()){
+			Set<HolidayBalanceDTO> balances = getHolidayBalancesAvailable(typeInstanceId, userId);
+			// The method 'getHolidayBalancesAvailable' gives balances in descending
+			// order. We have to reverse the collection to have the ascending order.
+			List<HolidayBalanceDTO> balancesReversed = new ArrayList<HolidayBalanceDTO>(balances);
+			Collections.reverse(balancesReversed);
+			int remainToAdd = (int) (days * TWELTHS_DAYS);
+			HolidayBalance currentBalanceModel;
+			int maxOfThisBalance;
+			int availInThisBalance;
+			for (HolidayBalanceDTO b : balancesReversed) {
+				currentBalanceModel = em.get().find(HolidayBalance.class, b.id);
+				// Retrieve the maximum quantity of this balance
+				maxOfThisBalance = (int) (typeInstance.getQuantity() * typeInstance.getPeriodUnit() * 12);
+				// Current available quantity
+				availInThisBalance = currentBalanceModel.getAvailableBalanceUpdated();
+				// If the balance is full, switch to the next balance, else we fill
+				// it as possible.
+				if (availInThisBalance < maxOfThisBalance) {
+					// If there is enough space in this balance to add all days
+					if (maxOfThisBalance >= (remainToAdd + availInThisBalance)) {
+						int newBalanceAvail = availInThisBalance + remainToAdd;
+						currentBalanceModel.setAvailableBalanceUpdated(newBalanceAvail);
+						em.get().merge(currentBalanceModel);
+						break;
+					} else { // Increase the balance until its maximum and decrease
+						// the remain quantity to add.
+						currentBalanceModel.setAvailableBalanceUpdated(maxOfThisBalance);
+						remainToAdd -= (maxOfThisBalance - availInThisBalance);
+						em.get().merge(currentBalanceModel);
+					}
 				}
 			}
 		}

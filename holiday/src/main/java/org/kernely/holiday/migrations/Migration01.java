@@ -52,6 +52,7 @@ public class Migration01 extends Migration {
 		holidayTypeInstance.column("name", "varchar(50)");
 		holidayTypeInstance.column("color", "varchar(10)");
 		holidayTypeInstance.column("anticipated", "bool");
+		holidayTypeInstance.column("unlimited", "bool");
 		holidayTypeInstance.column("quantity", "int");
 		holidayTypeInstance.column("period_unit", "int");
 
