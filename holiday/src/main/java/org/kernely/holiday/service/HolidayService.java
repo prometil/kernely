@@ -279,7 +279,7 @@ public class HolidayService extends AbstractService {
 		}
 
 		HolidayProfile profile;
-		int id = request.id;
+		long id = request.id;
 		if (id == 0) {
 			profile = new HolidayProfile();
 		} else {

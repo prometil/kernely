@@ -178,7 +178,7 @@ public class HolidayRequestService extends AbstractService {
 	 * @return an holidaydetaildto
 	 */
 	@Transactional
-	public List<HolidayDetailDTO> getHolidayRequestDetails(int idRequest) {
+	public List<HolidayDetailDTO> getHolidayRequestDetails(long idRequest) {
 		Query holidayRequest = em.get().createQuery("SELECT h FROM HolidayRequest h WHERE id=:idRequest");
 		holidayRequest.setParameter("idRequest", idRequest);
 		HolidayRequest holiday = (HolidayRequest) holidayRequest.getSingleResult();
@@ -197,7 +197,7 @@ public class HolidayRequestService extends AbstractService {
 	 * @return an holiday detail DTO
 	 */
 	@Transactional
-	public List<HolidayDetailDTO> getHolidayRequestDetailsByOrder(int idRequest) {
+	public List<HolidayDetailDTO> getHolidayRequestDetailsByOrder(long idRequest) {
 		Query holidayRequest = em.get().createQuery("SELECT h FROM HolidayRequest h WHERE id=:idRequest");
 		holidayRequest.setParameter("idRequest", idRequest);
 		HolidayRequest holiday = (HolidayRequest) holidayRequest.getSingleResult();
