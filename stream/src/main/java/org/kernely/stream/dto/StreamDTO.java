@@ -61,7 +61,7 @@ public class StreamDTO {
 	/**
 	 *  the id in database
 	 */
-	public int id;
+	public long id;
 
 	/**
 	 *  messages contained by the stream

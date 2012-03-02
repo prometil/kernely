@@ -17,7 +17,7 @@ public class HolidayProfileDTO implements Comparable<HolidayProfileDTO>{
 	/**
 	 * The unique id of the profile
 	 */
-	public int id;
+	public long id;
 	
 	/**
 	 * The name of the profile.
@@ -43,13 +43,13 @@ public class HolidayProfileDTO implements Comparable<HolidayProfileDTO>{
 	
 	/**
 	 * Create an holiday profile, containing holiday types id.
-	 * @param id The id of the holiday profile.
+	 * @param profileId The id of the holiday profile.
 	 * @param name The name of the holiday profile.
 	 * @param holidayTypes The types associated to this profile.
 	 * @param nbUsers The number of users associated to this profile
 	 */
-	public HolidayProfileDTO(int id, String name, List<HolidayDTO> holidayTypes, int nbUsers){
-		this.id=id;
+	public HolidayProfileDTO(long profileId, String name, List<HolidayDTO> holidayTypes, int nbUsers){
+		this.id=profileId;
 		this.name=name;
 		this.holidayTypes = holidayTypes;
 		this.nbUsers = nbUsers;

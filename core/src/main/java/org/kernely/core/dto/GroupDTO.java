@@ -32,7 +32,7 @@ public class GroupDTO {
 	/**
 	 * The id of the group
 	 */
-	public int id;
+	public long id;
 	
 	/**
 	 * The name of the group
@@ -61,7 +61,7 @@ public class GroupDTO {
 	 * @param users
 	 *            Users associated to the current group
 	 */
-	public GroupDTO(String pName, int id, List<UserDTO> users) {
+	public GroupDTO(String pName, long id, List<UserDTO> users) {
 		this.id = id;
 		this.name = pName;
 		this.users = users;

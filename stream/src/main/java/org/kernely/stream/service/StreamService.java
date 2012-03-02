@@ -74,19 +74,19 @@ public class StreamService extends AbstractService {
 	 * @throws IllegalAccessException
 	 */
 	@Transactional
-	public StreamMessageDTO addMessage(String pMessage, int streamId) {
+	public StreamMessageDTO addMessage(String pMessage, long id) {
 		if (pMessage == null) {
 			throw new IllegalArgumentException("Message cannot be null ");
 		}
 		if ("".equals(pMessage)) {
 			throw new IllegalArgumentException("Message cannot be empty ");
 		}
-		if (!(currentUserHasRightsOnStream(Stream.RIGHT_WRITE, (int) streamId) || currentUserHasRightsOnStream(Stream.RIGHT_DELETE, (int) streamId))) {
+		if (!(currentUserHasRightsOnStream(Stream.RIGHT_WRITE, (int) id) || currentUserHasRightsOnStream(Stream.RIGHT_DELETE, (int) id))) {
 			return null;
 		}
 		Message message = new Message();
 
-		Stream parent = getStreamModel(streamId);
+		Stream parent = getStreamModel(id);
 		message.setStream(parent);
 		message.setContent(pMessage);
 		message.setUser(getAuthenticatedUserModel());
@@ -113,7 +113,7 @@ public class StreamService extends AbstractService {
 		}
 
 		StreamMessageDTO messageDTO = new StreamMessageDTO(message);
-		messageDTO.deletion = currentUserHasRightsOnStream(Stream.RIGHT_DELETE, (int) streamId);
+		messageDTO.deletion = currentUserHasRightsOnStream(Stream.RIGHT_DELETE, (int) id);
 		return messageDTO;
 	}
 
@@ -123,14 +123,14 @@ public class StreamService extends AbstractService {
 	 * @return the created comment
 	 */
 	@Transactional
-	public StreamMessageDTO addComment(String pMessage, int streamId, int idMessageParent) {
+	public StreamMessageDTO addComment(String pMessage, long streamId, long id) {
 		if (pMessage == null) {
 			throw new IllegalArgumentException("Comment cannot be null ");
 		}
 		if ("".equals(pMessage)) {
 			throw new IllegalArgumentException("Comment cannot be empty ");
 		}
-		Message messageParent = em.get().find(Message.class, idMessageParent);
+		Message messageParent = em.get().find(Message.class, id);
 		Message comment = new Message();
 
 		comment.setStream(getStreamModel(streamId));
@@ -194,8 +194,8 @@ public class StreamService extends AbstractService {
 	 * @return the stream
 	 */
 	@Transactional
-	public StreamDTO getStream(int streamId) {
-		Stream stream = getStreamModel(streamId);
+	public StreamDTO getStream(long id) {
+		Stream stream = getStreamModel(id);
 		StreamDTO dto = new StreamDTO();
 		dto.id = stream.getId();
 		dto.title = stream.getTitle();
@@ -210,9 +210,9 @@ public class StreamService extends AbstractService {
 	 * @return the stream
 	 */
 	@Transactional
-	private Stream getStreamModel(int streamId) {
+	private Stream getStreamModel(long id) {
 		Query query = em.get().createQuery("SELECT s FROM Stream s WHERE id= :stream_id");
-		query.setParameter("stream_id", (int) streamId);
+		query.setParameter("stream_id", id);
 		Stream stream = (Stream) query.getSingleResult();
 		log.debug("Found stream titled: {}", stream.getTitle());
 		return stream;
@@ -299,8 +299,8 @@ public class StreamService extends AbstractService {
 	 *            The id of the stream to lock.
 	 */
 	@Transactional
-	public void lockStream(int streamId) {
-		Stream stream = getStreamModel(streamId);
+	public void lockStream(long id) {
+		Stream stream = getStreamModel(id);
 		stream.setLocked(true);
 	}
 
@@ -311,8 +311,8 @@ public class StreamService extends AbstractService {
 	 *            The id of the stream to lock.
 	 */
 	@Transactional
-	public void unlockStream(int streamId) {
-		Stream stream = getStreamModel(streamId);
+	public void unlockStream(long id) {
+		Stream stream = getStreamModel(id);
 		stream.setLocked(false);
 	}
 
@@ -364,8 +364,8 @@ public class StreamService extends AbstractService {
 		List<PermissionDTO> permissions = permissionService.getTypeOfPermissionForOneUser(current.getId(), "streams");
 		List<Stream> streams = new ArrayList<Stream>();
 		for (PermissionDTO p : permissions) {
-			if (em.get().find(Stream.class, Integer.parseInt(p.resourceId)) != null) {
-				streams.add(em.get().find(Stream.class, Integer.parseInt(p.resourceId)));
+			if (em.get().find(Stream.class, Long.parseLong(p.resourceId)) != null) {
+				streams.add(em.get().find(Stream.class, Long.parseLong(p.resourceId)));
 			}
 		}
 		if (streams.isEmpty()) {
@@ -399,13 +399,13 @@ public class StreamService extends AbstractService {
 	 */
 	@SuppressWarnings("unchecked")
 	public List<StreamMessageDTO> getAllMessagesForCurrentUser(int flag) {
-		int cFlag = flag;
+		long cFlag = flag;
 		if (flag == 0) {
 			Query query = em.get().createQuery("SELECT max(id) FROM Message m");
-			if ((Integer) query.getSingleResult() == null) {
+			if ((Long) query.getSingleResult() == null) {
 				return null;
 			}
-			cFlag = (Integer) query.getSingleResult();
+			cFlag = (Long) query.getSingleResult();
 			// We add 1 to flag to consider the last id too in the request with
 			// '<'
 			cFlag++;
@@ -451,8 +451,8 @@ public class StreamService extends AbstractService {
 	 *            The id of the message to delete
 	 */
 	@Transactional
-	public void deleteMessage(int messageId) {
-		Message message = em.get().find(Message.class, messageId);
+	public void deleteMessage(long id) {
+		Message message = em.get().find(Message.class, id);
 		em.get().remove(message);
 	}
 
@@ -463,7 +463,7 @@ public class StreamService extends AbstractService {
 	 *            Id of the message
 	 * @return the list of DTO corresponding to message's comments
 	 */
-	public List<StreamMessageDTO> getAllCommentsForMessage(int id) {
+	public List<StreamMessageDTO> getAllCommentsForMessage(long id) {
 		Message message = em.get().find(Message.class, id);
 		TreeSet<Message> commentsModel = new TreeSet<Message>(new MessageComparator());
 		if (message.getComments() != null) {

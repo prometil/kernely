@@ -37,7 +37,7 @@ public class UserDetailsDTO {
 	/**
 	 * The id of the user detail
 	 */
-	public int id;
+	public long id;
 	
 	/**
 	 * The firstname of the user
@@ -187,7 +187,7 @@ public class UserDetailsDTO {
 		} else {
 			this.hireString = "";
 		}
-		this.id = details.getIdUserDetail();
+		this.id = details.getId();
 		this.user = new UserDTO(details.getUser());
 	}
 
@@ -199,7 +199,7 @@ public class UserDetailsDTO {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((firstname == null) ? 0 : firstname.hashCode());
-		result = prime * result + id;
+		result = (int) (prime * result + id);
 		result = prime * result + ((lastname == null) ? 0 : lastname.hashCode());
 		return result;
 	}

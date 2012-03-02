@@ -20,9 +20,36 @@
 
 package org.kernely.core.hibernate;
 
-/**
- *
- */
-public class AbstractModel {
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.MappedSuperclass;
 
+/**
+ *	All Kernely models have to extends this class
+ */
+@MappedSuperclass
+public class AbstractModel {
+	
+	/**
+	 * Unique id of the model
+	 */
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	protected long id;
+
+	/**
+	 * @return the id
+	 */
+	public long getId() {
+		return id;
+	}
+
+	/**
+	 * @param id the id to set
+	 */
+	public void setId(long id) {
+		this.id = id;
+	}
+	
 }

@@ -19,11 +19,7 @@
  */
 package org.kernely.core.model;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.Table;
 
 import org.kernely.core.hibernate.AbstractModel;
@@ -50,31 +46,11 @@ public class Mail extends AbstractModel {
 	 */
 	public static final int MAIL_WAITING = 0;
 	
-	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	@Column(name = "mail_id")
-	private int id;
-
 	private String subject;
 	private String content;
 	private String recipients;
 	private String cc;
 	private int status;
-
-	/**
-	 * @return the id
-	 */
-	public int getId() {
-		return id;
-	}
-
-	/**
-	 * @param id
-	 *            the id to set
-	 */
-	public void setId(int id) {
-		this.id = id;
-	}
 
 	/**
 	 * @return the object

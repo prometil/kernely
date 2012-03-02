@@ -15,7 +15,7 @@ public class ProjectDTO {
 	/**
 	 * The id of the project
 	 */
-	public int id;
+	public long id;
 	
 	/**
 	 * The  name of the project
@@ -47,8 +47,8 @@ public class ProjectDTO {
 	/**
 	 * Constructor
 	 */
-	public ProjectDTO(String newName, int newId, String newIcon, List<UserDTO> newUsers, OrganizationDTO newOrganization){
-		this.id = newId;
+	public ProjectDTO(String newName, long id, String newIcon, List<UserDTO> newUsers, OrganizationDTO newOrganization){
+		this.id = id;
 		this.name = newName;
 		this.users  = newUsers;
 		this.icon = newIcon;

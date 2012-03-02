@@ -24,9 +24,6 @@ import java.util.Set;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
@@ -38,8 +35,9 @@ import org.kernely.core.model.User;
 
 /**
  * The stream model
+ * 
  * @author b.grandperret
- *
+ * 
  */
 @Entity
 @Table(name = "kernely_stream")
@@ -62,25 +60,28 @@ public class Stream extends AbstractModel {
 	private User user;
 
 	/**
-     * get the userid associated to this stream
-     * @return : the userid associated
-     */
+	 * get the userid associated to this stream
+	 * 
+	 * @return : the userid associated
+	 */
 	public User getUser() {
 		return user;
 	}
 
 	/**
-     * set the userid associated to this stream
-     * @param : the userid associated
-     */
+	 * set the userid associated to this stream
+	 * 
+	 * @param : the userid associated
+	 */
 	public void setUser(User user) {
 		this.user = user;
 	}
 
 	/**
-     * set the lock associated to this stream
-     * @param : the new lock
-     */
+	 * set the lock associated to this stream
+	 * 
+	 * @param : the new lock
+	 */
 	public void setLocked(boolean locked) {
 		this.locked = locked;
 	}
@@ -109,14 +110,12 @@ public class Stream extends AbstractModel {
 	public static final String RIGHT_READ = "read";
 
 	/**
-	 * The right for an user to write messages on the stream. This right
-	 * includes the right to see the stream.
+	 * The right for an user to write messages on the stream. This right includes the right to see the stream.
 	 */
 	public static final String RIGHT_WRITE = "write";
 
 	/**
-	 * The right for an user to delete messages of the stream. This right
-	 * includes the right to write on the stream.
+	 * The right for an user to delete messages of the stream. This right includes the right to write on the stream.
 	 */
 	public static final String RIGHT_DELETE = "delete";
 
@@ -131,32 +130,9 @@ public class Stream extends AbstractModel {
 	private String title;
 
 	/**
-	 * Stream's state : locked or unlocked. When a stream is locked, users can't
-	 * write on it.
+	 * Stream's state : locked or unlocked. When a stream is locked, users can't write on it.
 	 */
 	private boolean locked;
-
-	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	private int id;
-
-	/**
-	 * The method return the id.
-	 * 
-	 * @return the id
-	 */
-	public int getId() {
-		return id;
-	}
-
-	/**
-	 * The method set the id.
-	 * 
-	 * @param id
-	 */
-	public void setId(int id) {
-		this.id = id;
-	}
 
 	/**
 	 * Return the title of the stream, which can be displayed.
@@ -188,16 +164,14 @@ public class Stream extends AbstractModel {
 	}
 
 	/**
-	 * Lock the stream. When a stream is locked, it is impossible to write on
-	 * it.
+	 * Lock the stream. When a stream is locked, it is impossible to write on it.
 	 */
 	public void lock() {
 		this.locked = true;
 	}
 
 	/**
-	 * Unlock the stream. Users which have the right to write on it can write on
-	 * it.
+	 * Unlock the stream. Users which have the right to write on it can write on it.
 	 */
 	public void unlock() {
 		this.locked = false;

@@ -33,7 +33,7 @@ public class UserCreationRequestDTO {
 	/**
 	 * The id of the user
 	 */
-	public int id;
+	public long id;
 	
 	/**
 	 * The  firstname of the user

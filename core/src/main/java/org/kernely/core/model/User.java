@@ -25,9 +25,6 @@ import java.util.Set;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
@@ -43,10 +40,6 @@ import org.kernely.core.hibernate.AbstractModel;
 @Entity
 @Table(name = "kernely_user")
 public class User extends AbstractModel implements Comparable<User> {
-
-	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	private long id;
 
 	private String username;
 	private String password;
@@ -90,16 +83,6 @@ public class User extends AbstractModel implements Comparable<User> {
 		this.password = "";
 		this.locked = false;
 	}
-	
-	/**
-	 * Get the id of the user.
-	 * 
-	 * @return The id of the user.
-	 */
-	public long getId() {
-		return id;
-	}
-	
 	
 	public UserDetails getUserDetails() {
 		return userDetails;
@@ -221,16 +204,6 @@ public class User extends AbstractModel implements Comparable<User> {
 
 	public void setLocked(boolean lock) {
 		this.locked = lock;
-	}
-
-	/**
-	 * Set the id of the user
-	 * 
-	 * @param id
-	 *            The id of the user.
-	 */
-	public void setId(long id) {
-		this.id = id;
 	}
 
 	/**

@@ -18,7 +18,7 @@ public class OrganizationDTO {
 	/**
 	 * The id of the organization
 	 */
-	public int id;
+	public long id;
 	
 	/**
 	 * The name of the organization

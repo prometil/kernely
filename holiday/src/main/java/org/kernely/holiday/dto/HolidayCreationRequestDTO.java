@@ -31,7 +31,7 @@ public class HolidayCreationRequestDTO {
 	/**
 	 * The id of holiday type
 	 */
-	public int id;
+	public long id;
 	
 	/**
 	 * The name of the holiday type

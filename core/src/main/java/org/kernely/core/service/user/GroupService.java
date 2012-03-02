@@ -155,7 +155,7 @@ public class GroupService extends AbstractService {
 	 *            The id of the group to delete
 	 */
 	@Transactional
-	public void deleteGroup(int id) {
+	public void deleteGroup(long id) {
 		Group group = em.get().find(Group.class, id);
 		em.get().remove(group);
 	}
@@ -168,7 +168,7 @@ public class GroupService extends AbstractService {
 	 * @return the list of users which are in the group.
 	 */
 	@Transactional
-	public List<UserDTO> getGroupUsers(int id) {
+	public List<UserDTO> getGroupUsers(long id) {
 		Group g = em.get().find(Group.class, id);
 		List<UserDTO> dtos = new ArrayList<UserDTO>();
 		for (User user : g.getUsers()) {

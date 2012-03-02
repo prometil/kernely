@@ -30,7 +30,7 @@ public class RoleDTO {
 	/**
 	 * The id of the role
 	 */
-	public int id;
+	public long id;
 	
 	/**
 	 * The name of the role
@@ -52,7 +52,7 @@ public class RoleDTO {
 	 * @param id
 	 *            The id of the current role
 	 */
-	public RoleDTO(int id, String pName) {
+	public RoleDTO(long id, String pName) {
 		this.id = id;
 		name = pName;
 	}

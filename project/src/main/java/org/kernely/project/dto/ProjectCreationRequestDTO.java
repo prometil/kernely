@@ -10,7 +10,7 @@ public class ProjectCreationRequestDTO {
 	/**
 	 * The id of the project
 	 */
-	public int id;
+	public long id;
 	
 	/**
 	 * The  name of the project
@@ -39,8 +39,8 @@ public class ProjectCreationRequestDTO {
 	/**
 	 * Constructor
 	 */
-	public ProjectCreationRequestDTO(String newName, int newId, String newIcon, String newOrganization){
-		this.id = newId;
+	public ProjectCreationRequestDTO(String newName, long id, String newIcon, String newOrganization){
+		this.id = id;
 		this.name = newName;
 		this.icon = newIcon; 
 		this.organization = newOrganization;

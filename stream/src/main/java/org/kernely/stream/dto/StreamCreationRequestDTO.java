@@ -23,8 +23,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  * The stream creation request DTO
- * @author b.grandperret
- *
  */
 @XmlRootElement
 public class StreamCreationRequestDTO {
@@ -32,7 +30,7 @@ public class StreamCreationRequestDTO {
 	/**
 	 * The id of the stream
 	 */
-	public int id;
+	public long id;
 	
 	/**
 	 * The name of the stream
@@ -61,7 +59,7 @@ public class StreamCreationRequestDTO {
 	 * @param category
 	 *            Category of the Stream
 	 */
-	public StreamCreationRequestDTO(int id, String name, String category) {
+	public StreamCreationRequestDTO(long id, String name, String category) {
 		this.id = id;
 		this.name = name;
 		this.category = category;

@@ -24,7 +24,7 @@ public class HolidayProfileCreationRequestDTO {
 	/**
 	 * Types contained in the profile
 	 */
-	public List<Integer> holidayTypesId;
+	public List<Long> holidayTypesId;
 	
 	
 	/**
@@ -39,7 +39,7 @@ public class HolidayProfileCreationRequestDTO {
 	 * @param newType
 	 * @param newFrequency
 	 */
-	public HolidayProfileCreationRequestDTO(int id, String name, List<Integer> holidayTypesId){
+	public HolidayProfileCreationRequestDTO(int id, String name, List<Long> holidayTypesId){
 		this.id = id;
 		this.name=name;
 		this.holidayTypesId = holidayTypesId;

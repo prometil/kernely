@@ -24,8 +24,6 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
- * 
- * @author b.grandperret
  * The dto for the creation of  a group
  */
 @XmlRootElement
@@ -34,7 +32,7 @@ public class GroupCreationRequestDTO {
 	/**
 	 * The id of the group
 	 */
-	public int id;
+	public long id;
 	
 	/**
 	 * The name of the group
@@ -63,7 +61,7 @@ public class GroupCreationRequestDTO {
 	 * @param users
 	 *            : users associated to the current group
 	 */
-	public GroupCreationRequestDTO(int id, String name, List<UserDTO> users) {
+	public GroupCreationRequestDTO(long id, String name, List<UserDTO> users) {
 		this.id = id;
 		this.name = name;
 		this.users = users;

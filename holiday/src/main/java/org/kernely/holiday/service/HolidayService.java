@@ -117,7 +117,7 @@ public class HolidayService extends AbstractService {
 	 * @return the holiday type dto.
 	 */
 	@Transactional
-	public HolidayDTO getHolidayDTO(int id) {
+	public HolidayDTO getHolidayDTO(long id) {
 		Query query = em.get().createQuery("SELECT  h from HolidayType h WHERE  h.id=:id");
 		query.setParameter("id", id);
 		HolidayType holiday = (HolidayType) query.getSingleResult();
@@ -134,7 +134,7 @@ public class HolidayService extends AbstractService {
 	 *            The id of the group to delete
 	 */
 	@Transactional
-	public void deleteHoliday(int id) {
+	public void deleteHoliday(long id) {
 		HolidayType holiday = em.get().find(HolidayType.class, id);
 		em.get().remove(holiday);
 	}
@@ -173,7 +173,7 @@ public class HolidayService extends AbstractService {
 		int oldPeriodUnit = 0;
 		int oldEffectiveMonth = 0;
 
-		int id = request.id;
+		long id = request.id;
 		if (id == 0) {
 			// Create a new type
 			holidayType = new HolidayType();
@@ -297,7 +297,7 @@ public class HolidayService extends AbstractService {
 
 		// Get all holiday types from this holiday profile
 		Set<HolidayType> types = new HashSet<HolidayType>();
-		for (int typeId : request.holidayTypesId) {
+		for (long typeId : request.holidayTypesId) {
 			Query query = em.get().createQuery("SELECT  h from HolidayType h WHERE  h.id=:id");
 			query.setParameter("id", typeId);
 			HolidayType holiday = (HolidayType) query.getSingleResult();
@@ -315,7 +315,7 @@ public class HolidayService extends AbstractService {
 		}
 
 		// Update holiday types
-		for (int typeId : request.holidayTypesId) {
+		for (long typeId : request.holidayTypesId) {
 			Query query = em.get().createQuery("SELECT  h from HolidayType h WHERE  h.id=:id");
 			query.setParameter("id", typeId);
 			HolidayType holiday = (HolidayType) query.getSingleResult();
@@ -358,9 +358,9 @@ public class HolidayService extends AbstractService {
 	 * Get all users associated to the profile.
 	 */
 	@Transactional
-	public List<UserDetailsDTO> getUsersInProfile(int profileId) {
+	public List<UserDetailsDTO> getUsersInProfile(long id) {
 		Query query = em.get().createQuery("SELECT hp FROM HolidayProfile hp WHERE hp.id=:id");
-		query.setParameter("id", profileId);
+		query.setParameter("id", id);
 
 		HolidayProfile profile = (HolidayProfile) query.getSingleResult();
 
@@ -394,7 +394,7 @@ public class HolidayService extends AbstractService {
 	 *            The list of usernames to associate to the profile.
 	 */
 	@Transactional
-	public void updateProfileUsers(int id, List<String> usernames) {
+	public void updateProfileUsers(long id, List<String> usernames) {
 		// Get profile
 		Query profileQuery = em.get().createQuery("SELECT hp FROM HolidayProfile hp WHERE id=:id");
 		profileQuery.setParameter("id", id);

@@ -22,9 +22,6 @@ package org.kernely.core.model;
 import java.util.Date;
 
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
@@ -32,17 +29,11 @@ import javax.persistence.Table;
 import org.kernely.core.hibernate.AbstractModel;
 
 /**
- * the user details model
- * 
- * @author b.grandperret
- * 
+ * The user details model
  */
 @Entity
 @Table(name = "kernely_user_details")
 public class UserDetails extends AbstractModel {
-	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	private int id;
 	private String name;
 	private String firstname;
 	private String mail;
@@ -137,25 +128,6 @@ public class UserDetails extends AbstractModel {
 	 */
 	public final void setMail(String mail) {
 		this.mail = mail;
-	}
-
-	/**
-	 * Get the userdetails' id
-	 * 
-	 * @return : the userdetails' id
-	 */
-	public final int getIdUserDetail() {
-		return id;
-	}
-
-	/**
-	 * Set the userdetails' id
-	 * 
-	 * @param idUserDetail
-	 *            : the userdetails' id
-	 */
-	public final void setIdUserDetail(int idUserDetail) {
-		id = idUserDetail;
 	}
 
 	/**

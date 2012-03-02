@@ -26,7 +26,7 @@ public class CalendarBalanceDetailDTO {
 	/**
 	 * Id of type of holiday
 	 */
-	public int idOfType;
+	public long idOfType;
 	
 	/**
 	 * Default constructor
@@ -38,13 +38,13 @@ public class CalendarBalanceDetailDTO {
 	 * @param name Name of the balance
 	 * @param available Quantity available. If set to -1, the balance is unlimited
 	 * @param color Color associated to this balance
-	 * @param idType HolidayType associated to this balance
+	 * @param typeId HolidayType associated to this balance
 	 */
-	public CalendarBalanceDetailDTO(String name, float available, String color, int idType){
+	public CalendarBalanceDetailDTO(String name, float available, String color, long typeId){
 		this.color = color;
 		this.nameOfType = name;
 		this.nbAvailable = available;
-		this.idOfType = idType;
+		this.idOfType = typeId;
 	}
 
 	/* (non-Javadoc)
@@ -54,7 +54,7 @@ public class CalendarBalanceDetailDTO {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + idOfType;
+		result = (int) (prime * result + idOfType);
 		result = prime * result + ((nameOfType == null) ? 0 : nameOfType.hashCode());
 		return result;
 	}

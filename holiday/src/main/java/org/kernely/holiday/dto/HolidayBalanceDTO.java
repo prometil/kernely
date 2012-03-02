@@ -28,10 +28,7 @@ import org.joda.time.DateTime;
 import org.kernely.holiday.model.HolidayBalance;
 
 /**
- * Dto for holiday
- * 
- * @author b.grandperret
- * 
+ * Dto for holiday balance
  */
 @XmlRootElement
 public class HolidayBalanceDTO implements Comparable<HolidayBalanceDTO> {
@@ -39,7 +36,7 @@ public class HolidayBalanceDTO implements Comparable<HolidayBalanceDTO> {
 	/**
 	 * The holiday id
 	 */
-	public int id;
+	public long id;
 
 	/**
 	 * Available balance for this type of holiday

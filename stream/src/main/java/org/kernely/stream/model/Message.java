@@ -24,9 +24,6 @@ import java.util.Set;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
@@ -41,14 +38,14 @@ import org.kernely.core.hibernate.AbstractModel;
 import org.kernely.core.model.User;
 
 /**
- * The message model 
+ * The message model
  */
 @Entity
 @Table(name = "kernely_message")
 public class Message extends AbstractModel {
 
 	/**
-	 * Constructor 
+	 * Constructor
 	 */
 	public Message() {
 		super();
@@ -64,18 +61,20 @@ public class Message extends AbstractModel {
 	@JoinColumn(name = "user_id")
 	private User user;
 
-
 	/**
-     * Get the user associated to this message
-     * @return : the user associated
-     */
+	 * Get the user associated to this message
+	 * 
+	 * @return : the user associated
+	 */
 	public User getUser() {
 		return this.user;
 	}
 
 	/**
-	 * Set the user associated  to this message
-	 * @param the new user
+	 * Set the user associated to this message
+	 * 
+	 * @param the
+	 *            new user
 	 */
 	public void setUser(User u) {
 		this.user = u;
@@ -86,20 +85,7 @@ public class Message extends AbstractModel {
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date date;
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	private int id;
-
 	private boolean commentable;
-
-	/**
-	 * The method return the id.
-	 * 
-	 * @return the long
-	 */
-	public int getId() {
-		return id;
-	}
 
 	/**
 	 * Can users comment this message ?
@@ -152,15 +138,6 @@ public class Message extends AbstractModel {
 	}
 
 	/**
-	 * The method set the id.
-	 * 
-	 * @param id
-	 */
-	public void setId(int id) {
-		this.id = id;
-	}
-
-	/**
 	 * Return the content of the message.
 	 * 
 	 * @return the content of the message.
@@ -185,7 +162,7 @@ public class Message extends AbstractModel {
 	 * @return the message date
 	 */
 	public Date getDate() {
-		return (Date)date.clone();
+		return (Date) date.clone();
 	}
 
 	/**
@@ -213,7 +190,7 @@ public class Message extends AbstractModel {
 	 *            the date of the message
 	 */
 	public void setDate(Date pDate) {
-		this.date = (Date)pDate.clone();
+		this.date = (Date) pDate.clone();
 	}
 
 	/**

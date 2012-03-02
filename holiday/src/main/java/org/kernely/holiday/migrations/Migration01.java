@@ -10,7 +10,6 @@ import org.kernely.core.migrations.migrator.RawSql;
 
 /**
  * Holiday migration script
- * 
  */
 public class Migration01 extends Migration {
 	/**
@@ -29,13 +28,13 @@ public class Migration01 extends Migration {
 		ArrayList<Command> commands = new ArrayList<Command>();
 
 		CreateTable holidayProfile = CreateTable.name("kernely_holiday_profile");
-		holidayProfile.column("id", "int primary key");
+		holidayProfile.column("id", "bigint primary key");
 		holidayProfile.column("name", "varchar(50)");
 		
 		commands.add(holidayProfile);
 		
 		CreateTable holidayProfileUsers = CreateTable.name("kernely_holiday_profile_users");
-		holidayProfileUsers.column("holiday_profile_id", "int");
+		holidayProfileUsers.column("holiday_profile_id", "bigint");
 		holidayProfileUsers.column("user_id", "bigint");
 
 		RawSql holidayProfileForeignKey = new RawSql("ALTER TABLE kernely_holiday_profile_users ADD CONSTRAINT fk_holiday_profile FOREIGN KEY (holiday_profile_id) REFERENCES kernely_holiday_profile (id)");
@@ -49,7 +48,7 @@ public class Migration01 extends Migration {
 		commands.add(userForeignKey);
 		
 		CreateTable holidayTypeInstance = CreateTable.name("kernely_holiday_type_instance");
-		holidayTypeInstance.column("id", "int primary key");
+		holidayTypeInstance.column("id", "bigint primary key");
 		holidayTypeInstance.column("name", "varchar(50)");
 		holidayTypeInstance.column("color", "varchar(10)");
 		holidayTypeInstance.column("anticipated", "bool");
@@ -59,7 +58,7 @@ public class Migration01 extends Migration {
 		commands.add(holidayTypeInstance);
 		
 		CreateTable holidayType = CreateTable.name("kernely_holiday_type");
-		holidayType.column("id", "int primary key");
+		holidayType.column("id", "bigint primary key");
 		holidayType.column("name", "varchar(50)");
 		holidayType.column("unlimited", "bool");
 		holidayType.column("quantity", "int");
@@ -67,8 +66,8 @@ public class Migration01 extends Migration {
 		holidayType.column("effective_month", "int");
 		holidayType.column("anticipated", "bool");
 		holidayType.column("color", "varchar(10)");
-		holidayType.column("holiday_profile_id", "int");
-		holidayType.column("current_instance", "int");
+		holidayType.column("holiday_profile_id", "bigint");
+		holidayType.column("current_instance", "bigint");
 
 		RawSql holidayTypeForeignKey = new RawSql("ALTER TABLE kernely_holiday_type ADD CONSTRAINT fk_holiday_profile FOREIGN KEY (holiday_profile_id) REFERENCES kernely_holiday_profile (id)");
 		RawSql holidayTypeInstanceForeignKey = new RawSql("ALTER TABLE kernely_holiday_type ADD CONSTRAINT fk_current_type_instance FOREIGN KEY (current_instance) REFERENCES kernely_holiday_type_instance (id)");
@@ -79,7 +78,7 @@ public class Migration01 extends Migration {
 		
 		CreateTable holidayTypeInstanceUser = CreateTable.name("kernely_holiday_type_instance_user");
 		holidayTypeInstanceUser.column("user_id", "bigint NOT NULL");
-		holidayTypeInstanceUser.column("type_instance_id", "int NOT NULL");
+		holidayTypeInstanceUser.column("type_instance_id", "bigint NOT NULL");
 
 		RawSql userFk = new RawSql("ALTER TABLE kernely_holiday_type_instance_user ADD CONSTRAINT fk_user_id FOREIGN KEY (user_id) REFERENCES kernely_user (id)");
 		RawSql typeInstanceFk = new RawSql("ALTER TABLE kernely_holiday_type_instance_user ADD CONSTRAINT fk_type_instance_id FOREIGN KEY (type_instance_id) REFERENCES kernely_holiday_type_instance (id)");
@@ -91,11 +90,11 @@ public class Migration01 extends Migration {
 		commands.add(tableTypeInstUserPk);
 		
 		CreateTable holidayBalance = CreateTable.name("kernely_holiday_balance");
-		holidayBalance.column("id", "int primary key");
+		holidayBalance.column("id", "bigint primary key");
 		holidayBalance.column("available_balance", "int");
 		holidayBalance.column("available_balance_updated", "int");
 		holidayBalance.column("last_update", "timestamp");
-		holidayBalance.column("holiday_type_instance_id", "int");
+		holidayBalance.column("holiday_type_instance_id", "bigint");
 		holidayBalance.column("begin_date", "timestamp");
 		holidayBalance.column("end_date", "timestamp");
 		holidayBalance.column("user_id", "bigint");
@@ -108,7 +107,7 @@ public class Migration01 extends Migration {
 		commands.add(holidayBalanceUserForeignKey);
 
 		CreateTable holidayRequest = CreateTable.name("kernely_holiday_request");
-		holidayRequest.column("id", "int primary key");
+		holidayRequest.column("id", "bigint primary key");
 		holidayRequest.column("begin_date", "timestamp");
 		holidayRequest.column("end_date", "timestamp");
 		holidayRequest.column("status", "int");
@@ -125,12 +124,12 @@ public class Migration01 extends Migration {
 		commands.add(holidayRequestManagerForeignKey);
 
 		CreateTable holidayRequestDetail = CreateTable.name("kernely_holiday_request_detail");
-		holidayRequestDetail.column("id", "int primary key");
+		holidayRequestDetail.column("id", "bigint primary key");
 		holidayRequestDetail.column("day", "timestamp");
 		holidayRequestDetail.column("am", "boolean");
 		holidayRequestDetail.column("pm", "boolean");
-		holidayRequestDetail.column("holiday_request_id", "int");
-		holidayRequestDetail.column("holiday_type_instance_id", "int");
+		holidayRequestDetail.column("holiday_request_id", "bigint");
+		holidayRequestDetail.column("holiday_type_instance_id", "bigint");
 
 		RawSql holidayRequestDetailRequestForeignKey = new RawSql("ALTER TABLE kernely_holiday_request_detail ADD CONSTRAINT fk_holiday_request FOREIGN KEY (holiday_request_id) REFERENCES kernely_holiday_request(id)");
 		RawSql holidayRequestDetailBalanceForeignKey = new RawSql("ALTER TABLE kernely_holiday_request_detail ADD CONSTRAINT fk_holiday_type_instance FOREIGN KEY (holiday_type_instance_id) REFERENCES kernely_holiday_type_instance(id)");

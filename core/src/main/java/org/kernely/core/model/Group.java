@@ -25,9 +25,6 @@ import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
@@ -38,19 +35,10 @@ import org.kernely.core.hibernate.AbstractModel;
 
 /**
  * The group model
- * @author b.grandperret
- *
  */
 @Entity
 @Table(name = "kernely_group")
 public class Group extends AbstractModel{
-	
-	/**
-	 * Group's id
-	 */
-	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	private int id;
 
 	/**
 	 * Group's name
@@ -122,22 +110,6 @@ public class Group extends AbstractModel{
 	 */
 	public final void setRoles(Set<Role> roles) {
 		this.roles = roles;
-	}
-
-	/**
-	 * Get the group's ID
-	 * @return the group's ID
-	 */
-	public final int getId() {
-		return id;
-	}
-
-	/**
-	 * Set the group's ID
-	 * @param id : the group's ID
-	 */
-	public final void setId(int id) {
-		this.id = id;
 	}
 
 	/**

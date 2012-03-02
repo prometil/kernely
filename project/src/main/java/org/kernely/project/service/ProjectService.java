@@ -22,7 +22,6 @@ import com.google.inject.persist.Transactional;
 
 /**
  * The service for project pages
- * 
  */
 @Singleton
 public class ProjectService extends AbstractService {
@@ -163,7 +162,7 @@ public class ProjectService extends AbstractService {
 	 *            The id of the project to delete
 	 */
 	@Transactional
-	public void deleteProject(int id) {
+	public void deleteProject(long id) {
 		Project project = em.get().find(Project.class, id);
 		em.get().remove(project);
 	}
@@ -176,7 +175,7 @@ public class ProjectService extends AbstractService {
 	 * @return the list of users which are in the project.
 	 */
 	@Transactional
-	public List<UserDTO> getProjectUsers(int id) {
+	public List<UserDTO> getProjectUsers(long id) {
 		Project g = em.get().find(Project.class, id);
 		List<UserDTO> dtos = new ArrayList<UserDTO>();
 		for (User user : g.getUsers()) {
@@ -211,9 +210,9 @@ public class ProjectService extends AbstractService {
 	 *            : The id of the project
 	 * @return true if the user has this right, false otherwise.
 	 */
-	public boolean currentUserHasRightsOnProject(String right, int projectId) {
+	public boolean currentUserHasRightsOnProject(String right, long id) {
 		User current = this.getAuthenticatedUserModel();
-		return permissionService.userHasPermission((int) current.getId(), true, right, Project.PROJECT_RESOURCE, projectId);
+		return permissionService.userHasPermission((int) current.getId(), true, right, Project.PROJECT_RESOURCE, id);
 	}
 	
 	
