@@ -297,7 +297,7 @@ public class HolidayService extends AbstractService {
 
 		// Get all holiday types from this holiday profile
 		Set<HolidayType> types = new HashSet<HolidayType>();
-		if (request.holidayTypesId.get(0) != null ){
+		if (request.holidayTypesId.size() > 0 && request.holidayTypesId.get(0) != null){
 			for (long typeId : request.holidayTypesId) {
 				Query query = em.get().createQuery("SELECT  h from HolidayType h WHERE  h.id=:id");
 				query.setParameter("id", typeId);
@@ -318,7 +318,7 @@ public class HolidayService extends AbstractService {
 		}
 
 		// Update holiday types
-		if (request.holidayTypesId.get(0) != null ){
+		if (request.holidayTypesId.size() > 0 && request.holidayTypesId.get(0) != null ){
 			for (long typeId : request.holidayTypesId) {
 				Query query = em.get().createQuery("SELECT  h from HolidayType h WHERE  h.id=:id");
 				query.setParameter("id", typeId);
