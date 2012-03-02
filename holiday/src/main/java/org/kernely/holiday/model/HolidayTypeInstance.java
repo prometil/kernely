@@ -13,6 +13,9 @@ import javax.persistence.Table;
 import org.kernely.core.hibernate.AbstractModel;
 import org.kernely.core.model.User;
 
+/**
+ * Model for an instance of an holiday type.
+ */
 @Entity
 @Table(name = "kernely_holiday_type_instance")
 public class HolidayTypeInstance extends AbstractModel {

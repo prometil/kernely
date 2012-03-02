@@ -55,6 +55,10 @@ public class HolidayProfileDTO implements Comparable<HolidayProfileDTO>{
 		this.nbUsers = nbUsers;
 	}
 	
+	/**
+	 * Constructor from a model
+	 * @param profile The model of Profile.
+	 */
 	public HolidayProfileDTO(HolidayProfile profile){
 		this.id = profile.getId();
 		this.name = profile.getName();
@@ -72,6 +76,10 @@ public class HolidayProfileDTO implements Comparable<HolidayProfileDTO>{
 		}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Comparable#compareTo(java.lang.Object)
+	 */
 	@Override
 	public int compareTo(HolidayProfileDTO dto) {
 		return this.name.compareTo(dto.name);

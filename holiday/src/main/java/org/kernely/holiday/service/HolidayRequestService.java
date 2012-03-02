@@ -122,7 +122,7 @@ public class HolidayRequestService extends AbstractService {
 	 *            The request DTO to store.
 	 */
 	@Transactional
-	public void registerRequestAndDetails(HolidayRequestCreationRequestDTO request) {
+	public HolidayRequestDTO registerRequestAndDetails(HolidayRequestCreationRequestDTO request) {
 		List<HolidayRequestDetail> detailsModels = new ArrayList<HolidayRequestDetail>();
 		Map<HolidayTypeInstance, Float> typeToUpdate = new HashMap<HolidayTypeInstance, Float>();
 		for (HolidayDetailCreationRequestDTO hdcr : request.details) {
@@ -168,6 +168,7 @@ public class HolidayRequestService extends AbstractService {
 		}
 
 		log.debug("Holiday Request registered !");
+		return new HolidayRequestDTO(hr);
 	}
 
 	/**

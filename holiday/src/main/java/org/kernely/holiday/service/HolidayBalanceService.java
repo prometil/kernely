@@ -196,7 +196,7 @@ public class HolidayBalanceService extends AbstractService {
 					}
 				}
 			} else { // In the case where there is a previous, when this is just
-						// the
+				// the
 				// balance for the next period
 				DateTime beginDate = new DateTime(previous.endDate).toDateMidnight().toDateTime();
 				if (beginDate.isAfter(DateTime.now().plusDays(1))) {
@@ -205,7 +205,7 @@ public class HolidayBalanceService extends AbstractService {
 				balance.setBeginDate(new DateTime(previous.endDate).toDateMidnight().toDate());
 				balance.setEndDate(new DateTime(previous.endDate).plusYears(1).toDateMidnight().toDate());
 			}
-			
+
 			em.get().persist(balance);
 
 			return new HolidayBalanceDTO(balance);
@@ -362,8 +362,7 @@ public class HolidayBalanceService extends AbstractService {
 	 * of anticipation, this method will return all old balances and the balance
 	 * for the current year. If this is not a type with possibility of
 	 * anticipation, it will return all balances except the one for the current
-	 * year.
-	 * Balance are returned from the oldest to the newest.
+	 * year. Balance are returned from the oldest to the newest.
 	 * 
 	 * @param userId
 	 *            The user associated to this balance.
@@ -570,6 +569,7 @@ public class HolidayBalanceService extends AbstractService {
 			if (availInThisBalance > 0F) {
 				if (availInThisBalance >= remainToRemove) {
 					int newBalanceAvail = availInThisBalance - remainToRemove;
+					remainToRemove = 0;
 					currentBalanceModel.setAvailableBalance(newBalanceAvail);
 					em.get().merge(currentBalanceModel);
 					break;
@@ -579,6 +579,16 @@ public class HolidayBalanceService extends AbstractService {
 					em.get().merge(currentBalanceModel);
 				}
 			}
+		}
+		// If we are in an anticipated type, and there are yet some days to
+		// remove, we remove these days from the newest balance.
+		if (remainToRemove > 0 && instance.isAnticipated()) {
+			HolidayBalanceDTO last = this.getProcessedBalance(holidayTypeInstanceId, userId);
+			HolidayBalance lastBalance = em.get().find(HolidayBalance.class, last.id);
+
+			int newBalanceAvail = lastBalance.getAvailableBalance() - remainToRemove;
+			lastBalance.setAvailableBalance(newBalanceAvail);
+			em.get().merge(lastBalance);
 		}
 	}
 

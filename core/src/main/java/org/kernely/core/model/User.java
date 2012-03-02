@@ -22,7 +22,6 @@ package org.kernely.core.model;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
@@ -77,21 +76,31 @@ public class User extends AbstractModel implements Comparable<User> {
 	@OneToOne(fetch=FetchType.LAZY, mappedBy="user")
 	private UserDetails userDetails;
 
-
+	/**
+	 * Default constructor
+	 */
 	public User(){
 		this.username = "";
 		this.password = "";
 		this.locked = false;
 	}
 	
+	/**
+	 * Get the user details
+	 * @return the user details
+	 */
 	public UserDetails getUserDetails() {
 		return userDetails;
 	}
 
+	/**
+	 * Set the user details
+	 * @param userDetails the user details
+	 */
 	public void setUserDetails(UserDetails userDetails) {
 		this.userDetails = userDetails;
 	}
-	@Column(name = "locked")
+	
 	public boolean isLocked() {
 		return locked;
 	}
@@ -101,7 +110,6 @@ public class User extends AbstractModel implements Comparable<User> {
 	 * 
 	 * @return The username of the user.
 	 */
-	@Column(name = "username")
 	public String getUsername() {
 		return username;
 	}
@@ -109,7 +117,6 @@ public class User extends AbstractModel implements Comparable<User> {
 	/**
 	 * Get the password of the user. return The password of the user.
 	 */
-	@Column(name = "password")
 	public String getPassword() {
 		return password;
 	}
@@ -160,7 +167,6 @@ public class User extends AbstractModel implements Comparable<User> {
 	 * 
 	 * @return the salt of the user
 	 */
-	@Column(name = "salt")
 	public String getSalt() {
 		return salt;
 	}

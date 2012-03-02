@@ -50,6 +50,13 @@ public class HolidayProfilesSummaryDTO {
 	 */
 	public List<HolidayUserSummaryDTO> usersSummaries;
 
+	/**
+	 * Constructor
+	 * @param month Requested month
+	 * @param year Requested year
+	 * @param name Profile name
+	 * @param usersSummaries List of the users summaries
+	 */
 	public HolidayProfilesSummaryDTO(int month, int year,String name, List<HolidayUserSummaryDTO> usersSummaries) {
 		this.name = name;
 		this.usersSummaries = usersSummaries;

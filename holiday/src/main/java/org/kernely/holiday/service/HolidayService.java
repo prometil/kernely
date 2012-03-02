@@ -439,6 +439,11 @@ public class HolidayService extends AbstractService {
 
 	}
 
+	/**
+	 * Retrieves all the profiles associated to an user
+	 * @param userId The id of the concerned user
+	 * @return A list of HolidayProfileDTO.
+	 */
 	@SuppressWarnings("unchecked")
 	public List<HolidayProfileDTO> getProfilesForUser(long userId) {
 		Query profileQuery = em.get().createQuery("SELECT hp FROM HolidayProfile hp WHERE :user member of hp.users");

@@ -42,11 +42,19 @@ public class HolidayUserSummaryDTO {
 	 */
 	public List<HolidayUserTypeSummaryDTO> typesSummaries;
 
+	/**
+	 * Constructor
+	 * @param details Details about the user concerned
+	 * @param typesSummaries List of HolidayUserTypeSummaryDTO relative to this user
+	 */
 	public HolidayUserSummaryDTO(UserDetailsDTO details, List<HolidayUserTypeSummaryDTO> typesSummaries) {
 		this.details = details;
 		this.typesSummaries = typesSummaries;
 	}
 
+	/**
+	 * Default constructor
+	 */
 	public HolidayUserSummaryDTO() {
 	}
 

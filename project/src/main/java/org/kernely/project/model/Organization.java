@@ -35,6 +35,9 @@ public class Organization extends AbstractModel {
 	@JoinTable(name = "kernely_user_organization", joinColumns = @JoinColumn(name = "organization_id"), inverseJoinColumns = @JoinColumn(name = "user_id"))
 	private Set<User> users;
 
+	/**
+	 * Default constructor
+	 */
 	public Organization() {
 		this.users = new HashSet<User>();
 		this.address = "";
