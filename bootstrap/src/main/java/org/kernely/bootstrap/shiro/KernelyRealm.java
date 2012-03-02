@@ -42,11 +42,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.inject.Inject;
+import com.google.inject.Provider;
 
 
 /**
- * 
- * @author b.grandperret
  * Definition of the realm for shiro 
  */
 public class KernelyRealm extends AuthorizingRealm {
@@ -54,34 +53,32 @@ public class KernelyRealm extends AuthorizingRealm {
 	private static Logger log = LoggerFactory.getLogger(KernelyRealm.class);
 
 	@Inject
-	private EntityManager em;
+	private Provider<EntityManager> em;
 
 	/**
-	 * Handle the  authentification of kernely
+	 * Handle the  authentication of kernely
 	 */
 	protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token){
 		try {
 			UsernamePasswordToken upToken = (UsernamePasswordToken) token;
-			em.getTransaction().begin();
+			em.get().getTransaction().begin();
 			String username = upToken.getUsername();
 			if (username == null) {
 				throw new AccountException("Null usernames are not allowed by this realm.");
 			}
-			Query query = em.createQuery("SELECT e FROM User e where username='" + username + "' AND locked = false");
+			Query query = em.get().createQuery("SELECT e FROM User e where username='" + username + "' AND locked = false");
 			
 			User userModel = (User) query.getResultList().get(0);
 			byte[] password = Base64.decode(userModel.getPassword());
 			SimpleByteSource salt = new SimpleByteSource(Base64.decode(userModel.getSalt()));  
 			
-			em.getTransaction().commit();
+			em.get().getTransaction().commit();
 			return new SimpleAuthenticationInfo(username, password, salt, getName());
 		} catch (Exception e) {
-			//TODO we should log this 
 			log.error("", e);
-			em.getTransaction().commit();
+			em.get().getTransaction().commit();
 			return null;
 		}
-
 	}
 
 	/**
@@ -92,8 +89,8 @@ public class KernelyRealm extends AuthorizingRealm {
 			throw new AuthorizationException("PrincipalCollection method argument cannot be null.");
 		}
 		String username = (String) principals.fromRealm(getName()).iterator().next();
-		Query query = em.createQuery("SELECT e FROM User e where username='" + username + "'");
-		User user = ((User) query.getResultList().get(0));
+		Query query = em.get().createQuery("SELECT e FROM User e where username='" + username + "'");
+		User user = ((User) query.getSingleResult());
 		SimpleAuthorizationInfo info = new SimpleAuthorizationInfo();
 		if (user != null) {
 			for (Role role : user.getAllRoles()) {

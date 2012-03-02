@@ -31,6 +31,7 @@ import java.util.Set;
 import javax.persistence.Query;
 
 import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.authz.UnauthorizedException;
 import org.apache.shiro.crypto.RandomNumberGenerator;
 import org.apache.shiro.crypto.SecureRandomNumberGenerator;
@@ -43,10 +44,13 @@ import org.kernely.core.dto.UserDetailsDTO;
 import org.kernely.core.dto.UserDetailsUpdateRequestDTO;
 import org.kernely.core.event.UserCreationEvent;
 import org.kernely.core.event.UserLockedEvent;
+import org.kernely.core.model.Permission;
 import org.kernely.core.model.Role;
 import org.kernely.core.model.User;
 import org.kernely.core.model.UserDetails;
 import org.kernely.core.service.AbstractService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.eventbus.EventBus;
 import com.google.inject.Inject;
@@ -60,6 +64,8 @@ import com.google.inject.persist.Transactional;
 @Singleton
 public class UserService extends AbstractService {
 
+	private static Logger log = LoggerFactory.getLogger(UserService.class);
+	
 	private static final int SALT_ITERATION = 1024;
 	@Inject
 	private EventBus eventBus;
@@ -237,6 +243,13 @@ public class UserService extends AbstractService {
 			throw new IllegalArgumentException("Another user with this username already exists");
 		}
 
+		User u = em.get().find(User.class, ud.getUser().getId());
+		
+		ud.setFirstname(request.firstname);
+		ud.setName(request.lastname);
+		ud.setHire(request.hire);
+		u.setUsername(request.username);
+
 		// Retrieve the role User, automatically given to a user.
 		Query query = em.get().createQuery("SELECT r FROM Role r WHERE name=:role");
 		query.setParameter("role", Role.ROLE_USER);
@@ -246,18 +259,14 @@ public class UserService extends AbstractService {
 		if (!request.roles.isEmpty() && (!(request.roles.get(0).name == null))) {
 			for (RoleDTO r : request.roles) {
 				roles.add(em.get().find(Role.class, r.id));
+				log.debug("User {} has now role {}",request.username,r.id);
 			}
 		}
 		// Add the user Role.
 		roles.add(roleUser);
-
-		ud.setFirstname(request.firstname);
-		ud.setName(request.lastname);
-		ud.setHire(request.hire);
-		User u = em.get().find(User.class, ud.getUser().getId());
-		u.setUsername(request.username);
-
 		u.setRoles(roles);
+		
+		em.get().merge(u);
 	}
 
 	/**
