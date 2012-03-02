@@ -297,17 +297,20 @@ public class HolidayService extends AbstractService {
 
 		// Get all holiday types from this holiday profile
 		Set<HolidayType> types = new HashSet<HolidayType>();
-		for (long typeId : request.holidayTypesId) {
-			Query query = em.get().createQuery("SELECT  h from HolidayType h WHERE  h.id=:id");
-			query.setParameter("id", typeId);
-			HolidayType holiday = (HolidayType) query.getSingleResult();
-			types.add(holiday);
-			log.debug("Added holiday type (id:{}) to holiday profile (name:{})", holiday.getId(), request.name.trim());
+		if (request.holidayTypesId.get(0) != null ){
+			for (long typeId : request.holidayTypesId) {
+				Query query = em.get().createQuery("SELECT  h from HolidayType h WHERE  h.id=:id");
+				query.setParameter("id", typeId);
+				HolidayType holiday = (HolidayType) query.getSingleResult();
+				types.add(holiday);
+				log.debug("Added holiday type (id:{}) to holiday profile (name:{})", holiday.getId(), request.name.trim());
+			}
 		}
 
 		profile.setName(request.name.trim());
 		profile.setHolidayTypes(types);
 
+		// Create
 		if (request.id == 0) {
 			em.get().persist(profile);
 		} else {
@@ -315,15 +318,15 @@ public class HolidayService extends AbstractService {
 		}
 
 		// Update holiday types
-		for (long typeId : request.holidayTypesId) {
-			Query query = em.get().createQuery("SELECT  h from HolidayType h WHERE  h.id=:id");
-			query.setParameter("id", typeId);
-			HolidayType holiday = (HolidayType) query.getSingleResult();
-			holiday.setProfile(profile);
-			em.get().merge(holiday);
+		if (request.holidayTypesId.get(0) != null ){
+			for (long typeId : request.holidayTypesId) {
+				Query query = em.get().createQuery("SELECT  h from HolidayType h WHERE  h.id=:id");
+				query.setParameter("id", typeId);
+				HolidayType holiday = (HolidayType) query.getSingleResult();
+				holiday.setProfile(profile);
+				em.get().merge(holiday);
+			}
 		}
-
-		// Create
 
 		return new HolidayProfileDTO(profile);
 	}

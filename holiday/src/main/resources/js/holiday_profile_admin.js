@@ -605,13 +605,9 @@ AppHolidayAdmin = (function($){
 				}
 			}
 			
-			if (holidayTypesId.length == 1){ // There is only character : '['.
-				var errorTemplate = $("#popup-holiday-profile-error-no-type-template").html();
-				alert(errorTemplate);
-				return;
+			if (holidayTypesId.length > 0){ //Remove the last coma
+				holidayTypesId = holidayTypesId.substring(0,holidayTypesId.length -1);
 			}
-			
-			holidayTypesId = holidayTypesId.substring(0,holidayTypesId.length -1);
 			holidayTypesId += ']';
 			
 			var json = '{"id":"'+this.vid+'", "name":"'+ $("#holiday-profile-name").val() +'" , "holidayTypesId":' + holidayTypesId + '}'
