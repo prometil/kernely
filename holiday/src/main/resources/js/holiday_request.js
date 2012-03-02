@@ -12,7 +12,7 @@ AppHolidayRequest = (function($){
 	var shifted = false;
 	var MORNING_PART = 1;
 	var AFTERNOON_PART = 2;
-
+	
 	HolidayRequestPageView = Backbone.View.extend({
 		el:"#request-main",
 		dates: null,
@@ -92,6 +92,15 @@ AppHolidayRequest = (function($){
 				processData: false,
 				contentType: "application/json; charset=utf-8",
 				success: function(data){
+					// Display a success message and destroy page
+					var message = $('#holiday-success-request-message-template').html();
+					alert(message);
+					$('#from').val("");
+					$('#to').val("");
+					$('#calendarContent').html("");
+					$('#colorSelector').html("");
+					$("#requester-comment").val("");
+					$("#calendarRequest").hide();
 				}
 			});
 			
@@ -330,7 +339,7 @@ AppHolidayRequest = (function($){
 		render: function(){
 			var parent = this;
 			
-			if(this.data.details.length > 1){
+			if(this.data.details != null && this.data.details.length > 1){
 				$.each(this.data.details, function(){
                     $(parent.el).append(new HolidayRequestColorPickerCell(this.nameOfType, this.nbAvailable, this.color, this.idOfType).render().el);
 				});
@@ -338,6 +347,7 @@ AppHolidayRequest = (function($){
 			else{
 				$(parent.el).append(new HolidayRequestColorPickerCell(this.data.details.nameOfType, this.data.details.nbAvailable, this.data.details.color, this.data.details.idOfType).render().el);
 			}
+			$('#colorSelector').show();
 			return this;
 		}
 	})

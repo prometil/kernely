@@ -13,6 +13,9 @@
 
 <script type="text/html" id="locale-country"><%= i18n.t("locale_country") %></script>
 
+<script type="text/html" id="holiday-success-request-message-template"><%= i18n.t("holiday_request_submit_success") %></script>
+
+
 
 <div id="request-main">  
 	<div id="period">
