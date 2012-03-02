@@ -37,7 +37,7 @@ public class HolidayDetailDTO implements Comparable<HolidayDetailDTO>{
 	/**
 	 * The id of the type
 	 */
-	public int typeId;
+	public int typeInstanceId;
 	
 	/**
 	 * The color associated to the type of balance
@@ -60,7 +60,7 @@ public class HolidayDetailDTO implements Comparable<HolidayDetailDTO>{
 		this.pm = detail.isPm();
 		this.am = detail.isAm();
 		this.type = detail.getTypeInstance().getName();
-		this.typeId = detail.getTypeInstance().getId();
+		this.typeInstanceId = detail.getTypeInstance().getId();
 		this.color = detail.getTypeInstance().getColor();
 	}
 

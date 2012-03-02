@@ -660,7 +660,7 @@ public class HolidayBalanceService extends AbstractService {
 		for (HolidayBalanceDTO b : balancesReversed) {
 			currentBalanceModel = em.get().find(HolidayBalance.class, b.id);
 			// Retrieve the maximum quantity of this balance
-			maxOfThisBalance = (int) (typeInstance.getQuantity() * Math.pow(typeInstance.getPeriodUnit(), 2));
+			maxOfThisBalance = (int) (typeInstance.getQuantity() * typeInstance.getPeriodUnit() * 12);
 			// Current available quantity
 			availInThisBalance = currentBalanceModel.getAvailableBalanceUpdated();
 			// If the balance is full, switch to the next balance, else we fill
@@ -716,15 +716,15 @@ public class HolidayBalanceService extends AbstractService {
 				// Calculate the amount of days of this request
 				for (HolidayDetailDTO detail : request.details) {
 
-					if (!days.containsKey(detail.typeId)) {
-						days.put(detail.typeId, 0F);
+					if (!days.containsKey(detail.typeInstanceId)) {
+						days.put(detail.typeInstanceId, 0F);
 					}
 
 					if (detail.am) {
-						days.put(detail.typeId, Float.valueOf(days.get(detail.typeId) + HALF_DAY));
+						days.put(detail.typeInstanceId, Float.valueOf(days.get(detail.typeInstanceId) + HALF_DAY));
 					}
 					if (detail.pm) {
-						days.put(detail.typeId, Float.valueOf(days.get(detail.typeId) + HALF_DAY));
+						days.put(detail.typeInstanceId, Float.valueOf(days.get(detail.typeInstanceId) + HALF_DAY));
 					}
 				}
 

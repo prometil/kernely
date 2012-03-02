@@ -89,6 +89,10 @@ public class HolidayBalanceServiceTest extends AbstractServiceTest {
 	//	@Inject
 	//	private HolidayRequestService requestService;
 
+	//******************************************************************************//
+	// Helpers
+	//******************************************************************************//
+	
 	private Date getNextCompleteMonth(){
 		if(DateTime.now().getDayOfMonth() != 1){
 			return DateTime.now().withDayOfMonth(1).plusMonths(1).toDateMidnight().toDate();
@@ -185,6 +189,10 @@ public class HolidayBalanceServiceTest extends AbstractServiceTest {
 		return userService.createUser(request);
 	}
 
+	//******************************************************************************//
+	// CreateBalanceForNewUser method
+	//******************************************************************************//
+	
 	@Test (expected=IllegalArgumentException.class)
 	public void createHolidayBalanceWithNullUser(){
 		HolidayDTO type = createHolidayTypeAllMonthForTest();
@@ -231,7 +239,19 @@ public class HolidayBalanceServiceTest extends AbstractServiceTest {
 		assertEquals(NEXT_COMPLETE_MONTH_DATE_FOR_FUTURE_HIRE , newBalance.beginDate);
 		assertEquals(this.getNextEndDateForNewBalance() , newBalance.endDate);
 	}
+	
+	@Test (expected=IllegalArgumentException.class)
+	public void createTwoBalancesForNewUserForTheSameTypeTest(){
+		UserDTO user = createUserNewHiredForTest();
+		HolidayDTO type = createHolidayTypeAllMonthForTest();
+		holidayBalanceService.createHolidayBalanceForNewUser(type.id, user.id);
+		holidayBalanceService.createHolidayBalanceForNewUser(type.id,user.id);
+	}
 
+	//******************************************************************************//
+	// CreateHolidayBalance method
+	//******************************************************************************//
+	
 	@Test
 	public void createNewBalanceForOldUserForAllMonthTest(){
 		UserDTO user = createUserOldHiredForTest();
@@ -263,14 +283,6 @@ public class HolidayBalanceServiceTest extends AbstractServiceTest {
 		assertEquals(AVAIL, newBalance.availableBalanceUpdated, 0);
 		assertEquals(this.getNextCompleteMonth() , newBalance.beginDate);
 		assertEquals(this.getNextEndDateForNewBalance() , newBalance.endDate);
-	}
-
-	@Test (expected=IllegalArgumentException.class)
-	public void createTwoBalancesForNewUserForTheSameTypeTest(){
-		UserDTO user = createUserNewHiredForTest();
-		HolidayDTO type = createHolidayTypeAllMonthForTest();
-		holidayBalanceService.createHolidayBalanceForNewUser(type.id, user.id);
-		holidayBalanceService.createHolidayBalanceForNewUser(type.id,user.id);
 	}
 
 	@Test
@@ -318,6 +330,10 @@ public class HolidayBalanceServiceTest extends AbstractServiceTest {
 		assertNull(balance);
 	}
 	
+	//******************************************************************************//
+	// GetAvailableBalances method
+	//******************************************************************************//
+
 	@Test
 	public void retrieveAllAvailableBalancesWithNoAnticipationSpecMonthTest(){
 		UserDTO user = createUserOldHiredForTest();
@@ -450,6 +466,11 @@ public class HolidayBalanceServiceTest extends AbstractServiceTest {
 		assertEquals(0, availBalances.size());	
 	}
 
+	//******************************************************************************//
+	// GetProcessedBalance method
+	//******************************************************************************//
+
+	
 	@Test
 	public void retrieveLatestBalanceProcessed(){
 		UserDTO user = createUserOldHiredForTest();
@@ -471,6 +492,10 @@ public class HolidayBalanceServiceTest extends AbstractServiceTest {
 		assertEquals(actualBalance.beginDate, processedBalance.beginDate);
 		assertEquals(actualBalance.endDate, processedBalance.endDate);
 	}
+	
+	//******************************************************************************//
+	// IncrementBalance method
+	//******************************************************************************//
 
 	@Test(expected = IllegalArgumentException.class)
 	public void incrementBalanceWithNoBalance(){
@@ -602,6 +627,11 @@ public class HolidayBalanceServiceTest extends AbstractServiceTest {
 		assertEquals(this.getNextCompleteMonth() , actualBalance.beginDate);
 		assertEquals(this.getNextEndDateForNewBalance() , actualBalance.endDate);
 	}
+	
+	//******************************************************************************//
+	// HasAvailableDays method
+	//******************************************************************************//
+
 
 	@Test
 	public void balancesDoNotHaveAvailableDaysTest(){
@@ -667,6 +697,10 @@ public class HolidayBalanceServiceTest extends AbstractServiceTest {
 		// Must be false because latest balance is not available due to lack of anticipation
 		assertEquals(true, holidayBalanceService.hasAvailableDays(type.instanceId, user.id, QUANTITY));
 	}
+	
+	//******************************************************************************//
+	// RemoveAvailableDays method
+	//******************************************************************************//
 
 	@Test(expected = IllegalArgumentException.class)
 	public void removeAvailableDaysWhenNotEnoughDaysTest(){
@@ -851,6 +885,10 @@ public class HolidayBalanceServiceTest extends AbstractServiceTest {
 		assertEquals(AVAIL, newestBalance.availableBalanceUpdated, 0);
 	}
 
+	//******************************************************************************//
+	// RemoveDaysInAvailableUpdatedFromRequest method
+	//******************************************************************************//
+	
 	@Test(expected = IllegalArgumentException.class)
 	public void removeAvailableTemporaryDaysWhenNotEnoughDaysTest(){
 		UserDTO user = createUserOldHiredForTest();
@@ -1069,6 +1107,9 @@ public class HolidayBalanceServiceTest extends AbstractServiceTest {
 		assertEquals(0, newestBalance.availableBalanceUpdated, 0);
 	}
 
+	//******************************************************************************//
+	// AddDaysInAvailableUpdatedFromRequest method
+	//******************************************************************************//
 	@Test(expected = IllegalArgumentException.class)
 	public void addDaysInAvailableUpdatedWithWrongValueTest(){
 		UserDTO user = createUserOldHiredForTest();
@@ -1150,6 +1191,9 @@ public class HolidayBalanceServiceTest extends AbstractServiceTest {
 
 	}
 
+	//******************************************************************************//
+	// RemovePastHolidays method
+	//******************************************************************************//
 	@Test
 	public void removePastHolidaysWithoutEffect(){
 		UserDTO user = createUserOldHiredForTest();

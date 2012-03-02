@@ -103,24 +103,25 @@ AppHolidayAdmin = (function($){
 						// Build each table
 						console.log("Building tables...");
 						// Create array from single profile summary
+						var view;
 						if (! $.isArray(data.holidayProfilesSummaryDTO)){
 							// Update the date in month selector
 							monthSelected = data.holidayProfilesSummaryDTO.month;
 							yearSelected = data.holidayProfilesSummaryDTO.year;
 							
-							var view = new HolidayProfileTableView(data.holidayProfilesSummaryDTO.name, data.holidayProfilesSummaryDTO.usersSummaries);
-			    			view.render();
-			    			selectorView.actualize();
+							view = new HolidayProfileTableView(data.holidayProfilesSummaryDTO.name, data.holidayProfilesSummaryDTO.usersSummaries);
 						}
-						$.each(data.holidayProfilesSummaryDTO, function() {
-							// Update the date in month selector
-							monthSelected = this.month;
-							yearSelected = this.year;
-							
-							var view = new HolidayProfileTableView(this.name, this.usersSummaries);
-			    			view.render();
-			    			selectorView.actualize();
-						});
+						else{
+							$.each(data.holidayProfilesSummaryDTO, function() {
+								// Update the date in month selector
+								monthSelected = this.month;
+								yearSelected = this.year;
+								
+								view = new HolidayProfileTableView(this.name, this.usersSummaries);
+							});
+						}
+						view.render();
+		    			selectorView.actualize();
 					}
 				}
 			});
