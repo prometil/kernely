@@ -50,6 +50,7 @@ public class I18n {
 		names.add("stream");
 		names.add("holiday");
 		names.add("project");
+		names.add("timesheet");
 		messages = new Messages(pLocale, names);
 		locale = pLocale;
 	}
