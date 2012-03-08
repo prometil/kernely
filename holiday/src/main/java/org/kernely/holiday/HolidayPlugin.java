@@ -98,8 +98,7 @@ public class HolidayPlugin extends AbstractPlugin {
 		// *  : every month
 		// ?  : the day of the week is not important
 		// *  : every year
-		//ScheduleBuilder holidaysSchedule = CronScheduleBuilder.cronSchedule("0 0 00 1 * ? *");
-		ScheduleBuilder holidaysSchedule = CronScheduleBuilder.cronSchedule("0 * * * * ? *");
+		ScheduleBuilder holidaysSchedule = CronScheduleBuilder.cronSchedule("0 0 00 1 * ? *");
 		
         // Create the holidays trigger
         Trigger holidaysTrigger = TriggerBuilder.
