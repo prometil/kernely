@@ -99,6 +99,7 @@
 		<module>stream</module>
 		<module>holiday</module>
 		<module>project</module>
+		<module>timesheet</module>
 	</modules>
 
 	<dependencies>
