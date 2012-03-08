@@ -9,6 +9,7 @@ import java.util.Set;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
+import org.joda.time.Months;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.junit.Test;
@@ -73,8 +74,6 @@ public class HolidayServicesTest extends AbstractServiceTest {
 	private static final int QUANTITY2 = 25;
 	private static final int PERIOD1 = HolidayType.PERIOD_MONTH;
 	private static final int PERIOD2 = HolidayType.PERIOD_YEAR;
-	private static final int AVAIL1 = QUANTITY1 * PERIOD1;
-	private static final int AVAIL2 = QUANTITY2 * PERIOD2;
 	private static final String COLOR1 = "#FFFFFF";
 	private static final String COLOR2 = "#000000";
 
@@ -87,6 +86,19 @@ public class HolidayServicesTest extends AbstractServiceTest {
 	// *********************************************************************//
 	// Helper //
 	// *********************************************************************//
+	private float getAvailableType1ForTheYear(HolidayBalanceDTO balance) {
+		// In the tests, we don't use twelth of days because dtos are already
+		// converted in days.
+		return QUANTITY1 * (Months.monthsBetween(new DateTime(balance.beginDate), new DateTime(balance.endDate)).getMonths());
+	}
+	
+	private float getAvailableType2ForTheYear(HolidayBalanceDTO balance) {
+		// In the tests, we don't use twelth of days because dtos are already
+		// converted in days.
+		// We divide by 12 because this QUANTITY  is associated to a year period.
+		return QUANTITY2 * (Months.monthsBetween(new DateTime(balance.beginDate), new DateTime(balance.endDate)).getMonths()) / 12F;
+	}
+	
 	private void createUserRoleForTest() {
 		RoleDTO requestRole = new RoleDTO(1, Role.ROLE_USER);
 		roleService.createRole(requestRole);
@@ -227,8 +239,10 @@ public class HolidayServicesTest extends AbstractServiceTest {
 		HolidayBalanceDTO balance1 = new ArrayList<HolidayBalanceDTO>(balanceType1).get(0);
 		HolidayBalanceDTO balance2 = new ArrayList<HolidayBalanceDTO>(balanceType2).get(0);
 
-		assertEquals(AVAIL1, balance1.availableBalanceUpdated, 0);
-		assertEquals(AVAIL2, balance2.availableBalanceUpdated, 0);
+		System.out.println("=================>" + balance1.availableBalanceUpdated);
+		
+		assertEquals(getAvailableType1ForTheYear(balance1), balance1.availableBalanceUpdated, 0);
+		assertEquals(getAvailableType2ForTheYear(balance2), balance2.availableBalanceUpdated, 0);
 		assertEquals(0, balance1.availableBalance, 0);
 		assertEquals(0, balance2.availableBalance, 0);
 
@@ -237,7 +251,7 @@ public class HolidayServicesTest extends AbstractServiceTest {
 		HolidayRequestDTO request = this.createHolidayRequestForUser(user.id, type1.instanceId);
 
 		balance1 = balanceService.getProcessedBalance(type1.instanceId, user.id);
-		assertEquals(AVAIL1 - 2, balance1.availableBalanceUpdated, 0);
+		assertEquals(getAvailableType1ForTheYear(balance1) - 2, balance1.availableBalanceUpdated, 0);
 		assertEquals(0, balance1.availableBalance, 0);
 
 		// Cancel the request
@@ -245,14 +259,14 @@ public class HolidayServicesTest extends AbstractServiceTest {
 
 		// Verify that the days have been restored
 		balance1 = balanceService.getProcessedBalance(type1.instanceId, user.id);
-		assertEquals(AVAIL1, balance1.availableBalanceUpdated, 0);
+		assertEquals(getAvailableType1ForTheYear(balance1), balance1.availableBalanceUpdated, 0);
 		assertEquals(0, balance1.availableBalance, 0);
 
 		// Register an holiday request
 		request = this.createHolidayRequestForUser(user.id, type1.instanceId);
 
 		balance1 = balanceService.getProcessedBalance(type1.instanceId, user.id);
-		assertEquals(AVAIL1 - 2, balance1.availableBalanceUpdated, 0);
+		assertEquals(getAvailableType1ForTheYear(balance1) - 2, balance1.availableBalanceUpdated, 0);
 		assertEquals(0, balance1.availableBalance, 0);
 
 		// Deny the request
@@ -262,14 +276,14 @@ public class HolidayServicesTest extends AbstractServiceTest {
 		authenticateAs(USERNAME_USER1);
 		// Verify that the days have been restored
 		balance1 = balanceService.getProcessedBalance(type1.instanceId, user.id);
-		assertEquals(AVAIL1, balance1.availableBalanceUpdated, 0);
+		assertEquals(getAvailableType1ForTheYear(balance1), balance1.availableBalanceUpdated, 0);
 		assertEquals(0, balance1.availableBalance, 0);
 
 		// Register an holiday request
 		request = this.createHolidayRequestForUser(user.id, type1.instanceId);
 
 		balance1 = balanceService.getProcessedBalance(type1.instanceId, user.id);
-		assertEquals(AVAIL1 - 2, balance1.availableBalanceUpdated, 0);
+		assertEquals(getAvailableType1ForTheYear(balance1) - 2, balance1.availableBalanceUpdated, 0);
 		assertEquals(0, balance1.availableBalance, 0);
 
 		// Accept the request
@@ -282,14 +296,14 @@ public class HolidayServicesTest extends AbstractServiceTest {
 		assertEquals(MANAGER_COMMENT, dtos.get(0).managerComment);
 
 		balance1 = balanceService.getProcessedBalance(type1.instanceId, user.id);
-		assertEquals(AVAIL1 - 2, balance1.availableBalanceUpdated, 0);
+		assertEquals(getAvailableType1ForTheYear(balance1) - 2, balance1.availableBalanceUpdated, 0);
 		assertEquals(0, balance1.availableBalance, 0);
 
 		// Remove holidays
 		balanceService.removePastHolidays();
 		balance1 = balanceService.getProcessedBalance(type1.instanceId, user.id);
 		assertEquals(-2, balance1.availableBalance, 0); 
-		assertEquals(AVAIL1 - 2, balance1.availableBalanceUpdated, 0);
+		assertEquals(getAvailableType1ForTheYear(balance1) - 2, balance1.availableBalanceUpdated, 0);
 
 		assertEquals(1, holidayRequestService.getAllRequestsWithStatusForCurrentUser(HolidayRequest.PAST_STATUS).size());
 	}

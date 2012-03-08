@@ -20,7 +20,9 @@
 
 package org.kernely.holiday.service;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNotSame;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -809,6 +811,8 @@ public class HolidayServiceTest extends AbstractServiceTest {
 		details.add(detail1);
 		request.details = details;
 
+		System.out.println("====================>" + balanceService.getHolidayBalancesAvailable(holidayType.instanceId, user1.id).size());
+		
 		requestService.registerRequestAndDetails(request);
 		
 		HolidayCreationRequestDTO update = new HolidayCreationRequestDTO();
@@ -956,4 +960,7 @@ public class HolidayServiceTest extends AbstractServiceTest {
 		assertEquals(true, nextInstUpd.anticipation);
 		assertEquals(COLOR_1_MODIFIED, nextInstUpd.color);
 	}
+	
+	
+	
 }

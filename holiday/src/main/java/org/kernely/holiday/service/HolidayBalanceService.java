@@ -35,6 +35,7 @@ import javax.persistence.Query;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
+import org.joda.time.Months;
 import org.kernely.core.model.User;
 import org.kernely.core.service.AbstractService;
 import org.kernely.holiday.dto.HolidayBalanceDTO;
@@ -155,16 +156,10 @@ public class HolidayBalanceService extends AbstractService {
 		balance.setUser(user);
 		balance.setHolidayTypeInstance(type.getCurrentInstance());
 		balance.setAvailableBalance(0);
-		if (!type.isUnlimited()) {
-			// This field contains the theoric value of the balance : Quantity *
-			// Period Unit * 12 to have that for the year
-			balance.setAvailableBalanceUpdated(type.getQuantity() * type.getPeriodUnit() * 12);
-		} else {
-			// This field doesn't matter in the case of illimited balance
-			balance.setAvailableBalanceUpdated(0);
-		}
 		DateTimeZone zoneUTC = DateTimeZone.UTC;
 		balance.setLastUpdate(new DateTime().withZone(zoneUTC).toDate());
+
+		Date bDate;
 
 		// In the case where there is an effective month, we set the begin date
 		// at the end of the previous balance,
@@ -174,7 +169,8 @@ public class HolidayBalanceService extends AbstractService {
 			if (previous == null) {
 				// In the case where there is no previous, when
 				// it's a new balance
-				balance.setBeginDate(this.getNextCompleteMonth(DateTime.now().withYear(year).toDate()));
+				bDate = this.getNextCompleteMonth(DateTime.now().withYear(year).toDate());
+				balance.setBeginDate(bDate);
 				// We check when the new balance is created
 				// If the current date is after the effectiveness of this type
 				// of
@@ -185,9 +181,10 @@ public class HolidayBalanceService extends AbstractService {
 				if (type.getEffectiveMonth() == HolidayType.ALL_MONTH) {
 					balance.setEndDate(new DateTime().withMonthOfYear(1).withDayOfMonth(1).withYear(year).plusYears(1).toDateMidnight().toDate());
 				} else {
-
-					if (DateTime.now().withYear(year).isAfter(
-							new DateTime().withDayOfMonth(1).withMonthOfYear(type.getEffectiveMonth()).withYear(year).toDateMidnight())) {
+					DateTime endTheoric = new DateTime().withDayOfMonth(1).withMonthOfYear(type.getEffectiveMonth()).withYear(year).toDateMidnight()
+							.toDateTime();
+					if (DateTime.now().withYear(year).isAfter(endTheoric) || new DateTime(bDate).isEqual(endTheoric)
+							|| new DateTime(bDate).isAfter(endTheoric)) {
 						balance.setEndDate(new DateTime().withMonthOfYear(type.getEffectiveMonth()).withYear(year).plusYears(1).withDayOfMonth(1)
 								.toDateMidnight().toDate());
 					} else {
@@ -204,6 +201,19 @@ public class HolidayBalanceService extends AbstractService {
 				}
 				balance.setBeginDate(new DateTime(previous.endDate).toDateMidnight().toDate());
 				balance.setEndDate(new DateTime(previous.endDate).plusYears(1).toDateMidnight().toDate());
+			}
+
+			if (!type.isUnlimited()) {
+				// This field contains the theoric value of the balance :
+				// Quantity *
+				// Period Unit * Number of months till the end to have that for
+				// the period
+				int months = Months.monthsBetween(new DateTime(balance.getBeginDate()), new DateTime(balance.getEndDate())).getMonths();
+
+				balance.setAvailableBalanceUpdated(type.getQuantity() * type.getPeriodUnit() * months);
+			} else {
+				// This field doesn't matter in the case of illimited balance
+				balance.setAvailableBalanceUpdated(0);
 			}
 
 			em.get().persist(balance);
@@ -246,9 +256,6 @@ public class HolidayBalanceService extends AbstractService {
 		balance.setUser(user);
 		balance.setHolidayTypeInstance(type.getCurrentInstance());
 		balance.setAvailableBalance(0);
-		// This field contains the theoric value of the balance : Quantity *
-		// Period Unit * 12 to have that for the year
-		balance.setAvailableBalanceUpdated(type.getQuantity() * type.getPeriodUnit() * 12);
 		DateTimeZone zoneUTC = DateTimeZone.UTC;
 		balance.setLastUpdate(new DateTime().withZone(zoneUTC).toDate());
 
@@ -270,6 +277,17 @@ public class HolidayBalanceService extends AbstractService {
 				balance.setEndDate(new DateTime().withMonthOfYear(type.getEffectiveMonth()).withDayOfMonth(1).toDateMidnight().toDate());
 			}
 		}
+		if (!type.isUnlimited()) {
+			// This field contains the theoric value of the balance : Quantity *
+			// Period Unit * Number of months till the end to have that for the
+			// period
+			int months = Months.monthsBetween(new DateTime(balance.getBeginDate()), new DateTime(balance.getEndDate())).getMonths();
+			balance.setAvailableBalanceUpdated(type.getQuantity() * type.getPeriodUnit() * months);
+		} else {
+			// This field doesn't matter in the case of illimited balance
+			balance.setAvailableBalanceUpdated(0);
+		}
+
 		em.get().persist(balance);
 		return new HolidayBalanceDTO(balance);
 	}
@@ -388,7 +406,7 @@ public class HolidayBalanceService extends AbstractService {
 		if (typeInstance.isAnticipated()) {
 			balanceRequest = em.get().createQuery(
 					"SELECT b FROM HolidayBalance b WHERE user=:user AND holidayTypeInstance=:type AND endDate <= :date ORDER BY beginDate ASC");
-			balanceRequest.setParameter("date", DateTime.now().plusYears(1).toDateMidnight().toDate());
+			balanceRequest.setParameter("date", this.getNextCompleteMonth(DateTime.now().plusYears(1).toDate()));
 		} else {
 			balanceRequest = em.get().createQuery(
 					"SELECT b FROM HolidayBalance b WHERE user=:user AND holidayTypeInstance=:type AND endDate <= :date ORDER BY begin_date ASC");
@@ -552,14 +570,15 @@ public class HolidayBalanceService extends AbstractService {
 		if (!(Math.abs(((float) entire) * HALF_DAY - days) < RANGE)) {
 			throw new IllegalArgumentException("Can only retrieve days or half days. " + days + " is not a multiple of half day");
 		}
-		if(!instance.isUnlimited()){
-			// If the type associated doesn't allowed anticipation, balance don't
+		if (!instance.isUnlimited()) {
+			// If the type associated doesn't allowed anticipation, balance
+			// don't
 			// have to be negative.
 			if (!instance.isAnticipated() && !hasAvailableDays(holidayTypeInstanceId, userId, days)) {
-				throw new IllegalArgumentException("Can not retrieve " + days + " days: holiday balance linked to type with id " + holidayTypeInstanceId
-						+ " for the user with id " + userId + " has not enough available days.");
+				throw new IllegalArgumentException("Can not retrieve " + days + " days: holiday balance linked to type with id "
+						+ holidayTypeInstanceId + " for the user with id " + userId + " has not enough available days.");
 			}
-	
+
 			Set<HolidayBalanceDTO> balances = getHolidayBalancesAvailable(holidayTypeInstanceId, userId);
 			int remainToRemove = (int) (days * TWELTHS_DAYS);
 			HolidayBalance currentBalanceModel;
@@ -585,7 +604,7 @@ public class HolidayBalanceService extends AbstractService {
 			if (remainToRemove > 0 && instance.isAnticipated()) {
 				HolidayBalanceDTO last = this.getProcessedBalance(holidayTypeInstanceId, userId);
 				HolidayBalance lastBalance = em.get().find(HolidayBalance.class, last.id);
-	
+
 				int newBalanceAvail = lastBalance.getAvailableBalance() - remainToRemove;
 				lastBalance.setAvailableBalance(newBalanceAvail);
 				em.get().merge(lastBalance);
@@ -607,19 +626,19 @@ public class HolidayBalanceService extends AbstractService {
 	@Transactional
 	public void removeDaysInAvailableUpdatedFromRequest(long typeInstanceId, long userId, float days) {
 		HolidayTypeInstance instance = em.get().find(HolidayTypeInstance.class, typeInstanceId);
-		
+
 		// Can only remove days or half days.
 		int entire = (int) (days / HALF_DAY);
 		if (!(Math.abs(((float) entire) * HALF_DAY - days) < RANGE)) {
 			throw new IllegalArgumentException("Can only retrieve days or half days. " + days + " is not a multiple of half day");
 		}
 
-		if(!instance.isUnlimited()){
+		if (!instance.isUnlimited()) {
 			if (!hasAvailableDaysUpdated(typeInstanceId, userId, days)) {
 				throw new IllegalArgumentException("Can not retrieve " + days + " days: holiday balance linked to type with id " + typeInstanceId
 						+ " for the user with id " + userId + " has not enough available days.");
 			}
-	
+
 			Set<HolidayBalanceDTO> balances = getHolidayBalancesAvailable(typeInstanceId, userId);
 			int remainToRemove = (int) (days * TWELTHS_DAYS);
 			HolidayBalance currentBalanceModel;
@@ -657,19 +676,20 @@ public class HolidayBalanceService extends AbstractService {
 	 */
 	@Transactional
 	public void addDaysInAvailableUpdatedFromRequest(long typeInstanceId, long userId, float days) {
-		
+
 		// Can only add days or half days.
 		int entire = (int) (days / HALF_DAY);
 		if (!(Math.abs(((float) entire) * HALF_DAY - days) < RANGE)) {
 			throw new IllegalArgumentException("Can only retrieve days or half days. " + days + " is not a multiple of half day");
 		}
-		
-		
+
 		HolidayTypeInstance typeInstance = em.get().find(HolidayTypeInstance.class, typeInstanceId);
-		if(!typeInstance.isUnlimited()){
+		if (!typeInstance.isUnlimited()) {
 			Set<HolidayBalanceDTO> balances = getHolidayBalancesAvailable(typeInstanceId, userId);
-			// The method 'getHolidayBalancesAvailable' gives balances in descending
-			// order. We have to reverse the collection to have the ascending order.
+			// The method 'getHolidayBalancesAvailable' gives balances in
+			// descending
+			// order. We have to reverse the collection to have the ascending
+			// order.
 			List<HolidayBalanceDTO> balancesReversed = new ArrayList<HolidayBalanceDTO>(balances);
 			Collections.reverse(balancesReversed);
 			int remainToAdd = (int) (days * TWELTHS_DAYS);
@@ -682,7 +702,8 @@ public class HolidayBalanceService extends AbstractService {
 				maxOfThisBalance = (int) (typeInstance.getQuantity() * typeInstance.getPeriodUnit() * 12);
 				// Current available quantity
 				availInThisBalance = currentBalanceModel.getAvailableBalanceUpdated();
-				// If the balance is full, switch to the next balance, else we fill
+				// If the balance is full, switch to the next balance, else we
+				// fill
 				// it as possible.
 				if (availInThisBalance < maxOfThisBalance) {
 					// If there is enough space in this balance to add all days
@@ -691,7 +712,8 @@ public class HolidayBalanceService extends AbstractService {
 						currentBalanceModel.setAvailableBalanceUpdated(newBalanceAvail);
 						em.get().merge(currentBalanceModel);
 						break;
-					} else { // Increase the balance until its maximum and decrease
+					} else { // Increase the balance until its maximum and
+								// decrease
 						// the remain quantity to add.
 						currentBalanceModel.setAvailableBalanceUpdated(maxOfThisBalance);
 						remainToAdd -= (maxOfThisBalance - availInThisBalance);
@@ -767,6 +789,7 @@ public class HolidayBalanceService extends AbstractService {
 	 * retrieved by the association type/user. If this method is called on the
 	 * effective month of the holiday type, create the balance for the next year
 	 */
+	@Transactional
 	public void computeHolidays() {
 		DateTime now = DateTime.now().toDateMidnight().toDateTime();
 
@@ -774,15 +797,18 @@ public class HolidayBalanceService extends AbstractService {
 			for (HolidayType type : profile.getHolidayTypes()) {
 				HolidayTypeInstance currentInstance = type.getCurrentInstance();
 				for (User user : currentInstance.getUsers()) {
-					this.incrementBalance(currentInstance.getId(), user.getId());
 					HolidayBalanceDTO balance = this.getProcessedBalance(currentInstance.getId(), user.getId());
+					DateTime beginDate = new DateTime(balance.beginDate);
 					DateTime endDate = new DateTime(balance.endDate);
-					if (now.isEqual(endDate) || now.isAfter(endDate)) {
-						if(!type.getCurrentInstance().equals(type.getNextInstance())){
-							type.setCurrentInstance(type.getNextInstance());
-							em.get().merge(type);
+					if(now.isAfter(beginDate) && !now.isEqual(beginDate)){
+						this.incrementBalance(currentInstance.getId(), user.getId());
+						if (now.isEqual(endDate) || now.isAfter(endDate)) {
+							if (!type.getCurrentInstance().equals(type.getNextInstance())) {
+								type.setCurrentInstance(type.getNextInstance());
+								em.get().merge(type);
+							}
+							this.createHolidayBalance(type.getId(), user.getId());
 						}
-						this.createHolidayBalance(type.getId(), user.getId());
 					}
 				}
 			}
