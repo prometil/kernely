@@ -48,6 +48,7 @@ import org.kernely.holiday.dto.HolidayUserSummaryDTO;
 import org.kernely.holiday.dto.HolidayUserTypeSummaryDTO;
 import org.kernely.holiday.model.HolidayProfile;
 import org.kernely.holiday.model.HolidayRequest;
+import org.kernely.holiday.model.HolidayRequestDetail;
 import org.kernely.holiday.model.HolidayType;
 import org.kernely.holiday.model.HolidayTypeInstance;
 import org.slf4j.Logger;
@@ -147,6 +148,7 @@ public class HolidayService extends AbstractService {
 	 *            Request containing data to set.
 	 * 
 	 */
+	@SuppressWarnings("unchecked")
 	@Transactional
 	public HolidayDTO createOrUpdateHoliday(HolidayCreationRequestDTO request) {
 		if (request == null) {
@@ -200,6 +202,7 @@ public class HolidayService extends AbstractService {
 		}
 		holidayType.setColor(request.color);
 
+		// If the id is not set or is 0, we are in the creation mode
 		if (id == 0) {
 			// Create a new instance of this type
 			HolidayTypeInstance instance = new HolidayTypeInstance();
@@ -211,40 +214,83 @@ public class HolidayService extends AbstractService {
 			instance.setUnlimited(holidayType.isUnlimited());
 			em.get().persist(instance);
 			holidayType.setCurrentInstance(instance);
+			holidayType.setNextInstance(instance);
 			em.get().persist(holidayType);
 			log.debug("HolidayService: new holiday type created ({})", request.name);
 		} else {
-			// Update case
-			// If the effective month, quantity, the period unit or the
-			// anticipated mode has
-			// changed, we have to create a new instance of this type
-			if (oldEffectiveMonth != holidayType.getEffectiveMonth() || oldAnticipated != holidayType.isAnticipated()
-					|| oldQuantity != holidayType.getQuantity() || oldPeriodUnit != holidayType.getPeriodUnit()
-					|| oldUnlimited != holidayType.isUnlimited()) {
-				HolidayTypeInstance instance = new HolidayTypeInstance();
+			// Here we're in the edition mode.
+			// Verify that some request details are already linked to this
+			// instance of type
+			Query verifExist = em.get().createQuery("SELECT d FROM HolidayRequestDetail d WHERE typeInstance=:instance");
+			verifExist.setParameter("instance", holidayType.getCurrentInstance());
+			try {
+				// Get the details by the request above
+				// If some details exists, will proceed, else, will raise a
+				// NoResultException
+				List<HolidayRequestDetail> list = (List<HolidayRequestDetail>)verifExist.getResultList();
+				if(list.size() == 0){
+					throw new NoResultException("Details are link to this instance of type !");
+				}
+
+				// Here some details are linked to the concerned type instance.
+				// If one or more of these fields have been modified, we have to
+				// create a new instance of this type and store it in the
+				// "nextInstance" field
+				if (oldEffectiveMonth != holidayType.getEffectiveMonth() || oldAnticipated != holidayType.isAnticipated()
+						|| oldQuantity != holidayType.getQuantity() || oldPeriodUnit != holidayType.getPeriodUnit()
+						|| oldUnlimited != holidayType.isUnlimited()) {
+					HolidayTypeInstance instance = new HolidayTypeInstance();
+					instance.setName(holidayType.getName());
+					instance.setColor(holidayType.getColor());
+					instance.setPeriodUnit(holidayType.getPeriodUnit());
+					instance.setQuantity(holidayType.getQuantity());
+					instance.setAnticipated(holidayType.isAnticipated());
+					instance.setUnlimited(holidayType.isUnlimited());
+					em.get().persist(instance);
+					// The new instance will be applied for the next balance
+					// created (When the current balance will end)
+					holidayType.setNextInstance(instance);
+				} else {
+					// If it's just the name or the color that has been
+					// modified, we just update the existing instance.
+					if (!oldName.equals(holidayType.getName()) || !oldColor.equals(holidayType.getColor())) {
+						HolidayTypeInstance instance = holidayType.getCurrentInstance();
+						instance.setName(holidayType.getName());
+						instance.setColor(holidayType.getColor());
+						em.get().merge(instance);
+					}
+				}
+			} catch (NoResultException nre) {
+				// Here, no request details are linked to the concerned type
+				// instance. So, we can update directly the existing type
+				// instance without affect data.
+				HolidayTypeInstance instance = holidayType.getCurrentInstance();
 				instance.setName(holidayType.getName());
 				instance.setColor(holidayType.getColor());
 				instance.setPeriodUnit(holidayType.getPeriodUnit());
 				instance.setQuantity(holidayType.getQuantity());
 				instance.setAnticipated(holidayType.isAnticipated());
 				instance.setUnlimited(holidayType.isUnlimited());
-				em.get().persist(instance);
+				em.get().merge(instance);
 				holidayType.setCurrentInstance(instance);
-			}
-			// If only the name or the color have changed, we have to just
-			// update the existing instance of this type
-			else {
-				if (!oldName.equals(holidayType.getName()) || !oldColor.equals(holidayType.getColor())) {
-					HolidayTypeInstance currentInstance = holidayType.getCurrentInstance();
-					currentInstance.setName(holidayType.getName());
-					currentInstance.setColor(holidayType.getColor());
-				}
+				holidayType.setNextInstance(instance);
 			}
 			em.get().merge(holidayType);
 			log.debug("HolidayService: holiday type updated ({})", request.name);
 		}
 
 		return new HolidayDTO(holidayType);
+	}
+	
+	/**
+	 * Returns an HolidayDTO representing the instance with the given id
+	 * @param id The id of the instance to retrieve
+	 * @return A DTO representing the instance with the given id.
+	 */
+	@Transactional
+	public HolidayDTO getHolidayTypeInstanceFromId(long id){
+		HolidayTypeInstance instance = em.get().find(HolidayTypeInstance.class, id);
+		return new HolidayDTO(instance);
 	}
 
 	/**
@@ -302,7 +348,7 @@ public class HolidayService extends AbstractService {
 
 		// Get all holiday types from this holiday profile
 		Set<HolidayType> types = new HashSet<HolidayType>();
-		if (request.holidayTypesId.size() > 0 && request.holidayTypesId.get(0) != null){
+		if (request.holidayTypesId.size() > 0 && request.holidayTypesId.get(0) != null) {
 			for (long typeId : request.holidayTypesId) {
 				Query query = em.get().createQuery("SELECT  h from HolidayType h WHERE  h.id=:id");
 				query.setParameter("id", typeId);
@@ -323,7 +369,7 @@ public class HolidayService extends AbstractService {
 		}
 
 		// Update holiday types
-		if (request.holidayTypesId.size() > 0 && request.holidayTypesId.get(0) != null ){
+		if (request.holidayTypesId.size() > 0 && request.holidayTypesId.get(0) != null) {
 			for (long typeId : request.holidayTypesId) {
 				Query query = em.get().createQuery("SELECT  h from HolidayType h WHERE  h.id=:id");
 				query.setParameter("id", typeId);
@@ -417,9 +463,18 @@ public class HolidayService extends AbstractService {
 
 		profile.setUsers(associatedUsers);
 		HolidayTypeInstance currentInstance;
+		HolidayTypeInstance nextInstance;
 		for (HolidayType type : profile.getHolidayTypes()) {
 			currentInstance = type.getCurrentInstance();
 			currentInstance.setUsers(associatedUsers);
+			nextInstance = type.getNextInstance();
+			if(!currentInstance.equals(nextInstance)){
+				nextInstance.setUsers(associatedUsers);
+				em.get().merge(nextInstance);
+				log
+				.debug("Next Type instance with id {} has been associated to the users of the profile with id {}", nextInstance.getId(), profile
+						.getId());
+			}
 			log
 					.debug("Type instance with id {} has been associated to the users of the profile with id {}", currentInstance.getId(), profile
 							.getId());

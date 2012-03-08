@@ -119,6 +119,7 @@ public class HolidayServicesTest extends AbstractServiceTest {
 		creation.color = COLOR1;
 
 		this.type1 = holidayService.createOrUpdateHoliday(creation);
+		
 		creation.name = NAME_TYPE2;
 		creation.unlimited = false;
 		creation.effectiveMonth = HolidayType.JUNE;
@@ -134,6 +135,23 @@ public class HolidayServicesTest extends AbstractServiceTest {
 		List<Long> typesId = new ArrayList<Long>();
 		typesId.add(this.type1.id);
 		typesId.add(this.type2.id);
+		profileCreation.holidayTypesId = typesId;
+
+		return holidayService.createOrUpdateHolidayProfile(profileCreation);
+	}
+	
+	private HolidayProfileDTO createHolidayProfileWithUnlimitedTypeForTest() {
+		HolidayCreationRequestDTO creation = new HolidayCreationRequestDTO();
+		creation.name = NAME_TYPE1;
+		creation.unlimited = true;
+		creation.color = COLOR1;
+
+		this.type1 = holidayService.createOrUpdateHoliday(creation);
+
+		HolidayProfileCreationRequestDTO profileCreation = new HolidayProfileCreationRequestDTO();
+		profileCreation.name = NAME_PROFILE;
+		List<Long> typesId = new ArrayList<Long>();
+		typesId.add(this.type1.id);
 		profileCreation.holidayTypesId = typesId;
 
 		return holidayService.createOrUpdateHolidayProfile(profileCreation);
@@ -167,7 +185,7 @@ public class HolidayServicesTest extends AbstractServiceTest {
 	}
 
 	// *********************************************************************//
-	// Integration test //
+	// Integration test														//
 	// *********************************************************************//
 
 	@Test
@@ -275,5 +293,104 @@ public class HolidayServicesTest extends AbstractServiceTest {
 
 		assertEquals(1, holidayRequestService.getAllRequestsWithStatusForCurrentUser(HolidayRequest.PAST_STATUS).size());
 	}
+	
+	@Test
+	public void simulateUnlimitedHolidayRequestTest(){
+		// Creation the role User
+		this.createUserRoleForTest();
 
+		// Creation of the user
+		UserDTO user = this.createUser1ForTest();
+		this.createManagerForTest();
+		
+		// Link the user to the manager
+		List<UserDTO> managed = new ArrayList<UserDTO>();
+		managed.add(user);
+		userService.updateManager(USERNAME_MANAGER, managed);
+
+		// Creation of the profile with types inside.
+		HolidayProfileDTO profile = this.createHolidayProfileWithUnlimitedTypeForTest();
+
+		assertEquals(NAME_PROFILE, profile.name);
+		assertEquals(1, profile.holidayTypes.size());
+
+		// Links users to this profile
+		List<String> usernames = new ArrayList<String>();
+		usernames.add(user.username);
+		holidayService.updateProfileUsers(profile.id, usernames);
+
+		List<UserDetailsDTO> users = holidayService.getUsersInProfile(profile.id);
+		assertEquals(1, users.size());
+		assertEquals(user.username, users.get(0).user.username);
+		
+		// Register an holiday request
+		authenticateAs(USERNAME_USER1);
+		HolidayRequestDTO request = this.createHolidayRequestForUser(user.id, type1.instanceId);
+		
+		HolidayBalanceDTO balance1 = balanceService.getProcessedBalance(type1.instanceId, user.id);
+		assertEquals(0, balance1.availableBalanceUpdated, 0);
+		assertEquals(0, balance1.availableBalance, 0);
+		
+		// Cancel the request
+		holidayRequestService.cancelRequest(request.id);
+
+		// Verify that the days have been restored
+		balance1 = balanceService.getProcessedBalance(type1.instanceId, user.id);
+		assertEquals(0, balance1.availableBalanceUpdated, 0);
+		assertEquals(0, balance1.availableBalance, 0);
+
+		// Register an holiday request
+		request = this.createHolidayRequestForUser(user.id, type1.instanceId);
+
+		balance1 = balanceService.getProcessedBalance(type1.instanceId, user.id);
+		assertEquals(0, balance1.availableBalanceUpdated, 0);
+		assertEquals(0, balance1.availableBalance, 0);
+
+		// Deny the request
+		authenticateAs(USERNAME_MANAGER);
+		holidayRequestService.denyRequest(request.id);
+
+		authenticateAs(USERNAME_USER1);
+		// Verify that the days have been restored
+		balance1 = balanceService.getProcessedBalance(type1.instanceId, user.id);
+		assertEquals(0, balance1.availableBalanceUpdated, 0);
+		assertEquals(0, balance1.availableBalance, 0);
+
+		authenticateAs(USERNAME_USER1);
+		// Verify that the days have been restored
+		balance1 = balanceService.getProcessedBalance(type1.instanceId, user.id);
+		assertEquals(0, balance1.availableBalanceUpdated, 0);
+		assertEquals(0, balance1.availableBalance, 0);
+
+		// Register an holiday request
+		request = this.createHolidayRequestForUser(user.id, type1.instanceId);
+
+		balance1 = balanceService.getProcessedBalance(type1.instanceId, user.id);
+		assertEquals(0, balance1.availableBalanceUpdated, 0);
+		assertEquals(0, balance1.availableBalance, 0);
+
+		// Accept the request
+		authenticateAs(USERNAME_MANAGER);
+		holidayRequestService.addManagerCommentary(request.id, MANAGER_COMMENT);
+		holidayRequestService.acceptRequest(request.id);
+
+		authenticateAs(USERNAME_USER1);
+		List<HolidayRequestDTO> dtos = holidayRequestService.getAllRequestsWithStatusForCurrentUser(HolidayRequest.ACCEPTED_STATUS);
+		assertEquals(MANAGER_COMMENT, dtos.get(0).managerComment);
+
+		balance1 = balanceService.getProcessedBalance(type1.instanceId, user.id);
+		assertEquals(0, balance1.availableBalanceUpdated, 0);
+		assertEquals(0, balance1.availableBalance, 0);
+
+		// Remove holidays
+		balanceService.removePastHolidays();
+		balance1 = balanceService.getProcessedBalance(type1.instanceId, user.id);
+		assertEquals(0, balance1.availableBalance, 0); 
+		assertEquals(0, balance1.availableBalanceUpdated, 0);
+
+		assertEquals(1, holidayRequestService.getAllRequestsWithStatusForCurrentUser(HolidayRequest.PAST_STATUS).size());
+	}
+
+	
+	
 }

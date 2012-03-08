@@ -132,7 +132,13 @@ public class HolidayBalance extends AbstractModel {
 	 * @return the lastUpdate
 	 */
 	public Date getLastUpdate() {
-		return (Date) lastUpdate.clone();
+		if(lastUpdate == null){
+			return null;
+		}
+		else{
+			return (Date) lastUpdate.clone();
+		}
+		
 	}
 
 	/**

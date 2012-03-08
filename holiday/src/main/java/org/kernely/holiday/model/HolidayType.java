@@ -53,6 +53,10 @@ public class HolidayType extends AbstractModel {
 	@JoinColumn(name="current_instance")
 	private HolidayTypeInstance currentInstance;
 	
+	@OneToOne
+	@JoinColumn(name="next_instance")
+	private HolidayTypeInstance nextInstance;
+	
 	private boolean anticipated;
 	
 	private boolean unlimited;
@@ -207,5 +211,19 @@ public class HolidayType extends AbstractModel {
 	 */
 	public void setCurrentInstance(HolidayTypeInstance currentInstance) {
 		this.currentInstance = currentInstance;
+	}
+
+	/**
+	 * @return the nextInstance
+	 */
+	public HolidayTypeInstance getNextInstance() {
+		return nextInstance;
+	}
+
+	/**
+	 * @param nextInstance the nextInstance to set
+	 */
+	public void setNextInstance(HolidayTypeInstance nextInstance) {
+		this.nextInstance = nextInstance;
 	}
 }

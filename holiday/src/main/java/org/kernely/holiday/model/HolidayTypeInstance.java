@@ -114,62 +114,6 @@ public class HolidayTypeInstance extends AbstractModel {
 		this.anticipated = anticipated;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#hashCode()
-	 */
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + (anticipated ? 1231 : 1237);
-		result = prime * result + ((color == null) ? 0 : color.hashCode());
-		result = (int) (prime * result + id);
-		result = prime * result + ((name == null) ? 0 : name.hashCode());
-		return result;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj) {
-			return true;
-		}
-		if (obj == null) {
-			return false;
-		}
-		if (getClass() != obj.getClass()) {
-			return false;
-		}
-		HolidayTypeInstance other = (HolidayTypeInstance) obj;
-		if (anticipated != other.anticipated) {
-			return false;
-		}
-		if (color == null) {
-			if (other.color != null) {
-				return false;
-			}
-		} else if (!color.equals(other.color)) {
-			return false;
-		}
-		if (id != other.id) {
-			return false;
-		}
-		if (name == null) {
-			if (other.name != null) {
-				return false;
-			}
-		} else if (!name.equals(other.name)) {
-			return false;
-		}
-		return true;
-	}
-
 	/**
 	 * @return the quantity
 	 */
@@ -212,5 +156,65 @@ public class HolidayTypeInstance extends AbstractModel {
 	 */
 	public void setUnlimited(boolean unlimited) {
 		this.unlimited = unlimited;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + (anticipated ? 1231 : 1237);
+		result = prime * result + ((color == null) ? 0 : color.hashCode());
+		result = prime * result + ((name == null) ? 0 : name.hashCode());
+		result = prime * result + periodUnit;
+		result = prime * result + quantity;
+		result = prime * result + (unlimited ? 1231 : 1237);
+		return result;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
+			return false;
+		}
+		HolidayTypeInstance other = (HolidayTypeInstance) obj;
+		if (anticipated != other.anticipated) {
+			return false;
+		}
+		if (color == null) {
+			if (other.color != null) {
+				return false;
+			}
+		} else if (!color.equals(other.color)) {
+			return false;
+		}
+		if (name == null) {
+			if (other.name != null) {
+				return false;
+			}
+		} else if (!name.equals(other.name)) {
+			return false;
+		}
+		if (periodUnit != other.periodUnit) {
+			return false;
+		}
+		if (quantity != other.quantity) {
+			return false;
+		}
+		if (unlimited != other.unlimited) {
+			return false;
+		}
+		return true;
 	}
 }

@@ -23,6 +23,7 @@ package org.kernely.holiday.dto;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.kernely.holiday.model.HolidayType;
+import org.kernely.holiday.model.HolidayTypeInstance;
 
 
 /**
@@ -78,6 +79,11 @@ public class HolidayDTO implements Comparable<HolidayDTO> {
 	public long instanceId;
 	
 	/**
+	 * The id of the next instance of this type
+	 */
+	public long nextInstanceId;
+	
+	/**
 	 * default constructor
 	 */
 	public HolidayDTO(){
@@ -105,6 +111,7 @@ public class HolidayDTO implements Comparable<HolidayDTO> {
 		this.effectiveMonth = effectiveMonth;
 		this.color = color;
 		this.instanceId = 0;
+		this.nextInstanceId = 0;
 	}
 	
 	/**
@@ -121,8 +128,31 @@ public class HolidayDTO implements Comparable<HolidayDTO> {
 		this.effectiveMonth = type.getEffectiveMonth();
 		this.color = type.getColor();
 		this.instanceId = type.getCurrentInstance().getId();
+		this.nextInstanceId = type.getNextInstance().getId();
+	}
+	
+	/**
+	 * Constructor with an instance as parameter
+	 * As the instance represents a type, we use this dto to represent this
+	 * @param instance The instance to represent
+	 */
+	public HolidayDTO(HolidayTypeInstance instance){
+		this.id = instance.getId();
+		this.name = instance.getName();
+		this.quantity = instance.getQuantity();
+		this.periodUnit = instance.getPeriodUnit();
+		this.anticipation = instance.isAnticipated();
+		this.unlimited = instance.isUnlimited();
+		this.effectiveMonth = -1;
+		this.color = instance.getColor();
+		this.instanceId = -1;
+		this.nextInstanceId = -1;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Comparable#compareTo(java.lang.Object)
+	 */
 	@Override
 	public int compareTo(HolidayDTO o) {
 		return this.name.compareTo(((HolidayDTO) o).name);

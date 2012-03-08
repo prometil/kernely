@@ -450,26 +450,26 @@ public class HolidayBalanceService extends AbstractService {
 	 *            Id of the owner of the balance to increment
 	 */
 	@Transactional
-	public void incrementBalance(long typeId, long userId) {
-		HolidayType type = em.get().find(HolidayType.class, typeId);
-		HolidayBalanceDTO bDto = getProcessedBalance(type.getCurrentInstance().getId(), userId);
+	public void incrementBalance(long typeInstanceId, long userId) {
+		HolidayTypeInstance typeInstance = em.get().find(HolidayTypeInstance.class, typeInstanceId);
+		HolidayBalanceDTO bDto = getProcessedBalance(typeInstance.getId(), userId);
 		if (bDto == null) {
 			throw new IllegalArgumentException("There is no balance associated to the user with the type " + userId
-					+ " and the holiday type with id " + typeId);
+					+ " and the holiday type with id " + typeInstanceId);
 		}
 		HolidayBalance balance = em.get().find(HolidayBalance.class, bDto.id);
 
 		// Only limited balances are incremented
-		if (!type.isUnlimited()) {
+		if (!typeInstance.isUnlimited()) {
 
 			// Quantity of time (in days) earned each period
-			int quantity = type.getQuantity();
+			int quantity = typeInstance.getQuantity();
 
 			// Adjust quantity: balances contains twelths of days
 			// Multiply quantity by the ratio of the period.
 			// The period unit is 12 for months, 1 for years (constants in
 			// HolidayType class).
-			quantity = quantity * type.getPeriodUnit();
+			quantity = quantity * typeInstance.getPeriodUnit();
 
 			// If there is no effective month of the type of holidays, the
 			// available balance is incremented, otherwise the future balance is
@@ -774,10 +774,14 @@ public class HolidayBalanceService extends AbstractService {
 			for (HolidayType type : profile.getHolidayTypes()) {
 				HolidayTypeInstance currentInstance = type.getCurrentInstance();
 				for (User user : currentInstance.getUsers()) {
-					this.incrementBalance(type.getId(), user.getId());
+					this.incrementBalance(currentInstance.getId(), user.getId());
 					HolidayBalanceDTO balance = this.getProcessedBalance(currentInstance.getId(), user.getId());
 					DateTime endDate = new DateTime(balance.endDate);
 					if (now.isEqual(endDate) || now.isAfter(endDate)) {
+						if(!type.getCurrentInstance().equals(type.getNextInstance())){
+							type.setCurrentInstance(type.getNextInstance());
+							em.get().merge(type);
+						}
 						this.createHolidayBalance(type.getId(), user.getId());
 					}
 				}

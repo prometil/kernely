@@ -69,13 +69,17 @@ public class Migration01 extends Migration {
 		holidayType.column("color", "varchar(10)");
 		holidayType.column("holiday_profile_id", "bigint");
 		holidayType.column("current_instance", "bigint");
+		holidayType.column("next_instance", "bigint");
 
 		RawSql holidayTypeForeignKey = new RawSql("ALTER TABLE kernely_holiday_type ADD CONSTRAINT fk_holiday_profile FOREIGN KEY (holiday_profile_id) REFERENCES kernely_holiday_profile (id)");
 		RawSql holidayTypeInstanceForeignKey = new RawSql("ALTER TABLE kernely_holiday_type ADD CONSTRAINT fk_current_type_instance FOREIGN KEY (current_instance) REFERENCES kernely_holiday_type_instance (id)");
+		RawSql holidayTypeNextInstanceForeignKey = new RawSql("ALTER TABLE kernely_holiday_type ADD CONSTRAINT fk_next_type_instance FOREIGN KEY (next_instance) REFERENCES kernely_holiday_type_instance (id)");
 		
 		commands.add(holidayType);
 		commands.add(holidayTypeForeignKey);
 		commands.add(holidayTypeInstanceForeignKey);
+		commands.add(holidayTypeNextInstanceForeignKey);
+		
 		
 		CreateTable holidayTypeInstanceUser = CreateTable.name("kernely_holiday_type_instance_user");
 		holidayTypeInstanceUser.column("user_id", "bigint NOT NULL");

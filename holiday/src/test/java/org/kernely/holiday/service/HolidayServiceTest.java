@@ -52,6 +52,16 @@ public class HolidayServiceTest extends AbstractServiceTest {
 	private static final String TYPE_2 = "type2";
 	private static final String TYPE_3 = "type3";
 	private static final String TYPE_4 = "type4";
+	
+	private static final String TYPE_1_MODIFIED = "type1_modified";
+	
+	private static final int EFFECTIVE_MONTH = HolidayType.APRIL;
+	
+	private static final int EFFECTIVE_MONTH_MODIFIED = HolidayType.FEBRUARY;
+	
+	private static final int PERIOD_UNIT = HolidayType.PERIOD_MONTH;
+	
+	private static final int PERIOD_UNIT_MODIFIED = HolidayType.PERIOD_YEAR;
 
 	private static final String NAME_1 = "name1";
 	private static final String NAME_2 = "name2";
@@ -62,10 +72,14 @@ public class HolidayServiceTest extends AbstractServiceTest {
 
 	private static final int QUANTITY_1 = 25;
 	private static final int QUANTITY_2 = 12;
-
+	
+	private static final int QUANTITY_1_MODIFIED = 20;
+	
 	private static final String COLOR_1 = "#FFFFFF";
 	private static final String COLOR_2 = "#000000";
 
+	private static final String COLOR_1_MODIFIED = "#123456";
+	
 	@Inject
 	private HolidayService holidayService;
 
@@ -145,40 +159,201 @@ public class HolidayServiceTest extends AbstractServiceTest {
 
 		creation.name = TYPE_1;
 		creation.unlimited = false;
-		creation.effectiveMonth = HolidayType.APRIL;
+		creation.effectiveMonth = EFFECTIVE_MONTH;
 		creation.quantity = QUANTITY_1;
-		creation.unity = HolidayType.PERIOD_MONTH;
+		creation.unity = PERIOD_UNIT;
 		creation.anticipation = false;
 		creation.color = COLOR_1;
 
 		HolidayDTO holidayType = holidayService.createOrUpdateHoliday(creation);
 		assertEquals(TYPE_1, holidayType.name);
 		assertEquals(false, holidayType.unlimited);
-		assertEquals(HolidayType.APRIL, holidayType.effectiveMonth);
+		assertEquals(EFFECTIVE_MONTH, holidayType.effectiveMonth);
 		assertEquals(QUANTITY_1, holidayType.quantity);
-		assertEquals(HolidayType.PERIOD_MONTH, holidayType.periodUnit);
+		assertEquals(PERIOD_UNIT, holidayType.periodUnit);
 		assertEquals(false, holidayType.anticipation);
 		assertEquals(COLOR_1, holidayType.color);
+		
 		HolidayCreationRequestDTO update = new HolidayCreationRequestDTO();
 
-		update.name = TYPE_2;
+		update.id = holidayType.id;
+		update.name = TYPE_1_MODIFIED;
 		update.unlimited = false;
-		update.effectiveMonth = HolidayType.FEBRUARY;
-		update.quantity = QUANTITY_2;
-		update.unity = HolidayType.PERIOD_YEAR;
+		update.effectiveMonth = EFFECTIVE_MONTH_MODIFIED;
+		update.quantity = QUANTITY_1_MODIFIED;
+		update.unity = PERIOD_UNIT_MODIFIED;
 		update.anticipation = true;
-		update.color = COLOR_2;
+		update.color = COLOR_1_MODIFIED;
 
 		holidayType = holidayService.createOrUpdateHoliday(update);
 
-		assertEquals(TYPE_2, holidayType.name);
+		assertEquals(TYPE_1_MODIFIED, holidayType.name);
 		assertEquals(false, holidayType.unlimited);
-		assertEquals(HolidayType.FEBRUARY, holidayType.effectiveMonth);
-		assertEquals(QUANTITY_2, holidayType.quantity);
-		assertEquals(HolidayType.PERIOD_YEAR, holidayType.periodUnit);
+		assertEquals(EFFECTIVE_MONTH_MODIFIED, holidayType.effectiveMonth);
+		assertEquals(QUANTITY_1_MODIFIED, holidayType.quantity);
+		assertEquals(PERIOD_UNIT_MODIFIED, holidayType.periodUnit);
 		assertEquals(true, holidayType.anticipation);
-		assertEquals(COLOR_2, holidayType.color);
+		assertEquals(COLOR_1_MODIFIED, holidayType.color);
 
+	}
+	
+	@Test
+	public void updateNameOrColorWhenNoLinksWithUserHolidayType() {
+		HolidayCreationRequestDTO creation = new HolidayCreationRequestDTO();
+
+		creation.name = TYPE_1;
+		creation.unlimited = false;
+		creation.effectiveMonth = EFFECTIVE_MONTH;
+		creation.quantity = QUANTITY_1;
+		creation.unity = PERIOD_UNIT;
+		creation.anticipation = false;
+		creation.color = COLOR_1;
+
+		HolidayDTO holidayType = holidayService.createOrUpdateHoliday(creation);
+		
+		assertEquals(TYPE_1, holidayType.name);
+		assertEquals(false, holidayType.unlimited);
+		assertEquals(EFFECTIVE_MONTH, holidayType.effectiveMonth);
+		assertEquals(QUANTITY_1, holidayType.quantity);
+		assertEquals(PERIOD_UNIT, holidayType.periodUnit);
+		assertEquals(false, holidayType.anticipation);
+		assertEquals(COLOR_1, holidayType.color);
+		assertEquals(holidayType.instanceId, holidayType.nextInstanceId);
+		
+		HolidayDTO currentInstOld = holidayService.getHolidayTypeInstanceFromId(holidayType.instanceId);
+		assertEquals(TYPE_1, currentInstOld.name);
+		assertEquals(false, currentInstOld.unlimited);
+		assertEquals(QUANTITY_1, currentInstOld.quantity);
+		assertEquals(PERIOD_UNIT, currentInstOld.periodUnit);
+		assertEquals(false, currentInstOld.anticipation);
+		assertEquals(COLOR_1, currentInstOld.color);
+		
+		HolidayDTO nextInstOld = holidayService.getHolidayTypeInstanceFromId(holidayType.instanceId);
+		assertEquals(TYPE_1, nextInstOld.name);
+		assertEquals(false, nextInstOld.unlimited);
+		assertEquals(QUANTITY_1, nextInstOld.quantity);
+		assertEquals(PERIOD_UNIT, nextInstOld.periodUnit);
+		assertEquals(false, nextInstOld.anticipation);
+		assertEquals(COLOR_1, nextInstOld.color);
+		
+		HolidayCreationRequestDTO update = new HolidayCreationRequestDTO();
+
+		update.id = holidayType.id;
+		update.name = TYPE_1_MODIFIED;
+		update.unlimited = false;
+		update.effectiveMonth = EFFECTIVE_MONTH;
+		update.quantity = QUANTITY_1;
+		update.unity = PERIOD_UNIT;
+		update.anticipation = false;
+		update.color = COLOR_1_MODIFIED;
+
+		HolidayDTO holidayTypeUpdated = holidayService.createOrUpdateHoliday(update);
+
+		assertEquals(TYPE_1_MODIFIED, holidayTypeUpdated.name);
+		assertEquals(false, holidayTypeUpdated.unlimited);
+		assertEquals(EFFECTIVE_MONTH, holidayTypeUpdated.effectiveMonth);
+		assertEquals(QUANTITY_1, holidayTypeUpdated.quantity);
+		assertEquals(PERIOD_UNIT, holidayTypeUpdated.periodUnit);
+		assertEquals(false, holidayTypeUpdated.anticipation);
+		assertEquals(COLOR_1_MODIFIED, holidayTypeUpdated.color);
+		assertEquals(holidayTypeUpdated.instanceId, holidayTypeUpdated.nextInstanceId);
+		
+		assertEquals(holidayType.instanceId, holidayTypeUpdated.instanceId);
+		assertEquals(holidayType.nextInstanceId, holidayTypeUpdated.nextInstanceId);
+		
+		HolidayDTO currentInstUpd = holidayService.getHolidayTypeInstanceFromId(holidayTypeUpdated.instanceId);
+		assertEquals(TYPE_1_MODIFIED, currentInstUpd.name);
+		assertEquals(false, currentInstUpd.unlimited);
+		assertEquals(QUANTITY_1, currentInstUpd.quantity);
+		assertEquals(PERIOD_UNIT, currentInstUpd.periodUnit);
+		assertEquals(false, currentInstUpd.anticipation);
+		assertEquals(COLOR_1_MODIFIED, currentInstUpd.color);
+		
+		HolidayDTO nextInstUpd = holidayService.getHolidayTypeInstanceFromId(holidayTypeUpdated.nextInstanceId);
+		assertEquals(TYPE_1_MODIFIED, nextInstUpd.name);
+		assertEquals(false, nextInstUpd.unlimited);
+		assertEquals(QUANTITY_1, nextInstUpd.quantity);
+		assertEquals(PERIOD_UNIT, nextInstUpd.periodUnit);
+		assertEquals(false, nextInstUpd.anticipation);
+		assertEquals(COLOR_1_MODIFIED, nextInstUpd.color);
+		
+	}
+	
+	@Test
+	public void updateOtherFieldsWhenNoLinksWithUserHolidayType() {
+		HolidayCreationRequestDTO creation = new HolidayCreationRequestDTO();
+
+		creation.name = TYPE_1;
+		creation.unlimited = false;
+		creation.effectiveMonth = EFFECTIVE_MONTH;
+		creation.quantity = QUANTITY_1;
+		creation.unity = PERIOD_UNIT;
+		creation.anticipation = false;
+		creation.color = COLOR_1;
+
+		HolidayDTO holidayType = holidayService.createOrUpdateHoliday(creation);
+		assertEquals(TYPE_1, holidayType.name);
+		assertEquals(false, holidayType.unlimited);
+		assertEquals(EFFECTIVE_MONTH, holidayType.effectiveMonth);
+		assertEquals(QUANTITY_1, holidayType.quantity);
+		assertEquals(PERIOD_UNIT, holidayType.periodUnit);
+		assertEquals(false, holidayType.anticipation);
+		assertEquals(COLOR_1, holidayType.color);
+		assertEquals(holidayType.instanceId, holidayType.nextInstanceId);
+		
+		HolidayDTO currentInstOld = holidayService.getHolidayTypeInstanceFromId(holidayType.instanceId);
+		assertEquals(TYPE_1, currentInstOld.name);
+		assertEquals(false, currentInstOld.unlimited);
+		assertEquals(QUANTITY_1, currentInstOld.quantity);
+		assertEquals(PERIOD_UNIT, currentInstOld.periodUnit);
+		assertEquals(false, currentInstOld.anticipation);
+		assertEquals(COLOR_1, currentInstOld.color);
+		
+		HolidayDTO nextInstOld = holidayService.getHolidayTypeInstanceFromId(holidayType.instanceId);
+		assertEquals(TYPE_1, nextInstOld.name);
+		assertEquals(false, nextInstOld.unlimited);
+		assertEquals(QUANTITY_1, nextInstOld.quantity);
+		assertEquals(PERIOD_UNIT, nextInstOld.periodUnit);
+		assertEquals(false, nextInstOld.anticipation);
+		assertEquals(COLOR_1, nextInstOld.color);
+		
+		HolidayCreationRequestDTO update = new HolidayCreationRequestDTO();
+
+		update.id = holidayType.id;
+		update.name = TYPE_1_MODIFIED;
+		update.unlimited = false;
+		update.effectiveMonth = EFFECTIVE_MONTH_MODIFIED;
+		update.quantity = QUANTITY_1_MODIFIED;
+		update.unity = PERIOD_UNIT_MODIFIED;
+		update.anticipation = false;
+		update.color = COLOR_1_MODIFIED;
+
+		HolidayDTO holidayTypeUpdated = holidayService.createOrUpdateHoliday(update);
+
+		assertEquals(TYPE_1_MODIFIED, holidayTypeUpdated.name);
+		assertEquals(false, holidayTypeUpdated.unlimited);
+		assertEquals(EFFECTIVE_MONTH_MODIFIED, holidayTypeUpdated.effectiveMonth);
+		assertEquals(QUANTITY_1_MODIFIED, holidayTypeUpdated.quantity);
+		assertEquals(PERIOD_UNIT_MODIFIED, holidayTypeUpdated.periodUnit);
+		assertEquals(false, holidayTypeUpdated.anticipation);
+		assertEquals(COLOR_1_MODIFIED, holidayTypeUpdated.color);
+		assertEquals(holidayType.instanceId, holidayTypeUpdated.nextInstanceId);
+		
+		HolidayDTO currentInstUpd = holidayService.getHolidayTypeInstanceFromId(holidayTypeUpdated.instanceId);
+		assertEquals(TYPE_1_MODIFIED, currentInstUpd.name);
+		assertEquals(false, currentInstUpd.unlimited);
+		assertEquals(QUANTITY_1_MODIFIED, holidayTypeUpdated.quantity);
+		assertEquals(PERIOD_UNIT_MODIFIED, holidayTypeUpdated.periodUnit);
+		assertEquals(false, currentInstUpd.anticipation);
+		assertEquals(COLOR_1_MODIFIED, currentInstUpd.color);
+		
+		HolidayDTO nextInstUpd = holidayService.getHolidayTypeInstanceFromId(holidayTypeUpdated.nextInstanceId);
+		assertEquals(TYPE_1_MODIFIED, nextInstUpd.name);
+		assertEquals(false, nextInstUpd.unlimited);
+		assertEquals(QUANTITY_1_MODIFIED, holidayTypeUpdated.quantity);
+		assertEquals(PERIOD_UNIT_MODIFIED, holidayTypeUpdated.periodUnit);
+		assertEquals(false, nextInstUpd.anticipation);
+		assertEquals(COLOR_1_MODIFIED, nextInstUpd.color);
 	}
 
 	@Test
@@ -401,11 +576,6 @@ public class HolidayServiceTest extends AbstractServiceTest {
 
 		holidayService.updateProfileUsers(profile1.id, profile1Usernames);
 
-		// Creation of balances for profile 1
-		balanceService.createHolidayBalance(type1.id,user1.id);
-		balanceService.createHolidayBalance(type2.id,user1.id);
-		balanceService.createHolidayBalance(type3.id,user1.id);
-
 		// Second profile, with 1 type and 2 users
 		List<Long> profile2Types = new ArrayList<Long>();
 		profile2Types.add(type4.id);
@@ -421,10 +591,6 @@ public class HolidayServiceTest extends AbstractServiceTest {
 		HolidayProfileDTO profile2 = holidayService.createOrUpdateHolidayProfile(profileRequest);
 
 		holidayService.updateProfileUsers(profile2.id, profile2Usernames);
-
-		// Creation of balances for profile 2
-		balanceService.createHolidayBalance(type4.id,user2.id);
-		balanceService.createHolidayBalance(type4.id,user3.id);
 
 		// Increment balances
 		balanceService.incrementBalance(type1.id,user1.id);
@@ -581,4 +747,213 @@ public class HolidayServiceTest extends AbstractServiceTest {
 		assertEquals(NAME_1, profiles.get(0).name);
 	}
 
+	@Test
+	public void updateNameOrColorTypeWithRequestMade(){
+		// Creation of users
+		this.creationOfUserRole();
+		UserDTO user1 = this.creationOfTestUser(NAME_1);
+		
+		HolidayCreationRequestDTO creation = new HolidayCreationRequestDTO();
+		creation.name = TYPE_1;
+		creation.unlimited = false;
+		creation.effectiveMonth = EFFECTIVE_MONTH;
+		creation.quantity = QUANTITY_1;
+		creation.unity = PERIOD_UNIT;
+		creation.anticipation = true;
+		creation.color = COLOR_1;
+
+		HolidayDTO holidayType = holidayService.createOrUpdateHoliday(creation);
+		
+		HolidayDTO currentInstOld = holidayService.getHolidayTypeInstanceFromId(holidayType.instanceId);
+		assertEquals(TYPE_1, currentInstOld.name);
+		assertEquals(false, currentInstOld.unlimited);
+		assertEquals(QUANTITY_1, currentInstOld.quantity);
+		assertEquals(PERIOD_UNIT, currentInstOld.periodUnit);
+		assertEquals(true, currentInstOld.anticipation);
+		assertEquals(COLOR_1, currentInstOld.color);
+		
+		HolidayDTO nextInstOld = holidayService.getHolidayTypeInstanceFromId(holidayType.instanceId);
+		assertEquals(TYPE_1, nextInstOld.name);
+		assertEquals(false, nextInstOld.unlimited);
+		assertEquals(QUANTITY_1, nextInstOld.quantity);
+		assertEquals(PERIOD_UNIT, nextInstOld.periodUnit);
+		assertEquals(true, nextInstOld.anticipation);
+		assertEquals(COLOR_1, nextInstOld.color);
+		
+		List<Long> profile1Types = new ArrayList<Long>();
+		profile1Types.add(holidayType.id);
+		
+		List<String> profile1Usernames = new ArrayList<String>();
+		profile1Usernames.add(user1.username);
+
+		HolidayProfileCreationRequestDTO profileRequest = new HolidayProfileCreationRequestDTO();
+		profileRequest.name = PROFILE_1;
+		profileRequest.holidayTypesId = profile1Types;
+
+		HolidayProfileDTO profile1 = holidayService.createOrUpdateHolidayProfile(profileRequest);
+
+		holidayService.updateProfileUsers(profile1.id, profile1Usernames);
+		
+		// Take holidays
+		HolidayRequestCreationRequestDTO request = new HolidayRequestCreationRequestDTO();
+		HolidayDetailCreationRequestDTO detail1 = new HolidayDetailCreationRequestDTO();
+		
+		// Holidays for the user
+		authenticateAs(user1.username);
+
+		detail1.am = true;
+		detail1.day = "10/10/2010";
+		detail1.typeInstanceId = holidayType.instanceId;
+		
+		List<HolidayDetailCreationRequestDTO> details = new ArrayList<HolidayDetailCreationRequestDTO>();
+		details.add(detail1);
+		request.details = details;
+
+		requestService.registerRequestAndDetails(request);
+		
+		HolidayCreationRequestDTO update = new HolidayCreationRequestDTO();
+		update.id = holidayType.id;
+		update.name = TYPE_1_MODIFIED;
+		update.unlimited = false;
+		update.effectiveMonth = EFFECTIVE_MONTH;
+		update.quantity = QUANTITY_1;
+		update.unity = PERIOD_UNIT;
+		update.anticipation = true;
+		update.color = COLOR_1_MODIFIED;
+
+		HolidayDTO holidayTypeUpdated = holidayService.createOrUpdateHoliday(update);
+		
+		assertEquals(TYPE_1_MODIFIED, holidayTypeUpdated.name);
+		assertEquals(false, holidayTypeUpdated.unlimited);
+		assertEquals(EFFECTIVE_MONTH, holidayTypeUpdated.effectiveMonth);
+		assertEquals(QUANTITY_1, holidayTypeUpdated.quantity);
+		assertEquals(PERIOD_UNIT, holidayTypeUpdated.periodUnit);
+		assertEquals(true, holidayTypeUpdated.anticipation);
+		assertEquals(COLOR_1_MODIFIED, holidayTypeUpdated.color);
+		assertEquals(holidayTypeUpdated.instanceId, holidayTypeUpdated.nextInstanceId);
+		
+		assertEquals(holidayType.instanceId, holidayTypeUpdated.instanceId);
+		assertEquals(holidayType.nextInstanceId, holidayTypeUpdated.nextInstanceId);
+		
+		HolidayDTO currentInstUpd = holidayService.getHolidayTypeInstanceFromId(holidayTypeUpdated.instanceId);
+		assertEquals(TYPE_1_MODIFIED, currentInstUpd.name);
+		assertEquals(false, currentInstUpd.unlimited);
+		assertEquals(QUANTITY_1, currentInstUpd.quantity);
+		assertEquals(PERIOD_UNIT, currentInstUpd.periodUnit);
+		assertEquals(true, currentInstUpd.anticipation);
+		assertEquals(COLOR_1_MODIFIED, currentInstUpd.color);
+		
+		HolidayDTO nextInstUpd = holidayService.getHolidayTypeInstanceFromId(holidayTypeUpdated.nextInstanceId);
+		assertEquals(TYPE_1_MODIFIED, nextInstUpd.name);
+		assertEquals(false, nextInstUpd.unlimited);
+		assertEquals(QUANTITY_1, nextInstUpd.quantity);
+		assertEquals(PERIOD_UNIT, nextInstUpd.periodUnit);
+		assertEquals(true, nextInstUpd.anticipation);
+		assertEquals(COLOR_1_MODIFIED, nextInstUpd.color);
+	}
+	
+	@Test
+	public void updateOtherFieldsTypeWithRequestMade(){
+		// Creation of users
+		this.creationOfUserRole();
+		UserDTO user1 = this.creationOfTestUser(NAME_1);
+		
+		HolidayCreationRequestDTO creation = new HolidayCreationRequestDTO();
+		creation.name = TYPE_1;
+		creation.unlimited = false;
+		creation.effectiveMonth = EFFECTIVE_MONTH;
+		creation.quantity = QUANTITY_1;
+		creation.unity = PERIOD_UNIT;
+		creation.anticipation = true;
+		creation.color = COLOR_1;
+
+		HolidayDTO holidayType = holidayService.createOrUpdateHoliday(creation);
+		
+		HolidayDTO currentInstOld = holidayService.getHolidayTypeInstanceFromId(holidayType.instanceId);
+		assertEquals(TYPE_1, currentInstOld.name);
+		assertEquals(false, currentInstOld.unlimited);
+		assertEquals(QUANTITY_1, currentInstOld.quantity);
+		assertEquals(PERIOD_UNIT, currentInstOld.periodUnit);
+		assertEquals(true, currentInstOld.anticipation);
+		assertEquals(COLOR_1, currentInstOld.color);
+		
+		HolidayDTO nextInstOld = holidayService.getHolidayTypeInstanceFromId(holidayType.instanceId);
+		assertEquals(TYPE_1, nextInstOld.name);
+		assertEquals(false, nextInstOld.unlimited);
+		assertEquals(QUANTITY_1, nextInstOld.quantity);
+		assertEquals(PERIOD_UNIT, nextInstOld.periodUnit);
+		assertEquals(true, nextInstOld.anticipation);
+		assertEquals(COLOR_1, nextInstOld.color);
+		
+		List<Long> profile1Types = new ArrayList<Long>();
+		profile1Types.add(holidayType.id);
+		
+		List<String> profile1Usernames = new ArrayList<String>();
+		profile1Usernames.add(user1.username);
+
+		HolidayProfileCreationRequestDTO profileRequest = new HolidayProfileCreationRequestDTO();
+		profileRequest.name = PROFILE_1;
+		profileRequest.holidayTypesId = profile1Types;
+
+		HolidayProfileDTO profile1 = holidayService.createOrUpdateHolidayProfile(profileRequest);
+
+		holidayService.updateProfileUsers(profile1.id, profile1Usernames);
+		
+		// Take holidays
+		HolidayRequestCreationRequestDTO request = new HolidayRequestCreationRequestDTO();
+		HolidayDetailCreationRequestDTO detail1 = new HolidayDetailCreationRequestDTO();
+		
+		// Holidays for the user
+		authenticateAs(user1.username);
+
+		detail1.am = true;
+		detail1.day = "10/10/2010";
+		detail1.typeInstanceId = holidayType.instanceId;
+		
+		List<HolidayDetailCreationRequestDTO> details = new ArrayList<HolidayDetailCreationRequestDTO>();
+		details.add(detail1);
+		request.details = details;
+
+		requestService.registerRequestAndDetails(request);
+		
+		HolidayCreationRequestDTO update = new HolidayCreationRequestDTO();
+		update.id = holidayType.id;
+		update.name = TYPE_1_MODIFIED;
+		update.unlimited = false;
+		update.effectiveMonth = EFFECTIVE_MONTH_MODIFIED;
+		update.quantity = QUANTITY_1_MODIFIED;
+		update.unity = PERIOD_UNIT_MODIFIED;
+		update.anticipation = true;
+		update.color = COLOR_1_MODIFIED;
+
+		HolidayDTO holidayTypeUpdated = holidayService.createOrUpdateHoliday(update);
+		
+		assertEquals(TYPE_1_MODIFIED, holidayTypeUpdated.name);
+		assertEquals(false, holidayTypeUpdated.unlimited);
+		assertEquals(EFFECTIVE_MONTH_MODIFIED, holidayTypeUpdated.effectiveMonth);
+		assertEquals(QUANTITY_1_MODIFIED, holidayTypeUpdated.quantity);
+		assertEquals(PERIOD_UNIT_MODIFIED, holidayTypeUpdated.periodUnit);
+		assertEquals(true, holidayTypeUpdated.anticipation);
+		assertEquals(COLOR_1_MODIFIED, holidayTypeUpdated.color);
+		assertNotSame(holidayTypeUpdated.instanceId, holidayTypeUpdated.nextInstanceId);
+		
+		assertEquals(holidayType.instanceId, holidayTypeUpdated.instanceId);
+		assertNotSame(holidayType.nextInstanceId, holidayTypeUpdated.nextInstanceId);
+		
+		HolidayDTO currentInstUpd = holidayService.getHolidayTypeInstanceFromId(holidayTypeUpdated.instanceId);
+		assertEquals(TYPE_1, currentInstUpd.name);
+		assertEquals(false, currentInstUpd.unlimited);
+		assertEquals(QUANTITY_1, currentInstUpd.quantity);
+		assertEquals(PERIOD_UNIT, currentInstUpd.periodUnit);
+		assertEquals(true, currentInstUpd.anticipation);
+		assertEquals(COLOR_1, currentInstUpd.color);
+		
+		HolidayDTO nextInstUpd = holidayService.getHolidayTypeInstanceFromId(holidayTypeUpdated.nextInstanceId);
+		assertEquals(TYPE_1_MODIFIED, nextInstUpd.name);
+		assertEquals(false, nextInstUpd.unlimited);
+		assertEquals(QUANTITY_1_MODIFIED, nextInstUpd.quantity);
+		assertEquals(PERIOD_UNIT_MODIFIED, nextInstUpd.periodUnit);
+		assertEquals(true, nextInstUpd.anticipation);
+		assertEquals(COLOR_1_MODIFIED, nextInstUpd.color);
+	}
 }
