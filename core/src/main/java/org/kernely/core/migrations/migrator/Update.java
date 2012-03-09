@@ -27,8 +27,6 @@ import com.google.common.base.Joiner;
 /**
  * Update command
  * 
- * @author g.breton
- * 
  */
 public class Update extends Command {
 

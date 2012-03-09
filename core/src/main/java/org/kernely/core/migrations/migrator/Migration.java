@@ -27,8 +27,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * @author g.breton
- * 
+ * The migration.
  */
 public abstract class Migration implements Comparable<Migration> {
 

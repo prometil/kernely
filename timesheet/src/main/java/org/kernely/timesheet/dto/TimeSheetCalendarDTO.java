@@ -5,6 +5,9 @@ import java.util.List;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
+/**
+ *	Represents the calendar for one timesheet, containing dates of the whole week.
+ */
 @XmlRootElement
 public class TimeSheetCalendarDTO {
 

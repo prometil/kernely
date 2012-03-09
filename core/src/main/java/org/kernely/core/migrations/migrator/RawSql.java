@@ -21,7 +21,6 @@ package org.kernely.core.migrations.migrator;
 
 /**
  * Executes a raw sql command.
- * @author g.breton
  * 
  */
 public class RawSql extends Command {

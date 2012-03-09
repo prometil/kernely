@@ -6,11 +6,8 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import org.apache.commons.configuration.AbstractConfiguration;
 import org.joda.time.DateTime;
 import org.kernely.core.controller.AbstractController;
-import org.kernely.core.service.user.GroupService;
-import org.kernely.core.service.user.PermissionService;
 import org.kernely.core.service.user.UserService;
 import org.kernely.core.template.TemplateRenderer;
 import org.kernely.timesheet.dto.TimeSheetCalendarDTO;
@@ -27,16 +24,7 @@ public class TimeSheetController extends AbstractController {
 	private TemplateRenderer templateRenderer;
 
 	@Inject
-	private AbstractConfiguration configuration;
-
-	@Inject
 	private UserService userService;
-
-	@Inject
-	private PermissionService permissionService;
-
-	@Inject
-	private GroupService groupService;
 
 	@Inject
 	private TimeSheetService timeSheetService;

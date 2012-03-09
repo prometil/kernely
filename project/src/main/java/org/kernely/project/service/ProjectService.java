@@ -9,7 +9,6 @@ import org.kernely.core.dto.UserDTO;
 import org.kernely.core.model.User;
 import org.kernely.core.service.AbstractService;
 import org.kernely.core.service.user.PermissionService;
-import org.kernely.core.service.user.UserService;
 import org.kernely.project.dto.OrganizationDTO;
 import org.kernely.project.dto.ProjectCreationRequestDTO;
 import org.kernely.project.dto.ProjectDTO;
@@ -29,9 +28,6 @@ public class ProjectService extends AbstractService {
 	
 	@Inject
 	private PermissionService permissionService;
-
-	@Inject
-	private UserService userService;
 
 	@Inject
 	private OrganizationService organizationService;
@@ -61,9 +57,9 @@ public class ProjectService extends AbstractService {
 	}
 	
 	/**
-	 * Gets the lists of all projects associated to the user.
+	 * Gets the lists of all projects associated to the user. The user is associated when he has right of contribution and/or management on the project.
 	 * 
-	 * @return the list of all projects associated to the user
+	 * @return the list of all projects associated to the user. If no project is found, return an empty list.
 	 */
 	@Transactional
 	public List<ProjectDTO> getAllProjectsForUser(long userId) {
@@ -75,9 +71,10 @@ public class ProjectService extends AbstractService {
 				usersProjects.add(project);
 			}
 		}
-		// For each project, check if the user is manager on the project.
+		// For each project, check if the user is manager on the project, onlly if the
 		for (ProjectDTO project : allProjects) {
-			if (permissionService.userHasPermission(userId, false, Project.RIGHT_PROJECTMANAGER, Project.PROJECT_RESOURCE, project.id)){
+			if (permissionService.userHasPermission(userId, false, Project.RIGHT_PROJECTMANAGER, Project.PROJECT_RESOURCE, project.id)
+					&& ! usersProjects.contains(project)){
 				usersProjects.add(project);
 			}
 		}

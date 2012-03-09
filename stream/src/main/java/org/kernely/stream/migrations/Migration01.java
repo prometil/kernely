@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.kernely.core.migrations.migrator.Command;
 import org.kernely.core.migrations.migrator.CreateTable;
+import org.kernely.core.migrations.migrator.DataBaseConstants;
 import org.kernely.core.migrations.migrator.Migration;
 import org.kernely.core.migrations.migrator.RawSql;
 
@@ -28,24 +29,24 @@ public class Migration01 extends Migration {
 	public List<Command> getList() {
 		ArrayList<Command> commands = new ArrayList<Command>();
 		CreateTable stream = CreateTable.name("kernely_stream");
-		stream.column("id", "bigint primary key");
-		stream.column("category", "varchar(50)");
-		stream.column("title", "varchar(50)");
-		stream.column("locked", "boolean DEFAULT false");
-		stream.column("user_id", "bigint");
+		stream.column(DataBaseConstants.ID_COLUMN, DataBaseConstants.LONG_PK);
+		stream.column("category", DataBaseConstants.VARCHAR_50);
+		stream.column("title", DataBaseConstants.VARCHAR_50);
+		stream.column("locked", DataBaseConstants.BOOLEAN_DEFAULT_FALSE);
+		stream.column("user_id", DataBaseConstants.LONG_NOT_NULL);
 		RawSql streamForeignKey= new RawSql("ALTER TABLE kernely_stream ADD CONSTRAINT fk_user_id FOREIGN KEY (user_id) REFERENCES kernely_user (id)");
 		
 		commands.add(stream);
 		commands.add(streamForeignKey);
 		
 		CreateTable message = CreateTable.name("kernely_message");
-		message.column("id", "bigint primary key");
-		message.column("content", "text");
-		message.column("message_parent", "bigint");
-		message.column("stream_id", "bigint");
-		message.column("date", "timestamp");
-		message.column("commentable", "boolean not null");
-		message.column("user_id", "bigint");
+		message.column(DataBaseConstants.ID_COLUMN, DataBaseConstants.LONG_PK);
+		message.column("content", DataBaseConstants.TEXT);
+		message.column("message_parent", DataBaseConstants.LONG);
+		message.column("stream_id", DataBaseConstants.LONG_NOT_NULL);
+		message.column("date", DataBaseConstants.DATE);
+		message.column("commentable", DataBaseConstants.BOOLEAN_DEFAULT_TRUE);
+		message.column("user_id", DataBaseConstants.LONG_NOT_NULL);
 		
 		RawSql messageForeignKeyUser= new RawSql("ALTER TABLE kernely_message ADD CONSTRAINT fk_user_id FOREIGN KEY (user_id) REFERENCES kernely_user (id)");
 		RawSql messageForeignKeyParent= new RawSql("ALTER TABLE kernely_message ADD CONSTRAINT fk_parent_id FOREIGN KEY (message_parent) REFERENCES kernely_message (id)");

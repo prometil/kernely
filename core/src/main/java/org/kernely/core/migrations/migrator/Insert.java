@@ -25,8 +25,7 @@ import java.util.Map;
 import com.google.common.base.Joiner;
 
 /**
- * @author g.breton
- * 
+ * Insert command
  */
 public class Insert extends Command {
 

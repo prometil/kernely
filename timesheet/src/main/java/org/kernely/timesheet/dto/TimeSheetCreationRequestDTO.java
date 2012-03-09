@@ -4,6 +4,9 @@ import java.util.Date;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
+/**
+ * DTO to create a new time sheet.
+ */
 @XmlRootElement
 public class TimeSheetCreationRequestDTO {
 

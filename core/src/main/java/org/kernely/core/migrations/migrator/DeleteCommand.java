@@ -21,9 +21,6 @@ package org.kernely.core.migrations.migrator;
 
 /**
  * A delete sql command
- * 
- * @author g.breton
- * 
  */
 public class DeleteCommand extends Command {
 

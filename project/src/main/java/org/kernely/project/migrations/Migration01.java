@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.kernely.core.migrations.migrator.Command;
 import org.kernely.core.migrations.migrator.CreateTable;
+import org.kernely.core.migrations.migrator.DataBaseConstants;
 import org.kernely.core.migrations.migrator.Migration;
 import org.kernely.core.migrations.migrator.RawSql;
 
@@ -30,22 +31,22 @@ public class Migration01 extends Migration {
 		
 		//the table kernely_organization
 		CreateTable organization = CreateTable.name("kernely_organization");
-		organization.column("id", "bigint primary key");
-		organization.column("name", "varchar(50)");
-		organization.column("address", "varchar(200)");
-		organization.column("zip", "varchar(5)");
-		organization.column("city", "varchar(50)");
-		organization.column("phone", "varchar(10)");
-		organization.column("fax", "varchar(10)");
+		organization.column(DataBaseConstants.ID_COLUMN, DataBaseConstants.LONG_PK);
+		organization.column("name", DataBaseConstants.VARCHAR_50);
+		organization.column("address", DataBaseConstants.VARCHAR_300);
+		organization.column("zip", DataBaseConstants.VARCHAR_5);
+		organization.column("city", DataBaseConstants.VARCHAR_50);
+		organization.column("phone", DataBaseConstants.VARCHAR_10);
+		organization.column("fax", DataBaseConstants.VARCHAR_10);
 		
 		commands.add(organization);
 		
 		//the table kernely_project
 		CreateTable project = CreateTable.name("kernely_project");
-		project.column("id", "bigint primary key");
-		project.column("name", "varchar(50)");
-		project.column("icon", "varchar(100)");
-		project.column("organization_id", "bigint");
+		project.column(DataBaseConstants.ID_COLUMN, DataBaseConstants.LONG_PK);
+		project.column("name", DataBaseConstants.VARCHAR_50);
+		project.column("icon", DataBaseConstants.VARCHAR_100);
+		project.column("organization_id", DataBaseConstants.LONG_NOT_NULL);
 		RawSql projectForeignKey= new RawSql("ALTER TABLE kernely_project ADD CONSTRAINT fk_organization_id FOREIGN KEY (organization_id) REFERENCES kernely_organization (id)");
 		
 		commands.add(project);
@@ -54,8 +55,8 @@ public class Migration01 extends Migration {
 		
 		//  the table user_project 
 		CreateTable userProject = CreateTable.name("kernely_user_project"); 
-		userProject.column("user_id", "bigint NOT NULL");
-		userProject.column("project_id", "bigint NOT NULL");
+		userProject.column("user_id", DataBaseConstants.LONG_NOT_NULL);
+		userProject.column("project_id", DataBaseConstants.LONG_NOT_NULL);
 		
 		RawSql userProjectProject = new RawSql("ALTER TABLE kernely_user_project ADD CONSTRAINT fk_project_id FOREIGN KEY ( project_id) REFERENCES kernely_project (id)");
 		RawSql userProjectUser = new RawSql("ALTER TABLE kernely_user_project ADD CONSTRAINT fk_user_id FOREIGN KEY (user_id) REFERENCES kernely_user (id)");
@@ -68,8 +69,8 @@ public class Migration01 extends Migration {
 		
 		//  the table user_organization
 		CreateTable userOrganization = CreateTable.name("kernely_user_organization"); 
-		userOrganization.column("user_id", "bigint NOT NULL");
-		userOrganization.column("organization_id", "bigint NOT NULL");
+		userOrganization.column("user_id", DataBaseConstants.LONG_NOT_NULL);
+		userOrganization.column("organization_id", DataBaseConstants.LONG_NOT_NULL);
 		
 		RawSql userOrganizationOrganization = new RawSql("ALTER TABLE kernely_user_organization ADD CONSTRAINT fk_organization_id FOREIGN KEY ( organization_id) REFERENCES kernely_organization (id)");
 		RawSql userOrganizationUser = new RawSql("ALTER TABLE kernely_user_organization ADD CONSTRAINT fk_user_id FOREIGN KEY (user_id) REFERENCES kernely_user (id)");

@@ -22,8 +22,10 @@ package org.kernely.core.migrations;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.configuration.DatabaseConfiguration;
 import org.kernely.core.migrations.migrator.Command;
 import org.kernely.core.migrations.migrator.CreateTable;
+import org.kernely.core.migrations.migrator.DataBaseConstants;
 import org.kernely.core.migrations.migrator.Insert;
 import org.kernely.core.migrations.migrator.Migration;
 import org.kernely.core.migrations.migrator.RawSql;
@@ -49,21 +51,21 @@ public class Migration01 extends Migration {
 		ArrayList<Command> commands = new ArrayList<Command>();
 		// the table kernely _ user
 		CreateTable user = CreateTable.name("kernely_user");
-		user.column("id", "bigint primary key");
-		user.column("username", "varchar(30)");
-		user.column("password", "varchar(80)");
-		user.column("salt", "varchar(300)");
-		user.column("locked", "boolean default false");
+		user.column(DataBaseConstants.ID_COLUMN, DataBaseConstants.LONG_PK);
+		user.column("username", DataBaseConstants.VARCHAR_30);
+		user.column("password", DataBaseConstants.VARCHAR_80);
+		user.column("salt", DataBaseConstants.VARCHAR_300);
+		user.column("locked", DataBaseConstants.BOOLEAN_DEFAULT_FALSE);
 
 		Insert insertBoby = Insert.into("kernely_user");
-		insertBoby.set("id", "1");
+		insertBoby.set(DataBaseConstants.ID_COLUMN, "1");
 		insertBoby.set("username", "bobby");
 		insertBoby.set("password", "2ty4LmflO9cRBKi1liWj3WvSrmtf2EnL67SoTa0bNuM=");
 		insertBoby.set("salt", "gNc1mOUoQxGmCzoV2W7YP3CJj9oDML/SfABujWDrBmvx9xN5if4Y0jMckDNK1we/kMRGR75uQggRgr5dKgnd6ZGIVxG0Zr3EiYxiXBU9aDyZkYvBqy9ffwZ9JScQ5Wke1NarH/lZevTgOUMaLMYVV7q/QvzH42rYek3mF0F1ykM=");
 		insertBoby.set("locked", "false");
 
 		Insert insertJohn = Insert.into("kernely_user");
-		insertJohn.set("id", "2");
+		insertJohn.set(DataBaseConstants.ID_COLUMN, "2");
 		insertJohn.set("username", "john");
 		insertJohn.set("password", "vAT9Kr/2bSbWoxFj3iinD783xrTez+lE2G/HSGaDzVk=");
 		insertJohn.set("salt", "8EiKXghisVxqZ74Nwen+/5NanikCV0DRB9J31tC0jWGip79G1ZCrkwsFYOkD/aw1ggYA8r/nsYHnWXofR7x0nFU8CK87aiZ3BzXyzH4AEu9pzV/YWfWhq1d0W3gAB36gHsVQ6mZubI5UYforzdATLAAGOlQAa4BXF7Cwxs8wuf0=");
@@ -74,8 +76,8 @@ public class Migration01 extends Migration {
 		commands.add(insertJohn);
 		
 		CreateTable manager = CreateTable.name("kernely_user_managers");
-		manager.column("manager_id", "bigint NOT NULL");
-		manager.column("user_id", "bigint NOT NULL");
+		manager.column("manager_id", DataBaseConstants.LONG_NOT_NULL);
+		manager.column("user_id", DataBaseConstants.LONG_NOT_NULL);
 		RawSql  managedUserForeignKey= new RawSql("ALTER TABLE kernely_user_managers ADD CONSTRAINT fk_managed_id FOREIGN KEY (manager_id) REFERENCES kernely_user (id)");
 		RawSql  managerUserForeignKey= new RawSql("ALTER TABLE kernely_user_managers ADD CONSTRAINT fk_manager_id FOREIGN KEY (user_id) REFERENCES kernely_user (id)");
 
@@ -85,41 +87,41 @@ public class Migration01 extends Migration {
 		
 		//the table kernely group
 		CreateTable group = CreateTable.name("kernely_group");
-		group.column("id", "bigint primary  key");
-		group.column("name", "varchar(30)");
+		group.column(DataBaseConstants.ID_COLUMN, DataBaseConstants.LONG_PK);
+		group.column("name", DataBaseConstants.VARCHAR_30);
 		
 		commands.add(group);
 		
 		// the table kernely permission
 		CreateTable permission = CreateTable.name("kernely_permission");
-		permission.column("id", "bigint primary key");
-		permission.column("name", "varchar(30)");
+		permission.column(DataBaseConstants.ID_COLUMN, DataBaseConstants.LONG_PK);
+		permission.column("name", DataBaseConstants.VARCHAR_30);
 
 		commands.add(permission);
 		
 		//the table kernely_userDetails
 		CreateTable userDetails = CreateTable.name("kernely_user_details");
-		userDetails.column("id", "bigint primary key");
-		userDetails.column("name", "varchar(50)");
-		userDetails.column("firstname", "varchar(50)");
-		userDetails.column("mail", "varchar(50)");
-		userDetails.column("image","varchar(100)");
-		userDetails.column("user_id", "bigint");
-		userDetails.column("address", "varchar(100)");
-		userDetails.column("zip", "varchar(5)");
-		userDetails.column("city", "varchar(30)");
-		userDetails.column("nationality", "varchar(30)");
-		userDetails.column("homephone", "varchar(10)");
-		userDetails.column("mobilephone","varchar(10)");
-		userDetails.column("businessphone","varchar(10)");
-		userDetails.column("ssn", "varchar(20)");
-		userDetails.column("civility", "int");
-		userDetails.column("birth", "timestamp");
-		userDetails.column("hire", "timestamp");
+		userDetails.column(DataBaseConstants.ID_COLUMN, DataBaseConstants.LONG_PK);
+		userDetails.column("name", DataBaseConstants.VARCHAR_50);
+		userDetails.column("firstname", DataBaseConstants.VARCHAR_50);
+		userDetails.column("mail", DataBaseConstants.VARCHAR_50);
+		userDetails.column("image",DataBaseConstants.VARCHAR_100);
+		userDetails.column("user_id", DataBaseConstants.LONG_NOT_NULL);
+		userDetails.column("address", DataBaseConstants.VARCHAR_100);
+		userDetails.column("zip", DataBaseConstants.VARCHAR_5);
+		userDetails.column("city", DataBaseConstants.VARCHAR_30);
+		userDetails.column("nationality", DataBaseConstants.VARCHAR_30);
+		userDetails.column("homephone", DataBaseConstants.VARCHAR_10);
+		userDetails.column("mobilephone",DataBaseConstants.VARCHAR_10);
+		userDetails.column("businessphone",DataBaseConstants.VARCHAR_10);
+		userDetails.column("ssn", DataBaseConstants.VARCHAR_20);
+		userDetails.column("civility", DataBaseConstants.INT);
+		userDetails.column("birth", DataBaseConstants.DATE);
+		userDetails.column("hire", DataBaseConstants.DATE);
 		RawSql  userDetailsForeignKey= new RawSql("ALTER TABLE kernely_user_details ADD CONSTRAINT fk_user_id FOREIGN KEY (user_id) REFERENCES kernely_user (id)");
 	
 		Insert insertJohnDetails = Insert.into("kernely_user_details");
-		insertJohnDetails.set("id", "5");
+		insertJohnDetails.set(DataBaseConstants.ID_COLUMN, "5");
 		insertJohnDetails.set("name", "doe");
 		insertJohnDetails.set("firstname", "john");
 		insertJohnDetails.set("mail", "john.doe@prometil.com");
@@ -136,7 +138,7 @@ public class Migration01 extends Migration {
 		insertJohnDetails.set("birth", "01/12/1990");
 		
 		Insert insertBobbyDetails = Insert.into("kernely_user_details");
-		insertBobbyDetails.set("id", "6");
+		insertBobbyDetails.set(DataBaseConstants.ID_COLUMN, "6");
 		insertBobbyDetails.set("name", "robert");
 		insertBobbyDetails.set("firstname", "bobby");
 		insertBobbyDetails.set("mail", "robert.bobby@prometil.com");
@@ -160,29 +162,29 @@ public class Migration01 extends Migration {
 		
 		//the table role
 		CreateTable role = CreateTable.name("kernely_role");
-		role.column("id","bigint primary key");
-		role.column("name", "varchar(30)");
+		role.column(DataBaseConstants.ID_COLUMN,DataBaseConstants.LONG_PK);
+		role.column("name", DataBaseConstants.VARCHAR_30);
 		
 		commands.add(role);
 		
 		Insert userRole = Insert.into("kernely_role");
-		userRole.set("id","3");
+		userRole.set(DataBaseConstants.ID_COLUMN,"3");
 		userRole.set("name","User");
 		
 		Insert adminRole = Insert.into("kernely_role");
-		adminRole.set("id","4");
+		adminRole.set(DataBaseConstants.ID_COLUMN,"4");
 		adminRole.set("name","Administrator");
 		
 		Insert rhRole = Insert.into("kernely_role");
-		rhRole.set("id", "5");
+		rhRole.set(DataBaseConstants.ID_COLUMN, "5");
 		rhRole.set("name", "Human resource");
 		
 		Insert projectManagerRole = Insert.into("kernely_role");
-		projectManagerRole.set("id", "6");
+		projectManagerRole.set(DataBaseConstants.ID_COLUMN, "6");
 		projectManagerRole.set("name", "Project manager");
 		
 		Insert clientRole = Insert.into("kernely_role");
-		clientRole.set("id", "7");
+		clientRole.set(DataBaseConstants.ID_COLUMN, "7");
 		clientRole.set("name", "Client");
 				
 		commands.add(userRole);
@@ -193,8 +195,8 @@ public class Migration01 extends Migration {
 		
 		//the table group permision
 		CreateTable groupPermission = CreateTable.name("kernely_group_permissions");
-		groupPermission.column("group_id", "bigint NOT NULL");
-		groupPermission.column("permission_id", "bigint NOT NULL");
+		groupPermission.column("group_id", DataBaseConstants.LONG_NOT_NULL);
+		groupPermission.column("permission_id", DataBaseConstants.LONG_NOT_NULL);
 		
 		RawSql groupPermissionGroup = new RawSql("ALTER TABLE kernely_group_permissions ADD CONSTRAINT fk_group_id FOREIGN KEY (group_id) REFERENCES kernely_group (id)");
 		RawSql groupPermissionPermission = new RawSql("ALTER TABLE kernely_group_permissions ADD CONSTRAINT fk_permission_id FOREIGN KEY (permission_id) REFERENCES kernely_permission (id)");
@@ -207,8 +209,8 @@ public class Migration01 extends Migration {
 		
 		//the table group roles
 		CreateTable groupRole = CreateTable.name("kernely_group_roles");
-		groupRole.column("group_id", "bigint NOT NULL");
-		groupRole.column("role_id", "bigint NOT NULL");
+		groupRole.column("group_id", DataBaseConstants.LONG_NOT_NULL);
+		groupRole.column("role_id", DataBaseConstants.LONG_NOT_NULL);
 		
 		RawSql groupRoleGroup = new RawSql("ALTER TABLE kernely_group_roles ADD CONSTRAINT fk_group_id FOREIGN KEY (group_id) REFERENCES kernely_group (id)");
 		RawSql groupRoleRole = new RawSql("ALTER TABLE kernely_group_roles ADD CONSTRAINT fk_roles_id FOREIGN KEY (role_id) REFERENCES kernely_role (id)");
@@ -221,8 +223,8 @@ public class Migration01 extends Migration {
 		
 		//  the table user_group 
 		CreateTable userGroup = CreateTable.name("kernely_user_group"); 
-		userGroup.column("user_id", "bigint NOT NULL");
-		userGroup.column("group_id", "bigint NOT NULL");
+		userGroup.column("user_id", DataBaseConstants.LONG_NOT_NULL);
+		userGroup.column("group_id", DataBaseConstants.LONG_NOT_NULL);
 		
 		RawSql userGroupGroup = new RawSql("ALTER TABLE kernely_user_group ADD CONSTRAINT fk_group_id FOREIGN KEY ( group_id) REFERENCES kernely_group (id)");
 		RawSql userGroupUser = new RawSql("ALTER TABLE kernely_user_group ADD CONSTRAINT fk_user_id FOREIGN KEY (user_id) REFERENCES kernely_user (id)");
@@ -236,8 +238,8 @@ public class Migration01 extends Migration {
 		
 		// the table user_permission
 		CreateTable userPermission = CreateTable.name("kernely_user_permissions"); 
-		userPermission.column("user_id", "bigint NOT NULL");
-		userPermission.column("permission_id", "bigint NOT NULL");
+		userPermission.column("user_id", DataBaseConstants.LONG_NOT_NULL);
+		userPermission.column("permission_id", DataBaseConstants.LONG_NOT_NULL);
 		
 		RawSql userPermissionUser = new RawSql("ALTER TABLE kernely_user_permissions ADD CONSTRAINT fk_user_id FOREIGN KEY (user_id) REFERENCES kernely_user (id)");  
 		RawSql userPermissionPermission = new RawSql("ALTER TABLE kernely_user_permissions ADD CONSTRAINT fk_permission_id FOREIGN KEY (permission_id) REFERENCES kernely_permission (id)"); 
@@ -248,10 +250,10 @@ public class Migration01 extends Migration {
 		commands.add(userPermissionUser);
 		commands.add(userPermissionPrimaryKey);
 		
-		// the table user_permission
+		// the table user_roles
 		CreateTable userRoles= CreateTable.name("kernely_user_roles"); 
-		userRoles.column("user_id", "bigint NOT NULL");
-		userRoles.column("role_id", "bigint NOT NULL");
+		userRoles.column("user_id", DataBaseConstants.LONG_NOT_NULL);
+		userRoles.column("role_id", DataBaseConstants.LONG_NOT_NULL);
 		
 		RawSql userRoleUser = new RawSql("ALTER TABLE kernely_user_roles ADD CONSTRAINT fk_user_id  FOREIGN KEY (user_id) REFERENCES kernely_user (id)");  
 		RawSql userRoleRole = new RawSql("ALTER TABLE kernely_user_roles ADD CONSTRAINT fk_role_id FOREIGN KEY (role_id ) REFERENCES kernely_role (id)");
@@ -275,12 +277,12 @@ public class Migration01 extends Migration {
 		commands.add(insertUserRole2);
 		
 		CreateTable mail = CreateTable.name("kernely_mail");
-		mail.column("id", "bigint primary key");
-		mail.column("subject", "text");
-		mail.column("content", "text");
-		mail.column("recipients", "text");
-		mail.column("cc", "text");
-		mail.column("status","int");
+		mail.column(DataBaseConstants.ID_COLUMN, DataBaseConstants.LONG_PK);
+		mail.column("subject", DataBaseConstants.TEXT);
+		mail.column("content", DataBaseConstants.TEXT);
+		mail.column("recipients", DataBaseConstants.TEXT);
+		mail.column("cc", DataBaseConstants.TEXT);
+		mail.column("status",DataBaseConstants.INT);
 		
 		commands.add(mail);
 		

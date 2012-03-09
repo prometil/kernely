@@ -77,8 +77,10 @@ AppHolidayRequest = (function($){
 		},
 		
 		addRow: function(projectName, projectId, amounts){
-			$("#timesheet-content").append(new ProjectRow(projectName, projectId,amounts,this.data.dates).render().el);
-			$("#project-select option[value='" + projectId + "']").remove();
+			if (projectId != null && projectName != null){
+				$("#timesheet-content").append(new ProjectRow(projectName, projectId,amounts,this.data.dates).render().el);
+				$("#project-select option[value='" + projectId + "']").remove();
+			}
 		},
 		
 		render: function(){

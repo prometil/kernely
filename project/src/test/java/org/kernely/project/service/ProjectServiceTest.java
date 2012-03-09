@@ -2,6 +2,8 @@ package org.kernely.project.service;
 
 import static org.junit.Assert.assertEquals;
 
+import java.util.List;
+
 import org.junit.Test;
 import org.kernely.core.common.AbstractServiceTest;
 import org.kernely.core.dto.RoleDTO;
@@ -154,11 +156,58 @@ public class ProjectServiceTest extends AbstractServiceTest {
 	@Test
 	public void testUserHasRight(){
 		long id = this.creationOfTestUser();
-		ProjectDTO proj = this.createProject();
+		ProjectDTO project = this.createProject();
 		authenticateAs(TEST_STRING);
 		
-		permissionService.grantPermission((int)id, Project.RIGHT_CLIENT, Project.PROJECT_RESOURCE, proj.id);
-		assertEquals(true, projectService.currentUserHasRightsOnProject(Project.RIGHT_CLIENT, proj.id));	
+		permissionService.grantPermission(id, Project.RIGHT_CLIENT, Project.PROJECT_RESOURCE, project.id);
+		assertEquals(true, projectService.currentUserHasRightsOnProject(Project.RIGHT_CLIENT, project.id));	
+	}
+	
+	@Test
+	public void getNoProjectForSpecificUser(){
+		long userId = this.creationOfTestUser();
+		List<ProjectDTO> projects = projectService.getAllProjectsForUser(userId);
+		assertEquals(0,projects.size());
+	}
+	
+	@Test
+	public void getProjectForContributorUser(){
+		long userId = this.creationOfTestUser();
+		ProjectDTO project = this.createProject();
+		
+		// Associate user to project by setting permission
+		permissionService.grantPermission(userId, Project.RIGHT_CONTRIBUTOR, Project.PROJECT_RESOURCE, project.id);
+		
+		List<ProjectDTO> projects = projectService.getAllProjectsForUser(userId);
+		assertEquals(1,projects.size());
+		assertEquals(project,projects.get(0));
+	}
+
+	@Test
+	public void getProjectForManagerUser(){
+		long userId = this.creationOfTestUser();
+		ProjectDTO project = this.createProject();
+		
+		// Associate user to project by setting permission
+		permissionService.grantPermission(userId, Project.RIGHT_PROJECTMANAGER, Project.PROJECT_RESOURCE, project.id);
+		
+		List<ProjectDTO> projects = projectService.getAllProjectsForUser(userId);
+		assertEquals(1,projects.size());
+		assertEquals(project,projects.get(0));
+	}
+
+	@Test
+	public void getProjectForManagerAndContributorUser(){
+		long userId = this.creationOfTestUser();
+		ProjectDTO project = this.createProject();
+		
+		// Associate user to project by setting permissions
+		permissionService.grantPermission(userId, Project.RIGHT_CONTRIBUTOR, Project.PROJECT_RESOURCE, project.id);
+		permissionService.grantPermission(userId, Project.RIGHT_PROJECTMANAGER, Project.PROJECT_RESOURCE, project.id);
+		
+		List<ProjectDTO> projects = projectService.getAllProjectsForUser(userId);
+		assertEquals(1,projects.size());
+		assertEquals(project,projects.get(0));
 	}
 	
 }

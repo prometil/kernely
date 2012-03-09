@@ -25,8 +25,7 @@ import java.util.List;
 import com.google.common.base.Joiner;
 
 /**
- * @author g.breton
- * 
+ * The create table command.
  */
 public class CreateTable extends Command {
 

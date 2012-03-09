@@ -21,8 +21,6 @@ package org.kernely.core.migrations.migrator;
 
 /**
  * A version
- * 
- * @author g.breton
  */
 public class Version implements Comparable<Version> {
 

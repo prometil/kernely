@@ -7,6 +7,9 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.kernely.core.dto.UserDetailsDTO;
 import org.kernely.timesheet.model.TimeSheet;
 
+/**
+ * This DTO represents the time sheet of a user, containing all details.
+ */
 @XmlRootElement
 public class TimeSheetDTO {
 

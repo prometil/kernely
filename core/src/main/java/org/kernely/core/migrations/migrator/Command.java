@@ -27,8 +27,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * @author g.breton
- * 
+ * SQL command.
  */
 public abstract class Command {
 	private static Logger log = LoggerFactory.getLogger(Migration.class);
