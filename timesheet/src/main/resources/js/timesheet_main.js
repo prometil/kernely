@@ -1,5 +1,6 @@
 AppHolidayRequest = (function($){
 
+	var calendar = null;
 	var currentCellPickerSelected = null;
 	var oldCellPickerSelected = null;
 	var allCellPicker = new Array();
@@ -10,21 +11,54 @@ AppHolidayRequest = (function($){
 	var shifted = false;
 	
 	TimeSheetPageView = Backbone.View.extend({
-		el:"#request-main",
+		el:"#timesheet-main",
 		dates: null,
 		events:{
-			
+			"click #add-project-button" : "addProject",
 		},
 		initialize: function(){
 			new TimePicker().render();
 			$.ajax({
 				type: "GET",
-				url:"/timesheet/current",
+				url:"/project/list",
 				success: function(data){
 					// Create the views
-					new CalendarView(data).render();
+					if (data != null){
+						if ($.isArray(data.projectDTO)){
+							$.each(data.projectDTO, function(){
+								$('#project-select')
+						          .append($('<option>', { value : this.id })
+						          .text(this.name));
+							});
+
+						} else if (data.projectDTO != null){
+						     $('#project-select')
+					          .append($('<option>', { value : data.projectDTO.id })
+					          .text(data.projectDTO.name));
+						}
+					}
+				
+					$.ajax({
+						type: "GET",
+						url:"/timesheet/current",
+						success: function(data){
+							// Create the views
+							calendar = new CalendarView(data).render();
+						}
+					});
 				}
 			});
+		},
+		addProject: function(){
+			var amounts = new Array();
+			amounts.push(0);
+			amounts.push(0);
+			amounts.push(0);
+			amounts.push(0);
+			amounts.push(0);
+			amounts.push(0);
+			amounts.push(0);
+			calendar.addRow($("#project-select option:selected").text(),$("#project-select option:selected").val(),amounts);
 		},
 		render: function(){
 			return this;
@@ -35,13 +69,18 @@ AppHolidayRequest = (function($){
 		el:"#timesheet-content",
 		data : null,
 		
-		
 		events:{
 
 		},
 		initialize: function(data){
 			this.data = data;
 		},
+		
+		addRow: function(projectName, projectId, amounts){
+			$("#timesheet-content").append(new ProjectRow(projectName, projectId,amounts,this.data.dates).render().el);
+			$("#project-select option[value='" + projectId + "']").remove();
+		},
+		
 		render: function(){
 			var parent = this;
 			var view = null;
@@ -49,25 +88,41 @@ AppHolidayRequest = (function($){
 			// Variables declarations :
 			// List of the headers : contains days
 			var headerList = new Array();
-			// Counter for the list building
-			var cptBuildingList = 0;
-			// Counter for the header list
-			var cptHeaderList = 0;
 
-			// Count the number of weeks created
-			var nPath = 0;
-			
-			// Building the header list and the days list
+			// Building the header
+			var template = $("#project-title-template").html();
+			$("#date-line").append("<td>"+template+"</td>");
 			for (var i = 0 ; i < this.data.dates.length ; i++){
 				$("#date-line").append("<td>" + this.data.stringDates[i] + "</td>");
-				$("#amounts-line").append(
-						new TimeSheetDayView(this.data.dates[i],i,0).render().el
-						);
 			}
 			return this;
 		}
-	})
-
+	}),
+	
+	ProjectRow = Backbone.View.extend({
+		tagName: "tr",
+		projectId: null,
+		projectName: null,
+		
+		initialize: function(projectName, projectId, amounts, days){
+			this.projectId = projectId;
+			this.projectName = projectName;
+			
+			// Set the title
+			$(this.el).append(projectName);
+			
+			// Create a td for each day
+			for (var i = 0 ; i < amounts.length ; i++){
+				$(this.el).append(
+						new TimeSheetDayView(this.day,i,amounts[i]).render().el
+						);
+			}
+		},
+		render: function(){
+			return this;
+		}
+	}),
+	
 	TimeSheetDayView = Backbone.View.extend({
 		tagName: "td",
 

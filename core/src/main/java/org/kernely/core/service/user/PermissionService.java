@@ -96,7 +96,7 @@ public class PermissionService extends AbstractService {
 	 */
 
 	@Transactional
-	public boolean userHasPermission(int id, boolean includingGroups, String right, String resourceType, Object resourceId) {
+	public boolean userHasPermission(long userId, boolean includingGroups, String right, String resourceType, Object resourceId) {
 		String permission = this.createPermissionString(right, resourceType, resourceId.toString());
 
 		Query query = em.get().createQuery("SELECT p FROM Permission p WHERE name = :permission");
@@ -107,14 +107,14 @@ public class PermissionService extends AbstractService {
 			// Verify if the user is associated to the permission
 			for (User u : p.getUsers()) {
 
-				if (u.getId() == id) {
+				if (u.getId() == userId) {
 					return true;
 				}
 			}
 			if (includingGroups) {
 				for (Group g : p.getGroups()) {
 					for (User u : g.getUsers()) {
-						if (u.getId() == id) {
+						if (u.getId() == userId) {
 							return true;
 						}
 					}

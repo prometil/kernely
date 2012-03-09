@@ -9,6 +9,7 @@ import org.kernely.core.dto.UserDTO;
 import org.kernely.core.model.User;
 import org.kernely.core.service.AbstractService;
 import org.kernely.core.service.user.PermissionService;
+import org.kernely.core.service.user.UserService;
 import org.kernely.project.dto.OrganizationDTO;
 import org.kernely.project.dto.ProjectCreationRequestDTO;
 import org.kernely.project.dto.ProjectDTO;
@@ -28,6 +29,9 @@ public class ProjectService extends AbstractService {
 	
 	@Inject
 	private PermissionService permissionService;
+
+	@Inject
+	private UserService userService;
 
 	@Inject
 	private OrganizationService organizationService;
@@ -54,6 +58,30 @@ public class ProjectService extends AbstractService {
 			dtos.add(new ProjectDTO(project.getName(), project.getId(), project.getIcon(), users, new OrganizationDTO(project.getOrganization())));
 		}
 		return dtos;
+	}
+	
+	/**
+	 * Gets the lists of all projects associated to the user.
+	 * 
+	 * @return the list of all projects associated to the user
+	 */
+	@Transactional
+	public List<ProjectDTO> getAllProjectsForUser(long userId) {
+		List<ProjectDTO> allProjects = this.getAllProjects();
+		List<ProjectDTO> usersProjects = new ArrayList<ProjectDTO>();
+		// For each project, check if the user is contributor on the project.
+		for (ProjectDTO project : allProjects) {
+			if (permissionService.userHasPermission(userId, false, Project.RIGHT_CONTRIBUTOR, Project.PROJECT_RESOURCE, project.id)){
+				usersProjects.add(project);
+			}
+		}
+		// For each project, check if the user is manager on the project.
+		for (ProjectDTO project : allProjects) {
+			if (permissionService.userHasPermission(userId, false, Project.RIGHT_PROJECTMANAGER, Project.PROJECT_RESOURCE, project.id)){
+				usersProjects.add(project);
+			}
+		}
+		return usersProjects;
 	}
 
 	/**

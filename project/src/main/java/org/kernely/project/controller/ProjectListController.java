@@ -58,4 +58,15 @@ public class ProjectListController extends AbstractController {
 	}
 	
 	
+
+	/**
+	 * Get the list of projects for the current user
+	 */
+	@GET
+	@Path("/list")
+	@Produces({ MediaType.APPLICATION_JSON})
+	public List<ProjectDTO> getCurrentUserProjects() {
+		return projectService.getAllProjectsForUser(userService.getAuthenticatedUserDTO().id);	
+	}
+	
 }
