@@ -3,6 +3,7 @@ package org.kernely.timesheet.controller;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -62,11 +63,13 @@ public class TimeSheetController extends AbstractController {
 	 * @return A JSON String containing the rights of all users for the project
 	 */
 	@GET
-	@Path("/current")
+	@Path("/calendar")
 	@Produces( { MediaType.APPLICATION_JSON })
-	public TimeSheetCalendarDTO getCurrentTimeSheet() {
-		int week = DateTime.now().getWeekOfWeekyear();
-		int year = DateTime.now().getYearOfCentury();
+	public TimeSheetCalendarDTO getCurrentTimeSheet(@QueryParam("week") int week, @QueryParam("year") int year ) {
+		if(week == 0 || year == 0){
+			week = DateTime.now().getWeekOfWeekyear();
+			year = DateTime.now().getYear();
+		}
 		TimeSheetCalendarDTO timeSheetCalendar = timeSheetService.getTimeSheetCalendar(week, year, userService.getAuthenticatedUserDTO().id, true);
 		return timeSheetCalendar;
 	}

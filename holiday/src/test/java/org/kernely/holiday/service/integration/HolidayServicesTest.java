@@ -238,8 +238,6 @@ public class HolidayServicesTest extends AbstractServiceTest {
 
 		HolidayBalanceDTO balance1 = new ArrayList<HolidayBalanceDTO>(balanceType1).get(0);
 		HolidayBalanceDTO balance2 = new ArrayList<HolidayBalanceDTO>(balanceType2).get(0);
-
-		System.out.println("=================>" + balance1.availableBalanceUpdated);
 		
 		assertEquals(getAvailableType1ForTheYear(balance1), balance1.availableBalanceUpdated, 0);
 		assertEquals(getAvailableType2ForTheYear(balance2), balance2.availableBalanceUpdated, 0);
