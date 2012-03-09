@@ -2,8 +2,6 @@ package org.kernely.timesheet.service;
 
 import static org.junit.Assert.assertEquals;
 
-import java.util.Date;
-
 import org.joda.time.DateTime;
 import org.junit.Test;
 import org.kernely.core.common.AbstractServiceTest;
