@@ -6,6 +6,8 @@
 
 <script type="text/html" id="project-title-template"><%= i18n.t("timesheet_project_title") %></script>
 
+<script type="text/html" id="delete-button-template"><input type="button" class="deleteButton" value="<%= i18n.t("delete") %>"/></script>
+
 <script type="text/html" id="time-cell-template">
 	<span id="time-cell-name">{{amount}}</span><br/>
 </script>

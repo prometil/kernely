@@ -102,6 +102,8 @@ AppHolidayRequest = (function($){
 		addRow: function(projectName, projectId, amounts){
 			if (projectId != null && projectName != null){
 				$("#timesheet-content").append(new ProjectRow(projectName, projectId,amounts,this.data.dates).render().el);
+				
+				// Remove from the combobox
 				$("#project-select option[value='" + projectId + "']").remove();
 			}
 		},
@@ -129,13 +131,15 @@ AppHolidayRequest = (function($){
 		tagName: "tr",
 		projectId: null,
 		projectName: null,
-		
+		events:{
+			"click .deleteButton" : "removeLine",
+		},
 		initialize: function(projectName, projectId, amounts, days){
 			this.projectId = projectId;
 			this.projectName = projectName;
 			
 			// Set the title
-			$(this.el).append(projectName);
+			$(this.el).append("<td>" + projectName + "</td>");
 			
 			// Create a td for each day
 			for (var i = 0 ; i < amounts.length ; i++){
@@ -143,7 +147,22 @@ AppHolidayRequest = (function($){
 						new TimeSheetDayView(this.day,i,amounts[i]).render().el
 						);
 			}
+			
+			// Create the delete button
+			var buttonTemplate = $("#delete-button-template").html();
+			$(this.el).append("<td>" + buttonTemplate + "</td>");
 		},
+		
+		removeLine : function(){
+			// Put the project in the combo box
+			$('#project-select')
+	          .append($('<option>', { value : this.projectId })
+	          .text(this.projectName));
+			
+			// Delete line
+			$(this.el).remove();
+		},
+		
 		render: function(){
 			return this;
 		}
