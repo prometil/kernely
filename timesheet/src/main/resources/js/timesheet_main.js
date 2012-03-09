@@ -1,6 +1,8 @@
 AppHolidayRequest = (function($){
 
+	var mainView = null;
 	var calendar = null;
+	var weekSelector = null;
 	var currentCellPickerSelected = null;
 	var oldCellPickerSelected = null;
 	var allCellPicker = new Array();
@@ -9,6 +11,8 @@ AppHolidayRequest = (function($){
 	var allDayCells = new Array();
 	var nbSelected = 0;
 	var shifted = false;
+	var weekSelected = 0;
+	var yearSelected = 0;
 	
 	TimeSheetPageView = Backbone.View.extend({
 		el:"#timesheet-main",
@@ -18,6 +22,7 @@ AppHolidayRequest = (function($){
 		},
 		initialize: function(){
 			new TimePicker().render();
+			weekSelector = new TimeWeekSelectorView().render();
 			$.ajax({
 				type: "GET",
 				url:"/project/list",
@@ -40,9 +45,13 @@ AppHolidayRequest = (function($){
 				
 					$.ajax({
 						type: "GET",
-						url:"/timesheet/current",
+						url:"/timesheet/calendar",
+						data:{week:weekSelected, year:yearSelected},
 						success: function(data){
 							// Create the views
+							weekSelected = data.timeSheet.week;
+							yearSelected = data.timeSheet.year;
+							weekSelector.refresh();
 							calendar = new CalendarView(data).render();
 						}
 					});
@@ -62,6 +71,20 @@ AppHolidayRequest = (function($){
 		},
 		render: function(){
 			return this;
+		},
+		reloadCalendar: function(){
+			$.ajax({
+				type: "GET",
+				url:"/timesheet/calendar",
+				data:{week:weekSelected, year:yearSelected},
+				success: function(data){
+					// Create the views
+					weekSelected = data.timeSheet.week;
+					yearSelected = data.timeSheet.year;
+					weekSelector.refresh();
+					calendar = new CalendarView(data).render();
+				}
+			});
 		}
 	})
 		
@@ -85,6 +108,7 @@ AppHolidayRequest = (function($){
 		
 		render: function(){
 			var parent = this;
+			$("#date-line").html("");
 			var view = null;
 			
 			// Variables declarations :
@@ -193,6 +217,62 @@ AppHolidayRequest = (function($){
 
 	})
 	
+	TimeWeekSelectorView = Backbone.View.extend({
+		el:"#weekSelector",
+		events:{
+			"click .minusWeek" : "minusWeek",
+			"click .plusWeek" : "plusWeek",
+		},
+		initialize: function(){
+			
+		},
+		render: function(){
+			var template = $("#calendarSelector").html();
+			var template4Week = $("#week-selector-template").html();
+			var view4Week = {week : weekSelected};
+			var html = Mustache.to_html(template4Week, view4Week);
+			var view = {week : html, year: yearSelected};
+			html = Mustache.to_html(template, view);
+			$(this.el).html(html);
+			return this;
+		},
+		refresh: function(){
+			this.render();
+		},
+		plusWeek: function(){
+			weekSelected ++;
+			weekSelected = ((weekSelected)%53);
+			if(weekSelected == 0){
+				weekSelected = 1;
+				yearSelected ++;
+			}
+			var template = $("#calendarSelector").html();
+			var template4Week = $("#week-selector-template").html();
+			var view4Week = {week : weekSelected};
+			var html = Mustache.to_html(template4Week, view4Week);
+			var view = {week : html, year: yearSelected};
+			html = Mustache.to_html(template, view);
+			$(this.el).html(html);
+			mainView.reloadCalendar();
+		},
+		minusWeek: function(){
+			weekSelected --;
+			weekSelected = ((weekSelected)%53);
+			if(weekSelected == 0){
+				weekSelected = 52;
+				yearSelected --;
+			}
+			var template = $("#calendarSelector").html();
+			var template4Week = $("#week-selector-template").html();
+			var view4Week = {week : weekSelected};
+			var html = Mustache.to_html(template4Week, view4Week);
+			var view = {week : html, year: yearSelected};
+			html = Mustache.to_html(template, view);
+			$(this.el).html(html);
+			mainView.reloadCalendar();
+		}
+	})
+	
 	TimePicker = Backbone.View.extend({
 		el:"#timePicker",
 		events:{
@@ -252,7 +332,7 @@ AppHolidayRequest = (function($){
 	// Initialization of the application
 	var self = {};
 	self.start = function(){
-		new TimeSheetPageView().render();
+		mainView = new TimeSheetPageView().render();
 	}
 	return self;
 })

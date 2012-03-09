@@ -810,8 +810,6 @@ public class HolidayServiceTest extends AbstractServiceTest {
 		List<HolidayDetailCreationRequestDTO> details = new ArrayList<HolidayDetailCreationRequestDTO>();
 		details.add(detail1);
 		request.details = details;
-
-		System.out.println("====================>" + balanceService.getHolidayBalancesAvailable(holidayType.instanceId, user1.id).size());
 		
 		requestService.registerRequestAndDetails(request);
 		

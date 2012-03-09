@@ -4,6 +4,7 @@ import java.util.Date;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.joda.time.DateTime;
 import org.kernely.core.dto.UserDetailsDTO;
 import org.kernely.timesheet.model.TimeSheet;
 
@@ -37,6 +38,16 @@ public class TimeSheetDTO {
 	 * Status of fees associated to the time sheet, using TimeSheet constants.
 	 */
 	public int feesStatus;
+	
+	/**
+	 * Week concerned by this dto
+	 */
+	public int week;
+	
+	/**
+	 * Year concerned by this dto
+	 */
+	public int year;
 
 	/**
 	 * Default constructor of the DTO
@@ -51,7 +62,8 @@ public class TimeSheetDTO {
 		this.end = timeSheet.getEndDate();
 		this.status = timeSheet.getStatus();
 		this.feesStatus = timeSheet.getFeesStatus();
-
+		this.week = new DateTime(this.end).getWeekOfWeekyear();
+		this.year = new DateTime(this.end).getYear();
 	}
 
 	/**

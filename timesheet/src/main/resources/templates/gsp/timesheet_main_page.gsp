@@ -10,7 +10,19 @@
 	<span id="time-cell-name">{{amount}}</span><br/>
 </script>
 
+<script type="text/html" id="calendarSelector">
+		<img class="minusWeek" alt="<" src="/images/previous.png"/>
+		<span id="week_current" style="width:100px;">{{week}} ({{year}})</span>
+		<img class="plusWeek" alt=">" src="/images/next.png"/>
+</script>
+
+<script type="text/html" id="week-selector-template">
+	<%=i18n.t("timesheet_week_title")%> {{week}}
+</script>
+
 <div id="timesheet-main">
+	<div id="weekSelector">
+	</div>
 	<select id="project-select"></select>
 	<input type="button" id="add-project-button" value="<%= i18n.t("timesheet_add_project") %>"/>
 	<div id="timesheet-div">
