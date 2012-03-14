@@ -13,12 +13,12 @@ import javax.persistence.Table;
 import org.kernely.core.hibernate.AbstractModel;
 
 /**
- * TimeSheet Details model
+ * TimeSheetDetail model
+ * 
  */
 @Entity
 @Table(name = "kernely_timesheet_details")
 public class TimeSheetDetail extends AbstractModel {
-
 	private Date day;
 
 	@ManyToOne
@@ -83,6 +83,4 @@ public class TimeSheetDetail extends AbstractModel {
 	}
 
 	
-	
-
 }

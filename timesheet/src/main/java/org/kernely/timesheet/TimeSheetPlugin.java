@@ -1,8 +1,10 @@
 package org.kernely.timesheet;
 
 import org.kernely.core.plugin.AbstractPlugin;
+import org.kernely.timesheet.controller.ExpenseAdminController;
 import org.kernely.timesheet.controller.TimeSheetController;
 import org.kernely.timesheet.migrations.Migration01;
+import org.kernely.timesheet.model.ExpenseType;
 import org.kernely.timesheet.model.TimeSheet;
 import org.kernely.timesheet.model.TimeSheetDayProject;
 import org.kernely.timesheet.model.TimeSheetDetail;
@@ -22,9 +24,13 @@ public class TimeSheetPlugin extends AbstractPlugin {
 		registerName(NAME);
 		registerPath("/timesheet");
 		registerController(TimeSheetController.class);
+		registerController(ExpenseAdminController.class);
+		
 		registerModel(TimeSheetDetail.class);
 		registerModel(TimeSheet.class);
 		registerModel(TimeSheetDayProject.class);
+		registerModel(ExpenseType.class);
+		registerAdminPage("Expense type admin", "/admin/expense");
 		registerMigration(new Migration01());
 	}
 

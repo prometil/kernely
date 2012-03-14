@@ -334,9 +334,7 @@ public class HolidayService extends AbstractService {
 		if (id == 0) {
 			profile = new HolidayProfile();
 		} else {
-			Query verifExist = em.get().createQuery("SELECT hp FROM HolidayProfile hp WHERE id=:id");
-			verifExist.setParameter("id", id);
-			profile = (HolidayProfile) verifExist.getSingleResult();
+			profile = em.get().find(HolidayProfile.class, id);
 
 			// Detach types from profile
 			for (HolidayType type : profile.getHolidayTypes()) {
@@ -350,9 +348,7 @@ public class HolidayService extends AbstractService {
 		Set<HolidayType> types = new HashSet<HolidayType>();
 		if (request.holidayTypesId.size() > 0 && request.holidayTypesId.get(0) != null) {
 			for (long typeId : request.holidayTypesId) {
-				Query query = em.get().createQuery("SELECT  h from HolidayType h WHERE  h.id=:id");
-				query.setParameter("id", typeId);
-				HolidayType holiday = (HolidayType) query.getSingleResult();
+				HolidayType holiday = em.get().find(HolidayType.class, typeId);
 				types.add(holiday);
 				log.debug("Added holiday type (id:{}) to holiday profile (name:{})", holiday.getId(), request.name.trim());
 			}
@@ -371,9 +367,7 @@ public class HolidayService extends AbstractService {
 		// Update holiday types
 		if (request.holidayTypesId.size() > 0 && request.holidayTypesId.get(0) != null) {
 			for (long typeId : request.holidayTypesId) {
-				Query query = em.get().createQuery("SELECT  h from HolidayType h WHERE  h.id=:id");
-				query.setParameter("id", typeId);
-				HolidayType holiday = (HolidayType) query.getSingleResult();
+				HolidayType holiday = em.get().find(HolidayType.class, typeId);
 				holiday.setProfile(profile);
 				em.get().merge(holiday);
 			}
@@ -450,9 +444,7 @@ public class HolidayService extends AbstractService {
 	@Transactional
 	public void updateProfileUsers(long id, List<String> usernames) {
 		// Get profile
-		Query profileQuery = em.get().createQuery("SELECT hp FROM HolidayProfile hp WHERE id=:id");
-		profileQuery.setParameter("id", id);
-		HolidayProfile profile = (HolidayProfile) profileQuery.getSingleResult();
+		HolidayProfile profile = em.get().find(HolidayProfile.class, id);
 		// Get users
 		Set<User> associatedUsers = new HashSet<User>();
 		for (String username : usernames) {

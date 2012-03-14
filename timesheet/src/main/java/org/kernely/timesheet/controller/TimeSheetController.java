@@ -56,7 +56,7 @@ public class TimeSheetController extends AbstractController {
 	@GET
 	@Path("/calendar")
 	@Produces( { MediaType.APPLICATION_JSON })
-	public TimeSheetCalendarDTO getCurrentTimeSheet(@QueryParam("week") int week, @QueryParam("year") int year ) {
+	public TimeSheetCalendarDTO getTimeSheetForWeekOfYear(@QueryParam("week") int week, @QueryParam("year") int year ) {
 		if(week == 0 || year == 0){
 			week = DateTime.now().getWeekOfWeekyear();
 			year = DateTime.now().getYear();

@@ -64,6 +64,15 @@ public class Migration01 extends Migration {
 		commands.add(timeSheetDayProject);
 		commands.add(timeSheetDayForeignKey);
 		commands.add(timeSheetProjectForeignKey);
+
+		// Table expense type
+		CreateTable expenseType = CreateTable.name("kernely_expense_type");
+		expenseType.column(DataBaseConstants.ID_COLUMN, DataBaseConstants.LONG_PK);
+		expenseType.column("name", DataBaseConstants.VARCHAR_50);
+		expenseType.column("direct", DataBaseConstants.BOOLEAN_DEFAULT_TRUE);
+		expenseType.column("ratio", DataBaseConstants.FLOAT4);
+		
+		commands.add(expenseType);
 		
 		return commands;
 	}

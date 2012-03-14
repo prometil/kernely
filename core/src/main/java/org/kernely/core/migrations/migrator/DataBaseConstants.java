@@ -22,5 +22,6 @@ public class DataBaseConstants {
 	public static final String BOOLEAN_DEFAULT_FALSE = "bool default false";
 	public static final String BOOLEAN_DEFAULT_TRUE = "bool default true";
 	public static final String FLOAT = "real";
+	public static final String FLOAT4 = "float4";
 	
 }
