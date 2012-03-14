@@ -222,6 +222,7 @@ AppHolidayRequest = (function($){
 		events:{
 			"click .minusWeek" : "minusWeek",
 			"click .plusWeek" : "plusWeek",
+			"click #week_current" : "currentWeek"
 		},
 		initialize: function(){
 			
@@ -246,13 +247,6 @@ AppHolidayRequest = (function($){
 				weekSelected = 1;
 				yearSelected ++;
 			}
-			var template = $("#calendarSelector").html();
-			var template4Week = $("#week-selector-template").html();
-			var view4Week = {week : weekSelected};
-			var html = Mustache.to_html(template4Week, view4Week);
-			var view = {week : html, year: yearSelected};
-			html = Mustache.to_html(template, view);
-			$(this.el).html(html);
 			mainView.reloadCalendar();
 		},
 		minusWeek: function(){
@@ -262,14 +256,13 @@ AppHolidayRequest = (function($){
 				weekSelected = 52;
 				yearSelected --;
 			}
-			var template = $("#calendarSelector").html();
-			var template4Week = $("#week-selector-template").html();
-			var view4Week = {week : weekSelected};
-			var html = Mustache.to_html(template4Week, view4Week);
-			var view = {week : html, year: yearSelected};
-			html = Mustache.to_html(template, view);
-			$(this.el).html(html);
 			mainView.reloadCalendar();
+		},
+		currentWeek:function(){
+			weekSelected = 0;
+			yearSelected = 0;
+			mainView.reloadCalendar();
+			
 		}
 	})
 	

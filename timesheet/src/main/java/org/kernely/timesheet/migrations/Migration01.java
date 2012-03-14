@@ -46,13 +46,21 @@ public class Migration01 extends Migration {
 		CreateTable timeSheetDetails = CreateTable.name("kernely_timesheet_details");
 		timeSheetDetails.column(DataBaseConstants.ID_COLUMN, DataBaseConstants.LONG_PK);
 		timeSheetDetails.column("day", DataBaseConstants.DATE);
-		timeSheetDetails.column("amount", DataBaseConstants.FLOAT);
 		timeSheetDetails.column("timesheet", DataBaseConstants.LONG_NOT_NULL);
 		RawSql timeSheetForeignKey= new RawSql("ALTER TABLE kernely_timesheet_details ADD CONSTRAINT fk_timesheet_id FOREIGN KEY (timesheet) REFERENCES kernely_timesheet (id)");
-		
+				
 		commands.add(timeSheetDetails);
 		commands.add(timeSheetForeignKey);
 
+		// Table expense type
+		CreateTable expenseType = CreateTable.name("kernely_expense_type");
+		expenseType.column(DataBaseConstants.ID_COLUMN, DataBaseConstants.LONG_PK);
+		expenseType.column("name", DataBaseConstants.VARCHAR_50);
+		expenseType.column("direct", DataBaseConstants.BOOLEAN_DEFAULT_TRUE);
+		expenseType.column("ratio", DataBaseConstants.FLOAT4);
+		
+		commands.add(expenseType);
+		
 		return commands;
 	}
 }

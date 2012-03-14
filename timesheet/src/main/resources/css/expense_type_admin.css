@@ -1,0 +1,18 @@
+#modal_window_expense_type{
+	position:absolute;
+	width:250px;
+	height:160px;
+	display:none;
+	z-index:9999;
+	padding:20px;
+	top:0;
+	left:0;
+}
+
+#expense_type_admin_table{
+	width:100%;
+}
+
+#ratio_field{
+	width:50px;
+}

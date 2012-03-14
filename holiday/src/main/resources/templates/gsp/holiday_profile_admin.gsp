@@ -11,6 +11,7 @@
 	<th><%= i18n.t("holiday_profile_name") %></th>
 	<th><%= i18n.t("holiday_profile_description") %></th>
 	<th><%= i18n.t("holiday_profile_users") %></th>
+</tr>
 </script>
 
 <script type="text/html" id="confirm-holiday-profile-deletion-template">
@@ -112,13 +113,13 @@
 	<div id="holiday-table-div">
 		<table id="holiday-types-list-table">
 			<tr>
-				<th><%= i18n.t("holiday_name") %></td>
-				<th><%= i18n.t("unlimited_holidays") %></td>
-				<th colspan="3"><%= i18n.t("holiday_gain") %></td>
-				<th><%= i18n.t("holiday_effective_month") %></td>
-				<th><%= i18n.t("can_be_anticipated") %></td>
-				<th><%= i18n.t("holiday_color") %></td>
-				<th></td>
+				<th><%= i18n.t("holiday_name") %></th>
+				<th><%= i18n.t("unlimited_holidays") %></th>
+				<th colspan="3"><%= i18n.t("holiday_gain") %></th>
+				<th><%= i18n.t("holiday_effective_month") %></th>
+				<th><%= i18n.t("can_be_anticipated") %></th>
+				<th><%= i18n.t("holiday_color") %></th>
+				<th></th>
 			</tr>
 		</table>
 	</div>
