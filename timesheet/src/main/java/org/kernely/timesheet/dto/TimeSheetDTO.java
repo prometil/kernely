@@ -1,6 +1,7 @@
 package org.kernely.timesheet.dto;
 
 import java.util.Date;
+import java.util.List;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -13,7 +14,11 @@ import org.kernely.timesheet.model.TimeSheet;
  */
 @XmlRootElement
 public class TimeSheetDTO {
-
+	/**
+	 * Unique id of the timesheet
+	 */
+	public long id;
+	
 	/**
 	 * User details of the user associated to this timesheet
 	 */
@@ -50,14 +55,19 @@ public class TimeSheetDTO {
 	public int year;
 
 	/**
+	 * Rows for the timesheet
+	 */
+	public List<TimeSheetRowDTO> rows;
+	
+	/**
 	 * Default constructor of the DTO
 	 * 
 	 * @param timeSheet
-	 *            The time sheet model
+	 *            The time sheet model. Don't fill rows.
 	 */
 	public TimeSheetDTO(TimeSheet timeSheet) {
+		this.id = timeSheet.getId();
 		this.userDetails = new UserDetailsDTO(timeSheet.getUser().getUserDetails());
-		
 		this.begin = timeSheet.getBeginDate();
 		this.end = timeSheet.getEndDate();
 		this.status = timeSheet.getStatus();
@@ -65,7 +75,7 @@ public class TimeSheetDTO {
 		this.week = new DateTime(this.end).getWeekOfWeekyear();
 		this.year = new DateTime(this.end).getYear();
 	}
-
+	
 	/**
 	 * Default constructor
 	 */

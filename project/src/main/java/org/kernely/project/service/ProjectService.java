@@ -105,7 +105,7 @@ public class ProjectService extends AbstractService {
 	 */
 	@SuppressWarnings("unchecked")
 	@Transactional
-	public void createProject(ProjectCreationRequestDTO request) {
+	public ProjectDTO createProject(ProjectCreationRequestDTO request) {
 		if (request == null) {
 			throw new IllegalArgumentException("Request cannot be null ");
 		}
@@ -130,6 +130,7 @@ public class ProjectService extends AbstractService {
 		project.setIcon(ICON);
 		project.setOrganization(organizationService.getOrganizationByName(request.organization));
 		em.get().persist(project);
+		return new ProjectDTO(project);
 	}
 
 	/**

@@ -4,6 +4,7 @@ import org.kernely.core.plugin.AbstractPlugin;
 import org.kernely.timesheet.controller.TimeSheetController;
 import org.kernely.timesheet.migrations.Migration01;
 import org.kernely.timesheet.model.TimeSheet;
+import org.kernely.timesheet.model.TimeSheetDayProject;
 import org.kernely.timesheet.model.TimeSheetDetail;
 import org.kernely.timesheet.service.TimeSheetService;
 
@@ -23,6 +24,7 @@ public class TimeSheetPlugin extends AbstractPlugin {
 		registerController(TimeSheetController.class);
 		registerModel(TimeSheetDetail.class);
 		registerModel(TimeSheet.class);
+		registerModel(TimeSheetDayProject.class);
 		registerMigration(new Migration01());
 	}
 

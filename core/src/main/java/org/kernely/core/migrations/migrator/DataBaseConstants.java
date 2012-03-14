@@ -21,6 +21,6 @@ public class DataBaseConstants {
 	public static final String VARCHAR_300 = "varchar(300)";
 	public static final String BOOLEAN_DEFAULT_FALSE = "bool default false";
 	public static final String BOOLEAN_DEFAULT_TRUE = "bool default true";
-	public static final String FLOAT = "float";
+	public static final String FLOAT = "real";
 	
 }

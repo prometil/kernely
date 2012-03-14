@@ -8,8 +8,16 @@
 
 <script type="text/html" id="delete-button-template"><input type="button" class="deleteButton" value="<%= i18n.t("delete") %>"/></script>
 
+<script type="text/html" id="time-amount-025">15 <%= i18n.t("timesheet_minutes") %></script>
+<script type="text/html" id="time-amount-05">30 <%= i18n.t("timesheet_minutes") %></script>
+<script type="text/html" id="time-amount-1">1 <%= i18n.t("timesheet_hour") %></script>
+<script type="text/html" id="time-amount-2">2 <%= i18n.t("timesheet_hours") %></script>
+<script type="text/html" id="time-amount-4">4 <%= i18n.t("timesheet_hours") %></script>
+<script type="text/html" id="time-amount-6">6 <%= i18n.t("timesheet_hours") %></script>
+<script type="text/html" id="time-amount-8">8 <%= i18n.t("timesheet_hours") %></script>
+
 <script type="text/html" id="time-cell-template">
-	<span id="time-cell-name">{{amount}}</span><br/>
+	<span id="time-cell-name">{{amount}}</span>
 </script>
 
 <script type="text/html" id="calendarSelector">

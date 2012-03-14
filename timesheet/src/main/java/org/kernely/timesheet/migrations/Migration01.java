@@ -46,13 +46,25 @@ public class Migration01 extends Migration {
 		CreateTable timeSheetDetails = CreateTable.name("kernely_timesheet_details");
 		timeSheetDetails.column(DataBaseConstants.ID_COLUMN, DataBaseConstants.LONG_PK);
 		timeSheetDetails.column("day", DataBaseConstants.DATE);
-		timeSheetDetails.column("amount", DataBaseConstants.FLOAT);
-		timeSheetDetails.column("timesheet", DataBaseConstants.LONG_NOT_NULL);
-		RawSql timeSheetForeignKey= new RawSql("ALTER TABLE kernely_timesheet_details ADD CONSTRAINT fk_timesheet_id FOREIGN KEY (timesheet) REFERENCES kernely_timesheet (id)");
+		timeSheetDetails.column("timesheet_id", DataBaseConstants.LONG_NOT_NULL);
+		RawSql timeSheetForeignKey= new RawSql("ALTER TABLE kernely_timesheet_details ADD CONSTRAINT fk_timesheet_id FOREIGN KEY (timesheet_id) REFERENCES kernely_timesheet (id)");
 		
 		commands.add(timeSheetDetails);
 		commands.add(timeSheetForeignKey);
 
+		// Association table which links the project to a detail
+		CreateTable timeSheetDayProject = CreateTable.name("kernely_timesheet_day_project");
+		timeSheetDayProject.column(DataBaseConstants.ID_COLUMN, DataBaseConstants.LONG_PK);
+		timeSheetDayProject.column("timesheet_detail_id", DataBaseConstants.LONG_NOT_NULL);
+		timeSheetDayProject.column("project_id", DataBaseConstants.LONG_NOT_NULL);
+		timeSheetDayProject.column("amount", DataBaseConstants.FLOAT);
+		RawSql timeSheetDayForeignKey= new RawSql("ALTER TABLE kernely_timesheet_day_project ADD CONSTRAINT fk_detail_id FOREIGN KEY (timesheet_detail_id) REFERENCES kernely_timesheet_details (id)");
+		RawSql timeSheetProjectForeignKey= new RawSql("ALTER TABLE kernely_timesheet_day_project ADD CONSTRAINT fk_project_id FOREIGN KEY (project_id) REFERENCES kernely_project (id)");
+		
+		commands.add(timeSheetDayProject);
+		commands.add(timeSheetDayForeignKey);
+		commands.add(timeSheetProjectForeignKey);
+		
 		return commands;
 	}
 }

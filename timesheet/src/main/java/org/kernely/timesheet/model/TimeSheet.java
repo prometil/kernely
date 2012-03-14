@@ -1,10 +1,13 @@
 package org.kernely.timesheet.model;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import org.kernely.core.hibernate.AbstractModel;
@@ -35,6 +38,11 @@ public class TimeSheet extends AbstractModel {
 	@JoinColumn(name = "user_id")
 	private User user;
 
+
+	@OneToMany
+	@JoinColumn( name="timesheet_id")
+	private List<TimeSheetDetail> details;
+	
 	/**
 	 * Default constructor
 	 */
@@ -64,6 +72,7 @@ public class TimeSheet extends AbstractModel {
 		this.status = status;
 		this.feesStatus = feesStatus;
 		this.user = user;
+		this.details = new ArrayList<TimeSheetDetail>(7);
 	}
 
 	/**
@@ -141,4 +150,19 @@ public class TimeSheet extends AbstractModel {
 		this.user = user;
 	}
 
+	/**
+	 * @return the details
+	 */
+	public List<TimeSheetDetail> getDetails() {
+		return details;
+	}
+
+	/**
+	 * @param details the details to set
+	 */
+	public void setDetails(List<TimeSheetDetail> details) {
+		this.details = details;
+	}
+
+	
 }

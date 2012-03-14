@@ -1,131 +1,88 @@
 package org.kernely.timesheet.model;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.OneToOne;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import org.kernely.core.hibernate.AbstractModel;
-import org.kernely.core.model.User;
 
 /**
- * project model
- * 
+ * TimeSheet Details model
  */
 @Entity
-@Table(name = "kernely_project")
+@Table(name = "kernely_timesheet_details")
 public class TimeSheetDetail extends AbstractModel {
 
-	private String name;
+	private Date day;
 
-	private String icon;
+	@ManyToOne
+	@JoinColumn(name="timesheet_id")
+	private TimeSheet timeSheet;
 
-	/**
-	 * Users in the project
-	 */
-	@ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, fetch = FetchType.LAZY)
-	@JoinTable(name = "kernely_user_project", joinColumns = @JoinColumn(name = "project_id"), inverseJoinColumns = @JoinColumn(name = "user_id"))
-	private Set<User> users;
-
-	@OneToOne
-	@JoinColumn(name = "organization_id")
-	private TimeSheet organization;
+	
+	@OneToMany
+	@JoinColumn(name="timesheet_detail_id")
+	private List<TimeSheetDayProject> dayProjects;
 
 	/**
-	 * The right for an user to be a contributor on the project
-	 */
-	public static final String RIGHT_CONTRIBUTOR = "contributor";
-
-	/**
-	 * The right for an user to be a project manager on the project
-	 */
-	public static final String RIGHT_PROJECTMANAGER = "project_manager";
-
-	/**
-	 * The right for an user to be a client on the project
-	 */
-	public static final String RIGHT_CLIENT = "client";
-
-	/**
-	 * The resource for project to give rights on the project.
-	 */
-	public static final String PROJECT_RESOURCE = "projects";
-
-	/**
-	 * initialize a project with default value
+	 * Initializes detail with default values
 	 */
 	public TimeSheetDetail() {
 		this.id = 0;
-		this.name = "";
-		this.icon = "";
-		this.users = new HashSet<User>();
+		this.timeSheet = null;
+		this.day = null;
+		this.dayProjects = new ArrayList<TimeSheetDayProject>();
 	}
 
 	/**
-	 * @return the type
+	 * @return the day
 	 */
-	public String getName() {
-		return name;
+	public Date getDay() {
+		return day;
 	}
 
 	/**
-	 * @param type
-	 *            the type to set
+	 * @param day the day to set
 	 */
-	public void setName(String name) {
-		this.name = name;
+	public void setDay(Date day) {
+		this.day = day;
 	}
 
 	/**
-	 * @return the users
+	 * @return the timeSheet
 	 */
-	public Set<User> getUsers() {
-		return users;
+	public TimeSheet getTimeSheet() {
+		return timeSheet;
 	}
 
 	/**
-	 * @param users
-	 *            the users to set
+	 * @param timeSheet the timeSheet to set
 	 */
-	public void setUsers(Set<User> users) {
-		this.users = users;
+	public void setTimeSheet(TimeSheet timeSheet) {
+		this.timeSheet = timeSheet;
 	}
 
 	/**
-	 * @return the icon
+	 * @return the dayProjects
 	 */
-	public String getIcon() {
-		return icon;
+	public List<TimeSheetDayProject> getDayProjects() {
+		return dayProjects;
 	}
 
 	/**
-	 * @param icon
-	 *            the icon to set
+	 * @param dayProjects the dayProjects to set
 	 */
-	public void setIcon(String icon) {
-		this.icon = icon;
+	public void setDayProjects(List<TimeSheetDayProject> dayProjects) {
+		this.dayProjects = dayProjects;
 	}
 
-	/**
-	 * @return the organization
-	 */
-	public TimeSheet getOrganization() {
-		return organization;
-	}
-
-	/**
-	 * @param organization
-	 *            the organization to set
-	 */
-	public void setOrganization(TimeSheet organization) {
-		this.organization = organization;
-	}
+	
+	
 
 }

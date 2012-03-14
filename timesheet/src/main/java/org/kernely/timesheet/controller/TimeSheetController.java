@@ -1,6 +1,8 @@
 package org.kernely.timesheet.controller;
 
+import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
@@ -12,6 +14,7 @@ import org.kernely.core.controller.AbstractController;
 import org.kernely.core.service.user.UserService;
 import org.kernely.core.template.TemplateRenderer;
 import org.kernely.timesheet.dto.TimeSheetCalendarDTO;
+import org.kernely.timesheet.dto.TimeSheetDayDTO;
 import org.kernely.timesheet.service.TimeSheetService;
 
 import com.google.inject.Inject;
@@ -60,5 +63,18 @@ public class TimeSheetController extends AbstractController {
 		}
 		TimeSheetCalendarDTO timeSheetCalendar = timeSheetService.getTimeSheetCalendar(week, year, userService.getAuthenticatedUserDTO().id, true);
 		return timeSheetCalendar;
+	}
+	
+	/**
+	 * Update a day in a timesheet
+	 * 
+	 * @return A JSON String containing the updated day detail
+	 */
+	@POST
+	@Path("/update")
+	@Consumes( { MediaType.APPLICATION_JSON })
+	@Produces( { MediaType.APPLICATION_JSON })
+	public TimeSheetDayDTO getCurrentTimeSheet(TimeSheetDayDTO timeSheetDay) {
+		return timeSheetService.createOrUpdateDayAmountForProject(timeSheetDay);
 	}
 }

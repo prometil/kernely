@@ -1,10 +1,13 @@
 package org.kernely.project.dto;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.kernely.core.dto.UserDTO;
+import org.kernely.core.model.User;
+import org.kernely.project.model.Project;
 
 /**
  * The project DTO
@@ -53,6 +56,20 @@ public class ProjectDTO {
 		this.users = newUsers;
 		this.icon = newIcon;
 		this.organization = newOrganization;
+	}
+	
+	/**
+	 * Constructor using model
+	 */
+	public ProjectDTO(Project project){
+		this.id = project.getId();
+		this.name = project.getName();
+		this.users = new ArrayList<UserDTO>();
+		for (User u : project.getUsers()){
+			this.users.add(new UserDTO(u));
+		}
+		this.icon = project.getIcon();
+		this.organization = new OrganizationDTO(project.getOrganization());
 	}
 
 	/**

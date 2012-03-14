@@ -1,10 +1,11 @@
 AppHolidayRequest = (function($){
 
+	
+	var MAX_VALUE = 8;
 	var mainView = null;
 	var calendar = null;
 	var weekSelector = null;
 	var currentCellPickerSelected = null;
-	var oldCellPickerSelected = null;
 	var allCellPicker = new Array();
 	//The last day cell clicked (used for the shift + clic function)
 	var lastClicked = null;
@@ -13,6 +14,7 @@ AppHolidayRequest = (function($){
 	var shifted = false;
 	var weekSelected = 0;
 	var yearSelected = 0;
+	var timeSheetId = 0;
 	
 	TimeSheetPageView = Backbone.View.extend({
 		el:"#timesheet-main",
@@ -52,6 +54,7 @@ AppHolidayRequest = (function($){
 							weekSelected = data.timeSheet.week;
 							yearSelected = data.timeSheet.year;
 							weekSelector.refresh();
+							timeSheetId = data.timeSheet.id;
 							calendar = new CalendarView(data).render();
 						}
 					});
@@ -102,7 +105,6 @@ AppHolidayRequest = (function($){
 		addRow: function(projectName, projectId, amounts){
 			if (projectId != null && projectName != null){
 				$("#timesheet-content").append(new ProjectRow(projectName, projectId,amounts,this.data.dates).render().el);
-				
 				// Remove from the combobox
 				$("#project-select option[value='" + projectId + "']").remove();
 			}
@@ -117,11 +119,34 @@ AppHolidayRequest = (function($){
 			// List of the headers : contains days
 			var headerList = new Array();
 
-			// Building the header
+			// Build the header
 			var template = $("#project-title-template").html();
 			$("#date-line").append("<td>"+template+"</td>");
 			for (var i = 0 ; i < this.data.dates.length ; i++){
 				$("#date-line").append("<td>" + this.data.stringDates[i] + "</td>");
+			}
+			// Build rows with data
+			if( $.isArray(this.data.timeSheet.rows)){
+				$.each(this.data.timeSheet.rows, function(){
+					$("#timesheet-content").append(
+							new ProjectRow(this.project.name,
+									this.project.id,
+									this.timeSheetDays,parent.data.dates).render().el
+					);
+					// Remove from the combobox
+					$("#project-select option[value='" + this.project.id + "']").remove();
+				});
+			} else {
+				// Verify if there is at least one row
+				if (this.data.timeSheet.rows != null){
+					$("#timesheet-content").append(
+							new ProjectRow(this.data.timeSheet.rows.project.name,
+									this.data.timeSheet.rows.project.id,
+									this.data.timeSheet.rows.timeSheetDays,this.data.dates).render().el
+					);
+					// Remove from the combobox
+					$("#project-select option[value='" + this.data.projectId + "']").remove();
+				}
 			}
 			return this;
 		}
@@ -134,7 +159,9 @@ AppHolidayRequest = (function($){
 		events:{
 			"click .deleteButton" : "removeLine",
 		},
-		initialize: function(projectName, projectId, amounts, days){
+		initialize: function(projectName, projectId, timeSheetDays, days){
+			console.log(projectName+" : "+projectId)
+			
 			this.projectId = projectId;
 			this.projectName = projectName;
 			
@@ -142,10 +169,39 @@ AppHolidayRequest = (function($){
 			$(this.el).append("<td>" + projectName + "</td>");
 			
 			// Create a td for each day
-			for (var i = 0 ; i < amounts.length ; i++){
-				$(this.el).append(
-						new TimeSheetDayView(this.day,i,amounts[i]).render().el
+			for (var i = 0 ; i < 7 ; i++){
+
+				var found  = false;
+				// Search for an existing timeSheetDay
+				if(! $.isArray(timeSheetDays)){
+					if (timeSheetDays.index == i){
+						$(this.el).append(
+								new TimeSheetDayView(timeSheetDays.index,
+										timeSheetDays.amount,
+										timeSheetDays.day,
+										timeSheetDays.projectId,
+										timeSheetDays.detailId).render().el
 						);
+						found = true;
+					}
+				} else {
+					for (var j = 0 ; j < timeSheetDays.length ; j++){
+
+						if (timeSheetDays[j].index == i){
+							$(this.el).append(
+									new TimeSheetDayView(timeSheetDays[j].index,
+											timeSheetDays[j].amount,
+											timeSheetDays[j].day,
+											timeSheetDays[j].projectId,
+											timeSheetDays[j].detailId).render().el
+							);
+							found = true;
+						}
+					}
+				}
+				if (! found){
+					$(this.el).append(new TimeSheetDayView(i,0,days[i], this.projectId, 0).render().el);
+				}
 			}
 			
 			// Create the delete button
@@ -175,7 +231,7 @@ AppHolidayRequest = (function($){
 		amount : null,
 		week : null,
 		isSelected: false,
-		partOfDay: null,
+		projectId: null,
 		selectedBy: -1,
 		// An id only reserved to the view to allow the shift + clic event.
 		viewRank: -1,
@@ -183,54 +239,71 @@ AppHolidayRequest = (function($){
 		events:{
 			"click" : "increment"
 		},
-
-		initialize: function(day, index,amount){
+		initialize: function(index, amount, day, projectId, detailId){
+			this.index = index;
+			this.amount = amount;
 			this.day = day;
+			this.projectId = projectId;
+			this.detailId = detailId;
 		},
 		
 		increment : function(event){
+			var parent = this;
 			if(currentCellPickerSelected != null){
-				if(this.selectedBy != currentCellPickerSelected.idType){
-					// Color the cell with the Balance color
-					$(this.el).css('background-color', currentCellPickerSelected.color);
-					// decrease balance's available days
-					currentCellPickerSelected.decrease();
-					// If this cell was already selected, increase the old selection in order to not loose a day
-					if(oldCellPickerSelected != null && this.isSelected){
-						allCellPicker[this.selectedBy].increase();
-					}
-					this.isSelected = true;
-					// Store the id of the type choosen for this cell
-					this.selectedBy = currentCellPickerSelected.idType;
-					nbSelected ++;
+				// Get value and increment
+				var val = parseFloat($(this.el).text());
+				val += currentCellPickerSelected.amount;
+				if (val > MAX_VALUE){
+					val = MAX_VALUE;
 				}
-				else{
-					if(!shifted){
-						// If we deselect a cell
-						currentCellPickerSelected.increase();
-						$(this.el).css('background-color', '#dce8f1');
-						this.isSelected = false;
-						this.selectedBy = -1;
-						nbSelected --;
+				this.amount = val;
+				$(this.el).text(val);
+				
+				json = '{"index":"'+this.index+'","amount":'+this.amount
+				+',"day":"'+this.day
+				+'","projectId":"'+this.projectId
+				+'","detailId":"'+this.detailId
+				+'","timeSheetId":"'+timeSheetId+'"}';
+				console.log("JSON : "+json);
+				// Send data to server
+				$.ajax({
+					type: "POST",
+					url:"/timesheet/update",
+					data:json,
+					dataType:"json",
+					contentType: "application/json; charset=utf-8",
+					processData: false,
+					success: function(data){
+						parent.detailId = data.detailId;
 					}
-				}
-				// If shift is pressed, we colore all fields between days selected 
-				if(typeof(event) != "undefined"){
-					if(event.shiftKey){
-						shifted = true;
-						var cpt = lastClicked.viewRank;
-						while(cpt < this.viewRank){
-							allDayCells[cpt].increment();
-							cpt ++;
-						}
-					}
-				}
-				shifted = false;
-				lastClicked = this;
+				});
+				
 			}
+			else{
+				if(!shifted){
+					// If we deselect a cell
+					$(this.el).css('background-color', '#dce8f1');
+					this.isSelected = false;
+					this.selectedBy = -1;
+					nbSelected --;
+				}
+			}
+			// If shift is pressed, we colore all fields between days selected 
+			if(typeof(event) != "undefined"){
+				if(event.shiftKey){
+					shifted = true;
+					var cpt = lastClicked.viewRank;
+					while(cpt < this.viewRank){
+						allDayCells[cpt].increment();
+						cpt ++;
+					}
+				}
+			}
+			shifted = false;
+			lastClicked = this;
 		},
 		render: function(){
-			$(this.el).text("0");
+			$(this.el).text(this.amount);
 			return this;
 		}
 
@@ -298,7 +371,7 @@ AppHolidayRequest = (function($){
 		
 		},
 		
-		times: [8,4,2,1,0.5,0.25],
+		times: [8,6,4,2,1,0.5,0.25],
 		
 		initialize : function(){
 		},
@@ -329,19 +402,27 @@ AppHolidayRequest = (function($){
 		render : function(){
 			var template;
             var view;
+            var readableAmount;
+            if (this.amount == 0.25){
+            	readableAmount = $("#time-amount-025").html();
+            } else if (this.amount == 0.5){
+            	readableAmount = $("#time-amount-05").html();
+            } else {
+            	readableAmount = $("#time-amount-"+this.amount).html();
+            }
 			template = $("#time-cell-template").html();
-			view =  {amount: this.amount};
+			view =  {amount: readableAmount};
             var html = Mustache.to_html(template, view);
             $(this.el).html(html);
 			return this;
 		},
-		
+		unselect : function(){
+			$(this.el).removeClass("time-cell-selected");
+		},
 		selectTime : function(){
 			$(this.el).addClass("time-cell-selected");
-			
-			oldCellPickerSelected = currentCellPickerSelected;
-			if(oldCellPickerSelected != null){
-				$(oldCellPickerSelected.el).removeClass("time-cell-selected");
+			if (currentCellPickerSelected != null){
+				currentCellPickerSelected.unselect();
 			}
 			currentCellPickerSelected = this;
 		},
