@@ -3,6 +3,7 @@ package org.kernely.timesheet.service;
 import static org.junit.Assert.assertEquals;
 
 import java.util.Date;
+import java.util.List;
 
 import org.joda.time.DateTime;
 import org.junit.Test;
@@ -30,8 +31,6 @@ public class TimeSheetServiceTest extends AbstractServiceTest {
 	private static final int YEAR = 2012;
 	private static final String NAME = "test";
 	private static final int AMOUNT_1 = 3;
-	private static final int AMOUNT_2 = 5;
-	private static final int AMOUNT_3 = 1;
 	private static final Date DATE_1 = new DateTime().withDayOfMonth(5).withMonthOfYear(3).withYear(2012).toDate();
 	
 	@Inject
@@ -82,11 +81,21 @@ public class TimeSheetServiceTest extends AbstractServiceTest {
 	}
 	
 	@Test
+	public void getWeekWithoutCreation(){
+		
+		UserDTO user = createUserForTest();
+		
+		TimeSheetDTO timeSheet = timeSheetService.getTimeSheet(WEEK, YEAR, user.id, false);
+		
+		assertEquals(null,timeSheet);
+	}
+	
+	@Test
 	public void getCalendarWeek(){
 		
 		UserDTO user = createUserForTest();
 		
-		TimeSheetCalendarDTO calendar = timeSheetService.getTimeSheetCalendar(WEEK, YEAR, user.id, true);
+		TimeSheetCalendarDTO calendar = timeSheetService.getTimeSheetCalendar(WEEK, YEAR, user.id);
 		
 		assertEquals(7,calendar.dates.size());
 		
@@ -102,6 +111,25 @@ public class TimeSheetServiceTest extends AbstractServiceTest {
 		assertEquals(11,dayOfEndDay);
 		assertEquals(3,mounthOfEndDay);
 		assertEquals(12,yearOfEndDay);
+		
+	}
+	
+	@Test
+	public void getUniqueTimeSheetWithMultipleRequests(){
+		
+		UserDTO user = createUserForTest();
+		
+		// The timesheet service should create only once the timesheet
+		TimeSheetDTO firstTimeSheet = timeSheetService.getTimeSheet(WEEK, YEAR, user.id, true);
+		for (int i = 0; i < 100 ; i++){
+			timeSheetService.getTimeSheet(WEEK, YEAR, user.id, true);
+		}
+		TimeSheetDTO lastTimeSheet = timeSheetService.getTimeSheet(WEEK, YEAR, user.id, true);
+		
+		List<TimeSheetDTO> allTimeSheets = timeSheetService.getAllTimeSheets();
+		
+		assertEquals(1, allTimeSheets.size());
+		assertEquals(firstTimeSheet.id, lastTimeSheet.id);
 	}
 	
 	@Test
@@ -111,14 +139,14 @@ public class TimeSheetServiceTest extends AbstractServiceTest {
 		organizationService.createOrganization(organizationRequest);
 		ProjectCreationRequestDTO projectRequest = new ProjectCreationRequestDTO(NAME, 1, NAME, NAME);
 		ProjectDTO project = projectService.createProject(projectRequest);
-		TimeSheetCalendarDTO calendar = timeSheetService.getTimeSheetCalendar(WEEK, YEAR, user.id, true);
+		TimeSheetCalendarDTO calendar = timeSheetService.getTimeSheetCalendar(WEEK, YEAR, user.id);
 		TimeSheetDayDTO timeSheetDay = new TimeSheetDayDTO();
 		timeSheetDay.amount = AMOUNT_1;
 		timeSheetDay.projectId = project.id;
 		timeSheetDay.timeSheetId = calendar.timeSheet.id;
 		timeSheetDay.day = DATE_1;
 		timeSheetService.createOrUpdateDayAmountForProject(timeSheetDay);
-		calendar = timeSheetService.getTimeSheetCalendar(WEEK, YEAR, user.id, true);
+		calendar = timeSheetService.getTimeSheetCalendar(WEEK, YEAR, user.id);
 		
 		int expectedDay = new DateTime(DATE_1).getDayOfMonth();
 		int expectedMonth = new DateTime(DATE_1).getMonthOfYear();

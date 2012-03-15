@@ -3,6 +3,7 @@ package org.kernely.timesheet.service;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.Query;
 
@@ -145,7 +146,7 @@ public class TimeSheetService extends AbstractService {
 				// Build rows of the DTO: get dayProjects for all day of the week, from 0 (monday) to 6 (sunday)
 				List<TimeSheetRowDTO> calculatedRows = new ArrayList<TimeSheetRowDTO>(7);
 				for (int i = 0; i < 7; i++) {
-					List<TimeSheetDayProject> dayProjects = sheet.getDetails().get(i).getDayProjects();
+					Set<TimeSheetDayProject> dayProjects = sheet.getDetails().get(i).getDayProjects();
 					for (TimeSheetDayProject dayProject : dayProjects) {
 						TimeSheetDayDTO dayDTO = new TimeSheetDayDTO(i, dayProject.getTimeSheetDetail().getId(), dayProject.getAmount(), sheet.getDetails().get(i).getDay(),
 								sheet.getId(), dayProject.getProject().getId());
@@ -196,9 +197,9 @@ public class TimeSheetService extends AbstractService {
 	 *            id of the user.
 	 * @parma withCreation If true, will create the timesheet if it does not exists, and return it.
 	 */
-	public TimeSheetCalendarDTO getTimeSheetCalendar(int week, int year, long userId, boolean withCreation) {
-		TimeSheetDTO timeSheet = this.getTimeSheet(week, year, userId, withCreation);
-
+	public TimeSheetCalendarDTO getTimeSheetCalendar(int week, int year, long userId) {
+		TimeSheetDTO timeSheet = this.getTimeSheet(week, year, userId, true);
+		
 		List<Date> dates = new ArrayList<Date>();
 		List<String> stringDates = new ArrayList<String>();
 
@@ -246,5 +247,24 @@ public class TimeSheetService extends AbstractService {
 		
 		return timeSheetDay;
 		
+	}
+
+	/**
+	 * Removes a line from a timesheet, therefore remove all amounts of time of this line.
+	 * @param timeSheetId The id of the time sheet.
+	 * @param projectId The id of the project matching the line.
+	 */
+	@Transactional
+	public void removeLine(long timeSheetId, long projectId) {
+		TimeSheet timeSheet = em.get().find(TimeSheet.class, timeSheetId);
+		
+		// Get all details from timesheet
+		for (TimeSheetDetail detail : timeSheet.getDetails()){
+			for (TimeSheetDayProject day : detail.getDayProjects()){
+				if (day.getProject().getId() == projectId){
+					em.get().remove(day);
+				}
+			}
+		}
 	}
 }

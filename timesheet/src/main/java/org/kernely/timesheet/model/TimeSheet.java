@@ -158,10 +158,10 @@ public class TimeSheet extends AbstractModel {
 	}
 
 	/**
-	 * @param details the details to set
+	 * @param defaultDetails the details to set
 	 */
-	public void setDetails(List<TimeSheetDetail> details) {
-		this.details = details;
+	public void setDetails(List<TimeSheetDetail> defaultDetails) {
+		this.details = defaultDetails;
 	}
 
 	

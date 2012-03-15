@@ -61,7 +61,7 @@ public class TimeSheetController extends AbstractController {
 			week = DateTime.now().getWeekOfWeekyear();
 			year = DateTime.now().getYear();
 		}
-		TimeSheetCalendarDTO timeSheetCalendar = timeSheetService.getTimeSheetCalendar(week, year, userService.getAuthenticatedUserDTO().id, true);
+		TimeSheetCalendarDTO timeSheetCalendar = timeSheetService.getTimeSheetCalendar(week, year, userService.getAuthenticatedUserDTO().id);
 		return timeSheetCalendar;
 	}
 	
@@ -74,7 +74,16 @@ public class TimeSheetController extends AbstractController {
 	@Path("/update")
 	@Consumes( { MediaType.APPLICATION_JSON })
 	@Produces( { MediaType.APPLICATION_JSON })
-	public TimeSheetDayDTO getCurrentTimeSheet(TimeSheetDayDTO timeSheetDay) {
+	public TimeSheetDayDTO updateTimeSheet(TimeSheetDayDTO timeSheetDay) {
 		return timeSheetService.createOrUpdateDayAmountForProject(timeSheetDay);
+	}
+	
+	/**
+	 * Remove a line in a time sheet
+	 */
+	@GET
+	@Path("/removeline")
+	public void deleteTimeSheet(@QueryParam("timeSheetUniqueId") long timeSheetId, @QueryParam("projectUniqueId") long projectId) {
+		timeSheetService.removeLine(timeSheetId, projectId);
 	}
 }

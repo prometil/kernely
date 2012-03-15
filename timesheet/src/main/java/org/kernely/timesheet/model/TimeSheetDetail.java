@@ -1,8 +1,8 @@
 package org.kernely.timesheet.model;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
@@ -28,7 +28,7 @@ public class TimeSheetDetail extends AbstractModel {
 	
 	@OneToMany
 	@JoinColumn(name="timesheet_detail_id")
-	private List<TimeSheetDayProject> dayProjects;
+	private Set<TimeSheetDayProject> dayProjects;
 
 	/**
 	 * Initializes detail with default values
@@ -37,7 +37,7 @@ public class TimeSheetDetail extends AbstractModel {
 		this.id = 0;
 		this.timeSheet = null;
 		this.day = null;
-		this.dayProjects = new ArrayList<TimeSheetDayProject>();
+		this.dayProjects = new HashSet<TimeSheetDayProject>();
 	}
 
 	/**
@@ -71,14 +71,14 @@ public class TimeSheetDetail extends AbstractModel {
 	/**
 	 * @return the dayProjects
 	 */
-	public List<TimeSheetDayProject> getDayProjects() {
+	public Set<TimeSheetDayProject> getDayProjects() {
 		return dayProjects;
 	}
 
 	/**
 	 * @param dayProjects the dayProjects to set
 	 */
-	public void setDayProjects(List<TimeSheetDayProject> dayProjects) {
+	public void setDayProjects(Set<TimeSheetDayProject> dayProjects) {
 		this.dayProjects = dayProjects;
 	}
 

@@ -44,8 +44,6 @@ import com.google.inject.Inject;
 import com.google.inject.persist.PersistService;
 
 /**
- * @author g.breton
- * 
  */
 public abstract class AbstractServiceTest {
 

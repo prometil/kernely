@@ -81,6 +81,9 @@ AppHolidayRequest = (function($){
 				url:"/timesheet/calendar",
 				data:{week:weekSelected, year:yearSelected},
 				success: function(data){
+					// Reset display
+					$("#timesheet-content").html('<tr id="date-line"></tr>');
+					
 					// Create the views
 					weekSelected = data.timeSheet.week;
 					yearSelected = data.timeSheet.year;
@@ -209,6 +212,8 @@ AppHolidayRequest = (function($){
 		},
 		
 		removeLine : function(){
+			var parent = this;
+			
 			// Put the project in the combo box
 			$('#project-select')
 	          .append($('<option>', { value : this.projectId })
@@ -216,6 +221,17 @@ AppHolidayRequest = (function($){
 			
 			// Delete line
 			$(this.el).remove();
+			
+			console.log("TSID : "+timeSheetId+" PID : "+this.projectId)
+			
+			// Delete line in database: delete all amounts of time
+			$.ajax({
+				type: "GET",
+				url:"/timesheet/removeline",
+				data:{timeSheetUniqueId:timeSheetId, projectUniqueId:parent.projectId},
+				success: function(data){
+				}
+			});
 		},
 		
 		render: function(){
