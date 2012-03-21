@@ -35,16 +35,6 @@ public class TimeSheetDTO {
 	public Date end;
 
 	/**
-	 * Status of the time sheet, using TimeSheet constants.
-	 */
-	public int status;
-
-	/**
-	 * Status of fees associated to the time sheet, using TimeSheet constants.
-	 */
-	public int feesStatus;
-	
-	/**
 	 * Week concerned by this dto
 	 */
 	public int week;
@@ -55,9 +45,9 @@ public class TimeSheetDTO {
 	public int year;
 
 	/**
-	 * Rows for the timesheet
+	 * Columns for the timesheet
 	 */
-	public List<TimeSheetRowDTO> rows;
+	public List<TimeSheetColumnDTO> columns;
 	
 	/**
 	 * Default constructor of the DTO
@@ -70,8 +60,6 @@ public class TimeSheetDTO {
 		this.userDetails = new UserDetailsDTO(timeSheet.getUser().getUserDetails());
 		this.begin = timeSheet.getBeginDate();
 		this.end = timeSheet.getEndDate();
-		this.status = timeSheet.getStatus();
-		this.feesStatus = timeSheet.getFeesStatus();
 		this.week = new DateTime(this.end).getWeekOfWeekyear();
 		this.year = new DateTime(this.end).getYear();
 	}

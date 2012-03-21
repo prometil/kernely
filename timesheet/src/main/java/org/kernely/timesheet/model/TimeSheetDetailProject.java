@@ -12,14 +12,14 @@ import org.kernely.project.model.Project;
  * TimeSheet Day Project model
  */
 @Entity
-@Table(name = "kernely_timesheet_day_project")
-public class TimeSheetDayProject extends AbstractModel {
+@Table(name = "kernely_timesheet_detail_project")
+public class TimeSheetDetailProject extends AbstractModel {
 
 	private float amount;
 
 	@ManyToOne
-	@JoinColumn(name="timesheet_detail_id")
-	private TimeSheetDetail timeSheetDetail;
+	@JoinColumn(name="timesheet_day_id")
+	private TimeSheetDay timeSheetDay;
 
 	@ManyToOne
 	@JoinColumn(name="project_id")
@@ -28,7 +28,7 @@ public class TimeSheetDayProject extends AbstractModel {
 	/**
 	 * Initialize with default values
 	 */
-	public TimeSheetDayProject() {
+	public TimeSheetDetailProject() {
 		this.id = 0;
 	}
 
@@ -47,17 +47,17 @@ public class TimeSheetDayProject extends AbstractModel {
 	}
 
 	/**
-	 * @return the timeSheetDetail
+	 * @return the timeSheetDay
 	 */
-	public TimeSheetDetail getTimeSheetDetail() {
-		return timeSheetDetail;
+	public TimeSheetDay getTimeSheetDay() {
+		return timeSheetDay;
 	}
 
 	/**
-	 * @param timeSheetDetail the timeSheetDetail to set
+	 * @param timeSheetDay the timeSheetDay to set
 	 */
-	public void setTimeSheetDetail(TimeSheetDetail timeSheetDetail) {
-		this.timeSheetDetail = timeSheetDetail;
+	public void setTimeSheetDay(TimeSheetDay timeSheetDay) {
+		this.timeSheetDay = timeSheetDay;
 	}
 
 	/**

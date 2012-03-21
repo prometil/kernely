@@ -22,6 +22,7 @@ import org.kernely.project.service.ProjectService;
 import org.kernely.timesheet.dto.TimeSheetCalendarDTO;
 import org.kernely.timesheet.dto.TimeSheetDTO;
 import org.kernely.timesheet.dto.TimeSheetDayDTO;
+import org.kernely.timesheet.dto.TimeSheetDetailDTO;
 
 import com.google.inject.Inject;
 
@@ -30,7 +31,8 @@ public class TimeSheetServiceTest extends AbstractServiceTest {
 	private static final int WEEK = 10;
 	private static final int YEAR = 2012;
 	private static final String NAME = "test";
-	private static final int AMOUNT_1 = 3;
+	private static final float AMOUNT_1 = 3;
+	private static final float AMOUNT_2 = 5.25F;
 	private static final Date DATE_1 = new DateTime().withDayOfMonth(5).withMonthOfYear(3).withYear(2012).toDate();
 	
 	@Inject
@@ -135,17 +137,18 @@ public class TimeSheetServiceTest extends AbstractServiceTest {
 	@Test
 	public void setNewAmountForDay(){
 		UserDTO user = createUserForTest();
+		authenticateAs(user.username);
 		OrganizationCreationRequestDTO organizationRequest = new OrganizationCreationRequestDTO(1, NAME, null, null, null, null, null, null);
 		organizationService.createOrganization(organizationRequest);
 		ProjectCreationRequestDTO projectRequest = new ProjectCreationRequestDTO(NAME, 1, NAME, NAME);
 		ProjectDTO project = projectService.createProject(projectRequest);
 		TimeSheetCalendarDTO calendar = timeSheetService.getTimeSheetCalendar(WEEK, YEAR, user.id);
-		TimeSheetDayDTO timeSheetDay = new TimeSheetDayDTO();
-		timeSheetDay.amount = AMOUNT_1;
-		timeSheetDay.projectId = project.id;
-		timeSheetDay.timeSheetId = calendar.timeSheet.id;
-		timeSheetDay.day = DATE_1;
-		timeSheetService.createOrUpdateDayAmountForProject(timeSheetDay);
+		TimeSheetDetailDTO timeSheetDetail = new TimeSheetDetailDTO();
+		timeSheetDetail.amount = AMOUNT_1;
+		timeSheetDetail.projectId = project.id;
+		timeSheetDetail.timeSheetId = calendar.timeSheet.id;
+		timeSheetDetail.day = DATE_1;
+		timeSheetService.createOrUpdateDayAmountForProject(timeSheetDetail);
 		calendar = timeSheetService.getTimeSheetCalendar(WEEK, YEAR, user.id);
 		
 		int expectedDay = new DateTime(DATE_1).getDayOfMonth();
@@ -155,9 +158,118 @@ public class TimeSheetServiceTest extends AbstractServiceTest {
 		assertEquals(expectedDay,new DateTime(calendar.dates.get(0)).getDayOfMonth());
 		assertEquals(expectedMonth,new DateTime(calendar.dates.get(0)).getMonthOfYear());
 		assertEquals(expectedYear,new DateTime(calendar.dates.get(0)).getYear());
-		assertEquals(1, calendar.timeSheet.rows.size());
-		assertEquals(NAME, calendar.timeSheet.rows.get(0).project.name);
-		assertEquals(1, calendar.timeSheet.rows.get(0).timeSheetDays.size());
-		assertEquals(AMOUNT_1, calendar.timeSheet.rows.get(0).timeSheetDays.get(0).amount, 0F);
+		assertEquals(NAME, calendar.timeSheet.columns.get(0).timeSheetDetails.get(0).projectName);
+		assertEquals(1, calendar.timeSheet.columns.get(0).timeSheetDetails.size());
+		assertEquals(AMOUNT_1, calendar.timeSheet.columns.get(0).timeSheetDetails.get(0).amount, 0F);
+	}
+	
+	@Test
+	public void updateAmountForDay(){
+		UserDTO user = createUserForTest();
+		authenticateAs(user.username);
+		OrganizationCreationRequestDTO organizationRequest = new OrganizationCreationRequestDTO(1, NAME, null, null, null, null, null, null);
+		organizationService.createOrganization(organizationRequest);
+		ProjectCreationRequestDTO projectRequest = new ProjectCreationRequestDTO(NAME, 1, NAME, NAME);
+		ProjectDTO project = projectService.createProject(projectRequest);
+		TimeSheetCalendarDTO calendar = timeSheetService.getTimeSheetCalendar(WEEK, YEAR, user.id);
+		TimeSheetDetailDTO timeSheetDetail = new TimeSheetDetailDTO();
+		timeSheetDetail.amount = AMOUNT_1;
+		timeSheetDetail.projectId = project.id;
+		timeSheetDetail.timeSheetId = calendar.timeSheet.id;
+		timeSheetDetail.day = DATE_1;
+		TimeSheetDetailDTO newDTO = timeSheetService.createOrUpdateDayAmountForProject(timeSheetDetail);
+		newDTO.amount = AMOUNT_2;
+		timeSheetService.createOrUpdateDayAmountForProject(newDTO);
+		calendar = timeSheetService.getTimeSheetCalendar(WEEK, YEAR, user.id);
+		
+		int expectedDay = new DateTime(DATE_1).getDayOfMonth();
+		int expectedMonth = new DateTime(DATE_1).getMonthOfYear();
+		int expectedYear = new DateTime(DATE_1).getYear();
+		
+		assertEquals(expectedDay,new DateTime(calendar.dates.get(0)).getDayOfMonth());
+		assertEquals(expectedMonth,new DateTime(calendar.dates.get(0)).getMonthOfYear());
+		assertEquals(expectedYear,new DateTime(calendar.dates.get(0)).getYear());
+		assertEquals(NAME, calendar.timeSheet.columns.get(0).timeSheetDetails.get(0).projectName);
+		assertEquals(1, calendar.timeSheet.columns.get(0).timeSheetDetails.size());
+		assertEquals(AMOUNT_2, calendar.timeSheet.columns.get(0).timeSheetDetails.get(0).amount, 0F);
+	}
+	
+	@Test(expected=IllegalArgumentException.class)
+	public void setTwiceIndexAmountForDay(){
+		UserDTO user = createUserForTest();
+		authenticateAs(user.username);
+		OrganizationCreationRequestDTO organizationRequest = new OrganizationCreationRequestDTO(1, NAME, null, null, null, null, null, null);
+		organizationService.createOrganization(organizationRequest);
+		ProjectCreationRequestDTO projectRequest = new ProjectCreationRequestDTO(NAME, 1, NAME, NAME);
+		ProjectDTO project = projectService.createProject(projectRequest);
+		TimeSheetCalendarDTO calendar = timeSheetService.getTimeSheetCalendar(WEEK, YEAR, user.id);
+		TimeSheetDetailDTO timeSheetDetail = new TimeSheetDetailDTO();
+		timeSheetDetail.amount = AMOUNT_1;
+		timeSheetDetail.projectId = project.id;
+		timeSheetDetail.timeSheetId = calendar.timeSheet.id;
+		timeSheetDetail.day = DATE_1;
+		timeSheetService.createOrUpdateDayAmountForProject(timeSheetDetail);
+		// The second call should fail : the detailId is not set,
+		// therefore a new detail should be created for this project, this time sheet and this day.
+		// But such a detail already exists so it should be updated and not created.
+		
+		TimeSheetDetailDTO twice = new TimeSheetDetailDTO();
+		twice.amount = AMOUNT_1;
+		twice.projectId = project.id;
+		twice.timeSheetId = calendar.timeSheet.id;
+		twice.day = DATE_1;
+		
+		timeSheetService.createOrUpdateDayAmountForProject(twice);
+
+		calendar = timeSheetService.getTimeSheetCalendar(WEEK, YEAR, user.id);
+		
+		int expectedDay = new DateTime(DATE_1).getDayOfMonth();
+		int expectedMonth = new DateTime(DATE_1).getMonthOfYear();
+		int expectedYear = new DateTime(DATE_1).getYear();
+		
+		assertEquals(expectedDay,new DateTime(calendar.dates.get(0)).getDayOfMonth());
+		assertEquals(expectedMonth,new DateTime(calendar.dates.get(0)).getMonthOfYear());
+		assertEquals(expectedYear,new DateTime(calendar.dates.get(0)).getYear());
+		assertEquals(NAME, calendar.timeSheet.columns.get(0).timeSheetDetails.get(0).projectName);
+		assertEquals(1, calendar.timeSheet.columns.get(0).timeSheetDetails.size());
+		assertEquals(AMOUNT_1, calendar.timeSheet.columns.get(0).timeSheetDetails.get(0).amount, 0F);
+	}
+	
+	@Test
+	public void getTimeSheetDayDTOTest(){
+		UserDTO user = createUserForTest();
+		authenticateAs(user.username);
+		
+		timeSheetService.getTimeSheetCalendar(WEEK, YEAR, user.id);
+		TimeSheetDayDTO day = timeSheetService.getTimeSheetDayDTO(DATE_1);
+		TimeSheetDayDTO day_2nd = timeSheetService.getTimeSheetDayDTO(DATE_1);
+		TimeSheetDayDTO day_3rd = timeSheetService.getTimeSheetDayDTO(DATE_1);
+		
+		assertEquals(new DateTime(DATE_1).toDateMidnight().toDate(), day.day);
+		assertEquals(day.id, day_2nd.id);
+		assertEquals(day_2nd.id, day_3rd.id);
+		assertEquals(day.id, day_3rd.id);
+	}
+	
+	@Test(expected = IllegalArgumentException.class)
+	public void deleteNonExistingRow(){
+		
+		UserDTO user = createUserForTest();
+		authenticateAs(user.username);
+		
+		OrganizationCreationRequestDTO organizationRequest = new OrganizationCreationRequestDTO(1, NAME, null, null, null, null, null, null);
+		organizationService.createOrganization(organizationRequest);
+		ProjectCreationRequestDTO projectRequest = new ProjectCreationRequestDTO(NAME, 1, NAME, NAME);
+		ProjectDTO project = projectService.createProject(projectRequest);
+		TimeSheetCalendarDTO calendar = timeSheetService.getTimeSheetCalendar(WEEK, YEAR, user.id);
+		TimeSheetDetailDTO timeSheetDay = new TimeSheetDetailDTO();
+		timeSheetDay.amount = AMOUNT_1;
+		timeSheetDay.projectId = project.id;
+		timeSheetDay.timeSheetId = calendar.timeSheet.id;
+		timeSheetDay.day = DATE_1;
+		timeSheetService.createOrUpdateDayAmountForProject(timeSheetDay);
+		
+		// Delete non existing row in timesheet
+		timeSheetService.removeLine(calendar.timeSheet.id, project.id + 1);		
 	}
 }

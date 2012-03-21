@@ -1,8 +1,9 @@
 package org.kernely.timesheet.model;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.TreeSet;
 
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
@@ -20,16 +21,9 @@ import org.kernely.core.model.User;
 @Entity
 @Table(name = "kernely_timesheet")
 public class TimeSheet extends AbstractModel {
-	public static final int TIMESHEET_PENDING = 0;
-	public static final int TIMESHEET_TO_VALIDATE = 1;
-	public static final int TIMESHEET_VALIDATED = 2;
-	public static final int FEES_TO_VALIDATE = 0;
-	public static final int FEES_VALIDATED = 1;
 
 	private Date beginDate;
 	private Date endDate;
-	private int status;
-	private int feesStatus;
 
 	/**
 	 * User concerned by this timesheet
@@ -41,7 +35,7 @@ public class TimeSheet extends AbstractModel {
 
 	@OneToMany
 	@JoinColumn( name="timesheet_id")
-	private List<TimeSheetDetail> details;
+	private Set<TimeSheetDay> days;
 	
 	/**
 	 * Default constructor
@@ -58,21 +52,15 @@ public class TimeSheet extends AbstractModel {
 	 *            The first dayof the timesheet
 	 * @param end
 	 *            The last day of the timesheet
-	 * @param status
-	 *            The status of the timesheet. Use constants in TimeSheet model.
-	 * @param feesStatus
-	 *            The status of the timesheet. Uses constants in TimeSheet model.
 	 * @param user
 	 *            The user associated to this timesheet.
 	 */
-	public TimeSheet(Date begin, Date end, int status, int feesStatus, User user) {
+	public TimeSheet(Date begin, Date end, User user) {
 		super();
 		this.beginDate = begin;
 		this.endDate = end;
-		this.status = status;
-		this.feesStatus = feesStatus;
 		this.user = user;
-		this.details = new ArrayList<TimeSheetDetail>(7);
+		this.days = new HashSet<TimeSheetDay>(7);
 	}
 
 	/**
@@ -106,36 +94,6 @@ public class TimeSheet extends AbstractModel {
 	}
 
 	/**
-	 * @return the status
-	 */
-	public int getStatus() {
-		return status;
-	}
-
-	/**
-	 * @param status
-	 *            the status to set
-	 */
-	public void setStatus(int status) {
-		this.status = status;
-	}
-
-	/**
-	 * @return the feesStatus
-	 */
-	public int getFeesStatus() {
-		return feesStatus;
-	}
-
-	/**
-	 * @param feesStatus
-	 *            the feesStatus to set
-	 */
-	public void setFeesStatus(int feesStatus) {
-		this.feesStatus = feesStatus;
-	}
-
-	/**
 	 * @return the user
 	 */
 	public User getUser() {
@@ -151,17 +109,17 @@ public class TimeSheet extends AbstractModel {
 	}
 
 	/**
-	 * @return the details
+	 * @return the days
 	 */
-	public List<TimeSheetDetail> getDetails() {
-		return details;
+	public Set<TimeSheetDay> getDays() {
+		return new TreeSet<TimeSheetDay>(days);
 	}
 
 	/**
-	 * @param defaultDetails the details to set
+	 * @param days the days to set
 	 */
-	public void setDetails(List<TimeSheetDetail> defaultDetails) {
-		this.details = defaultDetails;
+	public void setDays(Set<TimeSheetDay> days) {
+		this.days = days;
 	}
 
 	

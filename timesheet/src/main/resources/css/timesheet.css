@@ -1,6 +1,6 @@
 .time-cell{
-	width:210px;
-	height:60px;
+	width:170px;
+	height:30px;
 	padding-top:20px;
 	text-align:center;
 	cursor: pointer;
@@ -21,3 +21,70 @@
 	opacity:0.6;
 }
 
+td.timeSheetDetail{
+	width:100px;
+	height:30px;
+	background-color:lightblue;
+	text-align:center;
+}
+
+img.editButton{
+	position:absolute;
+	margin-top:-7px;
+}
+
+.editAmount{
+	float:left;
+	width:70px;
+	height:20px;
+	display:block;
+	cursor:pointer;
+}
+
+.timesheet-project-select{
+	width:200px;
+}
+
+#modal_window_expense{
+	position:absolute;
+	width:400px;
+	height:300px;
+	display:none;
+	z-index:9999;
+	padding:20px;
+	top:0;
+	left:0;
+}
+
+#expense-comment{
+	width:100%;
+}
+
+#expense-amount{
+	width:50px;
+}
+
+#expense-table{
+	width:375px;
+	max-height:125px;
+	overflow:auto;
+	display:block;
+}
+
+#expense-form{
+	margin-top:10px;
+}
+
+#expense-amount-update{
+	width:50px;
+}
+
+
+/* Common */
+#mask{
+	position:absolute;
+	z-index:9000;
+	background-color:#000;
+	display:none;top:0;
+	left:0;
+}

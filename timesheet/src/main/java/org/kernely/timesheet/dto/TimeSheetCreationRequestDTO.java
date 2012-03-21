@@ -31,16 +31,6 @@ public class TimeSheetCreationRequestDTO {
 	public long userId;
 	
 	/**
-	 * The status of the time sheet, using TimeSheet model constants.
-	 */
-	public int status;
-	
-	/**
-	 * The status of the fees associated to the time sheet, using TimeSheet model constants.
-	 */
-	public int feesStatus;
-
-	/**
 	 * Default constructor
 	 */
 	public TimeSheetCreationRequestDTO() {

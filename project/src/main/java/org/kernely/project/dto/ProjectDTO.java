@@ -13,7 +13,7 @@ import org.kernely.project.model.Project;
  * The project DTO
  */
 @XmlRootElement
-public class ProjectDTO {
+public class ProjectDTO implements Comparable<ProjectDTO>{
 
 	/**
 	 * The id of the project
@@ -111,6 +111,14 @@ public class ProjectDTO {
 			return false;
 		}
 		return true;
+	}
+
+	/**
+	 * Compare name between project DTO.
+	 */
+	@Override
+	public int compareTo(ProjectDTO p) {
+		return this.name.compareTo(p.name);
 	}
 
 }

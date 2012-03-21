@@ -2,12 +2,14 @@ package org.kernely.timesheet;
 
 import org.kernely.core.plugin.AbstractPlugin;
 import org.kernely.timesheet.controller.ExpenseAdminController;
+import org.kernely.timesheet.controller.ExpenseController;
 import org.kernely.timesheet.controller.TimeSheetController;
 import org.kernely.timesheet.migrations.Migration01;
+import org.kernely.timesheet.model.Expense;
 import org.kernely.timesheet.model.ExpenseType;
 import org.kernely.timesheet.model.TimeSheet;
-import org.kernely.timesheet.model.TimeSheetDayProject;
-import org.kernely.timesheet.model.TimeSheetDetail;
+import org.kernely.timesheet.model.TimeSheetDay;
+import org.kernely.timesheet.model.TimeSheetDetailProject;
 import org.kernely.timesheet.service.TimeSheetService;
 
 /**
@@ -25,11 +27,13 @@ public class TimeSheetPlugin extends AbstractPlugin {
 		registerPath("/timesheet");
 		registerController(TimeSheetController.class);
 		registerController(ExpenseAdminController.class);
+		registerController(ExpenseController.class);
 		
-		registerModel(TimeSheetDetail.class);
+		registerModel(TimeSheetDay.class);
 		registerModel(TimeSheet.class);
-		registerModel(TimeSheetDayProject.class);
+		registerModel(TimeSheetDetailProject.class);
 		registerModel(ExpenseType.class);
+		registerModel(Expense.class);
 		registerAdminPage("Expense type admin", "/admin/expense");
 		registerMigration(new Migration01());
 	}

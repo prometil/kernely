@@ -10,11 +10,14 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import org.kernely.core.controller.AbstractController;
 import org.kernely.core.service.user.UserService;
 import org.kernely.core.template.TemplateRenderer;
 import org.kernely.timesheet.dto.TimeSheetCalendarDTO;
 import org.kernely.timesheet.dto.TimeSheetDayDTO;
+import org.kernely.timesheet.dto.TimeSheetDetailDTO;
 import org.kernely.timesheet.service.TimeSheetService;
 
 import com.google.inject.Inject;
@@ -65,6 +68,16 @@ public class TimeSheetController extends AbstractController {
 		return timeSheetCalendar;
 	}
 	
+	@GET
+	@Path("/day")
+	@Produces( { MediaType.APPLICATION_JSON })
+	public TimeSheetDayDTO getDayForTimeSheet(@QueryParam("day") String day) {
+		DateTimeFormatter fmt = DateTimeFormat.forPattern("MM/dd/yy");
+		DateTime d1 = DateTime.parse(day, fmt).toDateMidnight().toDateTime();
+		TimeSheetDayDTO timeSheetDay = timeSheetService.getTimeSheetDayDTO(d1.toDate());
+		return timeSheetDay;
+	}
+	
 	/**
 	 * Update a day in a timesheet
 	 * 
@@ -74,16 +87,18 @@ public class TimeSheetController extends AbstractController {
 	@Path("/update")
 	@Consumes( { MediaType.APPLICATION_JSON })
 	@Produces( { MediaType.APPLICATION_JSON })
-	public TimeSheetDayDTO updateTimeSheet(TimeSheetDayDTO timeSheetDay) {
+	public TimeSheetDetailDTO updateTimeSheet(TimeSheetDetailDTO timeSheetDay) {
 		return timeSheetService.createOrUpdateDayAmountForProject(timeSheetDay);
 	}
 	
 	/**
 	 * Remove a line in a time sheet
+	 * @return 
 	 */
 	@GET
 	@Path("/removeline")
-	public void deleteTimeSheet(@QueryParam("timeSheetUniqueId") long timeSheetId, @QueryParam("projectUniqueId") long projectId) {
+	public String deleteLineFromTimeSheet(@QueryParam("timeSheetUniqueId") long timeSheetId, @QueryParam("projectUniqueId") long projectId) {
 		timeSheetService.removeLine(timeSheetId, projectId);
+		return "{\"result\":\"Ok\"}";
 	}
 }

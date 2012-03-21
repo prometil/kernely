@@ -1,6 +1,7 @@
 package org.kernely.project.service;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import javax.persistence.Query;
@@ -53,6 +54,7 @@ public class ProjectService extends AbstractService {
 			}
 			dtos.add(new ProjectDTO(project.getName(), project.getId(), project.getIcon(), users, new OrganizationDTO(project.getOrganization())));
 		}
+		Collections.sort(dtos);
 		return dtos;
 	}
 	

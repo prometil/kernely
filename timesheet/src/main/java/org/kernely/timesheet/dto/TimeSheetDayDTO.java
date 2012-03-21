@@ -4,69 +4,48 @@ import java.util.Date;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.joda.time.DateTime;
+import org.kernely.timesheet.model.TimeSheetDay;
+
 /**
- * This DTO contains the amount for the day and the id of the project.
+ * Representation for a day of a time sheet
  */
 @XmlRootElement
 public class TimeSheetDayDTO {
 
 	/**
-	 * Place in the week : 0 = monday, 6 = sunday
+	 * Id of this day
 	 */
-	public int index;
+	public long id;
 	
 	/**
-	 * Amount of time for this day and this project.
+	 * Day under String format
 	 */
-	public float amount;
-
+	public String dayString;
+	
 	/**
-	 * The date of the day
+	 * Day under date format
 	 */
 	public Date day;
-
-	/**
-	 * The id of the project associated to this amount and this day.
-	 */
-	public long projectId;
-
-	/**
-	 * The id of the detail, containing all dayProjects
-	 */
-	public long detailId;
 	
 	/**
-	 * The id of the timesheet associated to this amount and this day.
+	 * Time sheet's id
 	 */
 	public long timeSheetId;
 	
-
-	/**
-	 * Constructor using fields
-	 * @param dayProjectId The id of the dayProject
-	 * @param amount The amount of time.
-	 * @param day The day.
-	 * @param timeSheetId The id of the time sheet
-	 * @param projectId The id of the project.
-	 */
-	public TimeSheetDayDTO(int index, long detailId, float amount, Date day, long timeSheetId, long projectId) {
-		super();
-		this.index = index;
-		this.amount = amount;
-		this.detailId = detailId;
-		this.day = day;
-		this.timeSheetId = timeSheetId;
-		this.projectId = projectId;
-	}
-
-
-
 	/**
 	 * Default constructor
 	 */
-	public TimeSheetDayDTO() {
-	}
-	
-	
+	public TimeSheetDayDTO(){}
 
+	/**
+	 * Construct a DTO based on a model of TimeSheetDetail
+	 * @param detail The model to represent in this DTO
+	 */
+	public TimeSheetDayDTO(TimeSheetDay detail){
+		this.id = detail.getId();
+		this.day = detail.getDay();
+		this.dayString = new DateTime(this.day).toString("MM/dd/yyyy");
+		this.timeSheetId = detail.getTimeSheet().getId();
+	}
 }

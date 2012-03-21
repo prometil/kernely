@@ -2,25 +2,27 @@ package org.kernely.timesheet.service;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
 import org.joda.time.DateTime;
 import org.kernely.core.model.User;
 import org.kernely.core.service.AbstractService;
 import org.kernely.core.service.user.UserService;
-import org.kernely.project.dto.ProjectDTO;
 import org.kernely.project.model.Project;
 import org.kernely.timesheet.dto.TimeSheetCalendarDTO;
+import org.kernely.timesheet.dto.TimeSheetColumnDTO;
 import org.kernely.timesheet.dto.TimeSheetCreationRequestDTO;
 import org.kernely.timesheet.dto.TimeSheetDTO;
 import org.kernely.timesheet.dto.TimeSheetDayDTO;
-import org.kernely.timesheet.dto.TimeSheetRowDTO;
+import org.kernely.timesheet.dto.TimeSheetDetailDTO;
 import org.kernely.timesheet.model.TimeSheet;
-import org.kernely.timesheet.model.TimeSheetDayProject;
-import org.kernely.timesheet.model.TimeSheetDetail;
+import org.kernely.timesheet.model.TimeSheetDay;
+import org.kernely.timesheet.model.TimeSheetDetailProject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -83,10 +85,8 @@ public class TimeSheetService extends AbstractService {
 
 		timeSheet.setBeginDate(request.begin);
 		timeSheet.setEndDate(request.end);
-		timeSheet.setFeesStatus(request.feesStatus);
-		timeSheet.setStatus(request.status);
 		timeSheet.setUser(user);
-		
+
 		// Build details : one day of the time sheet, from 0 (monday) to 6 (sunday)
 		if (id == 0) {
 			// Create a new time sheet
@@ -95,19 +95,18 @@ public class TimeSheetService extends AbstractService {
 			// Update case
 			em.get().merge(timeSheet);
 		}
-		
-		List<TimeSheetDetail> defaultDetails = new ArrayList<TimeSheetDetail>();
-		for (int i = 0; i < 7 ; i++){
-			
-			TimeSheetDetail detail = new TimeSheetDetail();
+
+		Set<TimeSheetDay> defaultDetails = new HashSet<TimeSheetDay>();
+		TimeSheetDay detail;
+		for (int i = 0; i < 7; i++) {
+			detail = getTimeSheetDay(new DateTime(request.begin).plusDays(i).toDateMidnight().toDate(), timeSheet.getId());
 			detail.setDay(new DateTime(request.begin).plusDays(i).toDate());
-			detail.setTimeSheet(timeSheet);
 			defaultDetails.add(detail);
-			
+
 			em.get().persist(detail);
 		}
-		
-		timeSheet.setDetails(defaultDetails);
+
+		timeSheet.setDays(defaultDetails);
 
 		em.get().merge(timeSheet);
 		return new TimeSheetDTO(timeSheet);
@@ -124,66 +123,59 @@ public class TimeSheetService extends AbstractService {
 	 *            id of the user.
 	 * @parma withCreation If true, will create the timesheet if it does not exists, and return it.
 	 */
-	@SuppressWarnings("unchecked")
 	@Transactional
 	public TimeSheetDTO getTimeSheet(int week, int year, long userId, boolean withCreation) {
-		Query query = em.get().createQuery("SELECT t FROM TimeSheet t WHERE user = :user");
+		Date firstDay = new DateTime().withWeekOfWeekyear(week).withYear(year).withDayOfWeek(1).toDateMidnight().toDate();
+		Date lastDay = new DateTime().withWeekOfWeekyear(week).withYear(year).withDayOfWeek(7).toDateMidnight().toDate();
+		Query query = em.get().createQuery("SELECT t FROM TimeSheet t WHERE user = :user AND beginDate = :beginWeek AND endDate = :endWeek");
 		User user = em.get().find(User.class, userId);
 
 		query.setParameter("user", user);
-		List<TimeSheet> timeSheets;
-		timeSheets = (List<TimeSheet>) query.getResultList();
-		DateTime weekDate = new DateTime().withYear(year).withWeekOfWeekyear(week);
-		DateTime firstDay = weekDate.withDayOfWeek(1).toDateMidnight().toDateTime();
-		DateTime lastDay = weekDate.withDayOfWeek(7).toDateMidnight().toDateTime();
+		query.setParameter("beginWeek", firstDay);
+		query.setParameter("endWeek", lastDay);
 
-		for (TimeSheet sheet : timeSheets) {
+		try {
+			TimeSheet timeSheet = (TimeSheet) query.getSingleResult();
 
-			// Search the timesheet corresponding to the dates
-			if (firstDay.isEqual(new DateTime(sheet.getBeginDate()).toDateMidnight().toDateTime())
-					&& lastDay.isEqual(new DateTime(sheet.getEndDate()).toDateMidnight().toDateTime())){
-				TimeSheetDTO toReturn = new TimeSheetDTO(sheet);
-				// Build rows of the DTO: get dayProjects for all day of the week, from 0 (monday) to 6 (sunday)
-				List<TimeSheetRowDTO> calculatedRows = new ArrayList<TimeSheetRowDTO>(7);
-				for (int i = 0; i < 7; i++) {
-					Set<TimeSheetDayProject> dayProjects = sheet.getDetails().get(i).getDayProjects();
-					for (TimeSheetDayProject dayProject : dayProjects) {
-						TimeSheetDayDTO dayDTO = new TimeSheetDayDTO(i, dayProject.getTimeSheetDetail().getId(), dayProject.getAmount(), sheet.getDetails().get(i).getDay(),
-								sheet.getId(), dayProject.getProject().getId());
-						boolean found = false; // To know if we have found the row
-						// Add the day to the correct row or, if don't exists, create the row
-						for (TimeSheetRowDTO row : calculatedRows) {
-							if (row.project.id == dayProject.getProject().getId()) {
-								found = true;
-								row.timeSheetDays.add(dayDTO);
-							}
-						}
-						if (!found) {
-							// Creates the row associated to the project
-							List<TimeSheetDayDTO> newList = new ArrayList<TimeSheetDayDTO>();
-							newList.add(dayDTO);
-							calculatedRows.add(new TimeSheetRowDTO(new ProjectDTO(dayProject.getProject()), newList));
-						}
-					}
+			TimeSheetDTO toReturn = new TimeSheetDTO(timeSheet);
+			// Build rows of the DTO: get detailsProjects for all day of the
+			// week, from 0 (monday) to 6 (sunday)
+			List<TimeSheetColumnDTO> calculatedColumn = new ArrayList<TimeSheetColumnDTO>();
+			Set<TimeSheetDay> days = timeSheet.getDays();
+			TimeSheetDayDTO dayDTO;
+			List<TimeSheetDetailDTO> detailsDTO;
+			TimeSheetColumnDTO column;
+			int index = 0;
+			for (TimeSheetDay day : days) {
+				dayDTO = new TimeSheetDayDTO(day);
+				detailsDTO = new ArrayList<TimeSheetDetailDTO>();
+				Set<TimeSheetDetailProject> details = day.getDetailsProjects();
+				for (TimeSheetDetailProject detail : details) {
+					TimeSheetDetailDTO detailDTO = new TimeSheetDetailDTO(detail);
+					detailDTO.index = index;
+					detailsDTO.add(detailDTO);
 				}
-
-				toReturn.rows = calculatedRows;
-
-				return toReturn;
+				column = new TimeSheetColumnDTO(dayDTO, detailsDTO);
+				calculatedColumn.add(column);
+				index++;
 			}
+
+			toReturn.columns = calculatedColumn;
+
+			return toReturn;
+		} catch (NoResultException nre) {
+			if (withCreation) {
+				// Create the time sheet if not founded.
+				TimeSheetCreationRequestDTO creationRequest = new TimeSheetCreationRequestDTO();
+				creationRequest.begin = firstDay;
+				creationRequest.end = lastDay;
+				creationRequest.userId = user.getId();
+
+				return this.createTimeSheet(creationRequest);
+			}
+			log.debug("There is no timesheet for this period of time !");
+			return null;
 		}
-		if (withCreation) {
-			// Create the time sheet if not founded.
-			TimeSheetCreationRequestDTO creationRequest = new TimeSheetCreationRequestDTO();
-			creationRequest.begin = firstDay.toDate();
-			creationRequest.end = lastDay.toDate();
-			creationRequest.feesStatus = TimeSheet.FEES_VALIDATED;
-			creationRequest.status = TimeSheet.TIMESHEET_PENDING;
-			creationRequest.userId = user.getId();
-			
-			return this.createTimeSheet(creationRequest);
-		}
-		return null;
 	}
 
 	/**
@@ -199,7 +191,7 @@ public class TimeSheetService extends AbstractService {
 	 */
 	public TimeSheetCalendarDTO getTimeSheetCalendar(int week, int year, long userId) {
 		TimeSheetDTO timeSheet = this.getTimeSheet(week, year, userId, true);
-		
+
 		List<Date> dates = new ArrayList<Date>();
 		List<String> stringDates = new ArrayList<String>();
 
@@ -215,56 +207,148 @@ public class TimeSheetService extends AbstractService {
 	 * Create or update amount of time for a specific project, a specific day and a specific timesheet
 	 */
 	@Transactional
-	public TimeSheetDayDTO createOrUpdateDayAmountForProject(TimeSheetDayDTO timeSheetDay) {
-		TimeSheetDayProject dayProject;
-		Project project = em.get().find(Project.class, timeSheetDay.projectId);
-		TimeSheetDetail timeSheetDetail = em.get().find(TimeSheetDetail.class, timeSheetDay.detailId);
-		TimeSheet timeSheet = em.get().find(TimeSheet.class, timeSheetDay.timeSheetId);
-		if (timeSheetDay.detailId != 0 && timeSheetDay.projectId != 0) {
-			// Update
-			Query query = em.get().createQuery("SELECT t FROM TimeSheetDayProject t WHERE project = :project AND timeSheetDetail = :timeSheetDetail");
-			query.setParameter("project", project);
-			query.setParameter("timeSheetDetail", timeSheetDetail);
-			dayProject = (TimeSheetDayProject) query.getSingleResult();
-			dayProject.setAmount(timeSheetDay.amount);
+	public TimeSheetDetailDTO createOrUpdateDayAmountForProject(TimeSheetDetailDTO timeSheetDetailDTO) {
+		if (getTimeSheetForDateForCurrentUser(timeSheetDetailDTO.day) == null) {
+			log.debug("TimeSheet doesn't exist for this day! Create the time sheet for the day : {}", timeSheetDetailDTO.day);
+			Date firstDay = new DateTime(timeSheetDetailDTO.day).withDayOfWeek(1).toDateMidnight().toDate();
+			Date lastDay = new DateTime(timeSheetDetailDTO.day).withDayOfWeek(7).toDateMidnight().toDate();
 
-			em.get().merge(dayProject);
-		} else {
-			// Get detail of the timesheet corresponding to the day
-			timeSheetDetail = timeSheet.getDetails().get(timeSheetDay.index);
-			
-			dayProject = new TimeSheetDayProject();
-			dayProject.setAmount(timeSheetDay.amount);
-			dayProject.setProject(project);
-			dayProject.setTimeSheetDetail(timeSheetDetail);
-			em.get().persist(dayProject);
-			// Get the place in week
-			
-			timeSheetDetail.getDayProjects().add(dayProject);
-			em.get().merge(timeSheetDetail);
-			timeSheetDay.detailId = timeSheetDetail.getId();
+			TimeSheetCreationRequestDTO creationRequest = new TimeSheetCreationRequestDTO();
+			creationRequest.begin = firstDay;
+			creationRequest.end = lastDay;
+			creationRequest.userId = this.getAuthenticatedUserModel().getId();
+
+			this.createTimeSheet(creationRequest);
 		}
 		
-		return timeSheetDay;
-		
+		TimeSheetDetailProject detailProject;
+		Project project = em.get().find(Project.class, timeSheetDetailDTO.projectId);
+		TimeSheetDay timeSheetDay = em.get().find(TimeSheetDay.class, timeSheetDetailDTO.dayId);
+		TimeSheet timeSheet = em.get().find(TimeSheet.class, timeSheetDetailDTO.timeSheetId);
+		if (timeSheetDetailDTO.dayId != 0 && timeSheetDetailDTO.projectId != 0) {
+			// Update
+			Query query = em.get().createQuery("SELECT t FROM TimeSheetDetailProject t WHERE project = :project AND timeSheetDay = :timeSheetDay");
+			query.setParameter("project", project);
+			query.setParameter("timeSheetDay", timeSheetDay);
+			detailProject = (TimeSheetDetailProject) query.getSingleResult();
+			detailProject.setAmount(timeSheetDetailDTO.amount);
+
+			em.get().merge(detailProject);
+		} else {
+			// Create a new detail.
+			// Get detail of the timesheet corresponding to the day
+			timeSheetDay = new ArrayList<TimeSheetDay>(timeSheet.getDays()).get(timeSheetDetailDTO.index);
+			// If a detail for the same project exists for this day, the existing detail should have been updated
+			for (TimeSheetDetailProject existingDetailProject : timeSheetDay.getDetailsProjects()){
+				if (project.getId() == existingDetailProject.getId()){
+					throw new IllegalArgumentException("An existing detail for project "+project.getId()+" and day "+ timeSheetDay.getId()+ " already exists, creation aborted.");
+				}
+			}
+			
+			detailProject = new TimeSheetDetailProject();
+			detailProject.setAmount(timeSheetDetailDTO.amount);
+			detailProject.setProject(project);
+			detailProject.setTimeSheetDay(timeSheetDay);
+			em.get().persist(detailProject);
+			
+			timeSheetDay.getDetailsProjects().add(detailProject);
+			em.get().merge(timeSheetDay);
+			timeSheetDetailDTO.dayId = timeSheetDay.getId();
+		}
+
+		return timeSheetDetailDTO;
+
+	}
+
+	@Transactional
+	private TimeSheetDay getTimeSheetDay(Date day, long timeSheetId) {
+		DateTime datetime = new DateTime(day).toDateMidnight().toDateTime();
+		Query query = em.get().createQuery("SELECT d FROM TimeSheetDay d WHERE day = :day AND timeSheet = :timeSheet");
+		query.setParameter("day", datetime.toDate());
+		TimeSheet timeSheet = em.get().find(TimeSheet.class, timeSheetId);
+		query.setParameter("timeSheet", timeSheet);
+		try {
+			// If the detail for this day exists, returns it.
+			return (TimeSheetDay) query.getSingleResult();
+		} catch (NoResultException nre) {
+			// The detail doesn't exist, we have to create it.
+			TimeSheetDay detail = new TimeSheetDay();
+			detail.setDay(datetime.toDate());
+			detail.setTimeSheet(timeSheet);
+			em.get().persist(detail);
+			return detail;
+		}
+	}
+
+	private TimeSheet getTimeSheetForDateForCurrentUser(Date date) {
+		Query query = em.get().createQuery("SELECT t FROM TimeSheet t WHERE beginDate <= :date AND endDate >= :date AND user = :user");
+		query.setParameter("date", date);
+		query.setParameter("user", this.getAuthenticatedUserModel());
+		try {
+			return (TimeSheet) query.getSingleResult();
+		} catch (NoResultException nre) {
+			return null;
+		}
+	}
+
+	/**
+	 * Retrieve the time sheet day for a given day and a given time sheet's id. If this day doesn't exist for this time sheet, it will be created
+	 * automatically. If the global timesheet doesn't exist for the current user, it will be created automatically too.
+	 * 
+	 * @param day
+	 *            The day concerned
+	 * @param timeSheetId
+	 *            The id of the concerned time sheet
+	 * @return A DTO representing the day for the given time sheet
+	 */
+	@Transactional
+	public TimeSheetDayDTO getTimeSheetDayDTO(Date day) {
+		TimeSheet timesheet = getTimeSheetForDateForCurrentUser(day);
+		if(timesheet == null){
+			log.debug("TimeSheet doesn't exist for this day ! Create the time sheet for the day : {}", day);
+			Date firstDay = new DateTime(day).withDayOfWeek(1).toDateMidnight().toDate();
+			Date lastDay = new DateTime(day).withDayOfWeek(7).toDateMidnight().toDate();
+
+			TimeSheetCreationRequestDTO creationRequest = new TimeSheetCreationRequestDTO();
+			creationRequest.begin = firstDay;
+			creationRequest.end = lastDay;
+			creationRequest.userId = this.getAuthenticatedUserModel().getId();
+
+			TimeSheetDTO tsDto = this.createTimeSheet(creationRequest);
+			return new TimeSheetDayDTO(this.getTimeSheetDay(day, tsDto.id));
+			
+		}else{
+			return new TimeSheetDayDTO(this.getTimeSheetDay(day, timesheet.getId()));
+		}
 	}
 
 	/**
 	 * Removes a line from a timesheet, therefore remove all amounts of time of this line.
-	 * @param timeSheetId The id of the time sheet.
-	 * @param projectId The id of the project matching the line.
+	 * 
+	 * @param timeSheetId
+	 *            The id of the time sheet.
+	 * @param projectId
+	 *            The id of the project matching the line.
 	 */
 	@Transactional
 	public void removeLine(long timeSheetId, long projectId) {
 		TimeSheet timeSheet = em.get().find(TimeSheet.class, timeSheetId);
-		
+
+		boolean rowExists = false;
+
 		// Get all details from timesheet
-		for (TimeSheetDetail detail : timeSheet.getDetails()){
-			for (TimeSheetDayProject day : detail.getDayProjects()){
-				if (day.getProject().getId() == projectId){
+		for (TimeSheetDay detail : timeSheet.getDays()) {
+			for (TimeSheetDetailProject day : detail.getDetailsProjects()) {
+				if (day.getProject().getId() == projectId) {
+					// Delete the entity
 					em.get().remove(day);
+					rowExists = true;
 				}
 			}
+		}
+
+		if (!rowExists) {
+			throw new IllegalArgumentException("Time sheet with id " + timeSheetId + " do not have project row for project " + projectId + ".");
 		}
 	}
 }
