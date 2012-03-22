@@ -35,6 +35,11 @@ public class ExpenseDTO {
 	public float typeRatio;
 	
 	/**
+	 * The id of the time sheet
+	 */
+	public long associatedTimeSheetId;
+	
+	/**
 	 * Default constructor
 	 */
 	public ExpenseDTO(){}
@@ -49,5 +54,6 @@ public class ExpenseDTO {
 		this.comment = expense.getComment();
 		this.typeName = expense.getTypeName();
 		this.typeRatio = expense.getTypeRatio();
+		this.associatedTimeSheetId = expense.getTimeSheetDay().getTimeSheet().getId();
 	}
 }

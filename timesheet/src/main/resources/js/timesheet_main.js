@@ -64,9 +64,9 @@ AppTimeSheet = (function($){
 							weekSelector.refresh();
 							calendar = new CalendarView(data).render();
 							expense = new TimeSheetExpenseLineView(data.stringDates).render();
+							expense.setTotals();
 							if(data.timeSheet != null){
 								timeSheetId = data.timeSheet.id;
-								expense.setTotals();
 							} else {
 								data.timeSheet = 0;
 							}
@@ -129,6 +129,13 @@ AppTimeSheet = (function($){
 							yearSelected = data.year;
 							weekSelector.refresh();
 							calendar = new CalendarView(data).render();
+							expense = new TimeSheetExpenseLineView(data.stringDates).render();
+							expense.setTotals();
+							if(data.timeSheet != null){
+								timeSheetId = data.timeSheet.id;
+							} else {
+								data.timeSheet = 0;
+							}
 						}
 					});
 				}
@@ -215,11 +222,20 @@ AppTimeSheet = (function($){
 		
 		calculateAllTotals: function(){
 			var allTotal = 0;
+			var atLeastOneProject = false;
 			for (var project in allDayCells){
+				atLeastOneProject = true;
 				if (allDayCells[project] != null){
 					for (var i = 0; i < 7; i++){
 						allTotal += this.calculateTotal(project,i);
 					}
+				}
+			}
+			if (! atLeastOneProject){
+				// Set all totals to 0
+				for (var i = 0; i < 8 ; i++){
+					// Actualize the column total
+					$("#columnTotalsRow").find("td").eq(parseInt(parseInt(i)+1)).html(0);
 				}
 			}
 		},
@@ -230,6 +246,7 @@ AppTimeSheet = (function($){
 				total += this.columnsTotals[i];
 			}
 			$("#columnTotalsRow").find("td").eq(8).html(total);
+
 		},
 		
 		render: function(){
@@ -665,15 +682,19 @@ AppTimeSheet = (function($){
 		
 		setTotals: function(){
 			var parent = this;
-			$.ajax({
-				type: "GET",
-				url:"/expense/totals",
-				data:{idTimeSheet: timeSheetId},
-				success: function(data){
-					parent.totals = data.totalExpenseDTO;
-					parent.render();
-				}
-			});
+			if (timeSheetId != 0){
+				$.ajax({
+					type: "GET",
+					url:"/expense/totals",
+					data:{idTimeSheet: timeSheetId},
+					success: function(data){
+						parent.totals = data.totalExpenseDTO;
+						parent.render();
+					}
+				});
+			} else {
+				parent.render();
+			}
 		},
 		
 		render: function(){
@@ -682,7 +703,7 @@ AppTimeSheet = (function($){
 			var i = 0;
 			$.each(this.days, function(){
 				if(parent.totals == null){
-					$(parent.el).append(new TimeSheetExpenseCellView(parent.days[i]).render().el);
+					$(parent.el).append(new TimeSheetExpenseCellView(parent.days[i],0.0).render().el);
 				}
 				else{
 					$(parent.el).append(new TimeSheetExpenseCellView(parent.days[i], parent.totals[i].total).render().el);
@@ -716,6 +737,7 @@ AppTimeSheet = (function($){
 		},
 		
 		editExpense: function(){
+			
 			var parent = this;
 			$.ajax({
 				type: "GET",
@@ -950,6 +972,7 @@ AppTimeSheet = (function($){
 		},
 		
 		registerExpense: function(){
+
 			var json = '{"id":"0", "amount":"' + $('input[name*="amount"]').val() + '", "comment":"' + $('#expense-comment').val() + '", "expenseTypeId" : "' + $("#expense-type-select option:selected").val() + '", "timesheetDayId":"' + this.idDay + '"}';
 			$.ajax({
 				type: "POST",
@@ -959,6 +982,8 @@ AppTimeSheet = (function($){
 				contentType: "application/json; charset=utf-8",
 				processData: false,
 				success: function(data){
+					timeSheetId = data.associatedTimeSheetId;
+
 					$(tableExpenseView.el).append(new ExpenseTableLineView(data.id, data.amount, data.typeName, data.typeRatio).render().el);
 				}
 			});

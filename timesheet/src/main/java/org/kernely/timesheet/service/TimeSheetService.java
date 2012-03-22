@@ -33,7 +33,7 @@ import com.google.inject.Singleton;
 import com.google.inject.persist.Transactional;
 
 /**
- * The service for organization pages
+ * The service for time sheet pages
  * 
  */
 @Singleton
