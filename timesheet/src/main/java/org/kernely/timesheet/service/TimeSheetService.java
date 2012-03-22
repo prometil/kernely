@@ -192,21 +192,21 @@ public class TimeSheetService extends AbstractService {
 	 * @parma withCreation If true, will create the timesheet if it does not exists, and return it.
 	 */
 	public TimeSheetCalendarDTO getTimeSheetCalendar(int week, int year, long userId) {
-		TimeSheetDTO timeSheet = this.getTimeSheet(week, year, userId, true);
+		TimeSheetDTO timeSheet = this.getTimeSheet(week, year, userId, false);
 
 		List<Date> dates = new ArrayList<Date>();
 		List<String> stringDates = new ArrayList<String>();
-
+		Date firstDayOfWeek = new DateTime().withWeekOfWeekyear(week).withYear(year).withDayOfWeek(1).toDateMidnight().toDate();
 		for (int i = 0; i <= 6; i++) {
-			dates.add(new DateTime(timeSheet.begin).plusDays(i).toDate());
-			stringDates.add(new DateTime(timeSheet.begin).plusDays(i).toString("MM/dd/yy"));
+			dates.add(new DateTime(firstDayOfWeek).plusDays(i).toDate());
+			stringDates.add(new DateTime(firstDayOfWeek).plusDays(i).toString("MM/dd/yy"));
 		}
 
 		// Build the list of id project, ordered by alphabetical order of project names
 		Set<ProjectDTO> projects = new TreeSet<ProjectDTO>();
 		List<Long> projectsId = new ArrayList<Long>();
 		ProjectDTO foundProject;
-		if (timeSheet.columns != null){
+		if (timeSheet != null && timeSheet.columns != null){
 			for (TimeSheetColumnDTO column : timeSheet.columns){
 				for (TimeSheetDetailDTO detail : column.timeSheetDetails){
 					foundProject = new ProjectDTO(detail.projectName, detail.projectId, null, null, null);
@@ -218,7 +218,7 @@ public class TimeSheetService extends AbstractService {
 			projectsId.add(new Long(project.id));
 		}
 
-		return new TimeSheetCalendarDTO(timeSheet, dates, stringDates, projectsId);
+		return new TimeSheetCalendarDTO(week, year, timeSheet, dates, stringDates, projectsId);
 	}
 
 	/**
@@ -226,6 +226,7 @@ public class TimeSheetService extends AbstractService {
 	 */
 	@Transactional
 	public TimeSheetDetailDTO createOrUpdateDayAmountForProject(TimeSheetDetailDTO timeSheetDetailDTO) {
+		
 		if (getTimeSheetForDateForCurrentUser(timeSheetDetailDTO.day) == null) {
 			log.debug("TimeSheet doesn't exist for this day! Create the time sheet for the day : {}", timeSheetDetailDTO.day);
 			Date firstDay = new DateTime(timeSheetDetailDTO.day).withDayOfWeek(1).toDateMidnight().toDate();
@@ -242,7 +243,17 @@ public class TimeSheetService extends AbstractService {
 		TimeSheetDetailProject detailProject;
 		Project project = em.get().find(Project.class, timeSheetDetailDTO.projectId);
 		TimeSheetDay timeSheetDay = em.get().find(TimeSheetDay.class, timeSheetDetailDTO.dayId);
-		TimeSheet timeSheet = em.get().find(TimeSheet.class, timeSheetDetailDTO.timeSheetId);
+		TimeSheet timeSheet;
+		// Try to find the time sheet with its id
+		if (timeSheetDetailDTO.timeSheetId != 0){
+			timeSheet = em.get().find(TimeSheet.class, timeSheetDetailDTO.timeSheetId);
+		} else {
+			// Get the time sheet with the date
+			long timeSheetId = this.getTimeSheet(new DateTime(timeSheetDetailDTO.day).getWeekOfWeekyear(), new DateTime(timeSheetDetailDTO.day).getYear(), getAuthenticatedUserModel().getId(), false).id;
+			timeSheet = em.get().find(TimeSheet.class, timeSheetId);
+
+		}
+		
 		if (timeSheetDetailDTO.dayId != 0 && timeSheetDetailDTO.projectId != 0) {
 			// Update
 			Query query = em.get().createQuery("SELECT t FROM TimeSheetDetailProject t WHERE project = :project AND timeSheetDay = :timeSheetDay");

@@ -59,14 +59,16 @@ AppTimeSheet = (function($){
 							$("#timesheet-content").html('<tr id="date-line"></tr>');
 							
 							// Create the views
-							weekSelected = data.timeSheet.week;
-							yearSelected = data.timeSheet.year;
+							weekSelected = data.week;
+							yearSelected = data.year;
 							weekSelector.refresh();
 							calendar = new CalendarView(data).render();
 							expense = new TimeSheetExpenseLineView(data.stringDates).render();
 							if(data.timeSheet != null){
 								timeSheetId = data.timeSheet.id;
 								expense.setTotals();
+							} else {
+								data.timeSheet = 0;
 							}
 						}
 					});
@@ -123,8 +125,8 @@ AppTimeSheet = (function($){
 							$("#timesheet-content").html('<tr id="date-line"></tr>');
 							
 							// Create the views
-							weekSelected = data.timeSheet.week;
-							yearSelected = data.timeSheet.year;
+							weekSelected = data.week;
+							yearSelected = data.year;
 							weekSelector.refresh();
 							calendar = new CalendarView(data).render();
 						}
@@ -145,7 +147,11 @@ AppTimeSheet = (function($){
 		},
 		initialize: function(data){
 			this.data = data;
-			timeSheetId = data.timeSheet.id;
+			if (data.timeSheet != null){
+				timeSheetId = data.timeSheet.id;
+			} else {
+				timeSheetId = 0
+			}
 			
 			// Reset old totals
 			allDayCells = new Object();
@@ -242,10 +248,40 @@ AppTimeSheet = (function($){
 				$("#date-line").append("<td>" + this.data.stringDates[i] + "</td>");
 			}
 
-			// Build rows with data
-			if ($.isArray(this.data.projectsId)){
-				for (var i in this.data.projectsId){
-					var id = this.data.projectsId[i];
+			// Build projects rows only if the timesheet exists
+			if (this.data.timeSheet != null){
+				// Build rows with data
+				if ($.isArray(this.data.projectsId)){
+					for (var i in this.data.projectsId){
+						var id = this.data.projectsId[i];
+						var timeSheetDetails = new Array();
+						var projectName;
+						// Each projectId build a row
+						// Search for details linked to the projectId
+						for (var column in this.data.timeSheet.columns){
+							if (this.data.timeSheet.columns[column].timeSheetDetails != null){
+								if (this.data.timeSheet.columns[column].timeSheetDetails.length == null){
+									if (this.data.timeSheet.columns[column].timeSheetDetails.projectId == id){
+										// The detail matches the project id
+										timeSheetDetails.push(this.data.timeSheet.columns[column].timeSheetDetails);
+										projectName = this.data.timeSheet.columns[column].timeSheetDetails.projectName;
+									}
+									
+								} else {
+									for (var detail in this.data.timeSheet.columns[column].timeSheetDetails){
+										if (this.data.timeSheet.columns[column].timeSheetDetails[detail].projectId == id){
+											// The detail matches the project id
+											timeSheetDetails.push(this.data.timeSheet.columns[column].timeSheetDetails[detail]);
+											projectName = this.data.timeSheet.columns[column].timeSheetDetails[detail].projectName;
+										}
+									}
+								}
+							}
+						}
+						parent.addRow(projectName, id, timeSheetDetails, false);
+					}
+				} else {
+					var id = this.data.projectsId;
 					var timeSheetDetails = new Array();
 					var projectName;
 					// Each projectId build a row
@@ -272,35 +308,10 @@ AppTimeSheet = (function($){
 					}
 					parent.addRow(projectName, id, timeSheetDetails, false);
 				}
-			} else {
-				var id = this.data.projectsId;
-				var timeSheetDetails = new Array();
-				var projectName;
-				// Each projectId build a row
-				// Search for details linked to the projectId
-				for (var column in this.data.timeSheet.columns){
-					if (this.data.timeSheet.columns[column].timeSheetDetails != null){
-						if (this.data.timeSheet.columns[column].timeSheetDetails.length == null){
-							if (this.data.timeSheet.columns[column].timeSheetDetails.projectId == id){
-								// The detail matches the project id
-								timeSheetDetails.push(this.data.timeSheet.columns[column].timeSheetDetails);
-								projectName = this.data.timeSheet.columns[column].timeSheetDetails.projectName;
-							}
-							
-						} else {
-							for (var detail in this.data.timeSheet.columns[column].timeSheetDetails){
-								if (this.data.timeSheet.columns[column].timeSheetDetails[detail].projectId == id){
-									// The detail matches the project id
-									timeSheetDetails.push(this.data.timeSheet.columns[column].timeSheetDetails[detail]);
-									projectName = this.data.timeSheet.columns[column].timeSheetDetails[detail].projectName;
-								}
-							}
-						}
-					}
-				}
-				parent.addRow(projectName, id, timeSheetDetails, false);
+				
 			}
 			
+		
 			this.calculateAllTotals();
 			return this;
 		}

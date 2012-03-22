@@ -151,7 +151,6 @@ public class TimeSheetServiceTest extends AbstractServiceTest {
 		TimeSheetDetailDTO timeSheetDetail = new TimeSheetDetailDTO();
 		timeSheetDetail.amount = AMOUNT_1;
 		timeSheetDetail.projectId = project.id;
-		timeSheetDetail.timeSheetId = calendar.timeSheet.id;
 		timeSheetDetail.day = DATE_1;
 		timeSheetService.createOrUpdateDayAmountForProject(timeSheetDetail);
 		calendar = timeSheetService.getTimeSheetCalendar(WEEK, YEAR, user.id);
@@ -180,7 +179,6 @@ public class TimeSheetServiceTest extends AbstractServiceTest {
 		TimeSheetDetailDTO timeSheetDetail = new TimeSheetDetailDTO();
 		timeSheetDetail.amount = AMOUNT_1;
 		timeSheetDetail.projectId = project.id;
-		timeSheetDetail.timeSheetId = calendar.timeSheet.id;
 		timeSheetDetail.day = DATE_1;
 		TimeSheetDetailDTO newDTO = timeSheetService.createOrUpdateDayAmountForProject(timeSheetDetail);
 		newDTO.amount = AMOUNT_2;
@@ -211,7 +209,6 @@ public class TimeSheetServiceTest extends AbstractServiceTest {
 		TimeSheetDetailDTO timeSheetDetail = new TimeSheetDetailDTO();
 		timeSheetDetail.amount = AMOUNT_1;
 		timeSheetDetail.projectId = project.id;
-		timeSheetDetail.timeSheetId = calendar.timeSheet.id;
 		timeSheetDetail.day = DATE_1;
 		timeSheetService.createOrUpdateDayAmountForProject(timeSheetDetail);
 		// The second call should fail : the detailId is not set,
@@ -221,7 +218,6 @@ public class TimeSheetServiceTest extends AbstractServiceTest {
 		TimeSheetDetailDTO twice = new TimeSheetDetailDTO();
 		twice.amount = AMOUNT_1;
 		twice.projectId = project.id;
-		twice.timeSheetId = calendar.timeSheet.id;
 		twice.day = DATE_1;
 		
 		timeSheetService.createOrUpdateDayAmountForProject(twice);
@@ -270,7 +266,6 @@ public class TimeSheetServiceTest extends AbstractServiceTest {
 		detail1.amount = AMOUNT_3;
 		detail1.projectId = project.id;
 		detail1.projectName = project.name;
-		detail1.timeSheetId = calendar.timeSheet.id;
 		detail1.day = SECOND_DAY_OF_WEEK;
 		detail1.index = 1;
 		detail1 = timeSheetService.createOrUpdateDayAmountForProject(detail1);
@@ -279,7 +274,6 @@ public class TimeSheetServiceTest extends AbstractServiceTest {
 		detail2.amount = AMOUNT_3;
 		detail2.projectId = project2.id;
 		detail2.projectName = project2.name;
-		detail2.timeSheetId = calendar.timeSheet.id;
 		detail2.day = THIRD_DAY_OF_WEEK;
 		detail2.index = 2;
 		detail2 = timeSheetService.createOrUpdateDayAmountForProject(detail2);
@@ -288,7 +282,6 @@ public class TimeSheetServiceTest extends AbstractServiceTest {
 		detail3.amount = AMOUNT_3;
 		detail3.projectId = project3.id;
 		detail3.projectName = project3.name;
-		detail3.timeSheetId = calendar.timeSheet.id;
 		detail3.day = THIRD_DAY_OF_WEEK;
 		detail3.index = 2;
 		timeSheetService.createOrUpdateDayAmountForProject(detail3);
@@ -297,7 +290,6 @@ public class TimeSheetServiceTest extends AbstractServiceTest {
 		detail4.amount = AMOUNT_3;
 		detail4.projectId = project4.id;
 		detail4.projectName = project4.name;
-		detail4.timeSheetId = calendar.timeSheet.id;
 		detail4.day = THIRD_DAY_OF_WEEK;
 		detail4.index = 2;
 		timeSheetService.createOrUpdateDayAmountForProject(detail4);
@@ -306,7 +298,6 @@ public class TimeSheetServiceTest extends AbstractServiceTest {
 		detail5.amount = AMOUNT_3;
 		detail5.projectId = project3.id;
 		detail5.projectName = project3.name;
-		detail5.timeSheetId = calendar.timeSheet.id;
 		detail5.day = SECOND_DAY_OF_WEEK;
 		detail5.index = 1;
 		timeSheetService.createOrUpdateDayAmountForProject(detail5);
@@ -335,27 +326,5 @@ public class TimeSheetServiceTest extends AbstractServiceTest {
 		assertEquals(day.id, day_2nd.id);
 		assertEquals(day_2nd.id, day_3rd.id);
 		assertEquals(day.id, day_3rd.id);
-	}
-	
-	@Test(expected = IllegalArgumentException.class)
-	public void deleteNonExistingRow(){
-		
-		UserDTO user = createUserForTest();
-		authenticateAs(user.username);
-		
-		OrganizationCreationRequestDTO organizationRequest = new OrganizationCreationRequestDTO(1, NAME, null, null, null, null, null, null);
-		organizationService.createOrganization(organizationRequest);
-		ProjectCreationRequestDTO projectRequest = new ProjectCreationRequestDTO(NAME, 1, NAME, NAME);
-		ProjectDTO project = projectService.createProject(projectRequest);
-		TimeSheetCalendarDTO calendar = timeSheetService.getTimeSheetCalendar(WEEK, YEAR, user.id);
-		TimeSheetDetailDTO timeSheetDay = new TimeSheetDetailDTO();
-		timeSheetDay.amount = AMOUNT_1;
-		timeSheetDay.projectId = project.id;
-		timeSheetDay.timeSheetId = calendar.timeSheet.id;
-		timeSheetDay.day = DATE_1;
-		timeSheetService.createOrUpdateDayAmountForProject(timeSheetDay);
-		
-		// Delete non existing row in timesheet
-		timeSheetService.removeLine(calendar.timeSheet.id, project.id + 1);		
 	}
 }

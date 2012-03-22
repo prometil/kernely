@@ -64,6 +64,7 @@ public class TimeSheetController extends AbstractController {
 			week = DateTime.now().getWeekOfWeekyear();
 			year = DateTime.now().getYear();
 		}
+		
 		TimeSheetCalendarDTO timeSheetCalendar = timeSheetService.getTimeSheetCalendar(week, year, userService.getAuthenticatedUserDTO().id);
 		return timeSheetCalendar;
 	}

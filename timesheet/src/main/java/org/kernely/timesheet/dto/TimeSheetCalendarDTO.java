@@ -32,8 +32,19 @@ public class TimeSheetCalendarDTO {
 	 */
 	public List<String> stringDates;
 
-	public TimeSheetCalendarDTO(TimeSheetDTO timeSheet, List<Date> dates, List<String> stringDates, List<Long> projectsId) {
-		
+	/**
+	 * Week concerned by this dto
+	 */
+	public int week;
+	
+	/**
+	 * Year concerned by this dto
+	 */
+	public int year;
+	
+	public TimeSheetCalendarDTO(int week, int year, TimeSheetDTO timeSheet, List<Date> dates, List<String> stringDates, List<Long> projectsId) {
+		this.week = week;
+		this.year = year;
 		this.timeSheet = timeSheet;
 		this.dates = dates;
 		this.stringDates = stringDates;

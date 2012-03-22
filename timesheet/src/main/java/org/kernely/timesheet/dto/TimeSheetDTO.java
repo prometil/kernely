@@ -5,7 +5,6 @@ import java.util.List;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.joda.time.DateTime;
 import org.kernely.core.dto.UserDetailsDTO;
 import org.kernely.timesheet.model.TimeSheet;
 
@@ -35,16 +34,6 @@ public class TimeSheetDTO {
 	public Date end;
 
 	/**
-	 * Week concerned by this dto
-	 */
-	public int week;
-	
-	/**
-	 * Year concerned by this dto
-	 */
-	public int year;
-
-	/**
 	 * Columns for the timesheet
 	 */
 	public List<TimeSheetColumnDTO> columns;
@@ -60,8 +49,6 @@ public class TimeSheetDTO {
 		this.userDetails = new UserDetailsDTO(timeSheet.getUser().getUserDetails());
 		this.begin = timeSheet.getBeginDate();
 		this.end = timeSheet.getEndDate();
-		this.week = new DateTime(this.end).getWeekOfWeekyear();
-		this.year = new DateTime(this.end).getYear();
 	}
 	
 	/**
