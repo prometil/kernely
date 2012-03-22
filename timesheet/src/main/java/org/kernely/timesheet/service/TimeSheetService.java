@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
 
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
@@ -13,6 +14,7 @@ import org.joda.time.DateTime;
 import org.kernely.core.model.User;
 import org.kernely.core.service.AbstractService;
 import org.kernely.core.service.user.UserService;
+import org.kernely.project.dto.ProjectDTO;
 import org.kernely.project.model.Project;
 import org.kernely.timesheet.dto.TimeSheetCalendarDTO;
 import org.kernely.timesheet.dto.TimeSheetColumnDTO;
@@ -200,7 +202,23 @@ public class TimeSheetService extends AbstractService {
 			stringDates.add(new DateTime(timeSheet.begin).plusDays(i).toString("MM/dd/yy"));
 		}
 
-		return new TimeSheetCalendarDTO(timeSheet, dates, stringDates);
+		// Build the list of id project, ordered by alphabetical order of project names
+		Set<ProjectDTO> projects = new TreeSet<ProjectDTO>();
+		List<Long> projectsId = new ArrayList<Long>();
+		ProjectDTO foundProject;
+		if (timeSheet.columns != null){
+			for (TimeSheetColumnDTO column : timeSheet.columns){
+				for (TimeSheetDetailDTO detail : column.timeSheetDetails){
+					foundProject = new ProjectDTO(detail.projectName, detail.projectId, null, null, null);
+					projects.add(foundProject);
+				}
+			}
+		}
+		for (ProjectDTO project : projects){
+			projectsId.add(new Long(project.id));
+		}
+
+		return new TimeSheetCalendarDTO(timeSheet, dates, stringDates, projectsId);
 	}
 
 	/**
@@ -255,7 +273,7 @@ public class TimeSheetService extends AbstractService {
 			em.get().merge(timeSheetDay);
 			timeSheetDetailDTO.dayId = timeSheetDay.getId();
 		}
-
+		
 		return timeSheetDetailDTO;
 
 	}
@@ -317,7 +335,7 @@ public class TimeSheetService extends AbstractService {
 			TimeSheetDTO tsDto = this.createTimeSheet(creationRequest);
 			return new TimeSheetDayDTO(this.getTimeSheetDay(day, tsDto.id));
 			
-		}else{
+		} else {
 			return new TimeSheetDayDTO(this.getTimeSheetDay(day, timesheet.getId()));
 		}
 	}
@@ -346,7 +364,7 @@ public class TimeSheetService extends AbstractService {
 				}
 			}
 		}
-
+		
 		if (!rowExists) {
 			throw new IllegalArgumentException("Time sheet with id " + timeSheetId + " do not have project row for project " + projectId + ".");
 		}

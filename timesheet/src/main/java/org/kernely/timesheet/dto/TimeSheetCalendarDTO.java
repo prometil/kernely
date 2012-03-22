@@ -18,6 +18,11 @@ public class TimeSheetCalendarDTO {
 	public TimeSheetDTO timeSheet;
 	
 	/**
+	 * List of projects id, ordered alphabetically
+	 */
+	public List<Long> projectsId;
+	
+	/**
 	 * Dates of the week, in Date format
 	 */
 	public List<Date> dates;
@@ -27,11 +32,12 @@ public class TimeSheetCalendarDTO {
 	 */
 	public List<String> stringDates;
 
-	public TimeSheetCalendarDTO(TimeSheetDTO timeSheet, List<Date> dates, List<String> stringDates) {
+	public TimeSheetCalendarDTO(TimeSheetDTO timeSheet, List<Date> dates, List<String> stringDates, List<Long> projectsId) {
 		
 		this.timeSheet = timeSheet;
 		this.dates = dates;
 		this.stringDates = stringDates;
+		this.projectsId = projectsId;
 	}
 
 	/**

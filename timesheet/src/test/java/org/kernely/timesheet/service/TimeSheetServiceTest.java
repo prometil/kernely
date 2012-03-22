@@ -31,9 +31,15 @@ public class TimeSheetServiceTest extends AbstractServiceTest {
 	private static final int WEEK = 10;
 	private static final int YEAR = 2012;
 	private static final String NAME = "test";
+	private static final String NAME_2 = "AAA";
+	private static final String NAME_3 = "BBB";
+	private static final String NAME_4 = "CCC";
 	private static final float AMOUNT_1 = 3;
 	private static final float AMOUNT_2 = 5.25F;
+	private static final float AMOUNT_3 = 1;
 	private static final Date DATE_1 = new DateTime().withDayOfMonth(5).withMonthOfYear(3).withYear(2012).toDate();
+	private static final Date SECOND_DAY_OF_WEEK = new DateTime(DATE_1).withDayOfWeek(2).toDate();
+	private static final Date THIRD_DAY_OF_WEEK = new DateTime(DATE_1).withDayOfWeek(3).toDate();
 	
 	@Inject
 	TimeSheetService timeSheetService;
@@ -113,7 +119,6 @@ public class TimeSheetServiceTest extends AbstractServiceTest {
 		assertEquals(11,dayOfEndDay);
 		assertEquals(3,mounthOfEndDay);
 		assertEquals(12,yearOfEndDay);
-		
 	}
 	
 	@Test
@@ -233,6 +238,87 @@ public class TimeSheetServiceTest extends AbstractServiceTest {
 		assertEquals(NAME, calendar.timeSheet.columns.get(0).timeSheetDetails.get(0).projectName);
 		assertEquals(1, calendar.timeSheet.columns.get(0).timeSheetDetails.size());
 		assertEquals(AMOUNT_1, calendar.timeSheet.columns.get(0).timeSheetDetails.get(0).amount, 0F);
+	}
+	
+	@Test
+	public void getOrderedProjects(){
+		UserDTO user = createUserForTest();
+		authenticateAs(user.username);
+		OrganizationCreationRequestDTO organizationRequest = new OrganizationCreationRequestDTO(1, NAME, null, null, null, null, null, null);
+		organizationService.createOrganization(organizationRequest);
+		
+		// Project 1
+		ProjectCreationRequestDTO projectRequest = new ProjectCreationRequestDTO(NAME, 1, NAME, NAME);
+		ProjectDTO project = projectService.createProject(projectRequest);
+		
+		// Project 2
+		projectRequest = new ProjectCreationRequestDTO(NAME_2, 2, NAME_2, NAME);
+		ProjectDTO project2 = projectService.createProject(projectRequest);
+
+		// Project 3
+		projectRequest = new ProjectCreationRequestDTO(NAME_3, 3, NAME_3, NAME);
+		ProjectDTO project3 = projectService.createProject(projectRequest);
+
+		// Project 4
+		projectRequest = new ProjectCreationRequestDTO(NAME_4, 4, NAME_4, NAME);
+		ProjectDTO project4 = projectService.createProject(projectRequest);
+
+		TimeSheetCalendarDTO calendar = timeSheetService.getTimeSheetCalendar(WEEK, YEAR, user.id);
+
+		// Fill time sheet with the four projects
+		TimeSheetDetailDTO detail1 = new TimeSheetDetailDTO();
+		detail1.amount = AMOUNT_3;
+		detail1.projectId = project.id;
+		detail1.projectName = project.name;
+		detail1.timeSheetId = calendar.timeSheet.id;
+		detail1.day = SECOND_DAY_OF_WEEK;
+		detail1.index = 1;
+		detail1 = timeSheetService.createOrUpdateDayAmountForProject(detail1);
+		
+		TimeSheetDetailDTO detail2 = new TimeSheetDetailDTO();
+		detail2.amount = AMOUNT_3;
+		detail2.projectId = project2.id;
+		detail2.projectName = project2.name;
+		detail2.timeSheetId = calendar.timeSheet.id;
+		detail2.day = THIRD_DAY_OF_WEEK;
+		detail2.index = 2;
+		detail2 = timeSheetService.createOrUpdateDayAmountForProject(detail2);
+
+		TimeSheetDetailDTO detail3 = new TimeSheetDetailDTO();
+		detail3.amount = AMOUNT_3;
+		detail3.projectId = project3.id;
+		detail3.projectName = project3.name;
+		detail3.timeSheetId = calendar.timeSheet.id;
+		detail3.day = THIRD_DAY_OF_WEEK;
+		detail3.index = 2;
+		timeSheetService.createOrUpdateDayAmountForProject(detail3);
+
+		TimeSheetDetailDTO detail4 = new TimeSheetDetailDTO();
+		detail4.amount = AMOUNT_3;
+		detail4.projectId = project4.id;
+		detail4.projectName = project4.name;
+		detail4.timeSheetId = calendar.timeSheet.id;
+		detail4.day = THIRD_DAY_OF_WEEK;
+		detail4.index = 2;
+		timeSheetService.createOrUpdateDayAmountForProject(detail4);
+
+		TimeSheetDetailDTO detail5 = new TimeSheetDetailDTO();
+		detail5.amount = AMOUNT_3;
+		detail5.projectId = project3.id;
+		detail5.projectName = project3.name;
+		detail5.timeSheetId = calendar.timeSheet.id;
+		detail5.day = SECOND_DAY_OF_WEEK;
+		detail5.index = 1;
+		timeSheetService.createOrUpdateDayAmountForProject(detail5);
+
+		// Get calendar and verify the order
+		calendar = timeSheetService.getTimeSheetCalendar(WEEK, YEAR, user.id);
+
+		assertEquals(4,calendar.projectsId.size());
+		assertEquals(project2.id,calendar.projectsId.get(0).intValue());	
+		assertEquals(project3.id,calendar.projectsId.get(1).intValue());	
+		assertEquals(project4.id,calendar.projectsId.get(2).intValue());	
+		assertEquals(project.id,calendar.projectsId.get(3).intValue());	
 	}
 	
 	@Test
