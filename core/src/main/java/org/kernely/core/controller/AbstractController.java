@@ -31,7 +31,6 @@ import org.slf4j.LoggerFactory;
 
 /**
  * 
- * @author b.grandperret
  * Handle the server response
  *
  */

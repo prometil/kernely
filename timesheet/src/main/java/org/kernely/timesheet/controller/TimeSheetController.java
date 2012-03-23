@@ -18,6 +18,7 @@ import org.kernely.core.template.TemplateRenderer;
 import org.kernely.timesheet.dto.TimeSheetCalendarDTO;
 import org.kernely.timesheet.dto.TimeSheetDayDTO;
 import org.kernely.timesheet.dto.TimeSheetDetailDTO;
+import org.kernely.timesheet.dto.TimeSheetMonthDTO;
 import org.kernely.timesheet.service.TimeSheetService;
 
 import com.google.inject.Inject;
@@ -43,7 +44,7 @@ public class TimeSheetController extends AbstractController {
 	 */
 	@GET
 	@Produces( { MediaType.TEXT_HTML })
-	public Response getPluginAdminPanel() {
+	public Response getTimeSheetPanel() {
 		Response page = ok(templateRenderer.create("/templates/gsp/timesheet_main_page.gsp").addCss("/css/timesheet.css"));
 
 		return page;
@@ -77,6 +78,31 @@ public class TimeSheetController extends AbstractController {
 		DateTime d1 = DateTime.parse(day, fmt).toDateMidnight().toDateTime();
 		TimeSheetDayDTO timeSheetDay = timeSheetService.getTimeSheetDayDTO(d1.toDate());
 		return timeSheetDay;
+	}
+	
+	@GET
+	@Path("/month")
+	@Produces( { MediaType.APPLICATION_JSON })
+	public TimeSheetMonthDTO getMonthCalendarForUser(@QueryParam("month") int month, @QueryParam("year") int year) {
+		if(month == 0 || year == 0){
+			month = DateTime.now().getMonthOfYear();
+			year = DateTime.now().getYear();
+		}
+		
+		return timeSheetService.getTimeSheetCalendars(month, year, userService.getAuthenticatedUserDTO().id);
+	}
+	
+	/**
+	 * Set the template of month visualization
+	 * 
+	 * @return the monthly time sheet page
+	 */
+	@GET
+	@Produces( { MediaType.TEXT_HTML })
+	@Path("/view")
+	public Response getTimeSheetVisualizationPanel() {
+		Response page = ok(templateRenderer.create("/templates/gsp/timesheet_view.gsp").addCss("/css/timesheet_view.css"));
+		return page;
 	}
 	
 	/**

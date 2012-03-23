@@ -68,8 +68,6 @@ import com.google.inject.persist.Transactional;
 /**
  * The service for holiday request pages
  * 
- * @author b.grandperret
- * 
  */
 @Singleton
 public class HolidayRequestService extends AbstractService {

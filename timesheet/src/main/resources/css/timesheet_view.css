@@ -1,0 +1,31 @@
+table{
+	margin:20px;
+}
+
+td.timeSheetDetail{
+	width:100px;
+	height:30px;
+	background-color:lightblue;
+	text-align:center;
+}
+
+td.projectTitle{
+	width:100px;
+	height:30px;
+	text-align:center;
+}
+
+.editAmount{
+	float:left;
+	width:70px;
+	height:20px;
+	display:block;
+}
+
+td.expense_cell{
+	width:100px;
+}
+
+th{
+	width:100px;
+}

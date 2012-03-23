@@ -68,7 +68,7 @@ AppTimeSheet = (function($){
 							if(data.timeSheet != null){
 								timeSheetId = data.timeSheet.id;
 							} else {
-								data.timeSheet = 0;
+								timeSheetId = 0;
 							}
 						}
 					});
@@ -134,7 +134,7 @@ AppTimeSheet = (function($){
 							if(data.timeSheet != null){
 								timeSheetId = data.timeSheet.id;
 							} else {
-								data.timeSheet = 0;
+								timeSheetId = 0;
 							}
 						}
 					});

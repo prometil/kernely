@@ -22,6 +22,7 @@ import org.kernely.timesheet.dto.TimeSheetCreationRequestDTO;
 import org.kernely.timesheet.dto.TimeSheetDTO;
 import org.kernely.timesheet.dto.TimeSheetDayDTO;
 import org.kernely.timesheet.dto.TimeSheetDetailDTO;
+import org.kernely.timesheet.dto.TimeSheetMonthDTO;
 import org.kernely.timesheet.model.TimeSheet;
 import org.kernely.timesheet.model.TimeSheetDay;
 import org.kernely.timesheet.model.TimeSheetDetailProject;
@@ -379,5 +380,30 @@ public class TimeSheetService extends AbstractService {
 		if (!rowExists) {
 			throw new IllegalArgumentException("Time sheet with id " + timeSheetId + " do not have project row for project " + projectId + ".");
 		}
+	}
+
+	/**
+	 * Get all time sheet calendars for a month.
+	 * @param month The month.
+	 * @param year The year.
+	 * @param id Id of the user.
+	 * @return
+	 */
+	public TimeSheetMonthDTO getTimeSheetCalendars(int month, int year, long userId) {
+		List<TimeSheetCalendarDTO> calendars = new ArrayList<TimeSheetCalendarDTO>();
+		DateTime firstDayOfMonth = new DateTime().withDayOfMonth(1).withMonthOfYear(month).withYear(year).toDateMidnight().toDateTime();
+		DateTime lastDayOfMonth = new DateTime().withDayOfMonth(1).withMonthOfYear(month).plusMonths(1).minusDays(1).withYear(year).toDateMidnight().toDateTime();
+		
+		DateTime firstDayOfFirstWeek = firstDayOfMonth.withDayOfWeek(1).toDateTime();
+		int interval = lastDayOfMonth.getWeekOfWeekyear() - firstDayOfFirstWeek.getWeekOfWeekyear() + 1;
+		if (interval < 0) {
+			// For example : week 52 of 2011 to week 4 of 2012, causes -48
+			interval += 52;
+		}
+		
+		for (int i = 0 ; i < interval ; i++){
+			calendars.add(this.getTimeSheetCalendar(firstDayOfFirstWeek.plusWeeks(i).getWeekOfWeekyear(), firstDayOfFirstWeek.plusWeeks(i).getYear(), userId));
+		}
+		return new TimeSheetMonthDTO(calendars, month, year);
 	}
 }

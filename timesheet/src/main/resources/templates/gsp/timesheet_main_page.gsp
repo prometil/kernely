@@ -86,22 +86,22 @@
 			<tbody id="timesheet-content">
 				<tr id="date-line"></tr>
 			<tbody>
+			<tbody>
+			<tr id="columnTotalsRow">
+				<td><%= i18n.t("timesheet_total") %></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+			</tr>
+		</tbody>
 			<tbody id="timesheet-expense">
 				<tr id="expense-line"><td></td></tr>
 			<tbody>
-			<tfoot>
-				<tr id="columnTotalsRow">
-					<td><%= i18n.t("timesheet_total") %></td>
-					<td></td>
-					<td></td>
-					<td></td>
-					<td></td>
-					<td></td>
-					<td></td>
-					<td></td>
-					<td></td>
-				</tr>
-			</tfoot>
 		</table>
 	</div>
 	

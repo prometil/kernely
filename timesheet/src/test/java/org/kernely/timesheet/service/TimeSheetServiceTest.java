@@ -23,12 +23,14 @@ import org.kernely.timesheet.dto.TimeSheetCalendarDTO;
 import org.kernely.timesheet.dto.TimeSheetDTO;
 import org.kernely.timesheet.dto.TimeSheetDayDTO;
 import org.kernely.timesheet.dto.TimeSheetDetailDTO;
+import org.kernely.timesheet.dto.TimeSheetMonthDTO;
 
 import com.google.inject.Inject;
 
 public class TimeSheetServiceTest extends AbstractServiceTest {
 
 	private static final int WEEK = 10;
+	private static final int MONTH = 3;
 	private static final int YEAR = 2012;
 	private static final String NAME = "test";
 	private static final String NAME_2 = "AAA";
@@ -326,5 +328,17 @@ public class TimeSheetServiceTest extends AbstractServiceTest {
 		assertEquals(day.id, day_2nd.id);
 		assertEquals(day_2nd.id, day_3rd.id);
 		assertEquals(day.id, day_3rd.id);
+	}
+	
+	@Test
+	public void getMonthCalendar(){
+		UserDTO user = createUserForTest();
+		authenticateAs(user.username);
+
+		TimeSheetMonthDTO monthReport = timeSheetService.getTimeSheetCalendars(MONTH, YEAR, user.id);
+		
+		assertEquals(5,monthReport.calendars.size()); // March of year 2012 should contains 5 calendars.
+		assertEquals(new DateTime().withDayOfMonth(27).withMonthOfYear(2).withYear(2012).toDateMidnight().toDate(),monthReport.calendars.get(0).dates.get(0));
+		assertEquals(new DateTime().withDayOfMonth(1).withMonthOfYear(4).withYear(2012).toDateMidnight().toDate(),monthReport.calendars.get(4).dates.get(6));
 	}
 }
