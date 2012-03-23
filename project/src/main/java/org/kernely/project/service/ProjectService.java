@@ -13,6 +13,7 @@ import org.kernely.core.service.user.PermissionService;
 import org.kernely.project.dto.OrganizationDTO;
 import org.kernely.project.dto.ProjectCreationRequestDTO;
 import org.kernely.project.dto.ProjectDTO;
+import org.kernely.project.model.Organization;
 import org.kernely.project.model.Project;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -243,6 +244,17 @@ public class ProjectService extends AbstractService {
 		return permissionService.userHasPermission((int) current.getId(), true, right, Project.PROJECT_RESOURCE, id);
 	}
 	
-	
+	@SuppressWarnings("unchecked")
+	@Transactional
+	public List<ProjectDTO> getProjectsLinkedToOrganization(long organizationId){
+		Query request = em.get().createQuery("SELECT p FROM Project p WHERE organization = :organization");
+		request.setParameter("organization", em.get().find(Organization.class, organizationId));
+		List<Project> projects = (List<Project>)request.getResultList();
+		List<ProjectDTO> projectsDTO = new ArrayList<ProjectDTO>();
+		for(Project p : projects){
+			projectsDTO.add(new ProjectDTO(p));
+		}
+		return projectsDTO;
+	}
 	
 }

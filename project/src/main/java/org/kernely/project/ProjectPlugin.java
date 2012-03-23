@@ -2,6 +2,7 @@ package org.kernely.project;
 
 import org.kernely.core.plugin.AbstractPlugin;
 import org.kernely.project.controller.OrganizationAdminController;
+import org.kernely.project.controller.OrganizationController;
 import org.kernely.project.controller.ProjectAdminController;
 import org.kernely.project.controller.ProjectListController;
 import org.kernely.project.migrations.Migration01;
@@ -27,6 +28,7 @@ public class ProjectPlugin extends AbstractPlugin {
 		registerPath("/organization");
 		registerController(ProjectAdminController.class);
 		registerController(OrganizationAdminController.class);
+		registerController(OrganizationController.class);
 		registerController(ProjectListController.class);
 		registerModel(Project.class);
 		registerModel(Organization.class);

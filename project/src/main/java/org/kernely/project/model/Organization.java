@@ -9,6 +9,7 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import org.kernely.core.hibernate.AbstractModel;
@@ -28,6 +29,9 @@ public class Organization extends AbstractModel {
 	private String phone;
 	private String fax;
 
+	@OneToMany(mappedBy="organization")
+	private Set<Project> projects;
+	
 	/**
 	 * client of the organization
 	 */
@@ -152,6 +156,20 @@ public class Organization extends AbstractModel {
 	 */
 	public void setUsers(Set<User> users) {
 		this.users = users;
+	}
+
+	/**
+	 * @return the projects
+	 */
+	public Set<Project> getProjects() {
+		return projects;
+	}
+
+	/**
+	 * @param projects the projects to set
+	 */
+	public void setProjects(Set<Project> projects) {
+		this.projects = projects;
 	}
 
 }

@@ -1,0 +1,120 @@
+package org.kernely.invoice.dto;
+
+import java.util.Date;
+import java.util.List;
+
+import javax.xml.bind.annotation.XmlRootElement;
+
+import org.joda.time.DateTime;
+import org.joda.time.Days;
+import org.kernely.invoice.model.Invoice;
+
+/**
+ * DTO representing an invoice
+ */
+@XmlRootElement
+public class InvoiceDTO {
+
+	/**
+	 * Id of the invoice
+	 */
+	public long id;
+	
+	/**
+	 * Code number of this invoice
+	 */
+	public String code;
+	
+	/**
+	 * Creation of this invoice
+	 */
+	public Date dateCreation;
+	
+	/**
+	 * Publication of this invoice
+	 */
+	public Date datePublication;
+	
+	/**
+	 * Term of this invoice
+	 */
+	public Date dateTerm;
+	
+	/**
+	 * String representation of the creation of this invoice
+	 */
+	public String dateCreationString;
+	
+	/**
+	 * String representation of the publication of this invoice
+	 */
+	public String datePublicationString;
+	
+	/**
+	 * String representation of the term of this invoice
+	 */
+	public String dateTermString;
+	
+	/**
+	 * Object of this invoice
+	 */
+	public String object;
+	
+	/**
+	 * Status of this invoice
+	 */
+	public int status;
+	
+	/**
+	 * Delay of this invoice
+	 */
+	public int delay;
+	
+	/**
+	 * Organization name which will recieve this invoice
+	 */
+	public String organizationName;
+	
+	/**
+	 * Project relative to this invoice
+	 */
+	public String projectName;
+	
+	/**
+	 * Amount of this invoice
+	 */
+	public float amount;
+	
+	/**
+	 * Lines of this invoices
+	 */
+	public List<InvoiceLineDTO> lines;
+	
+	/**
+	 * Default constructor
+	 */
+	public InvoiceDTO(){}
+	
+	/**
+	 * Creates this DTO from an Invoice model
+	 * @param invoice The model of invoice to create
+	 */
+	public InvoiceDTO(Invoice invoice){
+		this.id = invoice.getId();
+		this.code = invoice.getCode();
+		this.dateCreation = invoice.getDateCreation();
+		this.datePublication = invoice.getDatePublication();
+		this.dateTerm = invoice.getDateTerm();
+		this.dateCreationString = new DateTime(invoice.getDateCreation()).toString("MM/dd/yyyy");
+		this.datePublicationString = new DateTime(invoice.getDatePublication()).toString("MM/dd/yyyy");
+		this.dateTermString = new DateTime(invoice.getDateTerm()).toString("MM/dd/yyyy");
+		this.object = invoice.getObject();
+		this.status = invoice.getStatus();
+		this.delay = Days.daysBetween(new DateTime(this.datePublication), new DateTime(this.dateTerm)).getDays();
+		this.organizationName = invoice.getProject().getOrganization().getName();
+		this.projectName = invoice.getProject().getName();
+		//TODO CHANGE !
+		this.amount = 0.0F;
+	}
+	
+}

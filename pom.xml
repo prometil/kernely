@@ -100,6 +100,7 @@
 		<module>holiday</module>
 		<module>project</module>
 		<module>timesheet</module>
+		<module>invoice</module>
 	</modules>
 
 	<dependencies>
