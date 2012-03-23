@@ -1,0 +1,106 @@
+#invoice-header{
+
+}
+
+#invoice-visualization{
+	padding: 5px;
+	width:800px;
+}
+
+#invoice-details{
+	width:800px;
+}
+
+#invoice-history{
+
+}
+
+#invoice-button-bar{
+
+}
+
+#invoicing-main{
+
+}
+
+#invoicing-header{
+
+}
+
+#invoicing-buttons-bar{
+
+}
+
+#invoices-list{
+
+}
+
+#invoice-line-details{
+	width:100%;
+}
+
+#organization-selector, #organization-selector option{
+	cursor:pointer;
+}
+
+#project-selector, #project-selector option{
+	cursor:pointer;
+}
+
+#modal_window_invoice{
+	position:absolute;
+	width:250px;
+	height:300px;
+	display:none;
+	z-index:9999;
+	padding:20px;
+	top:0;
+	left:0;
+}
+
+#organization-selector-mod{
+	width:200px;
+}
+
+#project-selector-mod{
+	width:200px;
+}
+
+#from{
+	width:100px;
+}
+
+#to{
+	width:100px;
+}
+
+#invoices-table{
+	width:100%;
+}
+
+.edit-invoice{
+	cursor:pointer;
+}
+
+.delete-invoice{
+	cursor:pointer
+}
+
+.general-informations-fields{
+	width:100px;
+}
+
+.object-field{
+	width:300px;
+}
+
+/* Common */
+#mask{
+	position:absolute;
+	z-index:9000;
+	background-color:#000;
+	display:none;top:0;
+	left:0;
+}
+
+

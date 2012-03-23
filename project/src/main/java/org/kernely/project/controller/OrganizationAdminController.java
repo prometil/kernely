@@ -32,7 +32,7 @@ public class OrganizationAdminController extends AbstractController {
 	private UserService userService;
 
 	@Inject 
-	OrganizationService organizationService;
+	private OrganizationService organizationService;
 	
 	/**
 	 * Set the template

@@ -58,7 +58,7 @@ public class OrganizationService extends AbstractService{
 	 */
 	@SuppressWarnings("unchecked")
 	@Transactional
-	public void createOrganization(OrganizationCreationRequestDTO request) {
+	public OrganizationDTO createOrganization(OrganizationCreationRequestDTO request) {
 		if (request == null) {
 			throw new IllegalArgumentException("Request cannot be null ");
 		}
@@ -86,6 +86,8 @@ public class OrganizationService extends AbstractService{
 		organization.setFax(request.fax);
 		organization.setPhone(request.phone);
 		em.get().persist(organization);
+		
+		return new OrganizationDTO(organization);
 	}
 	
 	

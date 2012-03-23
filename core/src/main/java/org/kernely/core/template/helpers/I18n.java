@@ -51,6 +51,7 @@ public class I18n {
 		names.add("holiday");
 		names.add("project");
 		names.add("timesheet");
+		names.add("invoice");
 		messages = new Messages(pLocale, names);
 		locale = pLocale;
 	}

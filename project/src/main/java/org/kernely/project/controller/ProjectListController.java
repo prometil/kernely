@@ -6,6 +6,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -67,6 +68,16 @@ public class ProjectListController extends AbstractController {
 	@Produces({ MediaType.APPLICATION_JSON})
 	public List<ProjectDTO> getCurrentUserProjects() {
 		return projectService.getAllProjectsForUser(userService.getAuthenticatedUserDTO().id);	
+	}
+	
+	/**
+	 * Get the list of projects for the current user
+	 */
+	@GET
+	@Path("/orga")
+	@Produces({ MediaType.APPLICATION_JSON})
+	public List<ProjectDTO> getProjectsLinkedToOrganization(@QueryParam("organizationId") long organizationId) {
+		return projectService.getProjectsLinkedToOrganization(organizationId);	
 	}
 	
 }
