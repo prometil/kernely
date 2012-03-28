@@ -71,7 +71,7 @@
 	<div id="weekSelector">
 	</div>
 	<select class="timesheet-project-select" id="project-select"></select>
-	<input type="button" id="add-project-button" value="<%= i18n.t("timesheet_add_project") %>"/>
+	<input type="button" id="add-project-button" value="<%= i18n.t("timesheet_add_project") %>"/><a href="/timesheet/view"><%= i18n.t("timesheet_view_month") %></a>
 	<div id="timesheet-div">
 		<table id="timesheet-table" border="0">
 			<tr>
