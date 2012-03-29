@@ -107,6 +107,7 @@ public class StreamService extends AbstractService {
 				recipients.add(u.userDetails.email);
 				log.debug("Adds {} in the mail recipients!", u.userDetails.email);
 			}
+
 			mailService.create("/templates/gsp/mail.gsp").with("content", contentString).subject("[Kernely] Someone posted on " + parent.getTitle())
 					.to(recipients).registerMail();
 			log.debug("Mail registered.");
@@ -244,8 +245,6 @@ public class StreamService extends AbstractService {
 	 *            The title of this stream.
 	 * @param category
 	 *            The category of this stream (use Stream class constants).
-	 * @param userId
-	 * 			  The user id associated to this stream
 	 */
 	@Transactional
 	public void createStreamForUser(String title, String category, long userId) {
@@ -255,7 +254,6 @@ public class StreamService extends AbstractService {
 		Stream newStream = new Stream();
 		newStream.setTitle(title);
 		newStream.setCategory(category);
-		newStream.setUser(em.get().find(User.class, userId));
 		em.get().persist(newStream);
 	}
 	

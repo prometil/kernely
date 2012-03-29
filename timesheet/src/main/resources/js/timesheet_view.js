@@ -22,6 +22,23 @@ AppTimeSheetMonth = (function($){
 	TimeSheetPageView = Backbone.View.extend({
 		el:"#timesheet-main",
 		dates: null,
+		events: {
+			"click #validate-month" : "validate"
+		},
+		
+		validate: function(){
+			$.ajax({
+				type: "GET",
+				url:"/timesheet/validate",
+				data:{month: monthSelected, year: yearSelected},
+				success: function(data){
+					// Update validate button
+					$("#validate-month").addClass("hidden");
+					$("#month-validated-message").removeClass("hidden");
+				}
+			});
+		},
+		
 		initialize: function(){
 			
 			// Delete old data
@@ -38,8 +55,18 @@ AppTimeSheetMonth = (function($){
 				success: function(data){
 					// Create the views
 					monthSelected = data.month;
-					yearSelected = data.year;
+					yearSelected = data.year;					
 					monthSelector.refresh();
+					
+					// Update validate button
+					if (data.validated == "true"){
+						$("#validate-month").addClass("hidden");
+						$("#month-validated-message").removeClass("hidden");
+					} else {
+						$("#validate-month").removeClass("hidden");
+						$("#month-validated-message").addClass("hidden");
+					}
+					
 					$.each(data.calendars, function(index){
 
 						// Create the table

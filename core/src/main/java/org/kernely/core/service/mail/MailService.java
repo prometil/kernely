@@ -123,7 +123,7 @@ public class MailService extends AbstractService implements Mailer {
 		 * @return The mail builder
 		 */
 		public MailBuilder to(List<String> addresses){
-			//recipients.addAll(addresses);
+			recipients.addAll(addresses);
 			return this;
 		}
 
@@ -176,6 +176,7 @@ public class MailService extends AbstractService implements Mailer {
 			String body = builder.forMail().render();
 			StringBuilder recipString = new StringBuilder("");
 			String recipInString="";
+
 			for (String to : recipients) {
 				recipString.append(to);
 				recipString.append(",");
@@ -269,10 +270,10 @@ public class MailService extends AbstractService implements Mailer {
 			message.setContent(mail.getContent(), "text/html");
 
 			Transport.send(message);
-			this.deleteMail(mail);
 			log.debug("Mail sended ! ");
 			mail.setStatus(Mail.MAIL_SENDED);
 			em.get().merge(mail);
+			this.deleteMail(mail);
 			return true;
 		} catch (MessagingException ex) {
 			log.error("Cannot send mail", ex);

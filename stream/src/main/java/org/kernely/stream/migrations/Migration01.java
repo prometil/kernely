@@ -33,11 +33,8 @@ public class Migration01 extends Migration {
 		stream.column("category", DataBaseConstants.VARCHAR_50);
 		stream.column("title", DataBaseConstants.VARCHAR_50);
 		stream.column("locked", DataBaseConstants.BOOLEAN_DEFAULT_FALSE);
-		stream.column("user_id", DataBaseConstants.LONG_NOT_NULL);
-		RawSql streamForeignKey= new RawSql("ALTER TABLE kernely_stream ADD CONSTRAINT fk_user_id FOREIGN KEY (user_id) REFERENCES kernely_user (id)");
 		
 		commands.add(stream);
-		commands.add(streamForeignKey);
 		
 		CreateTable message = CreateTable.name("kernely_message");
 		message.column(DataBaseConstants.ID_COLUMN, DataBaseConstants.LONG_PK);

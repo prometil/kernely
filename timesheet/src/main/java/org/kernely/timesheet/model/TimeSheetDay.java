@@ -22,7 +22,7 @@ import org.kernely.core.hibernate.AbstractModel;
 public class TimeSheetDay extends AbstractModel implements Comparable<TimeSheetDay> {
 
 	public static final int DAY_TO_VALIDATE = 0;
-	public static final int DAY_VALIDATE = 1;
+	public static final int DAY_VALIDATED = 1;
 
 	private Date day;
 

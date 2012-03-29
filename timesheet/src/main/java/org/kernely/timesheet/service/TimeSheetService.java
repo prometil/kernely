@@ -11,8 +11,11 @@ import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
 import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import org.kernely.core.model.User;
 import org.kernely.core.service.AbstractService;
+import org.kernely.core.service.mail.Mailer;
 import org.kernely.core.service.user.UserService;
 import org.kernely.project.dto.ProjectDTO;
 import org.kernely.project.model.Project;
@@ -43,6 +46,9 @@ public class TimeSheetService extends AbstractService {
 	@Inject
 	UserService userService;
 
+	@Inject
+	Mailer mailService;
+	
 	protected final Logger log = LoggerFactory.getLogger(this.getClass());
 
 	/**
@@ -309,6 +315,30 @@ public class TimeSheetService extends AbstractService {
 			return detail;
 		}
 	}
+	
+	@Transactional
+	private TimeSheetDay getTimeSheetDayForUser(Date day, long userId) {
+		DateTime datetime = new DateTime(day).toDateMidnight().toDateTime();
+		
+		TimeSheetDTO timeSheetDTO = this.getTimeSheet(datetime.getWeekOfWeekyear(), datetime.getYear(), userId, true);
+		
+		TimeSheet timeSheet = em.get().find(TimeSheet.class, timeSheetDTO.id);
+		
+		Query query = em.get().createQuery("SELECT d FROM TimeSheetDay d WHERE day = :day AND timeSheet = :timeSheet");
+		query.setParameter("day", datetime.toDate());
+		query.setParameter("timeSheet", timeSheet);
+		try {
+			// If the detail for this day exists, returns it.
+			return (TimeSheetDay) query.getSingleResult();
+		} catch (NoResultException nre) {
+			// The detail doesn't exist, we have to create it.
+			TimeSheetDay detail = new TimeSheetDay();
+			detail.setDay(datetime.toDate());
+			detail.setTimeSheet(timeSheet);
+			em.get().persist(detail);
+			return detail;
+		}
+	}
 
 	private TimeSheet getTimeSheetForDateForCurrentUser(Date date) {
 		Query query = em.get().createQuery("SELECT t FROM TimeSheet t WHERE beginDate <= :date AND endDate >= :date AND user = :user");
@@ -401,9 +431,66 @@ public class TimeSheetService extends AbstractService {
 			interval += 52;
 		}
 		
+		// Get time sheet for each week
 		for (int i = 0 ; i < interval ; i++){
 			calendars.add(this.getTimeSheetCalendar(firstDayOfFirstWeek.plusWeeks(i).getWeekOfWeekyear(), firstDayOfFirstWeek.plusWeeks(i).getYear(), userId));
 		}
-		return new TimeSheetMonthDTO(calendars, month, year);
+		return new TimeSheetMonthDTO(calendars, month, year, checkMonthTimeSheetValidation(month, year, userId));
+	}
+
+	/**
+	 * Validates all days of the month in time sheets, for a specific user.
+	 * @param month The month. 1 = January, 12 = December
+	 * @param year The year.
+	 * @param userId The id of the user.
+	 */
+	@Transactional
+	public void validateMonth(int month, int year, long userId){
+		log.debug("Validating timesheet of month {} for user {}.",month,userId);
+
+		DateTime firstDayOfMonth = new DateTime().withDayOfMonth(1).withMonthOfYear(month).withYear(year).toDateMidnight().toDateTime();
+		DateTime lastDayOfMonth = new DateTime().withDayOfMonth(1).withMonthOfYear(month).plusMonths(1).minusDays(1).withYear(year).toDateMidnight().toDateTime();
+		
+		for (DateTime day = firstDayOfMonth ; ! day.isAfter(lastDayOfMonth) ; day = day.plusDays(1) ){
+			TimeSheetDay dayModel = this.getTimeSheetDayForUser(day.toDate(), userId);
+			dayModel.setStatus(TimeSheetDay.DAY_VALIDATED);
+		}
+		
+		// Notify managers by mail
+		User currentUser = getAuthenticatedUserModel();
+		DateTimeFormatter formatter = DateTimeFormat.forPattern("MMMM");
+		String stringMonth = formatter.print(firstDayOfMonth);
+		String contentString = "The user <span style='font-style:italic;'>" + currentUser.getUserDetails().getFirstname()+" "+currentUser.getUserDetails().getName()
+		+ "</span> has validated his time sheet for <span style='font-style:italic;'>" + stringMonth + "</span>";
+		
+		List<String> recipients = new ArrayList<String>();
+		for (User manager : currentUser.getManagers()) {
+			recipients.add(manager.getUserDetails().getMail());
+			log.debug("Adds {} in the mail recipients!", manager.getUserDetails().getMail());
+		}
+		
+		mailService.create("/templates/gsp/timesheet_mail.gsp").with("content", contentString).subject("[Kernely] Time sheet validated")
+				.to(recipients).registerMail();
+		log.debug("Mail registered.");
+	}
+	
+	/**
+	 * Check if a user has validated his monthly timesheet
+	 * @param month The mounth. 1 = January, 12 = December.
+	 * @param year The year
+	 * @param userId the concerned userId
+	 * @return true if the month has been validated, false otherwise.
+	 */
+	public boolean checkMonthTimeSheetValidation(int month, int year, long userId){
+		DateTime firstDayOfMonth = new DateTime().withDayOfMonth(1).withMonthOfYear(month).withYear(year).toDateMidnight().toDateTime();
+		DateTime lastDayOfMonth = new DateTime().withDayOfMonth(1).withMonthOfYear(month).plusMonths(1).minusDays(1).withYear(year).toDateMidnight().toDateTime();
+		
+		for (DateTime day = firstDayOfMonth ; ! day.isAfter(lastDayOfMonth) ; day = day.plusDays(1) ){
+			TimeSheetDay dayModel = this.getTimeSheetDayForUser(day.toDate(), userId);
+			if (dayModel.getStatus() == TimeSheetDay.DAY_TO_VALIDATE){
+				return false;
+			}
+		}
+		return true;
 	}
 }

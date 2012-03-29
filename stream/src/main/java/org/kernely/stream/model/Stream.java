@@ -24,14 +24,11 @@ import java.util.Set;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.Cascade;
 import org.kernely.core.hibernate.AbstractModel;
-import org.kernely.core.model.User;
 
 /**
  * The stream model
@@ -52,29 +49,6 @@ public class Stream extends AbstractModel {
 		this.locked = false;
 		this.messages = new HashSet<Message>();
 		this.title = "";
-		this.user = null;
-	}
-
-	@OneToOne
-	@JoinColumn(name = "user_id")
-	private User user;
-
-	/**
-	 * get the userid associated to this stream
-	 * 
-	 * @return : the userid associated
-	 */
-	public User getUser() {
-		return user;
-	}
-
-	/**
-	 * set the userid associated to this stream
-	 * 
-	 * @param : the userid associated
-	 */
-	public void setUser(User user) {
-		this.user = user;
 	}
 
 	/**

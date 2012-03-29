@@ -88,4 +88,7 @@
 	</table>
 	<div id="timesheet-div">
 	</div>
+	<input class="hidden" type="button" id="validate-month" value="<%= i18n.t("validate_timesheet") %>"/>
+	<span class="hidden" id="month-validated-message"><%= i18n.t("timesheet_month_validated_message") %></span>
 </div>
+

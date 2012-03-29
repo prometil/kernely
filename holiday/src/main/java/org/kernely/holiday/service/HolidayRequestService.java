@@ -42,7 +42,7 @@ import org.joda.time.format.DateTimeFormatter;
 import org.kernely.core.dto.UserDTO;
 import org.kernely.core.model.User;
 import org.kernely.core.service.AbstractService;
-import org.kernely.core.service.mail.MailService;
+import org.kernely.core.service.mail.Mailer;
 import org.kernely.core.service.user.UserService;
 import org.kernely.holiday.dto.CalendarBalanceDetailDTO;
 import org.kernely.holiday.dto.CalendarDayDTO;
@@ -80,7 +80,7 @@ public class HolidayRequestService extends AbstractService {
 	private UserService userService;
 
 	@Inject
-	private MailService mailService;
+	private Mailer mailService;
 
 	@Inject
 	private HolidayBalanceService balanceService;

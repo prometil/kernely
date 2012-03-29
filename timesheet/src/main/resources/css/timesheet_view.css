@@ -29,3 +29,7 @@ td.expense_cell{
 th{
 	width:100px;
 }
+
+.hidden{
+	display:none;
+}

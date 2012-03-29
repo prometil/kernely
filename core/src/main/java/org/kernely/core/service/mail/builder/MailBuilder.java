@@ -25,8 +25,6 @@ import java.util.Map;
 
 /**
  * Interface of mail bilder
- * @author g.breton
- *
  */
 public interface MailBuilder {
 	/**

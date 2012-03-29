@@ -12,8 +12,6 @@ import org.slf4j.LoggerFactory;
 import com.google.inject.Inject;
 /**
  * The auto mailer
- * @author b.grandperret
- *
  */
 public class MailJob implements Job{
 	private static Logger log = LoggerFactory.getLogger(MailService.class);
@@ -26,9 +24,8 @@ public class MailJob implements Job{
 	 */
 	@Override
 	public void execute(JobExecutionContext arg0) throws JobExecutionException {
-		log.debug("Retrieving waiting mails...");
 		List<Mail> mails = mailService.getMailsToSend();
-		
+		log.debug("Retrieving the {} waiting mails...",mails.size());
 		for(Mail m : mails){
 			log.debug("Sending mails with id {}", m.getId());
 			mailService.send(m);

@@ -128,4 +128,15 @@ public class TimeSheetController extends AbstractController {
 		timeSheetService.removeLine(timeSheetId, projectId);
 		return "{\"result\":\"Ok\"}";
 	}
+	
+	/**
+	 * Validate a whole month of days in timesheets.
+	 * @return 
+	 */
+	@GET
+	@Path("/validate")
+	public String validateDays(@QueryParam("month") int month, @QueryParam("year") int year) {
+		timeSheetService.validateMonth(month, year, userService.getAuthenticatedUserDTO().id);
+		return "{\"result\":\"Ok\"}";
+	}
 }

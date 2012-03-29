@@ -17,13 +17,13 @@
         </hibernate>
         <mail>
                 <debug>true</debug>
-                <host>to_change</host>
-                <from>to_change</from>
+                <host></host>
+                <from>Kernely</from>
                 <smtp>
-                        <host>to_change</host>
-                        <port>to_change</port>
-                        <user>to_change</user>
-                        <password>to_change</password>
+                        <host></host>
+                        <port></port>
+                        <user></user>
+                        <password></password>
                         <auth>true</auth>
                 </smtp>
         </mail>
