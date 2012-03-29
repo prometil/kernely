@@ -4,7 +4,6 @@ import org.kernely.core.plugin.AbstractPlugin;
 import org.kernely.invoice.controller.InvoiceController;
 import org.kernely.invoice.migrations.Migration01;
 import org.kernely.invoice.model.Invoice;
-import org.kernely.invoice.model.InvoiceHistory;
 import org.kernely.invoice.model.InvoiceLine;
 import org.kernely.invoice.service.InvoiceService;
 
@@ -24,7 +23,6 @@ public class InvoicePlugin extends AbstractPlugin {
 		registerController(InvoiceController.class);
 		registerModel(Invoice.class);
 		registerModel(InvoiceLine.class);
-		registerModel(InvoiceHistory.class);
 		registerMigration(new Migration01());
 		
 		

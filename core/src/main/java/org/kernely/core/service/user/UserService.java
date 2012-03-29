@@ -426,6 +426,10 @@ public class UserService extends AbstractService {
 		return SecurityUtils.getSubject().hasRole(Role.ROLE_CLIENT); 
 	}
 	
+	public boolean currentUserHasRole(String role){
+		return SecurityUtils.getSubject().hasRole(role);
+	}
+	
 	/**
 	 * Retrieve the list of RoleDTO from an userdetails id
 	 * 

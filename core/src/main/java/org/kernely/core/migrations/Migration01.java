@@ -22,7 +22,6 @@ package org.kernely.core.migrations;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.configuration.DatabaseConfiguration;
 import org.kernely.core.migrations.migrator.Command;
 import org.kernely.core.migrations.migrator.CreateTable;
 import org.kernely.core.migrations.migrator.DataBaseConstants;
@@ -186,12 +185,17 @@ public class Migration01 extends Migration {
 		Insert clientRole = Insert.into("kernely_role");
 		clientRole.set(DataBaseConstants.ID_COLUMN, "7");
 		clientRole.set("name", "Client");
+		
+		Insert bookKeeperRole = Insert.into("kernely_role");
+		bookKeeperRole.set(DataBaseConstants.ID_COLUMN, "8");
+		bookKeeperRole.set("name", "Book keeper");
 				
 		commands.add(userRole);
 		commands.add(adminRole);
 		commands.add(rhRole);
 		commands.add(projectManagerRole);
 		commands.add(clientRole);
+		commands.add(bookKeeperRole);
 		
 		//the table group permision
 		CreateTable groupPermission = CreateTable.name("kernely_group_permissions");

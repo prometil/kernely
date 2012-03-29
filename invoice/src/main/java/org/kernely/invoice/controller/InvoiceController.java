@@ -10,15 +10,23 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriBuilder;
 
 import org.kernely.core.controller.AbstractController;
+import org.kernely.core.model.Role;
+import org.kernely.core.service.user.UserService;
 import org.kernely.core.template.TemplateRenderer;
 import org.kernely.invoice.dto.InvoiceCreationRequestDTO;
 import org.kernely.invoice.dto.InvoiceDTO;
 import org.kernely.invoice.dto.InvoiceLineCreationRequestDTO;
 import org.kernely.invoice.dto.InvoiceLineDTO;
 import org.kernely.invoice.service.InvoiceService;
+import org.kernely.project.dto.OrganizationDTO;
+import org.kernely.project.dto.ProjectDTO;
+import org.kernely.project.service.OrganizationService;
+import org.kernely.project.service.ProjectService;
 
 import com.google.inject.Inject;
 
@@ -32,6 +40,15 @@ public class InvoiceController extends AbstractController{
 	private InvoiceService invoiceService;
 	
 	@Inject
+	private OrganizationService organizationService;
+	
+	@Inject
+	private ProjectService projectService;
+	
+	@Inject
+	private UserService userService;
+	
+	@Inject
 	private TemplateRenderer templateRenderer; 
 	
 	/**
@@ -41,7 +58,54 @@ public class InvoiceController extends AbstractController{
 	@GET
 	@Produces( { MediaType.TEXT_HTML })
 	public String getInvoicePanel(){
-		return templateRenderer.create("/templates/gsp/invoice_overview.gsp").addCss("/css/invoice.css").render();
+		if(userService.currentUserHasRole(Role.ROLE_PROJECTMANAGER) || userService.currentUserHasRole(Role.ROLE_BOOKKEEPER)){
+			return templateRenderer.create("/templates/gsp/invoice_overview.gsp").addCss("/css/invoice.css").render();
+		}
+		return null;
+	}
+	
+	/**
+	 * Retrieves all the organizations in function of the role of the current user.
+	 * If the user is Project Manager, retrieves all the organization of his projects
+	 * Else, if he's Book Keeper, retrieve all the organization
+	 * @return A list of all the linked organizations
+	 */
+	@GET
+	@Path("/organizations")
+	@Produces({MediaType.APPLICATION_JSON})
+	public List<OrganizationDTO> getOrganizationForRole(){
+		if(userService.currentUserHasRole(Role.ROLE_BOOKKEEPER)){
+			return organizationService.getAllOrganizations();
+		}
+		else{
+			if(userService.currentUserHasRole(Role.ROLE_PROJECTMANAGER)){ 
+				return organizationService.getOrganizationForProjectManager();
+			}			
+		}
+		return null;
+	}
+	
+	/**
+	 * Retrieves all the projects in function of the role of the current user.
+	 * If the user is Project Manager, retrieves all his projects
+	 * Else, if he's Book Keeper, retrieve all the projects
+	 * @param organizationId The id of the organization
+	 * @return A list of all the linked projects
+	 */
+	@GET
+	@Path("/projects")
+	@Produces({MediaType.APPLICATION_JSON})
+	public List<ProjectDTO> getProjectForRole(@QueryParam("organizationId") long organizationId){
+		
+		if(userService.currentUserHasRole(Role.ROLE_BOOKKEEPER)){
+			return projectService.getProjectsLinkedToOrganization(organizationId);
+		}
+		else{
+			if(userService.currentUserHasRole(Role.ROLE_PROJECTMANAGER)){
+				return projectService.getProjectsForProjectManagerLinkedToOrganization(organizationId);
+			}
+		}
+		return null;
 	}
 	
 	/**
@@ -52,7 +116,10 @@ public class InvoiceController extends AbstractController{
 	@Path("/all")
 	@Produces({MediaType.APPLICATION_JSON})
 	public List<InvoiceDTO> getAllInvoices(){
-		return invoiceService.getAllInvoices();
+		if(userService.currentUserHasRole(Role.ROLE_PROJECTMANAGER) || userService.currentUserHasRole(Role.ROLE_BOOKKEEPER)){
+			return invoiceService.getAllInvoices();
+		}
+		return null;
 	}
 	
 	/**
@@ -65,7 +132,10 @@ public class InvoiceController extends AbstractController{
 	@Path("/specific")
 	@Produces({MediaType.APPLICATION_JSON})
 	public List<InvoiceDTO> getInvoicesPerOrganizationAndProject(@QueryParam("organizationId") long organizationId, @QueryParam("projectId") long projectId){
-		return invoiceService.getInvoicesPerOrganizationAndProject(organizationId, projectId);
+		if(userService.currentUserHasRole(Role.ROLE_PROJECTMANAGER) || userService.currentUserHasRole(Role.ROLE_BOOKKEEPER)){
+			return invoiceService.getInvoicesPerOrganizationAndProject(organizationId, projectId);
+		}
+		return null;
 	}
 	
 	/**
@@ -78,7 +148,10 @@ public class InvoiceController extends AbstractController{
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Produces({MediaType.APPLICATION_JSON})
 	public InvoiceDTO createInvoice(InvoiceCreationRequestDTO request){
-		return invoiceService.createOrUpdateInvoice(request);
+		if(userService.currentUserHasRole(Role.ROLE_PROJECTMANAGER) || userService.currentUserHasRole(Role.ROLE_BOOKKEEPER)){
+			return invoiceService.createOrUpdateInvoice(request);
+		}
+		return null;
 	}
 	
 	/**
@@ -91,7 +164,10 @@ public class InvoiceController extends AbstractController{
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Produces({MediaType.APPLICATION_JSON})
 	public InvoiceLineDTO createInvoiceLine(InvoiceLineCreationRequestDTO request){
-		return invoiceService.createOrUpdateInvoiceLine(request);
+		if(userService.currentUserHasRole(Role.ROLE_PROJECTMANAGER) || userService.currentUserHasRole(Role.ROLE_BOOKKEEPER)){
+			return invoiceService.createOrUpdateInvoiceLine(request);
+		}
+		return null;
 	}
 	
 	/**
@@ -104,8 +180,11 @@ public class InvoiceController extends AbstractController{
 	@Path("/delete")
 	@Produces({MediaType.APPLICATION_JSON})
 	public String deleteInvoice(@QueryParam("invoiceId") long invoiceId){
-		invoiceService.deleteInvoice(invoiceId);
-		return "{\"result\":\"Ok\"}";
+		if(userService.currentUserHasRole(Role.ROLE_PROJECTMANAGER) || userService.currentUserHasRole(Role.ROLE_BOOKKEEPER)){
+			invoiceService.deleteInvoice(invoiceId);
+			return "{\"result\":\"Ok\"}";
+		}
+		return null;
 	}
 	
 	/**
@@ -117,9 +196,83 @@ public class InvoiceController extends AbstractController{
 	@Path("/view/{invoiceId}")
 	@Produces( { MediaType.TEXT_HTML })
 	public Response visualizeInvoice(@PathParam("invoiceId") long invoiceId) {
-		InvoiceDTO invoiceDTO = invoiceService.getInvoiceById(invoiceId);
-		return ok(templateRenderer.create("/templates/gsp/invoice.gsp").with("invoice", invoiceDTO).addCss("/css/profile.css"));
+		if(userService.currentUserHasRole(Role.ROLE_PROJECTMANAGER) || userService.currentUserHasRole(Role.ROLE_BOOKKEEPER)){
+			InvoiceDTO invoiceDTO = invoiceService.getInvoiceById(invoiceId);
+			return ok(templateRenderer.create("/templates/gsp/invoice.gsp").with("invoice", invoiceDTO).addCss("/css/invoice.css"));
+		}
+		return null;
 	}
 	
+	/**
+	 * Loads the html page displaying the needed invoice in edition mode
+	 * @param invoiceId The id of the invoice to display
+	 * @return An html page
+	 */
+	@GET
+	@Path("/edit/{invoiceId}")
+	@Produces( { MediaType.TEXT_HTML })
+	public Response editInvoice(@PathParam("invoiceId") long invoiceId) {
+		if(userService.currentUserHasRole(Role.ROLE_PROJECTMANAGER) || userService.currentUserHasRole(Role.ROLE_BOOKKEEPER)){
+			InvoiceDTO invoiceDTO = invoiceService.getInvoiceById(invoiceId);
+			return ok(templateRenderer.create("/templates/gsp/invoice_editable.gsp").with("invoice", invoiceDTO).addCss("/css/invoice.css"));
+		}
+		return null;
+	}
 	
+	/**
+	 * Gets all lines relative to an invoice
+	 * @param invoiceId Id of the needed invoice
+	 * @return A list of DTO containing the lines of the given invoice
+	 */
+	@GET
+	@Path("/lines")
+	@Produces({MediaType.APPLICATION_JSON})
+	public List<InvoiceLineDTO> getInvoiceLine(@QueryParam("invoiceId") long invoiceId){
+		return invoiceService.getLinesForInvoice(invoiceId);
+	}
+	
+	/**
+	 * Update an invoice with the given informations
+	 * @param formParams The values retrieved from the form.
+	 * @param invoiceId Id of the invoice to update
+	 * @return the visualization page of the invoice
+	 */
+	@POST
+	@Path("/update/{invoiceId}")
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	@Produces({ MediaType.TEXT_HTML })
+	public Response updateInvoice(MultivaluedMap<String, String> formParams, @PathParam("invoiceId") long invoiceId){
+		invoiceService.deleteAllInvoiceLines(invoiceId);
+		InvoiceLineCreationRequestDTO lineRequest = new InvoiceLineCreationRequestDTO();
+		for(int i = 0; i < formParams.get("designation-field[]").size(); i++){
+			String designation = formParams.get("designation-field[]").get(i);
+			String quantity = formParams.get("quantity-field[]").get(i);
+			String unitPrice = formParams.get("unitprice-field[]").get(i);
+			if(!designation.equals("")){
+				lineRequest.designation = designation;
+				if(quantity.equals("")){
+					lineRequest.quantity = 0.0F;
+				}else{
+					lineRequest.quantity = Float.parseFloat(quantity);
+				}
+				if(unitPrice.equals("")){
+					lineRequest.unitPrice = 0.0F;
+				}else{
+					lineRequest.unitPrice = Float.parseFloat(unitPrice);
+				}
+				lineRequest.invoiceId = invoiceId;
+				invoiceService.createOrUpdateInvoiceLine(lineRequest);
+			}
+		}
+		InvoiceCreationRequestDTO invoiceRequest = new InvoiceCreationRequestDTO();
+		invoiceRequest.id = invoiceId;
+		invoiceRequest.datePublication = formParams.get("invoice-sending").get(0);
+		invoiceRequest.dateTerm = formParams.get("invoice-term").get(0);
+		invoiceRequest.object = formParams.get("invoice-object").get(0);
+		invoiceRequest.code = formParams.get("invoice-code").get(0);
+		invoiceService.createOrUpdateInvoice(invoiceRequest);
+		UriBuilder uriBuilder = UriBuilder.fromPath("/invoice/view/" + invoiceId);
+		// Status 303 allows to redirect a request from POST to GET
+		return Response.temporaryRedirect(uriBuilder.build()).status(303).build();
+	}
 }

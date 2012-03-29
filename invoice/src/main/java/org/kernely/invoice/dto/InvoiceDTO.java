@@ -76,6 +76,22 @@ public class InvoiceDTO {
 	public String organizationName;
 	
 	/**
+	 * Organization zip
+	 */
+	public String organizationZip;
+	
+	/**
+	 * Organization address
+	 */
+	public String organizationAddress;
+	
+	/**
+	 * Organization city
+	 */
+	public String organizationCity;
+	
+	
+	/**
 	 * Project relative to this invoice
 	 */
 	public String projectName;
@@ -111,10 +127,11 @@ public class InvoiceDTO {
 		this.object = invoice.getObject();
 		this.status = invoice.getStatus();
 		this.delay = Days.daysBetween(new DateTime(this.datePublication), new DateTime(this.dateTerm)).getDays();
-		this.organizationName = invoice.getProject().getOrganization().getName();
+		this.organizationName = invoice.getOrganizationName();
+		this.organizationAddress = invoice.getOrganizationCity();
+		this.organizationZip = invoice.getOrganizationZip();
+		this.organizationCity = invoice.getOrganizationCity();
 		this.projectName = invoice.getProject().getName();
-		//TODO CHANGE !
-		this.amount = 0.0F;
 	}
 	
 }
