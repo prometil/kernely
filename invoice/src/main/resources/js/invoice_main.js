@@ -47,7 +47,7 @@ AppInvoiceMain = (function($){
 			$('#project-select-group').html("");
 			$.ajax({
 				type: "GET",
-				url:"/project/orga",
+				url:"/invoice/projects",
 				data:{organizationId : $('#organization-selector').val()},
 				success: function(data){
 					// Create the views
@@ -72,7 +72,7 @@ AppInvoiceMain = (function($){
 		render: function(){
 			$.ajax({
 				type: "GET",
-				url:"/organization/all",
+				url:"/invoice/organizations",
 				success: function(data){
 					// Create the views
 					if (data != null){
@@ -237,7 +237,7 @@ AppInvoiceMain = (function($){
 			$('#project-selector-mod').html("<option></option>");
 			$.ajax({
 				type: "GET",
-				url:"/project/orga",
+				url:"/invoice/projects",
 				data:{organizationId : $('#organization-selector-mod').val()},
 				success: function(data){
 					// Create the views
@@ -287,7 +287,7 @@ AppInvoiceMain = (function($){
 			
 			$.ajax({
 				type: "GET",
-				url:"/organization/all",
+				url:"/invoice/organizations",
 				success: function(data){
 					// Create the views
 					if (data != null){

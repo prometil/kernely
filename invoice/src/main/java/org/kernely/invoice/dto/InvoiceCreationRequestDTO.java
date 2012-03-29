@@ -14,6 +14,11 @@ public class InvoiceCreationRequestDTO {
 	public long id;
 	
 	/**
+	 * Code of the invoice
+	 */
+	public String code;
+	
+	/**
 	 * Object of this invoice
 	 */
 	public String object;
@@ -46,8 +51,9 @@ public class InvoiceCreationRequestDTO {
 	 * @param dateTerm Term date of this invoice
 	 * @param projectId Id of the Project concerned by this invoice
 	 */
-	public InvoiceCreationRequestDTO(long id, String object, String datePublication, String dateTerm, long projectId){
+	public InvoiceCreationRequestDTO(long id, String code, String object, String datePublication, String dateTerm, long projectId){
 		this.id = id;
+		this.code = code;
 		this.object = object;
 		this.datePublication = datePublication;
 		this.dateTerm = dateTerm;

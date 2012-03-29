@@ -2,7 +2,9 @@ package org.kernely.invoice.service;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.Query;
 
@@ -50,9 +52,9 @@ public class InvoiceService extends AbstractService{
 			invoice = em.get().find(Invoice.class, request.id);
 		}
 		
-		invoice.setCode("IN-KERNELY-PROMETIL"); // TODO Change and generate code
+		invoice.setCode(request.code);
 		invoice.setObject(request.object);
-		invoice.setProject(em.get().find(Project.class, request.projectId));
+		
 		invoice.setStatus(Invoice.INVOICE_UNDEFINED);
 		
 		DateTimeFormatter fmt = DateTimeFormat.forPattern("MM/dd/yyyy");
@@ -63,6 +65,13 @@ public class InvoiceService extends AbstractService{
 		invoice.setDateCreation(DateTime.now().toDate());
 		
 		if(request.id == 0){
+			Project project = em.get().find(Project.class, request.projectId);
+			invoice.setProject(project);
+			invoice.setOrganizationAddress(project.getOrganization().getAddress());
+			invoice.setOrganizationName(project.getOrganization().getName());
+			invoice.setOrganizationCity(project.getOrganization().getCity());
+			invoice.setOrganizationZip(project.getOrganization().getZip());
+			
 			em.get().persist(invoice);
 		}
 		else{
@@ -101,11 +110,10 @@ public class InvoiceService extends AbstractService{
 		}
 		
 		invoiceLine.setDesignation(request.designation);
-		invoiceLine.setInvoice(em.get().find(Invoice.class, request.invoiceId));
+		Invoice invoice = em.get().find(Invoice.class, request.invoiceId);
+		invoiceLine.setInvoice(invoice);
 		invoiceLine.setQuantity(request.quantity);
 		invoiceLine.setUnitPrice(request.unitPrice);
-		
-		System.out.println("INVOICE !!! => " + request.invoiceId );
 		
 		if(request.id == 0){
 			em.get().persist(invoiceLine);
@@ -113,6 +121,11 @@ public class InvoiceService extends AbstractService{
 		else{
 			em.get().merge(invoiceLine);
 		}
+		
+		Set<InvoiceLine> lines = invoice.getLines();
+		lines.add(invoiceLine);
+		invoice.setLines(lines);
+		em.get().merge(invoice);
 		
 		return new InvoiceLineDTO(invoiceLine);
 	}
@@ -127,8 +140,11 @@ public class InvoiceService extends AbstractService{
 		Query request = em.get().createQuery("SELECT i FROM Invoice i");
 		List<Invoice> invoices = (List<Invoice>)request.getResultList();
 		List<InvoiceDTO> invoicesDTO = new ArrayList<InvoiceDTO>();
+		InvoiceDTO invoiceDTO;
 		for(Invoice i : invoices){
-			invoicesDTO.add(new InvoiceDTO(i));
+			invoiceDTO = new InvoiceDTO(i);
+			invoiceDTO.amount = this.getInvoiceTotalAmount(i.getId());
+			invoicesDTO.add(invoiceDTO);
 		}
 		return invoicesDTO;
 	}
@@ -155,14 +171,25 @@ public class InvoiceService extends AbstractService{
 				request.setParameter("project", em.get().find(Organization.class, organizationId).getProjects());
 			}
 			else{
+				// Verify that the given project is really one of the given organization
+				Organization organization = em.get().find(Organization.class, organizationId);
+				Project project = em.get().find(Project.class, projectId);
+				
+				if(!organization.getProjects().contains(project)){
+					throw new IllegalArgumentException("The given project ("+ projectId +") doesn't match to the given organization (" + organizationId + ")");
+				}
+				
 				request = em.get().createQuery("SELECT i FROM Invoice i WHERE project = :project");
 				request.setParameter("project", em.get().find(Project.class, projectId));
 			}
 		}
 		List<Invoice> invoices = (List<Invoice>)request.getResultList();
 		List<InvoiceDTO> invoicesDTO = new ArrayList<InvoiceDTO>();
+		InvoiceDTO invoiceDTO;
 		for(Invoice i : invoices){
-			invoicesDTO.add(new InvoiceDTO(i));
+			invoiceDTO = new InvoiceDTO(i);
+			invoiceDTO.amount = this.getInvoiceTotalAmount(i.getId());
+			invoicesDTO.add(invoiceDTO);
 		}
 		return invoicesDTO;
 	}
@@ -176,6 +203,7 @@ public class InvoiceService extends AbstractService{
 	public InvoiceDTO getInvoiceById(long invoiceId){
 		InvoiceDTO invoiceDTO = new InvoiceDTO(em.get().find(Invoice.class, invoiceId));
 		invoiceDTO.lines = this.getLinesForInvoice(invoiceId);
+		invoiceDTO.amount = this.getInvoiceTotalAmount(invoiceId);
 		return invoiceDTO;
 	}
 	
@@ -227,5 +255,21 @@ public class InvoiceService extends AbstractService{
 			lines.add(new InvoiceLineDTO(line));
 		}
 		return lines;
+	}
+	
+	/**
+	 * Delete all the existing lines linked to the given invoice
+	 * @param invoiceId The id of the given invoice
+	 */
+	@Transactional
+	public void deleteAllInvoiceLines(long invoiceId){
+		Invoice invoice = em.get().find(Invoice.class, invoiceId);
+		Set<InvoiceLine> oldLines = invoice.getLines();
+		//Remove all the old lines
+		for(InvoiceLine line : oldLines){
+			em.get().remove(line);
+		}
+		invoice.setLines(new HashSet<InvoiceLine>());
+		em.get().merge(invoice);
 	}
 }

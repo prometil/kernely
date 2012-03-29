@@ -1,6 +1,8 @@
 AppInvoiceEdit = (function($){
-	InvoiceVisualizationMainView = Backbone.View.extend({
-		el:"#invoice-visualization",
+	var invoiceLines = new Array();
+	
+	InvoiceEditionMainView = Backbone.View.extend({
+		el:"#invoice-edition",
 		events:{
 		
 		},
@@ -10,7 +12,6 @@ AppInvoiceEdit = (function($){
 		render: function(){
 			new InvoiceGeneralInfoView().render();
 			new InvoiceDetailsView().render();
-			new InvoiceHistoryView().render();
 		}
 	})
 	
@@ -69,12 +70,35 @@ AppInvoiceEdit = (function($){
 		
 		},
 		addLine: function(){
-			$(this.el).append(new InvoiceLineCreateView().render().el);
+			var view = new InvoiceLineCreateView(0).render();
+			$(this.el).append(view.el);
+			invoiceLines.push(view);
 		},
 		initialize: function(){
 			
 		},
 		render: function(){
+			var parent = this;
+			$.ajax({
+				type:"GET",
+				url:"/invoice/lines",
+				data:{invoiceId: $("#invoice-visu-i").text()},
+				success: function(data){
+					var view;
+					if(data.invoiceLineDTO.length > 1){
+						$.each(data.invoiceLineDTO, function(){
+							view = new InvoiceLineCreateView(this.id, this.designation, this.quantity, this.unitPrice, this.amount).render();
+							$(parent.el).append(view.el);
+							invoiceLines.push(view);
+						});
+					}
+					else{
+						view = new InvoiceLineCreateView(data.invoiceLineDTO.id, data.invoiceLineDTO.designation, data.invoiceLineDTO.quantity, data.invoiceLineDTO.unitPrice, data.invoiceLineDTO.amount).render();
+						$(parent.el).append(view.el);
+						invoiceLines.push(view);
+					}
+				}
+			});
 			return this;
 		}
 	})
@@ -82,16 +106,31 @@ AppInvoiceEdit = (function($){
 	InvoiceLineCreateView = Backbone.View.extend({
 		tagName:"tr",
 		
-		description : null,
-		quantity : null,
-		unitPrice : null,
-		amount : null,
+		id:0,
+		description : "",
+		quantity : 0,
+		unitPrice : 0,
+		amount : 0,
 		
 		events:{
-			"click .valid-invoice-line" : "saveLine"
+			"click .delete-invoice-line" : "deleteLine",
+			"change .quantity-field, .unitprice-field" : "processAmount"
+				
 		},
-		initialize: function(){
-			
+		initialize: function(id, description, quantity, unitPrice, amount){
+			this.id = id;
+			this.description = description;
+			this.quantity = quantity;
+			this.unitPrice = unitPrice;
+			this.amount = amount;
+		},
+		deleteLine: function(){
+			$(this.el).remove();
+		},
+		processAmount: function(){
+			var amount = $(this.el).find(".quantity-field").val() * $(this.el).find(".unitprice-field").val();
+			$(this.el).find(".line-amount").text(amount);
+			console.log(this.id);
 		},
 		saveLine: function(){
 			var parent = this;
@@ -99,7 +138,6 @@ AppInvoiceEdit = (function($){
 					+ '", "quantity" : "' + $('input[name*="quantity-field"]').val()
 					+ '", "unitPrice" : "' + $('input[name*="unitprice-field"]').val()
 					+ '", "invoiceId" : "'+ $('#invoice-visu-i').text() +'" }';
-			console.log($('#invoice-visu-i').text());
 			
 			$.ajax({
 				type: "POST",
@@ -119,43 +157,19 @@ AppInvoiceEdit = (function($){
 		},
 		render: function(){
 			var template = $("#invoice-line-editable-template").html();
-			var view = {};
+			var view = {description: this.description, quantity: this.quantity, unitprice : this.unitPrice, amount: this.amount};
 			var html = Mustache.to_html(template, view);
 			$(this.el).html(html);
 			return this;
 		}
 	})
 	
-	InvoiceHistoryView = Backbone.View.extend({
-		el:"#invoice-history",
-		events:{
-		
-		},
-		initialize: function(){
-			
-		},
-		render: function(){
-			
-		}
-	})
 	
-	InvoiceHistoryLineView = Backbone.View.extend({
-		tagName:"tr",
-		events:{
-		
-		},
-		initialize: function(){
-			
-		},
-		render: function(){
-			
-		}
-	})
 		
 	// define the application initialization
 	var self = {};
 	self.start = function(){
-		new InvoiceVisualizationMainView().render();
+		new InvoiceEditionMainView().render();
 	}
 	return self;
 });

@@ -1,6 +1,7 @@
 package org.kernely.invoice.model;
 
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.Column;
@@ -38,6 +39,19 @@ public class Invoice extends AbstractModel {
 	private String object;
 	private int status;
 	
+	@Column(name="organization_name")
+	private String organizationName;
+	
+	@Column(name="organization_address")
+	private String organizationAddress;
+	
+	@Column(name="organization_zip")
+	private String organizationZip;
+	
+	@Column(name="organization_city")
+	private String organizationCity;
+	
+	
 	@OneToMany(mappedBy ="invoice")
 	private Set<InvoiceLine> lines;
 	
@@ -45,8 +59,12 @@ public class Invoice extends AbstractModel {
 	@JoinColumn(name="project_id")
 	private Project project;
 	
-	@OneToMany(mappedBy="invoice")
-	private Set<InvoiceHistory> histories;
+	/**
+	 * Default constructor
+	 */
+	public Invoice(){
+		this.lines = new HashSet<InvoiceLine>();
+	}
 	
 	/**
 	 * @return the code
@@ -145,16 +163,150 @@ public class Invoice extends AbstractModel {
 		this.dateTerm = dateTerm;
 	}
 	/**
-	 * @return the histories
+	 * @return the organizationName
 	 */
-	public Set<InvoiceHistory> getHistories() {
-		return histories;
+	public String getOrganizationName() {
+		return organizationName;
 	}
 	/**
-	 * @param histories the histories to set
+	 * @param organizationName the organizationName to set
 	 */
-	public void setHistories(Set<InvoiceHistory> histories) {
-		this.histories = histories;
+	public void setOrganizationName(String organizationName) {
+		this.organizationName = organizationName;
+	}
+	/**
+	 * @return the organizationAddress
+	 */
+	public String getOrganizationAddress() {
+		return organizationAddress;
+	}
+	/**
+	 * @param organizationAddress the organizationAddress to set
+	 */
+	public void setOrganizationAddress(String organizationAddress) {
+		this.organizationAddress = organizationAddress;
+	}
+	/**
+	 * @return the organizationZip
+	 */
+	public String getOrganizationZip() {
+		return organizationZip;
+	}
+	/**
+	 * @param organizationZip the organizationZip to set
+	 */
+	public void setOrganizationZip(String organizationZip) {
+		this.organizationZip = organizationZip;
+	}
+	/**
+	 * @return the organizationCity
+	 */
+	public String getOrganizationCity() {
+		return organizationCity;
+	}
+	/**
+	 * @param organizationCity the organizationCity to set
+	 */
+	public void setOrganizationCity(String organizationCity) {
+		this.organizationCity = organizationCity;
+	}
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((code == null) ? 0 : code.hashCode());
+		result = prime * result + ((dateCreation == null) ? 0 : dateCreation.hashCode());
+		result = prime * result + ((datePublication == null) ? 0 : datePublication.hashCode());
+		result = prime * result + ((dateTerm == null) ? 0 : dateTerm.hashCode());
+		result = prime * result + ((object == null) ? 0 : object.hashCode());
+		result = prime * result + ((organizationAddress == null) ? 0 : organizationAddress.hashCode());
+		result = prime * result + ((organizationCity == null) ? 0 : organizationCity.hashCode());
+		result = prime * result + ((organizationName == null) ? 0 : organizationName.hashCode());
+		result = prime * result + ((organizationZip == null) ? 0 : organizationZip.hashCode());
+		return result;
+	}
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
+			return false;
+		}
+		Invoice other = (Invoice) obj;
+		if (code == null) {
+			if (other.code != null) {
+				return false;
+			}
+		} else if (!code.equals(other.code)) {
+			return false;
+		}
+		if (dateCreation == null) {
+			if (other.dateCreation != null) {
+				return false;
+			}
+		} else if (!dateCreation.equals(other.dateCreation)) {
+			return false;
+		}
+		if (datePublication == null) {
+			if (other.datePublication != null) {
+				return false;
+			}
+		} else if (!datePublication.equals(other.datePublication)) {
+			return false;
+		}
+		if (dateTerm == null) {
+			if (other.dateTerm != null) {
+				return false;
+			}
+		} else if (!dateTerm.equals(other.dateTerm)) {
+			return false;
+		}
+		if (object == null) {
+			if (other.object != null) {
+				return false;
+			}
+		} else if (!object.equals(other.object)) {
+			return false;
+		}
+		if (organizationAddress == null) {
+			if (other.organizationAddress != null) {
+				return false;
+			}
+		} else if (!organizationAddress.equals(other.organizationAddress)) {
+			return false;
+		}
+		if (organizationCity == null) {
+			if (other.organizationCity != null) {
+				return false;
+			}
+		} else if (!organizationCity.equals(other.organizationCity)) {
+			return false;
+		}
+		if (organizationName == null) {
+			if (other.organizationName != null) {
+				return false;
+			}
+		} else if (!organizationName.equals(other.organizationName)) {
+			return false;
+		}
+		if (organizationZip == null) {
+			if (other.organizationZip != null) {
+				return false;
+			}
+		} else if (!organizationZip.equals(other.organizationZip)) {
+			return false;
+		}
+		return true;
 	}
 	
 	

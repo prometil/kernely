@@ -33,6 +33,8 @@ public class ProjectService extends AbstractService {
 
 	@Inject
 	private OrganizationService organizationService;
+	
+	@Inject
 
 	private static final String ICON = "default.png";
 	protected final Logger log = LoggerFactory.getLogger(this.getClass());
@@ -257,4 +259,22 @@ public class ProjectService extends AbstractService {
 		return projectsDTO;
 	}
 	
+	/**
+	 * Gets all the project where the current user is associated as a Project Manager.
+	 * @return A list of ProjectDTO representing all the linked projects
+	 */
+	@SuppressWarnings("unchecked")
+	@Transactional
+	public List<ProjectDTO> getProjectsForProjectManagerLinkedToOrganization(long organizationId){
+		Query request = em.get().createQuery("SELECT p FROM Project p WHERE organization = :organization");
+		request.setParameter("organization", em.get().find(Organization.class, organizationId));
+		List<Project> projects = (List<Project>)request.getResultList();
+		List<ProjectDTO> usersProjects = new ArrayList<ProjectDTO>();
+		for (Project project : projects) {
+			if (permissionService.userHasPermission(this.getAuthenticatedUserModel().getId(), false, Project.RIGHT_PROJECTMANAGER, Project.PROJECT_RESOURCE, project.getId())){
+				usersProjects.add(new ProjectDTO(project));
+			}
+		}
+		return usersProjects;
+	}
 }

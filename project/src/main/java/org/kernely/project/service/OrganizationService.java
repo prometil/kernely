@@ -10,10 +10,11 @@ import javax.persistence.Query;
 import org.kernely.core.dto.UserDTO;
 import org.kernely.core.model.User;
 import org.kernely.core.service.AbstractService;
-import org.kernely.core.service.user.UserService;
+import org.kernely.core.service.user.PermissionService;
 import org.kernely.project.dto.OrganizationCreationRequestDTO;
 import org.kernely.project.dto.OrganizationDTO;
 import org.kernely.project.model.Organization;
+import org.kernely.project.model.Project;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,8 +29,9 @@ import com.google.inject.persist.Transactional;
  */
 @Singleton
 public class OrganizationService extends AbstractService{
+	
 	@Inject
-	UserService userService;
+	private PermissionService permissionService;
 
 	protected final Logger log = LoggerFactory.getLogger(this.getClass());
 
@@ -182,5 +184,22 @@ public class OrganizationService extends AbstractService{
 		Query query = em.get().createQuery("SELECT o FROM Organization o WHERE name=:name");
 		query.setParameter("name", name);
 		return (Organization) query.getSingleResult();
+	}
+	
+	/**
+	 * Gets all the organization where the current user has the Project manager role
+	 * @return A list of OrganizationDTO representing the linked organizations
+	 */
+	@SuppressWarnings("unchecked")
+	@Transactional
+	public List<OrganizationDTO> getOrganizationForProjectManager(){
+		List<Project> allProjects = (List<Project>)em.get().createQuery("SELECT p FROM Project p").getResultList();
+		List<OrganizationDTO> userOrganizations = new ArrayList<OrganizationDTO>();
+		for (Project project : allProjects) {
+			if (permissionService.userHasPermission(this.getAuthenticatedUserModel().getId(), false, Project.RIGHT_PROJECTMANAGER, Project.PROJECT_RESOURCE, project.getId())){
+				userOrganizations.add(new OrganizationDTO(project.getOrganization()));
+			}
+		}
+		return userOrganizations;
 	}
 }
