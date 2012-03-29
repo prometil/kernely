@@ -54,7 +54,7 @@ public class CalendarBalanceDetailDTO {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = (int) (prime * result + idOfType);
+		result = (prime * result + (int) (idOfType ^ (idOfType  >>> 32)));
 		result = prime * result + ((nameOfType == null) ? 0 : nameOfType.hashCode());
 		return result;
 	}

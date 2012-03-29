@@ -854,14 +854,13 @@ public class HolidayRequestService extends AbstractService {
 			}
 		}
 		for (UserDTO manager : map.keySet()) {
-			String content = "Some holiday requests wait for your response.<br/>";
+			StringBuffer content = new StringBuffer("Some holiday requests wait for your response.<br/>");
 
 			for (HolidayRequestDTO request : map.get(manager)) {
-				content += userService.getUserDetails(request.user).firstname + " " + userService.getUserDetails(request.user).lastname + " from "
-						+ request.beginDate + " to " + request.endDate + "\n";
+				content.append(userService.getUserDetails(request.user).firstname + " " + userService.getUserDetails(request.user).lastname + " from " + request.beginDate + " to " + request.endDate + "\n");
 			}
 
-			mailService.create("/templates/gsp/recallMail.gsp").with("content", content).subject("[Kernely] Holiday requests pending").to(
+			mailService.create("/templates/gsp/recallMail.gsp").with("content", content.toString()).subject("[Kernely] Holiday requests pending").to(
 					userService.getUserDetails(manager.username).email).registerMail();
 
 			log.info("Recall mail to manager {}: {}", manager.username, content);

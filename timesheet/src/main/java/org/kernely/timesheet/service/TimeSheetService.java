@@ -222,7 +222,7 @@ public class TimeSheetService extends AbstractService {
 			}
 		}
 		for (ProjectDTO project : projects){
-			projectsId.add(new Long(project.id));
+			projectsId.add(Long.valueOf(project.id));
 		}
 
 		return new TimeSheetCalendarDTO(week, year, timeSheet, dates, stringDates, projectsId);

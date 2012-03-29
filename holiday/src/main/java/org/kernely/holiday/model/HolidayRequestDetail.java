@@ -155,7 +155,7 @@ public class HolidayRequestDetail extends AbstractModel implements Comparable<Ho
 		int result = 1;
 		result = prime * result + (am ? 1231 : 1237);
 		result = prime * result + ((day == null) ? 0 : day.hashCode());
-		result = (int) (prime * result + id);
+		result = prime * result + (int) (id ^ (id >>> 32));
 		result = prime * result + (pm ? 1231 : 1237);
 		return result;
 	}

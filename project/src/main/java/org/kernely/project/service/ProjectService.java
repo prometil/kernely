@@ -27,7 +27,7 @@ import com.google.inject.persist.Transactional;
  */
 @Singleton
 public class ProjectService extends AbstractService {
-	
+
 	@Inject
 	private PermissionService permissionService;
 
@@ -58,9 +58,10 @@ public class ProjectService extends AbstractService {
 		Collections.sort(dtos);
 		return dtos;
 	}
-	
+
 	/**
-	 * Gets the lists of all projects associated to the user. The user is associated when he has right of contribution and/or management on the project.
+	 * Gets the lists of all projects associated to the user. The user is associated when he has right of contribution and/or management on the
+	 * project.
 	 * 
 	 * @return the list of all projects associated to the user. If no project is found, return an empty list.
 	 */
@@ -70,14 +71,14 @@ public class ProjectService extends AbstractService {
 		List<ProjectDTO> usersProjects = new ArrayList<ProjectDTO>();
 		// For each project, check if the user is contributor on the project.
 		for (ProjectDTO project : allProjects) {
-			if (permissionService.userHasPermission(userId, false, Project.RIGHT_CONTRIBUTOR, Project.PROJECT_RESOURCE, project.id)){
+			if (permissionService.userHasPermission(userId, false, Project.RIGHT_CONTRIBUTOR, Project.PROJECT_RESOURCE, project.id)) {
 				usersProjects.add(project);
 			}
 		}
 		// For each project, check if the user is manager on the project, onlly if the
 		for (ProjectDTO project : allProjects) {
 			if (permissionService.userHasPermission(userId, false, Project.RIGHT_PROJECTMANAGER, Project.PROJECT_RESOURCE, project.id)
-					&& ! usersProjects.contains(project)){
+					&& !usersProjects.contains(project)) {
 				usersProjects.add(project);
 			}
 		}
@@ -96,7 +97,8 @@ public class ProjectService extends AbstractService {
 		Query query = em.get().createQuery("Select e FROM Project e WHERE name=:name");
 		query.setParameter("name", name);
 		Project proj = (Project) query.getSingleResult();
-		ProjectDTO dto = new ProjectDTO(proj.getName(), proj.getId(), proj.getIcon(), new ArrayList(proj.getUsers()), new OrganizationDTO(proj.getOrganization()));
+		ProjectDTO dto = new ProjectDTO(proj.getName(), proj.getId(), proj.getIcon(), new ArrayList(proj.getUsers()), new OrganizationDTO(proj
+				.getOrganization()));
 		return dto;
 	}
 
@@ -140,8 +142,7 @@ public class ProjectService extends AbstractService {
 	 * Update an existing project in database
 	 * 
 	 * @param request
-	 *            The request, containing project name and id of the needed
-	 *            project
+	 *            The request, containing project name and id of the needed project
 	 */
 	@SuppressWarnings("unchecked")
 	@Transactional
@@ -220,9 +221,6 @@ public class ProjectService extends AbstractService {
 	 */
 	public Long getCurrentNbProjects() {
 		List<ProjectDTO> projDTO = this.getAllProjects();
-		if (projDTO == null) {
-			return Long.valueOf(0);
-		}
 		if (!projDTO.isEmpty()) {
 			Query query = em.get().createQuery("SELECT count(p) FROM Project p");
 			return ((Long) query.getSingleResult());
@@ -243,18 +241,18 @@ public class ProjectService extends AbstractService {
 		User current = this.getAuthenticatedUserModel();
 		return permissionService.userHasPermission((int) current.getId(), true, right, Project.PROJECT_RESOURCE, id);
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	@Transactional
-	public List<ProjectDTO> getProjectsLinkedToOrganization(long organizationId){
+	public List<ProjectDTO> getProjectsLinkedToOrganization(long organizationId) {
 		Query request = em.get().createQuery("SELECT p FROM Project p WHERE organization = :organization");
 		request.setParameter("organization", em.get().find(Organization.class, organizationId));
-		List<Project> projects = (List<Project>)request.getResultList();
+		List<Project> projects = (List<Project>) request.getResultList();
 		List<ProjectDTO> projectsDTO = new ArrayList<ProjectDTO>();
-		for(Project p : projects){
+		for (Project p : projects) {
 			projectsDTO.add(new ProjectDTO(p));
 		}
 		return projectsDTO;
 	}
-	
+
 }
