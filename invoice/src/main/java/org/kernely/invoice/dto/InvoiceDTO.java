@@ -61,6 +61,11 @@ public class InvoiceDTO {
 	public String object;
 	
 	/**
+	 * Comment associated to this invoice
+	 */
+	public String comment;
+	
+	/**
 	 * Status of this invoice
 	 */
 	public int status;
@@ -132,6 +137,7 @@ public class InvoiceDTO {
 		this.organizationZip = invoice.getOrganizationZip();
 		this.organizationCity = invoice.getOrganizationCity();
 		this.projectName = invoice.getProject().getName();
+		this.comment = invoice.getComment();
 	}
 	
 }

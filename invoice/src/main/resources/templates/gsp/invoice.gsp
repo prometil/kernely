@@ -54,5 +54,8 @@
 		<br/>
 		<br/>
 		<%= i18n.t("invoice-total") %> : ${invoice.amount}
+		<br/>
+		<%= i18n.t("invoice-comment") %>
+		<textarea id="invoice-comment" readonly="readonly">${invoice.comment}</textarea>
 	</div>
 </div>

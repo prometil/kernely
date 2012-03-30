@@ -94,6 +94,31 @@
 	width:300px;
 }
 
+.unpaid{
+	color:red;
+}
+
+.paid{
+	color:green;
+}
+
+.unpublished{
+	color:grey;
+}
+
+.pending{
+	color:#000000;
+}
+
+#errors_message{
+	color: red;
+}
+
+#invoice-comment{
+	width:100%;
+	height:50px;
+}
+
 /* Common */
 #mask{
 	position:absolute;

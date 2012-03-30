@@ -42,6 +42,15 @@ public class InvoiceService extends AbstractService{
 		if (request == null) {
 			throw new IllegalArgumentException("Request cannot be null ");
 		}
+		if (request.datePublication.equals("")) {
+			throw new IllegalArgumentException("Publication date must be defined ");
+		}
+		if (request.dateTerm.equals("")) {
+			throw new IllegalArgumentException("Term date must be defined ");
+		}
+		if (request.id == 0 && request.projectId == 0) {
+			throw new IllegalArgumentException("This invoice has to be associated to a project");
+		}
 		
 		Invoice invoice;
 		
@@ -54,6 +63,7 @@ public class InvoiceService extends AbstractService{
 		
 		invoice.setCode(request.code);
 		invoice.setObject(request.object);
+		invoice.setComment(request.comment);
 		
 		invoice.setStatus(Invoice.INVOICE_UNDEFINED);
 		

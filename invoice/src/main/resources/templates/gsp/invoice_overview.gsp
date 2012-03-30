@@ -6,8 +6,22 @@
 
 <script type="text/html" id="confirm-remove-invoice-template"><%= i18n.t("invoice_remove_confirm") %></script>
 
+<script type="text/html" id="invoice-status-2">
+	<%= i18n.t("invoice-unpaid") %>
+</script>
+<script type="text/html" id="invoice-status-1">
+	<%= i18n.t("invoice-paid") %>
+</script>
+<script type="text/html" id="invoice-status-3">
+	<%= i18n.t("invoice-undefined") %>
+</script>
+<script type="text/html" id="invoice-status-0">
+	<%= i18n.t("invoice-pending") %>
+</script>
+
+
 <script type="text/html" id="invoice-line-template">
-	<td>{{status}}</td>
+	<td><span class="{{statusStyle}}">{{status}}</span></td>
 	<td>{{number}}</td>
 	<td>{{client}}</td>
 	<td>{{project}}</td>

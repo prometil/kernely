@@ -147,9 +147,15 @@ public class InvoiceController extends AbstractController{
 	@Path("/create")
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Produces({MediaType.APPLICATION_JSON})
-	public InvoiceDTO createInvoice(InvoiceCreationRequestDTO request){
+	public String createInvoice(InvoiceCreationRequestDTO request){
 		if(userService.currentUserHasRole(Role.ROLE_PROJECTMANAGER) || userService.currentUserHasRole(Role.ROLE_BOOKKEEPER)){
-			return invoiceService.createOrUpdateInvoice(request);
+			try{
+				invoiceService.createOrUpdateInvoice(request);
+				return "{\"result\":\"Ok\"}";
+			}
+			catch(IllegalArgumentException iae){
+				return "{\"result\":\""+iae.getMessage()+"\"}";
+			}
 		}
 		return null;
 	}
@@ -270,6 +276,7 @@ public class InvoiceController extends AbstractController{
 		invoiceRequest.dateTerm = formParams.get("invoice-term").get(0);
 		invoiceRequest.object = formParams.get("invoice-object").get(0);
 		invoiceRequest.code = formParams.get("invoice-code").get(0);
+		invoiceRequest.comment = formParams.get("invoice-comment").get(0);
 		invoiceService.createOrUpdateInvoice(invoiceRequest);
 		UriBuilder uriBuilder = UriBuilder.fromPath("/invoice/view/" + invoiceId);
 		// Status 303 allows to redirect a request from POST to GET

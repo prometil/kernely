@@ -35,6 +35,7 @@ public class Migration01 extends Migration {
 		invoice.column("date_publication", DataBaseConstants.DATE);
 		invoice.column("date_term", DataBaseConstants.DATE);
 		invoice.column("object", DataBaseConstants.VARCHAR_100);
+		invoice.column("comment", DataBaseConstants.TEXT);
 		invoice.column("status", DataBaseConstants.INT);
 		invoice.column("organization_name", DataBaseConstants.VARCHAR_50);
 		invoice.column("organization_address", DataBaseConstants.VARCHAR_300);
