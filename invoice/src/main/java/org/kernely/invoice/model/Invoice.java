@@ -38,6 +38,7 @@ public class Invoice extends AbstractModel {
 	
 	private String object;
 	private int status;
+	private String comment;
 	
 	@Column(name="organization_name")
 	private String organizationName;
@@ -307,6 +308,20 @@ public class Invoice extends AbstractModel {
 			return false;
 		}
 		return true;
+	}
+
+	/**
+	 * @return the comment
+	 */
+	public String getComment() {
+		return comment;
+	}
+
+	/**
+	 * @param comment the comment to set
+	 */
+	public void setComment(String comment) {
+		this.comment = comment;
 	}
 	
 	

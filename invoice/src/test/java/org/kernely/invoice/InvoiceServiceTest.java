@@ -97,6 +97,43 @@ public class InvoiceServiceTest extends AbstractServiceTest{
 	public void createInvoiceWithNullRequestTest(){
 		invoiceService.createOrUpdateInvoice(null);
 	}
+	
+	@Test(expected=IllegalArgumentException.class)
+	public void createInvoiceWithUndefinedProjectTest(){
+		InvoiceCreationRequestDTO request = new InvoiceCreationRequestDTO();
+		request.id = 0;
+		request.datePublication = DATE_PUBLICATION_STRING;
+		request.dateTerm = DATE_TERM_STRING;
+		request.object= OBJECT1;
+		
+		invoiceService.createOrUpdateInvoice(request);
+	}
+	
+	@Test(expected=IllegalArgumentException.class)
+	public void createInvoiceWithUndefinedPublicationDateTest(){
+		createOrganization1ForTest();
+		ProjectDTO project1 = createProject1ForTest();
+		InvoiceCreationRequestDTO request = new InvoiceCreationRequestDTO();
+		request.id = 0;
+		request.dateTerm = DATE_TERM_STRING;
+		request.projectId = project1.id;
+		request.object= OBJECT1;
+		
+		invoiceService.createOrUpdateInvoice(request);
+	}
+	
+	@Test(expected=IllegalArgumentException.class)
+	public void createInvoiceWithUndefinedTermDateTest(){
+		createOrganization1ForTest();
+		ProjectDTO project1 = createProject1ForTest();
+		InvoiceCreationRequestDTO request = new InvoiceCreationRequestDTO();
+		request.id = 0;
+		request.datePublication = DATE_PUBLICATION_STRING;
+		request.projectId = project1.id;
+		request.object= OBJECT1;
+		
+		invoiceService.createOrUpdateInvoice(request);
+	}
 			
 	@Test
 	public void createInvoiceTest(){

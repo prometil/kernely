@@ -175,7 +175,22 @@ AppInvoiceMain = (function($){
 				
 		render: function(){
 			var template = $("#invoice-line-template").html();
-			var view = {status : this.status, number : this.number, client : this.client, project : this.project, amount : this.amount, invoiceId: this.id};
+			var templateStatus = $("#invoice-status-" + this.status).html();
+			var statusStyle;
+
+			if(this.status == 0){
+				statusStyle = "pending";
+			}
+			else if(this.status == 1){
+				statusStyle = "paid";
+			}
+			else if(this.status == 2){
+				statusStyle = "unpaid";
+			}
+			else if(this.status == 3){
+				statusStyle = "unpublished";
+			}
+			var view = {status : templateStatus, statusStyle: statusStyle, number : this.number, client : this.client, project : this.project, amount : this.amount, invoiceId: this.id};
 			var html = Mustache.to_html(template, view);
 			$(this.el).html(html);
 			return this;
@@ -273,8 +288,17 @@ AppInvoiceMain = (function($){
 				contentType: "application/json; charset=utf-8",
 				processData: false,
 				success: function(data){
-					parent.closemodal();
-					tableView.render();
+				console.log(data);
+					if(data.result=="Ok"){
+						parent.closemodal();
+						tableView.render();
+					}
+					else{
+						console.log("coucou");
+						$(parent.el).find("#errors_message").text(data.result);
+						$(parent.el).find("#errors_message").stop(true,true).fadeIn(1000);
+						$(parent.el).find("#errors_message").stop(true,true).fadeOut(3000);
+					}
 				}
 			});
 		},

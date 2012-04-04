@@ -20,11 +20,11 @@
 	</div>
 	<!-- General informations -->
 	<div id="invoice-general-informations">
-		<input type="text" class="general-informations-fields" name="invoice-code" value="${invoice.code}"/><br/>
-		<input type="text" class="general-informations-fields" id="invoice-publication" name="invoice-sending" value="${invoice.datePublicationString}"/><br/>
-		<input type="text" class="general-informations-fields" id="invoice-term" name="invoice-term" value="${invoice.dateTermString}"/>
+		<%= i18n.t("invoice-code") %> : <input type="text" class="general-informations-fields" name="invoice-code" value="${invoice.code}"/><br/>
+		<%= i18n.t("invoice-publication") %> : <input type="text" class="general-informations-fields" id="invoice-publication" name="invoice-sending" value="${invoice.datePublicationString}"/><br/>
+		<%= i18n.t("invoice-term") %> : <input type="text" class="general-informations-fields" id="invoice-term" name="invoice-term" value="${invoice.dateTermString}"/>
 		<input type="text" class="general-informations-fields" name="invoice-devise" value="&euro;"/><br/>
-		<input type="text" class="general-informations-fields object-field" name="invoice-object" value="${invoice.object}"/>
+		<%= i18n.t("invoice-object") %> : <input type="text" class="general-informations-fields object-field" name="invoice-object" value="${invoice.object}"/>
 	</div>
 	<!-- Invoice details -->
 	<br/>
@@ -46,6 +46,10 @@
 			</tbody>
 		</table>
 	</div>
+	
+	<%= i18n.t("invoice-comment") %><br/>
+	<textarea id="invoice-comment" name="invoice-comment">${invoice.comment}</textarea>
+	
 	<!-- Footer button bar -->
 	<div id="invoice-button-bar">
 		<input type="button" id="export-invoice" value="<%= i18n.t("export") %>"/>
