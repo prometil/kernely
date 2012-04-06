@@ -536,7 +536,7 @@ AppHolidayManagerRequest = (function($){
 				
 				// Adds all the mornings for the week
 				while(cptMorningList < 5){
-					lineMorning.append($(new HolidayRequestDayView(headerList[cptHeaderList + (nPath * 5)], morningList[cptMorningList + (nPath * 5)], false, true, dateTake, parent.listDays).render().el));
+					lineMorning.append($(new HolidayRequestDayView(headerList[cptHeaderList + (nPath * 5)], morningList[cptMorningList + (nPath * 5)], false, true, false, dateTake, parent.listDays).render().el));
 					cptMorningList ++;
 					cptHeaderList++;
 				}
@@ -551,7 +551,7 @@ AppHolidayManagerRequest = (function($){
 				
 				// Adds all the afternoons for the week
 				while(cptAfternoonList < 5){
-					lineAfternoon.append($(new HolidayRequestDayView(headerList[cptHeaderList + (nPath * 5)], afternoonList[cptAfternoonList + (nPath * 5)], false, false, dateTake, parent.listDays).render().el));
+					lineAfternoon.append($(new HolidayRequestDayView(headerList[cptHeaderList + (nPath * 5)], afternoonList[cptAfternoonList + (nPath * 5)], false, false, true, dateTake, parent.listDays).render().el));
 					cptAfternoonList ++;
 					cptHeaderList ++;
 				}
@@ -585,27 +585,31 @@ AppHolidayManagerRequest = (function($){
 		isHeader: false,
 		// We just specify if morning, if this is false, and header too ,this is afternoon
 		isMorning: false,
+		isAfternoon: false,
 		isColored : false,
 		
 
 		events:{
 		},
 
-		initialize: function(day, available, header, morning, take, details){
+		initialize: function(day, available, header, morning, afternoon, take, details){
 			this.day = day;
 			this.details = details;
 			this.available = available;
 			this.isHeader = header;
 			this.isMorning = morning;
+			this.isAfternoon = afternoon;
 			for (xDate in take){
 				if (this.details.holidayDetailDTO.length > 1){
-					if (take[xDate]==this.day && this.isMorning.toString() == this.details.holidayDetailDTO[xDate].am){
+					if (take[xDate]==this.day && this.isMorning.toString() == this.details.holidayDetailDTO[xDate].am
+						|| take[xDate]==this.day && this.isAfternoon.toString() == this.details.holidayDetailDTO[xDate].pm){
 						this.color=details.holidayDetailDTO[xDate].color;
 						this.isColored = true ;
 					}
 				}
 				else{
-					if (take[xDate]==this.day && this.isMorning.toString() == this.details.holidayDetailDTO.am){
+					if (take[xDate]==this.day && this.isMorning.toString() == this.details.holidayDetailDTO.am
+						|| take[xDate]==this.day && this.isAfternoon.toString() == this.details.holidayDetailDTO.pm){
 						this.color=details.holidayDetailDTO.color;
 						this.isColored = true ;
 					}
@@ -627,9 +631,9 @@ AppHolidayManagerRequest = (function($){
 							$(this.el).css('background-color', this.color);
 						}
 					}
-					else{
+					if(this.isAfternoon){
 						$(this.el).addClass("pm-part");
-						if (this.isColored == true && this.isHeader == false && this.isMorning == false){
+						if (this.isColored == true && this.isHeader == false && this.isAfternoon == true){
 							$(this.el).css('background-color', this.color);
 						}
 					}

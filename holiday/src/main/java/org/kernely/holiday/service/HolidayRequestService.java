@@ -236,12 +236,8 @@ public class HolidayRequestService extends AbstractService {
 	/**
 	 * Retrieve all request done by the specified user
 	 * 
-<<<<<<< HEAD
 	 * @return A list of DTO corresponding to the request done by the current
 	 *         user
-=======
-	 * @return A list of DTO corresponding to the request done by the current user
->>>>>>> 3c4745c49ace39b57220d0d8dff47fb03f23b41a
 	 */
 	@SuppressWarnings("unchecked")
 	@Transactional
