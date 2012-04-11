@@ -28,6 +28,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
 import org.apache.shiro.SecurityUtils;
@@ -434,7 +435,7 @@ public class UserService extends AbstractService {
 	 * Retrieve the list of RoleDTO from an userdetails id
 	 * 
 	 * @param id
-	 *            of userDetails
+	 *            of <u>userDetails</u>
 	 * @return list of RoleDTO
 	 */
 	@Transactional
@@ -453,6 +454,50 @@ public class UserService extends AbstractService {
 			dtos.add(new RoleDTO(role.getId(), role.getName()));
 		}
 		return dtos;
+	}
+	
+	/**
+	 * Adds a role with the given name to the user with the given id
+	 * @param userId Id of the concerned user
+	 * @param role Name of the concerned role
+	 */
+	@Transactional
+	public void addRoleToUser(long userId, String role){
+		User user = em.get().find(User.class, userId);
+		Query roleQuery = em.get().createQuery("SELECT r FROM Role r WHERE name = :roleName");
+		roleQuery.setParameter("roleName", role);
+		try{
+			Role r = (Role)roleQuery.getSingleResult();
+			Set<Role> roles = user.getRoles();
+			roles.add(r);
+			user.setRoles(roles);
+			em.get().merge(user);
+		}
+		catch(NoResultException nre){
+			log.debug("There is no role existing with the name {} !", role);
+		}
+	}
+	
+	/**
+	 * Removes the role with the given name to the user with the given id
+	 * @param userId Id of the concerned user
+	 * @param role Name of the concerned role
+	 */
+	@Transactional
+	public void removeRoleToUser(long userId, String role){
+		User user = em.get().find(User.class, userId);
+		Query roleQuery = em.get().createQuery("SELECT r FROM Role r WHERE name = :roleName");
+		roleQuery.setParameter("roleName", role);
+		try{
+			Role r = (Role)roleQuery.getSingleResult();
+			Set<Role> roles = user.getRoles();
+			roles.remove(r);
+			user.setRoles(roles);
+			em.get().merge(user);
+		}
+		catch(NoResultException nre){
+			log.debug("There is no role existing with the name {} !", role);
+		}
 	}
 
 	/**

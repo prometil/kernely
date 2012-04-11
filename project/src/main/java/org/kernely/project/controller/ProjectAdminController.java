@@ -21,6 +21,7 @@ import org.apache.commons.io.FileUtils;
 import org.kernely.core.controller.AbstractController;
 import org.kernely.core.dto.GroupDTO;
 import org.kernely.core.dto.UserDTO;
+import org.kernely.core.model.Role;
 import org.kernely.core.service.user.GroupService;
 import org.kernely.core.service.user.PermissionService;
 import org.kernely.core.service.user.UserService;
@@ -320,7 +321,9 @@ public class ProjectAdminController extends AbstractController {
 					if (!right.permission.equals("nothing")) {
 						// Add the requested permission
 						permissionService.grantPermission(right.id, right.permission, Project.PROJECT_RESOURCE, request.projectid);
-						
+						if(right.permission.equals("project_manager")){
+							userService.addRoleToUser(right.id, Role.ROLE_PROJECTMANAGER);
+						}
 					}
 				}
 			}

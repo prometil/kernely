@@ -259,13 +259,20 @@ public class ProjectService extends AbstractService {
 	
 	/**
 	 * Gets all the project where the current user is associated as a Project Manager.
+	 * If this function is called with 0 as parameter, returns all the projects where the user is PM
 	 * @return A list of ProjectDTO representing all the linked projects
 	 */
 	@SuppressWarnings("unchecked")
 	@Transactional
 	public List<ProjectDTO> getProjectsForProjectManagerLinkedToOrganization(long organizationId){
-		Query request = em.get().createQuery("SELECT p FROM Project p WHERE organization = :organization");
-		request.setParameter("organization", em.get().find(Organization.class, organizationId));
+		Query request;
+		if(organizationId != 0){
+			request = em.get().createQuery("SELECT p FROM Project p WHERE organization = :organization");
+			request.setParameter("organization", em.get().find(Organization.class, organizationId));
+		}
+		else{
+			request = em.get().createQuery("SELECT p FROM Project p");
+		}
 		List<Project> projects = (List<Project>)request.getResultList();
 		List<ProjectDTO> usersProjects = new ArrayList<ProjectDTO>();
 		for (Project project : projects) {

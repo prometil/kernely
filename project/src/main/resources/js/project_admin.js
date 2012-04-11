@@ -237,11 +237,11 @@ AppProjectAdmin = (function($){
 							$.each(data.organizationDTO, function(index, value){
 								option = option + '<option value="' + this.name + '">'+ this.name +'</option>' ;
 							});
-							$("#combo").append('<select name="organization-choice" id="combobox">' + option + '</select>');
 						}
 						else{
 							option = option + '<option value="' + data.organizationDTO.name + '">'+ data.organizationDTO.name +'</option>' ;
 						}
+						$("#combo").append('<select name="organization-choice" id="combobox">' + option + '</select>');
 					}
 				}
 			});
@@ -272,7 +272,6 @@ AppProjectAdmin = (function($){
 						
 						var successHtml = $("#project-created-updated-template").html();
 						tableView.reload();
-						console.log(successHtml);
 						$("#projects_notifications").text(successHtml);
 						$("#projects_notifications").fadeIn(1000);
 						$("#projects_notifications").fadeOut(3000);
@@ -353,7 +352,6 @@ AppProjectAdmin = (function($){
 			var users = "";
 			var parent=this;
 			var json = '{"id":"'+this.vid+'", "name":"'+$('input[name*="name"]').val() + '", "icon":"'+this.vicon + '", "organization":"'+$('#combobox').val() +'"}';
-			console.log(json);
 			$.ajax({
 				url:"/admin/projects/create",
 				data: json,
@@ -382,9 +380,7 @@ AppProjectAdmin = (function($){
 						else{
 							right = '"rights":{}';
 						}
-						console.log(parent.vid);
 						var json2 = '{"projectid":"'+parent.vid+'",'+ right +'}';
-						console.log(json2);
 						$.ajax({
 							url:"/admin/projects/updaterights",
 							data: json2,
@@ -572,8 +568,6 @@ AppProjectAdmin = (function($){
 			    			parent.vclient=0;
 			    			parent.vprojectmanager=0;
 			    		});
-		    			console.log(parent.vtable);
-		    			console.log(parent.vtableid);
 					}
 					$.ajax({
 						type: "GET",
