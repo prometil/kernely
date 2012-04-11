@@ -24,6 +24,10 @@ import org.kernely.core.model.User;
 public class Project extends AbstractModel {
 
 	private String name;
+	
+	private String description;
+	
+	private String status;
 
 	private String icon;
 
@@ -65,6 +69,8 @@ public class Project extends AbstractModel {
 		this.id = 0;
 		this.name = "";
 		this.icon = "";
+		this.description = "";
+		this.status ="";
 		this.users = new HashSet<User>();
 	}
 
@@ -128,4 +134,33 @@ public class Project extends AbstractModel {
 		this.organization = organization;
 	}
 
+	/**
+	 * @return the description
+	 */
+	public String getDescription() {
+		return description;
+	}
+
+	/**
+	 * @param description the description to set
+	 */
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	/**
+	 * @return the status
+	 */
+	public String getStatus() {
+		return status;
+	}
+
+	/**
+	 * @param status the status to set
+	 */
+	public void setStatus(String status) {
+		this.status = status;
+	}
+
+	
 }

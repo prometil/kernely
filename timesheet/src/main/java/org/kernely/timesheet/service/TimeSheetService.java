@@ -75,6 +75,7 @@ public class TimeSheetService extends AbstractService {
 	 */
 	@Transactional
 	public TimeSheetDTO createTimeSheet(TimeSheetCreationRequestDTO request) {
+		log.debug("Create timesheet from {} to {}",request.begin,request.end);
 		if (request == null) {
 			throw new IllegalArgumentException("Request cannot be null ");
 		}
@@ -180,9 +181,9 @@ public class TimeSheetService extends AbstractService {
 				creationRequest.end = lastDay;
 				creationRequest.userId = user.getId();
 
+				log.debug("There is no timesheet for period {} to {}, creation of the timesheet.",creationRequest.begin,creationRequest.end);
 				return this.createTimeSheet(creationRequest);
 			}
-			log.debug("There is no timesheet for this period of time !");
 			return null;
 		}
 	}
@@ -435,6 +436,7 @@ public class TimeSheetService extends AbstractService {
 		for (int i = 0 ; i < interval ; i++){
 			calendars.add(this.getTimeSheetCalendar(firstDayOfFirstWeek.plusWeeks(i).getWeekOfWeekyear(), firstDayOfFirstWeek.plusWeeks(i).getYear(), userId));
 		}
+
 		return new TimeSheetMonthDTO(calendars, month, year, checkMonthTimeSheetValidation(month, year, userId));
 	}
 

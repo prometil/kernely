@@ -36,17 +36,20 @@ public class Migration01 extends Migration {
 		organization.column("address", DataBaseConstants.VARCHAR_300);
 		organization.column("zip", DataBaseConstants.VARCHAR_5);
 		organization.column("city", DataBaseConstants.VARCHAR_50);
-		organization.column("phone", DataBaseConstants.VARCHAR_10);
-		organization.column("fax", DataBaseConstants.VARCHAR_10);
+		organization.column("phone", DataBaseConstants.VARCHAR_20);
+		organization.column("fax", DataBaseConstants.VARCHAR_20);
 		
 		commands.add(organization);
 		
 		//the table kernely_project
 		CreateTable project = CreateTable.name("kernely_project");
 		project.column(DataBaseConstants.ID_COLUMN, DataBaseConstants.LONG_PK);
-		project.column("name", DataBaseConstants.VARCHAR_50);
+		project.column("name", DataBaseConstants.VARCHAR_100);
+		project.column("status", DataBaseConstants.VARCHAR_20);
+		project.column("description", DataBaseConstants.TEXT);
 		project.column("icon", DataBaseConstants.VARCHAR_100);
 		project.column("organization_id", DataBaseConstants.LONG_NOT_NULL);
+		project.column("inter_organization_id", DataBaseConstants.LONG_NOT_NULL);
 		RawSql projectForeignKey= new RawSql("ALTER TABLE kernely_project ADD CONSTRAINT fk_organization_id FOREIGN KEY (organization_id) REFERENCES kernely_organization (id)");
 		
 		commands.add(project);

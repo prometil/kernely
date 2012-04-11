@@ -27,6 +27,8 @@ public class Invoice extends AbstractModel {
 	
 	private String code;
 	
+	private String currency;
+	
 	@Column(name="date_creation")
 	private Date dateCreation;
 	
@@ -219,6 +221,7 @@ public class Invoice extends AbstractModel {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((code == null) ? 0 : code.hashCode());
+		result = prime * result + ((currency == null) ? 0 : currency.hashCode());
 		result = prime * result + ((dateCreation == null) ? 0 : dateCreation.hashCode());
 		result = prime * result + ((datePublication == null) ? 0 : datePublication.hashCode());
 		result = prime * result + ((dateTerm == null) ? 0 : dateTerm.hashCode());
@@ -323,6 +326,18 @@ public class Invoice extends AbstractModel {
 	public void setComment(String comment) {
 		this.comment = comment;
 	}
-	
-	
+
+	/**
+	 * @return the currency
+	 */
+	public String getCurrency() {
+		return currency;
+	}
+
+	/**
+	 * @param currency the currency to set
+	 */
+	public void setCurrency(String currency) {
+		this.currency = currency;
+	}
 }

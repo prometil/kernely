@@ -19,6 +19,9 @@ public class InvoiceLine extends AbstractModel {
 	private String designation;
 	private float quantity;
 	
+	@Column(name="VAT")
+	private float vat;
+	
 	@Column(name="unit_price")
 	private float unitPrice;
 	
@@ -80,6 +83,20 @@ public class InvoiceLine extends AbstractModel {
 	 */
 	public void setInvoice(Invoice invoice) {
 		this.invoice = invoice;
+	}
+
+	/**
+	 * @return the vat
+	 */
+	public float getVat() {
+		return vat;
+	}
+
+	/**
+	 * @param vat the vat to set
+	 */
+	public void setVat(float vat) {
+		this.vat = vat;
 	}
 	
 	

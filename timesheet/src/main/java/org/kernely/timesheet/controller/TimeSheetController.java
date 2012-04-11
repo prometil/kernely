@@ -66,8 +66,8 @@ public class TimeSheetController extends AbstractController {
 			year = DateTime.now().getYear();
 		}
 		
-		TimeSheetCalendarDTO timeSheetCalendar = timeSheetService.getTimeSheetCalendar(week, year, userService.getAuthenticatedUserDTO().id);
-		return timeSheetCalendar;
+		return timeSheetService.getTimeSheetCalendar(week, year, userService.getAuthenticatedUserDTO().id);
+		
 	}
 	
 	@GET
@@ -76,8 +76,7 @@ public class TimeSheetController extends AbstractController {
 	public TimeSheetDayDTO getDayForTimeSheet(@QueryParam("day") String day) {
 		DateTimeFormatter fmt = DateTimeFormat.forPattern("MM/dd/yy");
 		DateTime d1 = DateTime.parse(day, fmt).toDateMidnight().toDateTime();
-		TimeSheetDayDTO timeSheetDay = timeSheetService.getTimeSheetDayDTO(d1.toDate());
-		return timeSheetDay;
+		return timeSheetService.getTimeSheetDayDTO(d1.toDate());
 	}
 	
 	@GET
@@ -101,8 +100,7 @@ public class TimeSheetController extends AbstractController {
 	@Produces( { MediaType.TEXT_HTML })
 	@Path("/view")
 	public Response getTimeSheetVisualizationPanel() {
-		Response page = ok(templateRenderer.create("/templates/gsp/timesheet_view.gsp").addCss("/css/timesheet_view.css"));
-		return page;
+		return ok(templateRenderer.create("/templates/gsp/timesheet_view.gsp").addCss("/css/timesheet_view.css"));
 	}
 	
 	/**

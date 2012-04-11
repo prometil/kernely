@@ -31,15 +31,16 @@ public class Migration01 extends Migration {
 		CreateTable invoice = CreateTable.name("kernely_invoice");
 		invoice.column(DataBaseConstants.ID_COLUMN, DataBaseConstants.LONG_PK);
 		invoice.column("code", DataBaseConstants.VARCHAR_30);
+		invoice.column("currency", DataBaseConstants.VARCHAR_20);
 		invoice.column("date_creation", DataBaseConstants.DATE);
 		invoice.column("date_publication", DataBaseConstants.DATE);
 		invoice.column("date_term", DataBaseConstants.DATE);
-		invoice.column("object", DataBaseConstants.VARCHAR_100);
+		invoice.column("object", DataBaseConstants.TEXT);
 		invoice.column("comment", DataBaseConstants.TEXT);
 		invoice.column("status", DataBaseConstants.INT);
 		invoice.column("organization_name", DataBaseConstants.VARCHAR_50);
 		invoice.column("organization_address", DataBaseConstants.VARCHAR_300);
-		invoice.column("organization_zip", DataBaseConstants.VARCHAR_5);
+		invoice.column("organization_zip", DataBaseConstants.VARCHAR_50);
 		invoice.column("organization_city", DataBaseConstants.VARCHAR_50);
 		invoice.column("project_id", DataBaseConstants.LONG_NOT_NULL);
 			
@@ -47,9 +48,10 @@ public class Migration01 extends Migration {
 		
 		CreateTable invoiceLine = CreateTable.name("kernely_invoice_line");
 		invoiceLine.column(DataBaseConstants.ID_COLUMN, DataBaseConstants.LONG_PK);
-		invoiceLine.column("designation", DataBaseConstants.VARCHAR_100);
+		invoiceLine.column("designation", DataBaseConstants.TEXT);
 		invoiceLine.column("quantity", DataBaseConstants.FLOAT4);
 		invoiceLine.column("unit_price", DataBaseConstants.FLOAT4);
+		invoiceLine.column("vat", DataBaseConstants.FLOAT4);
 		invoiceLine.column("invoice_id", DataBaseConstants.LONG_NOT_NULL);
 
 		RawSql invoiceLineForeignKey = new RawSql("ALTER TABLE kernely_invoice_line ADD CONSTRAINT fk_invoice FOREIGN KEY (invoice_id) REFERENCES kernely_invoice (id)");
