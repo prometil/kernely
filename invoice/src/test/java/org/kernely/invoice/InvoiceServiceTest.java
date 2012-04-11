@@ -458,4 +458,98 @@ public class InvoiceServiceTest extends AbstractServiceTest{
 		
 		
 	}
+	
+	@Test
+	public void setInvoiceAsPaidTest(){
+		createOrganization1ForTest();
+		ProjectDTO project = createProject1ForTest();
+		InvoiceCreationRequestDTO request = new InvoiceCreationRequestDTO();
+		request.id = 0;
+		request.datePublication = DATE_PUBLICATION_STRING;
+		request.dateTerm = DATE_TERM_STRING;
+		request.projectId = project.id;
+		request.object= OBJECT1;
+		
+		InvoiceDTO invoiceDTO = invoiceService.createOrUpdateInvoice(request);
+		
+		assertEquals(Invoice.INVOICE_UNDEFINED, invoiceDTO.status);
+		
+		// The state won't change because the invoice is not published
+		invoiceDTO = invoiceService.setInvoiceAsPaid(invoiceDTO.id);
+		assertEquals(Invoice.INVOICE_UNDEFINED, invoiceDTO.status);
+		
+		invoiceDTO = invoiceService.setInvoiceAsPublished(invoiceDTO.id);
+		assertEquals(Invoice.INVOICE_PENDING, invoiceDTO.status);
+		
+		invoiceDTO = invoiceService.setInvoiceAsPaid(invoiceDTO.id);
+		assertEquals(Invoice.INVOICE_PAID, invoiceDTO.status);
+	}
+	
+	@Test(expected = IllegalArgumentException.class)
+	public void setInvoiceAsPaidWithWrongInvoiceTest(){
+		
+		invoiceService.setInvoiceAsPaid(0);
+		
+	}
+	
+	@Test
+	public void setInvoiceAsUnpaidTest(){
+		createOrganization1ForTest();
+		ProjectDTO project = createProject1ForTest();
+		InvoiceCreationRequestDTO request = new InvoiceCreationRequestDTO();
+		request.id = 0;
+		request.datePublication = DATE_PUBLICATION_STRING;
+		request.dateTerm = DATE_TERM_STRING;
+		request.projectId = project.id;
+		request.object= OBJECT1;
+		
+		InvoiceDTO invoiceDTO = invoiceService.createOrUpdateInvoice(request);
+		
+		assertEquals(Invoice.INVOICE_UNDEFINED, invoiceDTO.status);
+		
+		// The state won't change because the invoice is not published
+		invoiceDTO = invoiceService.setInvoiceAsPaid(invoiceDTO.id);
+		assertEquals(Invoice.INVOICE_UNDEFINED, invoiceDTO.status);
+		
+		invoiceDTO = invoiceService.setInvoiceAsPublished(invoiceDTO.id);
+		assertEquals(Invoice.INVOICE_PENDING, invoiceDTO.status);
+		
+		invoiceDTO = invoiceService.setInvoiceAsUnpaid(invoiceDTO.id);
+		assertEquals(Invoice.INVOICE_UNPAID, invoiceDTO.status);
+	}
+	
+	@Test(expected = IllegalArgumentException.class)
+	public void setInvoiceAsUnpaidWithWrongInvoiceTest(){
+		
+		invoiceService.setInvoiceAsUnpaid(0);
+		
+	}
+	
+	@Test
+	public void setInvoiceAsPublishedTest(){
+		createOrganization1ForTest();
+		ProjectDTO project = createProject1ForTest();
+		InvoiceCreationRequestDTO request = new InvoiceCreationRequestDTO();
+		request.id = 0;
+		request.datePublication = DATE_PUBLICATION_STRING;
+		request.dateTerm = DATE_TERM_STRING;
+		request.projectId = project.id;
+		request.object= OBJECT1;
+		
+		InvoiceDTO invoiceDTO = invoiceService.createOrUpdateInvoice(request);
+		
+		assertEquals(Invoice.INVOICE_UNDEFINED, invoiceDTO.status);
+		
+		invoiceDTO = invoiceService.setInvoiceAsPublished(invoiceDTO.id);
+		
+		assertEquals(Invoice.INVOICE_PENDING, invoiceDTO.status);
+	}
+	
+	@Test(expected = IllegalArgumentException.class)
+	public void setInvoiceAsPublishedWithWrongInvoiceTest(){
+		
+		invoiceService.setInvoiceAsPublished(0);
+		
+	}
+	
 }

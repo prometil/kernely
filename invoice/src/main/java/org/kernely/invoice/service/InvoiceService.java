@@ -249,11 +249,76 @@ public class InvoiceService extends AbstractService{
 	@Transactional
 	public void deleteInvoice(long invoiceId){
 		Invoice invoice = em.get().find(Invoice.class, invoiceId);
-		em.get().remove(invoice);
+		if(invoice != null){
+			em.get().remove(invoice);
+		}
+		else{
+			throw new IllegalArgumentException("The invoice with the ID " + invoiceId + " doesn't exist ! ");
+		}
 	}
 	
 	/**
-	 * Constructs a list of DTO reprensenting lines of an invoices
+	 * Sets an invoice in the paid status
+	 * @param invoiceId The id of the concerned invoice
+	 * @return The DTO updated with the invoice
+	 */
+	@Transactional
+	public InvoiceDTO setInvoiceAsPaid(long invoiceId){
+		Invoice invoice = em.get().find(Invoice.class, invoiceId);
+		if(invoice != null){
+			if(invoice.getStatus() != Invoice.INVOICE_PAID &&  invoice.getStatus() != Invoice.INVOICE_UNDEFINED){
+				invoice.setStatus(Invoice.INVOICE_PAID);
+				em.get().merge(invoice);
+			}
+			return new InvoiceDTO(invoice);
+		}
+		else{
+			throw new IllegalArgumentException("The invoice with the ID " + invoiceId + " doesn't exist ! ");
+		}
+	}
+	
+	/**
+	 * Sets an invoice in the unpaid status
+	 * @param invoiceId The id of the concerned invoice
+	 * @return The DTO updated with the invoice
+	 */
+	@Transactional
+	public InvoiceDTO setInvoiceAsUnpaid(long invoiceId){
+		Invoice invoice = em.get().find(Invoice.class, invoiceId);
+		if(invoice != null){
+			if(invoice.getStatus() != Invoice.INVOICE_UNPAID &&  invoice.getStatus() != Invoice.INVOICE_UNDEFINED){
+				invoice.setStatus(Invoice.INVOICE_UNPAID);
+				em.get().merge(invoice);
+			}
+			return new InvoiceDTO(invoice);
+		}
+		else{
+			throw new IllegalArgumentException("The invoice with the ID " + invoiceId + " doesn't exist ! ");
+		}
+	}
+
+	/**
+	 * Sets an invoice in the published status
+	 * @param invoiceId The id of the concerned invoice
+	 * @return The DTO updated with the invoice
+	 */
+	@Transactional
+	public InvoiceDTO setInvoiceAsPublished(long invoiceId){
+		Invoice invoice = em.get().find(Invoice.class, invoiceId);
+		if(invoice != null){
+			if(invoice.getStatus() != Invoice.INVOICE_PAID &&  invoice.getStatus() != Invoice.INVOICE_UNPAID && invoice.getStatus() != Invoice.INVOICE_PENDING){
+				invoice.setStatus(Invoice.INVOICE_PENDING);
+				em.get().merge(invoice);
+			}
+			return new InvoiceDTO(invoice);
+		}
+		else{
+			throw new IllegalArgumentException("The invoice with the ID " + invoiceId + " doesn't exist ! ");
+		}
+	}
+	
+	/**
+	 * Constructs a list of DTO representing lines of an invoices
 	 * @param invoiceId The id of the invoice
 	 * @return A list of DTO representing the lines of this invoice
 	 */

@@ -194,6 +194,54 @@ public class InvoiceController extends AbstractController{
 	}
 	
 	/**
+	 * Publish an invoice
+	 * @param invoiceId The id of the invoice to publish
+	 * @return The invoice updated
+	 */
+	@GET
+	@Consumes({MediaType.APPLICATION_JSON})
+	@Path("/publish")
+	@Produces({MediaType.APPLICATION_JSON})
+	public InvoiceDTO publishInvoice(@QueryParam("invoiceId") long invoiceId){
+		if(userService.currentUserHasRole(Role.ROLE_PROJECTMANAGER) || userService.currentUserHasRole(Role.ROLE_BOOKKEEPER)){
+			return invoiceService.setInvoiceAsPublished(invoiceId);
+		}
+		return null;
+	}
+	
+	/**
+	 * Set an invoice as paid
+	 * @param invoiceId The id of the invoice to pay
+	 * @return The invoice updated
+	 */
+	@GET
+	@Consumes({MediaType.APPLICATION_JSON})
+	@Path("/paid")
+	@Produces({MediaType.APPLICATION_JSON})
+	public InvoiceDTO payInvoice(@QueryParam("invoiceId") long invoiceId){
+		if(userService.currentUserHasRole(Role.ROLE_PROJECTMANAGER) || userService.currentUserHasRole(Role.ROLE_BOOKKEEPER)){
+			return invoiceService.setInvoiceAsPaid(invoiceId);
+		}
+		return null;
+	}
+	
+	/**
+	 * Set an invoice as unpaid
+	 * @param invoiceId The id of the invoice to pay
+	 * @return The invoice updated
+	 */
+	@GET
+	@Consumes({MediaType.APPLICATION_JSON})
+	@Path("/unpaid")
+	@Produces({MediaType.APPLICATION_JSON})
+	public InvoiceDTO unpayInvoice(@QueryParam("invoiceId") long invoiceId){
+		if(userService.currentUserHasRole(Role.ROLE_PROJECTMANAGER) || userService.currentUserHasRole(Role.ROLE_BOOKKEEPER)){
+			return invoiceService.setInvoiceAsUnpaid(invoiceId);
+		}
+		return null;
+	}
+	
+	/**
 	 * Loads the html page displaying the needed invoice
 	 * @param invoiceId The id of the invoice to display
 	 * @return An html page
