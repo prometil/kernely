@@ -11,16 +11,21 @@ import javax.persistence.Query;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
+import org.kernely.core.model.Role;
 import org.kernely.core.service.AbstractService;
+import org.kernely.core.service.user.UserService;
 import org.kernely.invoice.dto.InvoiceCreationRequestDTO;
 import org.kernely.invoice.dto.InvoiceDTO;
 import org.kernely.invoice.dto.InvoiceLineCreationRequestDTO;
 import org.kernely.invoice.dto.InvoiceLineDTO;
 import org.kernely.invoice.model.Invoice;
 import org.kernely.invoice.model.InvoiceLine;
+import org.kernely.project.dto.ProjectDTO;
 import org.kernely.project.model.Organization;
 import org.kernely.project.model.Project;
+import org.kernely.project.service.ProjectService;
 
+import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.google.inject.persist.Transactional;
 
@@ -29,6 +34,12 @@ import com.google.inject.persist.Transactional;
  */
 @Singleton
 public class InvoiceService extends AbstractService{
+	
+	@Inject
+	private UserService userService;
+	
+	@Inject
+	private ProjectService projectService;
 	
 	/**
 	 * Creates or updates an invoice from a request containing all needed informations
@@ -173,12 +184,45 @@ public class InvoiceService extends AbstractService{
 	public List<InvoiceDTO> getInvoicesPerOrganizationAndProject(long organizationId, long projectId){
 		Query request;
 		if(organizationId == 0){
-			request = em.get().createQuery("SELECT i FROM Invoice i");
+			if(userService.currentUserHasRole(Role.ROLE_BOOKKEEPER)){
+				request = em.get().createQuery("SELECT i FROM Invoice i");
+			}
+			else{
+				// Here, the user must have the project manager role, so we have to retrieve his project and organizations.
+				List<ProjectDTO> projects = projectService.getProjectsForProjectManagerLinkedToOrganization(0);
+				if(projects != null && !projects.isEmpty()){
+					request = em.get().createQuery("SELECT i FROM Invoice i WHERE project in :project");
+					List<Project> projectsModel = new ArrayList<Project>();
+					for(ProjectDTO p : projects){
+						projectsModel.add(em.get().find(Project.class, p.id));
+					}
+					request.setParameter("project", projectsModel);
+				}
+				else{
+					throw new IllegalArgumentException("This user is not link to any project as Project Manager !");
+				}
+			}
 		}
 		else{
 			if(projectId == 0){
-				request = em.get().createQuery("SELECT i FROM Invoice i WHERE project in :project");
-				request.setParameter("project", em.get().find(Organization.class, organizationId).getProjects());
+				if(userService.currentUserHasRole(Role.ROLE_BOOKKEEPER)){
+					request = em.get().createQuery("SELECT i FROM Invoice i WHERE project in :project");
+					request.setParameter("project", em.get().find(Organization.class, organizationId).getProjects());
+				}
+				else{
+					List<ProjectDTO> projects = projectService.getProjectsForProjectManagerLinkedToOrganization(organizationId);
+					if(projects != null && !projects.isEmpty()){
+						request = em.get().createQuery("SELECT i FROM Invoice i WHERE project in :project");
+						List<Project> projectsModel = new ArrayList<Project>();
+						for(ProjectDTO p : projects){
+							projectsModel.add(em.get().find(Project.class, p.id));
+						}
+						request.setParameter("project", projectsModel);
+					}
+					else{
+						throw new IllegalArgumentException("The organization with id "+ organizationId +" doesn't have any project !");
+					}
+				}
 			}
 			else{
 				// Verify that the given project is really one of the given organization
@@ -249,11 +293,76 @@ public class InvoiceService extends AbstractService{
 	@Transactional
 	public void deleteInvoice(long invoiceId){
 		Invoice invoice = em.get().find(Invoice.class, invoiceId);
-		em.get().remove(invoice);
+		if(invoice != null){
+			em.get().remove(invoice);
+		}
+		else{
+			throw new IllegalArgumentException("The invoice with the ID " + invoiceId + " doesn't exist ! ");
+		}
 	}
 	
 	/**
-	 * Constructs a list of DTO reprensenting lines of an invoices
+	 * Sets an invoice in the paid status
+	 * @param invoiceId The id of the concerned invoice
+	 * @return The DTO updated with the invoice
+	 */
+	@Transactional
+	public InvoiceDTO setInvoiceAsPaid(long invoiceId){
+		Invoice invoice = em.get().find(Invoice.class, invoiceId);
+		if(invoice != null){
+			if(invoice.getStatus() != Invoice.INVOICE_PAID &&  invoice.getStatus() != Invoice.INVOICE_UNDEFINED){
+				invoice.setStatus(Invoice.INVOICE_PAID);
+				em.get().merge(invoice);
+			}
+			return new InvoiceDTO(invoice);
+		}
+		else{
+			throw new IllegalArgumentException("The invoice with the ID " + invoiceId + " doesn't exist ! ");
+		}
+	}
+	
+	/**
+	 * Sets an invoice in the unpaid status
+	 * @param invoiceId The id of the concerned invoice
+	 * @return The DTO updated with the invoice
+	 */
+	@Transactional
+	public InvoiceDTO setInvoiceAsUnpaid(long invoiceId){
+		Invoice invoice = em.get().find(Invoice.class, invoiceId);
+		if(invoice != null){
+			if(invoice.getStatus() != Invoice.INVOICE_UNPAID &&  invoice.getStatus() != Invoice.INVOICE_UNDEFINED){
+				invoice.setStatus(Invoice.INVOICE_UNPAID);
+				em.get().merge(invoice);
+			}
+			return new InvoiceDTO(invoice);
+		}
+		else{
+			throw new IllegalArgumentException("The invoice with the ID " + invoiceId + " doesn't exist ! ");
+		}
+	}
+
+	/**
+	 * Sets an invoice in the published status
+	 * @param invoiceId The id of the concerned invoice
+	 * @return The DTO updated with the invoice
+	 */
+	@Transactional
+	public InvoiceDTO setInvoiceAsPublished(long invoiceId){
+		Invoice invoice = em.get().find(Invoice.class, invoiceId);
+		if(invoice != null){
+			if(invoice.getStatus() != Invoice.INVOICE_PAID &&  invoice.getStatus() != Invoice.INVOICE_UNPAID && invoice.getStatus() != Invoice.INVOICE_PENDING){
+				invoice.setStatus(Invoice.INVOICE_PENDING);
+				em.get().merge(invoice);
+			}
+			return new InvoiceDTO(invoice);
+		}
+		else{
+			throw new IllegalArgumentException("The invoice with the ID " + invoiceId + " doesn't exist ! ");
+		}
+	}
+	
+	/**
+	 * Constructs a list of DTO representing lines of an invoices
 	 * @param invoiceId The id of the invoice
 	 * @return A list of DTO representing the lines of this invoice
 	 */

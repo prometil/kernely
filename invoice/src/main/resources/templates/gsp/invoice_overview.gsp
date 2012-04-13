@@ -27,7 +27,11 @@
 	<td>{{project}}</td>
 	<td></td>
 	<td>{{amount}}</td>
-	<td><a href="/invoice/view/{{invoiceId}}"><img src="/images/edit.png" class="edit-invoice" /></a></td>
+	<td><a href="/invoice/view/{{invoiceId}}"><img src="/images/icons/view.png" class="edit-invoice" /></a></td>
+	<td><a href="/invoice/edit/{{invoiceId}}"><img src="/images/edit.png" class="edit-invoice" /></a></td>
+	<td><input type="button" class="invoice-publish" value="Publish" /></td>
+	<td><input type="button" class="invoice-paid" value="Paid" /></td>
+	<td><input type="button" class="invoice-unpaid" value="Unpaid"/></td>
 	<td><img src="/img/delete.png" class="delete-invoice" /></td>
 </script>
 
@@ -80,6 +84,10 @@
 				<th><%= i18n.t("invoice-project") %></th>
 				<th></th>
 				<th><%= i18n.t("invoice-amount") %></th>
+				<th></th>
+				<th></th>
+				<th></th>
+				<th></th>
 				<th></th>
 				<th></th>
 			</tr>

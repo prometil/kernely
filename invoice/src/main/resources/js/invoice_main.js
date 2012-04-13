@@ -141,7 +141,10 @@ AppInvoiceMain = (function($){
 		amount: null,
 		
 		events:{
-			"click .delete-invoice" : "deleteinvoice"
+			"click .delete-invoice" : "deleteinvoice",
+			"click .invoice-publish" : "publishinvoice",
+			"click .invoice-paid" : "paidinvoice",
+			"click .invoice-unpaid" : "unpaidinvoice"
 		},
 		
 		initialize: function(id, status, number, client, project, amount){
@@ -151,6 +154,45 @@ AppInvoiceMain = (function($){
 			this.client = client;
 			this.project = project;
 			this.amount = amount;
+		},
+		
+		publishinvoice: function(){
+			var parent = this;
+			$.ajax({
+				type: "GET",
+				url:"/invoice/publish",
+				data:{invoiceId : parent.id},
+				success: function(data){
+					parent.status = data.status;
+					parent.render();
+				}
+			});
+		},
+		
+		paidinvoice: function(){
+			var parent = this;
+			$.ajax({
+				type: "GET",
+				url:"/invoice/paid",
+				data:{invoiceId : parent.id},
+				success: function(data){
+					parent.status = data.status;
+					parent.render();
+				}
+			});
+		},
+		
+		unpaidinvoice: function(){
+			var parent = this;
+			$.ajax({
+				type: "GET",
+				url:"/invoice/unpaid",
+				data:{invoiceId : parent.id},
+				success: function(data){
+					parent.status = data.status;
+					parent.render();
+				}
+			});
 		},
 		
 		deleteinvoice: function(){
@@ -193,6 +235,23 @@ AppInvoiceMain = (function($){
 			var view = {status : templateStatus, statusStyle: statusStyle, number : this.number, client : this.client, project : this.project, amount : this.amount, invoiceId: this.id};
 			var html = Mustache.to_html(template, view);
 			$(this.el).html(html);
+			
+			if(this.status == 0){
+				$(this.el).find(".invoice-publish").attr("disabled", "disabled");
+			}
+			else if(this.status == 1){
+				$(this.el).find(".invoice-paid").attr("disabled", "disabled");
+				$(this.el).find(".invoice-publish").attr("disabled", "disabled");
+			}
+			else if(this.status == 2){
+				$(this.el).find(".invoice-publish").attr("disabled", "disabled");
+				$(this.el).find(".invoice-unpaid").attr("disabled", "disabled");
+			}
+			else if(this.status == 3){
+				$(this.el).find(".invoice-paid").attr("disabled", "disabled");
+				$(this.el).find(".invoice-unpaid").attr("disabled", "disabled");
+			}
+			
 			return this;
 		}
 	})
