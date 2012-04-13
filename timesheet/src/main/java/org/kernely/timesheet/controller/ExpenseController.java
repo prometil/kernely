@@ -39,7 +39,6 @@ public class ExpenseController extends AbstractController  {
 	public ExpenseDTO createExpenseLine(ExpenseCreationDTO request) {
 		try{
 			return expenseService.createOrUpdateExpenseLine(request);
-			
 		}
 		catch (IllegalArgumentException iae) {
 			log.debug("An error has occured during expense creation !");

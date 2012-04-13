@@ -10,6 +10,8 @@
 
 <script type="text/html" id="total-template"><%= i18n.t("timesheet_total") %></script>
 
+<script type="text/html" id="expense-line-title-template"><%= i18n.t("expense_line_title") %></script>
+
 <script type="text/html" id="delete-button-template"><input type="button" class="deleteButton" value="<%= i18n.t("delete") %>"/></script>
 
 <script type="text/html" id="detail-template"><span class="editAmount">{{amount}}</span><img class="editButton" src="../images/edit.png"/></script>
@@ -59,7 +61,7 @@
 		<%= i18n.t("expense_amount") %>: <input type="text" name="amount" id="expense-amount"/>
 		<select id="expense-type-select"></select>
 		<input type="button" id="submit-expense" value="<%= i18n.t("create") %>"/><br/>
-		<%= i18n.t("expense_comment") %><br/><textarea id="expense-comment"></textarea>
+		<%= i18n.t("expense_comment") %><br/><textarea disabled="disabled" id="expense-comment"></textarea>
 	</div>
 </fieldset>
 <input type="button" value="<%= i18n.t("ok") %>" class="create_expense"/>

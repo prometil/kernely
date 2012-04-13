@@ -698,6 +698,7 @@ AppTimeSheet = (function($){
 		},
 		
 		render: function(){
+			var title = $("#expense-line-title-template").html();
 			$(this.el).html("<td></td>");
 			parent = this;
 			var i = 0;
@@ -706,7 +707,9 @@ AppTimeSheet = (function($){
 					$(parent.el).append(new TimeSheetExpenseCellView(parent.days[i],0.0).render().el);
 				}
 				else{
-					$(parent.el).append(new TimeSheetExpenseCellView(parent.days[i], parent.totals[i].total).render().el);
+					if (parent.totals[i] != null){
+						$(parent.el).append(new TimeSheetExpenseCellView(parent.days[i], parent.totals[i].total).render().el);
+					}
 				}
 				
 				i++;
@@ -836,11 +839,11 @@ AppTimeSheet = (function($){
 					if(data != null){
 						if(data.expenseDTO.length > 1){
 							$.each(data.expenseDTO, function(){
-								$(parent.el).append(new ExpenseTableLineView(this.id, this.amount, this.typeName, this.typeRatio).render().el);
+								$(parent.el).append(new ExpenseTableLineView(this.id, this.amount, this.typeName, this.typeRatio, this.comment).render().el);
 							});
 						}
 						else{
-							$(parent.el).append(new ExpenseTableLineView(data.expenseDTO.id, data.expenseDTO.amount, data.expenseDTO.typeName, data.expenseDTO.typeRatio).render().el);
+							$(parent.el).append(new ExpenseTableLineView(data.expenseDTO.id, data.expenseDTO.amount, data.expenseDTO.typeName, data.expenseDTO.typeRatio, data.expenseDTO.comment).render().el);
 						}
 					}
 				}				
@@ -858,6 +861,7 @@ AppTimeSheet = (function($){
 		vamount: null,
 		vtypename: null,
 		vtyperatio: null,
+		vcomment: null,
 	
 		events:{
 			"click .editLine" : "edit",
@@ -865,11 +869,12 @@ AppTimeSheet = (function($){
 			"click .update" : "update"
 		},
 	
-		initialize: function(id, amount, typeName, typeRatio){
+		initialize: function(id, amount, typeName, typeRatio, comment){
             this.vid = id;
             this.vamount = amount;
             this.vtypename = typeName;
             this.vtyperatio = typeRatio;
+            this.vcomment = comment;
 		},
 		
 		edit: function(){
@@ -878,23 +883,27 @@ AppTimeSheet = (function($){
 				url:"/expense/type/all",
 				dataType:"json",
 				success: function(data){
+					$('#expense-comment').removeAttr("disabled");
 					var p = $('<div>');
 					var select = $('<select>', {id: 'expense-type-select-update'});
 					select.append($('<option>', { value : 0 })
 				          .text(parent.vtypename));
-					if(data.expenseTypeDTO.length > 1){
-						$.each(data.expenseTypeDTO, function(){
-							select.append($('<option>', { value : this.id })
-							          .text(this.name));
-						});
-					}
-					else{
-						select.append($('<option>', { value : data.expenseTypeDTO.id })
-						          .text(data.expenseTypeDTO.name));
+					if (data != null){
+						if(data.expenseTypeDTO.length > 1){
+							$.each(data.expenseTypeDTO, function(){
+								select.append($('<option>', { value : this.id })
+								          .text(this.name));
+							});
+						}
+						else{
+							select.append($('<option>', { value : data.expenseTypeDTO.id })
+							          .text(data.expenseTypeDTO.name));
+						}
 					}
 					
 					p.append(select);
 					var html = '<td><input type="text" name="amount-update" id="expense-amount-update" value="'+parent.vamount+'"/></td><td>'+ p.html() +'</td><td><span class="update">Edit</span></td><td></td>';
+					$("#expense-comment").val(parent.vcomment);
 			        $(parent.el).html(html);
 				}
 			});	
@@ -905,7 +914,7 @@ AppTimeSheet = (function($){
 			var parent = this;
 			var json = '{"id":"'+ this.vid +'", "amount":"' + $('input[name*="amount-update"]').val() + '",';
 			if($("#expense-type-select-update option:selected").val() == 0){
-				json += '"expenseTypeId" : "0", "typeName":"' + this.vtypename + '", "typeRatio":"'+ this.vtyperatio +'", "timesheetDayId":"' + tableExpenseView.idDay + '"}';
+				json += '"expenseTypeId" : "0", "typeName":"' + this.vtypename + '", "comment":"' + $('#expense-comment').val() +'", "typeRatio":"'+ this.vtyperatio +'", "timesheetDayId":"' + tableExpenseView.idDay + '"}';
 			}
 			else{
 				json += '"expenseTypeId" : "' + $("#expense-type-select-update option:selected").val() + '", "timesheetDayId":"' + tableExpenseView.idDay + '"}';
@@ -927,7 +936,8 @@ AppTimeSheet = (function($){
 					var template = '<td>{{amount}} &euro;</td><td>{{typeName}}</td><td><span class="editLine">Edit</span></td><td><span class="deleteLine">Delete</span></td>';
 		            var view = {amount : parent.vamount, typeName: parent.vtypename};
 		            var html = Mustache.to_html(template, view);
-		            
+		            $("#expense-comment").val("");
+		            $('#expense-comment').attr("disabled","disabled");
 		            $(parent.el).html(html);
 				}
 			});
@@ -983,7 +993,6 @@ AppTimeSheet = (function($){
 				processData: false,
 				success: function(data){
 					timeSheetId = data.associatedTimeSheetId;
-
 					$(tableExpenseView.el).append(new ExpenseTableLineView(data.id, data.amount, data.typeName, data.typeRatio).render().el);
 				}
 			});
@@ -994,15 +1003,17 @@ AppTimeSheet = (function($){
 				url:"/expense/type/all",
 				dataType:"json",
 				success: function(data){
-					if(data.expenseTypeDTO.length > 1){
-						$.each(data.expenseTypeDTO, function(){
-							$("#expense-type-select").append($('<option>', { value : this.id })
-							          .text(this.name));
-						});
-					}
-					else{
-						$("#expense-type-select").append($('<option>', { value : data.expenseTypeDTO.id })
-						          .text(data.expenseTypeDTO.name));
+					if (data !=null){
+						if(data.expenseTypeDTO.length > 1){
+							$.each(data.expenseTypeDTO, function(){
+								$("#expense-type-select").append($('<option>', { value : this.id })
+								          .text(this.name));
+							});
+						}
+						else{
+							$("#expense-type-select").append($('<option>', { value : data.expenseTypeDTO.id })
+							          .text(data.expenseTypeDTO.name));
+						}
 					}
 				}
 			});

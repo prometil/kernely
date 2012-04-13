@@ -11,6 +11,7 @@ import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.kernely.core.model.User;
@@ -26,6 +27,8 @@ import org.kernely.timesheet.dto.TimeSheetDTO;
 import org.kernely.timesheet.dto.TimeSheetDayDTO;
 import org.kernely.timesheet.dto.TimeSheetDetailDTO;
 import org.kernely.timesheet.dto.TimeSheetMonthDTO;
+import org.kernely.timesheet.dto.TotalExpenseDTO;
+import org.kernely.timesheet.model.Expense;
 import org.kernely.timesheet.model.TimeSheet;
 import org.kernely.timesheet.model.TimeSheetDay;
 import org.kernely.timesheet.model.TimeSheetDetailProject;
@@ -147,29 +150,49 @@ public class TimeSheetService extends AbstractService {
 		try {
 			TimeSheet timeSheet = (TimeSheet) query.getSingleResult();
 
+			DateTime firstDayOfWeek = new DateTime(timeSheet.getBeginDate());
+			
 			TimeSheetDTO toReturn = new TimeSheetDTO(timeSheet);
 			// Build rows of the DTO: get detailsProjects for all day of the
 			// week, from 0 (monday) to 6 (sunday)
 			List<TimeSheetColumnDTO> calculatedColumn = new ArrayList<TimeSheetColumnDTO>();
-			Set<TimeSheetDay> days = timeSheet.getDays();
+			List<TimeSheetDay> days = new ArrayList<TimeSheetDay>();
+			days.addAll(timeSheet.getDays());
 			TimeSheetDayDTO dayDTO;
 			List<TimeSheetDetailDTO> detailsDTO;
 			TimeSheetColumnDTO column;
-			int index = 0;
-			for (TimeSheetDay day : days) {
-				dayDTO = new TimeSheetDayDTO(day);
-				detailsDTO = new ArrayList<TimeSheetDetailDTO>();
-				Set<TimeSheetDetailProject> details = day.getDetailsProjects();
-				for (TimeSheetDetailProject detail : details) {
-					TimeSheetDetailDTO detailDTO = new TimeSheetDetailDTO(detail);
-					detailDTO.index = index;
-					detailsDTO.add(detailDTO);
+			int dayIndex = 0;
+			
+			for (int i = 0; i < 7 ; i++){
+				if (dayIndex >= days.size()) {
+					detailsDTO = new ArrayList<TimeSheetDetailDTO>();
+					dayDTO = new TimeSheetDayDTO();
+					column = new TimeSheetColumnDTO(dayDTO, detailsDTO);
+					calculatedColumn.add(column);
+				} else {
+					Date day = new DateTime(days.get(dayIndex).getDay()).withZone(DateTimeZone.UTC).toDateMidnight().toDate();
+					if (day.equals(firstDayOfWeek.plusDays(i).withZone(DateTimeZone.UTC).toDateMidnight().toDate())){
+						dayDTO = new TimeSheetDayDTO(days.get(dayIndex));
+						detailsDTO = new ArrayList<TimeSheetDetailDTO>();
+						Set<TimeSheetDetailProject> details = days.get(dayIndex).getDetailsProjects();
+						
+						for (TimeSheetDetailProject detail : details) {
+							TimeSheetDetailDTO detailDTO = new TimeSheetDetailDTO(detail);
+							detailDTO.index = i;
+							detailsDTO.add(detailDTO);
+						}
+						column = new TimeSheetColumnDTO(dayDTO, detailsDTO);
+						calculatedColumn.add(column);
+						dayIndex++;
+					} else {
+						detailsDTO = new ArrayList<TimeSheetDetailDTO>();
+						dayDTO = new TimeSheetDayDTO();
+						column = new TimeSheetColumnDTO(dayDTO, detailsDTO);
+						calculatedColumn.add(column);
+					}
 				}
-				column = new TimeSheetColumnDTO(dayDTO, detailsDTO);
-				calculatedColumn.add(column);
-				index++;
 			}
-
+			
 			toReturn.columns = calculatedColumn;
 
 			return toReturn;

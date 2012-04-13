@@ -77,8 +77,8 @@ public class Migration01 extends Migration {
 		CreateTable expense = CreateTable.name("kernely_expense");
 		expense.column(DataBaseConstants.ID_COLUMN, DataBaseConstants.LONG_PK);
 		expense.column("amount", DataBaseConstants.FLOAT4);
-		expense.column("comment", DataBaseConstants.VARCHAR_100);
-		expense.column("type_name", DataBaseConstants.VARCHAR_50);
+		expense.column("comment", DataBaseConstants.TEXT);
+		expense.column("type_name", DataBaseConstants.VARCHAR_100);
 		expense.column("type_ratio", DataBaseConstants.FLOAT4);
 		expense.column("timesheet_day_id", DataBaseConstants.LONG);
 		RawSql expenseForeignKey= new RawSql("ALTER TABLE kernely_expense ADD CONSTRAINT fk_timesheet_day_id FOREIGN KEY (timesheet_day_id) REFERENCES kernely_timesheet_day (id)");

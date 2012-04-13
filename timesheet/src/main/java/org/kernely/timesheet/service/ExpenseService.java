@@ -2,11 +2,14 @@ package org.kernely.timesheet.service;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
 import javax.persistence.Query;
 
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 import org.kernely.core.service.AbstractService;
 import org.kernely.timesheet.dto.ExpenseCreationDTO;
 import org.kernely.timesheet.dto.ExpenseDTO;
@@ -201,12 +204,27 @@ public class ExpenseService extends AbstractService {
 		TimeSheet timeSheet = em.get().find(TimeSheet.class, timeSheetId);
 		List<TotalExpenseDTO> totals = new ArrayList<TotalExpenseDTO>(7);
 		float count;
-		for(TimeSheetDay day : timeSheet.getDays()){
-			count = 0.0F;
-			for(Expense expense : day.getExpenses()){
-				count += (expense.getAmount() * expense.getTypeRatio()); 
+		
+		DateTime firstDayOfWeek = new DateTime(timeSheet.getBeginDate());
+		List<TimeSheetDay> days = new ArrayList<TimeSheetDay>();
+		days.addAll(timeSheet.getDays());
+		int dayIndex = 0;
+		for (int i = 0; i < 7 ; i++){
+			if (dayIndex >= days.size()) {
+				totals.add(new TotalExpenseDTO(0F,firstDayOfWeek.plusDays(i).withZone(DateTimeZone.UTC).toDateMidnight().toDate()));
+			} else {
+				Date day = new DateTime(days.get(dayIndex).getDay()).withZone(DateTimeZone.UTC).toDateMidnight().toDate();
+				if (day.equals(firstDayOfWeek.plusDays(i).withZone(DateTimeZone.UTC).toDateMidnight().toDate())){
+					count = 0.0F;
+					for(Expense expense : days.get(dayIndex).getExpenses()){
+						count += (expense.getAmount() * expense.getTypeRatio()); 
+					}
+					totals.add(new TotalExpenseDTO(count, day));
+					dayIndex ++;
+				} else {
+					totals.add(new TotalExpenseDTO(0F,firstDayOfWeek.plusDays(i).withZone(DateTimeZone.UTC).toDateMidnight().toDate()));
+				}
 			}
-			totals.add(new TotalExpenseDTO(count, day.getDay()));
 		}
 		Collections.sort(totals);
 		return totals;
