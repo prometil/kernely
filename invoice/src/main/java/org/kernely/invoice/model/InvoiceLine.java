@@ -2,6 +2,7 @@ package org.kernely.invoice.model;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
@@ -25,7 +26,7 @@ public class InvoiceLine extends AbstractModel {
 	@Column(name="unit_price")
 	private float unitPrice;
 	
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name="invoice_id")
 	private Invoice invoice;
 

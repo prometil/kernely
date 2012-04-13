@@ -2,12 +2,16 @@ package org.kernely.invoice.service;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.Map.Entry;
 
 import javax.persistence.Query;
 
+import org.apache.commons.configuration.AbstractConfiguration;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -18,13 +22,17 @@ import org.kernely.invoice.dto.InvoiceCreationRequestDTO;
 import org.kernely.invoice.dto.InvoiceDTO;
 import org.kernely.invoice.dto.InvoiceLineCreationRequestDTO;
 import org.kernely.invoice.dto.InvoiceLineDTO;
+import org.kernely.invoice.dto.VatDTO;
 import org.kernely.invoice.model.Invoice;
 import org.kernely.invoice.model.InvoiceLine;
 import org.kernely.project.dto.ProjectDTO;
 import org.kernely.project.model.Organization;
 import org.kernely.project.model.Project;
 import org.kernely.project.service.ProjectService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Stopwatch;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.google.inject.persist.Transactional;
@@ -35,17 +43,23 @@ import com.google.inject.persist.Transactional;
 @Singleton
 public class InvoiceService extends AbstractService{
 	
+	private static final Logger log = LoggerFactory.getLogger(InvoiceService.class);
+	
 	@Inject
 	private UserService userService;
 	
 	@Inject
 	private ProjectService projectService;
 	
+	@Inject
+	private AbstractConfiguration configuration;
+
+	
 	/**
 	 * Creates or updates an invoice from a request containing all needed informations
 	 * Creation date is set to the current date and the current hour.
 	 * Create or update mode is defined in function of the value of the request id
-	 * @param request The DTO containing all  informations about the new invoice.
+	 * @param request The DTO containing all  informations about the new invoiceStop.
 	 * @return A DTO representing the new invoice created
 	 */
 	@Transactional
@@ -76,7 +90,7 @@ public class InvoiceService extends AbstractService{
 		invoice.setObject(request.object);
 		invoice.setComment(request.comment);
 		
-		invoice.setStatus(Invoice.INVOICE_UNDEFINED);
+		
 		
 		DateTimeFormatter fmt = DateTimeFormat.forPattern("MM/dd/yyyy");
 		Date publication = DateTime.parse(request.datePublication, fmt).toDateMidnight().toDate();
@@ -86,6 +100,7 @@ public class InvoiceService extends AbstractService{
 		invoice.setDateCreation(DateTime.now().toDate());
 		
 		if(request.id == 0){
+			invoice.setStatus(Invoice.INVOICE_UNDEFINED);
 			Project project = em.get().find(Project.class, request.projectId);
 			invoice.setProject(project);
 			invoice.setOrganizationAddress(project.getOrganization().getAddress());
@@ -129,12 +144,12 @@ public class InvoiceService extends AbstractService{
 		else{
 			invoiceLine = em.get().find(InvoiceLine.class, request.id);
 		}
-		
 		invoiceLine.setDesignation(request.designation);
 		Invoice invoice = em.get().find(Invoice.class, request.invoiceId);
 		invoiceLine.setInvoice(invoice);
 		invoiceLine.setQuantity(request.quantity);
 		invoiceLine.setUnitPrice(request.unitPrice);
+		invoiceLine.setVat(request.vat);
 		
 		if(request.id == 0){
 			em.get().persist(invoiceLine);
@@ -146,28 +161,11 @@ public class InvoiceService extends AbstractService{
 		Set<InvoiceLine> lines = invoice.getLines();
 		lines.add(invoiceLine);
 		invoice.setLines(lines);
+		float amount = invoice.getAmount() + (request.quantity * request.unitPrice)*(1 + (request.vat/100));
+		invoice.setAmount(amount);
 		em.get().merge(invoice);
 		
 		return new InvoiceLineDTO(invoiceLine);
-	}
-	
-	/**
-	 * Retrieves all existing invoices
-	 * @return A list containing all existing invoices
-	 */
-	@SuppressWarnings("unchecked")
-	@Transactional
-	public List<InvoiceDTO> getAllInvoices(){
-		Query request = em.get().createQuery("SELECT i FROM Invoice i");
-		List<Invoice> invoices = (List<Invoice>)request.getResultList();
-		List<InvoiceDTO> invoicesDTO = new ArrayList<InvoiceDTO>();
-		InvoiceDTO invoiceDTO;
-		for(Invoice i : invoices){
-			invoiceDTO = new InvoiceDTO(i);
-			invoiceDTO.amount = this.getInvoiceTotalAmount(i.getId());
-			invoicesDTO.add(invoiceDTO);
-		}
-		return invoicesDTO;
 	}
 	
 	/**
@@ -183,9 +181,15 @@ public class InvoiceService extends AbstractService{
 	@Transactional
 	public List<InvoiceDTO> getInvoicesPerOrganizationAndProject(long organizationId, long projectId){
 		Query request;
+		Stopwatch sw = new Stopwatch();
 		if(organizationId == 0){
 			if(userService.currentUserHasRole(Role.ROLE_BOOKKEEPER)){
+				
+				sw.reset();
+				sw.start();
 				request = em.get().createQuery("SELECT i FROM Invoice i");
+				log.debug("Reqest took {} ms", sw.elapsedMillis());
+				
 			}
 			else{
 				// Here, the user must have the project manager role, so we have to retrieve his project and organizations.
@@ -237,14 +241,20 @@ public class InvoiceService extends AbstractService{
 				request.setParameter("project", em.get().find(Project.class, projectId));
 			}
 		}
+		sw.reset();
+		sw.start();
+		
 		List<Invoice> invoices = (List<Invoice>)request.getResultList();
 		List<InvoiceDTO> invoicesDTO = new ArrayList<InvoiceDTO>();
+		log.debug("Before loop {} ms", sw.elapsedMillis());
+		sw.reset();
+		sw.start();
 		InvoiceDTO invoiceDTO;
 		for(Invoice i : invoices){
 			invoiceDTO = new InvoiceDTO(i);
-			invoiceDTO.amount = this.getInvoiceTotalAmount(i.getId());
 			invoicesDTO.add(invoiceDTO);
 		}
+		log.debug("Loop took {} ms", sw.elapsedMillis());
 		return invoicesDTO;
 	}
 	
@@ -257,7 +267,15 @@ public class InvoiceService extends AbstractService{
 	public InvoiceDTO getInvoiceById(long invoiceId){
 		InvoiceDTO invoiceDTO = new InvoiceDTO(em.get().find(Invoice.class, invoiceId));
 		invoiceDTO.lines = this.getLinesForInvoice(invoiceId);
-		invoiceDTO.amount = this.getInvoiceTotalAmount(invoiceId);
+		float amountDf = this.getInvoiceTotalAmountDutyFree(invoiceId);
+		invoiceDTO.amountDf = amountDf;
+		List<VatDTO> vats = this.getAmountByVAT(invoiceId);
+		invoiceDTO.vats = vats;
+		float amountTotal = amountDf;
+		for(VatDTO v : vats){
+			amountTotal += v.amount;
+		}
+		invoiceDTO.amount = amountTotal;
 		return invoiceDTO;
 	}
 	
@@ -267,7 +285,7 @@ public class InvoiceService extends AbstractService{
 	 * @return A float representing the total amount of this invoice
 	 */
 	@Transactional
-	public float getInvoiceTotalAmount(long invoiceId){
+	public float getInvoiceTotalAmountDutyFree(long invoiceId){
 		Invoice invoice = em.get().find(Invoice.class, invoiceId);
 		float amount = 0.0F;
 		for(InvoiceLine line : invoice.getLines()){
@@ -390,5 +408,46 @@ public class InvoiceService extends AbstractService{
 		}
 		invoice.setLines(new HashSet<InvoiceLine>());
 		em.get().merge(invoice);
+	}
+	
+	/**
+	 * Retrieves all the registered VAT values in the configuration file
+	 * @return A list of VatDTOs representing all the value configured
+	 */
+	public List<VatDTO> getVAT(){
+		List<VatDTO> vats = new ArrayList<VatDTO>();
+		configuration.setListDelimiter(',');
+		for(String s : configuration.getStringArray("vat")){
+			vats.add(new VatDTO(Float.parseFloat(s)));
+		}
+		return vats;
+	}
+	
+	/**
+	 * Process the amount of the lines for each value added taxes for an invoice
+	 * @param invoiceId The id of the concerned invoice
+	 * @return A list of VatDTO representing the amount by VAT 
+	 */
+	@Transactional
+	public List<VatDTO> getAmountByVAT(long invoiceId){
+		Invoice invoice = em.get().find(Invoice.class, invoiceId);
+		Map<Float, Float> vatAmounts = new HashMap<Float, Float>();
+		List<VatDTO> vats = new ArrayList<VatDTO>();
+		for(InvoiceLine l : invoice.getLines()){
+			float newAmount;
+			if(vatAmounts.containsKey(l.getVat())){
+				newAmount = vatAmounts.get(l.getVat()) + (l.getQuantity() * l.getUnitPrice())*(l.getVat()/100);
+			}
+			else{
+				newAmount = (l.getQuantity() * l.getUnitPrice())*(l.getVat()/100);
+			}
+			
+			vatAmounts.put(l.getVat(), newAmount);
+		}
+		
+		for(Entry<Float, Float> e : vatAmounts.entrySet()){
+			vats.add(new VatDTO(e.getKey(), e.getValue()));
+		}
+		return vats;
 	}
 }

@@ -23,8 +23,8 @@
 			<directory>src/main/resources</directory>
 			<outputDirectory>conf</outputDirectory>
 			<includes>
+				<include>invoice.xml</include>			
 				<include>logback.xml</include>
-				<include>invoice.xml</include>
 			</includes>
 		</fileSet>
 		

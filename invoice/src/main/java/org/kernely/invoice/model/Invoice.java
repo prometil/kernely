@@ -6,6 +6,7 @@ import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
@@ -42,6 +43,8 @@ public class Invoice extends AbstractModel {
 	private int status;
 	private String comment;
 	
+	private float amount;
+	
 	@Column(name="organization_name")
 	private String organizationName;
 	
@@ -55,10 +58,10 @@ public class Invoice extends AbstractModel {
 	private String organizationCity;
 	
 	
-	@OneToMany(mappedBy ="invoice")
+	@OneToMany(mappedBy ="invoice",fetch = FetchType.LAZY)
 	private Set<InvoiceLine> lines;
 	
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name="project_id")
 	private Project project;
 	
@@ -339,5 +342,19 @@ public class Invoice extends AbstractModel {
 	 */
 	public void setCurrency(String currency) {
 		this.currency = currency;
+	}
+
+	/**
+	 * @return the amount
+	 */
+	public float getAmount() {
+		return amount;
+	}
+
+	/**
+	 * @param amount the amount to set
+	 */
+	public void setAmount(float amount) {
+		this.amount = amount;
 	}
 }

@@ -41,6 +41,11 @@ public class InvoiceLineDTO {
 	public float amount;
 	
 	/**
+	 * Vat of this line
+	 */
+	public float vat;
+	
+	/**
 	 * Default constructor
 	 */
 	public InvoiceLineDTO(){}
@@ -56,5 +61,6 @@ public class InvoiceLineDTO {
 		this.unitPrice = line.getUnitPrice();
 		this.invoiceId = line.getInvoice().getId();
 		this.amount = this.quantity * this.unitPrice;
+		this.vat = line.getVat();
 	}
 }

@@ -1,5 +1,6 @@
 AppInvoiceEdit = (function($){
 	var invoiceLines = new Array();
+	var invoiceDetails = null;
 	
 	InvoiceEditionMainView = Backbone.View.extend({
 		el:"#invoice-edition",
@@ -11,7 +12,7 @@ AppInvoiceEdit = (function($){
 		},
 		render: function(){
 			new InvoiceGeneralInfoView().render();
-			new InvoiceDetailsView().render();
+			invoiceDetails = new InvoiceDetailsView().render();
 		}
 	})
 	
@@ -87,13 +88,13 @@ AppInvoiceEdit = (function($){
 					var view;
 					if(data.invoiceLineDTO.length > 1){
 						$.each(data.invoiceLineDTO, function(){
-							view = new InvoiceLineCreateView(this.id, this.designation, this.quantity, this.unitPrice, this.amount).render();
+							view = new InvoiceLineCreateView(this.id, this.designation, this.quantity, this.unitPrice, this.amount, this.vat).render();
 							$(parent.el).append(view.el);
 							invoiceLines.push(view);
 						});
 					}
 					else{
-						view = new InvoiceLineCreateView(data.invoiceLineDTO.id, data.invoiceLineDTO.designation, data.invoiceLineDTO.quantity, data.invoiceLineDTO.unitPrice, data.invoiceLineDTO.amount).render();
+						view = new InvoiceLineCreateView(data.invoiceLineDTO.id, data.invoiceLineDTO.designation, data.invoiceLineDTO.quantity, data.invoiceLineDTO.unitPrice, data.invoiceLineDTO.amount, data.invoiceLineDTO.vat).render();
 						$(parent.el).append(view.el);
 						invoiceLines.push(view);
 					}
@@ -111,18 +112,20 @@ AppInvoiceEdit = (function($){
 		quantity : 0,
 		unitPrice : 0,
 		amount : 0,
+		vat : 0,
 		
 		events:{
 			"click .delete-invoice-line" : "deleteLine",
 			"change .quantity-field, .unitprice-field" : "processAmount"
 				
 		},
-		initialize: function(id, description, quantity, unitPrice, amount){
+		initialize: function(id, description, quantity, unitPrice, amount, vat){
 			this.id = id;
 			this.description = description;
 			this.quantity = quantity;
 			this.unitPrice = unitPrice;
 			this.amount = amount;
+			this.vat = vat;
 		},
 		deleteLine: function(){
 			$(this.el).remove();
@@ -132,34 +135,45 @@ AppInvoiceEdit = (function($){
 			$(this.el).find(".line-amount").text(amount);
 			console.log(this.id);
 		},
-		saveLine: function(){
-			var parent = this;
-			var json = '{"id" : 0, "designation" : "'+ $('input[name*="designation-field"]').val()
-					+ '", "quantity" : "' + $('input[name*="quantity-field"]').val()
-					+ '", "unitPrice" : "' + $('input[name*="unitprice-field"]').val()
-					+ '", "invoiceId" : "'+ $('#invoice-visu-i').text() +'" }';
-			
-			$.ajax({
-				type: "POST",
-				url:"/invoice/line/create",
-				data : json,
-				dataType: "json",
-				contentType: "application/json; charset=utf-8",
-				processData: false,
-				success: function(data){
-					var template = $("#invoice-line-template").html();
-					var view = {description:data.designation, quantity: data.quantity, unitprice: data.unitPrice, amount: data.amount};
-					var html = Mustache.to_html(template, view);
-					$(parent.el).html(html);
-				}
-				
-			});
-		},
 		render: function(){
 			var template = $("#invoice-line-editable-template").html();
 			var view = {description: this.description, quantity: this.quantity, unitprice : this.unitPrice, amount: this.amount};
 			var html = Mustache.to_html(template, view);
 			$(this.el).html(html);
+			var parent = this;
+			$.ajax({
+				url:"/invoice/vat",
+				dataType:"json",
+				success:function(data){
+					var options;
+					var valueInConf = false;
+					if($.isArray(data.vatDTO)){
+						$.each(data.vatDTO, function(){
+							if(this.value == parent.vat){
+								options += '<option selected="selected" value="'+this.value+'">'+this.value+'</option>';
+								valueInConf = true;
+							}
+							else{
+								options += '<option value="'+this.value+'">'+this.value+'</option>';
+							}
+						});
+						if(!valueInConf && typeof(parent.vat) != "undefined"){
+							options += '<option selected="selected" value="'+parent.vat+'">'+parent.vat+'</option>';
+						}
+					}
+					else{
+						if(data.vatDTO.value == parent.vat){
+							options = '<option value="'+data.vatDTO.value+'">'+data.vatDTO.value+'</option>';
+						}
+						else{
+							options += '<option selected="selected" value="'+parent.vat+'">'+parent.vat+'</option>';
+							options += '<option value="'+data.vatDTO.value+'">'+data.vatDTO.value+'</option>';
+						}	
+						$(this.el).find(".vat-field").attr("disabled", "disabled");
+					}
+					$(parent.el).find(".vat-field").append(options);
+				}
+			});
 			return this;
 		}
 	})

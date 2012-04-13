@@ -29,7 +29,7 @@ public class Organization extends AbstractModel {
 	private String phone;
 	private String fax;
 
-	@OneToMany(mappedBy="organization")
+	@OneToMany(mappedBy="organization", fetch = FetchType.LAZY)
 	private Set<Project> projects;
 	
 	/**

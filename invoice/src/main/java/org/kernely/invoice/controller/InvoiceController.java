@@ -22,6 +22,7 @@ import org.kernely.invoice.dto.InvoiceCreationRequestDTO;
 import org.kernely.invoice.dto.InvoiceDTO;
 import org.kernely.invoice.dto.InvoiceLineCreationRequestDTO;
 import org.kernely.invoice.dto.InvoiceLineDTO;
+import org.kernely.invoice.dto.VatDTO;
 import org.kernely.invoice.service.InvoiceService;
 import org.kernely.project.dto.OrganizationDTO;
 import org.kernely.project.dto.ProjectDTO;
@@ -104,20 +105,6 @@ public class InvoiceController extends AbstractController{
 			if(userService.currentUserHasRole(Role.ROLE_PROJECTMANAGER)){
 				return projectService.getProjectsForProjectManagerLinkedToOrganization(organizationId);
 			}
-		}
-		return null;
-	}
-	
-	/**
-	 * Retrieves all the existing invoice
-	 * @return A JSON String representing the result data
-	 */
-	@GET
-	@Path("/all")
-	@Produces({MediaType.APPLICATION_JSON})
-	public List<InvoiceDTO> getAllInvoices(){
-		if(userService.currentUserHasRole(Role.ROLE_PROJECTMANAGER) || userService.currentUserHasRole(Role.ROLE_BOOKKEEPER)){
-			return invoiceService.getAllInvoices();
 		}
 		return null;
 	}
@@ -302,6 +289,7 @@ public class InvoiceController extends AbstractController{
 			String designation = formParams.get("designation-field[]").get(i);
 			String quantity = formParams.get("quantity-field[]").get(i);
 			String unitPrice = formParams.get("unitprice-field[]").get(i);
+			String vat = formParams.get("vat-field[]").get(i);
 			if(!designation.equals("")){
 				lineRequest.designation = designation;
 				if(quantity.equals("")){
@@ -314,6 +302,7 @@ public class InvoiceController extends AbstractController{
 				}else{
 					lineRequest.unitPrice = Float.parseFloat(unitPrice);
 				}
+				lineRequest.vat = Float.parseFloat(vat);
 				lineRequest.invoiceId = invoiceId;
 				invoiceService.createOrUpdateInvoiceLine(lineRequest);
 			}
@@ -329,5 +318,12 @@ public class InvoiceController extends AbstractController{
 		UriBuilder uriBuilder = UriBuilder.fromPath("/invoice/view/" + invoiceId);
 		// Status 303 allows to redirect a request from POST to GET
 		return Response.temporaryRedirect(uriBuilder.build()).status(303).build();
+	}
+	
+	@GET
+	@Path("/vat")
+	@Produces({MediaType.APPLICATION_JSON})
+	public List<VatDTO> getVat(){
+		return invoiceService.getVAT();
 	}
 }

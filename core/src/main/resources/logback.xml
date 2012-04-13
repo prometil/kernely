@@ -29,7 +29,7 @@
    
   </appender>
  <logger name="org.eclipse" level="WARN"/>
-	<logger name="org.hibernate" level="ERROR"/>
+	<logger name="org.hibernate" level="DEBUG"/>
 	<logger name="org.apache.shiro" level="ERROR"/>
 	<logger name="org.quartz" level="ERROR"/>
 	<logger name="org.kernely" level="trace" />

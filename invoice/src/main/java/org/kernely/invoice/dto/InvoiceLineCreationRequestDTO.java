@@ -33,6 +33,11 @@ public class InvoiceLineCreationRequestDTO {
 	public long invoiceId;
 	
 	/**
+	 * Vat of this line
+	 */
+	public float vat;
+	
+	/**
 	 * Default constructor
 	 */
 	public InvoiceLineCreationRequestDTO(){}
@@ -44,12 +49,14 @@ public class InvoiceLineCreationRequestDTO {
 	 * @param quantity Quantity of the line
 	 * @param unitPrice Unit price of the line
 	 * @param invoiceId Invoice id containing this line
+	 * @param vat Vat associated to this line
 	 */
-	public InvoiceLineCreationRequestDTO(long id, String designation, float quantity, float unitPrice, long invoiceId){
+	public InvoiceLineCreationRequestDTO(long id, String designation, float quantity, float unitPrice, long invoiceId, float vat){
 		this.id = id;
 		this.designation = designation;
 		this.quantity = quantity;
 		this.unitPrice = unitPrice;
 		this.invoiceId = invoiceId;
+		this.vat = vat;
 	}
 }

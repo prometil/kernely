@@ -8,6 +8,7 @@
 	<td><input type="text" class="quantity-field" name="quantity-field[]" value="{{quantity}}"/></td>
 	<td><input type="text" class="unitprice-field" name="unitprice-field[]" value="{{unitprice}}"/></td>
 	<td class="line-amount">{{amount}}</td>
+	<td><select name="vat-field[]" class="vat-field"></select> %</td>
 	<td><img src="/img/delete.png" class="delete-invoice-line"/></td>
 </script>
 
@@ -36,6 +37,7 @@
 				<th><%= i18n.t("invoice-line-quantity") %></th>
 				<th><%= i18n.t("invoice-line-unit-price") %></th>
 				<th><%= i18n.t("invoice-line-amount") %></th>
+				<th><%= i18n.t("invoice-line-vat") %></th>
 				<th><!-- Column for the delete button --></th>
 			</tr>
 			<tbody id="invoice-lines">
@@ -53,7 +55,7 @@
 	<!-- Footer button bar -->
 	<div id="invoice-button-bar">
 		<input type="button" id="export-invoice" value="<%= i18n.t("export") %>"/>
-		<input type="button" id="cancel-invoice" value="<%= i18n.t("cancel") %>"/>
+		<input type="button" id="cancel-invoice" value="<%= i18n.t("cancel") %>" onClick="window.location = '/invoice/view/${invoice.id}';"/>
 		<input type="submit" id="validate-invoice" value="<%= i18n.t("ok") %>"/>
 	</div>
 </div>

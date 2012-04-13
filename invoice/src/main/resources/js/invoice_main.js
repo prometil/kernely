@@ -116,8 +116,9 @@ AppInvoiceMain = (function($){
 				success: function(data){
 					if(data != null){
 						if(data.invoiceDTO.length > 1){
+							var elt = $(parent.el);
 							$.each(data.invoiceDTO, function(){
-								$(parent.el).append(new InvoiceTableLineView(this.id, this.status, this.code, this.organizationName, this.projectName, this.amount).render().el);
+								elt.append(new InvoiceTableLineView(this.id, this.status, this.code, this.organizationName, this.projectName, this.amount).render().el);
 							});
 						}
 						else{

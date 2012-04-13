@@ -104,12 +104,22 @@ public class InvoiceDTO {
 	/**
 	 * Amount of this invoice
 	 */
+	public float amountDf;
+	
+	/**
+	 * Amount of this invoice
+	 */
 	public float amount;
 	
 	/**
 	 * Lines of this invoices
 	 */
 	public List<InvoiceLineDTO> lines;
+	
+	/**
+	 * Amount for each different vat for this invoice
+	 */
+	public List<VatDTO> vats;
 	
 	/**
 	 * Default constructor
@@ -137,7 +147,8 @@ public class InvoiceDTO {
 		this.organizationZip = invoice.getOrganizationZip();
 		this.organizationCity = invoice.getOrganizationCity();
 		this.projectName = invoice.getProject().getName();
-		this.comment = invoice.getComment();
+		this.comment = invoice.getComment(); 
+		this.amount = invoice.getAmount();
 	}
 	
 }

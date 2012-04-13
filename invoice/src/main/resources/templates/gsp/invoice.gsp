@@ -36,6 +36,7 @@
 				<th><%= i18n.t("invoice-line-quantity") %></th>
 				<th><%= i18n.t("invoice-line-unit-price") %></th>
 				<th><%= i18n.t("invoice-line-amount") %></th>
+				<th><%= i18n.t("invoice-line-vat") %></th>
 			</tr>
 			<tbody id="invoice-lines">
 				<% invoice.lines.each() { value -> %>
@@ -44,6 +45,7 @@
 						<td>${value.quantity}</td>
 						<td>${value.unitPrice}</td>
 						<td>${value.amount}</td>
+						<td>${value.vat} %</td>
 					</tr>
 				<% };%>
 			</tbody>
@@ -51,10 +53,13 @@
 				
 			</tbody>
 		</table>
-		<br/>
+		<%= i18n.t("invoice-total-df") %> : ${invoice.amountDf}<br/>
+		<% invoice.vats.each() { value -> %>
+			<%= i18n.t("invoice-line-vat") %> ${value.value} % : ${value.amount}<br/>
+		<% };%>
 		<br/>
 		<%= i18n.t("invoice-total") %> : ${invoice.amount}
-		<br/>
+		<br/>	
 		<%= i18n.t("invoice-comment") %>
 		<textarea id="invoice-comment" readonly="readonly">${invoice.comment}</textarea>
 	</div>

@@ -12,6 +12,7 @@ import org.kernely.invoice.dto.InvoiceCreationRequestDTO;
 import org.kernely.invoice.dto.InvoiceDTO;
 import org.kernely.invoice.dto.InvoiceLineCreationRequestDTO;
 import org.kernely.invoice.dto.InvoiceLineDTO;
+import org.kernely.invoice.dto.VatDTO;
 import org.kernely.invoice.model.Invoice;
 import org.kernely.invoice.service.InvoiceService;
 import org.kernely.project.dto.OrganizationCreationRequestDTO;
@@ -48,6 +49,8 @@ public class InvoiceServiceTest extends AbstractServiceTest{
 	private static final float UNITPRICE1_MODIFIED = 5.0F;
 	private static final float AMOUNT1 = QUANTITY1 * UNITPRICE1;
 	private static final float AMOUNT1_MODIFIED = QUANTITY1_MODIFIED * UNITPRICE1_MODIFIED;
+	private static final float VAT1 = 19.6F;
+	private static final float VAT2 = 5.5F;
 	
 	
 	
@@ -209,29 +212,6 @@ public class InvoiceServiceTest extends AbstractServiceTest{
 		assertEquals(Invoice.INVOICE_UNDEFINED, invoiceDTO2.status);
 	}
 	
-	
-	@Test
-	public void getAllInvoiceTest(){
-		OrganizationDTO organization = createOrganization1ForTest();
-		ProjectDTO project1 = createProject1ForTest();
-		InvoiceCreationRequestDTO request = new InvoiceCreationRequestDTO();
-		request.id = 0;
-		request.datePublication = DATE_PUBLICATION_STRING;
-		request.dateTerm = DATE_TERM_STRING;
-		request.projectId = project1.id;
-		request.object= OBJECT1;
-		
-		invoiceService.createOrUpdateInvoice(request);
-		
-		List<InvoiceDTO> invoices = invoiceService.getAllInvoices();
-		InvoiceDTO invoice = invoices.get(0);
-		
-		assertEquals(OBJECT1, invoice.object);
-		assertEquals(organization.name, invoice.organizationName);
-		assertEquals(project1.name, invoice.projectName);
-		assertEquals(Invoice.INVOICE_UNDEFINED, invoice.status);
-	}
-	
 	public void getInvoicePerOrganizationAndProject(){
 		OrganizationDTO organization1 = createOrganization1ForTest();
 		ProjectDTO project1 = createProject1ForTest();
@@ -370,6 +350,7 @@ public class InvoiceServiceTest extends AbstractServiceTest{
 		requestLine.quantity = QUANTITY1;
 		requestLine.unitPrice = UNITPRICE1;
 		requestLine.invoiceId = invoiceDTO.id;
+		requestLine.vat = VAT1;
 		
 		InvoiceLineDTO invoiceLineDTO = invoiceService.createOrUpdateInvoiceLine(requestLine);
 		assertEquals(DESIGNATION1, invoiceLineDTO.designation);
@@ -377,7 +358,8 @@ public class InvoiceServiceTest extends AbstractServiceTest{
 		assertEquals(UNITPRICE1, invoiceLineDTO.unitPrice);
 		assertEquals(AMOUNT1, invoiceLineDTO.amount);
 		assertEquals(invoiceDTO.id, invoiceLineDTO.invoiceId);
-		
+		InvoiceDTO invoiceDTOUpd = invoiceService.getInvoiceById(invoiceDTO.id);
+		assertEquals((QUANTITY1 * UNITPRICE1) * (1 + VAT1/100), invoiceDTOUpd.amount);
 	}
 	
 	@Test
@@ -397,6 +379,7 @@ public class InvoiceServiceTest extends AbstractServiceTest{
 		requestLine.designation = DESIGNATION1;
 		requestLine.quantity = QUANTITY1;
 		requestLine.unitPrice = UNITPRICE1;
+		requestLine.vat = VAT1;
 		requestLine.invoiceId = invoiceDTO.id;
 		
 		InvoiceLineDTO invoiceLineDTO = invoiceService.createOrUpdateInvoiceLine(requestLine);
@@ -405,12 +388,15 @@ public class InvoiceServiceTest extends AbstractServiceTest{
 		assertEquals(UNITPRICE1, invoiceLineDTO.unitPrice);
 		assertEquals(AMOUNT1, invoiceLineDTO.amount);
 		assertEquals(invoiceDTO.id, invoiceLineDTO.invoiceId);
+		InvoiceDTO invoiceDTOUpd = invoiceService.getInvoiceById(invoiceDTO.id);
+		assertEquals((QUANTITY1 * UNITPRICE1) * (1 + VAT1/100), invoiceDTOUpd.amount, 0.001);
 		
 		InvoiceLineCreationRequestDTO requestLine2 = new InvoiceLineCreationRequestDTO();
 		requestLine2.id = invoiceLineDTO.id;
 		requestLine2.designation = DESIGNATION1_MODIFIED;
 		requestLine2.quantity = QUANTITY1_MODIFIED;
 		requestLine2.unitPrice = UNITPRICE1_MODIFIED;
+		requestLine2.vat = VAT2;
 		requestLine2.invoiceId = invoiceDTO.id;
 		
 		InvoiceLineDTO invoiceLineDTO2 = invoiceService.createOrUpdateInvoiceLine(requestLine2);
@@ -419,6 +405,8 @@ public class InvoiceServiceTest extends AbstractServiceTest{
 		assertEquals(UNITPRICE1_MODIFIED, invoiceLineDTO2.unitPrice);
 		assertEquals(AMOUNT1_MODIFIED, invoiceLineDTO2.amount);
 		assertEquals(invoiceDTO.id, invoiceLineDTO2.invoiceId);
+		invoiceDTOUpd = invoiceService.getInvoiceById(invoiceDTO.id);
+		assertEquals((QUANTITY1_MODIFIED * UNITPRICE1_MODIFIED) * (1 + VAT2/100), invoiceDTOUpd.amount, 0.001);
 	}
 	
 	@Test
@@ -549,6 +537,85 @@ public class InvoiceServiceTest extends AbstractServiceTest{
 	public void setInvoiceAsPublishedWithWrongInvoiceTest(){
 		
 		invoiceService.setInvoiceAsPublished(0);
+		
+	}
+	
+	@Test
+	public void getAmountsByVATTest(){
+		createOrganization1ForTest();
+		ProjectDTO project1 = createProject1ForTest();
+		InvoiceCreationRequestDTO request = new InvoiceCreationRequestDTO();
+		request.id = 0;
+		request.datePublication = DATE_PUBLICATION_STRING;
+		request.dateTerm = DATE_TERM_STRING;
+		request.projectId = project1.id;
+		request.object= OBJECT1;
+		
+		InvoiceDTO invoiceDTO = invoiceService.createOrUpdateInvoice(request);
+		
+		InvoiceLineCreationRequestDTO requestLine1 = new InvoiceLineCreationRequestDTO();
+		requestLine1.designation = DESIGNATION1;
+		requestLine1.quantity = QUANTITY1;
+		requestLine1.unitPrice = UNITPRICE1;
+		requestLine1.invoiceId = invoiceDTO.id;
+		requestLine1.vat = VAT1;
+		
+		InvoiceLineCreationRequestDTO requestLine2 = new InvoiceLineCreationRequestDTO();
+		requestLine2.designation = DESIGNATION1;
+		requestLine2.quantity = QUANTITY1;
+		requestLine2.unitPrice = UNITPRICE1;
+		requestLine2.invoiceId = invoiceDTO.id;
+		requestLine2.vat = VAT1;
+		
+		InvoiceLineCreationRequestDTO requestLine3 = new InvoiceLineCreationRequestDTO();
+		requestLine3.designation = DESIGNATION1_MODIFIED;
+		requestLine3.quantity = QUANTITY1_MODIFIED;
+		requestLine3.unitPrice = UNITPRICE1_MODIFIED;
+		requestLine3.invoiceId = invoiceDTO.id;
+		requestLine3.vat = VAT2;
+		
+		InvoiceLineDTO invoiceLineDTO1 = invoiceService.createOrUpdateInvoiceLine(requestLine1);
+		InvoiceLineDTO invoiceLineDTO2 = invoiceService.createOrUpdateInvoiceLine(requestLine2);
+		InvoiceLineDTO invoiceLineDTO3 = invoiceService.createOrUpdateInvoiceLine(requestLine3);
+		
+		assertEquals(DESIGNATION1, invoiceLineDTO1.designation);
+		assertEquals(QUANTITY1, invoiceLineDTO1.quantity);
+		assertEquals(UNITPRICE1, invoiceLineDTO1.unitPrice);
+		assertEquals(AMOUNT1, invoiceLineDTO1.amount);
+		assertEquals(invoiceDTO.id, invoiceLineDTO1.invoiceId);
+		
+		assertEquals(DESIGNATION1, invoiceLineDTO2.designation);
+		assertEquals(QUANTITY1, invoiceLineDTO2.quantity);
+		assertEquals(UNITPRICE1, invoiceLineDTO2.unitPrice);
+		assertEquals(AMOUNT1, invoiceLineDTO2.amount);
+		assertEquals(invoiceDTO.id, invoiceLineDTO2.invoiceId);
+		
+		assertEquals(DESIGNATION1_MODIFIED, invoiceLineDTO3.designation);
+		assertEquals(QUANTITY1_MODIFIED, invoiceLineDTO3.quantity);
+		assertEquals(UNITPRICE1_MODIFIED, invoiceLineDTO3.unitPrice);
+		assertEquals(AMOUNT1_MODIFIED, invoiceLineDTO3.amount);
+		assertEquals(invoiceDTO.id, invoiceLineDTO3.invoiceId);
+		
+		InvoiceDTO invoiceDTOUpd = invoiceService.getInvoiceById(invoiceDTO.id);
+		assertEquals(((QUANTITY1 * UNITPRICE1) * (1 + VAT1/100))*2 + (QUANTITY1_MODIFIED * UNITPRICE1_MODIFIED) * (1 + VAT2/100), invoiceDTOUpd.amount, 0.001);
+	
+		List<VatDTO> vats = invoiceService.getAmountByVAT(invoiceDTO.id);
+		VatDTO vatdto1 = vats.get(0);
+		VatDTO vatdto2 = vats.get(1);
+		
+		if(vatdto1.value == VAT1){
+			assertEquals(((QUANTITY1 * UNITPRICE1) * (VAT1/100))*2, vatdto1.amount, 0.001);
+		}
+		else{
+			assertEquals((QUANTITY1_MODIFIED * UNITPRICE1_MODIFIED) * (VAT2/100), vatdto1.amount, 0.001);
+		}
+		
+		if(vatdto2.value == VAT1){
+			assertEquals(((QUANTITY1 * UNITPRICE1) * (VAT1/100))*2, vatdto2.amount, 0.001);
+		}
+		else{
+			assertEquals((QUANTITY1_MODIFIED * UNITPRICE1_MODIFIED) * (VAT2/100), vatdto2.amount, 0.001);
+		}
 		
 	}
 	

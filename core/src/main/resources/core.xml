@@ -14,6 +14,11 @@
                 </hbm2ddl>
                 <dialect>org.hibernate.dialect.PostgreSQLDialect</dialect>
                 <show_sql>false</show_sql>
+                
+                <cache>
+                	<use_second_level_cache>true</use_second_level_cache>
+                	<provider_class>net.sf.ehcache.hibernate.SingletonEhCacheProvider</provider_class>
+                </cache>
         </hibernate>
         <mail>
                 <debug>true</debug>

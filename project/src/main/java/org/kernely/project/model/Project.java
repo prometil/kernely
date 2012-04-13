@@ -38,7 +38,7 @@ public class Project extends AbstractModel {
 	@JoinTable(name = "kernely_user_project", joinColumns = @JoinColumn(name = "project_id"), inverseJoinColumns = @JoinColumn(name = "user_id"))
 	private Set<User> users;
 
-	@OneToOne
+	@OneToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "organization_id")
 	private Organization organization;
 
