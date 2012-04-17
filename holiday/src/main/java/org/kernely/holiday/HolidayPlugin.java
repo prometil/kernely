@@ -130,11 +130,14 @@ public class HolidayPlugin extends AbstractPlugin {
 		eventBus.register(userEventHandler);
 	}
 	
+	
+	/**
+	 * Configure the plugin
+	 */
 	@Override
-	protected void configure() {
+	public void configurePlugin() {
 		bind(HolidayService.class);
 		bind(HolidayRequestService.class);
 		bind(HolidayManagerUserService.class);
 	}
-
 }

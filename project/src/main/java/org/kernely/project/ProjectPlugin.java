@@ -42,8 +42,11 @@ public class ProjectPlugin extends AbstractPlugin {
 
 	}
 
+	/**
+	 * Configure the plugin
+	 */
 	@Override
-	protected void configure() {
+	public void configurePlugin() {
 		bind(ProjectService.class);
 		bind(OrganizationService.class);
 	}

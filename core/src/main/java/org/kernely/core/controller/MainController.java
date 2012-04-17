@@ -20,13 +20,17 @@
 
 package org.kernely.core.controller;
 
+import java.io.StringWriter;
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import org.kernely.core.template.TemplateRenderer;
+import org.kernely.core.template.SobaTemplateRenderer;
 
 import com.google.inject.Inject;
 
@@ -38,8 +42,10 @@ import com.google.inject.Inject;
  */
 @Path("/")
 public class MainController extends AbstractController {
+	
 	@Inject
-	private TemplateRenderer templateRenderer;
+	private SobaTemplateRenderer templateRenderer;
+
 
 	/**
 	 * Get the main page of the application
@@ -49,9 +55,13 @@ public class MainController extends AbstractController {
 	@GET
 	@Produces({ MediaType.TEXT_HTML })
 	public Response getUI() {
-		String url = "/templates/gsp/home.gsp";
-		return ok(templateRenderer.create(url));
-
+		
+		String url = "templates/home.html";
+		StringWriter w = new StringWriter();
+		Map<String, Object> map =new HashMap<String, Object>();
+		templateRenderer.render(url, w, map);
+		return Response.ok(w.toString()).build();
+		
 	}
 
 }

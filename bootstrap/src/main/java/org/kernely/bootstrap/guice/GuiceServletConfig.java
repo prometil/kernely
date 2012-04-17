@@ -84,6 +84,8 @@ public class GuiceServletConfig extends GuiceServletContextListener {
 
 		// create injector
 		Injector injector = Guice.createInjector(list);
+		
+		//inject plugin back for start
 		for (AbstractPlugin plugin : plugins) {
 			injector.injectMembers(plugin);
 			plugin.start();

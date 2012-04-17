@@ -42,7 +42,9 @@ import org.kernely.core.service.mail.MailJob;
 import org.kernely.core.service.mail.MailService;
 import org.kernely.core.service.mail.Mailer;
 import org.kernely.core.template.TemplateRenderer;
+import org.kernely.core.template.helpers.SobaI18n;
 import org.quartz.DateBuilder;
+import org.quartz.DateBuilder.IntervalUnit;
 import org.quartz.ScheduleBuilder;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
@@ -50,8 +52,9 @@ import org.quartz.SchedulerFactory;
 import org.quartz.SimpleScheduleBuilder;
 import org.quartz.Trigger;
 import org.quartz.TriggerBuilder;
-import org.quartz.DateBuilder.IntervalUnit;
 import org.quartz.impl.StdSchedulerFactory;
+
+import soba.SobaEngine;
 
 import com.google.common.eventbus.EventBus;
 import com.google.inject.Provides;
@@ -105,20 +108,6 @@ public class CorePlugin extends AbstractPlugin {
         
         registerJob(MailJob.class, mailTrigger);
 	}
-
-	/**
-	 * bind the class
-	 */
-	@Override
-	protected void configure() {
-		bind(PluginsLoader.class);
-		bind(TemplateRenderer.class);
-		bind(Mailer.class).to(MailService.class);
-		bind(SimpleTemplateEngine.class);
-		bind(EventBus.class).in(Singleton.class);
-
-	}
-
 	/**
 	 * Return the scheduler of the plugin 
 	 * @return Scheduler
@@ -136,5 +125,21 @@ public class CorePlugin extends AbstractPlugin {
 		}
 
 	}
+	/**
+	 * Configure the plugin
+	 */
+	@Override
+	public void configurePlugin() {
+		
+		bind(PluginsLoader.class);
+		bind(TemplateRenderer.class);
+		bind(Mailer.class).to(MailService.class);
+		bind(SimpleTemplateEngine.class);
+		bind(EventBus.class).in(Singleton.class);
+		bind(SobaEngine.class).in(Singleton.class);
+		bind(SobaI18n.class).in(Singleton.class);
+	}
+	
+	
 
 }

@@ -43,8 +43,11 @@ public class TimeSheetPlugin extends AbstractPlugin {
 
 	}
 
+	/**
+	 * Configure the plugin
+	 */
 	@Override
-	protected void configure() {
+	public void configurePlugin() {
 		bind(TimeSheetService.class);
 	}
 

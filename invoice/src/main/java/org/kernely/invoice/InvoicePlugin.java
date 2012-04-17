@@ -37,12 +37,11 @@ public class InvoicePlugin extends AbstractPlugin {
 
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.kernely.core.plugin.AbstractPlugin#configure()
+	/**
+	 * Configure the plugin
 	 */
 	@Override
-	protected void configure() {
+	public void configurePlugin() {
 		bind(InvoiceService.class);
 	}
 

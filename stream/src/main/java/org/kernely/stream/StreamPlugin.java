@@ -66,8 +66,11 @@ public class StreamPlugin extends AbstractPlugin {
 		eventBus.register(userEventHandler);
 	}
 
+	/**
+	 * Configure the plugin
+	 */
 	@Override
-	protected void configure() {
+	public void configurePlugin() {
 		bind(StreamService.class);
 		bind(UserEventHandler.class);
 	}
