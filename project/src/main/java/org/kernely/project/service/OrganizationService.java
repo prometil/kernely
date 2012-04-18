@@ -51,6 +51,22 @@ public class OrganizationService extends AbstractService{
 		}
 		return dtos;
 	}
+	
+	/**
+	 * Gets the lists of all organizations contained in the database which contains at least one project.
+	 * 
+	 * @return the list of all organizations contained in the database.
+	 */
+	@SuppressWarnings("unchecked")
+	public List<OrganizationDTO> getAllOrganizationsWithProjects() {
+		Query query = em.get().createQuery("SELECT DISTINCT e FROM Organization e, Project p WHERE p.organization = e");
+		List<Organization> collection = (List<Organization>) query.getResultList();
+		List<OrganizationDTO> dtos = new ArrayList<OrganizationDTO>();
+		for (Organization organization : collection) {
+			dtos.add(new OrganizationDTO(organization));
+		}
+		return dtos;
+	}
 
 	/**
 	 * Create a new Organization in database

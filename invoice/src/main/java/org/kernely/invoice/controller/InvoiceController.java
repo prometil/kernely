@@ -76,7 +76,7 @@ public class InvoiceController extends AbstractController{
 	@Produces({MediaType.APPLICATION_JSON})
 	public List<OrganizationDTO> getOrganizationForRole(){
 		if(userService.currentUserHasRole(Role.ROLE_BOOKKEEPER)){
-			return organizationService.getAllOrganizations();
+			return organizationService.getAllOrganizationsWithProjects();
 		}
 		else{
 			if(userService.currentUserHasRole(Role.ROLE_PROJECTMANAGER)){ 

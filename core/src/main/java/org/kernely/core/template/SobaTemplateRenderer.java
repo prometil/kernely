@@ -3,64 +3,78 @@
  */
 package org.kernely.core.template;
 
+import java.io.StringWriter;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
-import org.apache.commons.configuration.AbstractConfiguration;
+import javax.annotation.PostConstruct;
+
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 import org.kernely.core.plugin.AbstractPlugin;
 import org.kernely.core.plugin.PluginsLoader;
 import org.kernely.core.service.user.UserService;
-import org.kernely.core.template.helpers.I18n;
 import org.kernely.core.template.helpers.SobaI18n;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import soba.context.Context;
-import soba.node.Template;
 
 import com.google.inject.Inject;
 
 /**
  * @author g.breton
- *
+ * 
  */
 public class SobaTemplateRenderer {
 
 	private static Logger log = LoggerFactory.getLogger(TemplateRenderer.class);
-	
+
 	@Inject
 	private soba.javaops.SobaEngineFacade engine;
-	
+
 	@Inject
 	private UserService userService;
 	@Inject
 	private PluginsLoader pluginsLoader;
-	
+
 	@Inject
 	private SobaI18n i18n;
+	
+	@PostConstruct
+	public void configure(){
+		engine.registerExtension(i18n);
+	}
 
-	
-	
 	/**
 	 * Load a template base on the filepath
-	 * @param filePath the filepath to load
+	 * 
+	 * @param filePath
+	 *            the filepath to load
 	 * @return the loaded template
 	 */
-	public void render(String filePath, Writer writer, Map<String,Object> bindings){
-		engine.registerExtension(i18n);
-		if (filePath == null ) {
+	public void render(String filePath, Writer writer, Map<String, Object> bindings) {
+		if (filePath == null) {
 			log.error("Cannot load a null file path");
 			throw new IllegalArgumentException("Cannot load the template");
-		}
-		else{
+		} else {
 			engine.render(filePath, writer, enhanceBinding(bindings));
 		}
 	}
+
+	/**
+	 * Load a template base on the filepath
+	 * 
+	 * @param filePath
+	 *            the filepath to load
+	 * @return the loaded template
+	 */
+	public String render(String filePath, Map<String, Object> bindings) {
+		StringWriter w = new StringWriter();
+		engine.render(filePath, w, enhanceBinding(bindings));
+		return w.toString();
+	}
+
 	/**
 	 * Enhanced the binding, to add constants
 	 * 
@@ -71,13 +85,13 @@ public class SobaTemplateRenderer {
 	private Map<String, Object> enhanceBinding(Map<String, Object> binding) {
 		ArrayList<Menu> menus = new ArrayList<Menu>();
 		for (AbstractPlugin plugin : pluginsLoader.getPlugins()) {
-			if (plugin.getPath() != null){
+			if (plugin.getPath() != null) {
 				List<String> path = plugin.getPath();
-				int i=0;
-				for (String pPath : path){
+				int i = 0;
+				for (String pPath : path) {
 					if (pPath != null) {
-							menus.add(new Menu(plugin.getName().get(i), pPath));
-							i++;
+						menus.add(new Menu(plugin.getName().get(i), pPath));
+						i++;
 					}
 				}
 			}
@@ -93,11 +107,12 @@ public class SobaTemplateRenderer {
 
 			binding.put("currentUser", subject.getPrincipal().toString());
 		}
-		/*String lang = configuration.getString("locale.lang");
-		String country = configuration.getString("locale.country");
-		binding.put("i18n", new I18n(new Locale(lang,country)));*/
+		/*
+		 * String lang = configuration.getString("locale.lang"); String country
+		 * = configuration.getString("locale.country"); binding.put("i18n", new
+		 * I18n(new Locale(lang,country)));
+		 */
 		return binding;
 	}
-	
 
 }

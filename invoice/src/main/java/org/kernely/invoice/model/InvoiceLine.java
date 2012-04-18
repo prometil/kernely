@@ -27,7 +27,7 @@ public class InvoiceLine extends AbstractModel {
 	private float unitPrice;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name="invoice_id")
+	@JoinColumn(name="invoice_id", insertable=false, updatable=false)
 	private Invoice invoice;
 
 	/**

@@ -54,13 +54,9 @@ public class MainController extends AbstractController {
 	 */
 	@GET
 	@Produces({ MediaType.TEXT_HTML })
-	public Response getUI() {
-		
-		String url = "templates/home.html";
-		StringWriter w = new StringWriter();
+	public Response getUI() {		
 		Map<String, Object> map =new HashMap<String, Object>();
-		templateRenderer.render(url, w, map);
-		return Response.ok(w.toString()).build();
+		return Response.ok(templateRenderer.render("templates/home.html", map)).build();
 		
 	}
 
