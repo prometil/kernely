@@ -39,7 +39,7 @@
 							<img id="profilePU-img" src='{{"{{"}}image{{"}}"}}'/>
 						</div>
 						<div id='profilePU-information'>
-							{{"{{"}}fullname}} ({{"{{"}}username{{"}}"}})<br/>
+							{{"{{"}}fullname{{"}}"}} ({{"{{"}}username{{"}}"}})<br/>
 							{{"{{"}}mail{{"}}"}}<br/>
 							<br/>
 							<a href="/user/{{"{{"}}username{{"}}"}}/profile"><%= i18n.t("profile") %></a>
@@ -60,7 +60,6 @@
 					{% for c in menu %}
 						<a href="{{c.link}}">{{c.name}}</a>
 					{% endfor %}
-					
 					{% if admin %}
 						<a href="/admin">{% i18n "administration" %}</a>
 					{% endif %}
