@@ -25,7 +25,7 @@ import groovy.text.SimpleTemplateEngine;
 
 import org.apache.commons.configuration.AbstractConfiguration;
 import org.apache.commons.configuration.BaseConfiguration;
-import org.kernely.core.plugin.PluginsLoader;
+import org.kernely.core.plugin.PluginManager;
 import org.kernely.core.service.mail.Mailer;
 import org.kernely.core.service.mail.builder.MailBuilder;
 import org.kernely.core.template.TemplateRenderer;
@@ -66,7 +66,7 @@ public class GuiceJunitModule extends AbstractModule {
 
 		bind(Initializer.class);
 		
-		bind(PluginsLoader.class);
+		bind(PluginManager.class);
 		bind(TemplateRenderer.class);
 		
 		//creates a mail moker

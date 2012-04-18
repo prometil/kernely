@@ -21,7 +21,7 @@ public class ProjectPlugin extends AbstractPlugin {
 	 * Default constructor
 	 */
 	public ProjectPlugin() {
-		super();
+		super(NAME);
 		registerName(NAME);
 		registerName("organization");
 		registerPath("/project");

@@ -110,6 +110,7 @@ public class Migrator {
 		Connection conn = null;
 		Properties connectionProps = new Properties();
 		try {
+			log.debug("Hibernate driver : {}",configuration.getString("hibernate.connection.driver_class"));
 			Class.forName(configuration.getString("hibernate.connection.driver_class"));
 			connectionProps.put("user", configuration.getString("hibernate.connection.username"));
 			connectionProps.put("password", configuration.getString("hibernate.connection.password"));
@@ -128,7 +129,7 @@ public class Migrator {
 			rs.close();
 
 			for (AbstractPlugin plugin : plugins) {
-				SortedSet<Version> versions = getCurrentSchemaVersion(conn, plugin.getName().get(0));
+				SortedSet<Version> versions = getCurrentSchemaVersion(conn, plugin.getName());
 				if (versions.size() > 0) {
 					Version currentVersion = versions.last();
 					log.info("{} plugin schema is in version {}", plugin.getName(), currentVersion);
@@ -138,7 +139,7 @@ public class Migrator {
 							log.info("Applying version {} for plugin {}", migration.getVersion(), plugin.getName());
 							if (migration.apply(conn)) {
 
-								addVersion(conn, migration.getVersion(), plugin.getName().get(0));
+								addVersion(conn, migration.getVersion(), plugin.getName());
 							} else {
 								log.error("Cannot apply migration {} due to previous errors", migration.getVersion());
 								return;
@@ -149,7 +150,7 @@ public class Migrator {
 					for (Migration migration : plugin.getMigrations()) {
 						log.info("Applying version {} for plugin {}", migration.getVersion(), plugin.getName());
 						if (migration.apply(conn)) {
-							addVersion(conn, migration.getVersion(), plugin.getName().get(0));
+							addVersion(conn, migration.getVersion(), plugin.getName());
 						} else {
 							log.error("Cannot apply migration {} due to previous errors", migration.getVersion());
 							return;

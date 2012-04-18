@@ -40,7 +40,7 @@ import org.kernely.bootstrap.error.KernelyErrorHandler;
 import org.kernely.bootstrap.guice.GuiceServletConfig;
 import org.kernely.core.migrations.migrator.Migrator;
 import org.kernely.core.plugin.AbstractPlugin;
-import org.kernely.core.plugin.PluginsLoader;
+import org.kernely.core.plugin.PluginManager;
 import org.kernely.core.resource.ResourceLocator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -69,7 +69,7 @@ public class KernelyBootstrap {
 		p.update();
 
 		// Load all detected plugins
-		PluginsLoader pluginLoad = new PluginsLoader();
+		PluginManager pluginLoad = new PluginManager();
 		List<AbstractPlugin> plugins = pluginLoad.getPlugins();
 
 		// configure
@@ -168,8 +168,10 @@ public class KernelyBootstrap {
 		ResourceLocator resourceLocator = new ResourceLocator();
 		CombinedConfiguration combinedConfiguration = new CombinedConfiguration();
 		// Bind all Jersey resources detected in plugins
+		System.out.println("qsdqsd"+plugins.size());
 		for (AbstractPlugin plugin : plugins) {
-			String filepath = plugin.getName().get(0)+".xml";
+			
+			String filepath = plugin.getName()+".xml";
 			log.debug("Searching configuration file {}",filepath);
 			if (filepath != null) {
 				try {

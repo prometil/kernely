@@ -73,7 +73,11 @@ public abstract class AbstractPlugin extends AbstractModule {
 	private Map<Class<? extends Job>, Trigger> jobs;
 
 	// the name of the abstract plugin
-	private List<String> name;
+	private List<String> menus;
+	
+	
+	//the name of the plugin
+	private String name;
 
 	// the path of the plugin
 	private List<String> path;
@@ -81,11 +85,11 @@ public abstract class AbstractPlugin extends AbstractModule {
 	/**
 	 * the constructor
 	 * 
-	 * @param pName
-	 * @param pPath
+	 * @param pName the name of the plugin
 	 */
-	public AbstractPlugin() {
-		name = new ArrayList<String>();
+	public AbstractPlugin(String pName) {
+		name = pName;
+		menus = new ArrayList<String>();
 		path = new ArrayList<String>();
 		controllers = new ArrayList<Class<? extends AbstractController>>();
 		models = new ArrayList<Class<? extends AbstractModel>>();
@@ -148,7 +152,7 @@ public abstract class AbstractPlugin extends AbstractModule {
 	 * @param String name
 	 */
 	protected void registerName(String name){
-		this.name.add(name);
+		this.menus.add(name);
 	}
 	
 
@@ -165,8 +169,8 @@ public abstract class AbstractPlugin extends AbstractModule {
 	 * 
 	 * @return the name of the plugin
 	 */
-	public List<String> getName() {
-		return name;
+	public List<String> getMenus() {
+		return menus;
 	}
 
 	/**
@@ -283,6 +287,20 @@ public abstract class AbstractPlugin extends AbstractModule {
 	 */
 	public SortedSet<Migration> getMigrations() {
 		return migrations;
+	}
+
+	/**
+	 * @return the name
+	 */
+	public String getName() {
+		return name;
+	}
+
+	/**
+	 * @param name the name to set
+	 */
+	public void setName(String name) {
+		this.name = name;
 	}
 
 }
