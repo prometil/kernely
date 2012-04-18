@@ -1,0 +1,36 @@
+{% import "templates/layout.html" %}
+	
+	{% block javascript %}
+	<!-- additional javascript-->
+	<script type="text/javascript" src="/js/adminfunctions.js"></script>
+	{% endblock %}
+
+	{% block css %}
+		<link rel="stylesheet" type="text/css" href="/css/admin.css"/>
+	{% endblock %}
+
+	
+	
+	{% block left %}
+		<div id="admin_sidebar_container">
+			<div class="admin_plugin_menu">
+			</div>
+		</div>
+
+	{% endblock %}
+	
+	{% block content %}
+		<div id="admin_header">
+		{% block title %}
+			{% i18n "admin_page_title" %}
+		{% endblock %}
+		</div>
+		<div id="admin_panel_container">
+			{% block admin %}
+			{% i18n "admin_page_text" %}
+			{% endblock %}
+		</div>
+		<div id="admin_bottom_container"><div>
+	{% endblock %}
+{% end %}
+

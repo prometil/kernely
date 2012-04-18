@@ -72,10 +72,18 @@
 				</div>
 			</div>
 			<div id="profile_popup"></div>
+			<div id="container_left">
+			{% block left %}
+			{% endblock %}
+			</div>
 			<div id="container">
 				{% block content %}
-					this content
+				No content.
 				{% endblock %}
+			</div>
+			<div id="container_right">
+			{% block right %}
+			{% endblock %}
 			</div>
 	</body>
 </html>
