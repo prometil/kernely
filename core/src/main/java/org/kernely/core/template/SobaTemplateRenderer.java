@@ -28,7 +28,7 @@ import com.google.inject.Inject;
  */
 public class SobaTemplateRenderer {
 
-	private static Logger log = LoggerFactory.getLogger(TemplateRenderer.class);
+	private static Logger log = LoggerFactory.getLogger(SobaTemplateRenderer.class);
 
 	@Inject
 	private soba.javaops.SobaEngineFacade engine;
@@ -36,13 +36,8 @@ public class SobaTemplateRenderer {
 	@Inject
 	private UserService userService;
 	@Inject
-<<<<<<< HEAD
-	private PluginsLoader pluginsLoader;
-
-=======
 	private PluginManager pluginsLoader;
 	
->>>>>>> Renames plugin loader and add automatic bundle detection
 	@Inject
 	private SobaI18n i18n;
 	
@@ -95,13 +90,9 @@ public class SobaTemplateRenderer {
 				int i = 0;
 				for (String pPath : path) {
 					if (pPath != null) {
-<<<<<<< HEAD
-						menus.add(new Menu(plugin.getName().get(i), pPath));
-						i++;
-=======
+
 							menus.add(new Menu(plugin.getMenus().get(i), pPath));
 							i++;
->>>>>>> Renames plugin loader and add automatic bundle detection
 					}
 				}
 			}
