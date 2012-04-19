@@ -30,8 +30,14 @@
 		<!-- additional css-->
 	
 	{% endblock %}
+	
+	
+	
 	</head>
 	<body>
+		{% block template %}
+			<!-- all templates -->
+		{% endblock %}
 			<script type="text/html" id="profile-template">
 				<div id='profilePU-content'>
 					<div id='profilePU-main'>
@@ -42,12 +48,12 @@
 							{{"{{"}}fullname}} ({{"{{"}}username{{"}}"}})<br/>
 							{{"{{"}}mail{{"}}"}}<br/>
 							<br/>
-							<a href="/user/{{"{{"}}username{{"}}"}}/profile"><%= i18n.t("profile") %></a>
+							<a href="/user/{{"{{"}}username{{"}}"}}/profile">{% i18n "profile" %}</a>
 						</div>
 					</div>
 					<div id="profilePU-footer">
 						<hr/>
-						<a href="/user/logout"><%= i18n.t("logout") %></a>
+						<a href="/user/logout">{% i18n "logout" %}</a>
 					</div>
 				</div>
 			</script>

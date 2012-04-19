@@ -1,6 +1,8 @@
 package org.kernely.invoice.controller;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -13,11 +15,12 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
+import javax.ws.rs.core.Response.Status;
 
 import org.kernely.core.controller.AbstractController;
 import org.kernely.core.model.Role;
 import org.kernely.core.service.user.UserService;
-import org.kernely.core.template.TemplateRenderer;
+import org.kernely.core.template.SobaTemplateRenderer;
 import org.kernely.invoice.dto.InvoiceCreationRequestDTO;
 import org.kernely.invoice.dto.InvoiceDTO;
 import org.kernely.invoice.dto.InvoiceLineCreationRequestDTO;
@@ -50,7 +53,7 @@ public class InvoiceController extends AbstractController{
 	private UserService userService;
 	
 	@Inject
-	private TemplateRenderer templateRenderer; 
+	private SobaTemplateRenderer templateRenderer; 
 	
 	/**
 	 * Retrieves the main page of the invoice
@@ -58,11 +61,12 @@ public class InvoiceController extends AbstractController{
 	 */
 	@GET
 	@Produces( { MediaType.TEXT_HTML })
-	public String getInvoicePanel(){
+	public Response getInvoicePanel(){
 		if(userService.currentUserHasRole(Role.ROLE_PROJECTMANAGER) || userService.currentUserHasRole(Role.ROLE_BOOKKEEPER)){
-			return templateRenderer.create("/templates/gsp/invoice_overview.gsp").addCss("/css/invoice.css").render();
+			Map<String, Object> map =new HashMap<String, Object>();
+			return Response.ok(templateRenderer.render("templates/invoice_overview.html", map)).build();
 		}
-		return null;
+		return Response.status(Status.FORBIDDEN).build();
 	}
 	
 	/**
@@ -120,6 +124,7 @@ public class InvoiceController extends AbstractController{
 	@Produces({MediaType.APPLICATION_JSON})
 	public List<InvoiceDTO> getInvoicesPerOrganizationAndProject(@QueryParam("organizationId") long organizationId, @QueryParam("projectId") long projectId){
 		if(userService.currentUserHasRole(Role.ROLE_PROJECTMANAGER) || userService.currentUserHasRole(Role.ROLE_BOOKKEEPER)){
+			
 			return invoiceService.getInvoicesPerOrganizationAndProject(organizationId, projectId);
 		}
 		return null;
@@ -239,9 +244,13 @@ public class InvoiceController extends AbstractController{
 	public Response visualizeInvoice(@PathParam("invoiceId") long invoiceId) {
 		if(userService.currentUserHasRole(Role.ROLE_PROJECTMANAGER) || userService.currentUserHasRole(Role.ROLE_BOOKKEEPER)){
 			InvoiceDTO invoiceDTO = invoiceService.getInvoiceById(invoiceId);
-			return ok(templateRenderer.create("/templates/gsp/invoice.gsp").with("invoice", invoiceDTO).addCss("/css/invoice.css"));
+			Map<String, Object> map =new HashMap<String, Object>();
+			map.put("invoice", invoiceDTO);
+			map.put("invoiceLines", invoiceDTO.lines);
+			map.put("invoiceVats", invoiceDTO.vats);
+			return Response.ok(templateRenderer.render("templates/invoice.html", map)).build();
 		}
-		return null;
+		return Response.status(Status.FORBIDDEN).build();
 	}
 	
 	/**
@@ -255,9 +264,13 @@ public class InvoiceController extends AbstractController{
 	public Response editInvoice(@PathParam("invoiceId") long invoiceId) {
 		if(userService.currentUserHasRole(Role.ROLE_PROJECTMANAGER) || userService.currentUserHasRole(Role.ROLE_BOOKKEEPER)){
 			InvoiceDTO invoiceDTO = invoiceService.getInvoiceById(invoiceId);
-			return ok(templateRenderer.create("/templates/gsp/invoice_editable.gsp").with("invoice", invoiceDTO).addCss("/css/invoice.css"));
+			
+			Map<String, Object> map =new HashMap<String, Object>();
+			map.put("invoice", invoiceDTO);
+			
+			return Response.ok(templateRenderer.render("templates/invoice_editable.html", map)).build();
 		}
-		return null;
+		return Response.status(Status.FORBIDDEN).build();
 	}
 	
 	/**
@@ -283,9 +296,14 @@ public class InvoiceController extends AbstractController{
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Produces({ MediaType.TEXT_HTML })
 	public Response updateInvoice(MultivaluedMap<String, String> formParams, @PathParam("invoiceId") long invoiceId){
-		invoiceService.deleteAllInvoiceLines(invoiceId);
 		InvoiceLineCreationRequestDTO lineRequest = new InvoiceLineCreationRequestDTO();
 		for(int i = 0; i < formParams.get("designation-field[]").size(); i++){
+			String id = formParams.get("id-field[]").get(i);
+			if(id.equals("")){
+				lineRequest.id = 0;
+			}else{
+				lineRequest.id = Integer.parseInt(id);
+			}
 			String designation = formParams.get("designation-field[]").get(i);
 			String quantity = formParams.get("quantity-field[]").get(i);
 			String unitPrice = formParams.get("unitprice-field[]").get(i);
@@ -303,11 +321,13 @@ public class InvoiceController extends AbstractController{
 					lineRequest.unitPrice = Float.parseFloat(unitPrice);
 				}
 				lineRequest.vat = Float.parseFloat(vat);
+				
 				lineRequest.invoiceId = invoiceId;
 				invoiceService.createOrUpdateInvoiceLine(lineRequest);
 			}
 		}
 		InvoiceCreationRequestDTO invoiceRequest = new InvoiceCreationRequestDTO();
+		
 		invoiceRequest.id = invoiceId;
 		invoiceRequest.datePublication = formParams.get("invoice-sending").get(0);
 		invoiceRequest.dateTerm = formParams.get("invoice-term").get(0);

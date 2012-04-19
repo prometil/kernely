@@ -410,44 +410,6 @@ public class InvoiceServiceTest extends AbstractServiceTest{
 	}
 	
 	@Test
-	public void deleteLinesOfInvoiceTest(){
-		createOrganization1ForTest();
-		ProjectDTO project1 = createProject1ForTest();
-		InvoiceCreationRequestDTO request = new InvoiceCreationRequestDTO();
-		request.id = 0;
-		request.datePublication = DATE_PUBLICATION_STRING;
-		request.dateTerm = DATE_TERM_STRING;
-		request.projectId = project1.id;
-		request.object= OBJECT1;
-		
-		InvoiceDTO invoiceDTO = invoiceService.createOrUpdateInvoice(request);
-
-		InvoiceLineCreationRequestDTO requestLine = new InvoiceLineCreationRequestDTO();
-		requestLine.designation = DESIGNATION1;
-		requestLine.quantity = QUANTITY1;
-		requestLine.unitPrice = UNITPRICE1;
-		requestLine.invoiceId = invoiceDTO.id;
-		
-		invoiceService.createOrUpdateInvoiceLine(requestLine);
-		
-		InvoiceLineCreationRequestDTO requestLine2 = new InvoiceLineCreationRequestDTO();
-		requestLine2.designation = DESIGNATION1_MODIFIED;
-		requestLine2.quantity = QUANTITY1_MODIFIED;
-		requestLine2.unitPrice = UNITPRICE1_MODIFIED;
-		requestLine2.invoiceId = invoiceDTO.id;
-		
-		invoiceService.createOrUpdateInvoiceLine(requestLine2);
-				
-		assertEquals(2, invoiceService.getLinesForInvoice(invoiceDTO.id).size());
-		
-		invoiceService.deleteAllInvoiceLines(invoiceDTO.id);
-		
-		assertEquals(0, invoiceService.getLinesForInvoice(invoiceDTO.id).size());
-		
-		
-	}
-	
-	@Test
 	public void setInvoiceAsPaidTest(){
 		createOrganization1ForTest();
 		ProjectDTO project = createProject1ForTest();

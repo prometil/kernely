@@ -137,7 +137,7 @@ AppInvoiceEdit = (function($){
 		},
 		render: function(){
 			var template = $("#invoice-line-editable-template").html();
-			var view = {description: this.description, quantity: this.quantity, unitprice : this.unitPrice, amount: this.amount};
+			var view = {id: this.id, description: this.description, quantity: this.quantity, unitprice : this.unitPrice, amount: this.amount};
 			var html = Mustache.to_html(template, view);
 			$(this.el).html(html);
 			var parent = this;
