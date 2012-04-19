@@ -32,7 +32,7 @@ import javax.ws.rs.core.Response;
 
 import org.kernely.core.dto.PluginDTO;
 import org.kernely.core.plugin.AbstractPlugin;
-import org.kernely.core.plugin.PluginsLoader;
+import org.kernely.core.plugin.PluginManager;
 import org.kernely.core.service.user.UserService;
 import org.kernely.core.template.SobaTemplateRenderer;
 
@@ -51,7 +51,7 @@ public class AdminController extends AbstractController {
 	private UserService userService;
 
 	@Inject
-	private PluginsLoader pluginsLoader;
+	private PluginManager pluginsLoader;
 
 	/**
 	 * Display the administration panel.
@@ -85,7 +85,7 @@ public class AdminController extends AbstractController {
 	public List<PluginDTO> getAdminList() {
 		List<PluginDTO> plugins = new ArrayList<PluginDTO>();
 		for (AbstractPlugin plugin : pluginsLoader.getPlugins()) {
-			PluginDTO dto = new PluginDTO(plugin.getName(), plugin.getPath(), "", plugin.getAdminPages());
+			PluginDTO dto = new PluginDTO(plugin.getMenus(), plugin.getPath(), "", plugin.getAdminPages());
 			plugins.add(dto);
 		}
 		return plugins;

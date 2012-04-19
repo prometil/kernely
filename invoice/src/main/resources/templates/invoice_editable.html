@@ -1,0 +1,75 @@
+{% extends "templates/layout.html" %}
+{% block javascript %}
+	<script type="text/javascript" src="/js/invoice_edit.js"></script>
+{% endblock %}
+
+{% block css %}
+	<link rel="stylesheet" type="text/css" href="/css/invoice.css"/>
+{% endblock %}
+
+{% block template %}
+	<script type="text/html" id="invoice-line-template">
+	</script>
+
+	<script type="text/html" id="invoice-line-editable-template">
+		<td class="id-field"><input type="text" name="id-field[]" value="{{"{{"}}id{{"}}"}}"/></td>
+		<td><input type="text" name="designation-field[]" value="{{"{{"}}description{{"}}"}}"/></td>
+		<td><input type="text" class="quantity-field" name="quantity-field[]" value="{{"{{"}}quantity{{"}}"}}"/></td>
+		<td><input type="text" class="unitprice-field" name="unitprice-field[]" value="{{"{{"}}unitprice{{"}}"}}"/></td>
+		<td class="line-amount">{{"{{"}}amount{{"}}"}}</td>
+		<td><select name="vat-field[]" class="vat-field"></select> %</td>
+		<td><img src="/img/delete.png" class="delete-invoice-line"/></td>
+	</script>
+
+{% endblock %}
+
+{% block content %}
+	<form action="/invoice/update/{{invoice.id}}" method="POST" id="invoice-edition">
+		
+		<span id="invoice-visu-i" style="display:none;">{{invoice.id}}</span>
+		<!-- Invoice header -->
+		<div id="invoice-header">
+			<h2><span>{% i18n "invoice" %}</span> {{invoice.organizationName}}</h2>
+		</div>
+		<!-- General informations -->
+		<div id="invoice-general-informations">
+			{% i18n "invoice-code" %} : <input type="text" class="general-informations-fields" name="invoice-code" value="{{invoice.code}}"/><br/>
+			{% i18n "invoice-publication" %} : <input type="text" class="general-informations-fields" id="invoice-publication" name="invoice-sending" value="{{invoice.datePublicationString}}"/><br/>
+			{% i18n "invoice-term" %} : <input type="text" class="general-informations-fields" id="invoice-term" name="invoice-term" value="{{invoice.dateTermString}}"/>
+			<input type="text" class="general-informations-fields" name="invoice-devise" value="&euro;"/><br/>
+			{% i18n "invoice-object" %} : <input type="text" class="general-informations-fields object-field" name="invoice-object" value="{{invoice.object}}"/>
+		</div>
+		<!-- Invoice details -->
+		<br/>
+		<div id="invoice-details">
+			<input type="button" id="new-invoice-line" value="{% i18n "invoice-new-line" %}"/>
+			<table id="invoice-line-details">
+				<tr>
+					<th class="id-field"><!--id of the line--></th>
+					<th>{% i18n "invoice-line-description" %}</th>
+					<th>{% i18n "invoice-line-quantity" %}</th>
+					<th>{% i18n "invoice-line-unit-price" %}</th>
+					<th>{% i18n "invoice-line-amount" %}</th>
+					<th>{% i18n "invoice-line-vat" %}</th>
+					<th><!-- Column for the delete button --></th>
+				</tr>
+				<tbody id="invoice-lines">
+					
+				</tbody>
+				<tbody id="additional-informations">
+				
+				</tbody>
+			</table>
+		</div>
+		
+		{% i18n "invoice-comment" %}<br/>
+		<textarea id="invoice-comment" name="invoice-comment">{{invoice.comment}}</textarea>
+		
+		<!-- Footer button bar -->
+		<div id="invoice-button-bar">
+			<input type="button" id="export-invoice" value="{% i18n "export" %}"/>
+			<input type="button" id="cancel-invoice" value="{% i18n "cancel" %}" onClick="window.location = '/invoice/view/${invoice.id}';"/>
+			<input type="submit" id="validate-invoice" value="{% i18n "ok" %}"/>
+		</div>
+	</form>
+{% endblock %}

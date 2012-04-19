@@ -30,24 +30,27 @@ import org.slf4j.LoggerFactory;
 /**
  * Load all plugins
  */
-public class PluginsLoader {
-	private static Logger log = LoggerFactory.getLogger(PluginsLoader.class);
+public class PluginManager {
+	private static Logger log = LoggerFactory.getLogger(PluginManager.class);
+	
+	private List<AbstractPlugin> plugins ;
 
 	/**
 	 * Find the plugins
 	 */
 	public List<AbstractPlugin> getPlugins() {
+		if(plugins == null){
+			plugins = new ArrayList<AbstractPlugin>();
 
-		List<AbstractPlugin> plugins = new ArrayList<AbstractPlugin>();
+			ServiceLoader<AbstractPlugin> commandLoader = ServiceLoader.load(AbstractPlugin.class);
+			// commandLoader.reload();
+			Iterator<AbstractPlugin> it = commandLoader.iterator();
+			while (it.hasNext()) {
+				AbstractPlugin plugin = it.next();
+				log.debug("Plugin {} found", plugin.getMenus().get(0));
+				plugins.add(plugin);
 
-		ServiceLoader<AbstractPlugin> commandLoader = ServiceLoader.load(AbstractPlugin.class);
-		// commandLoader.reload();
-		Iterator<AbstractPlugin> it = commandLoader.iterator();
-		while (it.hasNext()) {
-			AbstractPlugin plugin = it.next();
-			log.debug("Plugin {} found", plugin.getName().get(0));
-			plugins.add(plugin);
-
+			}
 		}
 		return plugins;
 	}

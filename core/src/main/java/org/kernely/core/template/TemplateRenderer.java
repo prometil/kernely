@@ -36,7 +36,7 @@ import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 import org.codehaus.groovy.control.CompilationFailedException;
 import org.kernely.core.plugin.AbstractPlugin;
-import org.kernely.core.plugin.PluginsLoader;
+import org.kernely.core.plugin.PluginManager;
 import org.kernely.core.resource.ResourceLocator;
 import org.kernely.core.service.user.UserService;
 import org.kernely.core.template.helpers.I18n;
@@ -53,7 +53,7 @@ import com.google.inject.Inject;
 public class TemplateRenderer {
 
 	@Inject
-	private PluginsLoader pluginsLoader;
+	private PluginManager pluginsLoader;
 
 	@Inject
 	private SimpleTemplateEngine engine;
@@ -275,7 +275,7 @@ public class TemplateRenderer {
 					int i=0;
 					for (String pPath : path){
 						if (pPath != null) {
-								menu.put(plugin.getName().get(i), pPath);
+								menu.put(plugin.getMenus().get(i), pPath);
 								i++;
 						}
 					}

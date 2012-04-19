@@ -94,6 +94,10 @@
 	width:300px;
 }
 
+.id-field{
+	display:none;
+}
+
 .unpaid{
 	color:red;
 }

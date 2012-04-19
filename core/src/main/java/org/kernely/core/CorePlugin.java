@@ -37,7 +37,7 @@ import org.kernely.core.model.Role;
 import org.kernely.core.model.User;
 import org.kernely.core.model.UserDetails;
 import org.kernely.core.plugin.AbstractPlugin;
-import org.kernely.core.plugin.PluginsLoader;
+import org.kernely.core.plugin.PluginManager;
 import org.kernely.core.service.mail.MailJob;
 import org.kernely.core.service.mail.MailService;
 import org.kernely.core.service.mail.Mailer;
@@ -72,7 +72,7 @@ public class CorePlugin extends AbstractPlugin {
 	 */
 	@SuppressWarnings({ "unchecked" })
 	public CorePlugin() {
-		super();
+		super(NAME);
 		registerPath(null);
 		registerName(NAME);
 		registerController(MainController.class);
@@ -131,7 +131,7 @@ public class CorePlugin extends AbstractPlugin {
 	@Override
 	public void configurePlugin() {
 		
-		bind(PluginsLoader.class);
+		bind(PluginManager.class);
 		bind(TemplateRenderer.class);
 		bind(Mailer.class).to(MailService.class);
 		bind(SimpleTemplateEngine.class);

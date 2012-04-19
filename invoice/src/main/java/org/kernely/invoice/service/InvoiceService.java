@@ -3,7 +3,6 @@ package org.kernely.invoice.service;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -32,7 +31,6 @@ import org.kernely.project.service.ProjectService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Stopwatch;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.google.inject.persist.Transactional;
@@ -181,14 +179,10 @@ public class InvoiceService extends AbstractService{
 	@Transactional
 	public List<InvoiceDTO> getInvoicesPerOrganizationAndProject(long organizationId, long projectId){
 		Query request;
-		Stopwatch sw = new Stopwatch();
 		if(organizationId == 0){
 			if(userService.currentUserHasRole(Role.ROLE_BOOKKEEPER)){
 				
-				sw.reset();
-				sw.start();
 				request = em.get().createQuery("SELECT i FROM Invoice i");
-				log.debug("Reqest took {} ms", sw.elapsedMillis());
 				
 			}
 			else{
@@ -241,20 +235,13 @@ public class InvoiceService extends AbstractService{
 				request.setParameter("project", em.get().find(Project.class, projectId));
 			}
 		}
-		sw.reset();
-		sw.start();
-		
 		List<Invoice> invoices = (List<Invoice>)request.getResultList();
 		List<InvoiceDTO> invoicesDTO = new ArrayList<InvoiceDTO>();
-		log.debug("Before loop {} ms", sw.elapsedMillis());
-		sw.reset();
-		sw.start();
 		InvoiceDTO invoiceDTO;
 		for(Invoice i : invoices){
 			invoiceDTO = new InvoiceDTO(i);
 			invoicesDTO.add(invoiceDTO);
 		}
-		log.debug("Loop took {} ms", sw.elapsedMillis());
 		return invoicesDTO;
 	}
 	
@@ -392,22 +379,7 @@ public class InvoiceService extends AbstractService{
 			lines.add(new InvoiceLineDTO(line));
 		}
 		return lines;
-	}
-	
-	/**
-	 * Delete all the existing lines linked to the given invoice
-	 * @param invoiceId The id of the given invoice
-	 */
-	@Transactional
-	public void deleteAllInvoiceLines(long invoiceId){
-		Invoice invoice = em.get().find(Invoice.class, invoiceId);
-		Set<InvoiceLine> oldLines = invoice.getLines();
-		//Remove all the old lines
-		for(InvoiceLine line : oldLines){
-			em.get().remove(line);
-		}
-		invoice.setLines(new HashSet<InvoiceLine>());
-		em.get().merge(invoice);
+		
 	}
 	
 	/**

@@ -48,7 +48,7 @@ public class StreamPlugin extends AbstractPlugin {
 	 * Default constructor
 	 */
 	public StreamPlugin() {
-		super();
+		super(NAME);
 		registerPath("/streams");
 		registerName(NAME);
 		registerController(StreamController.class);

@@ -1,0 +1,113 @@
+{% extends "templates/layout.html" %}
+
+{% block javascript %}
+	<script type="text/javascript" src="/js/invoice_main.js"></script>
+{% endblock %}
+
+{% block css %}
+	<link rel="stylesheet" type="text/css" href="/css/invoice.css"/>
+{% endblock %}
+
+{% block template %}
+	<script type="text/html" id="confirm-remove-invoice-template">{% i18n "invoice_remove_confirm" %}</script>
+	
+	<script type="text/html" id="invoice-status-2">
+		{% i18n "invoice-unpaid" %}
+	</script>
+	<script type="text/html" id="invoice-status-1">
+		{% i18n "invoice-paid" %}
+	</script>
+	<script type="text/html" id="invoice-status-3">
+		{% i18n "invoice-undefined" %}
+	</script>
+	<script type="text/html" id="invoice-status-0">
+		{% i18n "invoice-pending" %}
+	</script>
+	
+	
+	<script type="text/html" id="invoice-line-template">
+		<td><span class="{{"{{"}}statusStyle{{"}}"}}">{{"{{"}}status{{"}}"}}</span></td>
+		<td>{{"{{"}}number{{"}}"}}</td>
+		<td>{{"{{"}}client{{"}}"}}</td>
+		<td>{{"{{"}}project{{"}}"}}</td>
+		<td></td>
+		<td>{{"{{"}}amount{{"}}"}}</td>
+		<td><a href="/invoice/view/{{"{{"}}invoiceId{{"}}"}}"><img src="/images/icons/view.png" class="edit-invoice" /></a></td>
+		<td><a href="/invoice/edit/{{"{{"}}invoiceId{{"}}"}}"><img src="/images/edit.png" class="edit-invoice" /></a></td>
+		<td><input type="button" class="invoice-publish" value="Publish" /></td>
+		<td><input type="button" class="invoice-paid" value="Paid" /></td>
+		<td><input type="button" class="invoice-unpaid" value="Unpaid"/></td>
+		<td><img src="/img/delete.png" class="delete-invoice" /></td>
+	</script>
+	
+	<script type="text/html" id="invoice-creation-window">
+		<input type="button" value="{% i18n "close" %}" class="closeModal"/><br/>
+		<fieldset>
+		<legend>{% i18n "new-invoice" %}</legend>
+		<span>{% i18n "choose-organization" %}</span><br/>
+		<select id="organization-selector-mod">
+			<option></option>
+		</select><br/>
+		<span>{% i18n "choose-project" %}</span><br/>
+		<select id="project-selector-mod" disabled="disabled">
+			<option></option>
+		</select><br/>
+		<span>{% i18n "choose-period" %}</span><br/>
+		<label for="from">{% i18n "from_date" %} </label><input readonly="readonly" type="text" id="from" name="from"/><br/>
+		<label for="to"> {% i18n "to_date" %} </label><input readonly="readonly" type="text" id="to" name="to"/>
+		</fieldset>
+		<input type="button" value="{% i18n "cancel" %}" class="cancel_invoice"/>
+		<input type="button" value="{% i18n "create" %}" class="create_invoice"/>
+		<br/>
+		<span id="errors_message"></span>
+	</script>
+{% endblock %}
+
+{% block content %}
+	<div id="mask"></div>
+	
+	<div id="modal_window_invoice"></div>
+	
+	
+	<div id="invoicing-main">
+		<div id="invoicing-header">
+		</div>
+		<div id="invoicing-buttons-bar">
+			<select id="organization-selector">
+				<option value="0">All</option>
+				<optgroup id="organization-select-group" label="{% i18n "organizations" %}">
+					
+				</optgroup>
+			</select>
+			<select id="project-selector" disabled="disabled">
+				<option value="0">All</option>
+				<optgroup id="project-select-group" label="{% i18n "projects" %}">
+				
+				</optgroup>
+			</select>
+			<input type="button" value="{% i18n "new-invoice" %}" id="new-invoice">
+		</div>
+		<div id="invoices-list">
+			<table id="invoices-table">
+				<tr>
+					<th>{% i18n "invoice-status" %}</th>
+					<th>{% i18n "invoice-number" %}</th>
+					<th>{% i18n "invoice-client" %}</th>
+					<th>{% i18n "invoice-project" %}</th>
+					<th></th>
+					<th>{% i18n "invoice-amount" %}</th>
+					<th></th>
+					<th></th>
+					<th></th>
+					<th></th>
+					<th></th>
+					<th></th>
+				</tr>
+				<tbody id="invoices">
+				
+				</tbody>
+			</table>
+		</div>
+		
+	</div>
+{% endblock %}
