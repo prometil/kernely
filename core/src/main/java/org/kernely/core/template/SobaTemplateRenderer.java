@@ -6,6 +6,7 @@ package org.kernely.core.template;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -71,6 +72,20 @@ public class SobaTemplateRenderer {
 	 */
 	public String render(String filePath, Map<String, Object> bindings) {
 		StringWriter w = new StringWriter();
+		engine.render(filePath, w, enhanceBinding(bindings));
+		return w.toString();
+	}
+	
+	/**
+	 * Load a template base on the filepath
+	 * 
+	 * @param filePath
+	 *            the filepath to load
+	 * @return the loaded template
+	 */
+	public String render(String filePath) {
+		StringWriter w = new StringWriter();
+		Map<String,Object> bindings = new HashMap<String,Object>();
 		engine.render(filePath, w, enhanceBinding(bindings));
 		return w.toString();
 	}
