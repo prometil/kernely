@@ -13,6 +13,8 @@ import javax.annotation.PostConstruct;
 
 import org.apache.commons.configuration.AbstractConfiguration;
 import org.kernely.core.i18n.Messages;
+import org.kernely.core.plugin.AbstractPlugin;
+import org.kernely.core.plugin.PluginManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,6 +35,10 @@ public class SobaI18n extends Extension {
 
 	@Inject
 	private AbstractConfiguration configuration;
+	
+	
+	@Inject
+	private PluginManager pluginManager;
 
 	private Messages messages;
 
@@ -49,13 +55,13 @@ public class SobaI18n extends Extension {
 	
 		String lang = configuration.getString("locale.lang");
 		String country = configuration.getString("locale.country");
+		
+		List<AbstractPlugin> plugins = pluginManager.getPlugins();
 		List<String> names = new ArrayList<String>();
-		names.add("core");
-		names.add("stream");
-		names.add("holiday");
-		names.add("project");
-		names.add("timesheet");
-		names.add("invoice");
+		for (AbstractPlugin plugin : plugins){
+			names.add(plugin.getName());
+		}
+		
 		Locale locale = new Locale(lang, country);
 		messages = new Messages(locale, names);
 	}

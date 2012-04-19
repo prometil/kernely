@@ -29,6 +29,7 @@ AppAdmin = (function($){
                    dataType:"json",
                    success: function(data){
                             $.each(data.pluginDTO, function() {
+
                             	// If the plugin doesn't have an admin page, then do nothing
                             	if(this.adminPages != null && typeof(this.adminPages) != "undefined"){
 	                            	if (this.adminPages.length > 1){
@@ -63,6 +64,9 @@ AppAdmin = (function($){
 
 		},
 		initialize:function(admin, adminpath){
+			console.log(admin+" found : "+adminpath);
+
+
 			this.vadmin = admin;
 			this.vadminpath = adminpath;
 		},
@@ -72,6 +76,8 @@ AppAdmin = (function($){
 			var html = Mustache.to_html(template, view);
 			$(this.el).html(html);
             $(this.el).appendTo($("#admin_sidebar_container"));
+            console.log($(this.el).html());
+			console.log($("#admin_sidebar_container").html());
 			return this;			
 		}
 		

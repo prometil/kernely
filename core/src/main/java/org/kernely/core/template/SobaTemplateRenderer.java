@@ -14,7 +14,7 @@ import javax.annotation.PostConstruct;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 import org.kernely.core.plugin.AbstractPlugin;
-import org.kernely.core.plugin.PluginsLoader;
+import org.kernely.core.plugin.PluginManager;
 import org.kernely.core.service.user.UserService;
 import org.kernely.core.template.helpers.SobaI18n;
 import org.slf4j.Logger;
@@ -28,7 +28,7 @@ import com.google.inject.Inject;
  */
 public class SobaTemplateRenderer {
 
-	private static Logger log = LoggerFactory.getLogger(TemplateRenderer.class);
+	private static Logger log = LoggerFactory.getLogger(SobaTemplateRenderer.class);
 
 	@Inject
 	private soba.javaops.SobaEngineFacade engine;
@@ -36,8 +36,8 @@ public class SobaTemplateRenderer {
 	@Inject
 	private UserService userService;
 	@Inject
-	private PluginsLoader pluginsLoader;
-
+	private PluginManager pluginsLoader;
+	
 	@Inject
 	private SobaI18n i18n;
 	
@@ -90,8 +90,9 @@ public class SobaTemplateRenderer {
 				int i = 0;
 				for (String pPath : path) {
 					if (pPath != null) {
-						menus.add(new Menu(plugin.getName().get(i), pPath));
-						i++;
+
+							menus.add(new Menu(plugin.getMenus().get(i), pPath));
+							i++;
 					}
 				}
 			}

@@ -699,7 +699,7 @@ AppTimeSheet = (function($){
 		
 		render: function(){
 			var title = $("#expense-line-title-template").html();
-			$(this.el).html("<td></td>");
+			$(this.el).html("<td>"+title+"</td>");
 			parent = this;
 			var i = 0;
 			$.each(this.days, function(){

@@ -17,7 +17,7 @@ public class InvoicePlugin extends AbstractPlugin {
 	 * Default constructor
 	 */
 	public InvoicePlugin() {
-		super();
+		super(NAME);
 		registerName(NAME);
 		registerPath("/invoice");
 		registerController(InvoiceController.class);

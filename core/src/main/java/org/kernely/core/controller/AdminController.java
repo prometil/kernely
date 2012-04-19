@@ -20,7 +20,9 @@
 package org.kernely.core.controller;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -30,9 +32,9 @@ import javax.ws.rs.core.Response;
 
 import org.kernely.core.dto.PluginDTO;
 import org.kernely.core.plugin.AbstractPlugin;
-import org.kernely.core.plugin.PluginsLoader;
+import org.kernely.core.plugin.PluginManager;
 import org.kernely.core.service.user.UserService;
-import org.kernely.core.template.TemplateRenderer;
+import org.kernely.core.template.SobaTemplateRenderer;
 
 import com.google.inject.Inject;
 
@@ -43,13 +45,13 @@ import com.google.inject.Inject;
 public class AdminController extends AbstractController {
 
 	@Inject
-	private TemplateRenderer templateRenderer;
+	private SobaTemplateRenderer templateRenderer;
 
 	@Inject
 	private UserService userService;
 
 	@Inject
-	private PluginsLoader pluginsLoader;
+	private PluginManager pluginsLoader;
 
 	/**
 	 * Display the administration panel.
@@ -61,11 +63,13 @@ public class AdminController extends AbstractController {
 	public Response getAdmin() {
 		javax.ws.rs.core.Response page;
 
+		Map<String, Object> map =new HashMap<String, Object>();
+		
 		// Display the admin page only if the user is admin.
 		if (userService.currentUserIsAdministrator()) {
-			page = ok(templateRenderer.create("/templates/gsp/admin.gsp").with("extension", "").addCss("/css/admin.css"));
+			page = Response.ok(templateRenderer.render("templates/admin.html", map)).build();
 		} else {
-			page = ok(templateRenderer.create("/templates/gsp/home.gsp"));
+			page = Response.ok(templateRenderer.render("templates/home.html",map)).build();
 		}
 		return page;
 	}
@@ -81,7 +85,7 @@ public class AdminController extends AbstractController {
 	public List<PluginDTO> getAdminList() {
 		List<PluginDTO> plugins = new ArrayList<PluginDTO>();
 		for (AbstractPlugin plugin : pluginsLoader.getPlugins()) {
-			PluginDTO dto = new PluginDTO(plugin.getName(), plugin.getPath(), "", plugin.getAdminPages());
+			PluginDTO dto = new PluginDTO(plugin.getMenus(), plugin.getPath(), "", plugin.getAdminPages());
 			plugins.add(dto);
 		}
 		return plugins;

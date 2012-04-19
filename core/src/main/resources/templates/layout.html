@@ -45,7 +45,7 @@
 							<img id="profilePU-img" src='{{"{{"}}image{{"}}"}}'/>
 						</div>
 						<div id='profilePU-information'>
-							{{"{{"}}fullname}} ({{"{{"}}username{{"}}"}})<br/>
+							{{"{{"}}fullname{{"}}"}} ({{"{{"}}username{{"}}"}})<br/>
 							{{"{{"}}mail{{"}}"}}<br/>
 							<br/>
 							<a href="/user/{{"{{"}}username{{"}}"}}/profile">{% i18n "profile" %}</a>
@@ -66,7 +66,6 @@
 					{% for c in menu %}
 						<a href="{{c.link}}">{{c.name}}</a>
 					{% endfor %}
-					
 					{% if admin %}
 						<a href="/admin">{% i18n "administration" %}</a>
 					{% endif %}
@@ -78,10 +77,18 @@
 				</div>
 			</div>
 			<div id="profile_popup"></div>
+			<div id="container_left">
+			{% block left %}
+			{% endblock %}
+			</div>
 			<div id="container">
 				{% block content %}
-					this content
+				No content.
 				{% endblock %}
+			</div>
+			<div id="container_right">
+			{% block right %}
+			{% endblock %}
 			</div>
 	</body>
 </html>
