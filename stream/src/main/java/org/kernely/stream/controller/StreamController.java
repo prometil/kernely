@@ -34,7 +34,7 @@ import javax.ws.rs.core.Response;
 
 import org.apache.shiro.SecurityUtils;
 import org.kernely.core.controller.AbstractController;
-import org.kernely.core.template.TemplateRenderer;
+import org.kernely.core.template.SobaTemplateRenderer;
 import org.kernely.stream.dto.StreamCommentCreationRequestDTO;
 import org.kernely.stream.dto.StreamDTO;
 import org.kernely.stream.dto.StreamMessageCreationRequestDTO;
@@ -48,8 +48,6 @@ import com.google.inject.Inject;
 
 /**
  * The controller for stream pages
- * @author b.grandperret
- *
  */
 @Path("/streams")
 public class StreamController extends AbstractController {
@@ -57,7 +55,7 @@ public class StreamController extends AbstractController {
 	private static Logger log = LoggerFactory.getLogger(StreamController.class);
 
 	@Inject
-	private TemplateRenderer templateRenderer;
+	private SobaTemplateRenderer templateRenderer;
 
 	@Inject
 	private StreamService streamService;
@@ -72,7 +70,7 @@ public class StreamController extends AbstractController {
 	public Response display() {
 		log.debug("Call to GET on streams");
 
-		return ok(templateRenderer.create("/templates/gsp/streams.gsp").addCss("/css/stream.css"));
+		return Response.ok(templateRenderer.render("templates/streams.html")).build();
 	}
 
 	/**

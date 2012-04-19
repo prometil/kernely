@@ -1,5 +1,5 @@
 {% extends "templates/layout.html" %}
-	
+
 {% block javascript %}
 <!-- Additional javascript -->
 <script type="text/javascript" src="/js/adminfunctions.js"></script>
@@ -9,6 +9,8 @@
 
 {% block css %}
 	<link rel="stylesheet" type="text/css" href="/css/admin.css"/>
+	{% block subcss %}
+	{% endblock %}
 {% endblock %}
 
 {% block left %}

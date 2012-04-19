@@ -28,6 +28,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 
 import org.kernely.core.controller.AbstractController;
 import org.kernely.core.dto.GroupDTO;
@@ -35,7 +36,7 @@ import org.kernely.core.dto.UserDTO;
 import org.kernely.core.service.user.GroupService;
 import org.kernely.core.service.user.PermissionService;
 import org.kernely.core.service.user.UserService;
-import org.kernely.core.template.TemplateRenderer;
+import org.kernely.core.template.SobaTemplateRenderer;
 import org.kernely.stream.dto.RightOnStreamDTO;
 import org.kernely.stream.dto.StreamCreationRequestDTO;
 import org.kernely.stream.dto.StreamDTO;
@@ -56,7 +57,7 @@ public class StreamAdminController extends AbstractController {
 	private static Logger log = LoggerFactory.getLogger(StreamAdminController.class);
 
 	@Inject
-	private TemplateRenderer templateRenderer;
+	private SobaTemplateRenderer templateRenderer;
 
 	@Inject
 	private UserService userService;
@@ -79,14 +80,12 @@ public class StreamAdminController extends AbstractController {
 	@Path("/main")
 	@Produces({ MediaType.TEXT_HTML })
 	public Response getPluginAdminPanel() {
-		Response page;
-		if (userService.currentUserIsAdministrator()) {
-			page = ok(templateRenderer.create("/templates/gsp/streams_admin.gsp").withLayout(TemplateRenderer.ADMIN_LAYOUT).addCss("/css/admin.css").addCss("/css/stream_admin.css"));
-		} else {
-			page = ok(templateRenderer.create("/templates/gsp/home.gsp"));
-		}
 		log.debug("getting stream administration main page");
-		return page;
+		if (userService.currentUserIsAdministrator()) {
+			return Response.ok(templateRenderer.render("templates/streams_admin.html")).build();
+		} else {
+			return Response.status(Status.FORBIDDEN).build();
+		}
 	}
 
 	/**

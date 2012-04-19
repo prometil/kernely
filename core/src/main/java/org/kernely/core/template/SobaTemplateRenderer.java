@@ -85,8 +85,7 @@ public class SobaTemplateRenderer {
 	 */
 	public String render(String filePath) {
 		StringWriter w = new StringWriter();
-		Map<String,Object> bindings = new HashMap<String,Object>();
-		engine.render(filePath, w, enhanceBinding(bindings));
+		engine.render(filePath, w, enhanceBinding(new HashMap<String,Object>()));
 		return w.toString();
 	}
 

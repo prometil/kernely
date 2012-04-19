@@ -14,6 +14,7 @@ import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.kernely.core.controller.AbstractController;
 import org.kernely.core.service.user.UserService;
+import org.kernely.core.template.SobaTemplateRenderer;
 import org.kernely.core.template.TemplateRenderer;
 import org.kernely.timesheet.dto.TimeSheetCalendarDTO;
 import org.kernely.timesheet.dto.TimeSheetDayDTO;
@@ -29,7 +30,7 @@ import com.google.inject.Inject;
 @Path("/timesheet")
 public class TimeSheetController extends AbstractController {
 	@Inject
-	private TemplateRenderer templateRenderer;
+	private SobaTemplateRenderer templateRenderer;
 
 	@Inject
 	private UserService userService;
@@ -45,9 +46,7 @@ public class TimeSheetController extends AbstractController {
 	@GET
 	@Produces( { MediaType.TEXT_HTML })
 	public Response getTimeSheetPanel() {
-		Response page = ok(templateRenderer.create("/templates/gsp/timesheet_main_page.gsp").addCss("/css/timesheet.css"));
-
-		return page;
+		return Response.ok(templateRenderer.render("templates/timesheet_main_page.html")).build();
 	}
 	
 	
@@ -100,7 +99,7 @@ public class TimeSheetController extends AbstractController {
 	@Produces( { MediaType.TEXT_HTML })
 	@Path("/view")
 	public Response getTimeSheetVisualizationPanel() {
-		return ok(templateRenderer.create("/templates/gsp/timesheet_view.gsp").addCss("/css/timesheet_view.css"));
+		return Response.ok(templateRenderer.render("templates/timesheet_view.html")).build();
 	}
 	
 	/**

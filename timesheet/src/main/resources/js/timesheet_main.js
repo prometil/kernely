@@ -55,6 +55,7 @@ AppTimeSheet = (function($){
 						url:"/timesheet/calendar",
 						data:{week:weekSelected, year:yearSelected},
 						success: function(data){
+
 							// Reset display
 							$("#timesheet-content").html('<tr id="date-line"></tr>');
 							
@@ -1081,11 +1082,13 @@ AppTimeSheet = (function($){
 		initialize : function(){
 		},
 		render: function(){
+
 			var parent = this;
 			
 			$.each(this.times, function(){
                  $(parent.el).append(new TimePickerCell(this).render().el);
 			});
+
 			return this;
 		}
 	})
@@ -1105,6 +1108,7 @@ AppTimeSheet = (function($){
 		},
 		
 		render : function(){
+
 			var template;
             var view;
             var readableAmount;
@@ -1119,6 +1123,7 @@ AppTimeSheet = (function($){
 			view =  {amount: readableAmount};
             var html = Mustache.to_html(template, view);
             $(this.el).html(html);
+
 			return this;
 		},
 		unselect : function(){

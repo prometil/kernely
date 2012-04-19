@@ -1,0 +1,143 @@
+{% extends "templates/admin.html" %}
+
+{% block subjavascript %}
+	<script type="text/javascript" src="/js/streams_admin.js"></script>
+{% endblock %}
+
+{% block subcss %}
+	<link rel="stylesheet" type="text/css" href="/css/stream_admin.css"/>
+{% endblock %}
+
+{% block subtemplate %}
+	<script type="text/html" id="popup-stream-admin-template">
+		<input type="button" value="{% i18n "close" %}" class="closeModal"/><br/>
+		<fieldset>
+		<legend>{% i18n "stream_informations" %}</legend>
+		{% i18n "name" %}: <input type="text" name="name" value="{{"{{"}}name{{"}}"}}"/><br/>
+		{% i18n "stream_category" %}:
+		<select name="category" id="category">
+			<option value="streams/users">{% i18n "stream_category_user" %}</option>
+			<option value="streams/plugins">{% i18n "stream_category_plugin" %}</option>
+			<option value="streams/others">{% i18n "stream_category_other" %}</option>
+		</select>
+		</fieldset>
+		<br/>
+		<input type="button" value="{% i18n "create" %}" class="sendStream"/><br/>
+		<span id="errors_message"></span>
+	</script>
+	
+	<script type="text/html" id="popup-stream-admin-update-template">
+		<input type="button" value="{% i18n "close" %}" class="closeModal"/><br/>
+		<fieldset>
+		<legend>{% i18n "stream_informations" %}</legend>
+		{% i18n "name" %}: <input type="text" name="name" value="{{"{{"}}name{{"}}"}}"/><br/>
+		<div id="selected">{% i18n "stream_category" %}:
+			<select name="category" id="category">
+				<option value="streams/users">{% i18n "stream_category_user" %}</option>
+				<option value="streams/plugins">{% i18n "stream_category_plugin" %}</option>
+				<option value="streams/others">{% i18n "stream_category_other" %}</option>
+			</select>
+		</div> 
+		</fieldset>
+		<br/>
+		<input type="button" value="{% i18n "update" %}" class="updateDataStream"/><br/>
+		<span id="errors_message"></span>
+	</script>
+	
+	<script type="text/html" id="confirm-stream-lock-template">
+	{% i18n "confirm_stream_lock" %}
+	</script>
+	
+	<script type="text/html" id="confirm-stream-unlock-template">
+	{% i18n "confirm_stream_unlock" %}
+	</script>
+	
+	<script type="text/html" id="stream-locked-template">
+	{% i18n "stream_locked" %}
+	</script>
+	
+	<script type="text/html" id="stream-unlocked-template">
+	{% i18n "stream_unlocked" %}
+	</script>
+	
+	<script type="text/html" id="rights-updated-template">
+	{% i18n "stream_rights_updated" %}
+	</script>
+	
+	<script type="text/html" id="stream-created-template">
+	{% i18n "stream_created" %}
+	</script>
+	
+	<script type="text/html" id="stream-updated-template">
+	{% i18n "stream_updated" %}
+	</script>
+	
+	<script type="text/html" id="stream-groups-rights-combo-template">
+	<tr>
+	<td>{{"{{"}}name{{"}}"}}</td>
+	<td><select class="groupscombo" id="{{"{{"}}id{{"}}"}}">
+			<option value="nothing">{% i18n "no_right" %}</option>
+			<option value="read">{% i18n "read_right" %}</option>
+			<option value="write">{% i18n "read_write_right" %}</option>
+			<option value="delete">{% i18n "read_write_delete_right" %}</option>
+		</select><br/>
+	</td>
+	</tr>
+	</script>
+	
+	<script type="text/html" id="stream-users-rights-combo-template">
+	<tr>
+	<td>{{"{{"}}lastname{{"}}"}} {{"{{"}}firstname{{"}}"}}</td>
+	<td><select class="userscombo" id="{{"{{"}}id{{"}}"}}">
+			<option value="nothing">{% i18n "no_right" %}</option>
+			<option value="read">{% i18n "read_right" %}</option>
+			<option value="write">{% i18n "read_write_right" %}</option>
+			<option value="delete">{% i18n "read_write_delete_right" %}</option>
+		</select><br/>
+	</td>
+	</tr>
+	</script>
+	
+	
+	
+	<!-- Template for the user rights view  -->
+	<script type="text/html" id="popup-stream-rights-update-template">
+	<input type="button" value="{% i18n "close" %}" class="closeModal"/><br/>
+	<div class="selectedTab" id="usersTab">{% i18n "stream_users_rights_tab" %}</div>
+	<div class="tab" id="groupsTab">{% i18n "stream_groups_rights_tab" %}</div>
+	<br/>
+	<fieldset>
+	<legend>{% i18n "stream_rights_text" %} {{"{{"}}title{{"}}"}}</legend>
+		<div class="tabContent" id="usersToRight">
+			<!-- Filled by ajax  -->
+		</div>
+		<div class="tabHiddenContent" id="groupsToRight">
+			<!-- Filled by ajax  -->
+		</div>
+	</fieldset>
+	<br/>
+	<input type="button" value="{% i18n "update" %}" class="updateStream"/>
+	</script>
+
+{% endblock %}
+
+{% block admin %}
+	<div id="stream_header"></div>
+		<div id="mask"></div>
+		<div id="streams_modal_window">
+	</div>
+
+	<div id="stream_admin_container">
+		<div id="stream_admin_buttons">
+			<input type="button" class="createButton" value="{% i18n "create" %}"/>
+			<input type="button" class="editButton" value="{% i18n "edit" %}" disabled="disabled"/>
+			<input type="button" class="lockButton" value="{% i18n "lock" %}" disabled="disabled"/>
+			<input type="button" class="unlockButton" value="{% i18n "unlock" %}" disabled="disabled"/>
+			<input type="button" class="rightsButton" value="{% i18n "stream_rights" %}" disabled="disabled"/>
+			<span id="streams_notifications"></span>
+		</div>
+		<table id="stream_admin_table">
+			
+		</table>
+	</div>
+{% endblock %}

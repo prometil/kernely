@@ -64,9 +64,6 @@ public class UserController extends AbstractController {
 	private SobaTemplateRenderer templateRenderer;
 
 	@Inject
-	private TemplateRenderer oldTemplateRenderer;
-
-	@Inject
 	private UserService userService;
 
 	/**

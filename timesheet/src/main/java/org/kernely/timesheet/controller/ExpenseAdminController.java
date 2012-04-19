@@ -10,10 +10,11 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 
 import org.kernely.core.controller.AbstractController;
 import org.kernely.core.service.user.UserService;
-import org.kernely.core.template.TemplateRenderer;
+import org.kernely.core.template.SobaTemplateRenderer;
 import org.kernely.timesheet.dto.ExpenseTypeCreationDTO;
 import org.kernely.timesheet.dto.ExpenseTypeDTO;
 import org.kernely.timesheet.service.ExpenseService;
@@ -26,7 +27,7 @@ import com.google.inject.Inject;
 @Path("/admin/expense")
 public class ExpenseAdminController extends AbstractController {
 	@Inject
-	private TemplateRenderer templateRenderer;
+	private SobaTemplateRenderer templateRenderer;
 	
 	@Inject
 	private ExpenseService expenseService;
@@ -41,13 +42,11 @@ public class ExpenseAdminController extends AbstractController {
 	@GET
 	@Produces( { MediaType.TEXT_HTML })
 	public Response getPluginAdminPanel(){
-		Response page;
 		if (userService.currentUserIsAdministrator()){
-			page = ok(templateRenderer.create("/templates/gsp/expense_type_admin.gsp").addCss("/css/admin.css").addCss("/css/expense_type_admin.css").withLayout(TemplateRenderer.ADMIN_LAYOUT));
+			return Response.ok(templateRenderer.render("templates/expense_type_admin.html")).build();
 		} else{
-			page = ok(templateRenderer.create("/templates/gsp/home.gsp"));
+			return Response.status(Status.FORBIDDEN).build();
 		}
-		return page;
 	}
 	
 	/**

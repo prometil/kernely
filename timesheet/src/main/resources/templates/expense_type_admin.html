@@ -1,0 +1,76 @@
+{% extends "templates/admin.html" %}
+
+{% block subcss %}
+	<link rel="stylesheet" type="text/css" href="/css/expense_type_admin.css"/>
+{% endblock %}
+
+{% block subjavascript %}
+	<script type="text/javascript" src="/js/expense_type_admin.js"></script>
+{% endblock %}
+
+{% block admin %}
+	<div id="expense_type_admin_container">
+	        <div id="expense_type_admin_buttons">
+	                <input type="button" class="createButton" value="{% i18n "create" %}"/>
+	                <input type="button" class="editButton" value="{% i18n "edit" %}" disabled="disabled"/>
+	                <input type="button" class="deleteButton" value="{% i18n "delete" %}" disabled="disabled"/>
+	                <span id="span_notifications"></span>
+	        </div>
+	        <table id="expense_type_admin_table">
+	                
+	        </table>
+	</div>
+	<div id="expense_type_header"></div>
+	<div id="mask"></div>
+	<div id="modal_window_expense_type"></div>
+{% endblock %}
+	
+{% block subtemplate %}
+
+	<script type="text/html" id="table-header-template">
+	<tr>
+		<th>{% i18n "expense_type_name" %}</th>
+		<th>{% i18n "expense_type_direct" %}</th>
+		<th>{% i18n "expense_type_ratio" %}</th>
+	</tr>
+	</script>
+
+
+	<script type="text/html" id="success-message-template">{% i18n "success_message" %}</script>
+
+	<script type="text/html" id="expense-type-delete-confirm-template">
+	{% i18n "confirm_expense_type_deletion" %}
+	</script>
+
+	<!-- Yes and no -->
+	<script type="text/html" id="yes-template">{% i18n "yes" %}</script>
+	<script type="text/html" id="no-template">{% i18n "no" %}</script>
+
+	<script type="text/html" id="popup-expense-type-admin-create-template">
+		<input type="button" value="{% i18n "close" %}" class="closeModal"/><br/>
+		<fieldset>
+		<legend>{% i18n "expense_type_informations" %}</legend>
+		{% i18n "expense_type_name" %}: <input type="text" name="name"/><br/>
+		{% i18n "expense_type_direct" %}: <input type="checkbox" class="expense-type-cb" name="direct"/> 
+		{% i18n "expense_type_ratio" %}: <input type="text" name="ratio" id="ratio_field"/>
+		</fieldset>
+		<br/>
+		
+		<input type="button" value="{% i18n "create" %}" class="create_expense_type"/>
+		<span id="errors_message"></span>
+	</script>
+
+	<script type="text/html" id="popup-expense-type-admin-update-template">
+		<input type="button" value="{% i18n "close" %}" class="closeModal"/><br/>
+		<fieldset>
+		<legend>{% i18n "expense_type_informations" %}</legend>
+		{% i18n "expense_type_name" %}: <input type="text" name="name" value="{{"{{"}}name{{"}}"}}"/><br/>
+		{% i18n "expense_type_direct" %}: <input type="checkbox" name="direct"/> 
+		{% i18n "expense_type_ratio" %}: <input type="text" name="ratio" value="{{"{{"}}ratio{{"}}"}}" id="ratio_field"/>
+		</fieldset>
+		<br/>
+		
+		<input type="button" value="{% i18n "create" %}" class="create_expense_type"/>
+		<span id="errors_message"></span>
+	</script>
+{% endblock %}
