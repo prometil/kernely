@@ -20,7 +20,6 @@
 
 package org.kernely.core.controller;
 
-import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -36,9 +35,6 @@ import com.google.inject.Inject;
 
 /**
  * The controller of the main page
- * 
- * @author b.grandperret
- * 
  */
 @Path("/")
 public class MainController extends AbstractController {
@@ -54,10 +50,9 @@ public class MainController extends AbstractController {
 	 */
 	@GET
 	@Produces({ MediaType.TEXT_HTML })
-	public Response getUI() {		
+	public Response getUI() {
 		Map<String, Object> map =new HashMap<String, Object>();
 		return Response.ok(templateRenderer.render("templates/home.html", map)).build();
-		
 	}
 
 }

@@ -24,7 +24,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigInteger;
 import java.security.SecureRandom;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -42,6 +44,7 @@ import org.kernely.core.dto.UserDTO;
 import org.kernely.core.dto.UserDetailsDTO;
 import org.kernely.core.dto.UserDetailsUpdateRequestDTO;
 import org.kernely.core.service.user.UserService;
+import org.kernely.core.template.SobaTemplateRenderer;
 import org.kernely.core.template.TemplateRenderer;
 
 import com.google.inject.Inject;
@@ -49,9 +52,7 @@ import com.sun.jersey.core.header.FormDataContentDisposition;
 import com.sun.jersey.multipart.FormDataParam;
 
 /**
- * 
- * @author b.grandperret
- * The controller of the user profile page
+ * The controller of the user profile page.
  */
 @Path("/user")
 public class UserController extends AbstractController {
@@ -60,7 +61,10 @@ public class UserController extends AbstractController {
 	private AbstractConfiguration configuration;
 
 	@Inject
-	private TemplateRenderer templateRenderer;
+	private SobaTemplateRenderer templateRenderer;
+
+	@Inject
+	private TemplateRenderer oldTemplateRenderer;
 
 	@Inject
 	private UserService userService;
@@ -75,7 +79,9 @@ public class UserController extends AbstractController {
 	public Response getText() {
 		log.debug("Call to GET on all users");
 		List<UserDTO> users = userService.getAllUsers();
-		return ok(templateRenderer.create("/templates/gsp/users.gsp").with("users", users));
+		Map<String,Object> map = new HashMap<String,Object>();
+		map.put("users", users);
+		return Response.ok(templateRenderer.render("templates/users.html",map)).build();
 	}
 
 	/**
@@ -87,7 +93,8 @@ public class UserController extends AbstractController {
 	@Path("/login")
 	@Produces( { MediaType.TEXT_HTML })
 	public Response login() {
-		return ok(templateRenderer.create("/templates/gsp/login.gsp").withoutLayout());
+		Map<String,Object> map = new HashMap<String,Object>();
+		return Response.ok(templateRenderer.render("templates/login.html",map)).build();
 	}
 
 	/**
@@ -101,7 +108,8 @@ public class UserController extends AbstractController {
 	public Response postLogin() {
 		log.info("Login attempt : is authenticated {}", SecurityUtils.getSubject().isAuthenticated());
 
-		return ok(templateRenderer.create("/templates/gsp/login.gsp").withoutLayout());
+		Map<String,Object> map = new HashMap<String,Object>();
+		return Response.ok(templateRenderer.render("templates/login.html",map)).build();
 	}
 
 	/**
@@ -129,17 +137,18 @@ public class UserController extends AbstractController {
 	@Path("/{login}/profile")
 	@Produces( { MediaType.TEXT_HTML })
 	public Response profil(@PathParam("login") String userLogin) {
-		String template = "/templates/gsp/profile.gsp";
+		String template = "templates/profile.html";
 		UserDTO usercurrent = this.getCurrent();
 		if (usercurrent.username.equals(userLogin)) {
-			template = "/templates/gsp/profile_editable.gsp";
+			template = "templates/profile_editable.html";
 		}
 		UserDetailsDTO uddto = userService.getUserDetails(userLogin);
 		if(uddto.image==null){
 			uddto.image="default_user.png";
 		}
-
-		return ok(templateRenderer.create(template).with("details", uddto).addCss("/css/profile.css"));
+		Map<String,Object> map = new HashMap<String,Object>();
+		map.put("details", uddto);
+		return Response.ok(templateRenderer.render(template, map)).build();
 	}
 
 	/**
@@ -158,8 +167,8 @@ public class UserController extends AbstractController {
 		UserDetailsDTO ud = userService.getUserDetails(userService.getAuthenticatedUserDTO().username);
 		// Match the user id (foreign key) with the userdetailid
 		user.id = ud.id;
-		// Call UserService to update informations
 		
+		// Call UserService to update informations
 		return userService.updateUserProfile(user);
 	}
 
@@ -177,13 +186,14 @@ public class UserController extends AbstractController {
 	@Produces({MediaType.TEXT_HTML})
 	public Response uploadFile(@FormDataParam("file") InputStream uploadedInputStream, @FormDataParam("file") FormDataContentDisposition fileDetail) {
 		if (fileDetail.getFileName().equals("")) {
-			String template="/templates/gsp/profile_editable.gsp";
-			return ok(templateRenderer.create(template).with("details", userService.getUserDetails(userService.getAuthenticatedUserDTO().username)).addCss("/css/profile.css"));
+			Map<String,Object> map = new HashMap<String,Object>();
+			map.put("details",userService.getUserDetails(userService.getAuthenticatedUserDTO().username));
+			return Response.ok(templateRenderer.render("templates/profile_editable.html",map)).build();
 		}
 		// get extension
 		String[] extension = fileDetail.getFileName().split("\\.");
 		if (extension.length < 2) {
-			throw new IllegalArgumentException("the file need an extansion");
+			throw new IllegalArgumentException("The file need an extension");
 		}
 
 		SecureRandom random = new SecureRandom();
@@ -203,8 +213,10 @@ public class UserController extends AbstractController {
 		userService.updateUserProfile(ud);
 		
 		//get the dto modified
-		String template="/templates/gsp/profile_editable.gsp";
-		return ok(templateRenderer.create(template).with("details", userService.getUserDetails(userService.getAuthenticatedUserDTO().username)));
+		String template="templates/profile_editable.html";
+		Map<String,Object> map = new HashMap<String,Object>();
+		map.put("details",userService.getUserDetails(userService.getAuthenticatedUserDTO().username));
+		return Response.ok(templateRenderer.render(template,map)).build();
 	}
 	
 	/**

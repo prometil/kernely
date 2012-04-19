@@ -19,7 +19,9 @@
  */
 package org.kernely.core.controller;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -28,26 +30,25 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 
 import org.kernely.core.dto.GroupCreationRequestDTO;
 import org.kernely.core.dto.GroupDTO;
 import org.kernely.core.dto.UserDTO;
 import org.kernely.core.service.user.GroupService;
 import org.kernely.core.service.user.UserService;
-import org.kernely.core.template.TemplateRenderer;
+import org.kernely.core.template.SobaTemplateRenderer;
 
 import com.google.inject.Inject;
 
 /**
- * 
- * @author b.grandperret
  * The controller of the group administration page
  */
 @Path("/admin/groups")
 public class GroupAdminController extends AbstractController {
 
 	@Inject
-	private TemplateRenderer templateRenderer;
+	private SobaTemplateRenderer templateRenderer;
 	
 	@Inject
 	private GroupService groupService;
@@ -79,10 +80,16 @@ public class GroupAdminController extends AbstractController {
 	@Produces( { MediaType.TEXT_HTML })
 	public Response displayPage()
 	{
-		if (userService.currentUserIsAdministrator()){
-			return ok(templateRenderer.create("/templates/gsp/administration/group_admin.gsp").withLayout(TemplateRenderer.ADMIN_LAYOUT).addCss("/css/admin.css"));
+		
+		Map<String, Object> map =new HashMap<String, Object>();
+		Response page;
+		// Display the admin page only if the user is admin.
+		if (userService.currentUserIsAdministrator()) {
+			page = Response.ok(templateRenderer.render("templates/admin/group_admin.html", map)).build();
+		} else {
+			page = Response.status(Status.FORBIDDEN).build();
 		}
-		return ok(templateRenderer.create("/templates/gsp/home.gsp"));
+		return page;
 	}
 	
 	/**

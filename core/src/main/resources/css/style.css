@@ -35,6 +35,13 @@ font: normal 13px arial, sans-serif;
 	margin: 0 auto 0 auto;
 }
 
+#main_title{
+	height:50px;
+	text-align:center;
+	font-size:20px;
+	color:darkgreen;
+	font-weight:bold;
+}
 #container_right {
 	width:200px;
 	float:left;

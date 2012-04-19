@@ -1,0 +1,16 @@
+{% extends "templates/layout.html" %}
+{% block title %}
+	{% i18n "groups_page_title" %}
+{% endblock %}
+{% block content %}
+	{% i18n "groups_page_text" %}
+	<br/>
+	<div id="users">
+		<ul>
+			
+			{% for group in groups %}
+				<li> {{group.name}}</li>
+			{% endfor %}
+		</ul>
+	</div>
+{% endblock %}

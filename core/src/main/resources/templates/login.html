@@ -1,0 +1,33 @@
+<html>
+	<head>
+	<link rel="stylesheet" type="text/css" href="/css/login.css"/>	
+	</head>
+	<body>
+	<div id="header" >
+		<div id="logo">{% i18n "title" %}</div>
+	
+	</div>
+	
+	<div id="space">
+	
+	</div>
+	<div id="information">
+		
+	</div>
+	
+	<div id="login">
+		<form action="" method="POST">
+			{% i18n "connection" %}<br/>
+			<p><input name="username" type="text" placeholder="{% i18n "username" %}"/></p>
+			<p><input name="password" type="password"  placeholder="{% i18n "password" %}"/></p>
+			<div id="connection"> 
+				<input type="submit" value="{% i18n "login" %}"/>
+			</div> 
+			<div id="remember">
+				<input type="checkbox" name="rememberMe" value="true"/>{% i18n "remember_me" %}?<br/>
+			</div>
+		</form>
+	</div>
+ 
+	</body>
+</html>

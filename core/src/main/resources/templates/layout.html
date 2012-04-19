@@ -32,6 +32,9 @@
 	{% endblock %}
 	</head>
 	<body>
+	{% block template %}
+    <!-- all templates -->
+    {% endblock %}
 			<script type="text/html" id="profile-template">
 				<div id='profilePU-content'>
 					<div id='profilePU-main'>
@@ -74,6 +77,11 @@
 			<div id="container_left">
 			{% block left %}
 			{% endblock %}
+			</div>
+			<div id="main_title">
+				{% block title %}
+				
+				{% endblock %}
 			</div>
 			<div id="container">
 				{% block content %}

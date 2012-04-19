@@ -19,7 +19,9 @@
  */
 package org.kernely.core.controller;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -29,19 +31,17 @@ import javax.ws.rs.core.Response;
 
 import org.kernely.core.dto.GroupDTO;
 import org.kernely.core.service.user.GroupService;
-import org.kernely.core.template.TemplateRenderer;
+import org.kernely.core.template.SobaTemplateRenderer;
 
 import com.google.inject.Inject;
 
 /**
- * 
- * @author b.grandperret
  * The controller of the group page
  */
 @Path("/group")
 public class GroupController extends AbstractController{
 	@Inject
-	private TemplateRenderer templateRenderer;
+	private SobaTemplateRenderer templateRenderer;
 	
 	@Inject
 	private GroupService groupService;
@@ -55,7 +55,9 @@ public class GroupController extends AbstractController{
 	public Response getText()
 	{
 		log.debug("Call to GET on all groups");
+		Map<String,Object> map = new HashMap<String,Object>();
 		List<GroupDTO> groups = groupService.getAllGroups();
-		return ok(templateRenderer.create("/templates/gsp/groups.gsp").with("groups", groups));
+		map.put("groups", groups);
+		return Response.ok(templateRenderer.render("templates/groups.html", map)).build();
 	}
 }

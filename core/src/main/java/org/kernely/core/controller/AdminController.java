@@ -61,7 +61,7 @@ public class AdminController extends AbstractController {
 	@GET
 	@Produces( { MediaType.TEXT_HTML })
 	public Response getAdmin() {
-		javax.ws.rs.core.Response page;
+		Response page;
 
 		Map<String, Object> map =new HashMap<String, Object>();
 		

@@ -20,7 +20,9 @@
 package org.kernely.core.controller;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.ws.rs.GET;
@@ -30,24 +32,23 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 
 import org.kernely.core.dto.ManagerCreationRequestDTO;
 import org.kernely.core.dto.ManagerDTO;
 import org.kernely.core.dto.UserDTO;
 import org.kernely.core.service.user.UserService;
-import org.kernely.core.template.TemplateRenderer;
+import org.kernely.core.template.SobaTemplateRenderer;
 
 import com.google.inject.Inject;
 
 /**
- * 
- * @author b.grandperret 
  * The controller of the manager admin page
  */
 @Path("/admin/manager")
 public class ManagerAdminController extends AbstractController {
 	@Inject
-	private TemplateRenderer templateRenderer;
+	private SobaTemplateRenderer templateRenderer;
 
 	@Inject
 	private UserService userService;
@@ -60,10 +61,15 @@ public class ManagerAdminController extends AbstractController {
 	@GET
 	@Produces({ MediaType.TEXT_HTML })
 	public Response displayPage() {
+
+		Map<String, Object> map = new HashMap<String, Object>();
+		// Display the admin page only if the user is admin.
 		if (userService.currentUserIsAdministrator()) {
-			return ok(templateRenderer.create("/templates/gsp/administration/manager_admin.gsp").withLayout(TemplateRenderer.ADMIN_LAYOUT).addCss("/css/admin.css"));
+			return Response.ok(templateRenderer.render("templates/admin/manager_admin.html", map)).build();
+		} else {
+			return Response.status(Status.FORBIDDEN).build();
 		}
-		return ok(templateRenderer.create("/templates/gsp/home.gsp"));
+		
 	}
 
 	/**

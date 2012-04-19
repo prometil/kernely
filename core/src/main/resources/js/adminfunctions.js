@@ -64,9 +64,6 @@ AppAdmin = (function($){
 
 		},
 		initialize:function(admin, adminpath){
-			console.log(admin+" found : "+adminpath);
-
-
 			this.vadmin = admin;
 			this.vadminpath = adminpath;
 		},
@@ -76,8 +73,6 @@ AppAdmin = (function($){
 			var html = Mustache.to_html(template, view);
 			$(this.el).html(html);
             $(this.el).appendTo($("#admin_sidebar_container"));
-            console.log($(this.el).html());
-			console.log($("#admin_sidebar_container").html());
 			return this;			
 		}
 		

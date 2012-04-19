@@ -1,0 +1,25 @@
+{% extends "templates/layout.html" %}
+
+{% block javascript%}
+	<script type="text/javascript" src="/js/user.js"></script>
+{% endblock %}
+
+{% block title %}
+	{% i18n "users_page_title" %}
+{% endblock %}
+
+{% block content %}
+	
+	{% i18n "users_page_text" %}
+	<br/>
+	<div id="users">
+	
+	<ul>
+					{% for user in users %}
+						<li> {{user.username}}</li>
+					{% endfor %}
+	</ul>
+	
+	
+	</div>
+{% endblock %}

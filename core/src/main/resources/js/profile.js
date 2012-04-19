@@ -225,7 +225,6 @@ AppProfile= (function($){
 		},
 		
 		render:function(){
-			console.log("init all inputview");			
 			this.createUser();
 			return this;
 		},

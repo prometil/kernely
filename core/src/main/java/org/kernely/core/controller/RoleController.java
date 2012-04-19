@@ -33,8 +33,6 @@ import org.kernely.core.service.user.UserService;
 import com.google.inject.Inject;
 
 /**
- * 
- * @author b.grandperret
  * The controller of the role page
  */
 @Path("/roles")
