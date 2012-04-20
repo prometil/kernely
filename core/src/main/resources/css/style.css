@@ -50,15 +50,11 @@ font: normal 13px arial, sans-serif;
 	margin: 0 auto 0 auto;
 }
 
-#main-content {
+#container {
 	width:960px;
 	margin:0 auto;
 	padding-top: 20px;
 	margin: 0 auto 0 auto;
-}
-
-#container {
-	width:100%;
 }
 
 h1 {
@@ -158,6 +154,32 @@ div#profilePU-information{
 div#profilePU-footer{
 	height:30px;
 	text-align:center;
+}
+
+/* notifications*/
+div#notification_to_user{
+	height:14px;
+}
+div.success-notification{
+	color:darkgreen;
+	background-color:#CCFFCC;
+	border-color:darkgreen;
+	border-width:1px;
+	font-size:12px;
+}
+div.error-notification{
+	color:darkred;
+	background-color:#FFCCCC;
+	border-color:darkred;
+	border-width:1px;
+	font-size:12px;
+}
+div.info-notification{
+	color:darkblue;
+	background-color:#FFFFCC;
+	border-color:darkblue;
+	border-width:1px;
+	font-size:12px;
 }
 
 /* content */

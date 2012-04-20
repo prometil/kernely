@@ -190,10 +190,8 @@ AppManagerAdmin = (function($){
 					url:"/admin/manager/delete/" + lineSelected.vname,
 					success: function(){
 						var successHtml = $("#manager-success-template").html();
-					
-						$("#manager_notifications").text(successHtml);
-						$("#manager_notifications").fadeIn(1000);
-						$("#manager_notifications").fadeOut(3000);
+						
+						$.writeMessage("success",successHtml);
 						tableView.reload();
 					}
 				});
@@ -283,14 +281,10 @@ AppManagerAdmin = (function($){
 					if (data.result == "ok"){
 						var successHtml = $("#manager-success-template").html();
 						
-						$("#manager_notifications").text(successHtml);
-						$("#manager_notifications").fadeIn(1000);
-						$("#manager_notifications").fadeOut(3000);
+						$.writeMessage("success",successHtml);
 						tableView.reload();
 					} else {
-						$("#manager_errors_create").text(data.result);
-						$("#manager_errors_create").fadeIn(1000);
-						$("#manager_errors_create").fadeOut(3000);
+						$.writeMessage("error",data.result,"#errors_message");
 					}
 					parent.closemodal();
 				}
@@ -365,14 +359,10 @@ AppManagerAdmin = (function($){
 						$('#mask').hide();
 						var successHtml = $("#manager-success-template").html();
 						
-						$("#manager_notifications").text(successHtml);
-						$("#manager_notifications").fadeIn(1000);
-						$("#manager_notifications").fadeOut(3000);
+						$.writeMessage("success",successHtml);
 						tableView.reload();
 					} else {
-						$("#managers_errors_update").text(data.result);
-						$("#managers_errors_update").fadeIn(1000);
-						$("#managers_errors_update").fadeOut(3000);
+						$.writeMessage("error",data.result,"#errors_message");
 					}
 					parent.closemodal();
 				}

@@ -588,7 +588,12 @@ public class HolidayService extends AbstractService {
 						if ((new DateTime(detail.day).getMonthOfYear() == month) && (new DateTime(detail.day).getYear() == year)) {
 							log.debug("Summary build: Detail  has type {}", detail.type);
 							if (request.status == HolidayRequest.ACCEPTED_STATUS || request.status == HolidayRequest.PAST_STATUS) {
-								taken.put(detail.type, taken.get(detail.type) + 0.5F);
+								if(taken.containsKey(detail.type)){
+									taken.put(detail.type, taken.get(detail.type) + 0.5F);
+								}
+								else{
+									taken.put(detail.type, 0.5F);
+								}
 							} else if (request.status == HolidayRequest.PENDING_STATUS) {
 								pending.put(detail.type, pending.get(detail.type) + 0.5F);
 							}

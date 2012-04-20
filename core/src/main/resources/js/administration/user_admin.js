@@ -207,9 +207,7 @@
 					url:"/admin/users/lock/" + lineSelected.vid,
 					success: function(){
 						var successHtml = $("#success-message-template").html();
-						$("#users_notifications").text(successHtml);
-						$("#users_notifications").fadeIn(1000);
-						$("#users_notifications").fadeOut(3000);
+						$.writeMessage("success",successHtml);
 						tableView.reload();
 					}
 				});
@@ -261,14 +259,10 @@
 	       			$('#mask').hide();
 
 	       			var successHtml = $("#success-message-template").html();
-					$("#users_notifications").text(successHtml);
-					$("#users_notifications").fadeIn(1000);
-					$("#users_notifications").fadeOut(3000);
+					$.writeMessage("success",successHtml);
 					tableView.reload();
 				  } else {
-                    $("#users_errors_create").text(data.result);
-                    $("#users_errors_create").fadeIn(1000);
-                    $("#users_errors_create").fadeOut(3000);
+					$.writeMessage("error",data.result,"#errors_message");
 				  }
 				}
 			});
@@ -355,14 +349,10 @@
 						$('#mask').hide();
 
 						var successHtml = $("#success-message-template").html();
-						$("#users_notifications").text(successHtml);
-						$("#users_notifications").fadeIn(1000);
-						$("#users_notifications").fadeOut(3000);
+						$.writeMessage("success",successHtml);
 						tableView.reload();
 					} else {
-						$("#users_errors_update").text(data.result);
-						$("#users_errors_update").fadeIn(1000);
-						$("#users_errors_update").fadeOut(3000);
+						$.writeMessage("error",data.result,"#errors_message");
 					}
 				}
 			});

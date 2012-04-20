@@ -127,9 +127,8 @@ public class UserService extends AbstractService {
 		userdetails.setUser(user);
 
 		user.setUserDetails(userdetails);
-
-		em.get().persist(userdetails);
 		em.get().persist(user);
+		em.get().persist(userdetails);
 
 		eventBus.post(new UserCreationEvent(user.getId(), user.getUsername()));
 
