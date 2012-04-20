@@ -395,7 +395,8 @@ AppHolidayManagerRequest = (function($){
 							parent.data=data1;
 							$.ajax({
 								type: "GET",
-								url:"/holiday/managers/request/construct/" + dates[0] + "/" + dates[1],
+								url:"/holiday/managers/request/construct",
+								data:{dateBegin:dates[0], dateEnd:dates[1]},
 								dataType:"json",
 								success: function(data2){
 									// Clean the div content

@@ -20,7 +20,7 @@
  	 	<td>{{requesterComment}}</td><td>{{beginDate}}</td><td>{{endDate}}</td>
  </script>
  
- <div id="main_title">
+<div id="main_title">
 	<%=i18n.t("title_user_request")%>
 </div>
  

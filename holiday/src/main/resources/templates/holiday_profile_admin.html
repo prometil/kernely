@@ -1,0 +1,180 @@
+{% extends "templates/admin.html" %}
+{% block subjavascript %}
+	<script type="text/javascript" src="/js/holiday_profile_admin.js"></script>
+{% endblock %}
+
+{% block css %}
+	<link rel="stylesheet" type="text/css" href="/css/holiday_admin.css"/>
+{% endblock %}
+
+{% block subtemplate %}
+<div id="mask"></div>
+
+<div id="modal_window_holiday"></div>
+
+	<script type="text/html" id="table-header">
+	<tr>
+		<th>{% i18n "holiday_profile_name" %}</th>
+		<th>{% i18n "holiday_profile_description" %}</th>
+		<th>{% i18n "holiday_profile_users" %}</th>
+	</tr>
+	</script>
+	
+	<script type="text/html" id="confirm-holiday-profile-deletion-template">
+	{% i18n "confirm_holiday_profile_deletion" %}
+	</script>
+	
+	<script type="text/html" id="confirm-holiday-type-deletion-template">
+	{% i18n "confirm_holiday_type_deletion" %}
+	</script>
+	
+	<script type="text/html" id="popup-holiday-profile-error-name-template">
+	{% i18n "holiday_profile_error_name" %}
+	</script>
+	
+	<script type="text/html" id="popup-holiday-profile-error-no-type-template">
+	{% i18n "holiday_profile_no_type_error" %}
+	</script>
+	
+	<script type="text/html" id="update-button-template">{% i18n "update" %}</script>
+	
+	<script type="text/html" id="holiday-success-message-template">
+	{% i18n "holiday_success_message" %}
+	</script>
+	
+	<!-- Templates for months and year -->
+	<script type="text/html" id="month-template">{% i18n "month" %}</script>
+	<script type="text/html" id="year-template">{% i18n "year" %}</script>
+	<script type="text/html" id="1-month-template">{% i18n "january" %}</script>
+	<script type="text/html" id="2-month-template">{% i18n "february" %}</script>
+	<script type="text/html" id="3-month-template">{% i18n "march" %}</script>
+	<script type="text/html" id="4-month-template">{% i18n "april" %}</script>
+	<script type="text/html" id="5-month-template">{% i18n "may" %}</script>
+	<script type="text/html" id="6-month-template">{% i18n "june" %}</script>
+	<script type="text/html" id="7-month-template">{% i18n "july" %}</script>
+	<script type="text/html" id="8-month-template">{% i18n "august" %}</script>
+	<script type="text/html" id="9-month-template">{% i18n "september" %}</script>
+	<script type="text/html" id="10-month-template">{% i18n "october" %}</script>
+	<script type="text/html" id="11-month-template">{% i18n "november" %}</script>
+	<script type="text/html" id="12-month-template">{% i18n "december" %}</script>
+	<script type="text/html" id="0-month-template">{% i18n "all_month" %}</script>
+	
+	<!-- Yes and no -->
+	<script type="text/html" id="yes-template">{% i18n "yes" %}</script>
+	<script type="text/html" id="no-template">{% i18n "no" %}</script>
+	
+	<!-- Template for holiday types lines-->
+	<script type="text/html" id="holiday-type-line-template">
+		<td>
+			<input type="text" name="name" value="{{"{{"}}name{{"}}"}}" class="holiday-name"/>
+		</td>
+		<td>
+			<input type="checkbox" name="unlimited" class="holiday-unlimited">
+		</td>
+		<td>
+			<input type="text" name="quantity" value="{{"{{"}}quantity{{"}}"}}" class="holiday-quantity" size="2" maxlength="4" />
+		</td>
+		<td>
+			{% i18n "holiday_days_every" %}
+		</td>
+		<td>
+			<select name="unity" class="holiday-unity"><option value="12">{% i18n "month" %}</option><option value="1">{% i18n "year" %}</option></select>
+		</td>
+		<td>
+			<select name="effectivemonth" class="holiday-effectivemonth">
+				<option value="0" selected="selected">{% i18n "all_month" %}</option>
+				<option value="1">{% i18n "january" %}</option>
+				<option value="2">{% i18n "february" %}</option>
+				<option value="3">{% i18n "march" %}</option>
+				<option value="4">{% i18n "april" %}</option>
+				<option value="5">{% i18n "may" %}</option>
+				<option value="6">{% i18n "june" %}</option>
+				<option value="7">{% i18n "july" %}</option>
+				<option value="8">{% i18n "august" %}</option>
+				<option value="9">{% i18n "september" %}</option>
+				<option value="10">{% i18n "october" %}</option>
+				<option value="11">{% i18n "november" %}</option>
+				<option value="12">{% i18n "december" %}</option>
+			</select>
+		</td>
+		<td>
+			<input class="holiday-anticipated" name="anticipated" type="checkbox"/>
+		</td>
+		<td>
+			<input class="holiday-color" type="text" name="color" size="6" maxlength="7" value="{{"{{"}}color{{"}}"}}" />
+		</td>
+		<td>
+			<input type="button" value="{% i18n "ok" %}" class="edit_button"/>
+		</td>
+		<td>
+			<input type="button" value="{% i18n "delete" %}" class="delete_button"/>
+		</td>
+	
+	</script>
+	
+	<!-- Template for the create view  -->
+	<script type="text/html" id="popup-holiday-admin-create-template">
+		<div id="modal_window_holiday_create">
+			<input type="button" value="{% i18n "close" %}" class="closeModal"/><br/>
+			{% i18n "holiday_profile_name" %}: <input value="{{"{{"}}profilename{{"}}"}}" type="input" id="holiday-profile-name"/>
+			<div id="holiday-table-div">
+				<table id="holiday-types-list-table">
+					<tr>
+						<th>{% i18n "holiday_name" %}</th>
+						<th>{% i18n "unlimited_holidays" %}</th>
+						<th colspan="3">{% i18n "holiday_gain" %}</th>
+						<th>{% i18n "holiday_effective_month" %}</th>
+						<th>{% i18n "can_be_anticipated" %}</th>
+						<th>{% i18n "holiday_color" %}</th>
+						<th></th>
+					</tr>
+				</table>
+			</div>
+			<input type="button" value="New type" id="newHolidayButton"/>
+			<input type="button" value="{% i18n "create" %}" id="createHolidayProfile"/>
+			<span id="holidays_errors_create"></span>
+		</div>
+	</script>
+	
+	<!-- Template for edit users view  -->
+	<script type="text/html" id="popup-holiday-admin-users-template">
+		<div id="modal_window_holiday_create">
+			<input type="button" value="{% i18n "close" %}" class="closeModal"/><br/>
+			Users for {{"{{"}}name{{"}}"}}
+			<div id="holiday-users-boxes">
+				<div id="out-listbox-div">
+		
+				</div>
+				<div id="in-out-buttons">
+					<input type="button" value="==>" id="addUserButton"/>
+					<br/>
+					<input type="button" value="<==" id="removeUserButton"/>
+				</div>
+				<div id="in-listbox-div">
+				
+				</div>
+			</div>
+			<br/>
+			<input type="button" value="{% i18n "update" %}" id="updateUsersButton"/>
+		</div>
+	</script>
+{% endblock %}
+
+{% block admintitle %}
+	{% i18n "profile_holiday_admin_title" %}
+{% endblock %}
+
+{% block admin %}
+	
+	<div id="holiday_admin_container">
+		<div id="holiday_admin_buttons">
+			<input type="button" class="createButton" value="{% i18n "create" %}"/>
+			<input type="button" class="editButton" value="{% i18n "edit" %}" disabled="disabled"/>
+			<input type="button" class="usersButton" value="{% i18n "holiday_profile_users" %}" disabled="disabled"/>
+			<span id="holidays_notifications"></span>
+		</div>
+		<table id="holiday_admin_table">
+			
+		</table>
+	</div>
+{% endblock %}

@@ -8,10 +8,11 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import org.kernely.core.controller.AbstractController;
 import org.kernely.core.service.user.UserService;
-import org.kernely.core.template.TemplateRenderer;
+import org.kernely.core.template.SobaTemplateRenderer;
 import org.kernely.holiday.dto.HolidayProfilesSummaryDTO;
 import org.kernely.holiday.dto.HolidayUsersManagerDTO;
 import org.kernely.holiday.service.HolidayHumanResourceService;
@@ -26,7 +27,7 @@ import com.google.inject.Inject;
 @Path("holiday/humanresource")
 public class HolidayHumanResourceController extends AbstractController{
 	@Inject
-	private TemplateRenderer templateRenderer;
+	private SobaTemplateRenderer templateRenderer;
 	
 	@Inject
 	private HolidayService profileService;
@@ -43,8 +44,8 @@ public class HolidayHumanResourceController extends AbstractController{
 	 */
 	@GET
 	@Produces( { MediaType.TEXT_HTML })
-	public String getHolidayManagerUsersPanel(){
-		return templateRenderer.create("/templates/gsp/holiday_human_resource.gsp").addCss("/css/holiday_human_resource.css").render();
+	public Response getHolidayManagerUsersPanel(){
+		return Response.ok(templateRenderer.render("templates/holiday_human_resource.html")).build();
 	}
 	
 	/**
@@ -67,8 +68,8 @@ public class HolidayHumanResourceController extends AbstractController{
 	@GET
 	@Path("/summary")
 	@Produces( { MediaType.TEXT_HTML })
-	public String getSummaryPage(){
-		return templateRenderer.create("/templates/gsp/holiday_summary.gsp").addCss("/css/holiday_human_resource.css").render();
+	public Response getSummaryPage(){
+		return Response.ok(templateRenderer.render("templates/holiday_summary.html")).build();
 	}
 	
 	/**

@@ -15,37 +15,24 @@ AppHolidayRequest = (function($){
 	
 	HolidayRequestPageView = Backbone.View.extend({
 		el:"#request-main",
-		dates: null,
 		events:{
-			"click #submitPeriod" : "buildCalendarAndPicker",
 			"click #validate-holidays" : "sendRequestHolidays"
 		},
 		initialize: function(){
-			dates = $( "#from, #to" ).datepicker({
-				defaultDate: "+1w",
-				changeMonth: true,
-				onSelect: function( selectedDate ) {
-				var option = this.id == "from" ? "minDate" : "maxDate",
-						instance = $( this ).data( "datepicker" ),
-						date = $.datepicker.parseDate(
-								instance.settings.dateFormat ||
-								$.datepicker._defaults.dateFormat,
-								selectedDate, instance.settings );
-				dates.not( this ).datepicker( "option", option, date );
-			}
-			});
-			var lang = $("#locale-lang").html();
-			var country = $("#locale-country").html();
-			$.datepicker.setDefaults($.datepicker.regional[lang+"-"+country]);
+			
 		},
 		render: function(){
+			this.buildCalendarAndPicker();
 			return this;
 		},
 		buildCalendarAndPicker: function(){
+			var from = $.getUrlVar('from');
+			var to = $.getUrlVar('to');
+			
 			$.ajax({
 				type: "GET",
 				url:"/holiday/request/interval",
-				data: {date1: dates[0].value, date2: dates[1].value},
+				data: {date1: from, date2: to},
 				dataType:"json",
 				success: function(data){
 					// Clean the div content
