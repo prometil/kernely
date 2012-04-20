@@ -6,8 +6,10 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 
 import org.kernely.core.controller.AbstractController;
+import org.kernely.core.service.user.UserService;
 import org.kernely.core.template.SobaTemplateRenderer;
 import org.kernely.holiday.dto.HolidayUsersManagerDTO;
 import org.kernely.holiday.service.HolidayManagerUserService;
@@ -25,6 +27,9 @@ public class HolidayManagerUserController extends AbstractController{
 	@Inject
 	private HolidayManagerUserService holidayManagerService;
 	
+	@Inject
+	private UserService userService;
+	
 	/**
 	 * Get the template for holiday manager page
 	 * @return The template
@@ -32,7 +37,10 @@ public class HolidayManagerUserController extends AbstractController{
 	@GET
 	@Produces( { MediaType.TEXT_HTML })
 	public Response getHolidayManagerUsersPanel(){
-		return Response.ok(templateRenderer.render("templates/holiday_manager_users.html")).build();
+		if(userService.isManager(userService.getAuthenticatedUserDTO().username)){
+			return Response.ok(templateRenderer.render("templates/holiday_manager_users.html")).build();
+		}
+		return Response.status(Status.FORBIDDEN).build();
 	}
 	
 	/**
@@ -45,6 +53,9 @@ public class HolidayManagerUserController extends AbstractController{
 	@Path("/all")
 	@Produces( {MediaType.APPLICATION_JSON} )
 	public HolidayUsersManagerDTO getAllRequestsOfAllUsers(@QueryParam("month") int month, @QueryParam("year") int year){
-		return  holidayManagerService.getHolidayForAllManagedUsersForMonth(month, year);
+		if(userService.isManager(userService.getAuthenticatedUserDTO().username)){	
+			return  holidayManagerService.getHolidayForAllManagedUsersForMonth(month, year);
+		}
+		return new HolidayUsersManagerDTO();
 	}
 }

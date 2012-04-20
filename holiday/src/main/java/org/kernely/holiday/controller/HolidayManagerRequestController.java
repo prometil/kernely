@@ -68,7 +68,7 @@ public class HolidayManagerRequestController extends AbstractController {
 			log.debug("Call to GET on all holiday request pending");
 			return holidayRequestService.getSpecificRequestsForManagers(HolidayRequest.PENDING_STATUS);
 		}
-		return null;
+		return new ArrayList<HolidayRequestDTO>();
 	}
 	
 	/**
@@ -87,7 +87,7 @@ public class HolidayManagerRequestController extends AbstractController {
 			lhr.addAll(holidayRequestService.getSpecificRequestsForManagers(HolidayRequest.DENIED_STATUS));
 			return lhr; 
 		}
-		return null;
+		return new ArrayList<HolidayRequestDTO>();
 	}
 	
 	/**
@@ -176,7 +176,7 @@ public class HolidayManagerRequestController extends AbstractController {
 			hddto.add(lastHoliday);
 			return hddto;
 		}
-		return null;
+		return new ArrayList<HolidayDetailDTO>();
 	}
 	
 	/**
@@ -191,7 +191,7 @@ public class HolidayManagerRequestController extends AbstractController {
 		if (userService.isManager(userService.getAuthenticatedUserDTO().username)){
 			return holidayRequestService.getHolidayRequestDetailsByOrder(idRequest);
 		}
-		return null;
+		return new ArrayList<HolidayDetailDTO>();
 	}
 	
 	/**

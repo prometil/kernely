@@ -20,6 +20,7 @@
 
 package org.kernely.holiday.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.ws.rs.GET;
@@ -30,6 +31,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 
 import org.kernely.core.controller.AbstractController;
 import org.kernely.core.dto.UserDetailsDTO;
@@ -86,7 +88,7 @@ public class HolidayAdminController extends AbstractController {
 			log.debug("Call to GET on all holiday profiles");
 			return holidayService.getAllProfiles();
 		}
-		return null;
+		return new ArrayList<HolidayProfileDTO>();
 	}
 	
 	/**
@@ -100,7 +102,7 @@ public class HolidayAdminController extends AbstractController {
 		if (userService.currentUserIsAdministrator()){
 			return holidayService.getHolidayDTO(id) ;		
 		}
-		return null;
+		return new HolidayDTO();
 	}
 
 	/**
@@ -111,12 +113,12 @@ public class HolidayAdminController extends AbstractController {
 	@POST
 	@Path("/create")
 	@Produces({MediaType.APPLICATION_JSON})
-	public String create(HolidayProfileCreationRequestDTO holiday){
+	public Response create(HolidayProfileCreationRequestDTO holiday){
 		if (userService.currentUserIsAdministrator()){
 			holidayService.createOrUpdateHolidayProfile(holiday);
-			return "{\"result\":\"Ok\"}";
+			return Response.ok().build();
 		}
-		return null;		
+		return Response.status(Status.FORBIDDEN).build();		
 	}
 	
 	/**
@@ -131,7 +133,7 @@ public class HolidayAdminController extends AbstractController {
 		if (userService.currentUserIsAdministrator()){
 			return holidayService.createOrUpdateHoliday(holiday);
 		}
-		return null;		
+		return new HolidayDTO();		
 	}
 	
 	/**
@@ -149,7 +151,7 @@ public class HolidayAdminController extends AbstractController {
 			log.debug("Profile {} is associated to {} users",id,in.size());
 			return new HolidayProfileUsersDTO(id,in,out);
 		}
-		return null;		
+		return new HolidayProfileUsersDTO();		
 	}
 	
 	/**
@@ -160,12 +162,14 @@ public class HolidayAdminController extends AbstractController {
 	@POST
 	@Path("/profile/users/update")
 	@Produces({MediaType.APPLICATION_JSON})
-	public String updateUsers(HolidayProfileUpdateUsersRequestDTO request){
+	public Response updateUsers(HolidayProfileUpdateUsersRequestDTO request){
 		// Check if request is not null.
-		if(request != null){
+		if(request != null && userService.currentUserIsAdministrator()){
 			holidayService.updateProfileUsers(request.id,request.usernames);
+			return Response.ok().build();
 		}
-		return "{\"result\":\"Ok\"}";
+		return Response.status(Status.FORBIDDEN).build();
+		
 	}
 
 }

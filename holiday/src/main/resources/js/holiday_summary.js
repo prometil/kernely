@@ -17,12 +17,34 @@
  * License along with Kernely.
  * If not, see <http://www.gnu.org/licenses/>.
  */
+
 AppHolidayAdmin = (function($){
 	var lineSelected = null;
 	var tableView = null;
 	var selectorView = null;
 	var monthSelected = 0;
 	var yearSelected = 0;
+	var app_router = null;
+	
+	Router = Backbone.Router.extend({
+
+		routes: {
+			"/month/:month/:year":  "visualize",
+			"*actions" : "defaultRoute"
+		},
+		
+		initialize: function() {
+		},
+
+		visualize: function(month, year) {
+			tableView.change(month, year);
+		},
+		
+		defaultRoute: function(){
+			tableView.change(0, 0);
+		}
+	})
+	
 	
 	HolidaySummaryLineView = Backbone.View.extend({
 		tagName: "tr",
@@ -89,13 +111,16 @@ AppHolidayAdmin = (function($){
 		
 		},
 		initialize:function(){
-
+			
+		},
+		
+		reload: function(){
 			var parent = this;
 			var html = $("#table-header").html();
 			$(this.el).html(html);
  			$.ajax({
 				type:"GET",
-				url:"/holiday/humanresource/summary/allprofiles",
+				url:"/holiday/summary/allprofiles",
 				dataType:"json",
 				data:{month:monthSelected,year:yearSelected},
 				success: function(data){
@@ -129,10 +154,10 @@ AppHolidayAdmin = (function($){
 				}
 			});
 		},
-		
-		reload: function(){
-			this.initialize();
-			this.render();
+		change: function(month, year){
+			monthSelected = month;
+			yearSelected = year;
+			this.reload();
 		},
 		render: function(){
 			return this;
@@ -227,8 +252,11 @@ AppHolidayAdmin = (function($){
 			"click .minusMonth" : "minusMonth",
 			"click .plusMonth" : "plusMonth",
 		},
-		initialize: function(){
-			
+		
+		app_router:null,
+		
+		initialize: function(router){
+			app_router = router;
 		},
 		render: function(){
 			var template = $("#calendarSelector").html();
@@ -247,7 +275,7 @@ AppHolidayAdmin = (function($){
 				yearSelected ++;
 			}
 			this.actualize();
-			tableView.reload();
+			app_router.navigate("/month/" + monthSelected + "/" + yearSelected, {trigger: true, replace: true});
 		},
 		minusMonth: function(){
 			monthSelected --;
@@ -257,7 +285,7 @@ AppHolidayAdmin = (function($){
 				yearSelected --;
 			}
 			this.actualize();
-			tableView.reload();
+			app_router.navigate("/month/" + monthSelected + "/" + yearSelected, {trigger: true, replace: true});
 		},
 		actualize: function(){
 			var template = $("#"+ monthSelected +"-month-template").html();
@@ -271,6 +299,10 @@ AppHolidayAdmin = (function($){
 	self.start = function(){
 		tableView = new HolidaySummaryTableView().render();
 		selectorView = new HolidayMonthSelectorView().render();
+		// Instantiate the router
+		app_router = new Router;
+	    // Start Backbone history a neccesary step for bookmarkable URL's
+	    Backbone.history.start();
 	}
 	return self;
 })
