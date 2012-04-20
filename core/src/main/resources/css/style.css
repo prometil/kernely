@@ -156,6 +156,32 @@ div#profilePU-footer{
 	text-align:center;
 }
 
+/* notifications*/
+div#notification_to_user{
+	height:14px;
+}
+div.success-notification{
+	color:darkgreen;
+	background-color:#CCFFCC;
+	border-color:darkgreen;
+	border-width:1px;
+	font-size:12px;
+}
+div.error-notification{
+	color:darkred;
+	background-color:#FFCCCC;
+	border-color:darkred;
+	border-width:1px;
+	font-size:12px;
+}
+div.info-notification{
+	color:darkblue;
+	background-color:#FFFFCC;
+	border-color:darkblue;
+	border-width:1px;
+	font-size:12px;
+}
+
 /* content */
 div#content {
 	padding: 10px;

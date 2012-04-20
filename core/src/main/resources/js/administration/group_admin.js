@@ -195,10 +195,7 @@ AppGroupAdmin = (function($){
 					url:"/admin/groups/delete/" + lineSelected.vid,
 					success: function(){
 						var successHtml = $("#group-deleted-template").html();
-					
-						$("#groups_notifications").text(successHtml);
-						$("#groups_notifications").fadeIn(1000);
-						$("#groups_notifications").fadeOut(3000);
+						$.writeMessage("success",successHtml);
 						tableView.reload();
 					}
 				});
@@ -250,15 +247,10 @@ AppGroupAdmin = (function($){
 						$('#mask').hide();
 						
 						var successHtml = $("#group-created-updated-template").html();
+						$.writeMessage("success",successHtml);
 						tableView.reload();
-						console.log(successHtml);
-						$("#groups_notifications").text(successHtml);
-						$("#groups_notifications").fadeIn(1000);
-						$("#groups_notifications").fadeOut(3000);
 					} else {
-						$("#groups_errors_create").text(data.result);
-						$("#groups_errors_create").fadeIn(1000);
-						$("#groups_errors_create").fadeOut(3000);
+						$.writeMessage("error",data.result,"#errors_message");
 					}
 				}
 			});
@@ -331,16 +323,14 @@ AppGroupAdmin = (function($){
 						$('#modal_window_group').hide();
 						$('#mask').hide();
 						
-						var successHtml= $("#groupe-created-updated-template").html();
+						var successHtml= $("#group-created-updated-template").html();
 
 						$("#groups_notifications").text(successHtml);
-						$("#groups_notifications").fadeIn(1000);
-						$("#groups_notifications").fadeOut(3000);
+						$.writeMessage("success",successHtml);
 						tableView.reload();
 					} else {
-						$("#groups_errors_update").text(data.result);
-						$("#groups_errors_update").fadeIn(1000);
-						$("#groups_errors_update").fadeOut(3000);
+						$.writeMessage("error",data.result,"#errors_message");
+						
 					}
 				}
 			});

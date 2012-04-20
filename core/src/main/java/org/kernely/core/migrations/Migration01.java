@@ -105,7 +105,7 @@ public class Migration01 extends Migration {
 		userDetails.column("firstname", DataBaseConstants.VARCHAR_50);
 		userDetails.column("mail", DataBaseConstants.VARCHAR_50);
 		userDetails.column("image",DataBaseConstants.VARCHAR_100);
-		userDetails.column("user_id", DataBaseConstants.LONG_NOT_NULL);
+		userDetails.column("user_id", DataBaseConstants.LONG);
 		userDetails.column("address", DataBaseConstants.VARCHAR_100);
 		userDetails.column("zip", DataBaseConstants.VARCHAR_5);
 		userDetails.column("city", DataBaseConstants.VARCHAR_30);

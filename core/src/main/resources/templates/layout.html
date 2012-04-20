@@ -15,6 +15,7 @@
 	<script type="text/javascript" src="/js/jquery-ui-1.8.16.min.js"></script>
 	<script type="text/javascript" src="/js/jquery.ui.datepicker-en-US.js"></script>
 	<script type="text/javascript" src="/js/jquery.ui.datepicker-fr-FR.js"></script>
+	<script type="text/javascript" src="/js/kernely.ui.js"></script>
 	<script type="text/javascript" src="/js/jscolor/jscolor.js"></script>
 	
 	{% block javascript %}
@@ -81,12 +82,12 @@
 			{% block left %}
 			{% endblock %}
 			</div>
-			<div id="main_title">
-				{% block title %}
-				
-				{% endblock %}
-			</div>
 			<div id="container">
+					<div id="main_title">
+						{% block title %}
+						{% endblock %}
+					<div id="notification_to_user"></div>
+				</div>
 				{% block content %}
 				No content.
 				{% endblock %}
