@@ -34,7 +34,7 @@ import javax.ws.rs.core.Response;
 import org.kernely.core.controller.AbstractController;
 import org.kernely.core.dto.UserDetailsDTO;
 import org.kernely.core.service.user.UserService;
-import org.kernely.core.template.TemplateRenderer;
+import org.kernely.core.template.SobaTemplateRenderer;
 import org.kernely.holiday.dto.HolidayCreationRequestDTO;
 import org.kernely.holiday.dto.HolidayDTO;
 import org.kernely.holiday.dto.HolidayProfileCreationRequestDTO;
@@ -50,7 +50,7 @@ import com.google.inject.Inject;
 @Path("/admin/holiday")
 public class HolidayAdminController extends AbstractController {
 	@Inject
-	private TemplateRenderer templateRenderer;
+	private SobaTemplateRenderer templateRenderer;
 	
 	@Inject
 	private UserService userService;
@@ -67,9 +67,9 @@ public class HolidayAdminController extends AbstractController {
 	public Response getPluginAdminPanel(){
 		Response page;
 		if (userService.currentUserIsAdministrator()){
-			page = ok(templateRenderer.create("/templates/gsp/holiday_profile_admin.gsp").addCss("/css/admin.css").addCss("/css/holiday_admin.css").withLayout(TemplateRenderer.ADMIN_LAYOUT));
+			page = Response.ok(templateRenderer.render("templates/holiday_profile_admin.html")).build();
 		} else{
-			page = ok(templateRenderer.create("/templates/gsp/home.gsp"));
+			page = Response.ok(templateRenderer.render("templates/home.html")).build();
 		}
 		return page;
 	}

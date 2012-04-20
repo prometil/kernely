@@ -16,6 +16,7 @@
 	<script type="text/javascript" src="/js/jquery.ui.datepicker-en-US.js"></script>
 	<script type="text/javascript" src="/js/jquery.ui.datepicker-fr-FR.js"></script>
 	<script type="text/javascript" src="/js/jscolor/jscolor.js"></script>
+	<script type="text/javascript" src="/js/jquery-urlparams.js"></script>
 	
 	{% block javascript %}
 		<!-- additional javascript-->
@@ -81,19 +82,21 @@
 			{% block left %}
 			{% endblock %}
 			</div>
-			<div id="main_title">
-				{% block title %}
-				
-				{% endblock %}
-			</div>
-			<div id="container">
-				{% block content %}
-				No content.
-				{% endblock %}
+			<div id="main-content">
+				<div id="main_title">
+					{% block title %}
+					
+					{% endblock %}
+				</div>
+				<div id="container">
+					{% block content %}
+					No content.
+					{% endblock %}
+				</div>
 			</div>
 			<div id="container_right">
-			{% block right %}
-			{% endblock %}
+				{% block right %}
+				{% endblock %}
 			</div>
 	</body>
 </html>

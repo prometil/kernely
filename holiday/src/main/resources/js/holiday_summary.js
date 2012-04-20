@@ -110,17 +110,20 @@ AppHolidayAdmin = (function($){
 							yearSelected = data.holidayProfilesSummaryDTO.year;
 							
 							view = new HolidayProfileTableView(data.holidayProfilesSummaryDTO.name, data.holidayProfilesSummaryDTO.usersSummaries);
+							view.render();
 						}
 						else{
+
 							$.each(data.holidayProfilesSummaryDTO, function() {
 								// Update the date in month selector
 								monthSelected = this.month;
 								yearSelected = this.year;
 								
 								view = new HolidayProfileTableView(this.name, this.usersSummaries);
+								view.render();
 							});
 						}
-						view.render();
+						
 		    			selectorView.actualize();
 					}
 				}

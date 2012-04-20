@@ -76,7 +76,7 @@ padding:0px;
 
 #request-main{
 	margin-top: 20px;
-	width:960px;
+	width:955px;
 	height:auto;
 }
 
@@ -85,7 +85,6 @@ padding:0px;
 	width:720px;
 	height:auto;
 	float:left;
-	display : none;
 }
 
 #colorSelector{

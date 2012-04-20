@@ -28,7 +28,7 @@ font: normal 13px arial, sans-serif;
 
 
 #container_left {
-	width:200px;
+	width:250px;
 	margin:0 auto;
 	float:left;
 	padding-top: 20px;
@@ -43,18 +43,22 @@ font: normal 13px arial, sans-serif;
 	font-weight:bold;
 }
 #container_right {
-	width:200px;
+	width:250px;
 	float:left;
 	margin:0 auto;
 	padding-top: 20px;
 	margin: 0 auto 0 auto;
 }
 
-#container {
+#main-content {
 	width:960px;
 	margin:0 auto;
 	padding-top: 20px;
 	margin: 0 auto 0 auto;
+}
+
+#container {
+	width:100%;
 }
 
 h1 {

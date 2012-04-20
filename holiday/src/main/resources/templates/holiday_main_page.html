@@ -1,0 +1,63 @@
+{% extends "templates/layout.html" %}
+{% block javascript %}
+	<script type="text/javascript" src="/js/holiday_user_request.js"></script>
+{% endblock %}
+
+{% block css %}
+	<link rel="stylesheet" type="text/css" href="/css/holiday_user_request.css"/>
+{% endblock %}
+
+{% block template %}	
+	<script type="text/html" id="cancel-ask-template">
+		{% i18n "canceled_ask" %}
+	</script>
+	
+	<script type="text/html" id="holiday-canceled-template">
+		{% i18n "canceled" %}
+	 </script>
+	
+	 <script type="text/html" id="status-denied-template">
+	 	{% i18n "denied" %}
+	 </script>
+	
+	<script type="text/html" id="status-accepted-template">
+		{% i18n "accepted" %}
+	 </script>
+	 
+	<script type="text/html" id="status-accepted-or-denied-template">
+	 	<td>{{"{{"}}requesterComment{{"}}"}}</td><td>{{"{{"}}beginDate{{"}}"}}</td><td>{{"{{"}}endDate{{"}}"}}</td>
+	</script>
+	
+	<script type="text/html" id="new-request-form">
+		<form method="POST" action="/holiday/request/">
+			<label for="from">{% i18n "from_date" %} </label><input readonly="readonly" type="text" id="from" name="from"/><br/>
+			<label for="to"> {% i18n "to_date" %} </label><input readonly="readonly" type="text" id="to" name="to"/><br/>
+			<input id="submitPeriod" type="submit" value="{% i18n "ok" %}"/>
+			<input id="cancel-request-form" type="button" value="{% i18n "cancel" %}"/>
+		</form>
+	</script>
+{% endblock %}
+
+{% block title %}
+	{% i18n "title_user_request" %}
+{% endblock %}
+
+{% block content %}	
+	<div id="request-manager-main">
+		<div id="holiday_button_container">
+			<input type="button" id="button_canceled" value="{% i18n "canceled" %}" disabled="disabled"/>
+			<input type="button" id="new_request" value="{% i18n "new-request" %}" />
+		</div>
+		<table id="user_pending_request_table">
+			  <caption><b><u>{% i18n "title_table_1" %}</u></b></caption>
+			 <th>{% i18n "requester_comment" %}</th><th>{% i18n "begin_date" %}</th><th>{% i18n "end_date" %}</th><th></th>
+		</table>
+		<span id="holiday_notifications"></span>
+		<br/>
+		<br/>
+		<table id="user_request_table">
+		    <caption><b><u>{% i18n "title_table_2" %}</u></b></caption>
+			<th>{% i18n "manager" %}</th><th>{% i18n "requester_comment" %}</th><th>{% i18n "manager_comment" %}</th><th>{% i18n "begin_date" %}</th><th>{% i18n "end_date" %}</th><th>{% i18n "status" %}</th></tr>
+		</table>
+	</div>
+{% endblock %}

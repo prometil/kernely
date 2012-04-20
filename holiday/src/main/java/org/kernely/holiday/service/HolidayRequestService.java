@@ -776,18 +776,20 @@ public class HolidayRequestService extends AbstractService {
 			List<HolidayBalanceDTO> balancesList;
 			HolidayBalanceDTO balanceAnticipated;
 			for (HolidayTypeInstance type : types) {
-				availableDays = 0.0F;
-				balancesList = new ArrayList<HolidayBalanceDTO>(balanceService.getHolidayBalancesAvailable(type.getId(), userId));
-				if(type.isAnticipated()){
-					balanceAnticipated = balancesList.get(balancesList.size() - 1);
-					balancesList.remove(balancesList.size() - 1);
-					details.add(new CalendarBalanceDetailDTO(type.getName() + "(anticipation)", balanceAnticipated.availableBalanceUpdated, type.getColor(), type.getId()));
-				}
-				for (HolidayBalanceDTO hb : balancesList) {
-					availableDays += hb.availableBalanceUpdated;
-				}
-				if(availableDays > 0.0F){
-					details.add(new CalendarBalanceDetailDTO(type.getName(), availableDays, type.getColor(), type.getId()));					
+				if(!type.isUnlimited()){
+					availableDays = 0.0F;
+					balancesList = new ArrayList<HolidayBalanceDTO>(balanceService.getHolidayBalancesAvailable(type.getId(), userId));
+					if(type.isAnticipated()){
+						balanceAnticipated = balancesList.get(balancesList.size() - 1);
+						balancesList.remove(balancesList.size() - 1);
+						details.add(new CalendarBalanceDetailDTO(type.getName() + "(anticipation)", balanceAnticipated.availableBalanceUpdated, type.getColor(), type.getId()));
+					}
+					for (HolidayBalanceDTO hb : balancesList) {
+						availableDays += hb.availableBalanceUpdated;
+					}
+					if(availableDays > 0.0F){
+						details.add(new CalendarBalanceDetailDTO(type.getName(), availableDays, type.getColor(), type.getId()));					
+					}
 				}
 			}
 			// Now, retrieve all unlimited types associated to the current profiles of the user.

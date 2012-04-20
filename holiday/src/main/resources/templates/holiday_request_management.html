@@ -1,0 +1,105 @@
+{% extends "templates/layout.html" %}
+{% block javascript %}
+	<script type="text/javascript" src="/js/holiday_manager_request.js"></script>
+{% endblock %}
+
+{% block css %}
+	<link rel="stylesheet" type="text/css" href="/css/holiday_manager_request.css"/>
+{% endblock %}
+
+{% block template %}
+	<script type="text/html" id="status-denied-template">
+		{% i18n "denied" %}
+	</script>
+	
+	<script type="text/html" id="status-accepted-template">
+		{% i18n "accepted" %}
+	</script>
+	
+	<script type="text/html" id="holiday-accept-template">
+		{% i18n "accepted_done" %}
+	</script>
+	
+	<script type="text/html" id="holiday-deny-template">
+		{% i18n "denied_done" %}
+	</script>
+	
+	<script type="text/html" id="status-accepted-or-denied-template">
+		 	<td>{{"{{"}}from{{"}}"}}</td><td>{{"{{"}}requesterComment{{"}}"}}</td><td>{{"{{"}}beginDate{{"}}"}}</td><td>{{"{{"}}endDate{{"}}"}}</td><td><input type="button" class="button_accepted" value="{% i18n "accepted" %}"/></td><td><input type="button" class="button_denied" value="{% i18n "denied" %}"/></td><td><input type="button" class="button_visualize" value="{% i18n "visualize" %}"/></td>
+	</script>
+	
+	<script type="text/html" id="balance-cell-template">
+		<span id="balance-cell-name">{{"{{"}}name{{"}}"}}</span><br/>
+		{% i18n "holiday_balance_available" %}: <span class="available-cpt">{{"{{"}}available}}</span>
+	</script>
+	
+	<script type="text/html" id="locale-lang">{% i18n "locale_lang" %}</script>
+	
+	<script type="text/html" id="locale-country">{% i18n "locale_country" %}</script>
+	
+	<script type="text/html" id="popup-accepted-template">
+		<input type="button" value="{% i18n "close" %}" class="closeModal"/><br/>
+		<fieldset>	
+		<legend>{% i18n "accepted_ask" %}</legend>
+		{% i18n "accepted_commentary" %}: <input type="text" id="comment" size="40"/><br/>
+		</fieldset>
+		<br/>
+		<input type="button" value="{% i18n "holiday_request_create" %}" class="validateHolidayRequest"/>
+	</script>
+	
+	<script type="text/html" id="popup-visualize-request">
+		<input type="button" value="{% i18n "close" %}" class="closeModal"/><br/>
+		
+		<div id="request-main">  
+		<div id="calendarRequest">
+			<table id="calendarTable" border="0">
+				<tr>
+					<th>{% i18n "day_1_short" %}</th>
+					<th>{% i18n "day_2_short" %}</th>
+					<th>{% i18n "day_3_short" %}</th>
+					<th>{% i18n "day_4_short" %}</th>
+					<th>{% i18n "day_5_short" %}</th>
+				</tr>
+				<tbody id="calendarContent">
+				<tbody>
+			</table>
+		</div>
+		<input type="button" id="button_accepted" value="{% i18n "accepted" %}"/> <input type="button" id="button_denied" value="{% i18n "denied" %}" />
+		
+	</script>
+	
+	<script type="text/html" id="popup-denied-template">
+		<input type="button" value="{% i18n "close" %}" class="closeModal"/><br/>
+		<fieldset>	
+		<legend>{% i18n "denied_ask" %}</legend>
+		{% i18n "denied_commentary" %}: <input type="text" id="comment" size="40"/><br/>
+		</fieldset>
+		<br/>
+		<input type="button" value="{% i18n "holiday_request_create" %}" class="denyHolidayRequest"/>
+	</script>
+{% endblock %}
+
+{% block title %}
+	{% i18n "request-management-title" %}
+{% endblock %}
+
+{% block content %}	
+	<div id="mask"></div>
+	
+	<div id="modal_window_holiday_request">
+	</div>
+	
+	<div id="request-manager-main">
+	<hr/>
+	<table id="manager_pending_request_table">
+		  <caption><b><u>{% i18n "title_table_1" %}</u></b></caption>
+		  <tr><th>{% i18n "from" %}</th><th>{% i18n "requester_comment" %}</th><th>{% i18n "begin_date" %}</th><th>{% i18n "end_date" %}</th><th></th><th></th><th></th></tr>
+	</table>
+	<span id="holiday_notifications"></span>
+	<hr/>	
+	<table id="manager_request_table">
+	    <caption><b><u>{% i18n "title_table_2" %}</u></b></caption>
+		<tr><th>{% i18n "from" %}</th><th>{% i18n "requester_comment" %}</th><th>{% i18n "manager_comment" %}</th><th>{% i18n "begin_date" %}</th><th>{% i18n "end_date" %}</th><th>{% i18n "status" %}</th></tr>
+	</table>
+	</div>
+{% endblock %}

@@ -5,9 +5,10 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import org.kernely.core.controller.AbstractController;
-import org.kernely.core.template.TemplateRenderer;
+import org.kernely.core.template.SobaTemplateRenderer;
 import org.kernely.holiday.dto.HolidayUsersManagerDTO;
 import org.kernely.holiday.service.HolidayManagerUserService;
 
@@ -19,7 +20,7 @@ import com.google.inject.Inject;
 @Path("holiday/manager/users")
 public class HolidayManagerUserController extends AbstractController{
 	@Inject
-	private TemplateRenderer templateRenderer;
+	private SobaTemplateRenderer templateRenderer;
 	
 	@Inject
 	private HolidayManagerUserService holidayManagerService;
@@ -30,8 +31,8 @@ public class HolidayManagerUserController extends AbstractController{
 	 */
 	@GET
 	@Produces( { MediaType.TEXT_HTML })
-	public String getHolidayManagerUsersPanel(){
-		return templateRenderer.create("/templates/gsp/holiday_manager_users.gsp").addCss("/css/holiday_manager_users.css").render();
+	public Response getHolidayManagerUsersPanel(){
+		return Response.ok(templateRenderer.render("templates/holiday_manager_users.html")).build();
 	}
 	
 	/**

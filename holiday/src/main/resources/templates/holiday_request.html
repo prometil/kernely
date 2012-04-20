@@ -1,0 +1,55 @@
+{% extends "templates/layout.html" %}
+{% block javascript %}
+	<script type="text/javascript" src="/js/holiday_request.js"></script>
+{% endblock %}
+
+{% block css %}
+	<link rel="stylesheet" type="text/css" href="/css/holiday_request.css"/>
+{% endblock %}
+
+{% block template %}	
+	<script type="text/html" id="balance-cell-template">
+			<span id="balance-cell-name">{{"{{"}}name{{"}}"}}</span><br/>
+			{% i18n "holiday_balance_available" %}: <span class="available-cpt">{{"{{"}}available{{"}}"}}</span>
+	</script>
+	
+	<script type="text/html" id="balance-unlimited-cell-template">
+		<span id="balance-cell-name">{{"{{"}}name{{"}}"}}</span>
+	</script>
+	
+	<script type="text/html" id="locale-lang">{% i18n "locale_lang" %}</script>
+	
+	<script type="text/html" id="locale-country">{% i18n "locale_country" %}</script>
+	
+	<script type="text/html" id="holiday-success-request-message-template">{% i18n "holiday_request_submit_success" %}</script>
+{% endblock %}
+
+{% block title %}
+	{% i18n "new-request-title" %}
+{% endblock %}
+
+{% block content %}
+	<div id="request-main">
+		<div id="calendarRequest">
+			<table id="calendarTable" border="0">
+				<tr>
+					<th>{% i18n "day_1_short" %}</th>
+					<th>{% i18n "day_2_short" %}</th>
+					<th>{% i18n "day_3_short" %}</th>
+					<th>{% i18n "day_4_short" %}</th>
+					<th>{% i18n "day_5_short" %}</th></tr>
+				<tbody id="calendarContent">
+				<tbody>
+			</table>
+			<div id="requester-comment-div">
+				<textarea id="requester-comment"></textarea>
+				<input type="button" id="validate-holidays" value="Submit"/>
+			</div>
+		</div>
+	</div>
+{% endblock %}
+{% block right %}
+	<div id="colorSelector">
+	<!-- Color picker to color holidays -->
+	</div>
+{% endblock %}

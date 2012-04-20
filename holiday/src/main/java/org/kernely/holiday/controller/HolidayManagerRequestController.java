@@ -8,15 +8,17 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.kernely.core.controller.AbstractController;
 import org.kernely.core.service.user.UserService;
-import org.kernely.core.template.TemplateRenderer;
+import org.kernely.core.template.SobaTemplateRenderer;
 import org.kernely.holiday.dto.CalendarRequestDTO;
 import org.kernely.holiday.dto.HolidayDetailDTO;
 import org.kernely.holiday.dto.HolidayRequestDTO;
@@ -27,13 +29,12 @@ import com.google.inject.Inject;
 
 /**
  * Controller for the  manager  request view
- * @author b.grandperret
  *
  */
 @Path("/holiday/managers/request")
 public class HolidayManagerRequestController extends AbstractController {
 	@Inject
-	private TemplateRenderer templateRenderer;
+	private SobaTemplateRenderer templateRenderer;
 	
 	@Inject
 	private UserService userService;
@@ -48,7 +49,10 @@ public class HolidayManagerRequestController extends AbstractController {
 	@GET
 	@Produces( { MediaType.TEXT_HTML })
 	public Response getHolidayRequestPage(){
-		return ok(templateRenderer.create("/templates/gsp/holiday_manager_request.gsp").addCss("/css/holiday_manager_request.css"));
+		if (userService.isManager(userService.getAuthenticatedUserDTO().username)){	
+			return Response.ok(templateRenderer.render("templates/holiday_request_management.html")).build();
+		}
+		return Response.status(Status.FORBIDDEN).build();
 	}
 	
 	/**
@@ -94,12 +98,12 @@ public class HolidayManagerRequestController extends AbstractController {
 	@GET
 	@Path("/accept/{id}")
 	@Produces({MediaType.TEXT_HTML})
-	public String acceptHoliday(@PathParam("id")int idRequest){
+	public Response acceptHoliday(@PathParam("id")int idRequest){
 		if (userService.isManager(userService.getAuthenticatedUserDTO().username)){
 			holidayRequestService.acceptRequest(idRequest);
-			return "{\"result\":\"Ok\"}"; 			
+			return Response.ok().build(); 			
 		}
-		return null;
+		return Response.status(Status.FORBIDDEN).build();
 	}
 	
 	/**
@@ -110,12 +114,12 @@ public class HolidayManagerRequestController extends AbstractController {
 	@GET
 	@Path("/deny/{id}")
 	@Produces({MediaType.TEXT_HTML})
-	public String denyHoliday(@PathParam("id")int idRequest){
+	public Response denyHoliday(@PathParam("id")int idRequest){
 		if (userService.isManager(userService.getAuthenticatedUserDTO().username)){
 			holidayRequestService.denyRequest(idRequest);
-			return "{\"result\":\"Ok\"}"; 			
+			return Response.ok().build();			
 		}
-		return null;
+		return Response.status(Status.FORBIDDEN).build();
 	}
 	
 	/**
@@ -127,12 +131,12 @@ public class HolidayManagerRequestController extends AbstractController {
 	@GET
 	@Path("/comment/{id}/{comment}")
 	@Produces({MediaType.TEXT_HTML})
-	public String managerCommentHoliday(@PathParam("id")int idRequest, @PathParam("comment")String managerComment){
+	public Response managerCommentHoliday(@PathParam("id")int idRequest, @PathParam("comment")String managerComment){
 		if (userService.isManager(userService.getAuthenticatedUserDTO().username)){
 			holidayRequestService.addManagerCommentary(idRequest, managerComment);
-			return "{\"result\":\"Ok\"}"; 			
+			return Response.ok().build();			
 		}
-		return null;
+		return Response.status(Status.FORBIDDEN).build();
 	}
 	
 	/**
@@ -197,9 +201,9 @@ public class HolidayManagerRequestController extends AbstractController {
 	 * @return Calendar request
 	 */
 	@GET
-	@Path("construct/{dateBegin}/{dateEnd}")
+	@Path("construct")
 	@Produces(MediaType.APPLICATION_JSON)
-	public CalendarRequestDTO constructCalendar(@PathParam("dateBegin")String dateBegin,@PathParam("dateEnd")String dateEnd){
+	public CalendarRequestDTO constructCalendar(@QueryParam("dateBegin")String dateBegin,@QueryParam("dateEnd")String dateEnd){
 		DateTimeFormatter fmt = DateTimeFormat.forPattern("yyyy-MM-dd");
 		DateTime d1 = DateTime.parse(dateBegin, fmt);
 		DateTime d2 = DateTime.parse(dateEnd, fmt);
