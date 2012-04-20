@@ -1,0 +1,24 @@
+{% extends "templates/layout.html" %}
+
+{% block css %}
+	<link rel="stylesheet" type="text/css" href="/css/project_list.css"/>
+{% endblock %}
+
+{% block content %}
+	<div id="project_list_header">
+	{% i18n "project_list_title" %}
+	</div>
+	<div id="project_list_container">
+	{% for proj in project %}
+		<div id="project-{{proj.id}}" class="proj">
+			<div id="project-image">
+				<img class="project-icon" src="/images/{{proj.icon}}"/>
+			</div>
+			<div id="project-info">
+				<span id="project_name" class="span_project"><a href="/project/{{proj.name}}">{{proj.name}}</a></span>		
+			</div>
+		</div>
+	{% endfor %}
+	</div>
+{% endblock %}
+

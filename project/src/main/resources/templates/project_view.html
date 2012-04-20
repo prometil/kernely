@@ -1,0 +1,16 @@
+{% extends "templates/layout.html" %}
+
+{% block css %}
+	<link rel="stylesheet" type="text/css" href="/css/project_view.css"/>
+{% endblock %}
+
+{% block content %}
+	<div id="project-{{project.id}}" class="proj">
+		<div id="project-image">
+			<img class="project-icon" src="/images/{{project.icon}}"/>
+		</div>
+		<div id="project-info">
+			<span id="project_name" class="span_project">{{project.name}}</span>		
+		</div>
+	</div>
+{% endblock %}

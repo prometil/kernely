@@ -1,0 +1,110 @@
+{% extends "templates/admin.html" %}
+
+{% block subjavascript %}
+	<script type="text/javascript" src="/js/project_admin.js"></script>
+{% endblock %}
+
+{% block subcss %}
+	<link rel="stylesheet" type="text/css" href="/css/project_admin.css"/>
+{% endblock %}
+
+{% block admin %}
+	<div id="group_header" style=""></div>
+	<div id="mask"></div>
+	<div id="modal_window_project"></div>
+	<div id="project_admin_container">
+	<div id="project_admin_buttons">
+		<input type="button" class="createButton" value="{% i18n "create" %}"/>
+		<input type="button" class="editButton" value="{% i18n "edit" %}" disabled="disabled"/>
+		<input type="button" class="deleteButton" value="{% i18n "delete" %}" disabled="disabled"/>
+		<input type="button" class="imageButton" value="{% i18n "image" %}"  disabled="disabled"/>
+		<span id="span_notifications"></span>
+	</div>
+	<table id="project_admin_table">
+		
+	</table>
+</div>
+	
+	{% endblock %}
+
+{% block subtemplate %}
+	<!-- Template for the create view  -->
+	<script type="text/html" id="popup-project-admin-create-template">
+		<input type="button" value="{% i18n "close" %}" class="closeModal"/><br/>
+		<fieldset>
+		<legend>{% i18n "project_informations" %}</legend>
+		{% i18n "project_name" %}: <input type="text" name="name"/><br/>
+		</fieldset>
+		<fieldset>
+		<legend>{% i18n "project_organizations" %}</legend>
+		<div id="combo">{% i18n "organization" %}:
+		
+		</div>	
+		</fieldset>
+		<br/>
+		<input type="button" value="{% i18n "create" %}" class="createProject"/>
+		<span id="errors_message"></span>
+	</script>
+	
+	<!-- Template for the edit view  -->
+	<script type="text/html" id="popup-project-admin-update-template">
+		<input type="button" value="{% i18n "close" %}" class="closeModal"/><br/>
+		<fieldset>
+		<legend>{% i18n "project_informations" %}</legend>
+		{% i18n "project_name" %}: <input type="text" name="name" value="{{"{{"}}name{{"}}"}}"/><br/>
+		</fieldset>
+		<fieldset>
+		<legend>{% i18n "project_organizations" %}</legend>
+		<div id="combo">{% i18n "organization" %}:
+		
+		</div>	
+		</fieldset>
+		<fieldset>
+		<legend>{% i18n "project_users" %}</legend>
+			<div id="usersToLink">
+				<table id="project_user_table">
+			
+				</table>
+			</div>
+		</fieldset>
+		<br/>
+		<input type="button" value="{% i18n "update" %}" class="updateProject"/>
+		<span id="errors_message"></span>
+	</script>
+	
+	
+	<!-- Template for the icon view  -->
+	<script type="text/html" id="popup-project-admin-icon-template">
+		<input type="button" value="{% i18n "close" %}" class="closeModal"/><br/>
+		<fieldset>
+		<legend>{% i18n "project_informations" %}</legend>
+			<img src="/images/{{"{{"}}icon{{"}}"}}" id="image_name" name="{{"{{"}}icon{{"}}"}}"/>
+			<form action="/admin/projects/upload/{{"{{"}}name{{"}}"}}" method="post" enctype="multipart/form-data">
+	 			<input type="file" name="file"/>
+			   <input type="submit" value="{% i18n "upload" %}" />
+			</form>
+		</fieldset> <br/>
+	</script>
+	
+	
+	<script type="text/html" id="confirm-project-deletion-template">
+	{% i18n "confirm_project_deletion" %}
+	</script>
+	
+	<script type="text/html" id="project-deleted-template">
+	{% i18n "project_deleted" %}
+	</script>
+	
+	<script type="text/html" id="project-created-updated-template">
+	{% i18n "project_created_updated" %}
+	</script>
+	
+	<script type="text/html" id="table-header-template" class="table_header">
+	<tr><th>{% i18n "project_name" %}</tr>
+	</script>
+	
+	<script type="text/html" id="table-header-template2" class="table_header">
+	<tr><th></th><th>{% i18n "contributor" %}<th>{% i18n "project_manager" %}</th><th>{% i18n "client" %}</th></tr>
+	</script>
+
+{% endblock %}

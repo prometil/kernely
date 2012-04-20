@@ -9,11 +9,12 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 
 import org.kernely.core.controller.AbstractController;
 import org.kernely.core.dto.UserDTO;
 import org.kernely.core.service.user.UserService;
-import org.kernely.core.template.TemplateRenderer;
+import org.kernely.core.template.SobaTemplateRenderer;
 import org.kernely.project.dto.OrganizationCreationRequestDTO;
 import org.kernely.project.dto.OrganizationDTO;
 import org.kernely.project.service.OrganizationService;
@@ -26,7 +27,7 @@ import com.google.inject.Inject;
 @Path("/admin/organizations")
 public class OrganizationAdminController extends AbstractController {
 	@Inject
-	private TemplateRenderer templateRenderer;
+	private SobaTemplateRenderer templateRenderer;
 
 	@Inject
 	private UserService userService;
@@ -42,13 +43,11 @@ public class OrganizationAdminController extends AbstractController {
 	@GET
 	@Produces({ MediaType.TEXT_HTML })
 	public Response getPluginAdminPanel() {
-		Response page;
 		if (userService.currentUserIsAdministrator()) {
-			page = ok(templateRenderer.create("/templates/gsp/organization_admin.gsp").addCss("/css/admin.css").addCss("/css/organization_admin.css").withLayout(TemplateRenderer.ADMIN_LAYOUT));
+			return Response.ok(templateRenderer.render("templates/organization_admin.html")).build();
 		} else {
-			page = ok(templateRenderer.create("/templates/gsp/home.gsp"));
+			return Response.status(Status.FORBIDDEN).build();
 		}
-		return page;
 	}
 	
 	/**

@@ -1,8 +1,8 @@
-#project-image{
+#project-icon{
 	float: left;
-	height: 48px;
+	max-height: 48px;
 	overflow: hidden;
-	width: 48px;
+	max-width: 48px;
 	margin-top: 3px;
 }
 
@@ -18,3 +18,4 @@
 	width:300px;
 	border-top:1px solid grey;	
 }
+

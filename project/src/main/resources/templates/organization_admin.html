@@ -1,0 +1,85 @@
+{% extends "templates/admin.html" %}
+
+{% block subjavascript %}
+	<script type="text/javascript" src="/js/organization_admin.js"></script>
+{% endblock %}
+
+{% block subcss %}
+	<link rel="stylesheet" type="text/css" href="/css/organization_admin.css"/>
+{% endblock %}
+
+{% block admin %}
+	<div id="group_header" style=""></div>
+	<div id="mask"></div>
+	<div id="modal_window_organization"></div>
+	
+	<div id="organization_admin_container">
+		<div id="organization_admin_buttons">
+			<input type="button" class="createButton" value="{% i18n "create" %}"/>
+			<input type="button" class="editButton" value="{% i18n "edit" %}" disabled="disabled"/>
+			<input type="button" class="deleteButton" value="{% i18n "delete" %}" disabled="disabled"/>
+			<span id="span_notifications"></span>
+		</div>
+		<table id="organization_admin_table">
+			
+		</table>
+	</div>
+{% endblock %}
+
+{% block subtemplate %}
+	<!-- Template for the create view  -->
+	<script type="text/html" id="popup-organization-admin-create-template">
+		<input type="button" value="{% i18n "close" %}" class="closeModal"/><br/>
+		<fieldset>
+		<legend>{% i18n "organization_informations" %}</legend>
+		{% i18n "organization_name" %}: <input type="text" name="name"/><br/>
+		{% i18n "organization_address" %}: <input type="text" name="address"/><br/>
+		{% i18n "organization_zip" %}: <input type="text" name="zip" maxlenght="5"/><br/>
+		{% i18n "organization_city" %}: <input type="text" name="city"/><br/>
+		{% i18n "organization_phone" %}: <input type="text" name="phone" maxlenght="10"/><br/>
+		{% i18n "organization_fax" %}: <input type="text" name="fax" maxlenght="10"/><br/>
+		</fieldset>
+		<br/>
+		<input type="button" value="{% i18n "create" %}" class="createOrganization"/>
+		<span id="errors_message"></span>
+	</script>
+	
+	<!-- Template for the update view  -->
+	<script type="text/html" id="popup-organization-admin-update-template">
+		<input type="button" value="{% i18n "close" %}" class="closeModal"/><br/>
+		<fieldset>
+		<legend>{% i18n "organization_informations" %}</legend>
+		{% i18n "organization_name" %}: <input type="text" name="name" value="{{"{{"}}name{{"}}"}}"/><br/>
+		{% i18n "organization_address" %}: <input type="text" name="address" value="{{"{{"}}address{{"}}"}}"/><br/>
+		{% i18n "organization_zip" %}: <input type="text" name="zip" maxlenght="5" value="{{"{{"}}zip{{"}}"}}"/><br/>
+		{% i18n "organization_city" %}: <input type="text" name="city" value="{{"{{"}}city}}"/><br/>
+		{% i18n "organization_phone" %}: <input type="text" name="phone" maxlenght="10" value="{{"{{"}}phone{{"}}"}}"/><br/>
+		{% i18n "organization_fax" %}: <input type="text" name="fax" maxlenght="10" value="{{"{{"}}fax{{"}}"}}"/><br/>
+		</fieldset>
+		<fieldset>
+		<legend>{% i18n "organization_client" %}</legend>
+			<div id="usersToLink">
+				<!-- Filled by ajax  -->
+			</div>
+		</fieldset>
+		<br/>
+		<input type="button" value="{% i18n "update" %}" class="updateOrganization"/>
+		<span id="errors_message"></span>
+	</script>
+	
+	<script type="text/html" id="confirm-organization-deletion-template">
+	{% i18n "confirm_organization_deletion" %}
+	</script>
+	
+	<script type="text/html" id="organization-deleted-template">
+	{% i18n "organization_deleted" %}
+	</script>
+	
+	<script type="text/html" id="organization-created-updated-template">
+	{% i18n "organization_created_updated" %}
+	</script>
+	
+	<script type="text/html" id="table-header-template">
+	<tr><th>{% i18n "organization_name" %}</tr>
+	</script>
+{% endblock %}

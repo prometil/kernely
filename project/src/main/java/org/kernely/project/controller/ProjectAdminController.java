@@ -15,6 +15,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 
 import org.apache.commons.configuration.AbstractConfiguration;
 import org.apache.commons.io.FileUtils;
@@ -25,7 +26,7 @@ import org.kernely.core.model.Role;
 import org.kernely.core.service.user.GroupService;
 import org.kernely.core.service.user.PermissionService;
 import org.kernely.core.service.user.UserService;
-import org.kernely.core.template.TemplateRenderer;
+import org.kernely.core.template.SobaTemplateRenderer;
 import org.kernely.project.dto.OrganizationDTO;
 import org.kernely.project.dto.ProjectCreationRequestDTO;
 import org.kernely.project.dto.ProjectDTO;
@@ -45,7 +46,7 @@ import com.sun.jersey.multipart.FormDataParam;
 @Path("/admin/projects")
 public class ProjectAdminController extends AbstractController {
 	@Inject
-	private TemplateRenderer templateRenderer;
+	private SobaTemplateRenderer templateRenderer;
 
 	@Inject
 	private AbstractConfiguration configuration;
@@ -73,13 +74,11 @@ public class ProjectAdminController extends AbstractController {
 	@GET
 	@Produces({ MediaType.TEXT_HTML })
 	public Response getPluginAdminPanel() {
-		Response page;
 		if (userService.currentUserIsAdministrator()) {
-			page = ok(templateRenderer.create("/templates/gsp/project_admin.gsp").addCss("/css/admin.css").addCss("/css/project_admin.css").withLayout(TemplateRenderer.ADMIN_LAYOUT));
+			return Response.ok(templateRenderer.render("templates/project_admin.html")).build();
 		} else {
-			page = ok(templateRenderer.create("/templates/gsp/home.gsp"));
+			return Response.status(Status.FORBIDDEN).header("Status","403 Forbidden").build();
 		}
-		return page;
 	}
 
 	/**
@@ -193,9 +192,9 @@ public class ProjectAdminController extends AbstractController {
 	public Response uploadFile(@FormDataParam("file") InputStream uploadedInputStream, @FormDataParam("file") FormDataContentDisposition fileDetail, @PathParam("name") String projectName) {
 		if (fileDetail.getFileName().equals("")) {
 			if (userService.currentUserIsAdministrator()) {
-				return ok(templateRenderer.create("/templates/gsp/project_admin.gsp").addCss("/css/admin.css").addCss("/css/project_admin.css").withLayout(TemplateRenderer.ADMIN_LAYOUT));
+				return Response.ok(templateRenderer.render("templates/project_admin.html")).build();
 			} else {
-				return ok(templateRenderer.create("/templates/gsp/home.gsp"));
+				return Response.status(Status.FORBIDDEN).build();
 			}
 		}
 		// get extension
@@ -220,9 +219,9 @@ public class ProjectAdminController extends AbstractController {
 
 		// get the dto modified
 		if (userService.currentUserIsAdministrator()) {
-			return ok(templateRenderer.create("/templates/gsp/project_admin.gsp").addCss("/css/admin.css").addCss("/css/project_admin.css").withLayout(TemplateRenderer.ADMIN_LAYOUT));
+			return Response.ok(templateRenderer.render("templates/project_admin.html")).build();
 		} else {
-			return ok(templateRenderer.create("/templates/gsp/home.gsp"));
+			return Response.status(Status.FORBIDDEN).build();
 		}
 	}
 

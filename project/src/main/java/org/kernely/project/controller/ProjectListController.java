@@ -1,6 +1,9 @@
 package org.kernely.project.controller;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -12,19 +15,19 @@ import javax.ws.rs.core.Response;
 
 import org.kernely.core.controller.AbstractController;
 import org.kernely.core.service.user.UserService;
-import org.kernely.core.template.TemplateRenderer;
+import org.kernely.core.template.SobaTemplateRenderer;
 import org.kernely.project.dto.ProjectDTO;
 import org.kernely.project.service.ProjectService;
 
 import com.google.inject.Inject;
 
 /**
- * Admin controller for project
+ * Controller for project
  */
 @Path("/project")
 public class ProjectListController extends AbstractController {
 	@Inject
-	private TemplateRenderer templateRenderer;
+	private SobaTemplateRenderer templateRenderer;
 
 	@Inject
 	private ProjectService projectService;
@@ -40,11 +43,14 @@ public class ProjectListController extends AbstractController {
 	@GET
 	@Produces({ MediaType.TEXT_HTML })
 	public Response getProjectListPage() {
+		Map<String,Object> bindings = new HashMap<String,Object>();
 		if (userService.currentUserIsProjectManager()) {
-			List<ProjectDTO> projDTO = projectService.getAllProjects();
-			return ok(templateRenderer.create("/templates/gsp/project_list.gsp").with("project", projDTO).addCss("/css/project_list.css"));
+			bindings.put("project", projectService.getAllProjects());
+			return Response.ok(templateRenderer.render("templates/project_list.html",bindings)).build();
+		} else {
+			bindings.put("project", new ArrayList<ProjectDTO>());
+			return Response.ok(templateRenderer.render("templates/project_list.html",bindings)).build();
 		}
-		return ok(templateRenderer.create("/templates/gsp/project_list.gsp").with("project", null).addCss("/css/project_list.css"));
 	}
 
 	/**
@@ -55,7 +61,9 @@ public class ProjectListController extends AbstractController {
 	@Produces({ MediaType.TEXT_HTML})
 	public Response getProjectPage(@PathParam("name")String projectName) {
 		ProjectDTO projDTO = projectService.getProject(projectName);
-		return ok(templateRenderer.create("/templates/gsp/project_view.gsp").with("project", projDTO).addCss("/css/project_view.css"));	
+		Map<String,Object> bindings = new HashMap<String,Object>();
+		bindings.put("project", projDTO);
+		return Response.ok(templateRenderer.render("templates/project_view.html",bindings)).build();	
 	}
 	
 	
