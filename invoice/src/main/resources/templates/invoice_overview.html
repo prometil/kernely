@@ -8,8 +8,16 @@
 	<link rel="stylesheet" type="text/css" href="/css/invoice.css"/>
 {% endblock %}
 
+
+{% block title %}
+	{% i18n "invoicing" %}
+{% endblock %}
+
 {% block template %}
 	<script type="text/html" id="confirm-remove-invoice-template">{% i18n "invoice_remove_confirm" %}</script>
+	
+	
+	<script type="text/html" id="invoice-creation-success-template">{% i18n "invoice-creation-success" %}</script>
 	
 	<script type="text/html" id="invoice-status-2">
 		{% i18n "invoice-unpaid" %}

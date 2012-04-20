@@ -4,6 +4,10 @@
 	<link rel="stylesheet" type="text/css" href="/css/project_view.css"/>
 {% endblock %}
 
+{% block title %}
+	{{project.name}}
+{% endblock %}
+
 {% block content %}
 	<div id="project-{{project.id}}" class="proj">
 		<div id="project-image">

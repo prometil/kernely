@@ -205,9 +205,7 @@ AppStreamAdmin = (function($){
 					url:"/admin/streams/lock/" + lineSelected.vid,
 					success: function(){
 						var successHtml = $("#stream-locked-template").html();
-						$("#streams_notifications").text(successHtml);
-						$("#streams_notifications").fadeIn(1000);
-						$("#streams_notifications").fadeOut(3000);
+						$.writeMessage("success",successHtml);
 						tableView.reload();
 					}
 				});
@@ -225,9 +223,7 @@ AppStreamAdmin = (function($){
 					url:"/admin/streams/unlock/" + lineSelected.vid,
 					success: function(){
 						var successHtml = $("#stream-unlocked-template").html();
-						$("#streams_notifications").text(successHtml);
-						$("#streams_notifications").fadeIn(1000);
-						$("#streams_notifications").fadeOut(3000);
+						$.writeMessage("success",successHtml);
 						tableView.reload();
 					}
 				});
@@ -347,13 +343,9 @@ AppStreamAdmin = (function($){
 						
 						var successHtml = $("#rights-updated-template").html();
 
-						$("#streams_notifications").text(successHtml);
-						$("#streams_notifications").fadeIn(1000);
-						$("#streams_notifications").fadeOut(3000);
+						$.writeMessage("success",successHtml);
 					} else {
-						$("#streams_errors_update").text(data.result);
-						$("#streams_errors_update").fadeIn(1000);
-						$("#streams_errors_update").fadeOut(3000);
+						$.writeMessage("error",data.result,"#errors_message");
 					}
 				}
 			});
@@ -543,14 +535,10 @@ AppStreamAdmin = (function($){
 
 	       				var html = $("#stream-created-template").html();
 
-						$("#streams_notifications").text(html);
-						$("#streams_notifications").fadeIn(1000);
-						$("#streams_notifications").fadeOut(3000);
+						$.writeMessage("success",html);
 						tableView.reload();
 					} else {
-						$("#streams_errors").text(data.result);
-						$("#streams_errors").fadeIn(1000);
-						$("#streams_errors").fadeOut(3000);
+						$.writeMessage("error",data.result,"#errors_message");
 					}
 				}
 			});
@@ -618,14 +606,10 @@ AppStreamAdmin = (function($){
 	       				
 	       				var html = $("#stream-updated-template").html();
 	       				
-						$("#streams_notifications").text(html);
-						$("#streams_notifications").fadeIn(1000);
-						$("#streams_notifications").fadeOut(3000);
+						$.writeMessage("success",html);
 						tableView.reload();
 					} else {
-						$("#streams_errors").text(data.result);
-						$("#streams_errors").fadeIn(1000);
-						$("#streams_errors").fadeOut(3000);
+						$.writeMessage("error",data.result,"#errors_message");
 					}
 				}
 			});

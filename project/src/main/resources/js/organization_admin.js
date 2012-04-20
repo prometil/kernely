@@ -193,10 +193,7 @@ AppOrganizationAdmin = (function($){
 					url:"/admin/organizations/delete/" + lineSelected.vid,
 					success: function(){
 						var successHtml = $("#organization-deleted-template").html();
-					
-						$("#organizations_notifications").text(successHtml);
-						$("#organizations_notifications").fadeIn(1000);
-						$("#organizations_notifications").fadeOut(3000);
+						$.writeMessage("success",successHtml);
 						tableView.reload();
 					}
 				});
@@ -249,13 +246,9 @@ AppOrganizationAdmin = (function($){
 						
 						var successHtml = $("#organization-created-updated-template").html();
 						tableView.reload();
-						$("#organizations_notifications").text(successHtml);
-						$("#organizations_notifications").fadeIn(1000);
-						$("#organizations_notifications").fadeOut(3000);
+						$.writeMessage("success",successHtml);
 					} else {
-						$("#organizations_errors_create").text(data.result);
-						$("#organizations_errors_create").fadeIn(1000);
-						$("#organizations_errors_create").fadeOut(3000);
+						$.writeMessage("error",data.result,"#errors_message");
 					}
 				}
 			});
@@ -336,17 +329,11 @@ AppOrganizationAdmin = (function($){
 					if (data.result == "ok"){
 						$('#modal_window_organization').hide();
 						$('#mask').hide();
-						
 						var successHtml= $("#organization-created-updated-template").html();
-
-						$("#organizations_notifications").text(successHtml);
-						$("#organizations_notifications").fadeIn(1000);
-						$("#organizations_notifications").fadeOut(3000);
+						$.writeMessage("success",successHtml);
 						tableView.reload();
 					} else {
-						$("#organizations_errors_update").text(data.result);
-						$("#organizations_errors_update").fadeIn(1000);
-						$("#organizations_errors_update").fadeOut(3000);
+						$.writeMessage("error",data.result,"#errors_message");
 					}
 				}
 			});

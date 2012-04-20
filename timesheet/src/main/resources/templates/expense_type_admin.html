@@ -4,6 +4,10 @@
 	<link rel="stylesheet" type="text/css" href="/css/expense_type_admin.css"/>
 {% endblock %}
 
+{% block admintitle %}
+{% i18n "expenses_admin_title" %}
+{% endblock %}
+
 {% block subjavascript %}
 	<script type="text/javascript" src="/js/expense_type_admin.js"></script>
 {% endblock %}
@@ -14,7 +18,6 @@
 	                <input type="button" class="createButton" value="{% i18n "create" %}"/>
 	                <input type="button" class="editButton" value="{% i18n "edit" %}" disabled="disabled"/>
 	                <input type="button" class="deleteButton" value="{% i18n "delete" %}" disabled="disabled"/>
-	                <span id="span_notifications"></span>
 	        </div>
 	        <table id="expense_type_admin_table">
 	                
@@ -57,7 +60,7 @@
 		<br/>
 		
 		<input type="button" value="{% i18n "create" %}" class="create_expense_type"/>
-		<span id="errors_message"></span>
+		<div id="errors_message"></div>
 	</script>
 
 	<script type="text/html" id="popup-expense-type-admin-update-template">
@@ -71,6 +74,6 @@
 		<br/>
 		
 		<input type="button" value="{% i18n "create" %}" class="create_expense_type"/>
-		<span id="errors_message"></span>
+		<div id="errors_message"></div>
 	</script>
 {% endblock %}

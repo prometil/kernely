@@ -136,6 +136,7 @@ public class ProjectService extends AbstractService {
 		project.setName(request.name.trim());
 		project.setIcon(ICON);
 		project.setOrganization(organizationService.getOrganizationByName(request.organization));
+		project.setInterOrganization(organizationService.getOrganizationByName(request.organization));
 		em.get().persist(project);
 		return new ProjectDTO(project);
 	}

@@ -41,6 +41,10 @@ public class Project extends AbstractModel {
 	@OneToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "organization_id")
 	private Organization organization;
+	
+	@OneToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "inter_organization_id")
+	private Organization interOrganization;
 
 	/**
 	 * The right for an user to be a contributor on the project
@@ -160,6 +164,20 @@ public class Project extends AbstractModel {
 	 */
 	public void setStatus(String status) {
 		this.status = status;
+	}
+
+	/**
+	 * @return the interOrganization
+	 */
+	public Organization getInterOrganization() {
+		return interOrganization;
+	}
+
+	/**
+	 * @param interOrganization the interOrganization to set
+	 */
+	public void setInterOrganization(Organization interOrganization) {
+		this.interOrganization = interOrganization;
 	}
 
 	

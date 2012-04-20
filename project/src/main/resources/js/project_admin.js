@@ -192,10 +192,7 @@ AppProjectAdmin = (function($){
 					url:"/admin/projects/delete/" + lineSelected.vid,
 					success: function(){
 						var successHtml = $("#project-deleted-template").html();
-					
-						$("#projects_notifications").text(successHtml);
-						$("#projects_notifications").fadeIn(1000);
-						$("#projects_notifications").fadeOut(3000);
+						$.writeMessage("success",successHtml);
 						tableView.reload();
 					}
 				});
@@ -271,14 +268,10 @@ AppProjectAdmin = (function($){
 						$('#mask').hide();
 						
 						var successHtml = $("#project-created-updated-template").html();
+						$.writeMessage("success",successHtml);
 						tableView.reload();
-						$("#projects_notifications").text(successHtml);
-						$("#projects_notifications").fadeIn(1000);
-						$("#projects_notifications").fadeOut(3000);
 					} else {
-						$("#projects_errors_create").text(data.result);
-						$("#projects_errors_create").fadeIn(1000);
-						$("#projects_errors_create").fadeOut(3000);
+						$.writeMessage("error",data.result,"#errors_message");
 					}
 				}
 			});
@@ -397,15 +390,10 @@ AppProjectAdmin = (function($){
 						$('#mask').hide();
 						
 						var successHtml= $("#project-created-updated-template").html();
-
-						$("#projects_notifications").text(successHtml);
-						$("#projects_notifications").fadeIn(1000);
-						$("#projects_notifications").fadeOut(3000);
+						$.writeMessage("success",successHtml);
 						tableView.reload();
 					} else {
-						$("#projects_errors_update").text(data.result);
-						$("#projects_errors_update").fadeIn(1000);
-						$("#projects_errors_update").fadeOut(3000);
+						$.writeMessage("error",data.result,"#errors_message");
 					}
 				}
 			});

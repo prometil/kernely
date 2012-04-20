@@ -8,6 +8,10 @@
 	<link rel="stylesheet" type="text/css" href="/css/organization_admin.css"/>
 {% endblock %}
 
+{% block admintitle %}
+	{% i18n "organization_admin_title" %}
+{% endblock %}
+
 {% block admin %}
 	<div id="group_header" style=""></div>
 	<div id="mask"></div>
@@ -18,7 +22,6 @@
 			<input type="button" class="createButton" value="{% i18n "create" %}"/>
 			<input type="button" class="editButton" value="{% i18n "edit" %}" disabled="disabled"/>
 			<input type="button" class="deleteButton" value="{% i18n "delete" %}" disabled="disabled"/>
-			<span id="span_notifications"></span>
 		</div>
 		<table id="organization_admin_table">
 			
@@ -41,7 +44,7 @@
 		</fieldset>
 		<br/>
 		<input type="button" value="{% i18n "create" %}" class="createOrganization"/>
-		<span id="errors_message"></span>
+		<div id="errors_message"></div>
 	</script>
 	
 	<!-- Template for the update view  -->
@@ -64,7 +67,7 @@
 		</fieldset>
 		<br/>
 		<input type="button" value="{% i18n "update" %}" class="updateOrganization"/>
-		<span id="errors_message"></span>
+		<div id="errors_message"></fiv>
 	</script>
 	
 	<script type="text/html" id="confirm-organization-deletion-template">
