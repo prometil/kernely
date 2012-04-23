@@ -72,7 +72,7 @@ public class SobaI18n extends Extension {
 		if (node.parameters().size() > 0) {
 			String key = (String) node.parameters().head();
 			try {
-				log.debug("i18n value for {} is {}", key,messages.getKey(key));
+				log.trace("i18n value for {} is {}", key,messages.getKey(key));
 				writer.write(messages.getKey(key));
 			} catch (IOException e) {
 				log.error("Cannot write on writer", e);
