@@ -70,9 +70,11 @@ public class CorePlugin extends AbstractPlugin {
 	/**
 	 * Default constructor
 	 */
-	@SuppressWarnings({ "unchecked" })
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public CorePlugin() {
+	
 		super(NAME);
+		log.trace("Instanciate core plugin");
 		registerPath(null);
 		registerName(NAME);
 		registerController(MainController.class);
@@ -131,7 +133,7 @@ public class CorePlugin extends AbstractPlugin {
 	@Override
 	public void configurePlugin() {
 		
-		bind(PluginManager.class);
+		bind(PluginManager.class).in(Singleton.class);
 		bind(TemplateRenderer.class);
 		bind(Mailer.class).to(MailService.class);
 		bind(SimpleTemplateEngine.class);
