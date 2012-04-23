@@ -66,8 +66,8 @@ public class KernelyRealm extends AuthorizingRealm {
 			if (username == null) {
 				throw new AccountException("Null usernames are not allowed by this realm.");
 			}
-			Query query = em.get().createQuery("SELECT e FROM User e where username='" + username + "' AND locked = false");
-			
+			Query query = em.get().createQuery("SELECT e FROM User e where username=:username AND locked = false");
+			query.setParameter("username", username);
 			User userModel = (User) query.getResultList().get(0);
 			byte[] password = Base64.decode(userModel.getPassword());
 			SimpleByteSource salt = new SimpleByteSource(Base64.decode(userModel.getSalt()));  
@@ -75,7 +75,7 @@ public class KernelyRealm extends AuthorizingRealm {
 			em.get().getTransaction().commit();
 			return new SimpleAuthenticationInfo(username, password, salt, getName());
 		} catch (Exception e) {
-			log.error("", e);
+			log.error("Autentication error", e);
 			em.get().getTransaction().commit();
 			return null;
 		}
