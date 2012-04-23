@@ -168,7 +168,6 @@ public class KernelyBootstrap {
 		ResourceLocator resourceLocator = new ResourceLocator();
 		CombinedConfiguration combinedConfiguration = new CombinedConfiguration();
 		// Bind all Jersey resources detected in plugins
-		System.out.println("qsdqsd"+plugins.size());
 		for (AbstractPlugin plugin : plugins) {
 			
 			String filepath = plugin.getName()+".xml";
