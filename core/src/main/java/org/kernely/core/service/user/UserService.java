@@ -32,6 +32,7 @@ import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
 import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authc.credential.PasswordService;
 import org.apache.shiro.authz.UnauthorizedException;
 import org.apache.shiro.crypto.RandomNumberGenerator;
 import org.apache.shiro.crypto.SecureRandomNumberGenerator;
@@ -69,6 +70,8 @@ public class UserService extends AbstractService {
 	@Inject
 	private EventBus eventBus;
 
+	@Inject
+	private PasswordService passwordService;
 	/**
 	 * Create a new user in database.
 	 * 
@@ -100,22 +103,15 @@ public class UserService extends AbstractService {
 		User user = new User();
 		user.setUsername(request.username.trim());
 
-		RandomNumberGenerator rng = new SecureRandomNumberGenerator();
-		Object salt = rng.nextBytes();
-
-		// Now hash the plain-text password with the random salt and multiple
-		// iterations and then Base64-encode the value (requires less space than
-		// Hex):
-		String hashedPasswordBase64 = new Sha256Hash(request.password.trim(), salt, SALT_ITERATION).toBase64();
+		
 
 		// Retrieve the role User, automatically given to a user.
 
-		Query query = em.get().createQuery("SELECT r FROM Role r WHERE name=:role_user");
+		Query query = em.get().createQuery("SELECT r FROM Role r WHERE name = :role_user");
 		query.setParameter("role_user", Role.ROLE_USER);
 		Role roleUser = (Role) query.getSingleResult();
 
-		user.setPassword(hashedPasswordBase64);
-		user.setSalt(salt.toString());
+		user.setPassword(passwordService.encryptPassword(request.password));
 		Set<Role> roles = new HashSet<Role>();
 		roles.add(roleUser);
 		user.setRoles(roles);
@@ -354,6 +350,7 @@ public class UserService extends AbstractService {
 	 */
 	@Transactional
 	public UserDTO getAuthenticatedUserDTO() {
+		log.debug("Looking for {}", SecurityUtils.getSubject().getPrincipal());
 		Query query = em.get().createQuery("SELECT e FROM User e WHERE username =:principal");
 		query.setParameter("principal", SecurityUtils.getSubject().getPrincipal());
 		User u = (User) query.getSingleResult();

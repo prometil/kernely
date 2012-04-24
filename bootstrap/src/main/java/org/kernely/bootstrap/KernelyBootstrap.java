@@ -48,7 +48,7 @@ import org.slf4j.LoggerFactory;
 import com.google.inject.servlet.GuiceFilter;
 
 /**
- * The project bootstrapper
+ * The project bootstraper
  * 
  * 
  */
@@ -94,8 +94,8 @@ public class KernelyBootstrap {
 			// Register a listener
 			ServletHandler handler = createServletHandler();
 			WebAppContext webApp = new WebAppContext(warUrlString, "/");
-			webApp.addEventListener(new GuiceServletConfig(plugins, buildConfiguration(plugins)));
 			webApp.setServletHandler(handler);
+			webApp.addEventListener(new GuiceServletConfig(plugins, buildConfiguration(plugins)));
 			webApp.setErrorHandler(new KernelyErrorHandler());
 			server.setHandler(webApp);
 

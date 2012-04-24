@@ -42,7 +42,6 @@ public class User extends AbstractModel implements Comparable<User> {
 
 	private String username;
 	private String password;
-	private String salt;
 	private boolean locked;
 
 	@ManyToMany(fetch = FetchType.LAZY)
@@ -162,14 +161,7 @@ public class User extends AbstractModel implements Comparable<User> {
 		return allPermissions;
 	}
 
-	/**
-	 * Get the salt of the user
-	 * 
-	 * @return the salt of the user
-	 */
-	public String getSalt() {
-		return salt;
-	}
+	
 
 	/**
 	 * @return the managers
@@ -198,15 +190,6 @@ public class User extends AbstractModel implements Comparable<User> {
 		this.password = newPassword;
 	}
 
-	/**
-	 * set or replace the salt of the user
-	 * 
-	 * @param newSalt
-	 *            the new salt
-	 */
-	public void setSalt(String newSalt) {
-		this.salt = newSalt;
-	}
 
 	public void setLocked(boolean lock) {
 		this.locked = lock;

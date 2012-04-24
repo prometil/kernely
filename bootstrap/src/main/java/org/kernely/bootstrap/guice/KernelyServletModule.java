@@ -25,15 +25,8 @@ import java.util.Properties;
 
 import org.apache.commons.configuration.AbstractConfiguration;
 import org.apache.commons.configuration.CombinedConfiguration;
-import org.apache.shiro.authc.credential.HashedCredentialsMatcher;
-import org.apache.shiro.crypto.hash.Sha256Hash;
-import org.apache.shiro.realm.Realm;
-import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
-import org.apache.shiro.web.mgt.WebSecurityManager;
 import org.eclipse.jetty.servlet.DefaultServlet;
 import org.kernely.bootstrap.MediaServlet;
-import org.kernely.bootstrap.shiro.KernelyRealm;
-import org.kernely.bootstrap.shiro.KernelyShiroFilter;
 import org.kernely.core.controller.AbstractController;
 import org.kernely.core.plugin.AbstractPlugin;
 import org.kernely.core.resource.ResourceLocator;
@@ -42,7 +35,6 @@ import org.quartz.impl.StdSchedulerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import com.google.inject.persist.PersistFilter;
 import com.google.inject.persist.jpa.JpaPersistModule;
@@ -55,11 +47,11 @@ import com.sun.jersey.guice.spi.container.servlet.GuiceContainer;
  */
 public class KernelyServletModule extends JerseyServletModule {
 
-	private static final int SALT_ITERATION = 1024;
-
 	private static Logger log = LoggerFactory.getLogger(KernelyServletModule.class);
 
 	private List<? extends AbstractPlugin> plugins;
+	
+	//configurations
 	private final CombinedConfiguration combinedConfiguration;
 
 	/**
@@ -80,8 +72,6 @@ public class KernelyServletModule extends JerseyServletModule {
 	@Override
 	protected void configureServlets() {
 
-		// configuration
-
 		// Bind all Jersey resources detected in plugins
 		for (AbstractPlugin plugin : plugins) {
 			for (Class<? extends AbstractController> controllerClass : plugin.getControllers()) {
@@ -90,9 +80,9 @@ public class KernelyServletModule extends JerseyServletModule {
 			}
 		}
 		bind(AbstractConfiguration.class).toInstance(combinedConfiguration);
-
 		bind(ResourceLocator.class);
-
+		
+		
 		// persistence
 		Iterator<String> keys = combinedConfiguration.getKeys("hibernate");
 		Properties properties = new Properties();
@@ -101,61 +91,25 @@ public class KernelyServletModule extends JerseyServletModule {
 			properties.put(key, combinedConfiguration.getProperty(key));
 		}
 
-		// the jpa persiste modul
+		// the jpa persiste module
 		JpaPersistModule module = new JpaPersistModule("kernelyUnit").properties(properties);
 		install(module);
 		filter("/*").through(PersistFilter.class);
 
+		//bind the scheduler factory
 		bind(SchedulerFactory.class).to(StdSchedulerFactory.class);
-
-		/*
-		 * bind(MessageBodyReader.class).to(JacksonJsonProvider.class);
-		 * bind(MessageBodyWriter.class).to(JacksonJsonProvider.class);
-		 * 
-		 * // Allows annotations with Shiro in Jersey resources
-		 * MethodInterceptor interceptor = new
-		 * AopAllianceAnnotationsAuthorizingMethodInterceptor();
-		 * bindInterceptor(any(), annotatedWith(RequiresRoles.class),
-		 * interceptor); bindInterceptor(any(),
-		 * annotatedWith(RequiresPermissions.class), interceptor);
-		 * bindInterceptor(any(), annotatedWith(RequiresAuthentication.class),
-		 * interceptor); bindInterceptor(any(),
-		 * annotatedWith(RequiresUser.class), interceptor);
-		 * bindInterceptor(any(), annotatedWith(RequiresGuest.class),
-		 * interceptor);
-		 */
-
-		// add the realm
-		bind(Realm.class).to(KernelyRealm.class).in(Singleton.class);
-
-		// Bind all path with shiro filter
-		filter("/*").through(KernelyShiroFilter.class);
 
 		// Allows to retrieve resources .js, .css, .png
 		bind(DefaultServlet.class).in(Singleton.class);
 		bind(MediaServlet.class).in(Singleton.class);
-
+	
+		//serve resource type
 		serve("*.ico").with(MediaServlet.class);
 		serve("*.js").with(MediaServlet.class);
 		serve("*.css").with(MediaServlet.class);
 		serve("*.png").with(MediaServlet.class);
 		serve("*.jpg").with(MediaServlet.class);
 		serve("/*").with(GuiceContainer.class);
-	}
-
-	/**
-	 * Configure the websecuritymanager 
-	 * @param realm 
-	 * @return the websecuritymanager
-	 */
-	@Provides
-	@Singleton
-	public WebSecurityManager securityManager(KernelyRealm realm) {
-		log.debug("Create security manager");  
-		// Configure encrypting password matcher
-		HashedCredentialsMatcher customMatcher = new HashedCredentialsMatcher(Sha256Hash.ALGORITHM_NAME);
-		customMatcher.setHashIterations(SALT_ITERATION);
-		realm.setCredentialsMatcher(customMatcher);
-		return new DefaultWebSecurityManager(realm);
+		
 	}
 }

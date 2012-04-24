@@ -15,7 +15,7 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<shiro.version>1.1.0</shiro.version>
+		<shiro.version>1.2.0</shiro.version>
 		<jetty.version>7.2.2.v20101205</jetty.version>
 	</properties>
 
@@ -65,10 +65,16 @@
 			<artifactId>guice</artifactId>
 			<version>3.0</version>
 		</dependency>
+		
 		<dependency>
 			<groupId>org.apache.shiro</groupId>
 			<artifactId>shiro-web</artifactId>
 			<version>${shiro.version}</version>
+		</dependency>
+		<dependency>
+		    <groupId>org.apache.shiro</groupId>
+		    <artifactId>shiro-guice</artifactId>
+		    <version>${shiro.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.shiro</groupId>

@@ -21,6 +21,8 @@ package org.kernely.core;
 
 import groovy.text.SimpleTemplateEngine;
 
+import org.apache.shiro.authc.credential.DefaultPasswordService;
+import org.apache.shiro.authc.credential.PasswordService;
 import org.kernely.core.controller.AdminController;
 import org.kernely.core.controller.GroupAdminController;
 import org.kernely.core.controller.GroupController;
@@ -132,7 +134,7 @@ public class CorePlugin extends AbstractPlugin {
 	 */
 	@Override
 	public void configurePlugin() {
-		
+
 		bind(PluginManager.class).in(Singleton.class);
 		bind(TemplateRenderer.class);
 		bind(Mailer.class).to(MailService.class);
@@ -140,6 +142,7 @@ public class CorePlugin extends AbstractPlugin {
 		bind(EventBus.class).in(Singleton.class);
 		bind(SobaEngine.class).in(Singleton.class);
 		bind(SobaI18n.class).in(Singleton.class);
+		bind(PasswordService.class).to(DefaultPasswordService.class).in(Singleton.class);
 	}
 	
 	
