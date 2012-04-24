@@ -20,7 +20,6 @@
 package org.kernely.bootstrap.guice;
 
 import java.util.Iterator;
-import java.util.List;
 import java.util.Properties;
 
 import org.apache.commons.configuration.AbstractConfiguration;
@@ -29,6 +28,7 @@ import org.eclipse.jetty.servlet.DefaultServlet;
 import org.kernely.bootstrap.media.MediaServlet;
 import org.kernely.core.controller.AbstractController;
 import org.kernely.core.plugin.AbstractPlugin;
+import org.kernely.core.plugin.PluginManager;
 import org.kernely.core.resource.ResourceLocator;
 import org.quartz.SchedulerFactory;
 import org.quartz.impl.StdSchedulerFactory;
@@ -48,21 +48,17 @@ import com.sun.jersey.guice.spi.container.servlet.GuiceContainer;
 public class KernelyServletModule extends JerseyServletModule {
 
 	private static Logger log = LoggerFactory.getLogger(KernelyServletModule.class);
-
-	private List<? extends AbstractPlugin> plugins;
 	
-	//configurations
-	private final CombinedConfiguration combinedConfiguration;
+	//the plugin manager
+	private PluginManager manager;
+
 
 	/**
-	 * Constructor.
-	 * 
-	 * @param plugins
-	 *            The list of plugins to configure.
+	 * Constructs a plugin manager 
+	 * @param manager the plugin manager use to inject data 
 	 */
-	public KernelyServletModule(List<? extends AbstractPlugin> plugins, CombinedConfiguration combinedConfiguration) {
-		this.plugins = plugins;
-		this.combinedConfiguration = combinedConfiguration;
+	public KernelyServletModule(PluginManager manager) {
+		this.manager = manager;
 	}
 
 	/**
@@ -73,22 +69,24 @@ public class KernelyServletModule extends JerseyServletModule {
 	protected void configureServlets() {
 
 		// Bind all Jersey resources detected in plugins
-		for (AbstractPlugin plugin : plugins) {
+		for (AbstractPlugin plugin : manager.getPlugins()) {
 			for (Class<? extends AbstractController> controllerClass : plugin.getControllers()) {
 				log.debug("Register controller {}", controllerClass);
 				bind(controllerClass);
 			}
 		}
-		bind(AbstractConfiguration.class).toInstance(combinedConfiguration);
+		CombinedConfiguration configuration = manager.getConfiguration();
+		bind(AbstractConfiguration.class).toInstance(configuration);
 		bind(ResourceLocator.class);
+		bind(PluginManager.class).toInstance(manager);
 		
 		
 		// persistence
-		Iterator<String> keys = combinedConfiguration.getKeys("hibernate");
+		Iterator<String> keys = configuration.getKeys("hibernate");
 		Properties properties = new Properties();
 		while (keys.hasNext()) {
 			String key = keys.next();
-			properties.put(key, combinedConfiguration.getProperty(key));
+			properties.put(key, configuration.getProperty(key));
 		}
 
 		// the jpa persiste module

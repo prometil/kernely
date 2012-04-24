@@ -135,7 +135,7 @@ public class CorePlugin extends AbstractPlugin {
 	@Override
 	public void configurePlugin() {
 
-		bind(PluginManager.class).in(Singleton.class);
+
 		bind(TemplateRenderer.class);
 		bind(Mailer.class).to(MailService.class);
 		bind(SimpleTemplateEngine.class);
