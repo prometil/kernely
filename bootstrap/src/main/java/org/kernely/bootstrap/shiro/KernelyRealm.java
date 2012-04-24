@@ -20,6 +20,8 @@
 
 package org.kernely.bootstrap.shiro;
 
+import java.util.List;
+
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
@@ -61,6 +63,7 @@ public class KernelyRealm extends AuthorizingRealm {
 	/**
 	 * Handle the authentication of kernely
 	 */
+	@SuppressWarnings("rawtypes")
 	protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) {
 		
 		try {
@@ -73,9 +76,15 @@ public class KernelyRealm extends AuthorizingRealm {
 			}
 			final Query query = em.get().createQuery("SELECT e FROM User e where username = :username AND locked = false");
 			query.setParameter("username", username);
-			final User userModel = (User) query.getResultList().get(0);
-			em.get().getTransaction().commit();
-			return new SimpleAuthenticationInfo(upToken.getPrincipal(), userModel.getPassword(), getName());
+			List resultList = query.getResultList();
+			if(resultList.size() != 0){
+				final User userModel = (User) resultList.get(0);
+				em.get().getTransaction().commit();
+				return new SimpleAuthenticationInfo(upToken.getPrincipal(), userModel.getPassword(), getName());
+			}else{
+				throw new AccountException("Cannot find user <"+username+">");
+			}
+			
 			
 		} catch (Exception e) {
 			log.error("Autentication error", e);
