@@ -62,20 +62,6 @@ public class SobaTemplateRenderer {
 			engine.render(filePath, writer, enhanceBinding(bindings));
 		}
 	}
-
-	/**
-	 * Load a template base on the filepath
-	 * 
-	 * @param filePath
-	 *            the filepath to load
-	 * @return the loaded template
-	 */
-	public String render(String filePath, Map<String, Object> bindings) {
-		StringWriter w = new StringWriter();
-		engine.render(filePath, w, enhanceBinding(bindings));
-		return w.toString();
-	}
-	
 	/**
 	 * Load a template base on the filepath
 	 * 
@@ -84,8 +70,20 @@ public class SobaTemplateRenderer {
 	 * @return the loaded template
 	 */
 	public String render(String filePath) {
+		return render(filePath, new HashMap<String, Object>());
+	}
+
+	/**
+	 * Load a template base on the filepath
+	 * 
+	 * @param filePath
+	 *            the filepath to load
+	 * @param
+	 * @return the loaded template
+	 */
+	public String render(String filePath, Map<String, Object> bindings) {
 		StringWriter w = new StringWriter();
-		engine.render(filePath, w, enhanceBinding(new HashMap<String,Object>()));
+		engine.render(filePath, w, enhanceBinding(bindings));
 		return w.toString();
 	}
 
