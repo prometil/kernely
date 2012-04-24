@@ -45,7 +45,6 @@ import org.kernely.core.dto.UserDetailsDTO;
 import org.kernely.core.dto.UserDetailsUpdateRequestDTO;
 import org.kernely.core.service.user.UserService;
 import org.kernely.core.template.SobaTemplateRenderer;
-import org.kernely.core.template.TemplateRenderer;
 
 import com.google.inject.Inject;
 import com.sun.jersey.core.header.FormDataContentDisposition;
