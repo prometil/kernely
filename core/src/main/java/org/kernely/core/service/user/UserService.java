@@ -34,9 +34,6 @@ import javax.persistence.Query;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.credential.PasswordService;
 import org.apache.shiro.authz.UnauthorizedException;
-import org.apache.shiro.crypto.RandomNumberGenerator;
-import org.apache.shiro.crypto.SecureRandomNumberGenerator;
-import org.apache.shiro.crypto.hash.Sha256Hash;
 import org.kernely.core.dto.ManagerDTO;
 import org.kernely.core.dto.RoleDTO;
 import org.kernely.core.dto.UserCreationRequestDTO;
@@ -66,7 +63,6 @@ public class UserService extends AbstractService {
 
 	private static Logger log = LoggerFactory.getLogger(UserService.class);
 	
-	private static final int SALT_ITERATION = 1024;
 	@Inject
 	private EventBus eventBus;
 
