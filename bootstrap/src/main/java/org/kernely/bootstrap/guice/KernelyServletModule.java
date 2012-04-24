@@ -26,7 +26,7 @@ import java.util.Properties;
 import org.apache.commons.configuration.AbstractConfiguration;
 import org.apache.commons.configuration.CombinedConfiguration;
 import org.eclipse.jetty.servlet.DefaultServlet;
-import org.kernely.bootstrap.MediaServlet;
+import org.kernely.bootstrap.media.MediaServlet;
 import org.kernely.core.controller.AbstractController;
 import org.kernely.core.plugin.AbstractPlugin;
 import org.kernely.core.resource.ResourceLocator;
