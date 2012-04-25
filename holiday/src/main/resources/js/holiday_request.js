@@ -13,6 +13,29 @@ AppHolidayRequest = (function($){
 	var MORNING_PART = 1;
 	var AFTERNOON_PART = 2;
 	
+	var pageView = null;
+	var app_router = null;
+	
+	Router = Backbone.Router.extend({
+
+		routes: {
+			"/:from/:to":  "visualize",
+			"*actions" : "defaultRoute"
+		},
+		
+		initialize: function() {
+		},
+
+		visualize: function(from, to) {
+			pageView.buildCalendarAndPicker(from, to)
+		},
+		
+		defaultRoute: function(){
+			window.location = "/holiday"
+		}
+		
+	})
+	
 	HolidayRequestPageView = Backbone.View.extend({
 		el:"#request-main",
 		events:{
@@ -22,13 +45,9 @@ AppHolidayRequest = (function($){
 			
 		},
 		render: function(){
-			this.buildCalendarAndPicker();
 			return this;
 		},
-		buildCalendarAndPicker: function(){
-			var from = $.getUrlVar('from');
-			var to = $.getUrlVar('to');
-			
+		buildCalendarAndPicker: function(from, to){			
 			$.ajax({
 				type: "GET",
 				url:"/holiday/request/interval",
@@ -79,15 +98,7 @@ AppHolidayRequest = (function($){
 				processData: false,
 				contentType: "application/json; charset=utf-8",
 				success: function(data){
-					// Display a success message and destroy page
-					var message = $('#holiday-success-request-message-template').html();
-					alert(message);
-					$('#from').val("");
-					$('#to').val("");
-					$('#calendarContent').html("");
-					$('#colorSelector').html("");
-					$("#requester-comment").val("");
-					$("#calendarRequest").hide();
+					window.location = "/holiday";
 				}
 			});
 			
@@ -410,7 +421,11 @@ AppHolidayRequest = (function($){
 	// Initialization of the application
 	var self = {};
 	self.start = function(){
-		new HolidayRequestPageView().render();
+		pageView = new HolidayRequestPageView().render();
+		// Instantiate the router
+		app_router = new Router;
+	    // Start Backbone history a neccesary step for bookmarkable URL's
+	    Backbone.history.start();
 	}
 	return self;
 })

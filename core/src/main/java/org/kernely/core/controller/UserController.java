@@ -45,7 +45,6 @@ import org.kernely.core.dto.UserDetailsDTO;
 import org.kernely.core.dto.UserDetailsUpdateRequestDTO;
 import org.kernely.core.service.user.UserService;
 import org.kernely.core.template.SobaTemplateRenderer;
-import org.kernely.core.template.TemplateRenderer;
 
 import com.google.inject.Inject;
 import com.sun.jersey.core.header.FormDataContentDisposition;
@@ -104,9 +103,7 @@ public class UserController extends AbstractController {
 	@Produces( { MediaType.TEXT_HTML })
 	public Response postLogin() {
 		log.info("Login attempt : is authenticated {}", SecurityUtils.getSubject().isAuthenticated());
-
-		Map<String,Object> map = new HashMap<String,Object>();
-		return Response.ok(templateRenderer.render("templates/login.html",map)).build();
+		return Response.ok(templateRenderer.render("templates/login.html")).build();
 	}
 
 	/**

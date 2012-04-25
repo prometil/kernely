@@ -83,7 +83,6 @@ AppTimeSheet = (function($){
 				amounts.push(0.0);
 			}
 			calendar.addRow($("#project-select option:selected").text(),$("#project-select option:selected").val(),amounts,true);
-
 		},
 		render: function(){
 			return this;
@@ -381,14 +380,13 @@ AppTimeSheet = (function($){
 							$(parent.el).append(new TimeSheetDayView(i,0,days[i], parent.projectId, 0).render().el);
 						}
 						
-
 						// Create the total cell
 						$(parent.el).append('<td class="columnTotal">' + parent.total + '</td>');
 						
 						// Create the delete button
 						var buttonTemplate = $("#delete-button-template").html();
 						$(parent.el).append("<td>" + buttonTemplate + "</td>");
-
+						timeSheetId = data.timeSheetId;
 					}
 				});
 			} else {
@@ -452,34 +450,36 @@ AppTimeSheet = (function($){
 			var view = {project: this.projectName};
 			var html = Mustache.to_html(template, view);
 			
-			var answer = confirm(html);
-			if (answer){
-				// Put the project in the combo box
-				$('#project-select')
-		          .append($('<option>', { value : this.projectId })
-		          .text(this.projectName));
+			$.kernelyConfirm(html,this.confirmRemoveLine,this);
+		},
+		
+		confirmRemoveLine: function(parent){
+			// Put the project in the combo box
+			$('#project-select')
+	          .append($('<option>', { value : parent.projectId })
+	          .text(parent.projectName));
 
-				$("#project-select").removeAttr("disabled");
-				$("#add-project-button").removeAttr("disabled");
+			$("#project-select").removeAttr("disabled");
+			$("#add-project-button").removeAttr("disabled");
 
-				// Remove from memorized data
-				allDayCells[this.projectId] = null;
-				
-				// Launch calcul to update columns calculs
-				calendar.calculateAllTotals();
-				
-				// Delete line
-				$(this.el).remove();
-				
-				// Delete line in database: delete all amounts of time
-				$.ajax({
-					type: "GET",
-					url:"/timesheet/removeline",
-					data:{timeSheetUniqueId:timeSheetId, projectUniqueId:parent.projectId},
-					success: function(data){
-					}
-				});
-			}
+			// Remove from memorized data
+			allDayCells[parent.projectId] = null;
+			
+			// Launch calcul to update columns calculs
+			calendar.calculateAllTotals();
+			
+			// Delete line
+			$(parent.el).remove();
+			
+			// Delete line in database: delete all amounts of time
+			$.ajax({
+				type: "GET",
+				url:"/timesheet/removeline",
+				data:{timeSheetUniqueId:timeSheetId, projectUniqueId:parent.projectId},
+				success: function(data){
+				}
+			});
+
 		},
 		
 		render: function(){
@@ -945,18 +945,19 @@ AppTimeSheet = (function($){
 		},
 		
 		delete: function(){
-			var parent = this;
-			var answer = confirm("Are you sure ?"); // To modify
-			if (answer){
-				$.ajax({
-					type: "GET",
-					url:"/expense/delete",
-					data:{idExpense: this.vid},
-					success: function(){
-						$(parent.el).remove();
-					}
-				});
-			}
+			var message = $("#confirm-remove-expense-line-template").html();
+			$.kernelyConfirm(message,this.confirmDelete,this);
+		},
+		
+		confirmDelete: function(parent){
+			$.ajax({
+				type: "GET",
+				url:"/expense/delete",
+				data:{idExpense: parent.vid},
+				success: function(){
+					$(parent.el).remove();
+				}
+			});
 		},
 		
 		render:function(){

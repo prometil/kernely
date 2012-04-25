@@ -32,9 +32,6 @@ import org.kernely.core.hibernate.AbstractModel;
 
 /**
  * The stream model
- * 
- * @author b.grandperret
- * 
  */
 @Entity
 @Table(name = "kernely_stream")

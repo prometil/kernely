@@ -1,14 +1,38 @@
-AppHolidayHumanResource = (function($){
+AppHolidayPlanning = (function($){
 	
 	// Initialize with January
 	var monthSelected = 0;
 	var yearSelected = 0;
 	var mainView = null;
+	var tableView = null;
+	var legendView = null;
+	var selectorView = null;
+	var app_router = null;
 	
 	// How many days in the month
 	var nbDays = 0;
 	
-	HolidayHumanResourceMainView = Backbone.View.extend({
+	Router = Backbone.Router.extend({
+
+		routes: {
+			"/month/:month/:year":  "visualize",
+			"*actions" : "defaultRoute"
+		},
+		
+		initialize: function() {
+		},
+
+		visualize: function(month, year) {
+			mainView.change(month, year);
+		},
+		
+		defaultRoute: function(){
+			mainView.change(0, 0);
+		}
+		
+	})
+	
+	HolidayPlanningMainView = Backbone.View.extend({
 		el:"#main-human-page-content",
 		events:{
 		
@@ -19,34 +43,34 @@ AppHolidayHumanResource = (function($){
 		},
 		
 		render: function(){
-			$.ajax({
-				url:"/holiday/humanresource/all",
-				data: {month: monthSelected, year: yearSelected},
-				dataType: "json",
-				success: function(data){
-					new HolidayHumanResourceTableView(data).render();
-					new HolidayHumanResourceColorPartView(data).render();
-					new HolidayHumanResourceMonthSelectorView().render();
-					monthSelected = data.month;
-					yearSelected = data.year;
-				}
-			});
+			selectorView = new HolidayPlanningMonthSelectorView().render();
+			legendView = new HolidayPlanningColorPartView();
+			tableView = new HolidayPlanningTableView();
 
 			return this;
 		},
-		reloadTable: function(){
+		change: function(month, year){
+			monthSelected = month;
+			yearSelected = year;
+			this.reloadTable(month, year);
+		},
+		reloadTable: function(month, year){
 			$.ajax({
-				url:"/holiday/humanresource/all",
-				data: {month: monthSelected, year: yearSelected},
+				url:"/holiday/planning/all",
+				data: {month: month, year: year},
 				dataType: "json",
 				success: function(data){
-					new HolidayHumanResourceTableView(data).reload();
+					tableView.render(data);
+					legendView.render(data);
+					monthSelected = data.month;
+					yearSelected = data.year;
+					selectorView.actualize();
 				}
 			});
 		}
 	})
 	
-	HolidayHumanResourceMonthSelectorView = Backbone.View.extend({
+	HolidayPlanningMonthSelectorView = Backbone.View.extend({
 		el:"#monthSelector",
 		events:{
 			"click .minusMonth" : "minusMonth",
@@ -71,9 +95,8 @@ AppHolidayHumanResource = (function($){
 				monthSelected = 1;
 				yearSelected ++;
 			}
-			var template = $("#"+ monthSelected +"-month-template").html();
-			$("#month_current").text(template + " " + yearSelected);
-			mainView.reloadTable();
+			this.actualize();
+			app_router.navigate("/month/" + monthSelected + "/" + yearSelected, {trigger: true, replace: true});
 		},
 		minusMonth: function(){
 			monthSelected --;
@@ -82,13 +105,16 @@ AppHolidayHumanResource = (function($){
 				monthSelected = 12;
 				yearSelected --;
 			}
+			this.actualize();
+			app_router.navigate("/month/" + monthSelected + "/" + yearSelected, {trigger: true, replace: true});
+		},
+		actualize: function(){
 			var template = $("#"+ monthSelected +"-month-template").html();
 			$("#month_current").text(template + " " + yearSelected);
-			mainView.reloadTable();
 		}
 	})
 	
-	HolidayHumanResourceTableLineView = Backbone.View.extend({
+	HolidayPlanningTableLineView = Backbone.View.extend({
 		tagName: "tr",
 		
 		user : null,
@@ -150,7 +176,7 @@ AppHolidayHumanResource = (function($){
 		}
 	})
 
-	HolidayHumanResourceTableView = Backbone.View.extend({
+	HolidayPlanningTableView = Backbone.View.extend({
 		el:"#usersHoliday",
 		
 		data: null,
@@ -159,15 +185,11 @@ AppHolidayHumanResource = (function($){
 		
 		},
 		
-		initialize: function(data){
+		initialize: function(){
+		},
+		render: function(data){
 			this.data = data;
-		},
-		reload: function(){
 			$(this.el).html("");
-			this.render();
-			return this;
-		},
-		render: function(){
 			var parent = this;
 			lineHeader = $("<tr>", {
 				class:'table-header border-element-r-b'
@@ -191,17 +213,17 @@ AppHolidayHumanResource = (function($){
 			
 			if(this.data.usersManaged.length > 1){
 				$.each(this.data.usersManaged, function(){
-                  $(parent.el).append(new HolidayHumanResourceTableLineView(this).render().el);
+                  $(parent.el).append(new HolidayPlanningTableLineView(this).render().el);
 				});
 			}
 			else{
-				$(parent.el).append(new HolidayHumanResourceTableLineView(this.data.usersManaged).render().el);
+				$(parent.el).append(new HolidayPlanningTableLineView(this.data.usersManaged).render().el);
 			}
 			return this;
 		}
 	})
 	
-	HolidayHumanResourceColorPartView = Backbone.View.extend({
+	HolidayPlanningColorPartView = Backbone.View.extend({
 		el:"#color-legend",
 		
 		events:{
@@ -210,20 +232,21 @@ AppHolidayHumanResource = (function($){
 		
 		data : null,
 		
-		initialize : function(data){
-			this.data = data;
+		initialize : function(){
 		},
-		render: function(){
+		render: function(data){
+			this.data = data;
+			$(this.el).html("");
 			var parent = this;
 			
 			if(typeof(this.data.balances) != "undefined"){
 				if(this.data.balances.length > 1){
 					$.each(this.data.balances, function(){
-	                    $(parent.el).append(new HolidayHumanResourceColorCellView(this.nameOfType, this.color, this.idOfType).render().el);
+	                    $(parent.el).append(new HolidayPlanningColorCellView(this.nameOfType, this.color, this.idOfType).render().el);
 					});
 				}
 				else{
-					$(parent.el).append(new HolidayHumanResourceColorCellView(this.data.balances.nameOfType, this.data.balances.color, this.data.balances.idOfType).render().el);
+					$(parent.el).append(new HolidayPlanningColorCellView(this.data.balances.nameOfType, this.data.balances.color, this.data.balances.idOfType).render().el);
 				}
 			}
 			return this;
@@ -231,7 +254,7 @@ AppHolidayHumanResource = (function($){
 	})
 	
 	
-	HolidayHumanResourceColorCellView = Backbone.View.extend({
+	HolidayPlanningColorCellView = Backbone.View.extend({
 		tagName:"div",
 		className: "balance-cell-legend",
 		
@@ -260,12 +283,16 @@ AppHolidayHumanResource = (function($){
 	
 	var self = {};
 	self.start = function(){
-		mainView = new HolidayHumanResourceMainView().render();
+		mainView = new HolidayPlanningMainView().render();
+		// Instantiate the router
+		app_router = new Router;
+	    // Start Backbone history a neccesary step for bookmarkable URL's
+	    Backbone.history.start();
 	}
 	return self;
 })
 
 $( function() {
 	console.log("Starting holiday human resource application")
-	new AppHolidayHumanResource(jQuery).start();
+	new AppHolidayPlanning(jQuery).start();
 })

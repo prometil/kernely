@@ -17,15 +17,14 @@
 	<script type="text/javascript" src="/js/jquery.ui.datepicker-fr-FR.js"></script>
 	<script type="text/javascript" src="/js/kernely.ui.js"></script>
 	<script type="text/javascript" src="/js/jscolor/jscolor.js"></script>
-	<script type="text/javascript" src="/js/jquery-urlparams.js"></script>
 	
 	{% block javascript %}
 		<!-- additional javascript-->
 	
 	{% endblock %}
 	<!-- css files -->
-	<link rel="stylesheet" type="text/css" href="/css/style.css"/>
 	<link rel="stylesheet" type="text/css" href="/css/jquery-ui.css"/>
+	<link rel="stylesheet" type="text/css" href="/css/style.css"/>
 	<link rel="stylesheet" type="text/css" href="/css/farbtastic.css"/>
 	
 	{% block css %}
@@ -38,9 +37,9 @@
 	</head>
 	<body>
 	<script type="text/html" id="kernely-confirm-dialog-template">
-		{{"{{"}}question{{"}}"}}
-		<input id="confirm-yes-button" type="button" value="{% i18n "yes" %}" /><br/>
-		<input id="confirm-no-button" type="button" value="{% i18n "no" %}" /><br/>
+		<div id="kernely-confirm-message">{{"{{"}}question{{"}}"}}</div>
+		<div id="kernely-confirm-buttons"><input id="confirm-no-button" class="button_standard" type="button" value="{% i18n "no" %}" />
+		<input id="confirm-yes-button" class="button_ok" type="button" value="{% i18n "yes" %}" /></div>
 	</script>
 		{% block template %}
 			<!-- all templates -->
@@ -68,39 +67,42 @@
 			<!-- display all applications in the menu -->
 			<div id="header">
 				<div id="menu">
-					<div id="title">{% i18n "title" %}</div>
+					<div id="title"></div>
 					
 					{% for c in menu %}
-						<a href="{{c.link}}">{{c.name}}</a>
+						<a class="menu_item" href="{{c.link}}">{{c.name}}</a>
 					{% endfor %}
 					{% if admin %}
-						<a href="/admin">{% i18n "administration" %}</a>
+						<a class="menu_item" href="/admin">{% i18n "administration" %}</a>
 					{% endif %}
 					
 				</div>
 				<div id="menu_header_profile">
-					<a id="username_menu" href="javascript:void(0)" class="button displayProfilePU"></a>
-					<a id="userimg_menu" href="javascript:void(0)" class="button displayProfilePU"></a>
+					<div id="username_menu" class="clickable displayProfilePU"></div>
+					<div id="profile_button" class="clickable displayProfilePU"></div>
+					<div id="settings_button" class="clickable"></div>
 				</div>
 			</div>
 			<div id="profile_popup"></div>
-			<div id="container_left">
-			{% block left %}
-			{% endblock %}
-			</div>
-			<div id="container">
+			<div id="main">
+				<div id="container_left" class="container_generic">
+				{% block left %}
+				{% endblock %}
+				</div>
+				<div id="container_central" class="container_generic">
 					<div id="main_title">
 						{% block title %}
 						{% endblock %}
-					<div id="notification_to_user"></div>
+						<div id="notification_to_user"></div>
+					</div>
+					{% block content %}
+					No content.
+					{% endblock %}
 				</div>
-				{% block content %}
-				No content.
-				{% endblock %}
-			</div>
-			<div id="container_right">
-				{% block right %}
-				{% endblock %}
+				<div id="container_right" class="container_generic">
+					{% block right %}
+					{% endblock %}
+				</div>
 			</div>
 	</body>
 </html>

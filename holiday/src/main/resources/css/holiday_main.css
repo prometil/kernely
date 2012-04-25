@@ -1,6 +1,6 @@
 #mask{
 	position:absolute;
-	z-index:9000;
+	z-index:1;
 	background-color:#000;
 	display:none;
 	top:0;
@@ -12,7 +12,7 @@
 	width:450px;
 	height:300px;
 	display:none;
-	z-index:9999;
+	z-index:2;
 	padding:20px;
 	top:0;
 	left:0;
@@ -38,23 +38,6 @@
 #colorpicker{
 	width:195px;
 	float:left;
-}
-
-#holidays_errors_create{
-	display:none;
-	font-weight:bold;
-	color:red;
-}
-
-#holidays_errors_update{
-	display:none;
-	font-weight:bold;
-	color:red;
-}
-
-#holidays_notifications{
-	display:none;
-	color:green;
 }
 
 #holiday_admin_table{

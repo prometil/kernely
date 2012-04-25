@@ -199,35 +199,37 @@ AppStreamAdmin = (function($){
 			var view = {stream: lineSelected.vname};
 			var html = Mustache.to_html(template, view);
 			
-			var answer = confirm(html);
-			if (answer){
-				$.ajax({
-					url:"/admin/streams/lock/" + lineSelected.vid,
-					success: function(){
-						var successHtml = $("#stream-locked-template").html();
-						$.writeMessage("success",successHtml);
-						tableView.reload();
-					}
-				});
-			}
+			$.kernelyConfirm(html,this.confirmLockStream);
+		},
+		
+		confirmLockStream: function(){
+			$.ajax({
+				url:"/admin/streams/lock/" + lineSelected.vid,
+				success: function(){
+					var successHtml = $("#stream-locked-template").html();
+					$.writeMessage("success",successHtml);
+					tableView.reload();
+				}
+			});
 		},
 		
 		unlockstream: function(){
 			var template = $("#confirm-stream-unlock-template").html();
 			var view = {stream: lineSelected.vname};
 			var html = Mustache.to_html(template, view);
-			var answer = confirm(html);
 
-			if (answer){
-				$.ajax({
-					url:"/admin/streams/unlock/" + lineSelected.vid,
-					success: function(){
-						var successHtml = $("#stream-unlocked-template").html();
-						$.writeMessage("success",successHtml);
-						tableView.reload();
-					}
-				});
-			}
+			$.kernelyConfirm(html, this.confirmUnlockStream);
+		},
+		
+		confirmUnlockStream: function(){
+			$.ajax({
+				url:"/admin/streams/unlock/" + lineSelected.vid,
+				success: function(){
+					var successHtml = $("#stream-unlocked-template").html();
+					$.writeMessage("success",successHtml);
+					tableView.reload();
+				}
+			});
 		},
 		
 		changestreamrights:function (){

@@ -201,17 +201,18 @@
 			var view = {name : lineSelected.vlastname, firstname : lineSelected.vfirstname, username : lineSelected.vlogin};
 			var html = Mustache.to_html(template, view);
 			
-			var answer = confirm(html);
-			if (answer){
-				$.ajax({
-					url:"/admin/users/lock/" + lineSelected.vid,
-					success: function(){
-						var successHtml = $("#success-message-template").html();
-						$.writeMessage("success",successHtml);
-						tableView.reload();
-					}
-				});
-			}
+			$.kernelyConfirm(html, this.confirmlockuser);
+		},
+		
+		confirmlockuser: function(){
+			$.ajax({
+				url:"/admin/users/lock/" + lineSelected.vid,
+				success: function(){
+					var successHtml = $("#success-message-template").html();
+					$.writeMessage("success",successHtml);
+					tableView.reload();
+				}
+			});
 		},
 		
 		render:function(){

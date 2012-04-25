@@ -22,14 +22,10 @@ package org.kernely.bootstrap;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
 
-import org.apache.commons.configuration.AbstractConfiguration;
 import org.apache.commons.configuration.CombinedConfiguration;
-import org.apache.commons.configuration.ConfigurationException;
-import org.apache.commons.configuration.XMLConfiguration;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.FilterHolder;
 import org.eclipse.jetty.servlet.FilterMapping;
@@ -41,14 +37,13 @@ import org.kernely.bootstrap.guice.GuiceServletConfig;
 import org.kernely.core.migrations.migrator.Migrator;
 import org.kernely.core.plugin.AbstractPlugin;
 import org.kernely.core.plugin.PluginManager;
-import org.kernely.core.resource.ResourceLocator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.inject.servlet.GuiceFilter;
 
 /**
- * The project bootstrapper
+ * The project bootstraper
  * 
  * 
  */
@@ -69,11 +64,11 @@ public class KernelyBootstrap {
 		p.update();
 
 		// Load all detected plugins
-		PluginManager pluginLoad = new PluginManager();
-		List<AbstractPlugin> plugins = pluginLoad.getPlugins();
+		PluginManager pluginManager = new PluginManager();
+		List<AbstractPlugin> plugins = pluginManager.getPlugins();
 
 		// configure
-		CombinedConfiguration combinedConfiguration = buildConfiguration(plugins);
+		CombinedConfiguration combinedConfiguration = pluginManager.getConfiguration();
 
 		// update database using configuration
 		Migrator m = new Migrator(combinedConfiguration, plugins);
@@ -94,8 +89,8 @@ public class KernelyBootstrap {
 			// Register a listener
 			ServletHandler handler = createServletHandler();
 			WebAppContext webApp = new WebAppContext(warUrlString, "/");
-			webApp.addEventListener(new GuiceServletConfig(plugins, buildConfiguration(plugins)));
 			webApp.setServletHandler(handler);
+			webApp.addEventListener(new GuiceServletConfig(pluginManager));
 			webApp.setErrorHandler(new KernelyErrorHandler());
 			server.setHandler(webApp);
 
@@ -156,43 +151,4 @@ public class KernelyBootstrap {
 		filterMapping.setFilterName(filterHolder.getName());
 		return filterMapping;
 	}
-
-	/**
-	 * Create and set the configuration from a xml file
-	 * 
-	 * @param plugins
-	 *            list of plugins
-	 * @return the combinedconfiguration set
-	 */
-	private static CombinedConfiguration buildConfiguration(List<AbstractPlugin> plugins) {
-		ResourceLocator resourceLocator = new ResourceLocator();
-		CombinedConfiguration combinedConfiguration = new CombinedConfiguration();
-		// Bind all Jersey resources detected in plugins
-		System.out.println("qsdqsd"+plugins.size());
-		for (AbstractPlugin plugin : plugins) {
-			
-			String filepath = plugin.getName()+".xml";
-			log.debug("Searching configuration file {}",filepath);
-			if (filepath != null) {
-				try {
-					AbstractConfiguration configuration;
-					try {
-						URL resource = resourceLocator.getResource("../config", filepath);
-						if(resource != null){
-							configuration = new XMLConfiguration(resource);
-							log.info("Found configuration file {} for plugin {}", filepath, plugin.getName());
-							combinedConfiguration.addConfiguration(configuration);
-						}
-					} catch (MalformedURLException e) {
-						log.error("Cannot find configuration file : {}", filepath);
-					}
-
-				} catch (ConfigurationException e) {
-					log.error("Cannot find configuration file {} for plugin {}", filepath, plugin.getName());
-				}
-			}
-		}
-		return combinedConfiguration;
-	}
-
 }

@@ -40,10 +40,17 @@ $.extend({
 	},
 
 	// Create a dialog
-	// text : the text to display (usually, a question...)
-	kernelyConfirm: function(content, callback){
-		console.log("Confirm");
-		div = document.createElement("div");
+	// 	- text : the text to display (usually, a question...)
+	// 	- callback : the function to call when the user click on Yes
+	//  - param : a param for the function (can be null)
+	kernelyConfirm: function(content, callback, param){
+		// Search for the confirm dialog
+		div = $("#kernely-confirm-dialog");
+		if ($(div).html() == null){
+			// Create the div for the dialog
+			div = document.createElement("div");
+			$(div).attr("id","kernely-confirm-dialog");
+		}
 
 		var template = $("#kernely-confirm-dialog-template").html();
 		var view = {question: content};
@@ -53,12 +60,10 @@ $.extend({
 			autoOpen: false,
 			modal: true
 		});
-		// $(div).dialog("close"); 
-		$("#confirm-yes-button").click(function(){console.log("oui"); callback(); $(div).dialog("destroy")});
-		$("#confirm-no-button").click(function(){console.log("non"); $(div).dialog("destroy")});
+
+		$("#confirm-yes-button").click(function(){callback(param); $(div).dialog("destroy")});
+		$("#confirm-no-button").click(function(){$(div).dialog("destroy")});
 		$(div).dialog("open");
-		console.log("Opened")
-		
 	}
 
 });

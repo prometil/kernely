@@ -498,14 +498,15 @@ AppHolidayAdmin = (function($){
 			var view = {name: nameToDisplay};
 			var html = Mustache.to_html(template, view);
 			
-			var answer = confirm(html);
-			if (answer){
-				if (this.veditmode){
-					changeEditedLines(-1);
-				}
-				typeLines[this.vrank] = null;
-				$("#"+this.vrank).remove();
+			$.kernelyConfirm(html,this.deleteLineConfirm,this)
+		},
+		
+		deleteLineConfirm: function(parent){
+			if (parent.veditmode){
+				changeEditedLines(-1);
 			}
+			typeLines[parent.vrank] = null;
+			$("#"+parent.vrank).remove();
 		}
 		
 	})

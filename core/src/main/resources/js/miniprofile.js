@@ -47,7 +47,7 @@ AppMiniProfile = (function($){
                                                         if(data.image == null || data.image =='undefined' || data.image == '' || data.image=='null'){
                                                                 vimage = "/images/default_user.png"
                                                         }
-                                                        $("#username_menu").text(vfullname + " (" + vuser + ")");
+                                                        $("#username_menu").text(vfullname);
                                                         $("#userimg_menu").html("<img class='img_miniprofile' style='width:28px;height:28px;' src='"+ vimage +"'/>");
                                                 }
                                         });

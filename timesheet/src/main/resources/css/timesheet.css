@@ -50,7 +50,7 @@ img.editButton{
 	width:400px;
 	height:300px;
 	display:none;
-	z-index:9999;
+	z-index:2;
 	padding:20px;
 	top:0;
 	left:0;
@@ -83,7 +83,7 @@ img.editButton{
 /* Common */
 #mask{
 	position:absolute;
-	z-index:9000;
+	z-index:1;
 	background-color:#000;
 	display:none;top:0;
 	left:0;

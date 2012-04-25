@@ -187,17 +187,18 @@ AppOrganizationAdmin = (function($){
 			var view = {name: lineSelected.vname};
 			var html = Mustache.to_html(template, view);
 			
-			var answer = confirm(html);
-			if (answer){
-				$.ajax({
-					url:"/admin/organizations/delete/" + lineSelected.vid,
-					success: function(){
-						var successHtml = $("#organization-deleted-template").html();
-						$.writeMessage("success",successHtml);
-						tableView.reload();
-					}
-				});
-			}
+			$.kernelyConfirm(html,this.confirmDeleteOrganization);
+		},
+		
+		confirmDeleteOrganization: function(){
+			$.ajax({
+				url:"/admin/organizations/delete/" + lineSelected.vid,
+				success: function(){
+					var successHtml = $("#organization-deleted-template").html();
+					$.writeMessage("success",successHtml);
+					tableView.reload();
+				}
+			});
 		},
 		
 		render:function(){

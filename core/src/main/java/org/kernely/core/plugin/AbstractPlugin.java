@@ -119,6 +119,7 @@ public abstract class AbstractPlugin extends AbstractModule {
 	 *            access to the admin page.
 	 */
 	protected void registerAdminPage(String name, String pathToAdmin) {
+		log.trace("Register admin page {},{}", name, pathToAdmin);
 		this.adminPages.add(new AdminPageDTO(name, pathToAdmin));
 	}
 

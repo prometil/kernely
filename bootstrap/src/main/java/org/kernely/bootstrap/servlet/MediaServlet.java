@@ -17,7 +17,7 @@
  * License along with Kernely.
  * If not, see <http://www.gnu.org/licenses/>.
  */
-package org.kernely.bootstrap;
+package org.kernely.bootstrap.servlet;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -38,7 +38,7 @@ import org.slf4j.LoggerFactory;
 import com.google.inject.Inject;
 
 /**
- * MediaServlet is used to detect resources type : css, png...
+ * MediaServlet is used to detect resources type : css, png, ico ///
  */
 public class MediaServlet extends HttpServlet {
 

@@ -186,17 +186,18 @@ AppProjectAdmin = (function($){
 			var view = {name: lineSelected.vname};
 			var html = Mustache.to_html(template, view);
 			
-			var answer = confirm(html);
-			if (answer){
-				$.ajax({
-					url:"/admin/projects/delete/" + lineSelected.vid,
-					success: function(){
-						var successHtml = $("#project-deleted-template").html();
-						$.writeMessage("success",successHtml);
-						tableView.reload();
-					}
-				});
-			}
+			$.kernelyConfirm(html, this.confirmDeleteProject);
+		},
+		
+		confirmDeleteProject: function(){
+			$.ajax({
+				url:"/admin/projects/delete/" + lineSelected.vid,
+				success: function(){
+					var successHtml = $("#project-deleted-template").html();
+					$.writeMessage("success",successHtml);
+					tableView.reload();
+				}
+			});
 		},
 		
 		iconproject: function(){

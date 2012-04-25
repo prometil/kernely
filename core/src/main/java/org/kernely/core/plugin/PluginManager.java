@@ -19,11 +19,18 @@
  */
 package org.kernely.core.plugin;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ServiceLoader;
 
+import org.apache.commons.configuration.AbstractConfiguration;
+import org.apache.commons.configuration.CombinedConfiguration;
+import org.apache.commons.configuration.ConfigurationException;
+import org.apache.commons.configuration.XMLConfiguration;
+import org.kernely.core.resource.ResourceLocator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -53,6 +60,43 @@ public class PluginManager {
 			}
 		}
 		return plugins;
+	}
+	/**
+	 * Create and set the configuration from a xml file
+	 * 
+	 * @param plugins
+	 *            list of plugins
+	 * @return the combinedconfiguration set
+	 */
+	public  CombinedConfiguration getConfiguration() {
+		List<AbstractPlugin> plugins = getPlugins();
+		ResourceLocator resourceLocator = new ResourceLocator();
+		CombinedConfiguration combinedConfiguration = new CombinedConfiguration();
+		// Bind all Jersey resources detected in plugins
+		for (AbstractPlugin plugin : plugins) {
+			
+			String filepath = plugin.getName()+".xml";
+			log.debug("Searching configuration file {}",filepath);
+			if (filepath != null) {
+				try {
+					AbstractConfiguration configuration;
+					try {
+						URL resource = resourceLocator.getResource("../config", filepath);
+						if(resource != null){
+							configuration = new XMLConfiguration(resource);
+							log.info("Found configuration file {} for plugin {}", filepath, plugin.getName());
+							combinedConfiguration.addConfiguration(configuration);
+						}
+					} catch (MalformedURLException e) {
+						log.error("Cannot find configuration file : {}", filepath);
+					}
+
+				} catch (ConfigurationException e) {
+					log.error("Cannot find configuration file {} for plugin {}", filepath, plugin.getName());
+				}
+			}
+		}
+		return combinedConfiguration;
 	}
 
 }

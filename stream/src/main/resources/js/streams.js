@@ -166,23 +166,20 @@ App = (function($){
 			}
 		},
 		deleteMessage: function(){
-			var parent = this;
-			if (this.message.deletion == "false"){
-				alert("You can't delete this message.");
-			} else {
-				var html = $("#confirm-deletion-template").html();
-				var answer = confirm(html);
-				if (answer){
-					$.ajax({
-						type:"POST",
-						url:"/streams/delete/"+parent.message.id, 
-						dataType:"json",
-						success: function(data){
-				  		}
-					});
-					$("#mess-"+parent.message.id).remove();
-				}
-			}
+			var html = $("#confirm-deletion-template").html();
+			
+			$.kernelyConfirm(html, this.confirmDeleteMessage, this);
+		},
+		
+		confirmDeleteMessage: function(parent){
+			$.ajax({
+				type:"POST",
+				url:"/streams/delete/"+parent.message.id, 
+				dataType:"json",
+				success: function(data){
+		  		}
+			});
+			$("#mess-"+parent.message.id).remove();
 		}
 	})
 	
@@ -243,23 +240,17 @@ App = (function($){
 			$(this.el).removeClass("comment_selected")
 		},
 		deleteComment: function(){
-			var parent = this;
-			if (this.comment.deletion == "false"){
-				alert("You can't delete this comment.");
-			} else {
-				var html = $("#confirm-deletion-comment-template").html();
-				var answer = confirm(html);
-				if (answer){
-					$.ajax({
-						type:"POST",
-						url:"/streams/delete/"+parent.comment.id, 
-						dataType:"json",
-						success: function(data){
-				  		}
-					});
-					$("#comment-"+parent.comment.id).remove();
-				}
-			}
+			var html = $("#confirm-deletion-comment-template").html();
+			$.kernelyConfirm(html, this.confirmDeleteComment, this);
+		},
+		confirmDeleteComment: function(parent){
+			$.ajax({
+				type:"POST",
+				url:"/streams/delete/"+parent.comment.id, 
+				dataType:"json",
+				success: function(data){}
+			});
+			$("#comment-"+parent.comment.id).remove();
 		}
 	})
 	

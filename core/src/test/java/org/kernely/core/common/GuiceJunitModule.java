@@ -25,6 +25,8 @@ import groovy.text.SimpleTemplateEngine;
 
 import org.apache.commons.configuration.AbstractConfiguration;
 import org.apache.commons.configuration.BaseConfiguration;
+import org.apache.shiro.authc.credential.DefaultPasswordService;
+import org.apache.shiro.authc.credential.PasswordService;
 import org.kernely.core.plugin.PluginManager;
 import org.kernely.core.service.mail.Mailer;
 import org.kernely.core.service.mail.builder.MailBuilder;
@@ -68,6 +70,7 @@ public class GuiceJunitModule extends AbstractModule {
 		
 		bind(PluginManager.class);
 		bind(TemplateRenderer.class);
+		bind(PasswordService.class).to(DefaultPasswordService.class);
 		
 		//creates a mail moker
 		Mailer mailerMock = Mockito.mock(Mailer.class);

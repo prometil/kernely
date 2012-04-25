@@ -50,7 +50,7 @@ public class HolidayRequestController extends AbstractController {
 		String toReplaced = to.replace('/', '-');
 		
 		try {
-			URI uri = new URI("/holiday/request/new?from="+fromReplaced+"&to="+toReplaced);
+			URI uri = new URI("/holiday/request/new/#/"+fromReplaced+"/"+toReplaced);
 			return Response.temporaryRedirect(uri).status(303).build();
 		} catch (URISyntaxException e) {
 			UriBuilder uriBuilder = UriBuilder.fromPath("/holiday");
@@ -103,7 +103,6 @@ public class HolidayRequestController extends AbstractController {
 		if(request.details.get(0).day != null && !request.details.get(0).day.equals("")){
 			holidayRequestService.registerRequestAndDetails(request);
 		}
-		UriBuilder uriBuilder = UriBuilder.fromPath("/holiday");
-		return Response.temporaryRedirect(uriBuilder.build()).status(303).build();
+		return Response.ok().build();
 	}
 }

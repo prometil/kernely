@@ -284,18 +284,18 @@ AppHolidayUserRequest = (function($){
 			var view = {};
 			var html = Mustache.to_html(template, view);
 			
-			var answer = confirm(html);
-			if (answer){
-				$.ajax({
-					url:"/holiday/cancel/" + lineSelected.vid,
-					success: function(){
-						var successHtml = $("#holiday-canceled-template").html();	
-						$.writeMessage("success",successHtml);
-						tableView1.reload();
-						$("#button_canceled").attr('disabled','disabled');
-					}
-				});
-			}	
+			$.kernelyConfirm(html,this.confirmCancel);
+		},
+		confirmCancel: function(){
+			$.ajax({
+				url:"/holiday/cancel/" + lineSelected.vid,
+				success: function(){
+					var successHtml = $("#holiday-canceled-template").html();	
+					$.writeMessage("success",successHtml);
+					tableView1.reload();
+					$("#button_canceled").attr('disabled','disabled');
+				}
+			});
 		}
 		
 	})

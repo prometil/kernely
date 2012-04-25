@@ -5,8 +5,33 @@ AppHolidayManagerUsers = (function($){
 	var yearSelected = 0;
 	var mainView = null;
 	
+	var tableView = null;
+	var legendView = null;
+	var selectorView = null;
+	var app_router = null;
+	
 	// How many days in the month
 	var nbDays = 0;
+	
+	Router = Backbone.Router.extend({
+
+		routes: {
+			"/month/:month/:year":  "visualize",
+			"*actions" : "defaultRoute"
+		},
+		
+		initialize: function() {
+		},
+
+		visualize: function(month, year) {
+			mainView.change(month, year);
+		},
+		
+		defaultRoute: function(){
+			mainView.change(0, 0);
+		}
+		
+	})
 	
 	HolidayManagerUserMainView = Backbone.View.extend({
 		el:"#main-manager-page-content",
@@ -19,28 +44,28 @@ AppHolidayManagerUsers = (function($){
 		},
 		
 		render: function(){
-			$.ajax({
-				url:"/holiday/manager/users/all",
-				data: {month: monthSelected, year: yearSelected},
-				dataType: "json",
-				success: function(data){
-					new HolidayManagerUserTableView(data).render();
-					new HolidayManagerColorPartView(data).render();
-					new HolidayManagerMonthSelectorView().render();
-					monthSelected = data.month;
-					yearSelected = data.year;
-				}
-			});
+			tableView = new HolidayManagerUserTableView();
+			legendView = new HolidayManagerColorPartView();
+			selectorView = new HolidayManagerMonthSelectorView().render();
 
 			return this;
 		},
-		reloadTable: function(){
+		change: function(month, year){
+			monthSelected = month;
+			yearSelected = year;
+			this.reloadTable(month, year);
+		},
+		reloadTable: function(month, year){
 			$.ajax({
 				url:"/holiday/manager/users/all",
-				data: {month: monthSelected, year: yearSelected},
+				data: {month: month, year: year},
 				dataType: "json",
 				success: function(data){
-					new HolidayManagerUserTableView(data).reload();
+					tableView.render(data);
+					legendView.render(data);
+					monthSelected = data.month;
+					yearSelected = data.year;
+					selectorView.actualize();
 				}
 			});
 		}
@@ -71,9 +96,8 @@ AppHolidayManagerUsers = (function($){
 				monthSelected = 1;
 				yearSelected ++;
 			}
-			var template = $("#"+ monthSelected +"-month-template").html();
-			$("#month_current").text(template + " " + yearSelected);
-			mainView.reloadTable();
+			this.actualize();
+			app_router.navigate("/month/" + monthSelected + "/" + yearSelected, {trigger: true, replace: true});
 		},
 		minusMonth: function(){
 			monthSelected --;
@@ -82,9 +106,12 @@ AppHolidayManagerUsers = (function($){
 				monthSelected = 12;
 				yearSelected --;
 			}
+			this.actualize();
+			app_router.navigate("/month/" + monthSelected + "/" + yearSelected, {trigger: true, replace: true});
+		},
+		actualize: function(){
 			var template = $("#"+ monthSelected +"-month-template").html();
 			$("#month_current").text(template + " " + yearSelected);
-			mainView.reloadTable();
 		}
 	})
 	
@@ -159,15 +186,11 @@ AppHolidayManagerUsers = (function($){
 		
 		},
 		
-		initialize: function(data){
+		initialize: function(){
+		},
+		render: function(data){
 			this.data = data;
-		},
-		reload: function(){
 			$(this.el).html("");
-			this.render();
-			return this;
-		},
-		render: function(){
 			var parent = this;
 			lineHeader = $("<tr>", {
 				class:'table-header border-element-r-b'
@@ -210,10 +233,11 @@ AppHolidayManagerUsers = (function($){
 		
 		data : null,
 		
-		initialize : function(data){
-			this.data = data;
+		initialize : function(){
 		},
-		render: function(){
+		render: function(data){
+			this.data = data;
+			$(this.el).html("");
 			var parent = this;
 			
 			if(typeof(this.data.balances) != "undefined"){
@@ -261,6 +285,10 @@ AppHolidayManagerUsers = (function($){
 	var self = {};
 	self.start = function(){
 		mainView = new HolidayManagerUserMainView().render();
+		// Instantiate the router
+		app_router = new Router;
+	    // Start Backbone history a neccesary step for bookmarkable URL's
+	    Backbone.history.start();
 	}
 	return self;
 })

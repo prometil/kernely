@@ -26,9 +26,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.configuration.CombinedConfiguration;
+import javax.servlet.ServletContext;
+import javax.servlet.ServletContextEvent;
+
+import org.apache.shiro.guice.aop.ShiroAopModule;
+import org.kernely.bootstrap.shiro.ShiroConfigurationModule;
 import org.kernely.core.job.GuiceSchedulerFactory;
 import org.kernely.core.plugin.AbstractPlugin;
+import org.kernely.core.plugin.PluginManager;
 import org.quartz.Job;
 import org.quartz.JobDetail;
 import org.quartz.Scheduler;
@@ -52,18 +57,23 @@ import com.google.inject.servlet.ServletModule;
 public class GuiceServletConfig extends GuiceServletContextListener {
 
 	private static Logger log = LoggerFactory.getLogger(GuiceServletConfig.class);
-	private List<? extends AbstractPlugin> plugins;
-	private final CombinedConfiguration combinedConfiguration;
+	private PluginManager manager;
 
 	/**
 	 * Constructor.
 	 * 
-	 * @param plugins
-	 *            The list of plugins to configure.
+	 * @param manager the plugin manager.
 	 */
-	public GuiceServletConfig(List<? extends AbstractPlugin> plugins, CombinedConfiguration combinedConfiguration) {
-		this.plugins = plugins;
-		this.combinedConfiguration = combinedConfiguration;
+	public GuiceServletConfig(PluginManager manager) {
+		this.manager = manager;
+	}
+
+	private ServletContext servletContext;
+
+	@Override
+	public void contextInitialized(ServletContextEvent servletContextEvent) {
+		servletContext = servletContextEvent.getServletContext();
+		super.contextInitialized(servletContextEvent);
 	}
 
 	/**
@@ -72,33 +82,35 @@ public class GuiceServletConfig extends GuiceServletContextListener {
 	 */
 	@Override
 	protected Injector getInjector() {
+
 		List<Module> list = new ArrayList<Module>();
-		for (AbstractPlugin plugin : plugins) {
+		for (AbstractPlugin plugin : manager.getPlugins()) {
 			Module module = plugin.getModule();
 			if (module != null) {
 				list.add(module);
 			}
 		}
-		list.add(new KernelyServletModule(plugins, combinedConfiguration));
+		list.add(new KernelyServletModule(manager));
+		list.add(new ShiroAopModule());
+		list.add(new ShiroConfigurationModule(servletContext));
+		list.add(ShiroConfigurationModule.guiceFilterModule());
 		list.add(new ServletModule());
 
 		// create injector
 		Injector injector = Guice.createInjector(list);
-		
-		//inject plugin back for start
-		for (AbstractPlugin plugin : plugins) {
+
+		// inject plugin back for start
+		for (AbstractPlugin plugin : manager.getPlugins()) {
 			injector.injectMembers(plugin);
 			plugin.start();
 		}
-		
 
 		// get all jobs
 		Scheduler scheduler = injector.getInstance(Scheduler.class);
 		GuiceSchedulerFactory guiceSchedulerFactory = injector.getInstance(GuiceSchedulerFactory.class);
 		try {
 			scheduler.setJobFactory(guiceSchedulerFactory);
-
-			for (AbstractPlugin plugin : plugins) {
+			for (AbstractPlugin plugin : manager.getPlugins()) {
 				for (Map.Entry<Class<? extends Job>, Trigger> entry : plugin.getJobs().entrySet()) {
 					JobDetail job = newJob(entry.getKey()).build();
 					scheduler.scheduleJob(job, entry.getValue());

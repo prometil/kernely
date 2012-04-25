@@ -57,7 +57,7 @@ public class ClasspathUpdater {
 	/**
 	 * update the classpath with the plugins found 
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public void update(){
 		
 		IOFileFilter f = new SuffixFileFilter(".jar");

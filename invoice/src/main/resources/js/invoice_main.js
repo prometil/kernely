@@ -203,17 +203,18 @@ AppInvoiceMain = (function($){
 			var view = {invoiceNumber: this.number};
 			var html = Mustache.to_html(template, view);
 			
-			var answer = confirm(html);
-			if (answer){
-				$.ajax({
-					type: "GET",
-					url:"/invoice/delete",
-					data:{invoiceId : parent.id},
-					success: function(data){
-						$(parent.el).remove();
-					}
-				});		
-			}
+			$.kernelyConfirm(html,this.confirmDeleteInvoice, this);
+		},
+		
+		confirmDeleteInvoice: function(parent){
+			$.ajax({
+				type: "GET",
+				url:"/invoice/delete",
+				data:{invoiceId : parent.id},
+				success: function(data){
+					$(parent.el).remove();
+				}
+			});
 		},
 				
 		render: function(){
