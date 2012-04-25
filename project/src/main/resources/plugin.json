@@ -1,0 +1,7 @@
+{
+    "name": "project",
+    "plugin": "org.kernely.project.ProjectPlugin",
+    "version": "0.1",
+    "author": "kernely.org",
+    "description": "Project plugin"
+}

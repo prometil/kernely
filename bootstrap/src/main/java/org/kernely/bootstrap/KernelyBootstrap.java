@@ -53,10 +53,12 @@ public class KernelyBootstrap {
 
 	/**
 	 * Main function
+	 * 
 	 * @param args
 	 * @throws IOException
 	 */
 	public static void main(String[] args) throws IOException {
+		
 		log.info("Bootstrapping kernely");
 
 		// Update the class loader with the plugins directory
@@ -64,11 +66,10 @@ public class KernelyBootstrap {
 		p.update();
 
 		// Load all detected plugins
-		PluginManager pluginManager = new PluginManager();
-		List<AbstractPlugin> plugins = pluginManager.getPlugins();
+		List<AbstractPlugin> plugins = PluginManager.getPlugins();
 
 		// configure
-		CombinedConfiguration combinedConfiguration = pluginManager.getConfiguration();
+		CombinedConfiguration combinedConfiguration = PluginManager.getConfiguration();
 
 		// update database using configuration
 		Migrator m = new Migrator(combinedConfiguration, plugins);
@@ -90,7 +91,7 @@ public class KernelyBootstrap {
 			ServletHandler handler = createServletHandler();
 			WebAppContext webApp = new WebAppContext(warUrlString, "/");
 			webApp.setServletHandler(handler);
-			webApp.addEventListener(new GuiceServletConfig(pluginManager));
+			webApp.addEventListener(new GuiceServletConfig());
 			webApp.setErrorHandler(new KernelyErrorHandler());
 			server.setHandler(webApp);
 
@@ -103,7 +104,6 @@ public class KernelyBootstrap {
 		} catch (Exception e) {
 			log.error("Cannot create working directory {}", workDirectory, e);
 		}
-
 
 	}
 

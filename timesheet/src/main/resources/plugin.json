@@ -1,0 +1,7 @@
+{
+    "name": "timesheet",
+    "plugin": "org.kernely.timesheet.TimeSheetPlugin",
+    "version": "0.1",
+    "author": "kernely.org",
+    "description": "Timesheet plugin"
+}

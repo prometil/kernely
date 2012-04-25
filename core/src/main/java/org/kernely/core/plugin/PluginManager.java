@@ -19,84 +19,215 @@
  */
 package org.kernely.core.plugin;
 
-import java.net.MalformedURLException;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.Collections;
+import java.util.Enumeration;
 import java.util.List;
-import java.util.ServiceLoader;
+import java.util.Map;
 
 import org.apache.commons.configuration.AbstractConfiguration;
 import org.apache.commons.configuration.CombinedConfiguration;
-import org.apache.commons.configuration.ConfigurationException;
-import org.apache.commons.configuration.XMLConfiguration;
-import org.kernely.core.resource.ResourceLocator;
+import org.apache.commons.configuration.HierarchicalConfiguration;
+import org.codehaus.jackson.JsonParseException;
+import org.codehaus.jackson.map.JsonMappingException;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Joiner;
+import com.sun.jdi.Bootstrap;
 
 /**
  * Load all plugins
  */
 public class PluginManager {
 	private static Logger log = LoggerFactory.getLogger(PluginManager.class);
-	
-	private List<AbstractPlugin> plugins ;
+
+	private List<AbstractPlugin> plugins;
+
+	private CombinedConfiguration configuration;
+
+	private PluginManager() {
+		plugins = findPlugins();
+	}
+
+	private static PluginManager instance;
+
+	public static PluginManager getInstance() {
+		if (instance == null) {
+			instance = new PluginManager();
+		}
+		return instance;
+	}
+
+	/**
+	 * Return the plugins list
+	 * 
+	 * @return a list of abstract plugin
+	 */
+	public static List<AbstractPlugin> getPlugins() {
+		return getInstance().plugins;
+	}
 
 	/**
 	 * Find the plugins
 	 */
-	public List<AbstractPlugin> getPlugins() {
-		if(plugins == null){
-			plugins = new ArrayList<AbstractPlugin>();
+	@SuppressWarnings("unchecked")
+	private List<AbstractPlugin> findPlugins() {
+		List<AbstractPlugin> plugins = new ArrayList<AbstractPlugin>();
 
-			ServiceLoader<AbstractPlugin> commandLoader = ServiceLoader.load(AbstractPlugin.class);
-			// commandLoader.reload();
-			Iterator<AbstractPlugin> it = commandLoader.iterator();
-			while (it.hasNext()) {
-				AbstractPlugin plugin = it.next();
-				log.debug("Plugin {} found", plugin.getMenus().get(0));
-				plugins.add(plugin);
-
-			}
-		}
-		return plugins;
-	}
-	/**
-	 * Create and set the configuration from a xml file
-	 * 
-	 * @param plugins
-	 *            list of plugins
-	 * @return the combinedconfiguration set
-	 */
-	public  CombinedConfiguration getConfiguration() {
-		List<AbstractPlugin> plugins = getPlugins();
-		ResourceLocator resourceLocator = new ResourceLocator();
-		CombinedConfiguration combinedConfiguration = new CombinedConfiguration();
-		// Bind all Jersey resources detected in plugins
-		for (AbstractPlugin plugin : plugins) {
-			
-			String filepath = plugin.getName()+".xml";
-			log.debug("Searching configuration file {}",filepath);
-			if (filepath != null) {
+		ObjectMapper mapper = new ObjectMapper();
+		configuration = new CombinedConfiguration();
+		Enumeration<URL> resources;
+		try {
+			resources = getDefaultClassLoader().getResources("plugin.json");
+			while (resources.hasMoreElements()) {
+				URL u = resources.nextElement();
+				BufferedReader in = new BufferedReader(new InputStreamReader(u.openStream()));
 				try {
-					AbstractConfiguration configuration;
-					try {
-						URL resource = resourceLocator.getResource("../config", filepath);
-						if(resource != null){
-							configuration = new XMLConfiguration(resource);
-							log.info("Found configuration file {} for plugin {}", filepath, plugin.getName());
-							combinedConfiguration.addConfiguration(configuration);
+					Map<String, Object> pluginData = mapper.readValue(in, Map.class);
+					Manifest m = new Manifest();
+					m.name = (String) pluginData.get("name");
+					m.author = (String) pluginData.get("version");
+					m.description = (String) pluginData.get("definition");
+					m.version = (String) pluginData.get("version");
+
+					Object object = pluginData.get("plugin");
+					if (object != null) {
+						String pluginClassName = (String) object;
+						Class<? extends AbstractPlugin> pluginClass;
+						try {
+							pluginClass = (Class<? extends AbstractPlugin>) getDefaultClassLoader().loadClass(pluginClassName);
+							AbstractPlugin plugin;
+							try {
+								plugin = pluginClass.getConstructor().newInstance();
+								plugin.setManifest(m);
+								plugins.add(plugin);
+							} catch (NoSuchMethodException e1) {
+								log.error("Cannot find contructor for [{}]", m.name);
+							} catch (IllegalArgumentException e) {
+								log.error("Cannot call contructor for [{}]", m.name);
+							} catch (SecurityException e) {
+								log.error("Cannot call contructor for [{}]", m.name);
+							} catch (InstantiationException e) {
+								log.error("Cannot call contructor for [{}]", m.name);
+							} catch (IllegalAccessException e) {
+								log.error("Cannot call contructor for [{}]", m.name);
+							} catch (InvocationTargetException e) {
+								log.error("Cannot call contructor for [{}]", m.name);
+							}
+
+						} catch (ClassNotFoundException e2) {
+							log.error("Cannot find class [{}]", pluginClassName);
 						}
-					} catch (MalformedURLException e) {
-						log.error("Cannot find configuration file : {}", filepath);
+
+						// plugins.put(plugin.name(), plugin);
+						for (Map.Entry<String, Object> entry : pluginData.entrySet()) {
+							if (entry.getKey().equals("configuration")) {
+								configuration.addConfiguration(getConfiguration((Map<String, Object>) entry.getValue()));
+							}
+						}
+
 					}
 
-				} catch (ConfigurationException e) {
-					log.error("Cannot find configuration file {} for plugin {}", filepath, plugin.getName());
+					else {
+						log.warn("Cannot find plugin definition in plugin.json, nothing has been loaded");
+					}
+
+				} catch (JsonParseException e1) {
+					log.error("Cannot parse json plug-in definition", e1);
+				} catch (JsonMappingException e1) {
+					log.error("Cannot convert json plug-in definition", e1);
+				} catch (IOException e1) {
+					log.error("Cannot read json plug-in definition", e1);
 				}
+				in.close();
+
+			}
+		} catch (IOException e) {
+			log.error("Cannot find plug-in definition ", e);
+		}
+		return plugins;
+
+	}
+
+	/**
+	 * Generate a configuration from a map
+	 * 
+	 * @param configurations
+	 *            the map containing all key
+	 * @return the generate configuration
+	 */
+	@SuppressWarnings("unchecked")
+	private AbstractConfiguration getConfiguration(Map<String, Object> configurations) {
+		if (configurations == null) {
+			throw new IllegalArgumentException("Cannot convert a null map");
+		}
+		AbstractConfiguration c = new HierarchicalConfiguration();
+		addConfiguration(c, configurations, Collections.EMPTY_LIST);
+		// System.exit(0);
+		return c;
+	}
+
+	/**
+	 * Adds configurations key to an existing configuration
+	 * 
+	 * @param configuration
+	 *            the configuration to upgrade
+	 * @param configurations
+	 *            the configuration to add
+	 * @param prefixes
+	 *            the prefix of the configuration key
+	 */
+	@SuppressWarnings("unchecked")
+	private void addConfiguration(AbstractConfiguration configuration, Map<String, Object> configurations, List<String> prefixes) {
+		Joiner joiner = Joiner.on(".").skipNulls();
+		for (Map.Entry<String, Object> config : configurations.entrySet()) {
+			List<String> key = new ArrayList<String>(prefixes);
+			key.add(config.getKey());
+
+			if (config.getValue() instanceof Map) {
+				addConfiguration(configuration, (Map) config.getValue(), key);
+			} else {
+				configuration.addProperty(joiner.join(key), config.getValue());
 			}
 		}
-		return combinedConfiguration;
+	}
+
+	/**
+	 * Returns the default class loader
+	 * 
+	 * @return the default class loader
+	 */
+	public static ClassLoader getDefaultClassLoader() {
+		ClassLoader cl = null;
+		try {
+			cl = Thread.currentThread().getContextClassLoader();
+		} catch (Throwable ex) {
+			// Cannot access thread context ClassLoader - falling back to system
+			// class loader...
+		}
+		if (cl == null) {
+			// No thread context class loader -> use class loader of this class.
+			cl = Bootstrap.class.getClassLoader();
+		}
+		return cl;
+	}
+
+	/**
+	 * Returns the configuration, defined by a merge of all plugin
+	 * configuration.
+	 * 
+	 * @return the combined configuration set
+	 */
+	public static CombinedConfiguration getConfiguration() {
+
+		return getInstance().configuration;
 	}
 
 }

@@ -1,0 +1,7 @@
+{
+    "name": "stream",
+    "plugin": "org.kernely.stream.StreamPlugin",
+    "version": "0.1",
+    "author": "kernely.org",
+    "description": "Stream plugin"
+}

@@ -48,18 +48,7 @@ import com.sun.jersey.guice.spi.container.servlet.GuiceContainer;
 public class KernelyServletModule extends JerseyServletModule {
 
 	private static Logger log = LoggerFactory.getLogger(KernelyServletModule.class);
-	
-	//the plugin manager
-	private PluginManager manager;
 
-
-	/**
-	 * Constructs a plugin manager 
-	 * @param manager the plugin manager use to inject data 
-	 */
-	public KernelyServletModule(PluginManager manager) {
-		this.manager = manager;
-	}
 
 	/**
 	 * Bind the servlet of the application
@@ -69,16 +58,16 @@ public class KernelyServletModule extends JerseyServletModule {
 	protected void configureServlets() {
 
 		// Bind all Jersey resources detected in plugins
-		for (AbstractPlugin plugin : manager.getPlugins()) {
+		for (AbstractPlugin plugin : PluginManager.getPlugins()) {
 			for (Class<? extends AbstractController> controllerClass : plugin.getControllers()) {
 				log.debug("Register controller {}", controllerClass);
 				bind(controllerClass);
 			}
 		}
-		CombinedConfiguration configuration = manager.getConfiguration();
+		CombinedConfiguration configuration = PluginManager.getConfiguration();
 		bind(AbstractConfiguration.class).toInstance(configuration);
 		bind(ResourceLocator.class);
-		bind(PluginManager.class).toInstance(manager);
+		//bind(PluginManager.class).toInstance(PluginManager.getInstance());
 		
 		
 		// persistence
