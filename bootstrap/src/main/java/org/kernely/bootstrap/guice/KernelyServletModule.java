@@ -67,7 +67,7 @@ public class KernelyServletModule extends JerseyServletModule {
 		CombinedConfiguration configuration = PluginManager.getConfiguration();
 		bind(AbstractConfiguration.class).toInstance(configuration);
 		bind(ResourceLocator.class);
-		//bind(PluginManager.class).toInstance(PluginManager.getInstance());
+		bind(PluginManager.class).toInstance(PluginManager.getInstance());
 		
 		
 		// persistence

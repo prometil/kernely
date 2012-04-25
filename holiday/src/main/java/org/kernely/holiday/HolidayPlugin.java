@@ -29,6 +29,7 @@ import org.kernely.holiday.controller.HolidayManagerUserController;
 import org.kernely.holiday.controller.HolidayPlanningController;
 import org.kernely.holiday.controller.HolidayRequestController;
 import org.kernely.holiday.controller.HolidaySummaryController;
+import org.kernely.holiday.event.HolidayUserEventHandler;
 import org.kernely.holiday.job.HolidaysDailyJob;
 import org.kernely.holiday.job.HolidaysMonthlyJob;
 import org.kernely.holiday.migrations.Migration01;
