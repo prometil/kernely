@@ -40,7 +40,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Joiner;
-import com.sun.jdi.Bootstrap;
 
 /**
  * Load all plugins
@@ -214,7 +213,7 @@ public class PluginManager {
 		}
 		if (cl == null) {
 			// No thread context class loader -> use class loader of this class.
-			cl = Bootstrap.class.getClassLoader();
+			cl = PluginManager.class.getClassLoader();
 		}
 		return cl;
 	}
