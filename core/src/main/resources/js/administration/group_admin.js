@@ -188,18 +188,21 @@ AppGroupAdmin = (function($){
 			
 			var view = {name: lineSelected.vname};
 			var html = Mustache.to_html(template, view);
-			
-			var answer = confirm(html);
-			if (answer){
-				$.ajax({
-					url:"/admin/groups/delete/" + lineSelected.vid,
-					success: function(){
-						var successHtml = $("#group-deleted-template").html();
-						$.writeMessage("success",successHtml);
-						tableView.reload();
-					}
-				});
-			}
+			console.log("Before")
+			$.kernelyConfirm(html,this.confirmdeletegroup);
+			console.log("After")
+		},
+		
+		confirmdeletegroup: function(){
+			console.log("Deletion");
+			$.ajax({
+				url:"/admin/groups/delete/" + lineSelected.vid,
+				success: function(){
+					var successHtml = $("#group-deleted-template").html();
+					$.writeMessage("success",successHtml);
+					tableView.reload();
+				}
+			});
 		},
 		
 		render:function(){

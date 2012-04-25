@@ -348,13 +348,8 @@ AppHolidayAdmin = (function($){
 					// data is the holiday type dto created
 					$('#modal_window_holiday').hide();
 					$('#mask').hide();
-					
 					var successHtml = $("#holiday-success-message-template").html();
-	
-					$("#holiday_notifications").text(successHtml);
-					$("#holiday_notifications").fadeIn(1000);
-					$("#holiday_notifications").fadeOut(3000);
-					
+					$.writeMessage("success",successHtml);
 					tableView.reload();
 				}
 			});
@@ -625,11 +620,7 @@ AppHolidayAdmin = (function($){
 					$('#mask').hide();
 					
 					var successHtml = $("#holiday-success-message-template").html();
-	
-					$("#holiday_notifications").text(successHtml);
-					$("#holiday_notifications").fadeIn(1000);
-					$("#holiday_notifications").fadeOut(3000);
-					
+					$.writeMessage("success",successHtml);
 					resetLinesMemory();
 					
 					tableView.reload();

@@ -37,6 +37,11 @@
 	
 	</head>
 	<body>
+	<script type="text/html" id="kernely-confirm-dialog-template">
+		{{"{{"}}question{{"}}"}}
+		<input id="confirm-yes-button" type="button" value="{% i18n "yes" %}" /><br/>
+		<input id="confirm-no-button" type="button" value="{% i18n "no" %}" /><br/>
+	</script>
 		{% block template %}
 			<!-- all templates -->
 		{% endblock %}

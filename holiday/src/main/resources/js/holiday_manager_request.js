@@ -271,9 +271,7 @@ AppHolidayManagerRequest = (function($){
 						url : "/holiday/managers/request/comment/" + parent.vid + "/" + $("#comment").val(),
 						success : function(){
 							var successHtml = $("#holiday-accept-template").html();				
-							$("#holiday_notifications").text(successHtml);
-							$("#holiday_notifications").fadeIn(1000);
-							$("#holiday_notifications").fadeOut(3000);
+							$.writeMessage("success",successHtml);
 							tableView1.reload();
 							tableView2.reload();
 							$("#button_accepted").attr('disabled', 'disabled');
@@ -331,9 +329,7 @@ AppHolidayManagerRequest = (function($){
 						url : "/holiday/managers/request/comment/" + parent.vid + "/" +  $("#comment").val(),
 						success : function(){
 							var successHtml = $("#holiday-accept-template").html();				
-							$("#holiday_notifications").text(successHtml);
-							$("#holiday_notifications").fadeIn(1000);
-							$("#holiday_notifications").fadeOut(3000);
+							$.writeMessage("success",successHtml);
 							tableView1.reload();
 							tableView2.reload();
 							$("#button_visualize").attr('disabled', 'disabled');
