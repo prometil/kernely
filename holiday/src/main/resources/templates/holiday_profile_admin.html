@@ -3,7 +3,7 @@
 	<script type="text/javascript" src="/js/holiday_profile_admin.js"></script>
 {% endblock %}
 
-{% block css %}
+{% block subcss %}
 	<link rel="stylesheet" type="text/css" href="/css/holiday_admin.css"/>
 {% endblock %}
 
@@ -168,12 +168,12 @@
 	
 	<div id="holiday_admin_container">
 		<div id="holiday_admin_buttons">
-			<input type="button" class="createButton" value="{% i18n "create" %}"/>
-			<input type="button" class="editButton" value="{% i18n "edit" %}" disabled="disabled"/>
-			<input type="button" class="usersButton" value="{% i18n "holiday_profile_users" %}" disabled="disabled"/>
+			<input type="button" class="createButton button_standard" value="{% i18n "create" %}"/>
+			<input type="button" class="editButton button_standard" value="{% i18n "edit" %}" disabled="disabled"/>
+			<input type="button" class="usersButton button_standard" value="{% i18n "holiday_profile_users" %}" disabled="disabled"/>
 			<span id="holidays_notifications"></span>
 		</div>
-		<table id="holiday_admin_table">
+		<table id="holiday_admin_table" class="kernely_table">
 			
 		</table>
 	</div>

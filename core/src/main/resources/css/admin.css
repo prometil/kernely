@@ -24,6 +24,17 @@ a.loader{
 
 
 /* Common */
+div.menu_admin, div.menu_admin_selected{
+	border-bottom:1px solid #a0a2a3;
+	width:223px;
+	height:43px;
+	padding-left:15px;
+}
+
+div.menu_admin_selected{
+	background-color:#3e3d40;
+}
+
 #mask{
 	position:absolute;
 	z-index:9000;
@@ -34,11 +45,6 @@ a.loader{
 
 .closeModal{
 	right:0;
-}
-
-#user_admin_table, #manager_admin_table, #group_admin_table{
-	cursor:pointer;
-	width:100%;
 }
 
 /* User page*/
@@ -98,19 +104,3 @@ a.loader{
 	overflow-y:auto;
 }
 
-/* Main admin layout page */
-#admin_panel_container{
-	width:710px;
-	float:left;
-}
-
-#admin_header{
-	text-align:center;
-	font-size:20px;
-	font-weight:bold;
-}
-
-#admin_sidebar_container{
-	width:250px;
-	float:left;
-}

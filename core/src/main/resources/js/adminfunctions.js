@@ -55,7 +55,7 @@ AppAdmin = (function($){
 
 	PluginAdminLinkView = Backbone.View.extend({
 		tagName:"div",
-		classname:"loader",
+		className:"loader menu_admin",
 		
 		vadmin: null,
 		vadminpath: null,
