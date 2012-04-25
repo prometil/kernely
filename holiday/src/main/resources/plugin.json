@@ -1,0 +1,12 @@
+{
+    "name": "holiday",
+    "plugin": "org.kernely.holiday.HolidayPlugin",
+    "version": "0.1",
+    "author": "kernely.org",
+    "description": "Holiday plugin",
+    "configuration": {
+        "holidayRequests": {
+            "recallTime": "7"
+        }
+    }
+}

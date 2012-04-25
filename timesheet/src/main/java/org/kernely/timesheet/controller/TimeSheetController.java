@@ -15,7 +15,6 @@ import org.joda.time.format.DateTimeFormatter;
 import org.kernely.core.controller.AbstractController;
 import org.kernely.core.service.user.UserService;
 import org.kernely.core.template.SobaTemplateRenderer;
-import org.kernely.core.template.TemplateRenderer;
 import org.kernely.timesheet.dto.TimeSheetCalendarDTO;
 import org.kernely.timesheet.dto.TimeSheetDayDTO;
 import org.kernely.timesheet.dto.TimeSheetDetailDTO;

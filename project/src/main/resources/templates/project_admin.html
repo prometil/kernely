@@ -8,6 +8,10 @@
 	<link rel="stylesheet" type="text/css" href="/css/project_admin.css"/>
 {% endblock %}
 
+{% block admintitle %}
+	{% i18n "project_admin_title" %}
+{% endblock %}
+
 {% block admin %}
 	<div id="group_header" style=""></div>
 	<div id="mask"></div>
@@ -18,7 +22,6 @@
 		<input type="button" class="editButton" value="{% i18n "edit" %}" disabled="disabled"/>
 		<input type="button" class="deleteButton" value="{% i18n "delete" %}" disabled="disabled"/>
 		<input type="button" class="imageButton" value="{% i18n "image" %}"  disabled="disabled"/>
-		<span id="span_notifications"></span>
 	</div>
 	<table id="project_admin_table">
 		
@@ -43,7 +46,7 @@
 		</fieldset>
 		<br/>
 		<input type="button" value="{% i18n "create" %}" class="createProject"/>
-		<span id="errors_message"></span>
+		<div id="errors_message"></div>
 	</script>
 	
 	<!-- Template for the edit view  -->
@@ -69,7 +72,7 @@
 		</fieldset>
 		<br/>
 		<input type="button" value="{% i18n "update" %}" class="updateProject"/>
-		<span id="errors_message"></span>
+		<div id="errors_message"></div>
 	</script>
 	
 	

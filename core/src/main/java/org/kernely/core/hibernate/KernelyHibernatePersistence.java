@@ -28,13 +28,15 @@ import javax.persistence.EntityManagerFactory;
 import org.hibernate.ejb.Ejb3Configuration;
 import org.hibernate.ejb.HibernatePersistence;
 import org.kernely.core.plugin.AbstractPlugin;
+import org.kernely.core.plugin.PluginManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * The hibernate persistance
+ * 
  * @author b.grandperret
- *
+ * 
  */
 public class KernelyHibernatePersistence extends HibernatePersistence {
 
@@ -55,10 +57,10 @@ public class KernelyHibernatePersistence extends HibernatePersistence {
 			cfg.setProperty(mapEntry.getKey(), mapEntry.getValue());
 		}
 
-		ServiceLoader<AbstractPlugin> commandLoader = ServiceLoader.load(AbstractPlugin.class);
-		Iterator<AbstractPlugin> it = commandLoader.iterator();
-		while (it.hasNext()) {
-			AbstractPlugin plugin = it.next();
+		// get the plugin list
+
+		PluginManager pm = PluginManager.getInstance();
+		for (AbstractPlugin plugin : pm.getPlugins()) {
 
 			for (Class<? extends AbstractModel> entityClass : plugin.getModels()) {
 				log.debug("Add annotated class : {}", entityClass);

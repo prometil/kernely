@@ -23,8 +23,8 @@
 	
 	{% endblock %}
 	<!-- css files -->
-	<link rel="stylesheet" type="text/css" href="/css/style.css"/>
 	<link rel="stylesheet" type="text/css" href="/css/jquery-ui.css"/>
+	<link rel="stylesheet" type="text/css" href="/css/style.css"/>
 	<link rel="stylesheet" type="text/css" href="/css/farbtastic.css"/>
 	
 	{% block css %}
@@ -36,6 +36,11 @@
 	
 	</head>
 	<body>
+	<script type="text/html" id="kernely-confirm-dialog-template">
+		<div id="kernely-confirm-message">{{"{{"}}question{{"}}"}}</div>
+		<div id="kernely-confirm-buttons"><input id="confirm-no-button" class="button_standard" type="button" value="{% i18n "no" %}" />
+		<input id="confirm-yes-button" class="button_ok" type="button" value="{% i18n "yes" %}" /></div>
+	</script>
 		{% block template %}
 			<!-- all templates -->
 		{% endblock %}

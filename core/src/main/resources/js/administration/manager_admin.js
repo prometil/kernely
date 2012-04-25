@@ -183,19 +183,20 @@ AppManagerAdmin = (function($){
 			
 			var view = {name: lineSelected.vname};
 			var html = Mustache.to_html(template, view);
-			
-			var answer = confirm(html);
-			if (answer){
-				$.ajax({
-					url:"/admin/manager/delete/" + lineSelected.vname,
-					success: function(){
-						var successHtml = $("#manager-success-template").html();
-						
-						$.writeMessage("success",successHtml);
-						tableView.reload();
-					}
-				});
-			}
+	
+			$.kernelyConfirm(html,this.confirmdeletemanager);
+		},
+		
+		confirmdeletemanager: function(){
+			$.ajax({
+				url:"/admin/manager/delete/" + lineSelected.vname,
+				success: function(){
+					var successHtml = $("#manager-success-template").html();
+					
+					$.writeMessage("success",successHtml);
+					tableView.reload();
+				}
+			});
 		},
 		
 		render:function(){

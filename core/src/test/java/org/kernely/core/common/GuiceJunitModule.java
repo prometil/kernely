@@ -68,7 +68,7 @@ public class GuiceJunitModule extends AbstractModule {
 
 		bind(Initializer.class);
 		
-		bind(PluginManager.class);
+		bind(PluginManager.class).toInstance(PluginManager.getInstance());
 		bind(TemplateRenderer.class);
 		bind(PasswordService.class).to(DefaultPasswordService.class);
 		

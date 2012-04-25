@@ -44,7 +44,7 @@
 	
 	<!-- Template for the edit view  -->
 	<script type="text/html" id="popup-group-admin-update-template">
-		<input type="button" value="<%= i18n.t("close") %>" class="closeModal"/><br/>
+		<input type="button" value="{% i18n "close" %}" class="closeModal"/><br/>
 		<fieldset>
 		<legend>{% i18n "group_informations" %}</legend>
 		{% i18n "group.name" %}: <input type="text" name="name" value="{{"{{"}}name{{"}}"}}"/><br/>

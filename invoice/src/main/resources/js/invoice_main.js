@@ -203,17 +203,18 @@ AppInvoiceMain = (function($){
 			var view = {invoiceNumber: this.number};
 			var html = Mustache.to_html(template, view);
 			
-			var answer = confirm(html);
-			if (answer){
-				$.ajax({
-					type: "GET",
-					url:"/invoice/delete",
-					data:{invoiceId : parent.id},
-					success: function(data){
-						$(parent.el).remove();
-					}
-				});		
-			}
+			$.kernelyConfirm(html,this.confirmDeleteInvoice, this);
+		},
+		
+		confirmDeleteInvoice: function(parent){
+			$.ajax({
+				type: "GET",
+				url:"/invoice/delete",
+				data:{invoiceId : parent.id},
+				success: function(data){
+					$(parent.el).remove();
+				}
+			});
 		},
 				
 		render: function(){
@@ -351,13 +352,12 @@ AppInvoiceMain = (function($){
 				console.log(data);
 					if(data.result=="Ok"){
 						parent.closemodal();
+						var successHtml = $("#invoice-creation-success-template").html();
+						$.writeMessage("success",successHtml);
 						tableView.render();
 					}
 					else{
-						console.log("coucou");
-						$(parent.el).find("#errors_message").text(data.result);
-						$(parent.el).find("#errors_message").stop(true,true).fadeIn(1000);
-						$(parent.el).find("#errors_message").stop(true,true).fadeOut(3000);
+						$.writeMessage("error", data.result, "#errors_message");
 					}
 				}
 			});

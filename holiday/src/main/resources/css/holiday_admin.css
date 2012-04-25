@@ -1,6 +1,6 @@
 #mask{
 	position:absolute;
-	z-index:9000;
+	z-index:400;
 	background-color:#000;
 	display:none;
 	top:0;
@@ -12,7 +12,7 @@
 	width:900px;
 	height:300px;
 	display:none;
-	z-index:9999;
+	z-index:500;
 	padding:20px;
 	top:0;
 	left:0;

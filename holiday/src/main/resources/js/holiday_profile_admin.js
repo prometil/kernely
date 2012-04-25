@@ -348,13 +348,8 @@ AppHolidayAdmin = (function($){
 					// data is the holiday type dto created
 					$('#modal_window_holiday').hide();
 					$('#mask').hide();
-					
 					var successHtml = $("#holiday-success-message-template").html();
-	
-					$("#holiday_notifications").text(successHtml);
-					$("#holiday_notifications").fadeIn(1000);
-					$("#holiday_notifications").fadeOut(3000);
-					
+					$.writeMessage("success",successHtml);
 					tableView.reload();
 				}
 			});
@@ -503,14 +498,15 @@ AppHolidayAdmin = (function($){
 			var view = {name: nameToDisplay};
 			var html = Mustache.to_html(template, view);
 			
-			var answer = confirm(html);
-			if (answer){
-				if (this.veditmode){
-					changeEditedLines(-1);
-				}
-				typeLines[this.vrank] = null;
-				$("#"+this.vrank).remove();
+			$.kernelyConfirm(html,this.deleteLineConfirm,this)
+		},
+		
+		deleteLineConfirm: function(parent){
+			if (parent.veditmode){
+				changeEditedLines(-1);
 			}
+			typeLines[parent.vrank] = null;
+			$("#"+parent.vrank).remove();
 		}
 		
 	})
@@ -625,11 +621,7 @@ AppHolidayAdmin = (function($){
 					$('#mask').hide();
 					
 					var successHtml = $("#holiday-success-message-template").html();
-	
-					$("#holiday_notifications").text(successHtml);
-					$("#holiday_notifications").fadeIn(1000);
-					$("#holiday_notifications").fadeOut(3000);
-					
+					$.writeMessage("success",successHtml);
 					resetLinesMemory();
 					
 					tableView.reload();

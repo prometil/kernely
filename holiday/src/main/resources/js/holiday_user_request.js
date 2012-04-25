@@ -253,14 +253,7 @@ AppHolidayUserRequest = (function($){
 		
 	
 		render:function(){
-			this.formRequest = document.createElement("div");
-			$(this.formRequest).html($("#new-request-form").html());
-			$(this.formRequest).dialog({
-				autoOpen: false,
-				height: 150,
-				width: 300,
-				modal: true
-			});
+			this.formRequest = $.kernelyDialog("#new-request-form",150,300);
 			
 			var dates = $( "#from, #to" ).datepicker({
 				defaultDate: "+1w",
@@ -291,20 +284,18 @@ AppHolidayUserRequest = (function($){
 			var view = {};
 			var html = Mustache.to_html(template, view);
 			
-			var answer = confirm(html);
-			if (answer){
-				$.ajax({
-					url:"/holiday/cancel/" + lineSelected.vid,
-					success: function(){
-						var successHtml = $("#holiday-canceled-template").html();	
-						$("#holiday_notifications").text(successHtml);
-						$("#holiday_notifications").fadeIn(1000);
-						$("#holiday_notifications").fadeOut(3000);
-						tableView1.reload();
-						$("#button_canceled").attr('disabled','disabled');
-					}
-				});
-			}	
+			$.kernelyConfirm(html,this.confirmCancel);
+		},
+		confirmCancel: function(){
+			$.ajax({
+				url:"/holiday/cancel/" + lineSelected.vid,
+				success: function(){
+					var successHtml = $("#holiday-canceled-template").html();	
+					$.writeMessage("success",successHtml);
+					tableView1.reload();
+					$("#button_canceled").attr('disabled','disabled');
+				}
+			});
 		}
 		
 	})

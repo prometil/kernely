@@ -32,7 +32,7 @@ html {
 /* Containers */
 
 #main_title{
-	height:50px;
+	height:auto;
 	font-size:20px;
 	color:#97ad17;
 	font-weight:bold;
@@ -227,32 +227,6 @@ div#profilePU-footer{
 	text-align:center;
 }
 
-/* notifications*/
-div#notification_to_user{
-	height:14px;
-}
-div.success-notification{
-	color:darkgreen;
-	background-color:#CCFFCC;
-	border-color:darkgreen;
-	border-width:1px;
-	font-size:12px;
-}
-div.error-notification{
-	color:darkred;
-	background-color:#FFCCCC;
-	border-color:darkred;
-	border-width:1px;
-	font-size:12px;
-}
-div.info-notification{
-	color:darkblue;
-	background-color:#FFFFCC;
-	border-color:darkblue;
-	border-width:1px;
-	font-size:12px;
-}
-
 /* content */
 div#content {
 	padding: 10px;
@@ -275,6 +249,7 @@ div.button-bar {
 	width:70px;
 	height:28px;
 	cursor:pointer;
+	font-weight:bold;
 }
 
 .button_ok{
@@ -333,4 +308,56 @@ table.kernely_table th{
 
 .clear{
 	clear:both;
+}
+
+/* Confirm dialog */
+.ui-widget-header{
+	background:#e4e4e4;
+	border: 0px;
+	background: #e4e4e4;
+	color: black;
+	font-weight: bold;
+}
+#kernely-confirm-dialog{
+	background-color:#f5f5f5;
+}
+
+#kernely-confirm-buttons{
+	margin:20px;
+	float:right;
+}
+
+/* notifications*/
+div#notification_to_user{
+	height:14px;
+}
+div.success-notification{
+	color:#000;
+	text-decoration:italic;
+	background-color:#eceee0;
+	font-size:12px;
+	padding:10px;
+	margin:10px;
+	font-weight: normal;
+	font-style: italic;
+}
+div.error-notification{
+	color:#000;
+	text-decoration:italic;
+	background-color:#eddfdf;
+	font-size:12px;
+	padding:10px;
+	margin:10px;
+	font-weight: normal;
+	font-style: italic;
+}
+div.info-notification{
+	color:#000;
+	text-decoration:italic;
+	background-color:#e8f3f7;
+	font-size:12px;
+	padding:10px;
+	margin:10px;
+	font-weight: normal;
+	font-style: italic;
 }

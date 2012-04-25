@@ -1,13 +1,14 @@
 {% extends "templates/layout.html" %}
 
 {% block css %}
-	<link rel="stylesheet" type="text/css" href="/css/project_list.css"/>
+<link rel="stylesheet" type="text/css" href="/css/project_list.css"/>
+{% endblock %}
+
+{% block title %}
+{% i18n "project_list_title" %}
 {% endblock %}
 
 {% block content %}
-	<div id="project_list_header">
-	{% i18n "project_list_title" %}
-	</div>
 	<div id="project_list_container">
 	{% for proj in project %}
 		<div id="project-{{proj.id}}" class="proj">

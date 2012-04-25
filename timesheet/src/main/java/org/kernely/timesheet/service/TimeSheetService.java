@@ -282,7 +282,6 @@ public class TimeSheetService extends AbstractService {
 			// Get the time sheet with the date
 			long timeSheetId = this.getTimeSheet(new DateTime(timeSheetDetailDTO.day).getWeekOfWeekyear(), new DateTime(timeSheetDetailDTO.day).getYear(), getAuthenticatedUserModel().getId(), false).id;
 			timeSheet = em.get().find(TimeSheet.class, timeSheetId);
-
 		}
 		
 		if (timeSheetDetailDTO.dayId != 0 && timeSheetDetailDTO.projectId != 0) {
@@ -298,6 +297,7 @@ public class TimeSheetService extends AbstractService {
 			// Create a new detail.
 			// Get detail of the timesheet corresponding to the day
 			timeSheetDay = new ArrayList<TimeSheetDay>(timeSheet.getDays()).get(timeSheetDetailDTO.index);
+			
 			// If a detail for the same project exists for this day, the existing detail should have been updated
 			for (TimeSheetDetailProject existingDetailProject : timeSheetDay.getDetailsProjects()){
 				if (project.getId() == existingDetailProject.getId()){
@@ -315,7 +315,7 @@ public class TimeSheetService extends AbstractService {
 			em.get().merge(timeSheetDay);
 			timeSheetDetailDTO.dayId = timeSheetDay.getId();
 		}
-		
+		timeSheetDetailDTO.timeSheetId = timeSheet.getId();
 		return timeSheetDetailDTO;
 
 	}

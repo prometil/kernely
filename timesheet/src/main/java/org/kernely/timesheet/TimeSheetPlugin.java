@@ -22,7 +22,7 @@ public class TimeSheetPlugin extends AbstractPlugin {
 	 * Default constructor
 	 */
 	public TimeSheetPlugin() {
-		super(NAME);
+		super();
 		registerName(NAME);
 		registerPath("/timesheet");
 		registerController(TimeSheetController.class);

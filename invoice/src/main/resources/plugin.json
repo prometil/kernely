@@ -1,0 +1,10 @@
+{
+    "name": "invoice",
+    "plugin": "org.kernely.invoice.InvoicePlugin",
+    "version": "0.1",
+    "author": "kernely.org",
+    "description": "Invoice plugin",
+    "configuration": 
+        { "vat": "19.6,5.5" 
+    }
+}

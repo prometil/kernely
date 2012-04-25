@@ -4,6 +4,11 @@
 	<link rel="stylesheet" type="text/css" href="/css/timesheet.css"/>
 {% endblock %}
 
+{% block title %}
+	{% i18n "timesheet" %}
+{% endblock %}
+
+
 {% block javascript %}
 	<script type="text/javascript" src="/js/timesheet_main.js"></script>
 {% endblock %}
@@ -14,6 +19,7 @@
 	
 	<script type="text/html" id="project-title-template">{% i18n "timesheet_project_title" %}</script>
 	<script type="text/html" id="confirm-remove-line-template">{% i18n "timesheet_remove_line_confirm" %}</script>
+	<script type="text/html" id="confirm-remove-expense-line-template">{% i18n "timesheet_remove_expense_line_confirm" %}</script>
 	<script type="text/html" id="total-template">{% i18n "timesheet_total" %}</script>
 	<script type="text/html" id="expense-line-title-template">{% i18n "expense_line_title" %}</script>
 	<script type="text/html" id="delete-button-template"><input type="button" class="deleteButton" value="{% i18n "delete" %}"/></script>

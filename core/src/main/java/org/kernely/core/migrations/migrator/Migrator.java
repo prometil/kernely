@@ -48,6 +48,7 @@ public class Migrator {
 
 	/**
 	 * Constructor
+	 * 
 	 * @param pConfiguration
 	 * @param pluginList
 	 */
@@ -84,7 +85,8 @@ public class Migrator {
 	}
 
 	/**
-	 * Add a  version to the kernely_schema_version plugin 
+	 * Add a version to the kernely_schema_version plugin
+	 * 
 	 * @param connection
 	 * @param version
 	 * @param name
@@ -110,35 +112,48 @@ public class Migrator {
 		Connection conn = null;
 		Properties connectionProps = new Properties();
 		try {
-			log.debug("Hibernate driver : {}",configuration.getString("hibernate.connection.driver_class"));
-			Class.forName(configuration.getString("hibernate.connection.driver_class"));
-			connectionProps.put("user", configuration.getString("hibernate.connection.username"));
-			connectionProps.put("password", configuration.getString("hibernate.connection.password"));
-			conn = DriverManager.getConnection(configuration.getString("hibernate.connection.url"), connectionProps);
+			String hibernateDriverName = configuration.getString("hibernate.connection.driver_class");
+			if (hibernateDriverName != null) {
+				log.debug("Hibernate driver : {}", hibernateDriverName);
+				Class.forName(hibernateDriverName);
+				connectionProps.put("user", configuration.getString("hibernate.connection.username"));
+				connectionProps.put("password", configuration.getString("hibernate.connection.password"));
+				conn = DriverManager.getConnection(configuration.getString("hibernate.connection.url"), connectionProps);
 
-			// initialise the database
-			DatabaseMetaData metaData = conn.getMetaData();
-			ResultSet rs = metaData.getTables(null, null, "kernely_schema_version", null);
-			if (!rs.next()) {
-				log.info("Initialising database");
-				CreateTable name = CreateTable.name("kernely_schema_version");
-				name.column("version", "varchar(20)");
-				name.column("plugin", "varchar(50)");
-				name.execute(conn);
-			}
-			rs.close();
+				// initialise the database
+				DatabaseMetaData metaData = conn.getMetaData();
+				ResultSet rs = metaData.getTables(null, null, "kernely_schema_version", null);
+				if (!rs.next()) {
+					log.info("Initialising database");
+					CreateTable name = CreateTable.name("kernely_schema_version");
+					name.column("version", "varchar(20)");
+					name.column("plugin", "varchar(50)");
+					name.execute(conn);
+				}
+				rs.close();
 
-			for (AbstractPlugin plugin : plugins) {
-				SortedSet<Version> versions = getCurrentSchemaVersion(conn, plugin.getName());
-				if (versions.size() > 0) {
-					Version currentVersion = versions.last();
-					log.info("{} plugin schema is in version {}", plugin.getName(), currentVersion);
-					for (Migration migration : plugin.getMigrations()) {
-						int compareTo = currentVersion.compareTo(migration.getVersion());
-						if (compareTo < 0) {
+				for (AbstractPlugin plugin : plugins) {
+					SortedSet<Version> versions = getCurrentSchemaVersion(conn, plugin.getName());
+					if (versions.size() > 0) {
+						Version currentVersion = versions.last();
+						log.info("{} plugin schema is in version {}", plugin.getName(), currentVersion);
+						for (Migration migration : plugin.getMigrations()) {
+							int compareTo = currentVersion.compareTo(migration.getVersion());
+							if (compareTo < 0) {
+								log.info("Applying version {} for plugin {}", migration.getVersion(), plugin.getName());
+								if (migration.apply(conn)) {
+
+									addVersion(conn, migration.getVersion(), plugin.getName());
+								} else {
+									log.error("Cannot apply migration {} due to previous errors", migration.getVersion());
+									return;
+								}
+							}
+						}
+					} else {
+						for (Migration migration : plugin.getMigrations()) {
 							log.info("Applying version {} for plugin {}", migration.getVersion(), plugin.getName());
 							if (migration.apply(conn)) {
-
 								addVersion(conn, migration.getVersion(), plugin.getName());
 							} else {
 								log.error("Cannot apply migration {} due to previous errors", migration.getVersion());
@@ -146,19 +161,14 @@ public class Migrator {
 							}
 						}
 					}
-				} else {
-					for (Migration migration : plugin.getMigrations()) {
-						log.info("Applying version {} for plugin {}", migration.getVersion(), plugin.getName());
-						if (migration.apply(conn)) {
-							addVersion(conn, migration.getVersion(), plugin.getName());
-						} else {
-							log.error("Cannot apply migration {} due to previous errors", migration.getVersion());
-							return;
-						}
-					}
-				}
 
+				}
 			}
+			else{
+				log.error("Hibernate driver class is not defined");
+				System.exit(0);
+			}
+
 		} catch (ClassNotFoundException e) {
 			log.error("", e);
 		} catch (SQLException e) {

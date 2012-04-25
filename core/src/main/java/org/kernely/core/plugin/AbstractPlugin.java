@@ -56,6 +56,9 @@ import com.google.inject.spi.TypeListener;
 public abstract class AbstractPlugin extends AbstractModule {
 	
 	protected Logger log = LoggerFactory.getLogger(this.getClass());
+	
+	
+	protected Manifest manifest;
 
 	// the controller list
 	private List<Class<? extends AbstractController>> controllers;
@@ -76,9 +79,6 @@ public abstract class AbstractPlugin extends AbstractModule {
 	private List<String> menus;
 	
 	
-	//the name of the plugin
-	private String name;
-
 	// the path of the plugin
 	private List<String> path;
 
@@ -87,8 +87,7 @@ public abstract class AbstractPlugin extends AbstractModule {
 	 * 
 	 * @param pName the name of the plugin
 	 */
-	public AbstractPlugin(String pName) {
-		name = pName;
+	public AbstractPlugin() {
 		menus = new ArrayList<String>();
 		path = new ArrayList<String>();
 		controllers = new ArrayList<Class<? extends AbstractController>>();
@@ -294,14 +293,16 @@ public abstract class AbstractPlugin extends AbstractModule {
 	 * @return the name
 	 */
 	public String getName() {
-		return name;
+		return manifest.name;
 	}
 
 	/**
-	 * @param name the name to set
+	 * Set the plugin manifest
+	 * @param m the manifest to set
 	 */
-	public void setName(String name) {
-		this.name = name;
+	public void setManifest(Manifest m) {
+		manifest = m;
+		
 	}
 
 }

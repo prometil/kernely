@@ -152,22 +152,20 @@ AppExpenseType = (function($){
 		
 		deleteType: function(){
 			var template = $("#expense-type-delete-confirm-template").html();
-			
-			var answer = confirm(template);
-			if (answer){
-				$.ajax({
-					type: "GET",
-					url:"/admin/expense/type/delete",
-					data:{idType: lineSelected.vid},
-					success: function(){
-						var successHtml = $("#success-message-template").html();
-						$("#span_notifications").text(successHtml);
-						$("#span_notifications").fadeIn(1000);
-						$("#span_notifications").fadeOut(3000);
-						tableView.reload();
-					}
-				});
-			}
+			$.kernelyConfirm(template,this.confirmDeleteType);
+		},
+		
+		confirmDeleteType: function(){
+			$.ajax({
+				type: "GET",
+				url:"/admin/expense/type/delete",
+				data:{idType: lineSelected.vid},
+				success: function(){
+					var successHtml = $("#success-message-template").html();
+					$.writeMessage("success",successHtml);
+					tableView.reload();
+				}
+			});
 		},
 		
 		render:function(){
@@ -224,14 +222,10 @@ AppExpenseType = (function($){
 	       			$('#mask').hide();
 
 	       			var successHtml = $("#success-message-template").html();
-					$("#span_notifications").text(successHtml);
-					$("#span_notifications").fadeIn(1000);
-					$("#span_notifications").fadeOut(3000);
+					$.writeMessage("success",successHtml);
 					tableView.reload();
 				  } else {
-                    $("#errors_message").text(data.result);
-                    $("#errors_message").fadeIn(1000);
-                    $("#errors_message").fadeOut(3000);
+                    $.writeMessage("error",data.result);
 				  }
 				}
 			});
@@ -276,8 +270,6 @@ AppExpenseType = (function($){
 		},
 		render : function(){
 			var template = $("#popup-expense-type-admin-update-template").html();
-		
-			
 			
 			var view = {name : this.vname, ratio: this.vratio};
 			var html = Mustache.to_html(template, view);
@@ -312,14 +304,10 @@ AppExpenseType = (function($){
 						$('#mask').hide();
 
 						var successHtml = $("#success-message-template").html();
-						$("#span_notifications").text(successHtml);
-						$("#span_notifications").fadeIn(1000);
-						$("#span_notifications").fadeOut(3000);
+						$.writeMessage("success",successHtml);
 						tableView.reload();
 					} else {
-						$("#errors_message").text(data.result);
-						$("#errors_message").fadeIn(1000);
-						$("#errors_message").fadeOut(3000);
+						$.writeMessage("error",data.result);
 					}
 				}
 			});
