@@ -43,6 +43,11 @@ public class GroupDTO {
 	 * The list of member of the group
 	 */
 	public List<UserDTO> users;
+	
+	/**
+	 * Number of users in this group
+	 */
+	public int nbUser;
 
 	/**
 	 * Default Constructor
@@ -65,6 +70,7 @@ public class GroupDTO {
 		this.id = id;
 		this.name = pName;
 		this.users = users;
+		this.nbUser = users.size();
 	}
 
 }
