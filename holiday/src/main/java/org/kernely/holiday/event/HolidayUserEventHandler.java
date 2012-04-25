@@ -17,7 +17,7 @@
  * License along with Kernely.
  * If not, see <http://www.gnu.org/licenses/>.
  */
-package org.kernely.holiday;
+package org.kernely.holiday.event;
 
 import java.util.List;
 

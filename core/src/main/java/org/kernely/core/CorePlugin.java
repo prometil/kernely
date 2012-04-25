@@ -39,7 +39,6 @@ import org.kernely.core.model.Role;
 import org.kernely.core.model.User;
 import org.kernely.core.model.UserDetails;
 import org.kernely.core.plugin.AbstractPlugin;
-import org.kernely.core.plugin.PluginManager;
 import org.kernely.core.service.mail.MailJob;
 import org.kernely.core.service.mail.MailService;
 import org.kernely.core.service.mail.Mailer;
@@ -75,7 +74,7 @@ public class CorePlugin extends AbstractPlugin {
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public CorePlugin() {
 	
-		super(NAME);
+		super();
 		log.trace("Instanciate core plugin");
 		registerPath(null);
 		registerName(NAME);

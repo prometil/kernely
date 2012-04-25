@@ -57,15 +57,13 @@ import com.google.inject.servlet.ServletModule;
 public class GuiceServletConfig extends GuiceServletContextListener {
 
 	private static Logger log = LoggerFactory.getLogger(GuiceServletConfig.class);
-	private PluginManager manager;
 
 	/**
 	 * Constructor.
 	 * 
 	 * @param manager the plugin manager.
 	 */
-	public GuiceServletConfig(PluginManager manager) {
-		this.manager = manager;
+	public GuiceServletConfig() {
 	}
 
 	private ServletContext servletContext;
@@ -84,13 +82,13 @@ public class GuiceServletConfig extends GuiceServletContextListener {
 	protected Injector getInjector() {
 
 		List<Module> list = new ArrayList<Module>();
-		for (AbstractPlugin plugin : manager.getPlugins()) {
+		for (AbstractPlugin plugin : PluginManager.getPlugins()) {
 			Module module = plugin.getModule();
 			if (module != null) {
 				list.add(module);
 			}
 		}
-		list.add(new KernelyServletModule(manager));
+		list.add(new KernelyServletModule());
 		list.add(new ShiroAopModule());
 		list.add(new ShiroConfigurationModule(servletContext));
 		list.add(ShiroConfigurationModule.guiceFilterModule());
@@ -100,7 +98,7 @@ public class GuiceServletConfig extends GuiceServletContextListener {
 		Injector injector = Guice.createInjector(list);
 
 		// inject plugin back for start
-		for (AbstractPlugin plugin : manager.getPlugins()) {
+		for (AbstractPlugin plugin : PluginManager.getPlugins()) {
 			injector.injectMembers(plugin);
 			plugin.start();
 		}
@@ -110,7 +108,7 @@ public class GuiceServletConfig extends GuiceServletContextListener {
 		GuiceSchedulerFactory guiceSchedulerFactory = injector.getInstance(GuiceSchedulerFactory.class);
 		try {
 			scheduler.setJobFactory(guiceSchedulerFactory);
-			for (AbstractPlugin plugin : manager.getPlugins()) {
+			for (AbstractPlugin plugin : PluginManager.getPlugins()) {
 				for (Map.Entry<Class<? extends Job>, Trigger> entry : plugin.getJobs().entrySet()) {
 					JobDetail job = newJob(entry.getKey()).build();
 					scheduler.scheduleJob(job, entry.getValue());

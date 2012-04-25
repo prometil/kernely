@@ -23,12 +23,13 @@ package org.kernely.holiday;
 import org.joda.time.DateTime;
 import org.kernely.core.plugin.AbstractPlugin;
 import org.kernely.holiday.controller.HolidayAdminController;
-import org.kernely.holiday.controller.HolidayPlanningController;
-import org.kernely.holiday.controller.HolidaySummaryController;
 import org.kernely.holiday.controller.HolidayMainController;
 import org.kernely.holiday.controller.HolidayManagerRequestController;
 import org.kernely.holiday.controller.HolidayManagerUserController;
+import org.kernely.holiday.controller.HolidayPlanningController;
 import org.kernely.holiday.controller.HolidayRequestController;
+import org.kernely.holiday.controller.HolidaySummaryController;
+import org.kernely.holiday.event.HolidayUserEventHandler;
 import org.kernely.holiday.job.HolidaysDailyJob;
 import org.kernely.holiday.job.HolidaysMonthlyJob;
 import org.kernely.holiday.migrations.Migration01;
@@ -43,11 +44,11 @@ import org.kernely.holiday.service.HolidayRequestService;
 import org.kernely.holiday.service.HolidayService;
 import org.quartz.CronScheduleBuilder;
 import org.quartz.DateBuilder;
+import org.quartz.DateBuilder.IntervalUnit;
 import org.quartz.ScheduleBuilder;
 import org.quartz.SimpleScheduleBuilder;
 import org.quartz.Trigger;
 import org.quartz.TriggerBuilder;
-import org.quartz.DateBuilder.IntervalUnit;
 
 import com.google.common.eventbus.EventBus;
 import com.google.inject.Inject;
@@ -70,7 +71,7 @@ public class HolidayPlugin extends AbstractPlugin {
 	 */
 	@SuppressWarnings({ "unchecked" })
 	public HolidayPlugin(){
-		super(NAME);
+		super();
 		registerPath("/holiday");
 		registerName(NAME);
 		registerController(HolidayMainController.class);

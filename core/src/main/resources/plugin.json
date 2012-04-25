@@ -1,0 +1,51 @@
+{
+    "name": "core",
+    "plugin": "org.kernely.core.CorePlugin",
+    "version": "0.1",
+    "author": "kernely.org",
+    "description": "Core plugin of the kernely project",
+    "configuration": {
+        "recall_time": 7,
+        "server": {
+            "port": 8080
+        },
+        "hibernate": {
+            "connection": {
+                "driver_class": "org.postgresql.Driver",
+                "url": "jdbc:postgresql://localhost:5432/kernely_db",
+                "username": "postgres",
+                "password": "kernely",
+                "pool_size": "10",
+                "autocommit": "false"
+            },
+            "hbm2ddl": {
+                "auto": "validate"
+            },
+            "dialect": "org.hibernate.dialect.PostgreSQLDialect",
+            "show_sql": "false",
+            "cache": {
+                "use_second_level_cache": "true",
+                "provider_class": "net.sf.ehcache.hibernate.SingletonEhCacheProvider"
+            }
+        },
+        "locale": {
+            "lang": "en",
+            "country": "US"
+        },
+        "mail": {
+            "debug": "true",
+            "host": {},
+            "from": "Kernely",
+            "smtp": {
+                "host": "",
+                "port": "",
+                "user": "",
+                "password": "",
+                "auth": true
+            }
+        },
+        "workpath": {
+            "url": "../workstation"
+        }
+    }
+}
