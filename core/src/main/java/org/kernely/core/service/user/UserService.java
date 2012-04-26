@@ -338,6 +338,21 @@ public class UserService extends AbstractService {
 		UserDetails ud = (UserDetails) query.getSingleResult();
 		return new UserDetailsDTO(ud);
 	}
+	
+	/**
+	 * Get details by id.
+	 * 
+	 * @param id
+	 *            The id of the userDetails
+	 * @return The DTO associated to this details
+	 */
+	@Transactional
+	public UserDetailsDTO getUserDetails(long userDetailsId) {
+		Query query = em.get().createQuery("SELECT e FROM UserDetails e WHERE id=:detailsId");
+		query.setParameter("detailsId", userDetailsId);
+		UserDetails ud = (UserDetails) query.getSingleResult();
+		return new UserDetailsDTO(ud);
+	}
 
 	/**
 	 * Get the current user authenticated in the application

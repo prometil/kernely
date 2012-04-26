@@ -136,56 +136,79 @@ jQuery.fn.extend({
 	// - eventName :
 	// - events :
 	// - reload :
-	kernely_table: function(options, editable){
-		// Force options to be an object
-		options = options || {};
-		if(!options.reload){
-			// Add the header to the table
-			var thead = document.createElement("thead");
-			var tr = document.createElement("tr");
-			if($.isArray(options.columns)){
-				$.each(options.columns, function(){
-					$(tr).append("<th>"+ this +"</th>");
-				});
-			}
-			else{
-				$(tr).append("<th>"+ options.columns +"</th>");
-			}
-			$(thead).append($(tr));
-			this.append($(thead));
-		}
-	
-		if(typeof(options.data) != "undefined"){
-			var table = this;
-			if($.isArray(options.data)){
-				var parent;
-				$.each(options.data, function(){
-					var array = new Array();
-					parent = this;
-					if($.isArray(options.elements)){
-						$.each(options.elements, function(){
-							array.push(parent[this]);
-						});
-					}
-					else{
-						array.push(parent[option.elements]);
-					}
-					table.append(new TableLineView(parent[options.idField],array, options.eventName, options.events).render().el);
-				});
-			}
-			else{
-				var array = new Array();
-				if($.isArray(options.elements)){
-					$.each(options.elements, function(){
-						array.push(options.data[this]);
-					});
-				}
-				else{
-					array.push(options.data[option.elements]);
-				}
-				table.append(new TableLineView(options.data[options.idField], array, options.eventName, options.events).render().el);
-			}
-		}
+	kernely_table: function(options){
+    // Force options to be an object
+    options = options || {};
+    options.events = options.events || {};
+    options.eventNames = options.eventNames || {};
+    if(!options.reload){
+            // Add the header to the table
+            var thead = document.createElement("thead");
+            var tr = document.createElement("tr");
+            if($.isArray(options.columns)){
+                    $.each(options.columns, function(){
+                            $(tr).append("<th>"+ this +"</th>");
+                    });
+            }
+            else{
+                    $(tr).append("<th>"+ options.columns +"</th>");
+            }
+            $(thead).append($(tr));
+            this.append($(thead));
+    }
+
+    if(typeof(options.data) != "undefined"){
+            var table = this;
+            if($.isArray(options.data)){
+                    var parent;
+                    $.each(options.data, function(){
+                            var array = new Array();
+                            parent = this;
+                            var elem;
+                            if($.isArray(options.elements)){
+                                    $.each(options.elements, function(){
+                                            if(this.lastIndexOf(".") != -1){
+                                                    var temp = this.split(".");
+                                                    elem = parent;
+                                                    $.each(temp, function(){
+                                                            elem = elem[this];
+                                                    });
+                                            }
+                                            else{
+                                                    elem = parent[this];
+                                            }
+                                            array.push(elem);
+                                    });
+                            }
+                            else{
+                                    if(options.elements.lastIndexOf(".") != -1){
+                                            var temp = options.elements.split(".");
+                                            elem = parent;
+                                            $.each(temp, function(){
+                                                    elem = elem[this];
+                                            });
+                                    }
+                                    else{
+                                            elem = parent[options.elements];
+                                    }
+                                    array.push(parent[option.elements]);
+                            }
+                            table.append(new TableLineView(parent[options.idField],array, options.eventName, options.events).render().el);
+                    });
+            }
+            else{
+                    var array = new Array();
+                    if($.isArray(options.elements)){
+                            $.each(options.elements, function(){
+                                    array.push(options.data[this]);
+                            });
+                    }
+                    else{
+                            array.push(options.data[option.elements]);
+                    }
+                    table.append(new TableLineView(options.data[options.idField], array, options.eventName, options.events).render().el);
+            }
+	    }
 	},
 
 	reload_table: function(options){
@@ -193,5 +216,53 @@ jQuery.fn.extend({
 		body.empty();
 		options.reload = true;
 		this.kernely_table(options);
+	},
+	
+	// Defines a generic behavior for all dialogs in the application
+	// The "options" parameter is the configuration of the table,
+	// It contains X fields :
+	// - title : The title of the dialog
+	// - content : The content of the dialog
+	// - eventName : Names of the events
+	// - events : Events
+	kernely_dialog: function(options){
+		
+		if (options == "close"){
+			$(this).dialog("close");
+		} else if (options == "open"){
+			$(this).dialog("open");
+		} else {
+			// Force options to be an object
+			options = options || {};
+			options.events = options.events || {};
+			options.eventNames = options.eventNames || {};
+			this.html(options.content);
+			if (options.height == null){
+				options.height = "auto";
+			}
+			if (options.width == null){
+				options.width = "auto";
+			}
+			this.dialog({autoOpen: false,
+							height: options.height,
+							width: options.width,
+							modal:true,
+							title: options.title,
+							resizable: false,
+							zIndex: 2});
+
+			var parent = this;
+			
+			// Considering events
+			if($.isArray(options.eventNames)){
+				$.each(options.eventNames, function(){
+					$(options.events[this].el).bind(this, options.events[this].event);
+				});
+			}
+			else{
+				$(options.events[options.eventNames].el).bind(options.eventNames, options.events[options.eventNames].event);
+			}
+		}
 	}
+
 });

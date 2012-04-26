@@ -310,7 +310,7 @@ table.kernely_table th{
 	clear:both;
 }
 
-/* Confirm dialog */
+/* Dialogs */
 .ui-widget-header{
 	background:#e4e4e4;
 	border: 0px;
@@ -327,6 +327,16 @@ table.kernely_table th{
 	float:right;
 }
 
+.ui-dialog-title{
+	text-align:center;
+}
+
+.dialog-buttons-container{
+	margin-top:10px;
+	margin-bottom:10px;
+	float:right;
+}
+
 /* notifications*/
 div#notification_to_user{
 	height:14px;
@@ -337,7 +347,7 @@ div.success-notification{
 	background-color:#eceee0;
 	font-size:12px;
 	padding:10px;
-	margin:10px;
+	margin:10px 0px;
 	font-weight: normal;
 	font-style: italic;
 }
