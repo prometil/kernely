@@ -93,7 +93,7 @@
 	
 	
 	UserAdminButtonsView = Backbone.View.extend({
-		el:"#user_admin_container",
+		el:"#user_admin_buttons",
 		
 		events: {
 			"click .createButton" : "createuser",
