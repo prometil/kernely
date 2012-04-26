@@ -61,8 +61,12 @@
 		<div id="errors_message"></div>
 	</script>
 	
-	<script type="text/html" id="table-header-template">
-		<tr><th>{% i18n "group.name" %}</th><th>{% i18n "group_users" %}</th></tr>
+	<script type="text/html" id="table-group_name-column">
+		{% i18n "group_name" %}
+	</script>
+	
+	<script type="text/html" id="table-group_members-column">
+		{% i18n "group_members" %}
 	</script>
 	
 	<script type="text/html" id="confirm-group-deletion-template">

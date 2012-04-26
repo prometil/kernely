@@ -3,6 +3,7 @@ bin
 .classpath
 .settings/*
 .DS_Store
+.log
 target
 */build/*
 stream/.project

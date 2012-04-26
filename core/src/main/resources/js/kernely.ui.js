@@ -58,7 +58,8 @@ $.extend({
 		$(div).html(html);
 		$(div).dialog({
 			autoOpen: false,
-			modal: true
+			modal: true,
+			resizable:false
 		});
 	
 		$("#confirm-yes-button").click(function(){callback(param); $(div).dialog("destroy")});
@@ -67,7 +68,7 @@ $.extend({
 	}
 });
 
-
+/* View used to generate table lines.*/
 TableLineView = Backbone.View.extend({
 	tagName: "tr",
 	className: 'kernely_table_line',
@@ -128,17 +129,20 @@ TableLineView = Backbone.View.extend({
 jQuery.fn.extend({
 	// Defines a generic behavior for all tables in the application
 	// The "options" parameter is the configuration of the table,
-	// It contains X fields :
-	// - data : 
-	// - idField : 
-	// - elements :
-	// - columns :
-	// - eventName :
-	// - events :
-	// - reload :
-	kernely_table: function(options, editable){
+	// It contains 8 fields :
+	// - data : The data to display in the table
+	// - idField : The name of the field representing the id of the current line
+	// - elements : The name of the fields present in data to localize the values
+	// - columns : The names of the columns to diaplay in the header of the table
+	// - eventName : The names of the different custom events to implements
+	// - events : The association between the name and the function called of a custom event
+	// - reload : If true, only reload the given data in the table
+	// - editable : 
+	kernely_table: function(options){
 		// Force options to be an object
 		options = options || {};
+		options.events = options.events || {};
+		options.eventNames = options.eventNames || {};
 		if(!options.reload){
 			// Add the header to the table
 			var thead = document.createElement("thead");
@@ -162,12 +166,33 @@ jQuery.fn.extend({
 				$.each(options.data, function(){
 					var array = new Array();
 					parent = this;
+					var elem;
 					if($.isArray(options.elements)){
 						$.each(options.elements, function(){
-							array.push(parent[this]);
+							if(this.lastIndexOf(".") != -1){
+								var temp = this.split(".");
+								elem = parent;
+								$.each(temp, function(){
+									elem = elem[this];
+								});
+							}
+							else{
+								elem = parent[this];
+							}
+							array.push(elem);
 						});
 					}
 					else{
+						if(options.elements.lastIndexOf(".") != -1){
+							var temp = options.elements.split(".");
+							elem = parent;
+							$.each(temp, function(){
+								elem = elem[this];
+							});
+						}
+						else{
+							elem = parent[options.elements];
+						}
 						array.push(parent[option.elements]);
 					}
 					table.append(new TableLineView(parent[options.idField],array, options.eventName, options.events).render().el);

@@ -38,6 +38,14 @@ html {
 	font-weight:bold;
 }
 
+.subtitle{
+	height:auto;
+	font-size:13px;
+	color:#97ad17;
+	font-weight:bold;
+	margin: 5px 0 5px 0;
+}
+
 #main{
 	width:1245px;
 	height:auto;
@@ -227,6 +235,35 @@ div#profilePU-footer{
 	text-align:center;
 }
 
+/*Profile left image*/
+#left_profile_container{
+	width:238px;
+	height:228px;
+	background-color:#3e3d40;
+	z-index:1;
+	color:#FFFFFF;
+	text-align:center;
+	font-weight:bold;
+}
+
+#profile_mask{
+	position:absolute;
+	width:238px;
+	height:197px;
+	background-image:url("/images/profile_mask.png");
+}
+
+#image_left_profile{
+	width:238px;
+	height:197px;
+}
+
+#left_profile_name{
+	width:238px;
+	height:40px;
+	padding-top:10px;
+}
+
 /* content */
 div#content {
 	padding: 10px;
@@ -246,7 +283,8 @@ div.button-bar {
 
 /* Buttons style */
 .button, .button_ok, .button_standard {
-	width:70px;
+	min-width:70px;
+	width:auto;
 	height:28px;
 	cursor:pointer;
 	font-weight:bold;
@@ -262,6 +300,11 @@ div.button-bar {
 	background-color:#eceded;
 	color:#000;
 	border: 1px solid #e6e7e7;
+}
+
+.button_standard:hover{
+	background-color:#e3e4e4;
+	color:#000;
 }
 
 /* Table style */

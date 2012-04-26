@@ -21,56 +21,6 @@ AppManagerAdmin = (function($){
 	var lineSelected = null;
 	var tableView = null;
 	
-	
-	ManagerAdminTableLineView = Backbone.View.extend({
-		tagName: "tr",
-		className: 'manager_list_line',
-		
-		vname : null,
-		vnbmembers : null,
-		
-		events: {
-			"click" : "selectLine",
-			"mouseover" : "overLine",
-			"mouseout" : "outLine"
-		},
-		
-		initialize: function(username, users){
-			this.vname = username;
-			this.vnbmembers = users;
-		},
-		selectLine : function(){
-			$(".editButton").removeAttr('disabled');
-			$(".deleteButton").removeAttr('disabled');
-			$(this.el).css("background-color", "#8AA5A1");
-			if(typeof(lineSelected) != "undefined"){
-				if(lineSelected != this && lineSelected != null){
-					$(lineSelected.el).css("background-color", "transparent");
-				}
-			}
-			lineSelected = this;
-		},
-		overLine : function(){
-			if(lineSelected != this){
-				$(this.el).css("background-color", "#EEEEEE");
-			}
-		},
-		outLine : function(){
-			if(lineSelected != this){
-				$(this.el).css("background-color", "transparent");
-			}
-		},
-		render:function(){
-			var template = '<td>{{username}}</td><td>{{members}}</td>';
-			var view = {username : this.vname, members: this.vnbmembers};
-			var html = Mustache.to_html(template, view);
-			
-			$(this.el).html(html);
-			$(this.el).appendTo($("#manager_admin_table"));
-			return this;
-		}		
-	})
-	
 	ManagerAdminTableView = Backbone.View.extend({
 		el:"#manager_admin_table",
 		events:{
@@ -78,41 +28,39 @@ AppManagerAdmin = (function($){
 		},
 		initialize:function(){
 			var parent = this; 
-			var html= $("#table-header-template").html();
-
-			$(this.el).html(html);
+			
+			var templateNameColumn = $("#table-manager-name-column").text();
+			var templateManagedColumn = $("#table-manager-users-column").text();
+			$(parent.el).kernely_table({
+				columns:[templateNameColumn, templateManagedColumn],
+				editable:true
+			});
+			
 			$.ajax({
 				type:"GET",
 				url:"/admin/manager/all",
 				dataType:"json",
 				success: function(data){ 
 					if(data != null){
-						if(data.managerDTO.length > 1 ){
-				    		$.each(data.managerDTO, function() {
-				    			if (this.users.length > 1){
-					    			var view = new ManagerAdminTableLineView(this.name, this.users.length);
-					    			view.render();
-				    			}
-				    			else{
-				    				var view = new ManagerAdminTableLineView(this.name, 1);
-					    			view.render();
-				    			}
-				    		});
-						}
-				    	// In the case when there is only one element
-			    		else{		    		
-			    			if ( data.managerDTO.users.length > 1){
-			    				var view = new ManagerAdminTableLineView(data.managerDTO.name, data.managerDTO.users.length);
-			    				view.render();
-			    			}
-			    			else{
-			    				var view = new ManagerAdminTableLineView(data.managerDTO.name, 1);
-			    				view.render();
-			    			}
-						}
+						var dataManager = data.managerDTO;
+						$(parent.el).reload_table({
+							data: dataManager,
+							idField:"id",
+							elements:["name", "nbUsers"],
+							eventNames:["click"],
+							events:{
+								"click": parent.selectLine
+							},
+							editable:true
+						});
 					}
 				}
 			});
+		},
+		selectLine : function(e){
+			$(".editButton").removeAttr('disabled');
+			$(".deleteButton").removeAttr('disabled');
+			lineSelected = e.data.line;
 		},
 		reload: function(){
 			this.initialize();
@@ -194,7 +142,7 @@ AppManagerAdmin = (function($){
 					var successHtml = $("#manager-success-template").html();
 					
 					$.writeMessage("success",successHtml);
-					tableView.reload();
+					//tableView.reload();
 				}
 			});
 		},
@@ -283,7 +231,7 @@ AppManagerAdmin = (function($){
 						var successHtml = $("#manager-success-template").html();
 						
 						$.writeMessage("success",successHtml);
-						tableView.reload();
+						//tableView.reload();
 					} else {
 						$.writeMessage("error",data.result,"#errors_message");
 					}
@@ -361,7 +309,7 @@ AppManagerAdmin = (function($){
 						var successHtml = $("#manager-success-template").html();
 						
 						$.writeMessage("success",successHtml);
-						tableView.reload();
+						//tableView.reload();
 					} else {
 						$.writeMessage("error",data.result,"#errors_message");
 					}
