@@ -78,10 +78,6 @@ public abstract class AbstractPlugin extends AbstractModule {
 	// the name of the abstract plugin
 	private List<String> menus;
 	
-	
-	//the name of the plugin
-	private String name;
-
 	// the path of the plugin
 	private List<String> path;
 
@@ -296,15 +292,9 @@ public abstract class AbstractPlugin extends AbstractModule {
 	 * @return the name
 	 */
 	public String getName() {
-		return name;
+		return manifest.name;
 	}
 
-	/**
-	 * @param name the name to set
-	 */
-	public void setName(String name) {
-		this.name = name;
-	}
 	/**
 	 * Set the plugin manifest
 	 * @param m the manifest to set
