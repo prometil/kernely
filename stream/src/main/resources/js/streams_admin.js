@@ -306,7 +306,6 @@ AppStreamAdmin = (function($){
 				
 				$.each(usersSelect, function(){
 					rights += '{"id":'+this.id+',"idType":"user", "permission":"'+$("#"+this.id+" :selected").val()+'"}';
-					console.log(rights);
 					count++;
 					if(count<usersSelect.length){
 						rights += ',';
