@@ -19,6 +19,7 @@
 	</script>
 
 	<script type="text/html" id="popup-user-admin-create-template">
+		<div id="errors_message"></div>
 		<fieldset>
 			<legend>{% i18n "connection_informations" %}</legend>
 			{% i18n "username" %}: <input type="text" name="login"/><br/>
@@ -32,11 +33,11 @@
 			{% i18n "user_hiredate" %}: <input type="text" name="hire"/>
 		</fieldset>
 		<br/>
-		<div id="errors_message"></div>
 		<div class="dialog-buttons-container"><input type="button" value="{% i18n "create" %}" class="createUser button_ok"/></div>
 
 	</script>
 	<script type="text/html" id="popup-user-admin-update-template">
+		<div id="errors_message"></div>
 		<fieldset>
 		<legend>{% i18n "connection_informations" %}</legend>
 		{% i18n "login" %}: <input type="text" name="login" value="{{"{{"}}login{{"}}"}}"/><br/>
@@ -55,7 +56,6 @@
 			</div>
 		</fieldset>
 		<div class="dialog-buttons-container"><input type="button" value="{% i18n "update" %}" class="updateUser button_ok"/></div>
-		<div id="errors_message"></div>
 	</script>
 	
 	<script type="text/html" id="lock-button-template">{% i18n "lock" %}</script>
@@ -86,16 +86,21 @@
 	{% i18n "users_admin_title" %}
 {% endblock %}
 
+{% block adminbuttons %}
+	<div id="user_admin_buttons">
+		<input type="button" class="createButton button_standard" value="{% i18n "create" %}"/>
+		<input type="button" class="editButton button_standard" value="{% i18n "edit" %}" disabled="disabled"/>
+		<input type="button" class="lockButton button_standard" value="{% i18n "lock" %}" disabled="disabled"/>
+	</div>	
+{% endblock %}
+
+<div class="clear"></div>
+
 {% block admin %}
 	<div id="user_header" style=""></div>
 	<div id="modal_window_user"></div>
 	
 	<div id="user_admin_container">
-	        <div id="user_admin_buttons">
-	                <input type="button" class="createButton button_standard" value="{% i18n "create" %}"/>
-	                <input type="button" class="editButton button_standard" value="{% i18n "edit" %}" disabled="disabled"/>
-	                <input type="button" class="lockButton button_standard" value="{% i18n "lock" %}" disabled="disabled"/>
-	        </div>
 	        <table id="user_admin_table" class="kernely_table">
 	                
 	        </table>

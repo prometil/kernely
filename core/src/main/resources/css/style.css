@@ -339,6 +339,12 @@ table.kernely_table td, table.kernely_table th{
 	border-right: 1px solid #a0a2a3;
 }
 
+table.kernely_table td{
+	color:#656567;
+	padding-left:5px;
+	padding-right:5px;
+}
+
 table.kernely_table th{
 	background-color: #e3e4e4;
 }
@@ -381,8 +387,9 @@ table.kernely_table th{
 }
 
 /* notifications*/
-div#notification_to_user{
-	height:14px;
+div#notification_container{
+	padding-top:10px;
+	padding-bottom:10px;
 }
 div.success-notification{
 	color:#000;
@@ -400,7 +407,7 @@ div.error-notification{
 	background-color:#eddfdf;
 	font-size:12px;
 	padding:10px;
-	margin:10px;
+	margin:10px 0px;
 	font-weight: normal;
 	font-style: italic;
 }
@@ -410,7 +417,7 @@ div.info-notification{
 	background-color:#e8f3f7;
 	font-size:12px;
 	padding:10px;
-	margin:10px;
+	margin:10px 0px;
 	font-weight: normal;
 	font-style: italic;
 }
