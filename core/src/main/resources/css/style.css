@@ -238,7 +238,7 @@ div#profilePU-footer{
 /*Profile left image*/
 #left_profile_container{
 	width:238px;
-	height:228px;
+	height:238px;
 	background-color:#3e3d40;
 	z-index:1;
 	color:#FFFFFF;
@@ -260,7 +260,7 @@ div#profilePU-footer{
 
 #left_profile_name{
 	width:238px;
-	height:40px;
+	height:30px;
 	padding-top:10px;
 }
 
