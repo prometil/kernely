@@ -61,6 +61,7 @@ html {
 #container_central {
 	width:676px;
 	padding:20px 45px 20px 45px;
+	height:100%;
 }
 
 .container_generic{
@@ -148,10 +149,9 @@ a.menu_item_selected{
 
 /* header profile */
 div#menu_header_profile {
-	right:0px;
 	height: 50px;
-   	position: absolute;
-   	top: 0;
+   	position: relative;
+	float:right; 
    	color:#FFF;
    	font-size:10px;
 }
@@ -265,10 +265,10 @@ div.button-bar {
 }
 
 /* Table style */
-tr:nth-child(odd) {
+table.kernely_table tr:nth-child(odd) {
     background-color: #F6F6F6;
 }
-tr:nth-child(even) {
+table.kernely_table tr:nth-child(even) {
     background-color: #e3e4e4;
 }
 
@@ -284,6 +284,14 @@ table.kernely_table tr{
 	height:25px;
 }
 
+table.kernely_table tr.line_selected{
+	background-color:#c9e559;
+}
+
+table.kernely_table tr.over{
+	background-color:#e3f38d;
+}
+
 table.kernely_table td, table.kernely_table th{
 	border-right: 1px solid #a0a2a3;
 }
@@ -296,6 +304,10 @@ table.kernely_table th{
 /* Helpers */
 .clickable{
 	cursor:pointer;
+}
+
+.clear{
+	clear:both;
 }
 
 /* Confirm dialog */

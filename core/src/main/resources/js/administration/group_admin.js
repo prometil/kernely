@@ -21,59 +21,6 @@
 AppGroupAdmin = (function($){
 	var lineSelected = null;
 	var tableView = null;
-	
-	
-	GroupAdminTableLineView = Backbone.View.extend({
-		tagName: "tr",
-		className: 'group_list_line',
-		
-		vid: null,
-		vname : null,
-		vnbmembers : null,
-		
-		events: {
-			"click" : "selectLine",
-			"mouseover" : "overLine",
-			"mouseout" : "outLine"
-		},
-		
-		initialize: function(id, name, members){
-			this.vid = id;
-			this.vname = name;
-			this.vnbmembers = members;
-		},
-		selectLine : function(){
-			$(".editButton").removeAttr('disabled');
-			$(".deleteButton").removeAttr('disabled');
-			$(this.el).css("background-color", "#8AA5A1");
-			if(typeof(lineSelected) != "undefined"){
-				if(lineSelected != this && lineSelected != null){
-					$(lineSelected.el).css("background-color", "transparent");
-				}
-			}
-			lineSelected = this;
-		},
-		overLine : function(){
-			if(lineSelected != this){
-				$(this.el).css("background-color", "#EEEEEE");
-			}
-		},
-		outLine : function(){
-			if(lineSelected != this){
-				$(this.el).css("background-color", "transparent");
-			}
-		},
-		render:function(){
-			var template = '<td>{{name}}</td><td>{{members}}</td>';
-			var view = {name : this.vname, members: this.vnbmembers};
-			var html = Mustache.to_html(template, view);
-			
-			$(this.el).html(html);
-			$(this.el).appendTo($("#group_admin_table"));
-			return this;
-		}
-		
-	})
 
 	GroupAdminTableView = Backbone.View.extend({
 		el:"#group_admin_table",
@@ -81,44 +28,38 @@ AppGroupAdmin = (function($){
 		
 		},
 		
+		wazatest: null,
+		
 		initialize:function(){
 			var parent = this;
-			var html= $("#table-header-template").html();
-
-			$(this.el).html(html);
+			
+			$(parent.el).kernely_table({
+				columns:["Name", "Members"]
+			}, true);
+			
 			$.ajax({
 				type:"GET",
 				url:"/admin/groups/all",
 				dataType:"json",
 				success: function(data){
 					if(data != null){
-						if(data.groupDTO.length > 1){
-				    		$.each(data.groupDTO, function() {
-				    			var users = 0;
-				    			if(this.users != null && typeof(this.users) != "undefined"){
-				    				if(typeof(this.users.length) != "undefined"){
-				    					users = this.users.length;
-				    				}
-				    				else{
-				    					users = 1;
-				    				}
-				    			}
-				    			var view = new GroupAdminTableLineView(this.id, this.name, users);
-				    			view.render();
-				    		});
-						}
-					   	// In the case when there is only one element
-			    		else{
-			    			var users = 0;
-			    			if(data.groupDTO.users != null && typeof(data.groupDTO.users) != "undefined"){
-			    				users = data.groupDTO.users.length;
-			    			}
-							var view = new GroupAdminTableLineView(data.groupDTO.id, data.groupDTO.name, users);
-			    			view.render();
-						}
+						var dataGroup = data.groupDTO;
+						$(parent.el).reload_table({
+							data: dataGroup,
+							idField:"id",
+							elements:["name", "nbUser"],
+							eventNames:["click"],
+							events:{
+								"click": parent.selectLine
+							}
+						}, true);
 					}
 				}
 			});
+		},
+		selectLine : function(e){
+			$(".editButton").removeAttr('disabled');
+			lineSelected = e.data.line;
 		},
 		reload: function(){
 			this.initialize();
@@ -178,9 +119,10 @@ AppGroupAdmin = (function($){
 		},
 		
 		editgroup: function(){
-			this.showModalWindow();
-			this.viewUpdate.setFields(lineSelected.vname, lineSelected.vid);
-			this.viewUpdate.render();
+//			this.showModalWindow();
+//			this.viewUpdate.setFields(lineSelected.vname, lineSelected.vid);
+//			this.viewUpdate.render();
+			console.log(lineSelected);
 		},
 		
 		deletegroup: function(){
