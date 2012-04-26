@@ -175,4 +175,20 @@ public class UserAdminController extends AbstractController{
 		}
 		return null;
 	}
+	
+	/**
+	 * Get data for a specified id
+	 * @param id the id of the needed user
+	 * @return The details of the specific user
+	 */
+	@GET
+	@Path("/details/{id}")
+	@Produces({MediaType.APPLICATION_JSON})
+	public UserDetailsDTO getUserDetails(@PathParam("id") long id){
+		if (userService.currentUserIsAdministrator()){
+			return userService.getUserDetails(id);
+		}
+		return null;
+	}
+
 }

@@ -37,7 +37,7 @@ div.menu_admin_selected{
 
 #mask{
 	position:absolute;
-	z-index:9000;
+	z-index:1;
 	background-color:#000;
 	display:none;top:0;
 	left:0;
@@ -47,17 +47,6 @@ div.menu_admin_selected{
 	right:0;
 }
 
-/* User page*/
-#modal_window_user{
-	position:absolute;
-	width:440px;
-	height:440px;
-	display:none;	
-	z-index:9999;
-	padding:20px;
-	top:0;
-	left:0;
-}
 
 #rolesToLink{
 	height:150px;
@@ -70,7 +59,7 @@ div.menu_admin_selected{
 	width:440px;
 	height:300px;
 	display:none;
-	z-index:9999;
+	z-index:5;
 	padding:20px;
 	top:0;
 	left:0;
@@ -93,7 +82,7 @@ div.menu_admin_selected{
 	width:440px;
 	height:300px;
 	display:none;
-	z-index:9999;
+	z-index:5;
 	padding:20px;
 	top:0;
 	left:0;

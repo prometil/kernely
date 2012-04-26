@@ -218,5 +218,53 @@ jQuery.fn.extend({
 		body.empty();
 		options.reload = true;
 		this.kernely_table(options);
+	},
+	
+	// Defines a generic behavior for all dialogs in the application
+	// The "options" parameter is the configuration of the table,
+	// It contains X fields :
+	// - title : The title of the dialog
+	// - content : The content of the dialog
+	// - eventName : Names of the events
+	// - events : Events
+	kernely_dialog: function(options){
+		
+		if (options == "close"){
+			$(this).dialog("close");
+		} else if (options == "open"){
+			$(this).dialog("open");
+		} else {
+			// Force options to be an object
+			options = options || {};
+			options.events = options.events || {};
+			options.eventNames = options.eventNames || {};
+			this.html(options.content);
+			if (options.height == null){
+				options.height = "auto";
+			}
+			if (options.width == null){
+				options.width = "auto";
+			}
+			this.dialog({autoOpen: false,
+							height: options.height,
+							width: options.width,
+							modal:true,
+							title: options.title,
+							resizable: false,
+							zIndex: 2});
+
+			var parent = this;
+			
+			// Considering events
+			if($.isArray(options.eventNames)){
+				$.each(options.eventNames, function(){
+					$(options.events[this].el).bind(this, options.events[this].event);
+				});
+			}
+			else{
+				$(options.events[options.eventNames].el).bind(options.eventNames, options.events[options.eventNames].event);
+			}
+		}
 	}
+
 });

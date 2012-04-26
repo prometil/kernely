@@ -20,7 +20,6 @@
  AppUserAdmin = (function($){
         var lineSelected = null;
         var tableView = null;
-        
     
 
     UserAdminTableView = Backbone.View.extend({
@@ -91,7 +90,7 @@
 		render: function(){
 			return this;
 		}
-	})	
+	})
 	
 	
 	UserAdminButtonsView = Backbone.View.extend({
@@ -102,103 +101,28 @@
 			"click .editButton" : "edituser",
 			"click .lockButton" : "lockuser"
 		},
-		
-		viewCreate:null,
+
 		viewUpdate:null,
 		
 		initialize: function(){
-			this.viewCreate =  new UserAdminCreateView();
-			this.viewUpdate = new UserAdminUpdateView("","","",0);
-		},
-		
-		showModalWindow: function(){
-			//Get the screen height and width
-       		var maskHeight = $(window).height();
-       		var maskWidth = $(window).width();
-
-
-            //Set height and width to mask to fill up the whole screen
-            $('#mask').css({'width':maskWidth,'height':maskHeight});
-
-            //transition effect    
-            $('#mask').fadeIn(500);   
-            $('#mask').fadeTo("fast",0.7); 
-
-            //Get the window height and width
-            var winH = $(window).height();
-            var winW = $(window).width();
-
-
-        	//Set the popup window to center
-       		$("#modal_window_user").css('top',  winH/2-$("#modal_window_user").height()/2);
-     		$("#modal_window_user").css('left', winW/2-$("#modal_window_user").width()/2);
-     		$("#modal_window_user").css('background-color', "#EEEEEE");
-     		$("input:text").each(function(){this.value="";});
-     		//transition effect
-     		$("#modal_window_user").fadeIn(500);
 		},
 		
 		createuser: function(){
-			this.showModalWindow();
-			this.viewCreate.render();
-		},
-		
-		edituser: function(){
-			this.showModalWindow();
-			this.viewUpdate.setFields(lineSelected.vlogin,lineSelected.vfirstname,lineSelected.vlastname, lineSelected.vhire, lineSelected.vid);
-			this.viewUpdate.render();
-		},
-		
-		lockuser: function(){
-			var template = $("#user-change-state-confirm-template").html();
-			var view = {name : lineSelected.vlastname, firstname : lineSelected.vfirstname, username : lineSelected.vlogin};
-			var html = Mustache.to_html(template, view);
-			
-			$.kernelyConfirm(html, this.confirmlockuser);
-		},
-		
-		confirmlockuser: function(){
-			$.ajax({
-				url:"/admin/users/lock/" + lineSelected,
-				success: function(){
-					var successHtml = $("#success-message-template").html();
-					$.writeMessage("success",successHtml);
-					tableView.reload();
+			var parent = this;
+			var template = $("#popup-user-admin-create-template").html();
+			var titleTemplate = "Creation";
+			$("#modal_window_user").kernely_dialog({
+				title: titleTemplate,
+				content: template,
+				eventNames:'click',
+				events:{
+					'click': {"el":".createUser", "event":parent.createNewUser}
 				}
 			});
+			$("#modal_window_user").kernely_dialog("open");
 		},
 		
-		render:function(){
-			return this;
-		}
-	})
-	
-	UserAdminCreateView = Backbone.View.extend({
-		el: "#modal_window_user",
-		
-		events:{
-			"click .closeModal" : "closemodal",
-			"click .createUser" : "registeruser"
-		},
-		
-		initialize:function(){
-		},
-		
-		render : function(){
-			var template = $("#popup-user-admin-create-template").html();
-			
-			var view = {};
-			var html = Mustache.to_html(template, view);
-			$(this.el).html(html);
-			return this;
-		},
-		
-		closemodal: function(){
-			$('#modal_window_user').hide();
-       		$('#mask').hide();
-		},
-		
-		registeruser: function(){
+		createNewUser: function(e){
 			var json = '{"id":"0", "firstname":"'+$('input[name*="firstname"]').val()+'","lastname":"'+$('input[name*="lastname"]').val()+'", "username":"'+$('input[name*="login"]').val()+'", "password":"'+$('input[name*="password"]').val()+'", "hire":"'+$('input[name*="hire"]')+'"}';
 			$.ajax({
 				url:"/admin/users/create",
@@ -209,8 +133,7 @@
 				contentType: "application/json; charset=utf-8",
 				success: function(data){
 				  if (data.result == "ok"){
-					$('#modal_window_user').hide();
-	       			$('#mask').hide();
+					$("#modal_window_user").kernely_dialog("close");
 
 	       			var successHtml = $("#success-message-template").html();
 					$.writeMessage("success",successHtml);
@@ -220,53 +143,76 @@
 				  }
 				}
 			});
-		}
-	}) 
+		},
+		
+		edituser: function(){
+			var parent = this;
+			
+			// Get user data
+			$.ajax({
+				type: "GET",
+				url:"/admin/users/details/" + lineSelected,
+				dataType:"json",
+				success: function(data){
+					// Create the edit view
+					var template = $("#popup-user-admin-update-template").html();
+					var view = {login : data.user.username, firstname: data.firstname, lastname: data.lastname, hire: data.hire};
+					var html = Mustache.to_html(template, view);
+					
+					var titleTemplate = "Edit user "+data.user.username;
+					$("#modal_window_user").kernely_dialog({
+						title: titleTemplate,
+						content: html,
+						eventNames:'click',
+						events:{
+							'click': {"el":".updateUser", "event":parent.updateuser}
+						}
+					});
+					
+					// Fill roles combo boxes
+					var rolesToLink = $("#rolesToLink");
 	
-	UserAdminUpdateView = Backbone.View.extend({
-		el: "#modal_window_user",
-		
-		vid: null,
-		vlogin: null,
-		vfirstname: null,
-		vlastname: null,
-		vhire: null,
-		
-		events:{
-			"click .closeModal" : "closemodal",
-			"click .updateUser" : "updateuser"
-		},
-		
-		initialize:function(login, firstname, lastname, hire, id){
-			this.vid = id;
-			this.vlogin = login;
-			this.vfirstname = firstname;
-			this.vlastname = lastname;
-			this.vhire = hire;
-		},
-		
-		setFields: function(login, firstname, lastname, hire, id){
-			this.vid = id;
-			this.vlogin = login;
-			this.vfirstname = firstname;
-			this.vlastname = lastname;
-			this.vhire = hire;
-		},
-		
-		render : function(){
-			var template = $("#popup-user-admin-update-template").html();
+					$.ajax({
+						type: "GET",
+						url:"/roles/all",
+						dataType:"json",
+						success: function(data){
+							if(data.roleDTO.length > 1){
+					    		$.each(data.roleDTO, function() {
+					    			$(rolesToLink).append('<input type="checkbox" id="'+ this.id +'">'+ this.name + '</input><br/>');
+					    		});
+							}
+							// In the case when there is only one role.
+							else{
+								$(rolesToLink).append('<input type="checkbox" id="'+ data.roleDTO.id +'">'+ data.roleDTO.name +'</input><br/>');
+							}
+							
+							$.ajax({
+								type: "GET",
+								url:"/admin/users/" + lineSelected + "/roles",
+								dataType:"json",
+								success: function(data){
+									if(data != null && typeof(data) != "undefined"){
+										if(data.roleDTO.length > 1){
+								    		$.each(data.roleDTO, function() {
+								    			$('#' + this.id).attr("checked", "checked");
+								    		});
+										}
+										// In the case when there is only one user.
+										else{
+											$('#' + data.roleDTO.id).attr("checked", "checked");
+										}
+									}
+								}
+							});
+						}
+					});
+					
+					$("#modal_window_user").kernely_dialog("open");
+				
+				}
+			});
 			
-			var view = {login : this.vlogin, firstname: this.vfirstname, lastname: this.vlastname, hire: this.vhire};
-			var html = Mustache.to_html(template, view);
-			$(this.el).html(html);
-			
-			new RolesCBListView(this.vid).render();
-			return this;
-		},
-		
-		closemodal: function(){
-			$('#modal_window_user').hide();
-       		$('#mask').hide();
 		},
 		
 		updateuser: function(){
@@ -289,7 +235,7 @@
 			else{
 				roles = '"roles":{}';
 			}
-			var json = '{"id":"'+this.vid+'", "firstname":"'+$('input[name*="firstname"]').val()+'","lastname":"'+$('input[name*="lastname"]').val()+'", "username":"'+$('input[name*="login"]').val()+'", "hire":"'+$('input[name*="hire"]')+'", ' + roles + '}';
+			var json = '{"id":"'+lineSelected+'", "firstname":"'+$('input[name*="firstname"]').val()+'","lastname":"'+$('input[name*="lastname"]').val()+'", "username":"'+$('input[name*="login"]').val()+'", "hire":"'+$('input[name*="hire"]')+'", ' + roles + '}';
 			$.ajax({
 				url:"/admin/users/create",
 				data: json,
@@ -299,9 +245,7 @@
 				contentType: "application/json; charset=utf-8",
 				success: function(data){
 					if (data.result == "ok"){
-						$('#modal_window_user').hide();
-						$('#mask').hide();
-
+						$('#modal_window_user').kernely_dialog("close");
 						var successHtml = $("#success-message-template").html();
 						$.writeMessage("success",successHtml);
 						tableView.reload();
@@ -310,63 +254,30 @@
 					}
 				}
 			});
-		}
-	})
-	
-	RolesCBListView = Backbone.View.extend({
-		el:"#rolesToLink",
-		
-		userId: null,
-		
-		events:{
-		
 		},
 		
-		initialize:function(userid){
-			this.userId = userid;
+		lockuser: function(){
+			var template = $("#user-change-state-confirm-template").html();
+			
+			$.kernelyConfirm(template, this.confirmlockuser);
 		},
 		
-		render: function(){
-			var parent = this;
+		confirmlockuser: function(){
 			$.ajax({
-				type: "GET",
-				url:"/roles/all",
-				dataType:"json",
-				success: function(data){
-					if(data.roleDTO.length > 1){
-			    		$.each(data.roleDTO, function() {
-			    			$(parent.el).append('<input type="checkbox" id="'+ this.id +'">'+ this.name + '</input><br/>');
-			    		});
-					}
-					// In the case when there is only one user.
-					else{
-						$(parent.el).append('<input type="checkbox" id="'+ data.roleDTO.id +'">'+ data.roleDTO.name +'</input><br/>');
-					}
-					
-					$.ajax({
-						type: "GET",
-						url:"/admin/users/" + parent.userId + "/roles",
-						dataType:"json",
-						success: function(data){
-							if(data != null && typeof(data) != "undefined"){
-								if(data.roleDTO.length > 1){
-						    		$.each(data.roleDTO, function() {
-						    			$('#' + this.id).attr("checked", "checked");
-						    		});
-								}
-								// In the case when there is only one user.
-								else{
-									$('#' + data.roleDTO.id).attr("checked", "checked");
-								}
-							}
-						}
-					});
+				url:"/admin/users/lock/" + lineSelected,
+				success: function(){
+					var successHtml = $("#success-message-template").html();
+					$.writeMessage("success",successHtml);
+					tableView.reload();
 				}
 			});
+		},
+		
+		render:function(){
 			return this;
 		}
 	})
-	
+
 	// define the application initialization
 	var self = {};
 	self.start = function(){

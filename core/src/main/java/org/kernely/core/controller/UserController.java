@@ -237,6 +237,5 @@ public class UserController extends AbstractController {
 	@Produces( {MediaType.APPLICATION_JSON})
 	public UserDetailsDTO getDetails(@PathParam("login") String userLogin) {
 		return userService.getUserDetails(userLogin);
-
 	}
 }
