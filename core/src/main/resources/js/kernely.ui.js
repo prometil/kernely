@@ -179,6 +179,9 @@ jQuery.fn.extend({
 							else{
 								elem = parent[this];
 							}
+							if(typeof(elem) == "undefined"){
+								elem = "";
+							}
 							array.push(elem);
 						});
 					}
@@ -192,6 +195,9 @@ jQuery.fn.extend({
 						}
 						else{
 							elem = parent[options.elements];
+						}
+						if(typeof(elem) == "undefined"){
+							elem = "";
 						}
 						array.push(parent[option.elements]);
 					}
