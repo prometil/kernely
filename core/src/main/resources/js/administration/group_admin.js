@@ -24,18 +24,16 @@ AppGroupAdmin = (function($){
 
 	GroupAdminTableView = Backbone.View.extend({
 		el:"#group_admin_table",
-		events:{
-		
-		},
-		
-		wazatest: null,
 		
 		initialize:function(){
 			var parent = this;
 			
+			var templateNameColumn = $("#table-group_name-column").text();
+			var templateMembersColumn = $("#table-group_members-column").text();
 			$(parent.el).kernely_table({
-				columns:["Name", "Members"]
-			}, true);
+				columns:[templateNameColumn, templateMembersColumn],
+				editable:true
+			});
 			
 			$.ajax({
 				type:"GET",
@@ -51,14 +49,16 @@ AppGroupAdmin = (function($){
 							eventNames:["click"],
 							events:{
 								"click": parent.selectLine
-							}
-						}, true);
+							},
+							editable:true
+						});
 					}
 				}
 			});
 		},
 		selectLine : function(e){
 			$(".editButton").removeAttr('disabled');
+			$(".deleteButton").removeAttr('disabled');
 			lineSelected = e.data.line;
 		},
 		reload: function(){
@@ -139,7 +139,7 @@ AppGroupAdmin = (function($){
 				success: function(){
 					var successHtml = $("#group-deleted-template").html();
 					$.writeMessage("success",successHtml);
-					tableView.reload();
+				//	tableView.reload();
 				}
 			});
 		},
@@ -190,7 +190,7 @@ AppGroupAdmin = (function($){
 						
 						var successHtml = $("#group-created-updated-template").html();
 						$.writeMessage("success",successHtml);
-						tableView.reload();
+					//	tableView.reload();
 					} else {
 						$.writeMessage("error",data.result,"#errors_message");
 					}

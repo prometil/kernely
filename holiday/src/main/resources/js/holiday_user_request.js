@@ -21,154 +21,43 @@ AppHolidayUserRequest = (function($){
 		}
 	})
 	
-	HolidayUserRequestPendingTableLineView = Backbone.View.extend({
-		tagName: "tr",
-		className:"user_pending_request_table_line",
-		
-		vid: null,
-		vrequesterComment : null,
-		vbegin : null,
-		vend : null,
-		
-		events: {
-			"click" : "selectLine",
-			"mouseover" : "overLine",
-			"mouseout" : "outLine"
-		},
-		
-		initialize: function(id, beginDate, endDate, requesterComment){
-			this.vid=id;
-			this.vbegin=beginDate;
-			this.vend=endDate;
-			this.vrequesterComment=requesterComment;		
-		},
-		
-		selectLine : function(){
-			$("#button_canceled").removeAttr('disabled');
-			$(this.el).css("background-color", "#8AA5A1");
-			if(typeof(lineSelected) != "undefined"){
-				if(lineSelected != this && lineSelected != null){
-					$(lineSelected.el).css("background-color", "transparent");
-				}
-			}
-			lineSelected = this;
-		},
-		
-		overLine : function(){
-			if(lineSelected != this){
-				$(this.el).css("background-color", "#EEEEEE");
-			}
-		},
-		outLine : function(){
-			if(lineSelected != this){
-				$(this.el).css("background-color", "transparent");
-			}
-		},
-
-		render:function(){
-			var template = $("#status-accepted-or-denied-template").html(); 
-			var view = {from : this.vto, requesterComment : this.vrequesterComment, beginDate : this.vbegin, endDate : this.vend};
-			var html = Mustache.to_html(template, view);
-			$(this.el).html(html);
-			$(this.el).appendTo($("#user_pending_request_table"));
-			return this;
-		}
-	})
-	
-	
-	HolidayUserRequestTableLineView = Backbone.View.extend({
-		tagName: "tr",
-		className:"user_request_table_line",
-		
-		vid: null,
-		vmanager : null,
-		vrequesterComment : null,
-		vmanagerComment : null,
-		vbegin : null,
-		vend : null,
-		vstatus : null,
-		
-		events: {
-			"click" : "selectLine",
-			"mouseover" : "overLine",
-			"mouseout" : "outLine"
-		},
-		
-		initialize: function(id, manager, beginDate, endDate, requesterComment, managerComment, status){
-			this.vid=id;
-			this.vmanager=manager;
-			this.vbegin=beginDate;
-			this.vend=endDate;
-			this.vrequesterComment=requesterComment;
-			this.vmanagerComment = managerComment;
-			this.vstatus = status;
-		},
-		
-		selectLine : function(){
-			$(this.el).css("background-color", "#8AA5A1");
-			if(typeof(lineSelected) != "undefined"){
-				if(lineSelected != this && lineSelected != null){
-					$(lineSelected.el).css("background-color", "transparent");
-				}
-			}
-			lineSelected = this;
-		},
-		
-		overLine : function(){
-			if(lineSelected != this){
-				$(this.el).css("background-color", "#EEEEEE");
-			}
-		},
-		outLine : function(){
-			if(lineSelected != this){
-				$(this.el).css("background-color", "transparent");
-			}
-		},
-		
-		render:function(){
-			var statusTemplate="";
-			if (this.vstatus==0){
-				 statusTemplate=$("#status-denied-template").html();
-			}
-			else {
-				statusTemplate=$("#status-accepted-template").html();
-			}
-			var template = '<td>{{manager}}</td><td>{{requesterComment}}</td><td>{{managerComment}}</td><td>{{beginDate}}</td><td>{{endDate}}</td><td>{{status}}</td>';
-			var view = {manager : this.vmanager, requesterComment : this.vrequesterComment, managerComment : this.vmanagerComment, beginDate : this.vbegin, endDate : this.vend, status : statusTemplate};
-			var html = Mustache.to_html(template, view);
-			$(this.el).html(html);
-			$(this.el).appendTo($("#user_request_table"));
-			return this;
-		}
-	})
-	
 	HolidayUserRequestPendingTableView = Backbone.View.extend({
 		el:"#user_pending_request_table",
-		events:{
 		
-		},
 		initialize:function(){
+			var parent = this;
+			var templateCommentColumn = $("#table-request-comment-column").text();
+			var templateBeginColumn = $("#table-begin-date-column").text();
+			var templateEndColumn = $("#table-end-date-column").text();
+			$(parent.el).kernely_table({
+				columns:[templateCommentColumn, templateBeginColumn, templateEndColumn],
+				editable:true
+			});
 			$.ajax({
 				type:"GET",
 				url:"/holiday/all/pending",
 				dataType:"json",
 				success: function(data){
 					if(data != null){
-						if(data.holidayRequestDTO.length > 1 ){
-							$.each(data.holidayRequestDTO, function (){
-								var view = new HolidayUserRequestPendingTableLineView(this.id, this.beginDate, this.endDate, this.requesterComment);	
-								view.render();
-							});
-						}
-						else{
-							var view = new HolidayUserRequestPendingTableLineView(data.holidayRequestDTO.id, data.holidayRequestDTO.beginDate, data.holidayRequestDTO.endDate, data.holidayRequestDTO.requesterComment);
-							view.render();
-						}
+						var dataRequest = data.holidayRequestDTO;
+						$(parent.el).reload_table({
+							data: dataRequest,
+							idField:"id",
+							elements:["requesterComment", "beginDateString", "endDateString"],
+							eventNames:["click"],
+							events:{
+								"click": parent.selectLine
+							},
+							editable:true
+						});
 					}
 				}
 			});
 		},
-		
+		selectLine : function(e){
+			$("#button_canceled").removeAttr('disabled');
+			lineSelected = e.data.line;
+		},
 		reload: function(){
 			$(".user_pending_request_table_line").html("");
 			this.initialize();
@@ -183,27 +72,50 @@ AppHolidayUserRequest = (function($){
 	HolidayUserRequestTableView = Backbone.View.extend({
 		el:"#user_request_table",
 		
-		events:{
-		
-		},
-		
 		initialize:function(){
+			var parent = this;
+			var templateManagerColumn = $("#table-manager-column").text();
+			var templateCommentColumn = $("#table-request-comment-column").text();
+			var templateBeginColumn = $("#table-begin-date-column").text();
+			var templateEndColumn = $("#table-end-date-column").text();
+			var templateStatusColumn = $("#table-status-column").text();
+			
+			$(parent.el).kernely_table({
+				columns:[templateManagerColumn, templateCommentColumn, templateBeginColumn, templateEndColumn, templateStatusColumn],
+				editable:true
+			});
+		
 			$.ajax({
 				type:"GET",
 				url:"/holiday/all/status",
 				dataType:"json",
 				success: function(data){
 					if(data != null){
-						if(data.holidayRequestDTO.length > 1 ){
-							$.each(data.holidayRequestDTO, function (){
-								var view = new HolidayUserRequestTableLineView(this.id, this.manager, this.beginDate, this.endDate, this.requesterComment, this.managerComment, this.status);
-								view.render();
+						var dataRequest = data.holidayRequestDTO;
+						if($.isArray(dataRequest)){
+							$.each(dataRequest, function(){
+								if(this.status == 1){
+									this.status = $("#status-accepted-template").html();
+								}
+								else{
+									this.status = $("#status-denied-template").html();
+								}
 							});
 						}
 						else{
-							var view = new HolidayUserRequestTableLineView(data.holidayRequestDTO.id, data.holidayRequestDTO.manager, data.holidayRequestDTO.beginDate, data.holidayRequestDTO.endDate, data.holidayRequestDTO.requesterComment, data.holidayRequestDTO.managerComment, data.holidayRequestDTO.status);
-							view.render();
+							if(dataRequest.status == 1){
+								dataRequest.status = $("#status-accepted-template").html();
+							}
+							else{
+								dataRequest.status = $("#status-denied-template").html();
+							}
 						}
+						$(parent.el).reload_table({
+							data: dataRequest,
+							idField:"id",
+							elements:["managerComment", "requesterComment", "beginDateString", "endDateString", "status"],
+							editable:false
+						});
 					}
 				}
 			});
@@ -288,7 +200,7 @@ AppHolidayUserRequest = (function($){
 		},
 		confirmCancel: function(){
 			$.ajax({
-				url:"/holiday/cancel/" + lineSelected.vid,
+				url:"/holiday/cancel/" + lineSelected,
 				success: function(){
 					var successHtml = $("#holiday-canceled-template").html();	
 					$.writeMessage("success",successHtml);

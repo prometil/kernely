@@ -17,11 +17,35 @@
 	 </script>
 	
 	 <script type="text/html" id="status-denied-template">
-	 	{% i18n "denied" %}
+	 	<span style="color:red;">{% i18n "denied" %}</span>
 	 </script>
-	
-	<script type="text/html" id="status-accepted-template">
-		{% i18n "accepted" %}
+	 
+	 <script type="text/html" id="table-request-comment-column">
+	 	{% i18n "requester_comment" %}
+	 </script>
+	 
+	 <script type="text/html" id="table-begin-date-column">
+	 	{% i18n "begin_date" %}
+	 </script>
+	 
+	 <script type="text/html" id="table-end-date-column">
+	 	{% i18n "end_date" %}
+	 </script>
+	 
+	 <script type="text/html" id="table-manager-column">
+	 	{% i18n "manager" %}
+	 </script>
+	 
+	 <script type="text/html" id="table-manager-comment-column">
+		 {% i18n "manager_comment" %}
+	 </script>
+	 
+	 <script type="text/html" id="table-status-column">
+	 	{% i18n "status" %}
+	 </script>
+	 
+	 <script type="text/html" id="status-accepted-template">
+	 	<span style="color:green;">{% i18n "accepted" %}</span>
 	 </script>
 	 
 	<script type="text/html" id="status-accepted-or-denied-template">
@@ -32,8 +56,8 @@
 		<form method="POST" action="/holiday/request/">
 			<label for="from">{% i18n "from_date" %} </label><input readonly="readonly" type="text" id="from" name="from"/><br/>
 			<label for="to"> {% i18n "to_date" %} </label><input readonly="readonly" type="text" id="to" name="to"/><br/>
-			<input id="submitPeriod" type="submit" value="{% i18n "ok" %}"/>
-			<input id="cancel-request-form" type="button" value="{% i18n "cancel" %}"/>
+			<input id="submitPeriod" class="button_ok" type="submit" value="{% i18n "ok" %}"/>
+			<input id="cancel-request-form" class="button_standard" type="button" value="{% i18n "cancel" %}"/>
 		</form>
 	</script>
 {% endblock %}
@@ -45,18 +69,25 @@
 {% block content %}	
 	<div id="request-manager-main">
 		<div id="holiday_button_container">
-			<input type="button" id="button_canceled" value="{% i18n "canceled" %}" disabled="disabled"/>
-			<input type="button" id="new_request" value="{% i18n "new-request" %}" />
+			<input type="button" class="button_standard" id="button_canceled" value="{% i18n "canceled" %}" disabled="disabled"/>
+			<input type="button" class="button_standard" id="new_request" value="{% i18n "new-request" %}" />
 		</div>
+		<div class="subtitle">{% i18n "title_table_1" %}</div>
 		<table id="user_pending_request_table" class="kernely_table">
-			  <caption><b><u>{% i18n "title_table_1" %}</u></b></caption>
-			 <th>{% i18n "requester_comment" %}</th><th>{% i18n "begin_date" %}</th><th>{% i18n "end_date" %}</th>
 		</table>
 		<br/>
-		<br/>
+		<div class="subtitle">{% i18n "title_table_2" %}</div>
 		<table id="user_request_table" class="kernely_table">
-		    <caption><b><u>{% i18n "title_table_2" %}</u></b></caption>
-			<th>{% i18n "manager" %}</th><th>{% i18n "requester_comment" %}</th><th>{% i18n "manager_comment" %}</th><th>{% i18n "begin_date" %}</th><th>{% i18n "end_date" %}</th><th>{% i18n "status" %}</th></tr>
 		</table>
 	</div>
 {% endblock %}
+
+{% block left %}
+	<div id="profile_mask"></div>
+	<div id='left_profile_container'>
+		<img src="/images/{{currentUser.image}}" id="image_left_profile"/>
+		<div id="left_profile_name">{{currentUser.firstname}} {{currentUser.lastname}}</div>
+	</div>
+{% endblock %}
+
+

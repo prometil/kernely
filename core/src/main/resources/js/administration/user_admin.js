@@ -20,76 +20,77 @@
  AppUserAdmin = (function($){
         var lineSelected = null;
         var tableView = null;
-        
-	UserAdminTableView = Backbone.View.extend({
-            el:"#user_admin_table",
+    
 
-            initialize:function(){
-                    var parent = this;
-                    
-                    var templateNameColumn = $("#table-user-name-column").text();
-                    var templateFirstnameColumn = $("#table-user-firstname-column").text();
-                    var templateUsernameColumn = $("#table-user-username-column").text();
-                    var templateEmailColumn = $("#table-user-email-column").text();
-                    $(parent.el).kernely_table({
-                            columns:["", templateNameColumn, templateFirstnameColumn, templateUsernameColumn, templateEmailColumn],
-                            editable:true
-                    });
-                    
-            },
-            selectLine : function(e){
-                    $(".editButton").removeAttr('disabled');
-                    $(".lockButton").removeAttr('disabled');
-                    var template = null;
-                    lineSelected = e.data.line;
-            },
-            reload: function(){
-                    this.render();
-            },
-            render: function(){
-            	var parent = this;
-            	$.ajax({
-                    type:"GET",
-                    url:"/admin/users/all",
-                    dataType:"json",
-                    success: function(data){
-                            if (data != null){
-                                    var dataUser = data.userDetailsDTO;
-                                    if($.isArray(dataUser)){
-                                            $.each(dataUser, function(){
-                                                    if(this.user.locked == "true"){
-                                                            this.user.locked = '<img src="/images/icons/user_locked.png"/>';
-                                                    }
-                                                    else{
-                                                            this.user.locked = '<img src="/images/icons/user.png"/>';
-                                                    }
-                                            });
-                                    }
-                                    else{
-                                            if(dataUser.user.locked == 1){
-                                                    dataUser.user.locked = '<img src="/images/icons/user_locked.png"/>';
-                                            }
-                                            else{
-                                                    dataUser.user.locked = '<img src="/images/icons/user.png"/>';
-                                            }
-                                    }
-                                    
-                                    $(parent.el).reload_table({
-                                            data: dataUser,
-                                            idField:"id",
-                                            elements:["user.locked", "lastname", "firstname", "user.username", "email"],
-                                            eventNames:["click"],
-                                            events:{
-                                                    "click": parent.selectLine
-                                            },
-                                            editable:true
-                                    });
-                            }
-                    	}
-            		});
-                    return this;
-            }
-    }),
+    UserAdminTableView = Backbone.View.extend({
+		el:"#user_admin_table",
+
+		initialize:function(){
+			var parent = this;
+			
+			var templateNameColumn = $("#table-user-name-column").text();
+			var templateFirstnameColumn = $("#table-user-firstname-column").text();
+			var templateUsernameColumn = $("#table-user-username-column").text();
+			var templateEmailColumn = $("#table-user-email-column").text();
+			$(parent.el).kernely_table({
+				columns:["", templateNameColumn, templateFirstnameColumn, templateUsernameColumn, templateEmailColumn],
+				editable:true
+			});
+			
+			$.ajax({
+				type:"GET",
+				url:"/admin/users/all",
+				dataType:"json",
+				success: function(data){
+					if (data != null){
+						var dataUser = data.userDetailsDTO;
+						if($.isArray(dataUser)){
+							$.each(dataUser, function(){
+								if(this.user.locked == "true"){
+									this.user.locked = '<img src="/images/icons/user_locked.png"/>';
+								}
+								else{
+									this.user.locked = '<img src="/images/icons/user.png"/>';
+								}
+							});
+						}
+						else{
+							if(dataUser.user.locked == 1){
+								dataUser.user.locked = '<img src="/images/icons/user_locked.png"/>';
+							}
+							else{
+								dataUser.user.locked = '<img src="/images/icons/user.png"/>';
+							}
+						}
+						
+						$(parent.el).reload_table({
+							data: dataUser,
+							idField:"id",
+							elements:["user.locked", "lastname", "firstname", "user.username", "email"],
+							eventNames:["click"],
+							events:{
+								"click": parent.selectLine
+							},
+							editable:true
+						});
+					}
+				}
+			});
+		},
+		selectLine : function(e){
+			$(".editButton").removeAttr('disabled');
+			$(".lockButton").removeAttr('disabled');
+			var template = null;
+			lineSelected = e.data.line;
+		},
+		reload: function(){
+			this.initialize();
+			this.render();
+		},
+		render: function(){
+			return this;
+		}
+	})
 	
 	
 	UserAdminButtonsView = Backbone.View.extend({

@@ -117,6 +117,7 @@ public class UserService extends AbstractService {
 		userdetails.setFirstname(request.firstname);
 		userdetails.setHire(request.hire);
 		userdetails.setUser(user);
+		userdetails.setImage("default_profile_user.png");
 
 		user.setUserDetails(userdetails);
 		em.get().persist(user);
@@ -627,13 +628,15 @@ public class UserService extends AbstractService {
 		Query query = em.get().createQuery("SELECT DISTINCT u.managers FROM User u");
 		List<User> idManager = (List<User>) query.getResultList();
 		Set<ManagerDTO> collection = new HashSet<ManagerDTO>();
+		Set<User> users;
+		ArrayList<UserDTO> usersList;
 		for (User manager : idManager) {
-			Set<User> users = manager.getUsers();
-			ArrayList<UserDTO> usersList = new ArrayList<UserDTO>();
+			users = manager.getUsers();
+			usersList = new ArrayList<UserDTO>();
 			for (User user : users) {
 				usersList.add(new UserDTO(user.getUsername(), user.getId()));
 			}
-			collection.add(new ManagerDTO(manager.getUsername(), usersList));
+			collection.add(new ManagerDTO(manager.getId(), manager.getUsername(), usersList));
 		}
 		return collection;
 	}

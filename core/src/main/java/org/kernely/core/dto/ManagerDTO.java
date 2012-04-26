@@ -35,9 +35,19 @@ public class ManagerDTO {
 	public List<UserDTO> users;
 	
 	/**
+	 * The number of users managed by this manager
+	 */
+	public int nbUsers;
+	
+	/**
 	 * The username of the manager
 	 */
 	public String name;
+	
+	/**
+	 * The id of this manager
+	 */
+	public long id;
 
 	/**
 	 * Manager DTO default constructor
@@ -51,9 +61,11 @@ public class ManagerDTO {
 	 * @param newName
 	 * @param newUsers
 	 */
-	public ManagerDTO(String newName, List<UserDTO> newUsers) {
+	public ManagerDTO(long id, String newName, List<UserDTO> newUsers) {
 		this.users = newUsers;
+		this.id = id;
 		this.name = newName;
+		this.nbUsers = newUsers.size();
 	}
 
 	/**
