@@ -34,7 +34,17 @@ AppGroupAdmin = (function($){
 				columns:[templateNameColumn, templateMembersColumn],
 				editable:true
 			});
-			
+		},
+		selectLine : function(e){
+			$(".editButton").removeAttr('disabled');
+			$(".deleteButton").removeAttr('disabled');
+			lineSelected = e.data.line;
+		},
+		reload: function(){
+			this.render();
+		},
+		render: function(){
+			var parent = this;
 			$.ajax({
 				type:"GET",
 				url:"/admin/groups/all",
@@ -55,17 +65,6 @@ AppGroupAdmin = (function($){
 					}
 				}
 			});
-		},
-		selectLine : function(e){
-			$(".editButton").removeAttr('disabled');
-			$(".deleteButton").removeAttr('disabled');
-			lineSelected = e.data.line;
-		},
-		reload: function(){
-			this.initialize();
-			this.render();
-		},
-		render: function(){
 			return this;
 		}
 	})	
@@ -139,7 +138,7 @@ AppGroupAdmin = (function($){
 				success: function(){
 					var successHtml = $("#group-deleted-template").html();
 					$.writeMessage("success",successHtml);
-				//	tableView.reload();
+					tableView.reload();
 				}
 			});
 		},
@@ -190,7 +189,7 @@ AppGroupAdmin = (function($){
 						
 						var successHtml = $("#group-created-updated-template").html();
 						$.writeMessage("success",successHtml);
-					//	tableView.reload();
+						tableView.reload();
 					} else {
 						$.writeMessage("error",data.result,"#errors_message");
 					}

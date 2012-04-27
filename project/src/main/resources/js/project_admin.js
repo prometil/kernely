@@ -24,101 +24,51 @@ AppProjectAdmin = (function($){
 	var tableView = null;
 	
 
-	ProjectAdminTableLineView = Backbone.View.extend({
-		tagName: "tr",
-		className: 'project_list_line',
-		
-		vid: null,
-		vname : null,
-		vicon : null,
-		vorganization : null,
-
-		events: {
-			"click" : "selectLine",
-			"mouseover" : "overLine",
-			"mouseout" : "outLine"
-		},
-		
-		
-		initialize: function(id, name, icon, organization){
-			this.vid = id;
-			this.vname = name;
-			this.vicon = icon;
-			this.vorganization = organization;
-		},
-		
-		selectLine : function(){
-			$(".editButton").removeAttr('disabled');
-			$(".deleteButton").removeAttr('disabled');
-			$(".imageButton").removeAttr('disabled');
-			$(this.el).css("background-color", "#8AA5A1");
-			if(typeof(lineSelected) != "undefined"){
-				if(lineSelected != this && lineSelected != null){
-					$(lineSelected.el).css("background-color", "transparent");
-				}
-			}
-			lineSelected = this;
-		},
-		overLine : function(){
-			if(lineSelected != this){
-				$(this.el).css("background-color", "#EEEEEE");
-			}
-		},
-		outLine : function(){
-			if(lineSelected != this){
-				$(this.el).css("background-color", "transparent");
-			}
-		},
-		render:function(){
-			var template = '<td>{{name}}</td>';
-			var view = {name : this.vname};
-			var html = Mustache.to_html(template, view);
-			
-			$(this.el).html(html);
-			$(this.el).appendTo($("#project_admin_table"));
-			return this;
-		}
-		
-	})
-	
 	
 	ProjectAdminTableView = Backbone.View.extend({
 		el:"#project_admin_table",
-		events:{
-		
-		},
 		
 		initialize:function(){
 			var parent = this;
-			var html= $("#table-header-template").html();
-
-			$(this.el).html(html);
+			
+			var templateNameColumn = $("#table-project-name-column").text();
+			$(parent.el).kernely_table({
+				columns:[templateNameColumn],
+				editable:true
+			});
+			
+		},
+		selectLine : function(e){
+			$(".editButton").removeAttr('disabled');
+			$(".deleteButton").removeAttr('disabled');
+			$(".imageButton").removeAttr('disabled');
+			lineSelected = e.data.line;
+		},
+		reload: function(){
+			this.render();
+		},
+		render: function(){
+			var parent = this;
 			$.ajax({
 				type:"GET",
 				url:"/admin/projects/all",
 				dataType:"json",
 				success: function(data){
 					if(data != null){
-						if(data.projectDTO.length > 1){
-				    		$.each(data.projectDTO, function() {
-				    			var view = new ProjectAdminTableLineView(this.id, this.name, this.icon, this.organization);
-				    			view.render();
-				    		});
-						}
-					   	// In the case when there is only one element
-			    		else{
-							var view = new ProjectAdminTableLineView(data.projectDTO.id, data.projectDTO.name, data.projectDTO.icon, data.projectDTO.organization);
-			    			view.render();
-						}
+						var dataProject = data.projectDTO;
+						$(parent.el).reload_table({
+							data: dataProject,
+							idField:"id",
+							elements:["name"],
+							eventNames:["click"],
+							events:{
+								"click": parent.selectLine
+							},
+							editable:true
+						});
 					}
 				}
 			});
-		},
-		reload: function(){
-			this.initialize();
-			this.render();
-		},
-		render: function(){
 			return this;
 		}
 	})	
@@ -191,7 +141,7 @@ AppProjectAdmin = (function($){
 		
 		confirmDeleteProject: function(){
 			$.ajax({
-				url:"/admin/projects/delete/" + lineSelected.vid,
+				url:"/admin/projects/delete/" + lineSelected,
 				success: function(){
 					var successHtml = $("#project-deleted-template").html();
 					$.writeMessage("success",successHtml);

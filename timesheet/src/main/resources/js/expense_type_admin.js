@@ -2,59 +2,6 @@ AppExpenseType = (function($){
 	var lineSelected = null;
     var tableView = null;
     
-    ExpenseTypeAdminTableLineView = Backbone.View.extend({
-        tagName: "tr",
-        className: 'expense_type_list_line',
-        
-        vid: null,
-        vname: null,
-        vdirect: null,
-        vration: null,
-        
-        events: {
-                "click" : "selectLine",
-                "mouseover" : "overLine",
-                "mouseout" : "outLine"
-        },
-        
-        initialize: function(id, name, direct, ratio){
-                this.vid = id;
-                this.vname = name;
-                this.vdirect = direct;
-                this.vratio = ratio;
-        },
-        selectLine : function(){
-                $(".editButton").removeAttr('disabled');
-                $(".deleteButton").removeAttr('disabled');
-                $(this.el).css("background-color", "#8AA5A1");
-                if(typeof(lineSelected) != "undefined"){
-                        if(lineSelected != this && lineSelected != null){
-                                $(lineSelected.el).css("background-color", "transparent");
-                        }
-                }
-                lineSelected = this;
-        },
-        overLine : function(){
-                if(lineSelected != this){
-                        $(this.el).css("background-color", "#EEEEEE");
-                }
-        },
-        outLine : function(){
-                if(lineSelected != this){
-                        $(this.el).css("background-color", "transparent");
-                }
-        },
-        render:function(){
-                var template = '<td>{{name}}</td><td>{{direct}}</td><td>{{ratio}}</td>';
-                var view = {name : this.vname, direct: this.vdirect, ratio: this.vratio};
-                var html = Mustache.to_html(template, view);
-                
-                $(this.el).html(html);
-                $(this.el).appendTo($("#expense_type_admin_table"));
-                return this;
-        }
-    })
-    
     ExpenseTypeAdminTableView = Backbone.View.extend({
 		el:"#expense_type_admin_table",
 		events:{
@@ -63,34 +10,44 @@ AppExpenseType = (function($){
 		initialize:function(){
 			var parent = this;
 			
-			var tableHeader = $("#table-header-template").html();
-			
-			$(this.el).html(tableHeader);
+			var templateNameColumn = $("#table-expense-name-column").text();
+			var templateDirectColumn = $("#table-expense-direct-column").text();
+			var templateRatioColumn = $("#table-expense-ratio-column").text();
+			$(parent.el).kernely_table({
+				columns:[templateNameColumn, templateDirectColumn, templateRatioColumn],
+				editable:true
+			});
+		},
+		selectLine : function(e){
+			$(".editButton").removeAttr('disabled');
+			$(".deleteButton").removeAttr('disabled');
+			lineSelected = e.data.line;
+		},
+		reload: function(){
+			this.render();
+		},
+		render: function(){
+			var parent = this;
 			$.ajax({
 				type:"GET",
 				url:"/admin/expense/type/all",
 				dataType:"json",
 				success: function(data){
 					if (data != null){
-						if(data.expenseTypeDTO.length > 1){
-				    		$.each(data.expenseTypeDTO, function() {
-				    			var view = new ExpenseTypeAdminTableLineView(this.id, this.name, this.direct, this.ratio);
-				    			view.render();
-				    		});
-						}
-						else{
-							var view = new ExpenseTypeAdminTableLineView(data.expenseTypeDTO.id, data.expenseTypeDTO.name, data.expenseTypeDTO.direct, data.expenseTypeDTO.ratio);
-			    			view.render();
-						}
+						var dataExpense = data.expenseTypeDTO;
+						$(parent.el).reload_table({
+							data: dataExpense,
+							idField:"id",
+							elements:["name", "direct", "ratio"],
+							eventNames:["click"],
+							events:{
+								"click": parent.selectLine
+							},
+							editable:true
+						});
 					}
 				}
 			});
-		},
-		reload: function(){
-			this.initialize();
-			this.render();
-		},
-		render: function(){
 			return this;
 		}
 	})
@@ -159,7 +116,7 @@ AppExpenseType = (function($){
 			$.ajax({
 				type: "GET",
 				url:"/admin/expense/type/delete",
-				data:{idType: lineSelected.vid},
+				data:{idType: lineSelected},
 				success: function(){
 					var successHtml = $("#success-message-template").html();
 					$.writeMessage("success",successHtml);

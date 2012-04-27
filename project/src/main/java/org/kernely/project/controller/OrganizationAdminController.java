@@ -1,5 +1,6 @@
 package org.kernely.project.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.ws.rs.GET;
@@ -64,7 +65,7 @@ public class OrganizationAdminController extends AbstractController {
 			log.debug("Call to GET on all organizations");
 			return organizationService.getAllOrganizations();
 		}
-		return null;
+		return new ArrayList<OrganizationDTO>();
 	}
 	
 	/**
@@ -103,12 +104,12 @@ public class OrganizationAdminController extends AbstractController {
 	@GET
 	@Path("/delete/{id}")
 	@Produces( { MediaType.TEXT_HTML })
-	public String deleteOrganization(@PathParam("id") int id){
+	public Response deleteOrganization(@PathParam("id") int id){
 		if (userService.currentUserIsAdministrator()){
 			organizationService.deleteOrganization(id);
-			return "Ok";
+			return Response.ok().build();
 		}
-		return null;
+		return Response.status(Status.FORBIDDEN).build();
 	}
 	
 	/**
@@ -123,7 +124,7 @@ public class OrganizationAdminController extends AbstractController {
 		if (userService.currentUserIsAdministrator()){
 			return organizationService.getOrganizationUsers(id);
 		}
-		return null;
+		return new ArrayList<UserDTO>();
 	}
 	
 }

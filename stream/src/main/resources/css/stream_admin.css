@@ -13,16 +13,6 @@
 	right:0;
 }
 
-#stream_admin_table{
-	cursor:pointer;
-	width:100%;
-}
-
-#streams_notifications{
-	display:none;
-	color:green;
-}
-
 div.tab{
 	border:1px;
 	border-color:darkblue;
