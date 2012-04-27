@@ -10,8 +10,7 @@ import org.apache.shiro.authz.UnauthorizedException;
 import org.joda.time.DateTime;
 import org.kernely.core.dto.UserDTO;
 import org.kernely.core.model.User;
-import org.kernely.core.service.AbstractService;
-import org.kernely.core.service.user.UserService;
+import org.kernely.core.service.UserService;
 import org.kernely.holiday.dto.CalendarBalanceDetailDTO;
 import org.kernely.holiday.dto.HolidayDetailDTO;
 import org.kernely.holiday.dto.HolidayManagedDetailsDTO;
@@ -20,6 +19,7 @@ import org.kernely.holiday.dto.HolidayUserManagedDTO;
 import org.kernely.holiday.dto.HolidayUsersManagerDTO;
 import org.kernely.holiday.model.HolidayRequest;
 import org.kernely.holiday.model.HolidayTypeInstance;
+import org.kernely.service.AbstractService;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;

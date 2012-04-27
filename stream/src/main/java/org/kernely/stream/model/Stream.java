@@ -28,7 +28,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.Cascade;
-import org.kernely.core.hibernate.AbstractModel;
+import org.kernely.persistence.AbstractModel;
 
 /**
  * The stream model

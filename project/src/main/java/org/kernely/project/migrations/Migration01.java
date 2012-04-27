@@ -3,11 +3,11 @@ package org.kernely.project.migrations;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.kernely.core.migrations.migrator.Command;
-import org.kernely.core.migrations.migrator.CreateTable;
-import org.kernely.core.migrations.migrator.DataBaseConstants;
-import org.kernely.core.migrations.migrator.Migration;
-import org.kernely.core.migrations.migrator.RawSql;
+import org.kernely.migrator.Command;
+import org.kernely.migrator.CreateTable;
+import org.kernely.migrator.DataBaseConstants;
+import org.kernely.migrator.Migration;
+import org.kernely.migrator.RawSql;
 
 /**
  * Holiday migration script

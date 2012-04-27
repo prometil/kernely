@@ -1,0 +1,82 @@
+{% extends "templates/admin.html" %}
+
+{% block subjavascript %}
+	<script type="text/javascript" src="/js/administration/manager_admin.js"></script>
+{% endblock %}
+
+{% block subtemplate %}
+	<!-- Template for the create view  -->
+	<script type="text/html" id="popup-manager-admin-create-template">
+		<div id="errors_message"></div>
+		<fieldset>
+		<legend>{% i18n "manager_informations" %}</legend>
+		<div id="combo"></div>
+		</fieldset>
+		<fieldset>
+		<legend>{% i18n "manager_users" %}</legend>
+			<div id="usersToLink">
+				<!-- Filled by ajax  -->
+			</div>
+		</fieldset>
+		<div class="dialog-buttons-container"><input type="button" value="{% i18n "create" %}" class="createManager button_ok"/></div>
+	</script>
+	
+	<!-- Template for the edit view  -->
+	<script type="text/html" id="popup-manager-admin-update-template">
+		<div id="errors_message"></div>
+		<fieldset>
+			<legend>{% i18n "manager_information" %}</legend>
+			{% i18n "name" %}: <input type="text" name="name" value="{{"{{"}}name{{"}}"}}" id="manager-username" disabled="disabled"/><br/>
+		</fieldset>
+		
+		<fieldset>
+			<legend>{% i18n "manager_users" %}</legend>
+			<div id="usersToLink">
+				<!-- Filled by ajax  -->
+			</div>
+		</fieldset>
+		<div class="dialog-buttons-container"><input type="button" value="{% i18n "update" %}" class="updateManager  button_ok"/></div>
+	</script>
+	 
+	<script type="text/html" id="table-manager-name-column">
+		{% i18n "manager_name" %}
+	</script>
+	
+	<script type="text/html" id="table-manager-users-column">
+		{% i18n "manager_users" %}
+	</script>
+	
+	<script type="text/html" id="confirm-manager-deletion-template">
+		{% i18n "confirm_manager_deletion" %}
+	</script>
+	
+	<script type="text/html" id="manager-success-template">
+		{% i18n "manager_success" %}
+	</script>
+	
+	<script type="text/html" id="create-template">{% i18n "create" %}</script>
+	<script type="text/html" id="edit-template">{% i18n "edit" %}</script>
+	<script type="text/html" id="delete-template">{% i18n "delete" %}</script>
+{% endblock %}
+
+{% block admintitle %}
+	{% i18n "manager_admin_title" %}
+{% endblock %}
+
+{% block adminbuttons %}
+	<div id="manager_admin_buttons">
+		<input type="button" class="createButton button_standard" value="{% i18n "create" %}"/>
+		<input type="button" class="editButton button_standard" value="{% i18n "edit" %}" disabled="disabled"/>
+		<input type="button" class="deleteButton button_standard" value="{% i18n "delete" %}" disabled="disabled"/>
+	</div>
+{% endblock %}
+
+{% block admin %}
+	<div id="manager_header" style=""></div>
+	
+	<div id="modal_window_manager"></div>
+	
+	<div id="manager_admin_container">
+		<table id="manager_admin_table" class="kernely_table"></table>
+	</div>
+{% endblock %}

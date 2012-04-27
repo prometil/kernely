@@ -1,0 +1,83 @@
+{% extends "templates/admin.html" %}
+
+{% block subjavascript %}
+	<script type="text/javascript" src="/js/administration/group_admin.js"></script>
+{% endblock %}
+
+{% block admintitle %}
+	{% i18n "groups_admin_title" %}
+{% endblock %}
+
+{% block adminbuttons %}
+	<div id="group_admin_buttons">
+		<input type="button" class="createButton button_standard" value="{% i18n "create" %}"/>
+		<input type="button" class="editButton button_standard" value="{% i18n "edit" %}" disabled="disabled"/>
+		<input type="button" class="deleteButton button_standard" value="{% i18n "delete" %}" disabled="disabled"/>
+	</div>
+{% endblock %}
+
+{% block admin %}
+	<div id="group_header" style=""></div>
+	
+	<div id="modal_window_group"></div>
+	
+	<div id="group_admin_container">
+	<table id="group_admin_table" class="kernely_table">
+		
+	</table>
+</div>
+
+{% endblock %}
+
+{% block subtemplate %}
+
+	<!-- Template for the create view  -->
+	<script type="text/html" id="popup-group-admin-create-template">
+		<fieldset>
+		<legend>{% i18n "group_informations" %}</legend>
+		{% i18n "group_name" %}: <input type="text" name="name"/><br/>
+		</fieldset>
+		<div class="dialog-buttons-container"><input type="button" value="{% i18n "create" %}" class="createGroup button_ok"/></div>
+	</script>
+	
+	<!-- Template for the edit view  -->
+	<script type="text/html" id="popup-group-admin-update-template">
+		<div id="errors_message"></div>
+		<fieldset>
+		<legend>{% i18n "group_informations" %}</legend>
+		{% i18n "group_name" %}: <input type="text" name="name" value="{{"{{"}}name{{"}}"}}"/><br/>
+		</fieldset>
+		
+		<fieldset>
+		<legend>{% i18n "group_users" %}</legend>
+			<div id="usersToLink">
+				<!-- Filled by ajax  -->
+			</div>
+		</fieldset>
+		<div class="dialog-buttons-container"><input type="button" value="{% i18n "update" %}" class="updateGroup button_ok"/></div>
+	</script>
+	
+	<script type="text/html" id="table-group_name-column">
+		{% i18n "group_name" %}
+	</script>
+	
+	<script type="text/html" id="table-group_members-column">
+		{% i18n "group_members" %}
+	</script>
+	
+	<script type="text/html" id="confirm-group-deletion-template">
+		{% i18n "confirm_group_deletion" %}
+	</script>
+	
+	<script type="text/html" id="group-deleted-template">
+		{% i18n "group_deleted" %}
+	</script>
+	
+	<script type="text/html" id="group-created-updated-template">
+		{% i18n "group_created_updated" %}
+	</script>
+	<script type="text/html" id="create-template">{% i18n "create" %}</script>
+	<script type="text/html" id="edit-template">{% i18n "edit" %}</script>
+	<script type="text/html" id="delete-template">{% i18n "delete" %}</script>
+
+{% endblock %}

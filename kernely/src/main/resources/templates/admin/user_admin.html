@@ -1,0 +1,112 @@
+{% extends "templates/admin.html" %}
+
+{% block subjavascript %}
+	<script type="text/javascript" src="/js/administration/user_admin.js"></script>
+{% endblock %}
+
+{% block subtemplate %}
+	<script type="text/html" id="table-user-name-column">
+		{% i18n "name" %}
+	</script>
+	<script type="text/html" id="table-user-firstname-column">
+		{% i18n "firstname" %}
+	</script>
+	<script type="text/html" id="table-user-username-column">
+		{% i18n "username" %}
+	</script>
+	<script type="text/html" id="table-user-email-column">
+		{% i18n "email" %}
+	</script>
+
+	<script type="text/html" id="popup-user-admin-create-template">
+		<div id="errors_message"></div>
+		<fieldset>
+			<legend>{% i18n "connection_informations" %}</legend>
+			{% i18n "username" %}: <input type="text" name="login"/><br/>
+			{% i18n "password" %}: <input type="text" name="password"/>
+		</fieldset>
+		<br/>
+		<fieldset>
+			<legend>{% i18n "user_informations" %}</legend>
+			{% i18n "name" %}:<input type="text" name="lastname"/><br/>
+			{% i18n "firstname" %}: <input type="text" name="firstname"/><br/>
+			{% i18n "user_hiredate" %}: <input type="text" name="hire"/>
+		</fieldset>
+		<br/>
+		<div class="dialog-buttons-container"><input type="button" value="{% i18n "create" %}" class="createUser button_ok"/></div>
+
+	</script>
+	<script type="text/html" id="popup-user-admin-update-template">
+		<div id="errors_message"></div>
+		<fieldset>
+		<legend>{% i18n "connection_informations" %}</legend>
+		{% i18n "login" %}: <input type="text" name="login" value="{{"{{"}}login{{"}}"}}"/><br/>
+		</fieldset>
+		<br/>
+		<fieldset>
+		<legend>{% i18n "user_informations" %}</legend>
+		{% i18n "name" %}: <input type="text" name="lastname" value="{{"{{"}}lastname{{"}}"}}"/><br/>
+		{% i18n "firstname" %}: <input type="text" name="firstname" value="{{"{{"}}firstname{{"}}"}}"/><br/>
+		{% i18n "user_hiredate" %}: <input type="text" name="hire" value="{{"{{"}}hire{{"}}"}}"/>
+		</fieldset>
+		<fieldset>
+		<legend>{% i18n "user_roles" %}</legend>
+			<div id="rolesToLink">
+				<!-- Filled by ajax  -->
+			</div>
+		</fieldset>
+		<div class="dialog-buttons-container"><input type="button" value="{% i18n "update" %}" class="updateUser button_ok"/></div>
+	</script>
+	
+	<script type="text/html" id="lock-button-template">{% i18n "lock" %}</script>
+	
+	<script type="text/html" id="unlock-button-template">{% i18n "unlock" %}</script>
+	
+	<script type="text/html" id="table-user-name-column">
+		{% i18n "name" %}
+	</script>
+	<script type="text/html" id="table-user-firstname-column">
+		{% i18n "firstname" %}
+	</script>
+	<script type="text/html" id="table-user-username-column">
+		{% i18n "username" %}
+	</script>
+	<script type="text/html" id="table-user-email-column">
+		{% i18n "email" %}
+	</script>
+	
+	<script type="text/html" id="success-message-template">{% i18n "success_message" %}</script>
+	
+	<script type="text/html" id="user-change-state-confirm-template">
+	{% i18n "user_change_status_confirm" %}
+	</script>
+	<script type="text/html" id="create-template">{% i18n "create" %}</script>
+	<script type="text/html" id="edit-template">{% i18n "edit" %}</script>
+	<script type="text/html" id="lock-template">{% i18n "lock" %}</script>
+
+	
+{% endblock %}
+
+{% block admintitle %}
+	{% i18n "users_admin_title" %}
+{% endblock %}
+
+{% block adminbuttons %}
+	<div id="user_admin_buttons">
+		<input type="button" class="createButton button_standard" value="{% i18n "create" %}"/>
+		<input type="button" class="editButton button_standard" value="{% i18n "edit" %}" disabled="disabled"/>
+		<input type="button" class="lockButton button_standard" value="{% i18n "lock" %}" disabled="disabled"/>
+	</div>	
+{% endblock %}
+
+{% block admin %}
+	<div id="user_header" style=""></div>
+	<div id="modal_window_user"></div>
+	
+	<div id="user_admin_container">
+	        <table id="user_admin_table" class="kernely_table">
+	                
+	        </table>
+	</div>
+	
+{% endblock %}

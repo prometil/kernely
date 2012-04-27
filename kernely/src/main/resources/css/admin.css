@@ -1,0 +1,61 @@
+/**
+ * Copyright 2011 Prometil SARL
+ *
+ * This file is part of Kernely.
+ *
+ * Kernely is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of
+ * the License, or (at your option) any later version.
+ *
+ * Kernely is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public
+ * License along with Kernely.
+ * If not, see <http://www.gnu.org/licenses/>.
+ */
+a.loader{
+  color:#008888;
+  cursor:pointer;
+}
+
+/* Header */
+div#admin_header{
+	float:left;
+}
+div#admin_buttons{
+	float:right;
+}
+
+/* Common */
+div.menu_admin, div.menu_admin_selected{
+	border-bottom:1px solid #a0a2a3;
+	width:223px;
+	height:43px;
+	padding-left:15px;
+}
+
+div.menu_admin_selected{
+	background-color:#3e3d40;
+}
+
+#rolesToLink{
+	height:150px;
+	overflow-y:auto;
+}
+
+/* Group page*/
+#usersToLink{
+	height:150px;
+	overflow-y:auto;
+}
+
+/* Manager page */
+#usersToLink{
+	height:150px;
+	overflow-y:auto;
+}
+

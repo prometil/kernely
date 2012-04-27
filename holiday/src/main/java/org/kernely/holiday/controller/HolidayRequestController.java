@@ -17,11 +17,11 @@ import javax.ws.rs.core.UriBuilder;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
-import org.kernely.core.controller.AbstractController;
-import org.kernely.core.template.SobaTemplateRenderer;
+import org.kernely.controller.AbstractController;
 import org.kernely.holiday.dto.CalendarRequestDTO;
 import org.kernely.holiday.dto.HolidayRequestCreationRequestDTO;
 import org.kernely.holiday.service.HolidayRequestService;
+import org.kernely.template.SobaTemplateRenderer;
 
 import com.google.inject.Inject;
 

@@ -1,27 +1,21 @@
 package org.kernely.holiday.service;
 
-import static org.junit.Assert.assertEquals;
-
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.shiro.authz.UnauthorizedException;
-import org.joda.time.DateTime;
 import org.junit.Test;
 import org.kernely.core.common.AbstractServiceTest;
 import org.kernely.core.dto.RoleDTO;
 import org.kernely.core.dto.UserCreationRequestDTO;
 import org.kernely.core.dto.UserDTO;
 import org.kernely.core.model.Role;
-import org.kernely.core.service.user.RoleService;
-import org.kernely.core.service.user.UserService;
+import org.kernely.core.service.RoleService;
+import org.kernely.core.service.UserService;
 import org.kernely.holiday.dto.HolidayCreationRequestDTO;
 import org.kernely.holiday.dto.HolidayDTO;
 import org.kernely.holiday.dto.HolidayDetailCreationRequestDTO;
 import org.kernely.holiday.dto.HolidayRequestCreationRequestDTO;
-import org.kernely.holiday.dto.HolidayRequestDTO;
-import org.kernely.holiday.dto.HolidayUsersManagerDTO;
-import org.kernely.holiday.model.HolidayRequest;
 import org.kernely.holiday.model.HolidayType;
 
 import com.google.inject.Inject;

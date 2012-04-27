@@ -27,7 +27,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
-import org.kernely.core.hibernate.AbstractModel;
+import org.kernely.persistence.AbstractModel;
 
 /**
  * holiday type model

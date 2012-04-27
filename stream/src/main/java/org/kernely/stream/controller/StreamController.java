@@ -33,14 +33,14 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.apache.shiro.SecurityUtils;
-import org.kernely.core.controller.AbstractController;
-import org.kernely.core.template.SobaTemplateRenderer;
+import org.kernely.controller.AbstractController;
 import org.kernely.stream.dto.StreamCommentCreationRequestDTO;
 import org.kernely.stream.dto.StreamDTO;
 import org.kernely.stream.dto.StreamMessageCreationRequestDTO;
 import org.kernely.stream.dto.StreamMessageDTO;
 import org.kernely.stream.model.Stream;
 import org.kernely.stream.service.StreamService;
+import org.kernely.template.SobaTemplateRenderer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

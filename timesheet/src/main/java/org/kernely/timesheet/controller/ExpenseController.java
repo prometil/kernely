@@ -10,7 +10,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
-import org.kernely.core.controller.AbstractController;
+import org.kernely.controller.AbstractController;
 import org.kernely.timesheet.dto.ExpenseCreationDTO;
 import org.kernely.timesheet.dto.ExpenseDTO;
 import org.kernely.timesheet.dto.ExpenseTypeDTO;

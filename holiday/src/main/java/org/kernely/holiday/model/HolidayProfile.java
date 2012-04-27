@@ -28,8 +28,8 @@ import javax.persistence.JoinTable;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-import org.kernely.core.hibernate.AbstractModel;
 import org.kernely.core.model.User;
+import org.kernely.persistence.AbstractModel;
 
 /**
  * Holiday profile model, which contains holiday types

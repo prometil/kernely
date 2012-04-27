@@ -21,7 +21,6 @@
 package org.kernely.holiday;
 
 import org.joda.time.DateTime;
-import org.kernely.core.plugin.AbstractPlugin;
 import org.kernely.holiday.controller.HolidayAdminController;
 import org.kernely.holiday.controller.HolidayMainController;
 import org.kernely.holiday.controller.HolidayManagerRequestController;
@@ -42,6 +41,7 @@ import org.kernely.holiday.model.HolidayTypeInstance;
 import org.kernely.holiday.service.HolidayManagerUserService;
 import org.kernely.holiday.service.HolidayRequestService;
 import org.kernely.holiday.service.HolidayService;
+import org.kernely.plugin.AbstractPlugin;
 import org.quartz.CronScheduleBuilder;
 import org.quartz.DateBuilder;
 import org.quartz.DateBuilder.IntervalUnit;

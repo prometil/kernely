@@ -30,7 +30,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import org.joda.time.DateTime;
-import org.kernely.core.hibernate.AbstractModel;
+import org.kernely.persistence.AbstractModel;
 
 /**
  * the holiday request details model

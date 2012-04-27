@@ -10,11 +10,11 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import org.kernely.core.controller.AbstractController;
-import org.kernely.core.template.SobaTemplateRenderer;
+import org.kernely.controller.AbstractController;
 import org.kernely.holiday.dto.HolidayRequestDTO;
 import org.kernely.holiday.model.HolidayRequest;
 import org.kernely.holiday.service.HolidayRequestService;
+import org.kernely.template.SobaTemplateRenderer;
 
 import com.google.inject.Inject;
 

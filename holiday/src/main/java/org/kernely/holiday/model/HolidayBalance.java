@@ -30,8 +30,8 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-import org.kernely.core.hibernate.AbstractModel;
 import org.kernely.core.model.User;
+import org.kernely.persistence.AbstractModel;
 
 /**
  * Model holiday balance

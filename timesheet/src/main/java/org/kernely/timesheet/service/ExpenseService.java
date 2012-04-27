@@ -10,7 +10,7 @@ import javax.persistence.Query;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
-import org.kernely.core.service.AbstractService;
+import org.kernely.service.AbstractService;
 import org.kernely.timesheet.dto.ExpenseCreationDTO;
 import org.kernely.timesheet.dto.ExpenseDTO;
 import org.kernely.timesheet.dto.ExpenseTypeCreationDTO;
