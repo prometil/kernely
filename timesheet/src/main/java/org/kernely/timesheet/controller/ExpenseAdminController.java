@@ -1,5 +1,6 @@
 package org.kernely.timesheet.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.ws.rs.Consumes;
@@ -61,7 +62,7 @@ public class ExpenseAdminController extends AbstractController {
 			log.debug("Call to GET on all expense types");
 			return expenseService.getAllExpenseTypes();
 		}
-		return null;
+		return new ArrayList<ExpenseTypeDTO>();
 	}
 	
 	/**
@@ -94,11 +95,11 @@ public class ExpenseAdminController extends AbstractController {
 	@Path("/type/delete")
 	@Consumes( { MediaType.APPLICATION_JSON })
 	@Produces( { MediaType.APPLICATION_JSON })
-	public String deleteExpenseType(@QueryParam("idType") long id) {
+	public Response deleteExpenseType(@QueryParam("idType") long id) {
 		if (userService.currentUserIsAdministrator()){
 			expenseService.deleteExpenseType(id);
-			return "{\"result\":\"Ok\"}";
+			return Response.ok().build();
 		}
-		return "{\"result\":\"Error\"}";
+		return Response.status(Status.FORBIDDEN).build();
 	}
 }

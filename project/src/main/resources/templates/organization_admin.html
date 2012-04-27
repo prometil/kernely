@@ -19,11 +19,11 @@
 	
 	<div id="organization_admin_container">
 		<div id="organization_admin_buttons">
-			<input type="button" class="createButton" value="{% i18n "create" %}"/>
-			<input type="button" class="editButton" value="{% i18n "edit" %}" disabled="disabled"/>
-			<input type="button" class="deleteButton" value="{% i18n "delete" %}" disabled="disabled"/>
+			<input type="button" class="createButton button_standard" value="{% i18n "create" %}"/>
+			<input type="button" class="editButton button_standard" value="{% i18n "edit" %}" disabled="disabled"/>
+			<input type="button" class="deleteButton button_standard" value="{% i18n "delete" %}" disabled="disabled"/>
 		</div>
-		<table id="organization_admin_table">
+		<table id="organization_admin_table" class="kernely_table">
 			
 		</table>
 	</div>
@@ -82,7 +82,7 @@
 	{% i18n "organization_created_updated" %}
 	</script>
 	
-	<script type="text/html" id="table-header-template">
-	<tr><th>{% i18n "organization_name" %}</tr>
+	<script type="text/html" id="table-organization-name-column">
+		{% i18n "organization_name" %}
 	</script>
 {% endblock %}

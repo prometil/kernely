@@ -42,115 +42,63 @@ AppHolidayAdmin = (function($){
 		editedlines = 0;
 	}
 
-	HolidayAdminTableLineView = Backbone.View.extend({
-		tagName: "tr",
-		className: 'holiday_list_line',
-		
-		vid: null,
-		vname : null,
-		vdetails : null,
-		vusers : null,
-		vholidayTypes : null,
-		
-		events: {
-			"click" : "selectLine",
-			"mouseover" : "overLine",
-			"mouseout" : "outLine"
-		},
-		
-		initialize: function(id, name, holidayTypes, users){
-			this.vid = id;
-			this.vname = name;
-			this.vholidayTypes = holidayTypes;
-			this.vusers = users;
-			this.vdetails = "";
-			
-			var parent = this;
-			if (this.vholidayTypes != undefined){
-				if ($.isArray(this.vholidayTypes)){
-					$.each(this.vholidayTypes, function() {
-		    			parent.vdetails += this.name+", ";
-		    		});
-					this.vdetails = this.vdetails.substring(0,this.vdetails.length -2);
-				}
-				else {
-					this.vdetails = this.vholidayTypes.name;
-				}
-			}
-			
-		},
-		selectLine : function(){
-			
-			$(".editButton").removeAttr('disabled');
-			$(".usersButton").removeAttr('disabled');
-			$(this.el).css("background-color", "#8AA5A1");
-			if(typeof(lineSelected) != "undefined"){
-				if(lineSelected != this && lineSelected != null){
-					$(lineSelected.el).css("background-color", "transparent");
-				}
-			}
-			lineSelected = this;
-		},
-		overLine : function(){
-			if(lineSelected != this){
-				$(this.el).css("background-color", "#EEEEEE");
-			}
-		},
-		outLine : function(){
-			if(lineSelected != this){
-				$(this.el).css("background-color", "transparent");
-			}
-		},
-		render:function(){
-			var template = '<td>{{name}}</td><td>{{details}}</td><td>{{users}}</td>';
-			var stringunity ="Undefined";
-
-			var view = {name : this.vname, details: this.vdetails, users: this.vusers};
-			var html = Mustache.to_html(template, view);
-			
-			$(this.el).html(html);
-			$(this.el).appendTo($("#holiday_admin_table"));
-			return this;
-		}
-		
-	})
 	
 	HolidayAdminTableView = Backbone.View.extend({
 		el:"#holiday_admin_table",
-		events:{
 		
-		},
 		initialize:function(){
 			var parent = this;
-			var html = $("#table-header").html();
-			$(this.el).html(html);
+			
+			var templateNameColumn = $("#table-profile-name-column").text();
+			var templateTypesColumn = $("#table-profile-types-column").text();
+			var templateUsersColumn = $("#table-profile-users-column").text();
+			$(parent.el).kernely_table({
+				columns:[templateNameColumn, templateTypesColumn, templateUsersColumn],
+				editable:true
+			});
+		},
+		
+		reload: function(){
+			this.render();
+		},
+		
+		selectLine : function(e){
+			$(".editButton").removeAttr('disabled');
+			$(".usersButton").removeAttr('disabled');
+			lineSelected = e.data.line;
+		},
+		
+		render: function(){
+			var parent = this;
 			$.ajax({
 				type:"GET",
 				url:"/admin/holiday/all",
 				dataType:"json",
 				success: function(data){
 					if (data != null){
-						if(data.holidayProfileDTO.length > 1){
-				    		$.each(data.holidayProfileDTO, function() {
-				    			var view = new HolidayAdminTableLineView(this.id, this.name, this.holidayTypes, this.nbUsers);
-				    			view.render();
-				    		});
+						var dataProfile = data.holidayProfileDTO;
+						if($.isArray(dataProfile.holidayTypes)){
+							$.each(dataProfile.holidayTypes, function(){
+								dataProfile.typesString += (this.name + ", "); 
+							});
+							dataProfile.typesString = dataProfile.typesString.substring(0, dataProfile.typesString.length-2);
 						}
-				    	// In the case when there is only one element
-			    		else{
-							var view = new HolidayAdminTableLineView(data.holidayProfileDTO.id, data.holidayProfileDTO.name, data.holidayProfileDTO.holidayTypes, this.nbUsers);
-			    			view.render();
+						else{
+							dataProfile.typesString = (dataProfile.holidayTypes.name); 
 						}
+						$(parent.el).reload_table({
+							data: dataProfile,
+							idField:"id",
+							elements:["name", "typesString", "nbUsers"],
+							eventNames:["click"],
+							events:{
+								"click": parent.selectLine
+							},
+							editable:true
+						});
 					}
 				}
 			});
-		},
-		reload: function(){
-			this.initialize();
-			this.render();
-		},
-		render: function(){
-			return this;
 		}
 	})	
 	

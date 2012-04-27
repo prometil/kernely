@@ -12,12 +12,16 @@
 
 <div id="modal_window_holiday"></div>
 
-	<script type="text/html" id="table-header">
-	<tr>
-		<th>{% i18n "holiday_profile_name" %}</th>
-		<th>{% i18n "holiday_profile_description" %}</th>
-		<th>{% i18n "holiday_profile_users" %}</th>
-	</tr>
+	<script type="text/html" id="table-profile-name-column">
+		{% i18n "holiday_profile_name" %}
+	</script>
+	
+	<script type="text/html" id="table-profile-types-column">
+		{% i18n "holiday_profile_description" %}
+	</script>
+	
+	<script type="text/html" id="table-profile-users-column">
+		{% i18n "holiday_profile_users" %}
 	</script>
 	
 	<script type="text/html" id="confirm-holiday-profile-deletion-template">

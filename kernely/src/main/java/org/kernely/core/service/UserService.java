@@ -54,7 +54,6 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.google.inject.persist.Transactional;
 
-
 /**
  * Service provided by the user plugin.
  */
@@ -117,6 +116,7 @@ public class UserService extends AbstractService {
 		userdetails.setFirstname(request.firstname);
 		userdetails.setHire(request.hire);
 		userdetails.setUser(user);
+		userdetails.setImage("default_profile_user.png");
 
 		user.setUserDetails(userdetails);
 		em.get().persist(user);
@@ -338,6 +338,21 @@ public class UserService extends AbstractService {
 		UserDetails ud = (UserDetails) query.getSingleResult();
 		return new UserDetailsDTO(ud);
 	}
+	
+	/**
+	 * Get details by id.
+	 * 
+	 * @param id
+	 *            The id of the userDetails
+	 * @return The DTO associated to this details
+	 */
+	@Transactional
+	public UserDetailsDTO getUserDetails(long userDetailsId) {
+		Query query = em.get().createQuery("SELECT e FROM UserDetails e WHERE id=:detailsId");
+		query.setParameter("detailsId", userDetailsId);
+		UserDetails ud = (UserDetails) query.getSingleResult();
+		return new UserDetailsDTO(ud);
+	}
 
 	/**
 	 * Get the current user authenticated in the application
@@ -493,9 +508,9 @@ public class UserService extends AbstractService {
 	}
 
 	/**
-	 * retrieve an users list belong to the managers.
+	 * Get all users managed by a manager.
 	 * 
-	 * @param managerId
+	 * @param The username of the manager
 	 * @return the users
 	 */
 	@Transactional
@@ -517,6 +532,20 @@ public class UserService extends AbstractService {
 		return users;
 	}
 
+	/**
+	 * Get the manager and his users
+	 * 
+	 * @param the id of the manager to get
+	 * @return The manager DTO, containing his users
+	 */
+	public ManagerDTO getManager(long id){
+		Query query = em.get().createQuery("Select u FROM User u WHERE u.id=:id");
+		query.setParameter("id", id);
+		User m = (User) query.getSingleResult();
+		ManagerDTO manager = new ManagerDTO(id, m.getUsername(), this.getUsers(m.getUsername()));
+		return manager;
+	}
+	
 	/**
 	 * Update all user of the list with the new manager
 	 * 
@@ -579,16 +608,29 @@ public class UserService extends AbstractService {
 	 * Delete an existing manager in database
 	 * 
 	 * @param id
-	 *            The id of the group to delete
+	 *            The id of the manager to delete
+	 */
+	@Transactional
+	public void deleteManager(long id) {
+		Query query = em.get().createQuery("Select u FROM User u WHERE u.id=:id");
+		query.setParameter("id", id);
+		User userManager = (User) query.getSingleResult();
+		Set<User> managed = userManager.getUsers();
+		userManager.setUsers(new HashSet<User>());
+		for (User user : managed) {
+			user.getManagers().remove(userManager);
+			em.get().merge(user);
+		}
+	}
+	
+	/**
+	 * Delete an existing manager in database
+	 * 
+	 * @param id
+	 *            The username of the manager to delete
 	 */
 	@Transactional
 	public void deleteManager(String username) {
-		if (username == null) {
-			throw new IllegalArgumentException("The manager cannot be null");
-		}
-		if (username.equals("")) {
-			throw new IllegalArgumentException("Manager cannot be an empty string");
-		}
 		Query query = em.get().createQuery("Select u FROM User u WHERE u.username=:username");
 		query.setParameter("username", username);
 		User userManager = (User) query.getSingleResult();
@@ -598,7 +640,6 @@ public class UserService extends AbstractService {
 			user.getManagers().remove(userManager);
 			em.get().merge(user);
 		}
-
 	}
 
 	/**
@@ -612,13 +653,15 @@ public class UserService extends AbstractService {
 		Query query = em.get().createQuery("SELECT DISTINCT u.managers FROM User u");
 		List<User> idManager = (List<User>) query.getResultList();
 		Set<ManagerDTO> collection = new HashSet<ManagerDTO>();
+		Set<User> users;
+		ArrayList<UserDTO> usersList;
 		for (User manager : idManager) {
-			Set<User> users = manager.getUsers();
-			ArrayList<UserDTO> usersList = new ArrayList<UserDTO>();
+			users = manager.getUsers();
+			usersList = new ArrayList<UserDTO>();
 			for (User user : users) {
 				usersList.add(new UserDTO(user.getUsername(), user.getId()));
 			}
-			collection.add(new ManagerDTO(manager.getUsername(), usersList));
+			collection.add(new ManagerDTO(manager.getId(), manager.getUsername(), usersList));
 		}
 		return collection;
 	}

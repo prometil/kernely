@@ -117,8 +117,8 @@ public class SobaTemplateRenderer {
 		}
 		Subject subject = SecurityUtils.getSubject();
 		if (subject.getPrincipal() != null) {
-
-			binding.put("currentUser", subject.getPrincipal().toString());
+			binding.put("currentUser", userService.getUserDetails(userService.getAuthenticatedUserDTO().username));
+			binding.put("currentUserLogin", userService.getAuthenticatedUserDTO().username);
 		}
 		/*
 		 * String lang = configuration.getString("locale.lang"); String country

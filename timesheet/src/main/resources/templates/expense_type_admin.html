@@ -15,11 +15,11 @@
 {% block admin %}
 	<div id="expense_type_admin_container">
 	        <div id="expense_type_admin_buttons">
-	                <input type="button" class="createButton" value="{% i18n "create" %}"/>
-	                <input type="button" class="editButton" value="{% i18n "edit" %}" disabled="disabled"/>
-	                <input type="button" class="deleteButton" value="{% i18n "delete" %}" disabled="disabled"/>
+	                <input type="button" class="createButton button_standard" value="{% i18n "create" %}"/>
+	                <input type="button" class="editButton button_standard" value="{% i18n "edit" %}" disabled="disabled"/>
+	                <input type="button" class="deleteButton button_standard" value="{% i18n "delete" %}" disabled="disabled"/>
 	        </div>
-	        <table id="expense_type_admin_table">
+	        <table id="expense_type_admin_table" class="kernely_table">
 	                
 	        </table>
 	</div>
@@ -30,14 +30,17 @@
 	
 {% block subtemplate %}
 
-	<script type="text/html" id="table-header-template">
-	<tr>
-		<th>{% i18n "expense_type_name" %}</th>
-		<th>{% i18n "expense_type_direct" %}</th>
-		<th>{% i18n "expense_type_ratio" %}</th>
-	</tr>
+	<script type="text/html" id="table-expense-name-column">
+		{% i18n "expense_type_name" %}
 	</script>
-
+	
+	<script type="text/html" id="table-expense-direct-column">
+		{% i18n "expense_type_direct" %}
+	</script>
+	
+	<script type="text/html" id="table-expense-ratio-column">
+		{% i18n "expense_type_ratio" %}
+	</script>
 
 	<script type="text/html" id="success-message-template">{% i18n "success_message" %}</script>
 

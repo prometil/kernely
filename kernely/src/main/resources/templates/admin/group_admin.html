@@ -8,19 +8,20 @@
 	{% i18n "groups_admin_title" %}
 {% endblock %}
 
-{% block admin %}
-	<div id="group_header" style=""></div>
-	
-	<div id="mask"></div>
-	
-	<div id="modal_window_group"></div>
-	
-	<div id="group_admin_container">
+{% block adminbuttons %}
 	<div id="group_admin_buttons">
 		<input type="button" class="createButton button_standard" value="{% i18n "create" %}"/>
 		<input type="button" class="editButton button_standard" value="{% i18n "edit" %}" disabled="disabled"/>
 		<input type="button" class="deleteButton button_standard" value="{% i18n "delete" %}" disabled="disabled"/>
 	</div>
+{% endblock %}
+
+{% block admin %}
+	<div id="group_header" style=""></div>
+	
+	<div id="modal_window_group"></div>
+	
+	<div id="group_admin_container">
 	<table id="group_admin_table" class="kernely_table">
 		
 	</table>
@@ -32,22 +33,19 @@
 
 	<!-- Template for the create view  -->
 	<script type="text/html" id="popup-group-admin-create-template">
-		<input type="button" value="{% i18n "close" %}" class="closeModal"/><br/>
 		<fieldset>
 		<legend>{% i18n "group_informations" %}</legend>
-		{% i18n "group.name" %}: <input type="text" name="name"/><br/>
+		{% i18n "group_name" %}: <input type="text" name="name"/><br/>
 		</fieldset>
-		<br/>
-		<input type="button" value="{% i18n "create" %}" class="createGroup"/>
-		<div id="errors_message"></div>
+		<div class="dialog-buttons-container"><input type="button" value="{% i18n "create" %}" class="createGroup button_ok"/></div>
 	</script>
 	
 	<!-- Template for the edit view  -->
 	<script type="text/html" id="popup-group-admin-update-template">
-		<input type="button" value="{% i18n "close" %}" class="closeModal"/><br/>
+		<div id="errors_message"></div>
 		<fieldset>
 		<legend>{% i18n "group_informations" %}</legend>
-		{% i18n "group.name" %}: <input type="text" name="name" value="{{"{{"}}name{{"}}"}}"/><br/>
+		{% i18n "group_name" %}: <input type="text" name="name" value="{{"{{"}}name{{"}}"}}"/><br/>
 		</fieldset>
 		
 		<fieldset>
@@ -56,13 +54,15 @@
 				<!-- Filled by ajax  -->
 			</div>
 		</fieldset>
-		<br/>
-		<input type="button" value="{% i18n "update" %}" class="updateGroup"/>
-		<div id="errors_message"></div>
+		<div class="dialog-buttons-container"><input type="button" value="{% i18n "update" %}" class="updateGroup button_ok"/></div>
 	</script>
 	
-	<script type="text/html" id="table-header-template">
-		<tr><th>{% i18n "group.name" %}</th><th>{% i18n "group_users" %}</th></tr>
+	<script type="text/html" id="table-group_name-column">
+		{% i18n "group_name" %}
+	</script>
+	
+	<script type="text/html" id="table-group_members-column">
+		{% i18n "group_members" %}
 	</script>
 	
 	<script type="text/html" id="confirm-group-deletion-template">
@@ -76,5 +76,8 @@
 	<script type="text/html" id="group-created-updated-template">
 		{% i18n "group_created_updated" %}
 	</script>
+	<script type="text/html" id="create-template">{% i18n "create" %}</script>
+	<script type="text/html" id="edit-template">{% i18n "edit" %}</script>
+	<script type="text/html" id="delete-template">{% i18n "delete" %}</script>
 
 {% endblock %}

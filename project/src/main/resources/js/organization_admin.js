@@ -23,107 +23,49 @@ AppOrganizationAdmin = (function($){
 	var lineSelected = null;
 	var tableView = null;
 	
-
-	OrganizationAdminTableLineView = Backbone.View.extend({
-		tagName: "tr",
-		className: 'organization_list_line',
-		
-		vid: null,
-		vname : null,
-		vaddress : null,
-		vzip : null,
-		vcity : null,
-		vphone : null,
-		vfax : null,
-
-		events: {
-			"click" : "selectLine",
-			"mouseover" : "overLine",
-			"mouseout" : "outLine"
-		},
-		
-		
-		initialize: function(id, name, address, zip, city, phone, fax){
-			this.vid = id;
-			this.vname = name;
-			this.vaddress = address;
-			this.vcity=city;
-			this.vzip=zip;
-			this.vphone=phone;
-			this.vfax=fax;
-		},
-		
-		selectLine : function(){
-			$(".editButton").removeAttr('disabled');
-			$(".deleteButton").removeAttr('disabled');
-			$(this.el).css("background-color", "#8AA5A1");
-			if(typeof(lineSelected) != "undefined"){
-				if(lineSelected != this && lineSelected != null){
-					$(lineSelected.el).css("background-color", "transparent");
-				}
-			}
-			lineSelected = this;
-		},
-		overLine : function(){
-			if(lineSelected != this){
-				$(this.el).css("background-color", "#EEEEEE");
-			}
-		},
-		outLine : function(){
-			if(lineSelected != this){
-				$(this.el).css("background-color", "transparent");
-			}
-		},
-
-		render:function(){
-			var template = '<td>{{name}}</td>';
-			var view = {name : this.vname};
-			var html = Mustache.to_html(template, view);
-			
-			$(this.el).html(html);
-			$(this.el).appendTo($("#organization_admin_table"));
-			return this;
-		}
-		
-	})
 	
 	OrganizationAdminTableView = Backbone.View.extend({
 		el:"#organization_admin_table",
-		events:{
-		
-		},
 		
 		initialize:function(){
 			var parent = this;
-			var html= $("#table-header-template").html();
-
-			$(this.el).html(html);
+			
+			var templateNameColumn = $("#table-organization-name-column").text();
+			$(parent.el).kernely_table({
+				columns:[templateNameColumn],
+				editable:true
+			});
+		},
+		reload: function(){
+			this.render();
+		},
+		selectLine : function(e){
+			$(".editButton").removeAttr('disabled');
+			$(".deleteButton").removeAttr('disabled');
+			lineSelected = e.data.line;
+		},
+		render: function(){
+			var parent = this;
 			$.ajax({
 				type:"GET",
 				url:"/admin/organizations/all",
 				dataType:"json",
 				success: function(data){
 					if(data != null){
-						if(data.organizationDTO.length > 1){
-				    		$.each(data.organizationDTO, function() {
-				    			var view = new OrganizationAdminTableLineView(this.id, this.name, this.address, this.zip, this.city, this.phone, this.fax);
-				    			view.render();
-				    		});
-						}
-					   	// In the case when there is only one element
-			    		else{
-							var view = new OrganizationAdminTableLineView(data.organizationDTO.id, data.organizationDTO.name, data.organizationDTO.address, data.organizationDTO.zip, data.organizationDTO.city, data.organizationDTO.phone, data.organizationDTO.fax);
-			    			view.render();
-						}
+						var dataOrganization = data.organizationDTO;
+						$(parent.el).reload_table({
+							data: dataOrganization,
+							idField:"id",
+							elements:["name"],
+							eventNames:["click"],
+							events:{
+								"click": parent.selectLine
+							},
+							editable:true
+						});
 					}
 				}
 			});
-		},
-		reload: function(){
-			this.initialize();
-			this.render();
-		},
-		render: function(){
 			return this;
 		}
 	})	
@@ -192,7 +134,7 @@ AppOrganizationAdmin = (function($){
 		
 		confirmDeleteOrganization: function(){
 			$.ajax({
-				url:"/admin/organizations/delete/" + lineSelected.vid,
+				url:"/admin/organizations/delete/" + lineSelected,
 				success: function(){
 					var successHtml = $("#organization-deleted-template").html();
 					$.writeMessage("success",successHtml);

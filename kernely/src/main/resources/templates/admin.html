@@ -24,10 +24,19 @@
 	{% endblock%}	
 {% endblock%}	
 {% block title %}
-	<div id="admin_header">
-	{% block admintitle %}
-			{% i18n "admin_page_title" %}
-	{% endblock %}
+	<div>
+		<div>
+			<div id="admin_header">
+			{% block admintitle %}
+					{% i18n "admin_page_title" %}
+			{% endblock %}
+			</div>
+			<div id="admin_buttons">
+			{% block adminbuttons %}
+			{% endblock %}
+			</div>
+		</div>
+		<div class="clear"></div>
 	</div>
 {% endblock %}
 {% block content %}

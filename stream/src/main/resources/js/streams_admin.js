@@ -21,79 +21,6 @@ AppStreamAdmin = (function($){
 	var lineSelected = null;
 	var tableView = null;
 	
-	
-	StreamAdminTableLineView = Backbone.View.extend({
-		tagName: "tr",
-		className: 'stream_list_line',
-		
-		vid: null,
-		vname : null,
-		vcategory : null,
-		vlocked : null,
-		
-		events: {
-			"click" : "selectLine",
-			"mouseover" : "overLine",
-			"mouseout" : "outLine"
-		},
-		
-		initialize: function(id, name, category,locked){
-			this.vid = id;
-			this.vname = name;
-			this.vcategory = category;
-			this.vlocked = locked;
-		},
-		selectLine : function(){
-			$(".editButton").removeAttr('disabled');
-			$(".rightsButton").removeAttr('disabled');
-			if (this.vlocked=="true"){
-				$(".unlockButton").removeAttr('disabled');
-				$(".lockButton").attr('disabled','disabled');
-			} else {
-				$(".lockButton").removeAttr('disabled');
-				$(".unlockButton").attr('disabled','disabled');
-			}
-			$(this.el).css("background-color", "#8AA5A1");
-			if(typeof(lineSelected) != "undefined"){
-				if(lineSelected != this && lineSelected != null){
-					$(lineSelected.el).css("background-color", "transparent");
-				}
-			}
-			lineSelected = this;
-		},
-		overLine : function(){
-			if(lineSelected != this){
-				$(this.el).css("background-color", "#EEEEEE");
-			}
-		},
-		outLine : function(){
-			if(lineSelected != this){
-				$(this.el).css("background-color", "transparent");
-			}
-		},
-		render:function(){
-			var image;
-			var template = '<td><img src="{{icon}}"></img></td><td>{{name}}</td><td>{{category}}</td>';
-
-			if(this.vlocked == "true"){
-				image = "/img/stream_locked.png";
-			}
-			else if (this.vcategory == "streams/users") {
-				image = "/images/icons/user.png";
-			} else if (this.vcategory == "streams/plugins"){
-				image = "/img/plugin.png";
-			} else {
-				image = "";
-			}
-			var view = {icon: image, name : this.vname, category : this.vcategory};
-			var html = Mustache.to_html(template, view);
-			
-			$(this.el).html(html);
-			$(this.el).appendTo($("#stream_admin_table"));
-			return this;
-		}
-		
-	})
 
 	StreamAdminTableView = Backbone.View.extend({
 		el:"#stream_admin_table",
@@ -102,33 +29,46 @@ AppStreamAdmin = (function($){
 		},
 		initialize:function(){
 			var parent = this;
-			$(this.el).html("<tr><th></th><th>Name</th><th>Category</th></tr>");
+			
+			var templateNameColumn = $("#table-stream-name-column").text();
+			var templateCategoryColumn = $("#table-stream-category-column").text();
+			$(parent.el).kernely_table({
+				columns:[templateNameColumn, templateCategoryColumn],
+				editable:true
+			});
+			
+		},
+		reload: function(){
+			this.render();
+		},
+		selectLine : function(e){
+			$(".editButton").removeAttr('disabled');
+			$(".lockButton").removeAttr('disabled');
+			$(".unlockButton").removeAttr('disabled');
+			lineSelected = e.data.line;
+		},
+		render: function(){
+			var parent = this;
 			$.ajax({
 				type:"GET",
 				url:"/admin/streams/all",
 				dataType:"json",
 				success: function(data){
 					if (data != null){
-						if(data.streamDTO.length > 1){
-				    		$.each(data.streamDTO, function() {
-				    			var view = new StreamAdminTableLineView(this.id, this.title,this.category,this.locked);
-				    			view.render();
-				    		});
-						}
-				    	// In the case when there is only one element
-			    		else{
-							var view = new StreamAdminTableLineView(data.streamDTO.id, data.streamDTO.title,data.streamDTO.category, data.streamDTO.locked);
-			    			view.render();
-						}
+						var dataStream = data.streamDTO;
+						$(parent.el).reload_table({
+							data: dataStream,
+							idField:"id",
+							elements:["title", "category"],
+							eventNames:["click"],
+							events:{
+								"click": parent.selectLine
+							},
+							editable:true
+						});
 					}
 				}
 			});
-		},
-		reload: function(){
-			this.initialize();
-			this.render();
-		},
-		render: function(){
 			return this;
 		}
 	})	
@@ -204,7 +144,7 @@ AppStreamAdmin = (function($){
 		
 		confirmLockStream: function(){
 			$.ajax({
-				url:"/admin/streams/lock/" + lineSelected.vid,
+				url:"/admin/streams/lock/" + lineSelected,
 				success: function(){
 					var successHtml = $("#stream-locked-template").html();
 					$.writeMessage("success",successHtml);
@@ -223,7 +163,7 @@ AppStreamAdmin = (function($){
 		
 		confirmUnlockStream: function(){
 			$.ajax({
-				url:"/admin/streams/unlock/" + lineSelected.vid,
+				url:"/admin/streams/unlock/" + lineSelected,
 				success: function(){
 					var successHtml = $("#stream-unlocked-template").html();
 					$.writeMessage("success",successHtml);
@@ -306,7 +246,6 @@ AppStreamAdmin = (function($){
 				
 				$.each(usersSelect, function(){
 					rights += '{"id":'+this.id+',"idType":"user", "permission":"'+$("#"+this.id+" :selected").val()+'"}';
-					console.log(rights);
 					count++;
 					if(count<usersSelect.length){
 						rights += ',';

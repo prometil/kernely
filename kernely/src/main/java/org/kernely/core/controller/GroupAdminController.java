@@ -151,5 +151,20 @@ public class GroupAdminController extends AbstractController {
 		}
 		return null;
 	}
+	
+	/**
+	 * Get a group.
+	 * @param id The id of the group
+	 * @return The group DTO.
+	 */
+	@GET
+	@Path("/{id}")
+	@Produces({MediaType.APPLICATION_JSON})
+	public GroupDTO getGroup(@PathParam("id") long id){
+		if (userService.currentUserIsAdministrator()){
+			return groupService.getGroup(id);
+		}
+		return new GroupDTO();
+	}
 
 }

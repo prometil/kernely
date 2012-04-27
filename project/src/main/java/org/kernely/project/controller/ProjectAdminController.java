@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigInteger;
 import java.security.SecureRandom;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.ws.rs.Consumes;
@@ -95,7 +96,7 @@ public class ProjectAdminController extends AbstractController {
 			log.debug("Call to GET on all projects");
 			return projectService.getAllProjects();
 		}
-		return null;
+		return new ArrayList<ProjectDTO>();
 	}
 
 	/**
@@ -111,7 +112,7 @@ public class ProjectAdminController extends AbstractController {
 			log.debug("Call to GET on all organization");
 			return organizationService.getAllOrganizations();
 		}
-		return null;
+		return new ArrayList<OrganizationDTO>();
 	}
 
 	/**
@@ -138,7 +139,7 @@ public class ProjectAdminController extends AbstractController {
 				return "{\"result\":\"" + iae.getMessage() + "\"}";
 			}
 		}
-		return null;
+		return "";
 	}
 
 	/**
@@ -151,12 +152,12 @@ public class ProjectAdminController extends AbstractController {
 	@GET
 	@Path("/delete/{id}")
 	@Produces({ MediaType.TEXT_HTML })
-	public String deleteProject(@PathParam("id") int id) {
+	public Response deleteProject(@PathParam("id") int id) {
 		if (userService.currentUserIsAdministrator()) {
 			projectService.deleteProject(id);
-			return "Ok";
+			return Response.ok().build();
 		}
-		return null;
+		return Response.status(Status.FORBIDDEN).build();
 	}
 
 	/**
@@ -174,7 +175,7 @@ public class ProjectAdminController extends AbstractController {
 		if (userService.currentUserIsAdministrator()) {
 			return projectService.getProjectUsers(id);
 		}
-		return null;
+		return new ArrayList<UserDTO>();
 	}
 
 	/**
@@ -298,7 +299,7 @@ public class ProjectAdminController extends AbstractController {
 	@POST
 	@Path("/updaterights")
 	@Produces({ MediaType.APPLICATION_JSON })
-	public String updateRights(ProjectRightsUpdateRequestDTO request) {
+	public Response updateRights(ProjectRightsUpdateRequestDTO request) {
 		log.debug("Update {} rights of the project : {}", request.rights.size(), request.projectid);
 
 		// delete permissions on the project for the user
@@ -327,6 +328,6 @@ public class ProjectAdminController extends AbstractController {
 				}
 			}
 		}
-		return "{\"result\":\"ok\"}";
+		return Response.ok().build();
 	}
 }

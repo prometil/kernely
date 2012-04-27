@@ -21,56 +21,6 @@ AppManagerAdmin = (function($){
 	var lineSelected = null;
 	var tableView = null;
 	
-	
-	ManagerAdminTableLineView = Backbone.View.extend({
-		tagName: "tr",
-		className: 'manager_list_line',
-		
-		vname : null,
-		vnbmembers : null,
-		
-		events: {
-			"click" : "selectLine",
-			"mouseover" : "overLine",
-			"mouseout" : "outLine"
-		},
-		
-		initialize: function(username, users){
-			this.vname = username;
-			this.vnbmembers = users;
-		},
-		selectLine : function(){
-			$(".editButton").removeAttr('disabled');
-			$(".deleteButton").removeAttr('disabled');
-			$(this.el).css("background-color", "#8AA5A1");
-			if(typeof(lineSelected) != "undefined"){
-				if(lineSelected != this && lineSelected != null){
-					$(lineSelected.el).css("background-color", "transparent");
-				}
-			}
-			lineSelected = this;
-		},
-		overLine : function(){
-			if(lineSelected != this){
-				$(this.el).css("background-color", "#EEEEEE");
-			}
-		},
-		outLine : function(){
-			if(lineSelected != this){
-				$(this.el).css("background-color", "transparent");
-			}
-		},
-		render:function(){
-			var template = '<td>{{username}}</td><td>{{members}}</td>';
-			var view = {username : this.vname, members: this.vnbmembers};
-			var html = Mustache.to_html(template, view);
-			
-			$(this.el).html(html);
-			$(this.el).appendTo($("#manager_admin_table"));
-			return this;
-		}		
-	})
-	
 	ManagerAdminTableView = Backbone.View.extend({
 		el:"#manager_admin_table",
 		events:{
@@ -78,41 +28,39 @@ AppManagerAdmin = (function($){
 		},
 		initialize:function(){
 			var parent = this; 
-			var html= $("#table-header-template").html();
-
-			$(this.el).html(html);
+			
+			var templateNameColumn = $("#table-manager-name-column").text();
+			var templateManagedColumn = $("#table-manager-users-column").text();
+			$(parent.el).kernely_table({
+				columns:[templateNameColumn, templateManagedColumn],
+				editable:true
+			});
+			
 			$.ajax({
 				type:"GET",
 				url:"/admin/manager/all",
 				dataType:"json",
 				success: function(data){ 
 					if(data != null){
-						if(data.managerDTO.length > 1 ){
-				    		$.each(data.managerDTO, function() {
-				    			if (this.users.length > 1){
-					    			var view = new ManagerAdminTableLineView(this.name, this.users.length);
-					    			view.render();
-				    			}
-				    			else{
-				    				var view = new ManagerAdminTableLineView(this.name, 1);
-					    			view.render();
-				    			}
-				    		});
-						}
-				    	// In the case when there is only one element
-			    		else{		    		
-			    			if ( data.managerDTO.users.length > 1){
-			    				var view = new ManagerAdminTableLineView(data.managerDTO.name, data.managerDTO.users.length);
-			    				view.render();
-			    			}
-			    			else{
-			    				var view = new ManagerAdminTableLineView(data.managerDTO.name, 1);
-			    				view.render();
-			    			}
-						}
+						var dataManager = data.managerDTO;
+						$(parent.el).reload_table({
+							data: dataManager,
+							idField:"id",
+							elements:["name", "nbUsers"],
+							eventNames:["click"],
+							events:{
+								"click": parent.selectLine
+							},
+							editable:true
+						});
 					}
 				}
 			});
+		},
+		selectLine : function(e){
+			$(".editButton").removeAttr('disabled');
+			$(".deleteButton").removeAttr('disabled');
+			lineSelected = e.data.line;
 		},
 		reload: function(){
 			this.initialize();
@@ -124,7 +72,7 @@ AppManagerAdmin = (function($){
 	})	
 	
 		ManagerAdminButtonsView = Backbone.View.extend({
-		el:"#manager_admin_container",
+		el:"#manager_admin_buttons",
 		
 		events: {
 			"click .createButton" : "createmanager",
@@ -132,96 +80,28 @@ AppManagerAdmin = (function($){
 			"click .deleteButton" : "deletemanager"
 		},
 		
-		viewCreate:null,
-		viewUpdate:null,
-		
 		initialize: function(){
-			this.viewCreate = new ManagerAdminCreateView();
-			this.viewUpdate =  new ManagerAdminUpdateView("", 0);
-		},
-		
-		showModalWindow: function(){
-			//Get the screen height and width
-       		var maskHeight = $(window).height();
-       		var maskWidth = $(window).width();
-
-       		//Set height and width to mask to fill up the whole screen
-       		$('#mask').css({'width':maskWidth,'height':maskHeight});
-
-       		//transition effect    
-       		$('#mask').fadeIn(500);   
-       		$('#mask').fadeTo("fast",0.7); 
-
-       		//Get the window height and width
-       		var winH = $(window).height();
-      		var winW = $(window).width();
-
-        	//Set the popup window to center
-       		$("#modal_window_manager").css('top',  winH/2-$("#modal_window_manager").height()/2);
-     		$("#modal_window_manager").css('left', winW/2-$("#modal_window_manager").width()/2);
-     		$("#modal_window_manager").css('background-color', "#EEEEEE");
-     		$("input:text").each(function(){this.value="";});
-     		//transition effect
-     		$("#modal_window_manager").fadeIn(500);
 		},
 		
 		createmanager: function(){
-			this.showModalWindow();
-			this.viewCreate.render();
-		},
-		
-		editmanager: function(){
-			
-			this.showModalWindow();
-			this.viewUpdate.setFields(lineSelected.vname, lineSelected.vid);
-			this.viewUpdate.render();
-		},
-		
-		deletemanager: function(){
-			
-			var template = $("#confirm-manager-deletion-template").html();
-			
-			var view = {name: lineSelected.vname};
-			var html = Mustache.to_html(template, view);
-	
-			$.kernelyConfirm(html,this.confirmdeletemanager);
-		},
-		
-		confirmdeletemanager: function(){
-			$.ajax({
-				url:"/admin/manager/delete/" + lineSelected.vname,
-				success: function(){
-					var successHtml = $("#manager-success-template").html();
-					
-					$.writeMessage("success",successHtml);
-					tableView.reload();
-				}
-			});
-		},
-		
-		render:function(){
-			return this;
-		}
-	})
-	
-	ManagerAdminCreateView = Backbone.View.extend({
-		el: "#modal_window_manager",
-		
-		events:{
-			"click .closeModal" : "closemodal",
-			"click .createManager" : "registermanager"
-		},
-		
-		initialize:function(){
-		},
-		
-		render : function(){
-			var template = $("#popup-manager-admin-create-template").html();
+			var parent = this;
 			$.ajax({
 				type: "GET",
 				url:"/admin/manager/combobox",
 				dataType:"json",
 				success: function(data){
+					var template = $("#popup-manager-admin-create-template").html();
+			
+					var titleTemplate = $("#create-template").html();
+					$("#modal_window_manager").kernely_dialog({
+						title: titleTemplate,
+						content: template,
+						eventNames:'click',
+						events:{
+							'click': {"el":".createManager", "event":parent.registermanager}
+						}
+					});
+					
 					if(data != null){
 						var option = "";
 						if ($.isArray(data.userDTO)){
@@ -233,20 +113,30 @@ AppManagerAdmin = (function($){
 							option = option + '<option value="' + data.userDTO.username + '">'+ data.userDTO.username +'</option>' ;
 							$("#combo").append('<select name="user-choice" id="combobox">' + option + '</select>');
 						}
-
 					}
+					
+					// Create list of users to manage
+					var usersToLink = $("#usersToLink");
+					$.ajax({
+						type: "GET",
+						url:"/admin/users/enabled",
+						dataType:"json",
+						success: function(data){
+							if(data.userDetailsDTO.length > 1){
+					    		$.each(data.userDetailsDTO, function() {
+					    			$(usersToLink).append('<input type="checkbox" id="'+ this.user.id +'">'+ this.lastname + ' ' + this.firstname+'</input><br/>');
+					    		});
+							}
+							// In the case when there is only one user.
+							else{
+								$(usersToLink).append('<input type="checkbox" id="'+ data.userDetailsDTO.user.id +'">'+ data.userDetailsDTO.lastname + ' ' + data.userDetailsDTO.firstname + ' ('+ data.userDetailsDTO.user.username +')'+'</input><br/>');
+							}
+						}
+					});
+					
+					$("#modal_window_manager").kernely_dialog("open");
 				}
 			});
-			var view = {};
-			var html = Mustache.to_html(template, view);
-			$(this.el).html(html);
-			new UserCBListViewCreate().render();
-			return this;
-		},
-		
-		closemodal: function(){
-			$('#modal_window_manager').hide();
-       		$('#mask').hide();
 		},
 		
 		registermanager: function(){	
@@ -281,48 +171,76 @@ AppManagerAdmin = (function($){
 				success: function(data){
 					if (data.result == "ok"){
 						var successHtml = $("#manager-success-template").html();
-						
 						$.writeMessage("success",successHtml);
+						$("#modal_window_manager").kernely_dialog("close");
 						tableView.reload();
 					} else {
 						$.writeMessage("error",data.result,"#errors_message");
 					}
-					parent.closemodal();
 				}
 			});
-		}
-	}) 
-	
-	ManagerAdminUpdateView = Backbone.View.extend({
-		el: "#modal_window_manager",
-		
-		events:{
-			"click .closeModal" : "closemodal",
-			"click .updateManager" : "updatemanager"
 		},
 		
-		initialize:function(name, id){
-			this.vid = id;
-			this.vname = name;
-		},
-		
-		setFields: function(name, id){
-			this.vid = id;
-			this.vname = name;
-		},
-		
-		render : function(){
-			var template = $("#popup-manager-admin-update-template").html();
-			var view = {name : this.vname};
-			var html = Mustache.to_html(template, view);
-			$(this.el).html(html);
-			new UserCBListView(this.vid).render();
-			return this;
-		},
-		
-		closemodal: function(){
-			$('#modal_window_manager').hide();
-       		$('#mask').hide();
+		editmanager: function(){
+			// Get data from manager
+			var parent = this;
+			var managerUsers;
+			$.ajax({
+				type: "GET",
+				url:"/admin/manager/"+lineSelected,
+				dataType:"json",
+				success: function(data){
+					var template = $("#popup-manager-admin-update-template").html();
+					var view = {name : data.name};
+					var html = Mustache.to_html(template, view);
+					
+					var titleTemplate = $("#edit-template").html();
+					$("#modal_window_manager").kernely_dialog({
+						title: titleTemplate,
+						content: html,
+						eventNames:'click',
+						events:{
+							'click': {"el":".updateManager", "event":parent.updatemanager}
+						}
+					});
+				
+					manager = data;
+					
+					var usersToLink = $("#usersToLink");
+					
+					$.ajax({
+						type: "GET",
+						url:"/admin/users/enabled",
+						dataType:"json",
+						success: function(data){
+							// Build users boxes
+							if(data.userDetailsDTO.length > 1){
+					    		$.each(data.userDetailsDTO, function() {
+					    			$(usersToLink).append('<input type="checkbox" id="'+ this.user.id +'">'+ this.lastname + ' ' + this.firstname+'</input><br/>');
+					    		});
+							}
+							// In the case when there is only one user.
+							else{
+								$(usersToLink).append('<input type="checkbox" id="'+ data.userDetailsDTO.user.id +'">'+ data.userDetailsDTO.lastname + ' ' + data.userDetailsDTO.firstname + ' ('+ data.userDetailsDTO.user.username +')'+'</input><br/>');
+							}
+							
+							// Check boxes
+							if(manager != null && typeof(manager) != "undefined"){
+								if(manager.users.length > 1){
+						    		$.each(manager.users, function() {
+						    			$('#' + this.id).attr("checked", "checked");
+						    		});
+								}
+								// In the case when there is only one user. 
+								else{
+									$('#' + manager.users.id).attr("checked", "checked");
+								}
+							}
+							$("#modal_window_manager").kernely_dialog("open");
+						}
+					});
+				}
+			});
 		},
 		
 		updatemanager: function(){
@@ -356,102 +274,38 @@ AppManagerAdmin = (function($){
 				contentType: "application/json; charset=utf-8",
 				success: function(data){
 					if (data.result == "ok"){
-						$('#modal_window_manager').hide();
-						$('#mask').hide();
 						var successHtml = $("#manager-success-template").html();
-						
 						$.writeMessage("success",successHtml);
+						$('#modal_window_manager').kernely_dialog("close");
 						tableView.reload();
 					} else {
 						$.writeMessage("error",data.result,"#errors_message");
 					}
-					parent.closemodal();
 				}
 			});
-		}
-	}) 
-	
-	UserCBListViewCreate = Backbone.View.extend({
-		el:"#usersToLink",
-		
-		events:{
-		
 		},
 		
-		initialize:function(){
+		deletemanager: function(){
+			
+			var html = $("#confirm-manager-deletion-template").html();
+			var title= $("#delete-template").html();
+			
+			$.kernelyConfirm(title,html,this.confirmdeletemanager);
 		},
 		
-		render: function(){
-			var parent = this;
+		confirmdeletemanager: function(){
 			$.ajax({
-				type: "GET",
-				url:"/admin/users/enabled",
-				dataType:"json",
-				success: function(data){
-					if(data.userDetailsDTO.length > 1){
-			    		$.each(data.userDetailsDTO, function() {
-			    			$(parent.el).append('<input type="checkbox" id="'+ this.user.id +'">'+ this.lastname + ' ' + this.firstname+'</input><br/>');
-			    		});
-					}
-					// In the case when there is only one user.
-					else{
-						$(parent.el).append('<input type="checkbox" id="'+ data.userDetailsDTO.user.id +'">'+ data.userDetailsDTO.lastname + ' ' + data.userDetailsDTO.firstname + ' ('+ data.userDetailsDTO.user.username +')'+'</input><br/>');
-					}
+				url:"/admin/manager/delete/" + lineSelected,
+				success: function(){
+					var successHtml = $("#manager-success-template").html();
+					
+					$.writeMessage("success",successHtml);
+					tableView.reload();
 				}
 			});
-			return this;
-		}
-	})
-	
-	UserCBListView = Backbone.View.extend({
-		el:"#usersToLink",
-		
-		managerId: null,
-		
-		events:{
-		
 		},
 		
-		initialize:function(managerid){
-			this.managerId = managerid;
-		},
-		
-		render: function(){
-			var parent = this;
-			$.ajax({
-				type: "GET",
-				url:"/admin/users/enabled",
-				dataType:"json",
-				success: function(data){
-					if(data.userDetailsDTO.length > 1){
-			    		$.each(data.userDetailsDTO, function() {
-			    			$(parent.el).append('<input type="checkbox" id="'+ this.user.id +'">'+ this.lastname + ' ' + this.firstname+'</input><br/>');
-			    		});
-					}
-					// In the case when there is only one user.
-					else{
-						$(parent.el).append('<input type="checkbox" id="'+ data.userDetailsDTO.user.id +'">'+ data.userDetailsDTO.lastname + ' ' + data.userDetailsDTO.firstname + ' ('+ data.userDetailsDTO.user.username +')'+'</input><br/>');
-					}
-					$.ajax({
-						type: "GET",
-						url:"/admin/manager/users/"+$("#manager-username").val(),
-						dataType:"json",
-						success: function(data){
-							if(data != null && typeof(data) != "undefined"){
-								if(data.userDTO.length > 1){
-						    		$.each(data.userDTO, function() {
-						    			$('#' + this.id).attr("checked", "checked");
-						    		});
-								}
-								// In the case when there is only one user. 
-								else{
-									$('#' + data.userDTO.id).attr("checked", "checked");
-								}
-							}
-						}
-					});
-				}
-			});
+		render:function(){
 			return this;
 		}
 	})

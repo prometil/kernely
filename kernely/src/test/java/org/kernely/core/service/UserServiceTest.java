@@ -30,6 +30,7 @@ import org.joda.time.DateTime;
 import org.junit.Assert;
 import org.junit.Test;
 import org.kernely.core.common.AbstractServiceTest;
+import org.kernely.core.dto.ManagerDTO;
 import org.kernely.core.dto.RoleDTO;
 import org.kernely.core.dto.UserCreationRequestDTO;
 import org.kernely.core.dto.UserDTO;
@@ -109,6 +110,18 @@ public class UserServiceTest extends AbstractServiceTest{
 		
 		UserDetailsDTO uddto = new UserDetailsDTO();
 		uddto = service.getUserDetails(userdto.username);
+		
+		assertEquals(uddto.firstname, service.getUserDetails(userdto.username).firstname);
+		assertEquals(uddto.lastname,service.getUserDetails(userdto.username).lastname);
+		assertEquals(uddto.hire, service.getUserDetails(userdto.username).hire);
+	}
+	
+	@Test
+	public void getUserDetailsById(){
+		createUserRole();
+		UserDTO userdto = creationOfTestUser(STRING_TEST);
+		UserDetailsDTO uddto = userdto.userDetails;
+		uddto = service.getUserDetails(uddto.id);
 		
 		assertEquals(uddto.firstname, service.getUserDetails(userdto.username).firstname);
 		assertEquals(uddto.lastname,service.getUserDetails(userdto.username).lastname);
@@ -406,14 +419,23 @@ public class UserServiceTest extends AbstractServiceTest{
 		Assert.assertEquals(list.size(),0);	
 	}
 	
-	@Test(expected=IllegalArgumentException.class)
-	public void deleteManagersNull(){
-		service.deleteManager(null);
-	}
-	
-	@Test(expected=IllegalArgumentException.class)
-	public void deleteManagerEmptyString(){
-		service.deleteManager("");
+	@Test
+	public void getManagerById(){
+		createUserRole();
+		creationOfTestUser(STRING_TEST);
+
+		List<UserDTO> users = service.getAllUsers() ; 
+		UserCreationRequestDTO request2 = new UserCreationRequestDTO();
+		request2.username = TEST_MODIFIED_1;
+		request2.password = TEST_MODIFIED_1;
+		request2.firstname = TEST_MODIFIED_1;
+		request2.lastname = TEST_MODIFIED_1;
+		UserDTO m = service.createUser(request2);
+		service.updateManager(TEST_MODIFIED_1, users) ;
+		ManagerDTO manager = service.getManager(m.id);
+		
+		assertEquals(1,manager.users.size());	
+		assertEquals(STRING_TEST,manager.users.get(0).username);	
 	}
 	
 	@Test 

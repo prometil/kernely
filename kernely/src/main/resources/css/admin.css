@@ -22,6 +22,13 @@ a.loader{
   cursor:pointer;
 }
 
+/* Header */
+div#admin_header{
+	float:left;
+}
+div#admin_buttons{
+	float:right;
+}
 
 /* Common */
 div.menu_admin, div.menu_admin_selected{
@@ -35,70 +42,18 @@ div.menu_admin_selected{
 	background-color:#3e3d40;
 }
 
-#mask{
-	position:absolute;
-	z-index:9000;
-	background-color:#000;
-	display:none;top:0;
-	left:0;
-}
-
-.closeModal{
-	right:0;
-}
-
-/* User page*/
-#modal_window_user{
-	position:absolute;
-	width:440px;
-	height:440px;
-	display:none;	
-	z-index:9999;
-	padding:20px;
-	top:0;
-	left:0;
-}
-
 #rolesToLink{
 	height:150px;
 	overflow-y:auto;
 }
 
 /* Group page*/
-#modal_window_group{
-	position:absolute;
-	width:440px;
-	height:300px;
-	display:none;
-	z-index:9999;
-	padding:20px;
-	top:0;
-	left:0;
-}
-
-#groups_errors_create , #groups_errors_update{
-	display:none;
-	font-weight:bold;
-	color:red;
-}
-
 #usersToLink{
 	height:150px;
 	overflow-y:auto;
 }
 
 /* Manager page */
-#modal_window_manager{
-	position:absolute;
-	width:440px;
-	height:300px;
-	display:none;
-	z-index:9999;
-	padding:20px;
-	top:0;
-	left:0;
-}
-
 #usersToLink{
 	height:150px;
 	overflow-y:auto;

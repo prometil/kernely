@@ -48,13 +48,13 @@
 				<div id='profilePU-content'>
 					<div id='profilePU-main'>
 						<div id='profilePU-image'>
-							<img id="profilePU-img" src='{{"{{"}}image{{"}}"}}'/>
+							<img id="profilePU-img" src='/images/{{currentUser.image}}' alt=""/>
 						</div>
 						<div id='profilePU-information'>
-							{{"{{"}}fullname{{"}}"}} ({{"{{"}}username{{"}}"}})<br/>
-							{{"{{"}}mail{{"}}"}}<br/>
+							{{currentUser.firstname}} {{currentUser.lastname}} ({{currentUserLogin}})<br/>
+							{{currentUser.email}}<br/>
 							<br/>
-							<a href="/user/{{"{{"}}username{{"}}"}}/profile">{% i18n "profile" %}</a>
+							<a href="/user/{{currentUserLogin}}/profile">{% i18n "profile" %}</a>
 						</div>
 					</div>
 					<div id="profilePU-footer">
@@ -78,7 +78,7 @@
 					
 				</div>
 				<div id="menu_header_profile">
-					<div id="username_menu" class="clickable displayProfilePU"></div>
+					<div id="username_menu" class="clickable displayProfilePU">{{currentUser.firstname}} {{currentUser.lastname}}</div>
 					<div id="profile_button" class="clickable displayProfilePU"></div>
 					<div id="settings_button" class="clickable"></div>
 				</div>
@@ -94,7 +94,9 @@
 					<div id="main_title">
 						{% block title %}
 						{% endblock %}
-						<div id="notification_to_user"></div>
+						<div id="notification_container">
+							<div id="notification_to_user"></div>
+						</div>
 					</div>
 					{% block content %}
 					No content.
