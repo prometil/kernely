@@ -8,13 +8,13 @@ import javax.persistence.Query;
 
 import org.kernely.core.dto.UserDTO;
 import org.kernely.core.model.User;
-import org.kernely.core.service.AbstractService;
-import org.kernely.core.service.user.PermissionService;
+import org.kernely.core.service.PermissionService;
 import org.kernely.project.dto.OrganizationDTO;
 import org.kernely.project.dto.ProjectCreationRequestDTO;
 import org.kernely.project.dto.ProjectDTO;
 import org.kernely.project.model.Organization;
 import org.kernely.project.model.Project;
+import org.kernely.service.AbstractService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

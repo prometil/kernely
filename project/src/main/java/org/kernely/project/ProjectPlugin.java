@@ -1,6 +1,6 @@
 package org.kernely.project;
 
-import org.kernely.core.plugin.AbstractPlugin;
+import org.kernely.plugin.AbstractPlugin;
 import org.kernely.project.controller.OrganizationAdminController;
 import org.kernely.project.controller.OrganizationController;
 import org.kernely.project.controller.ProjectAdminController;

@@ -8,11 +8,11 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
-import org.kernely.core.controller.AbstractController;
-import org.kernely.core.service.user.UserService;
-import org.kernely.core.template.SobaTemplateRenderer;
+import org.kernely.controller.AbstractController;
+import org.kernely.core.service.UserService;
 import org.kernely.holiday.dto.HolidayUsersManagerDTO;
 import org.kernely.holiday.service.HolidayManagerUserService;
+import org.kernely.template.SobaTemplateRenderer;
 
 import com.google.inject.Inject;
 

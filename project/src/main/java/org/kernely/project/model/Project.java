@@ -12,8 +12,8 @@ import javax.persistence.ManyToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
-import org.kernely.core.hibernate.AbstractModel;
 import org.kernely.core.model.User;
+import org.kernely.persistence.AbstractModel;
 
 /**
  * project model

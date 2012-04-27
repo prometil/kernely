@@ -13,7 +13,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-import org.kernely.core.hibernate.AbstractModel;
+import org.kernely.persistence.AbstractModel;
 import org.kernely.project.model.Project;
 
 /**

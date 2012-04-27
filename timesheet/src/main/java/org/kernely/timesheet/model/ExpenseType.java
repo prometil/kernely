@@ -3,7 +3,7 @@ package org.kernely.timesheet.model;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
-import org.kernely.core.hibernate.AbstractModel;
+import org.kernely.persistence.AbstractModel;
 
 @Entity
 @Table(name="kernely_expense_type")

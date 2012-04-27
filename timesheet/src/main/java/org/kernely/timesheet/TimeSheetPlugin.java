@@ -1,6 +1,6 @@
 package org.kernely.timesheet;
 
-import org.kernely.core.plugin.AbstractPlugin;
+import org.kernely.plugin.AbstractPlugin;
 import org.kernely.timesheet.controller.ExpenseAdminController;
 import org.kernely.timesheet.controller.ExpenseController;
 import org.kernely.timesheet.controller.TimeSheetController;

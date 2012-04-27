@@ -35,8 +35,7 @@ import javax.persistence.Query;
 import org.joda.time.DateTime;
 import org.kernely.core.dto.UserDetailsDTO;
 import org.kernely.core.model.User;
-import org.kernely.core.service.AbstractService;
-import org.kernely.core.service.user.UserService;
+import org.kernely.core.service.UserService;
 import org.kernely.holiday.dto.HolidayCreationRequestDTO;
 import org.kernely.holiday.dto.HolidayDTO;
 import org.kernely.holiday.dto.HolidayDetailDTO;
@@ -51,6 +50,7 @@ import org.kernely.holiday.model.HolidayRequest;
 import org.kernely.holiday.model.HolidayRequestDetail;
 import org.kernely.holiday.model.HolidayType;
 import org.kernely.holiday.model.HolidayTypeInstance;
+import org.kernely.service.AbstractService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

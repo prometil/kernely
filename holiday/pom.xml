@@ -1,19 +1,12 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	
-	<parent>
-		<groupId>org.kernely</groupId>
-		<artifactId>parent</artifactId>
-		<version>0.1-SNAPSHOT</version>
-        <relativePath>../pom.xml</relativePath>
-	</parent>
 	
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.kernely</groupId>
 	<artifactId>holiday</artifactId>
 	<name>holiday</name>
 	<packaging>jar</packaging>
-	<url>http://maven.apache.org</url>
-	
+		<version>0.1-SNAPSHOT</version>		
 	<properties>
     	<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
@@ -21,15 +14,15 @@
 	<dependencies>
 		<dependency>
 			<groupId>org.kernely</groupId>
-			<artifactId>core</artifactId>
-			<version>${project.version}</version>
-			<scope>provided</scope>
+			<artifactId>kernely</artifactId>
+			<version>0.1-SNAPSHOT</version>
+			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.kernely</groupId>
-			<artifactId>core</artifactId>
-			<version>${project.version}</version>
-			<type>test-jar</type>
+			<artifactId>kernely</artifactId>
+			<version>0.1-SNAPSHOT</version>
+			<classifier>tests</classifier>
 			<scope>test</scope>
 		</dependency>
 		<dependency>

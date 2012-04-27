@@ -34,8 +34,8 @@ import javax.persistence.TemporalType;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
-import org.kernely.core.hibernate.AbstractModel;
 import org.kernely.core.model.User;
+import org.kernely.persistence.AbstractModel;
 
 /**
  * The holiday request model

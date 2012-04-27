@@ -5,8 +5,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import javax.persistence.Query;
 
@@ -15,8 +15,7 @@ import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.kernely.core.model.Role;
-import org.kernely.core.service.AbstractService;
-import org.kernely.core.service.user.UserService;
+import org.kernely.core.service.UserService;
 import org.kernely.invoice.dto.InvoiceCreationRequestDTO;
 import org.kernely.invoice.dto.InvoiceDTO;
 import org.kernely.invoice.dto.InvoiceLineCreationRequestDTO;
@@ -28,6 +27,7 @@ import org.kernely.project.dto.ProjectDTO;
 import org.kernely.project.model.Organization;
 import org.kernely.project.model.Project;
 import org.kernely.project.service.ProjectService;
+import org.kernely.service.AbstractService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

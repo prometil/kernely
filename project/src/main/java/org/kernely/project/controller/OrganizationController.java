@@ -7,7 +7,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-import org.kernely.core.controller.AbstractController;
+import org.kernely.controller.AbstractController;
 import org.kernely.project.dto.OrganizationDTO;
 import org.kernely.project.service.OrganizationService;
 

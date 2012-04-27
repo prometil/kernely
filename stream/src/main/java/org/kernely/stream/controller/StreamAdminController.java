@@ -30,19 +30,19 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
-import org.kernely.core.controller.AbstractController;
+import org.kernely.controller.AbstractController;
 import org.kernely.core.dto.GroupDTO;
 import org.kernely.core.dto.UserDTO;
-import org.kernely.core.service.user.GroupService;
-import org.kernely.core.service.user.PermissionService;
-import org.kernely.core.service.user.UserService;
-import org.kernely.core.template.SobaTemplateRenderer;
+import org.kernely.core.service.GroupService;
+import org.kernely.core.service.PermissionService;
+import org.kernely.core.service.UserService;
 import org.kernely.stream.dto.RightOnStreamDTO;
 import org.kernely.stream.dto.StreamCreationRequestDTO;
 import org.kernely.stream.dto.StreamDTO;
 import org.kernely.stream.dto.StreamRightsUpdateRequestDTO;
 import org.kernely.stream.model.Stream;
 import org.kernely.stream.service.StreamService;
+import org.kernely.template.SobaTemplateRenderer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

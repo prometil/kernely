@@ -19,14 +19,13 @@ import javax.ws.rs.core.Response.Status;
 
 import org.apache.commons.configuration.AbstractConfiguration;
 import org.apache.commons.io.FileUtils;
-import org.kernely.core.controller.AbstractController;
+import org.kernely.controller.AbstractController;
 import org.kernely.core.dto.GroupDTO;
 import org.kernely.core.dto.UserDTO;
 import org.kernely.core.model.Role;
-import org.kernely.core.service.user.GroupService;
-import org.kernely.core.service.user.PermissionService;
-import org.kernely.core.service.user.UserService;
-import org.kernely.core.template.SobaTemplateRenderer;
+import org.kernely.core.service.GroupService;
+import org.kernely.core.service.PermissionService;
+import org.kernely.core.service.UserService;
 import org.kernely.project.dto.OrganizationDTO;
 import org.kernely.project.dto.ProjectCreationRequestDTO;
 import org.kernely.project.dto.ProjectDTO;
@@ -35,6 +34,7 @@ import org.kernely.project.dto.RightOnProjectDTO;
 import org.kernely.project.model.Project;
 import org.kernely.project.service.OrganizationService;
 import org.kernely.project.service.ProjectService;
+import org.kernely.template.SobaTemplateRenderer;
 
 import com.google.inject.Inject;
 import com.sun.jersey.core.header.FormDataContentDisposition;
