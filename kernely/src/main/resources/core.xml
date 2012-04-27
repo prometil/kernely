@@ -40,5 +40,9 @@
                 <country>US</country>
         </locale>
         <workspace>work</workspace>
+        <plugins>
+        	<repository>https://github.com/prometil/kernely-bundles.git</repository>  
+        	<directory>plugins</directory>      	
+        </plugins>
         
 </core>
