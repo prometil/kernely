@@ -18,12 +18,12 @@
 	<div id="modal_window_project"></div>
 	<div id="project_admin_container">
 	<div id="project_admin_buttons">
-		<input type="button" class="createButton" value="{% i18n "create" %}"/>
-		<input type="button" class="editButton" value="{% i18n "edit" %}" disabled="disabled"/>
-		<input type="button" class="deleteButton" value="{% i18n "delete" %}" disabled="disabled"/>
-		<input type="button" class="imageButton" value="{% i18n "image" %}"  disabled="disabled"/>
+		<input type="button" class="createButton button_standard" value="{% i18n "create" %}"/>
+		<input type="button" class="editButton button_standard" value="{% i18n "edit" %}" disabled="disabled"/>
+		<input type="button" class="deleteButton button_standard" value="{% i18n "delete" %}" disabled="disabled"/>
+		<input type="button" class="imageButton button_standard" value="{% i18n "image" %}"  disabled="disabled"/>
 	</div>
-	<table id="project_admin_table">
+	<table id="project_admin_table" class="kernely_table">
 		
 	</table>
 </div>
@@ -102,8 +102,8 @@
 	{% i18n "project_created_updated" %}
 	</script>
 	
-	<script type="text/html" id="table-header-template" class="table_header">
-	<tr><th>{% i18n "project_name" %}</tr>
+	<script type="text/html" id="table-project-name-column" class="table_header">
+		{% i18n "project_name" %}
 	</script>
 	
 	<script type="text/html" id="table-header-template2" class="table_header">

@@ -33,7 +33,7 @@
 			var templateUsernameColumn = $("#table-user-username-column").text();
 			var templateEmailColumn = $("#table-user-email-column").text();
 			$(parent.el).kernely_table({
-				columns:["", templateNameColumn, templateFirstnameColumn, templateUsernameColumn, templateEmailColumn],
+				columns:["", templateNameColumn, templateFirstnameColumn, templateUsernameColumn, templateEmailColumn],			
 				editable:true
 			});
 			
@@ -47,19 +47,19 @@
 						if($.isArray(dataUser)){
 							$.each(dataUser, function(){
 								if(this.user.locked == "true"){
-									this.user.locked = '<img src="/images/icons/user_locked.png"/>';
+									this.user.locked = '<img src="/images/icons/lock_icon.png"/>';
 								}
 								else{
-									this.user.locked = '<img src="/images/icons/user.png"/>';
+									this.user.locked = '';
 								}
 							});
 						}
 						else{
 							if(dataUser.user.locked == 1){
-								dataUser.user.locked = '<img src="/images/icons/user_locked.png"/>';
+								dataUser.user.locked = '<img src="/images/icons/lock_icon.png"/>';
 							}
 							else{
-								dataUser.user.locked = '<img src="/images/icons/user.png"/>';
+								dataUser.user.locked = '';
 							}
 						}
 						

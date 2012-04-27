@@ -19,6 +19,7 @@
  */
 package org.kernely.stream.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.ws.rs.GET;
@@ -102,7 +103,7 @@ public class StreamAdminController extends AbstractController {
 			return streamService.getAllStreams();
 			
 		} else {
-			return null;
+			return new ArrayList<StreamDTO>();
 		}
 	}
 
@@ -137,11 +138,12 @@ public class StreamAdminController extends AbstractController {
 	@POST
 	@Path("/update")
 	@Produces({ MediaType.APPLICATION_JSON })
-	public String update(StreamCreationRequestDTO stream) {
+	public Response update(StreamCreationRequestDTO stream) {
 		if (userService.currentUserIsAdministrator()){
 			streamService.updateStream(stream);
+			return Response.ok().build();
 		}
-		return "{\"result\":\"ok\"}";
+		return Response.status(Status.FORBIDDEN).build();
 	}
 
 	/**
@@ -309,7 +311,7 @@ public class StreamAdminController extends AbstractController {
 		if (userService.currentUserIsAdministrator()) {
 			return streamService.getStream(id);
 		}
-		return null;
+		return new StreamDTO();
 	}
 
 }

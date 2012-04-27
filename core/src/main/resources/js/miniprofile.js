@@ -30,14 +30,12 @@ AppMiniProfile = (function($){
                 },
                 showMiniProfile: function(){
                         if ($("#profile_popup").is(':hidden')){
-                                //$("#profile_popup").slideDown(200)
                                 $("#profile_popup").show()
                                 var view = new ProfilePopUpView();
                                 view.render();
                                 
                         }
                         else{
-                                //$("#profile_popup").slideUp(200)
                                 $("#profile_popup").hide()
                         }
                 },

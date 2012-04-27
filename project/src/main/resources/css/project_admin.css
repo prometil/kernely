@@ -11,22 +11,6 @@
 	right:0;
 }
 
-#errors_message{
-	display:none;
-	font-weight:bold;
-	color:red;
-}
-
-#span_notifications{
-	display:none;
-	color:green;
-}
-
-#project_admin_table{
-	cursor:pointer;
-	width:100%;
-}
-
 /* Group page*/
 #modal_window_project{
 	position:absolute;
