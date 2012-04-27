@@ -9,12 +9,15 @@
 
 {% block template %}	
 	<script type="text/html" id="balance-cell-template">
-			<span id="balance-cell-name">{{"{{"}}name{{"}}"}}</span><br/>
-			{% i18n "holiday_balance_available" %}: <span class="available-cpt">{{"{{"}}available{{"}}"}}</span>
+		<div class="balance-cell">
+			<div class="h-amount-avail">{{"{{"}}available{{"}}"}}</div>
+			<div class="balance-cell-title">{{"{{"}}name{{"}}"}}</div>
+		</div>
 	</script>
 	
 	<script type="text/html" id="balance-unlimited-cell-template">
-		<span id="balance-cell-name">{{"{{"}}name{{"}}"}}</span>
+			<div class="balance-cell-amount"></div>
+			<div class="balance-cell-title">{{"{{"}}name{{"}}"}}</div>
 	</script>
 	
 	<script type="text/html" id="locale-lang">{% i18n "locale_lang" %}</script>
@@ -22,6 +25,14 @@
 	<script type="text/html" id="locale-country">{% i18n "locale_country" %}</script>
 	
 	<script type="text/html" id="holiday-success-request-message-template">{% i18n "holiday_request_submit_success" %}</script>
+	
+	<script type="text/html" id="morning-text-template">
+		{% i18n "morning-lit" %}
+	</script>
+	
+	<script type="text/html" id="afternoon-text-template">
+		{% i18n "afternoon-lit" %}
+	</script>
 {% endblock %}
 
 {% block title %}
@@ -29,34 +40,39 @@
 {% endblock %}
 
 {% block content %}
-	<div id="request-main">
-		<div id="calendarRequest">
-			<table id="calendarTable" border="0">
-				<tr>
-					<th>{% i18n "day_1_short" %}</th>
-					<th>{% i18n "day_2_short" %}</th>
-					<th>{% i18n "day_3_short" %}</th>
-					<th>{% i18n "day_4_short" %}</th>
-					<th>{% i18n "day_5_short" %}</th></tr>
-				<tbody id="calendarContent">
-				<tbody>
-			</table>
-			<div id="requester-comment-div">
-				<textarea id="requester-comment"></textarea>
-				<input type="button" id="validate-holidays" value="Submit"/>
+		<div id="request-main">
+			<div id="calendarRequest">
+				<table id="calendar-table" border="0">
+					<tbody id="calendarContent">
+					</tbody>
+				</table>
+				<div id="requester-comment-div">
+					<div class="subtitle">{% i18n "comment_message" %}</div>
+					<textarea id="requester-comment"></textarea>
+				</div>
+				<div id="buttons-container">
+					<input type="button" id="cancel-holidays" class=" button_standard" value="{% i18n "cancel" %}" onClick="window.location = '/holiday'"/>
+					<input type="button" id="validate-holidays" class=" button_ok" value="{% i18n "ok" %}"/>
+				</div>
 			</div>
 		</div>
-	</div>
 {% endblock %}
 {% block right %}
 	<div id="colorSelector">
-	<!-- Color picker to color holidays -->
+		<div id="balance-selector-tabs">
+			<div id="limited-tab" class="balance-selector-tab balance-selector-tab-selected">{% i18n "limited-tab" %}</div>
+			<div id="unlimited-tab" class="balance-selector-tab ">{% i18n "unlimited-tab" %}</div>
+		</div>
+		<div id="limited-balances"></div>
+		<div id="unlimited-balances" class="balance-tab-invisible"></div>
 	</div>
 {% endblock %}
+
 {% block left %}
-<div id="profile_mask"></div>
-<div id='left_profile_container'>
-	<img src="/images/{{currentUser.image}}" id="image_left_profile"/>
-	<div id="left_profile_name">{{currentUser.firstname}} {{currentUser.lastname}}</div>
-</div>
+	<div id="profile_mask"></div>
+	<div id="left_profile_arrow"></div>
+	<div id='left_profile_container'>
+		<img src="/images/{{currentUser.image}}" id="image_left_profile"/>
+		<div id="left_profile_name">{{currentUser.firstname}} {{currentUser.lastname}}</div>
+	</div>
 {% endblock %}

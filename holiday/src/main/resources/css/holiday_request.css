@@ -1,18 +1,27 @@
-#period{
+.day-header-part, .am-part, .pm-part, .day-disabled{
+	width:125;
+	height:25px;
 	text-align:center;
+	font-weight:bold;
+	border:1px solid #a0a2a3;
 }
 
-.dayHeader-part{
-	background-image:url("/images/top_day.png");
-	background-repeat:no-repeat;
+.day-header-part{
+	background-color:#e3e4e4;
 }
 
-.am-part{
-	background-color:#dce8f1;
+.am-part, .pm-part{
+	cursor:pointer;
+	color:#c8c8c8;
 }
 
-.pm-part{
-	background-color:#dce8f1;
+#calendar-table{
+	width:100%;
+	border-spacing:10px 5px;
+}
+
+buttons-container{
+
 }
 
 .day-disabled{
@@ -20,101 +29,76 @@
 	cursor:default;
 }
 
-.week-container{
-	margin-bottom:7px;
-	height:202px;
-	width:720px;
-}
-
-.week-number{
-	height:171px;
-	width : 120px;
-	padding-top:30px;
-	float:left;
-}
-
-.week-content{
-	height: 201px;
-	float:left;
-	width:600px;
-}
-
-.day-of-calendar{
-	width:120px;
-	text-align:center;
-	height:20px;
-	float:left;
-
-}
-
-#calendar-header{
-	width:100%;
-	height:20px;
-}
-
-#calendarTable{
-	width:100%;
-}
-
-.daysPartCalendar{
-	height:50px;
-}
-
-.day-header{
-	text-align:center;
-}
-
-.morning-part{
-	cursor:pointer;
-}
-
-.afternoon-part{
-	cursor:pointer;
-margin:0px;
-padding:0px;
-}
-
-#request-main{
-	margin-top: 20px;
-	width:955px;
-	height:auto;
-}
-
 #calendarRequest{
 	margin-top:15px;
-	width:720px;
+	width:100%;
 	height:auto;
 	float:left;
 }
 
-#colorSelector{
-	width:210px;
-	margin-left:30px;
-	height:auto;
+#balance-selector-tabs{
+	height:25px;	
+	cursor:pointer;
+}
+
+.balance-selector-tab{
+	width:110px;
+	background-color:#c3c2c3;
+	height:20px;
 	float:left;
+	padding-top:5px;
+	color:#FFFFFF;
+	font-weight:bold;
+	text-align:center;
+}
+
+.balance-selector-tab-selected{
+	background-color:#3e3d40;
+}
+
+.balance-tab-invisible{
+	display:none;
+}
+
+#limited-balances{
+
+}
+
+#unlimited-balances{
+
 }
 
 .balance-cell{
-	width:210px;
-	height:60px;
-	padding-top:20px;
-	text-align:center;
-	cursor: pointer;
-	margin-top: 5px;
-	-moz-border-radius:20px;
-    	-moz-box-shadow:0px 2px 2px 0px rgba(0, 0, 0, 0.5),
-              0px 2px 2px 0px rgba(255, 255, 255, 0.5) inset;
-   	 -webkit-border-radius:20px;
-   	 -webkit-box-shadow:0px 2px 2px 0px rgba(0, 0, 0, 0.5),
-                 0px 2px 2px 0px rgba(255, 255, 255, 0.5) inset;
-   	 border-radius:20px;
-  	 box-shadow:0px 2px 2px 0px rgba(0, 0, 0, 0.5),
-             0px 2px 2px 0px rgba(255, 255, 255, 0.5) inset;
-	
+	height:45px;
+	border-bottom:1px solid #a0a2a3;
+	cursor:pointer;
+}
+
+.balance-cell:hover{
+	background-color:#e7e7e7;
+}
+
+.balance-cell-amount, .balance-cell-title{
+	margin-top:8px;
+}
+
+.balance-cell-amount{
+	margin-left:15px;
+	width:30px;
+	height:30px;
+	float:left;
+}
+
+.balance-cell-title{
+	font-weight:bold;
+	margin-left:10px;
+	float:left;
+	width:165px;
+	padding-top:5px;
 }
 
 .balance-cell-selected{
-	opacity:0.6;
+	background-color:#e3e4e4;
 }
 
 .available-cpt{
@@ -122,18 +106,13 @@ padding:0px;
 }
 
 #requester-comment{
-	width:640px;
-height:43px;
+	width:670px;
+	height:90px;
 	
 }
 
-#validate-holidays{
-	position:absolute;
-	height:50px;
-}
-
 .separation-part{
-	height:20px;
+	height:15px;
 }
 
 #balance-cell-name{
@@ -141,5 +120,12 @@ height:43px;
 }
 
 #requester-comment-div{
-	height:50px;
+	height:auto;
 }
+
+#buttons-container{
+	margin-top:35px;
+	float:right;
+}
+
+

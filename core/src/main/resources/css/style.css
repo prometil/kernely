@@ -57,7 +57,6 @@ html {
 
 #container_right {
 	width:220px;
-	padding-top:20px;
 	margin-left:13px;
 }
 
@@ -264,6 +263,15 @@ div#profilePU-footer{
 	padding-top:10px;
 }
 
+#left_profile_arrow{
+	position:absolute;
+	z-index:9999;
+	margin-left:238px;
+	height:238px;
+	width:11px;
+	background-image:url("/images/left_profile_arrow.png");
+}
+
 /* content */
 div#content {
 	padding: 10px;
@@ -294,6 +302,10 @@ div.button-bar {
 	background-color:#97ad17;
 	color:#efebe3;
 	border: 1px solid #90a516;
+}
+
+.button_ok:hover{
+	background-color:#879d08;
 }
 
 .button_standard{

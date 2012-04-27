@@ -54,12 +54,6 @@ AppHolidayRequest = (function($){
 				data: {date1: from, date2: to},
 				dataType:"json",
 				success: function(data){
-					// Clean the div content
-					$('#calendarContent').html("");
-					$('#colorSelector').html("");
-					$("#requester-comment").val("");
-					// Create the views
-					$("#calendarRequest").show();
 					new HolidayRequestCalendarView(data).render();
 					new HolidayRequestColorPicker(data).render();
 				}
@@ -109,13 +103,10 @@ AppHolidayRequest = (function($){
 		el:"#calendarContent",
 		data : null,
 		
-		
-		events:{
-
-		},
 		initialize: function(data){
 			this.data = data;
 		},
+		
 		render: function(){
 			var parent = this;
 			var view = null;
@@ -222,7 +213,6 @@ AppHolidayRequest = (function($){
 
 	HolidayRequestDayView = Backbone.View.extend({
 		tagName: "td",
-		className : "daysPartCalendar",
 
 		day : null,
 		available : null,
@@ -247,6 +237,7 @@ AppHolidayRequest = (function($){
 			this.week = week;
 			this.isHeader = header;
 			this.viewRank = rank;
+			this.isMorning = morning;
 			// Store the view into the array of all cell day views
 			if(this.viewRank != -1){
 				allDayCells[this.viewRank] = this;
@@ -277,7 +268,7 @@ AppHolidayRequest = (function($){
 					if(!shifted){
 						// If we deselect a cell
 						currentCellPickerSelected.increase();
-						$(this.el).css('background-color', '#dce8f1');
+						$(this.el).css('background-color', '');
 						this.isSelected = false;
 						this.selectedBy = -1;
 						nbSelected --;
@@ -301,15 +292,17 @@ AppHolidayRequest = (function($){
 		render: function(){
 			if(this.isHeader){
 				$(this.el).text(this.day);
-				$(this.el).addClass("dayHeader-part");
+				$(this.el).addClass("day-header-part");
 			}
 			else{
 				if(this.available == "true"){
 					if(this.isMorning){
 						$(this.el).addClass("am-part");
+						$(this.el).text($("#morning-text-template").text());
 					}
 					else{
 						$(this.el).addClass("pm-part");
+						$(this.el).text($("#afternoon-text-template").text());
 					}
 				}
 				else{
@@ -326,24 +319,49 @@ AppHolidayRequest = (function($){
 	HolidayRequestColorPicker = Backbone.View.extend({
 		el:"#colorSelector",
 		events:{
-		
+			"click #limited-tab":"showLimited",
+			"click #unlimited-tab":"showUnlimited"
 		},
 		
 		data : null,
 		
 		initialize : function(data){
 			this.data = data;
+			console.log(data);
+		},
+		showLimited: function(){
+			$(".balance-selector-tab-selected").removeClass("balance-selector-tab-selected");
+			$("#limited-tab").addClass("balance-selector-tab-selected");
+			$("#unlimited-balances").hide();
+			$("#limited-balances").show();
+		},
+		showUnlimited: function(){
+			$(".balance-selector-tab-selected").removeClass("balance-selector-tab-selected");
+			$("#unlimited-tab").addClass("balance-selector-tab-selected");
+			$("#limited-balances").hide();
+			$("#unlimited-balances").show();
+			
 		},
 		render: function(){
 			var parent = this;
 			
 			if(this.data.details != null && this.data.details.length > 1){
 				$.each(this.data.details, function(){
-                    $(parent.el).append(new HolidayRequestColorPickerCell(this.nameOfType, this.nbAvailable, this.color, this.idOfType).render().el);
-				});
+					if(this.nbAvailable != -1){
+						$("#limited-balances").append(new HolidayRequestColorPickerCell(this.nameOfType, this.nbAvailable, this.color, this.idOfType).render().el);
+					}
+					else{
+						$("#unlimited-balances").append(new HolidayRequestColorPickerCell(this.nameOfType, this.nbAvailable, this.color, this.idOfType).render().el);
+					}
+                });
 			}
 			else{
-				$(parent.el).append(new HolidayRequestColorPickerCell(this.data.details.nameOfType, this.data.details.nbAvailable, this.data.details.color, this.data.details.idOfType).render().el);
+				if(this.data.details.nbAvailable != -1){
+					$("#limited-balances").append(new HolidayRequestColorPickerCell(this.data.details.nameOfType, this.data.details.nbAvailable, this.data.details.color, this.data.details.idOfType).render().el);				
+				}
+				else{
+					$("#unlimited-balances").append(new HolidayRequestColorPickerCell(this.data.details.nameOfType, this.data.details.nbAvailable, this.data.details.color, this.data.details.idOfType).render().el);					
+				}
 			}
 			$('#colorSelector').show();
 			return this;
@@ -384,17 +402,14 @@ AppHolidayRequest = (function($){
 			}
             var html = Mustache.to_html(template, view);
             $(this.el).html(html);
-            $(this.el).css('background-color', this.color);
+            $(this.el).find(".balance-cell-amount").css('background-color', this.color);
 			return this;
 		},
 		
 		selectColor : function(){
+			$(".balance-cell-selected").removeClass("balance-cell-selected");
 			$(this.el).addClass("balance-cell-selected");
-			
 			oldCellPickerSelected = currentCellPickerSelected;
-			if(oldCellPickerSelected != null){
-				$(oldCellPickerSelected.el).removeClass("balance-cell-selected");
-			}
 			currentCellPickerSelected = this;
 		},
 		
