@@ -54,7 +54,6 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.google.inject.persist.Transactional;
 
-
 /**
  * Service provided by the user plugin.
  */

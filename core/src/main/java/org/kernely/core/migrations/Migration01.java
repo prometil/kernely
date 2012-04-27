@@ -107,9 +107,9 @@ public class Migration01 extends Migration {
 		userDetails.column("zip", DataBaseConstants.VARCHAR_5);
 		userDetails.column("city", DataBaseConstants.VARCHAR_30);
 		userDetails.column("nationality", DataBaseConstants.VARCHAR_30);
-		userDetails.column("homephone", DataBaseConstants.VARCHAR_10);
-		userDetails.column("mobilephone",DataBaseConstants.VARCHAR_10);
-		userDetails.column("businessphone",DataBaseConstants.VARCHAR_10);
+		userDetails.column("homephone", DataBaseConstants.VARCHAR_20);
+		userDetails.column("mobilephone",DataBaseConstants.VARCHAR_20);
+		userDetails.column("businessphone",DataBaseConstants.VARCHAR_20);
 		userDetails.column("ssn", DataBaseConstants.VARCHAR_20);
 		userDetails.column("civility", DataBaseConstants.INT);
 		userDetails.column("birth", DataBaseConstants.DATE);

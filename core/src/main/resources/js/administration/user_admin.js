@@ -36,7 +36,18 @@
 				columns:["", templateNameColumn, templateFirstnameColumn, templateUsernameColumn, templateEmailColumn],
 				editable:true
 			});
-			
+		},
+		selectLine : function(e){
+			$(".editButton").removeAttr('disabled');
+			$(".lockButton").removeAttr('disabled');
+			var template = null;
+			lineSelected = e.data.line;
+		},
+		reload: function(){
+			this.render();
+		},
+		render: function(){
+			var parent = this;
 			$.ajax({
 				type:"GET",
 				url:"/admin/users/all",
@@ -76,18 +87,6 @@
 					}
 				}
 			});
-		},
-		selectLine : function(e){
-			$(".editButton").removeAttr('disabled');
-			$(".lockButton").removeAttr('disabled');
-			var template = null;
-			lineSelected = e.data.line;
-		},
-		reload: function(){
-			this.initialize();
-			this.render();
-		},
-		render: function(){
 			return this;
 		}
 	})
