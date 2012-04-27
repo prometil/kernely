@@ -28,12 +28,22 @@ $.extend({
 		// h : height
 		// w : width
 	kernelyDialog: function(content,h,w){
+		if (h == null){
+			vh = "auto";
+		} else {
+			vh = h;
+		}
+		if (w == null){
+			vw = "auto";
+		} else {
+			vw = W;
+		}
 		div = document.createElement("div");
 		$(div).html($(content).html());
 		$(div).dialog({
 			autoOpen: false,
-			height: h,
-			width: w,
+			height: vh,
+			width: vw,
 			modal: true
 		});
 		return div;
@@ -43,7 +53,7 @@ $.extend({
 	// 	- text : the text to display (usually, a question...)
 	// 	- callback : the function to call when the user click on Yes
 	//  - param : a param for the function (can be null)
-	kernelyConfirm: function(content, callback, param){
+	kernelyConfirm: function(confirmTitle,content, callback, param){
 		// Search for the confirm dialog
 		div = $("#kernely-confirm-dialog");
 		if ($(div).html() == null){
@@ -51,15 +61,18 @@ $.extend({
 			div = document.createElement("div");
 			$(div).attr("id","kernely-confirm-dialog");
 		}
-	
+		
 		var template = $("#kernely-confirm-dialog-template").html();
 		var view = {question: content};
 		var html = Mustache.to_html(template, view);
 		$(div).html(html);
 		$(div).dialog({
+			title:confirmTitle,
 			autoOpen: false,
 			modal: true,
-			resizable:false
+			resizable:false,
+			height:"auto",
+			width:"auto"
 		});
 	
 		$("#confirm-yes-button").click(function(){callback(param); $(div).dialog("destroy")});

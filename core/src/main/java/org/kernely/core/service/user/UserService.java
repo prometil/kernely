@@ -508,9 +508,9 @@ public class UserService extends AbstractService {
 	}
 
 	/**
-	 * retrieve an users list belong to the managers.
+	 * Get all users managed by a manager.
 	 * 
-	 * @param managerId
+	 * @param The username of the manager
 	 * @return the users
 	 */
 	@Transactional
@@ -532,6 +532,20 @@ public class UserService extends AbstractService {
 		return users;
 	}
 
+	/**
+	 * Get the manager and his users
+	 * 
+	 * @param the id of the manager to get
+	 * @return The manager DTO, containing his users
+	 */
+	public ManagerDTO getManager(long id){
+		Query query = em.get().createQuery("Select u FROM User u WHERE u.id=:id");
+		query.setParameter("id", id);
+		User m = (User) query.getSingleResult();
+		ManagerDTO manager = new ManagerDTO(id, m.getUsername(), this.getUsers(m.getUsername()));
+		return manager;
+	}
+	
 	/**
 	 * Update all user of the list with the new manager
 	 * 
@@ -594,16 +608,29 @@ public class UserService extends AbstractService {
 	 * Delete an existing manager in database
 	 * 
 	 * @param id
-	 *            The id of the group to delete
+	 *            The id of the manager to delete
+	 */
+	@Transactional
+	public void deleteManager(long id) {
+		Query query = em.get().createQuery("Select u FROM User u WHERE u.id=:id");
+		query.setParameter("id", id);
+		User userManager = (User) query.getSingleResult();
+		Set<User> managed = userManager.getUsers();
+		userManager.setUsers(new HashSet<User>());
+		for (User user : managed) {
+			user.getManagers().remove(userManager);
+			em.get().merge(user);
+		}
+	}
+	
+	/**
+	 * Delete an existing manager in database
+	 * 
+	 * @param id
+	 *            The username of the manager to delete
 	 */
 	@Transactional
 	public void deleteManager(String username) {
-		if (username == null) {
-			throw new IllegalArgumentException("The manager cannot be null");
-		}
-		if (username.equals("")) {
-			throw new IllegalArgumentException("Manager cannot be an empty string");
-		}
 		Query query = em.get().createQuery("Select u FROM User u WHERE u.username=:username");
 		query.setParameter("username", username);
 		User userManager = (User) query.getSingleResult();
@@ -613,7 +640,6 @@ public class UserService extends AbstractService {
 			user.getManagers().remove(userManager);
 			em.get().merge(user);
 		}
-
 	}
 
 	/**

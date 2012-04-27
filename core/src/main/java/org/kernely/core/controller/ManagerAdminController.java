@@ -167,22 +167,35 @@ public class ManagerAdminController extends AbstractController {
 	}
 
 	/**
-	 * Delete the lanager which has the username 'username' The manager lost all
-	 * his managed user
+	 * Remove the user from managers. The user is not removed.
 	 * 
-	 * @param the
-	 *            username of the manager to delete
-	 * @return The result of the operation
+	 * @param the id of the user.
+	 * @return The result of the operation.
 	 */
 	@GET
-	@Path("/delete/{username}")
+	@Path("/delete/{id}")
 	@Produces({ MediaType.TEXT_HTML })
-	public String lock(@PathParam("username") String username) {
+	public String lock(@PathParam("id") long id) {
 		if (userService.currentUserIsAdministrator()) {
-			userService.deleteManager(username);
+			userService.deleteManager(id);
 			return "Ok";
 		}
 		return null;
 	}
 
+	/**
+	 * Get the manager and his users
+	 * 
+	 * @param the id of the manager to get
+	 * @return The manager DTO, containing his users
+	 */
+	@GET
+	@Path("/{id}")
+	@Produces({ MediaType.APPLICATION_JSON })
+	public ManagerDTO getManager(@PathParam("id") long id) {
+		if (userService.currentUserIsAdministrator()) {
+			return userService.getManager(id);
+		}
+		return null;
+	}
 }

@@ -100,8 +100,6 @@
 			"click .editButton" : "edituser",
 			"click .lockButton" : "lockuser"
 		},
-
-		viewUpdate:null,
 		
 		initialize: function(){
 		},
@@ -109,7 +107,7 @@
 		createuser: function(){
 			var parent = this;
 			var template = $("#popup-user-admin-create-template").html();
-			var titleTemplate = "Creation";
+			var titleTemplate = $("#create-template").html();
 			$("#modal_window_user").kernely_dialog({
 				title: titleTemplate,
 				content: template,
@@ -158,7 +156,7 @@
 					var view = {login : data.user.username, firstname: data.firstname, lastname: data.lastname, hire: data.hire};
 					var html = Mustache.to_html(template, view);
 					
-					var titleTemplate = "Edit user "+data.user.username;
+					var titleTemplate = $("#edit-template").html();
 					$("#modal_window_user").kernely_dialog({
 						title: titleTemplate,
 						content: html,
@@ -257,8 +255,8 @@
 		
 		lockuser: function(){
 			var template = $("#user-change-state-confirm-template").html();
-			
-			$.kernelyConfirm(template, this.confirmlockuser);
+			var titleTemplate = $("#lock-template").html();
+			$.kernelyConfirm(titleTemplate,template, this.confirmlockuser);
 		},
 		
 		confirmlockuser: function(){

@@ -80,6 +80,11 @@
 	<script type="text/html" id="user-change-state-confirm-template">
 	{% i18n "user_change_status_confirm" %}
 	</script>
+	<script type="text/html" id="create-template">{% i18n "create" %}</script>
+	<script type="text/html" id="edit-template">{% i18n "edit" %}</script>
+	<script type="text/html" id="lock-template">{% i18n "lock" %}</script>
+
+	
 {% endblock %}
 
 {% block admintitle %}
@@ -93,8 +98,6 @@
 		<input type="button" class="lockButton button_standard" value="{% i18n "lock" %}" disabled="disabled"/>
 	</div>	
 {% endblock %}
-
-<div class="clear"></div>
 
 {% block admin %}
 	<div id="user_header" style=""></div>

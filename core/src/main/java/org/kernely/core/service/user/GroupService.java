@@ -176,4 +176,21 @@ public class GroupService extends AbstractService {
 		}
 		return dtos;
 	}
+	
+	/**
+	 * Get all users from a group.
+	 * 
+	 * @param id
+	 *            The id of the group.
+	 * @return the list of users which are in the group.
+	 */
+	@Transactional
+	public GroupDTO getGroup(long id) {
+		Group g = em.get().find(Group.class, id);
+		List<UserDTO> users = new ArrayList<UserDTO>();
+		for (User user : g.getUsers()) {
+			users.add(new UserDTO(user.getUsername(), user.isLocked(), user.getId()));
+		}
+		return new GroupDTO(g.getName(), g.getId(), users);
+	}
 }
