@@ -35,12 +35,23 @@ AppManagerAdmin = (function($){
 				columns:[templateNameColumn, templateManagedColumn],
 				editable:true
 			});
-			
+		},
+		selectLine : function(e){
+			$(".editButton").removeAttr('disabled');
+			$(".deleteButton").removeAttr('disabled');
+			lineSelected = e.data.line;
+		},
+		reload: function(){
+			this.render();
+		},
+		render: function(){
+			var parent = this;
 			$.ajax({
 				type:"GET",
 				url:"/admin/manager/all",
 				dataType:"json",
-				success: function(data){ 
+				success: function(data){ 	
+
 					if(data != null){
 						var dataManager = data.managerDTO;
 						$(parent.el).reload_table({
@@ -56,17 +67,6 @@ AppManagerAdmin = (function($){
 					}
 				}
 			});
-		},
-		selectLine : function(e){
-			$(".editButton").removeAttr('disabled');
-			$(".deleteButton").removeAttr('disabled');
-			lineSelected = e.data.line;
-		},
-		reload: function(){
-			this.initialize();
-			this.render();
-		},
-		render: function(){
 			return this;
 		}
 	})	

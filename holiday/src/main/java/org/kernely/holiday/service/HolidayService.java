@@ -452,7 +452,7 @@ public class HolidayService extends AbstractService {
 				associatedUsers.add(userService.getUserByUsername(username));
 			}
 		}
-
+		
 		profile.setUsers(associatedUsers);
 		HolidayTypeInstance currentInstance;
 		HolidayTypeInstance nextInstance;

@@ -77,15 +77,23 @@ AppHolidayAdmin = (function($){
 				success: function(data){
 					if (data != null){
 						var dataProfile = data.holidayProfileDTO;
-						if($.isArray(dataProfile.holidayTypes)){
-							$.each(dataProfile.holidayTypes, function(){
-								dataProfile.typesString += (this.name + ", "); 
+						if ($.isArray(dataProfile)){
+							$.each(dataProfile, function(){
+								this.typesString = "Details";
 							});
-							dataProfile.typesString = dataProfile.typesString.substring(0, dataProfile.typesString.length-2);
+						} else {
+							dataProfile.typesString = "Details";
 						}
-						else{
-							dataProfile.typesString = (dataProfile.holidayTypes.name); 
-						}
+//						if($.isArray(dataProfile.holidayTypes)){
+//							$.each(dataProfile.holidayTypes, function(){
+//								dataProfile.typesString += (this.name + ", "); 
+//							});
+//							dataProfile.typesString = dataProfile.typesString.substring(0, dataProfile.typesString.length-2);
+//						}
+//						else{
+//							dataProfile.typesString = (dataProfile.holidayTypes.name); 
+//						}
+						
 						$(parent.el).reload_table({
 							data: dataProfile,
 							idField:"id",
@@ -96,6 +104,7 @@ AppHolidayAdmin = (function($){
 							},
 							editable:true
 						});
+						return parent;
 					}
 				}
 			});
@@ -112,50 +121,91 @@ AppHolidayAdmin = (function($){
 		},
 		
 		initialize: function(){
-			viewCreate = new HolidayAdminCreateView();
+			viewCreate = this;
 			viewUsers = new HolidayAdminProfileUsersView();
 		},
 		
-		showModalWindow: function(){
-			//Get the screen height and width
-       		var maskHeight = $(window).height();
-       		var maskWidth = $(window).width();
-
-       		//Set height and width to mask to fill up the whole screen
-       		$('#mask').css({'width':maskWidth,'height':maskHeight});
-
-       		//transition effect    
-       		$('#mask').fadeIn(500);   
-       		$('#mask').fadeTo("fast",0.7); 
-
-       		//Get the window height and width
-       		var winH = $(window).height();
-      		var winW = $(window).width();
-
-        	//Set the popup window to center
-       		$("#modal_window_holiday").css('top',  winH/2-$("#modal_window_holiday").height()/2);
-     		$("#modal_window_holiday").css('left', winW/2-$("#modal_window_holiday").width()/2);
-     		$("#modal_window_holiday").css('background-color', "#EEEEEE");
-     		$("input:text").each(function(){this.value="";});
-     		//transition effect
-     		$("#modal_window_holiday").fadeIn(500);
+		createholiday: function(){
+			var parent = this;
+			var template = $("#popup-holiday-admin-create-template").html();
+			var view = {profilename:""}
+			var html = Mustache.to_html(template,view);
+			var titleTemplate = $("#create-template").html();
+			$("#modal_window_holiday").kernely_dialog({
+				title: titleTemplate,
+				content: html,
+				eventNames:'click',
+				events:{
+					'click': [
+					          {"el":"#newHolidayButton", "event":parent.newEmptyHolidayLine},
+					          {"el":"#createHolidayProfile", "event":parent.createUpdateHolidayProfile}]
+				}
+			});
+			$("#modal_window_holiday").kernely_dialog("open");
+			
+			// Create an empty line
+			this.newHolidayLine(true);
 		},
 		
-		createholiday: function(){
-			this.showModalWindow();
-			viewCreate.setFields(0, "", null,false);
-			viewCreate.render();
+		newEmptyHolidayLine: function(){
+			console.log(this);
+			viewCreate.newHolidayLine(true);
+		},
+		
+		newHolidayLine : function(edit, id,name, unlimited, quantity, unity, effectivemonth,anticipation, color){
+			var holidayTypeLine = new HolidayTypeLineView(edit, id, name, unlimited, quantity, unity, effectivemonth,anticipation, color).render();
+			$("#holiday-types-list-table").append(holidayTypeLine);
+		},
+		
+		createUpdateHolidayProfile: function(){
+			if ($("#holiday-profile-name").val() == ""){
+				var errorTemplate = $("#popup-holiday-profile-error-name-template").html();
+				
+				return;
+			}
+			
+			// Create the holiday types list
+			var holidayTypesId = '[';
+			
+			for (var i = 0; i < typeLines.length ; i++){
+				if (typeLines[i] != null){
+					holidayTypesId += '"'+typeLines[i].vid + '",'
+				}
+			}
+			
+			if (holidayTypesId.length > 0){ //Remove the last coma
+				holidayTypesId = holidayTypesId.substring(0,holidayTypesId.length -1);
+			}
+			holidayTypesId += ']';
+			
+			var json = '{"id":"'+this.vid+'", "name":"'+ $("#holiday-profile-name").val() +'" , "holidayTypesId":' + holidayTypesId + '}'
+			
+			$.ajax({
+				url:"/admin/holiday/create",
+				data: json,
+				type: "POST",
+				dataType : "json",
+				processData: false,
+				contentType: "application/json; charset=utf-8",
+				success: function(data){
+					// data is the holiday type dto created
+					$('#modal_window_holiday').kernely_dialog("close");
+					
+					var successHtml = $("#holiday-success-message-template").html();
+					$.writeMessage("success",successHtml);
+					resetLinesMemory();
+					tableView.reload();
+				}
+			});
+			
 		},
 		
 		editholiday: function(){
-			this.showModalWindow();
-			viewCreate.setFields(lineSelected.vid,lineSelected.vname, lineSelected.vholidayTypes,true);
-			viewCreate.render();
+			// TODO
 		},
 		
 		editusers: function(){
-			this.showModalWindow();
-			viewUsers.setFields(lineSelected.vid,lineSelected.vname);
+			viewUsers.setFields(lineSelected);
 			viewUsers.render();
 		},
 		
@@ -165,10 +215,7 @@ AppHolidayAdmin = (function($){
 	})
 	
 	HolidayAdminProfileUsersView = Backbone.View.extend({
-		el: "#modal_window_holiday",
 		vid: null,
-		vname: null,
-		
 		
 		events:{
 			"click #addUserButton" : "addUser",
@@ -181,22 +228,15 @@ AppHolidayAdmin = (function($){
 		initialize: function(){
 		},
 		
-		setFields: function(id, name){
+		setFields: function(id){
 			this.vid = id;
-			this.vname = name;
+			console.log("Field set")
 		},
 		
-
-		
 		render: function(){
-			var template = $("#popup-holiday-admin-users-template").html();
-			
 			var parent = this;
-			
-			var view = {name:this.vname};
-			var html = Mustache.to_html(template, view);
-			
-			$(this.el).html(html);
+			var html = $("#popup-holiday-admin-users-template").html();
+			var titleTemplate = $("#edit-template").html();
 			
 			// Fill with existing users
 			$.ajax({
@@ -238,12 +278,29 @@ AppHolidayAdmin = (function($){
 					}
 					inbox += "</select>";
 					$("#in-listbox-div").html(inbox);
-
-					
 					return parent;
-					
 				}
 			});
+			
+			
+			$("#modal_window_holiday").kernely_dialog({
+				title: titleTemplate,
+				content: html,
+				width: '480px',
+				eventNames:'click',
+				events:{
+					'click': [
+					          {"el":"#addUserButton", "event":parent.addUser},
+					          {"el":"#removeUserButton", "event":parent.removeUser},
+					          {"el":"#updateUsersButton", "event":parent.updateUsers}],
+					'dblclick' : [
+						          {"el":"#out-listbox", "event":parent.addUser},
+						          {"el":"#in-listbox", "event":parent.addUser},
+					              ]
+				}
+			});
+			$("#modal_window_holiday").kernely_dialog("open");
+			
 		},
 		
 		addUser: function(){
@@ -274,7 +331,7 @@ AppHolidayAdmin = (function($){
 		
 		updateUsers: function(){
 			// Build json with only users associated to the profile
-			var json ='{"id":"'+this.vid+'","usernames":[';
+			var json ='{"id":"'+lineSelected+'","usernames":[';
 			for(var i = 0; i < $("#in-listbox>option").length; i++){
 				json += '"' + $("#in-listbox>option")[i].id + '"';
 				json +=",";
@@ -294,11 +351,10 @@ AppHolidayAdmin = (function($){
 				contentType: "application/json; charset=utf-8",
 				success: function(data){
 					// data is the holiday type dto created
-					$('#modal_window_holiday').hide();
-					$('#mask').hide();
 					var successHtml = $("#holiday-success-message-template").html();
 					$.writeMessage("success",successHtml);
-					tableView.reload();
+					$("#modal_window_holiday").kernely_dialog("close");
+					// tableView.reload();
 				}
 			});
 			
@@ -442,11 +498,11 @@ AppHolidayAdmin = (function($){
 		
 		deleteLine: function(){
 			var template = $("#confirm-holiday-type-deletion-template").html();
+			var title = $("#delete-template").html();
 			var nameToDisplay = $(".holiday-name",this.el).val()
 			var view = {name: nameToDisplay};
 			var html = Mustache.to_html(template, view);
-			
-			$.kernelyConfirm(html,this.deleteLineConfirm,this)
+			$.kernelyConfirm(title,html,this.deleteLineConfirm,this)
 		},
 		
 		deleteLineConfirm: function(parent){
@@ -458,127 +514,112 @@ AppHolidayAdmin = (function($){
 		}
 		
 	})
-	
-	HolidayAdminCreateView = Backbone.View.extend({
-		el: "#modal_window_holiday",
-		
-		vid: null,
-		vname:null,
-		vholidayTypes: null,
-		veditmode:null,
-		
-		events:{
-			"click .closeModal" : "closemodal",
-			"click #newHolidayButton" : "newEmptyHolidayLine",
-			"click #createHolidayProfile" : "createUpdateHolidayProfile"
-		},
-		
-		initialize:function(){
-			this.vid = 0;
-			this.vname = "";
-			this.vholidayTypes = null;
-			this.veditmode = false;
-		},
-		
-		setFields: function(id, name, holidayTypes, editmode){
-			this.vid = id;
-			this.vname = name;
-			this.vholidayTypes = holidayTypes;
-			this.veditmode = editmode;
-		},
 
-		
-		render : function(){
-			var template = $("#popup-holiday-admin-create-template").html();
-			
-			var view = {profilename:this.vname};
-			
-			
-			var html = Mustache.to_html(template, view);
-			$(this.el).html(html);
-
-			var parent = this;
-			// Create new lines for existing holiday types
-			if (this.vholidayTypes != null){
-				if ($.isArray(this.vholidayTypes)){
-					$.each(this.vholidayTypes, function() {
-						parent.newHolidayLine(false, this.id, this.name,this.unlimited,this.quantity,this.periodUnit,this.effectiveMonth,this.anticipation,this.color);
-		    		});
-				} else {
-					this.newHolidayLine(false, this.vholidayTypes.id, this.vholidayTypes.name,this.vholidayTypes.unlimited,this.vholidayTypes.quantity,this.vholidayTypes.periodUnit,this.vholidayTypes.effectiveMonth,this.vholidayTypes.anticipation,this.vholidayTypes.color);
-				}
-			} else {
-				// Create an empty line
-				this.newHolidayLine(true);
-			}
-			
-			if (this.veditmode){
-				$("#createHolidayProfile").val($("#update-button-template").html());
-			}
-			
-			return this;
-		},
-		newEmptyHolidayLine : function(){
-			this.newHolidayLine(true);
-		},
-		newHolidayLine : function(edit, id,name, unlimited, quantity, unity, effectivemonth,anticipation, color){
-			var holidayTypeLine = new HolidayTypeLineView(edit, id, name, unlimited, quantity, unity, effectivemonth,anticipation, color).render();
-			$("#holiday-types-list-table").append(holidayTypeLine);
-		},
-		
-		closemodal: function(){
-			$('#modal_window_holiday').hide();
-       		$('#mask').hide();
-       		resetLinesMemory();
-		},
-		
-		createUpdateHolidayProfile: function(){
-			
-			if ($("#holiday-profile-name").val() == ""){
-				var errorTemplate = $("#popup-holiday-profile-error-name-template").html();
-				alert(errorTemplate);
-				return;
-			}
-			
-			// Create the holiday types list
-			var holidayTypesId = '[';
-			
-			for (var i = 0; i < typeLines.length ; i++){
-				if (typeLines[i] != null){
-					holidayTypesId += '"'+typeLines[i].vid + '",'
-				}
-			}
-			
-			if (holidayTypesId.length > 0){ //Remove the last coma
-				holidayTypesId = holidayTypesId.substring(0,holidayTypesId.length -1);
-			}
-			holidayTypesId += ']';
-			
-			var json = '{"id":"'+this.vid+'", "name":"'+ $("#holiday-profile-name").val() +'" , "holidayTypesId":' + holidayTypesId + '}'
-			
-			$.ajax({
-				url:"/admin/holiday/create",
-				data: json,
-				type: "POST",
-				dataType : "json",
-				processData: false,
-				contentType: "application/json; charset=utf-8",
-				success: function(data){
-					// data is the holiday type dto created
-					$('#modal_window_holiday').hide();
-					$('#mask').hide();
-					
-					var successHtml = $("#holiday-success-message-template").html();
-					$.writeMessage("success",successHtml);
-					resetLinesMemory();
-					
-					tableView.reload();
-				}
-			});
-			
-		}
-		
-	})
+//		events:{
+//			"click #newHolidayButton" : "newEmptyHolidayLine",
+//			"click #createHolidayProfile" : "createUpdateHolidayProfile"
+//		},
+//		
+//		initialize:function(){
+//			this.vid = 0;
+//			this.vname = "";
+//			this.vholidayTypes = null;
+//			this.veditmode = false;
+//		},
+//		
+//		setFields: function(id, name, holidayTypes, editmode){
+//			this.vid = id;
+//			this.vname = name;
+//			this.vholidayTypes = holidayTypes;
+//			this.veditmode = editmode;
+//		},
+//
+//		
+//		render : function(){
+//			var template = $("#popup-holiday-admin-create-template").html();
+//			
+//			var view = {profilename:this.vname};
+//			
+//			
+//			var html = Mustache.to_html(template, view);
+//			$(this.el).html(html);
+//
+//			var parent = this;
+//			// Create new lines for existing holiday types
+//			if (this.vholidayTypes != null){
+//				if ($.isArray(this.vholidayTypes)){
+//					$.each(this.vholidayTypes, function() {
+//						parent.newHolidayLine(false, this.id, this.name,this.unlimited,this.quantity,this.periodUnit,this.effectiveMonth,this.anticipation,this.color);
+//		    		});
+//				} else {
+//					this.newHolidayLine(false, this.vholidayTypes.id, this.vholidayTypes.name,this.vholidayTypes.unlimited,this.vholidayTypes.quantity,this.vholidayTypes.periodUnit,this.vholidayTypes.effectiveMonth,this.vholidayTypes.anticipation,this.vholidayTypes.color);
+//				}
+//			} else {
+//				// Create an empty line
+//				this.newHolidayLine(true);
+//			}
+//			
+//			if (this.veditmode){
+//				$("#createHolidayProfile").val($("#update-button-template").html());
+//			}
+//			
+//			return this;
+//		},
+//		newEmptyHolidayLine : function(){
+//			this.newHolidayLine(true);
+//		},
+//		newHolidayLine : function(edit, id,name, unlimited, quantity, unity, effectivemonth,anticipation, color){
+//			var holidayTypeLine = new HolidayTypeLineView(edit, id, name, unlimited, quantity, unity, effectivemonth,anticipation, color).render();
+//			$("#holiday-types-list-table").append(holidayTypeLine);
+//		},
+//		
+//		createUpdateHolidayProfile: function(){
+//			
+//			if ($("#holiday-profile-name").val() == ""){
+//				var errorTemplate = $("#popup-holiday-profile-error-name-template").html();
+//				alert(errorTemplate);
+//				return;
+//			}
+//			
+//			// Create the holiday types list
+//			var holidayTypesId = '[';
+//			
+//			for (var i = 0; i < typeLines.length ; i++){
+//				if (typeLines[i] != null){
+//					holidayTypesId += '"'+typeLines[i].vid + '",'
+//				}
+//			}
+//			
+//			if (holidayTypesId.length > 0){ //Remove the last coma
+//				holidayTypesId = holidayTypesId.substring(0,holidayTypesId.length -1);
+//			}
+//			holidayTypesId += ']';
+//			
+//			var json = '{"id":"'+this.vid+'", "name":"'+ $("#holiday-profile-name").val() +'" , "holidayTypesId":' + holidayTypesId + '}'
+//			
+//			$.ajax({
+//				url:"/admin/holiday/create",
+//				data: json,
+//				type: "POST",
+//				dataType : "json",
+//				processData: false,
+//				contentType: "application/json; charset=utf-8",
+//				success: function(data){
+//					// data is the holiday type dto created
+//					$('#modal_window_holiday').hide();
+//					$('#mask').hide();
+//					
+//					var successHtml = $("#holiday-success-message-template").html();
+//					$.writeMessage("success",successHtml);
+//					resetLinesMemory();
+//					
+//					tableView.reload();
+//				}
+//			});
+//			
+//		}
+//		
+//	})
 	
 // define the application initialization
 	var self = {};

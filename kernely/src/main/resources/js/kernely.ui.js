@@ -276,12 +276,31 @@ jQuery.fn.extend({
 			
 			// Considering events
 			if($.isArray(options.eventNames)){
+				console.log("More than one event")
 				$.each(options.eventNames, function(){
-					$(options.events[this].el).bind(this, options.events[this].event);
+					var name = this;
+					var events = options.events[this];
+					if ($.isArray(events)){
+						$.each(events, function(){
+							$(this.el).bind(name, this.event);
+						});
+					} else {
+						$(options.events[this].el).bind(this, options.events[this].event);
+					}
 				});
 			}
 			else{
-				$(options.events[options.eventNames].el).bind(options.eventNames, options.events[options.eventNames].event);
+				console.log("One event")
+				var events = options.events[options.eventNames];
+				var name = options.eventNames;
+				if ($.isArray(events)){
+					console.log("More than one function")
+					$.each(events, function(){
+						$(this.el).bind(name, this.event);
+					});
+				} else {
+					$(events.el).bind(name,events.event);
+				}
 			}
 		}
 	}
