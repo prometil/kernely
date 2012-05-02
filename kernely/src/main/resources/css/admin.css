@@ -38,6 +38,10 @@ div.menu_admin, div.menu_admin_selected{
 	padding-left:15px;
 }
 
+div.menu_admin:last-child{
+	border:0;
+}
+
 div.menu_admin_selected{
 	background-color:#3e3d40;
 }

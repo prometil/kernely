@@ -30,6 +30,9 @@ AppInvoiceEdit = (function($){
 		render: function(){
 			var parent = this;
 			this.dates = $( "#invoice-publication, #invoice-term" ).datepicker({
+				showOn: "both",
+				buttonImage: "/images/icons/calendar_icon.png",
+				buttonImageOnly: true,
 				defaultDate: "+1w",
 				changeMonth: true,
 				onSelect: function( selectedDate ) {
@@ -86,17 +89,19 @@ AppInvoiceEdit = (function($){
 				data:{invoiceId: $("#invoice-visu-i").text()},
 				success: function(data){
 					var view;
-					if(data.invoiceLineDTO.length > 1){
-						$.each(data.invoiceLineDTO, function(){
-							view = new InvoiceLineCreateView(this.id, this.designation, this.quantity, this.unitPrice, this.amount, this.vat).render();
+					if(data != null){
+						if(data.invoiceLineDTO.length > 1){
+							$.each(data.invoiceLineDTO, function(){
+								view = new InvoiceLineCreateView(this.id, this.designation, this.quantity, this.unitPrice, this.amount, this.vat).render();
+								$(parent.el).append(view.el);
+								invoiceLines.push(view);
+							});
+						}
+						else{
+							view = new InvoiceLineCreateView(data.invoiceLineDTO.id, data.invoiceLineDTO.designation, data.invoiceLineDTO.quantity, data.invoiceLineDTO.unitPrice, data.invoiceLineDTO.amount, data.invoiceLineDTO.vat).render();
 							$(parent.el).append(view.el);
 							invoiceLines.push(view);
-						});
-					}
-					else{
-						view = new InvoiceLineCreateView(data.invoiceLineDTO.id, data.invoiceLineDTO.designation, data.invoiceLineDTO.quantity, data.invoiceLineDTO.unitPrice, data.invoiceLineDTO.amount, data.invoiceLineDTO.vat).render();
-						$(parent.el).append(view.el);
-						invoiceLines.push(view);
+						}
 					}
 				}
 			});

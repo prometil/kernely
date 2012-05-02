@@ -36,7 +36,7 @@ $.extend({
 		if (w == null){
 			vw = "auto";
 		} else {
-			vw = W;
+			vw = w;
 		}
 		div = document.createElement("div");
 		$(div).html($(content).html());

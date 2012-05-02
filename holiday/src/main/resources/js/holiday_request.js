@@ -327,7 +327,6 @@ AppHolidayRequest = (function($){
 		
 		initialize : function(data){
 			this.data = data;
-			console.log(data);
 		},
 		showLimited: function(){
 			$(".balance-selector-tab-selected").removeClass("balance-selector-tab-selected");
@@ -348,6 +347,7 @@ AppHolidayRequest = (function($){
 			if(this.data.details != null && this.data.details.length > 1){
 				$.each(this.data.details, function(){
 					if(this.nbAvailable != -1){
+						console.log("test");
 						$("#limited-balances").append(new HolidayRequestColorPickerCell(this.nameOfType, this.nbAvailable, this.color, this.idOfType).render().el);
 					}
 					else{
