@@ -8,9 +8,8 @@
 {% endblock %}
 
 {% block subtemplate %}
-<div id="mask"></div>
-
-<div id="modal_window_holiday"></div>
+	<script type="text/html" id="create-template">{% i18n "create" %}</script>
+	<script type="text/html" id="edit-template">{% i18n "edit" %}</script>
 
 	<script type="text/html" id="table-profile-name-column">
 		{% i18n "holiday_profile_name" %}
@@ -45,6 +44,11 @@
 	<script type="text/html" id="holiday-success-message-template">
 	{% i18n "holiday_success_message" %}
 	</script>
+	
+	<!-- Templates for titles of dialogs -->
+	<script type="text/html" id="create-template">{% i18n "create" %}</script>
+	<script type="text/html" id="edit-template">{% i18n "edit" %}</script>
+	<script type="text/html" id="delete-template">{% i18n "delete" %}</script>
 	
 	<!-- Templates for months and year -->
 	<script type="text/html" id="month-template">{% i18n "month" %}</script>
@@ -108,18 +112,18 @@
 			<input class="holiday-color" type="text" name="color" size="6" maxlength="7" value="{{"{{"}}color{{"}}"}}" />
 		</td>
 		<td>
-			<input type="button" value="{% i18n "ok" %}" class="edit_button"/>
+			<input type="button" value="{% i18n "ok" %}" class="edit_button button_ok"/>
 		</td>
 		<td>
-			<input type="button" value="{% i18n "delete" %}" class="delete_button"/>
+			<input type="button" value="{% i18n "delete" %}" class="delete_button button_standard"/>
 		</td>
 	
 	</script>
 	
-	<!-- Template for the create view  -->
+	<!-- Template for the create and edit view  -->
 	<script type="text/html" id="popup-holiday-admin-create-template">
 		<div id="modal_window_holiday_create">
-			<input type="button" value="{% i18n "close" %}" class="closeModal"/><br/>
+			<div id="errors_message"></div>
 			{% i18n "holiday_profile_name" %}: <input value="{{"{{"}}profilename{{"}}"}}" type="input" id="holiday-profile-name"/>
 			<div id="holiday-table-div">
 				<table id="holiday-types-list-table">
@@ -134,17 +138,16 @@
 					</tr>
 				</table>
 			</div>
-			<input type="button" value="New type" id="newHolidayButton"/>
-			<input type="button" value="{% i18n "create" %}" id="createHolidayProfile"/>
-			<div id="errors_message"></div>
+			<div class="dialog-buttons-container">
+				<input type="button" value="New type" class="button_standard" id="newHolidayButton"/>
+				<input type="button" value="{% i18n "create" %}" id="createHolidayProfile" class="button_ok"/>
+			</div>
 		</div>
 	</script>
 	
 	<!-- Template for edit users view  -->
 	<script type="text/html" id="popup-holiday-admin-users-template">
 		<div id="modal_window_holiday_create">
-			<input type="button" value="{% i18n "close" %}" class="closeModal"/><br/>
-			Users for {{"{{"}}name{{"}}"}}
 			<div id="holiday-users-boxes">
 				<div id="out-listbox-div">
 		
@@ -158,8 +161,9 @@
 				
 				</div>
 			</div>
-			<br/>
-			<input type="button" value="{% i18n "update" %}" id="updateUsersButton"/>
+			<div class="dialog-buttons-container">
+				<input type="button" class="button_ok" value="{% i18n "update" %}" id="updateUsersButton"/>
+			</div>
 		</div>
 	</script>
 {% endblock %}
@@ -169,7 +173,8 @@
 {% endblock %}
 
 {% block admin %}
-	
+	<div id="modal_window_holiday"></div>
+
 	<div id="holiday_admin_container">
 		<div id="holiday_admin_buttons">
 			<input type="button" class="createButton button_standard" value="{% i18n "create" %}"/>
