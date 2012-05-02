@@ -234,6 +234,15 @@
 					</excludes>
 				</configuration>
 			</plugin>
+<plugin>
+    <groupId>org.apache.maven.plugins</groupId>
+    <artifactId>maven-compiler-plugin</artifactId>
+    <version>2.0.2</version>
+    <configuration>
+        <source>1.6</source>
+        <target>1.6</target>
+    </configuration>
+</plugin>
 			<plugin>
 				<artifactId>maven-assembly-plugin</artifactId>
 				<version>2.3</version>
@@ -273,4 +282,8 @@
 			</url>
 		</repository>
 	</repositories>
+<<<<<<< HEAD
+=======
+
+>>>>>>> dbebcf9860368ff3f19ca141d4bdcae63f1303bf
 </project>
