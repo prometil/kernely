@@ -58,24 +58,22 @@ html {
 #container_right {
 	width:220px;
 	margin-left:13px;
-	z-index:5;
 }
 
 #container_left {
 	width:238px;
 	border-right:0px;
-	z-index:5;
 }
 
 #container_central {
 	width:676px;
 	padding:20px 45px 20px 45px;
 	height:100%;
-	z-index:5;
 }
 
 .container_generic{
 	position:relative;
+	z-index:1;
 	border:1px solid #a0a2a3;
 	background-color:#f6f6f6;
 	float:left;	
@@ -104,13 +102,13 @@ h1 {
 	margin-top:70px;
 	height:auto;
 	border-top:1px solid #a0a2a3;
-	z-index:1;
+	z-index:0;
 }
 
 .k_footer{
 	position:absolute;
 	margin-top:-151px;
-	z-index:0;
+	z-index:-1;
 }
 
 /* header (logo, menu and profile)*/
