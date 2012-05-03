@@ -112,7 +112,7 @@
 			<input class="holiday-color" type="text" name="color" size="6" maxlength="7" value="{{"{{"}}color{{"}}"}}" />
 		</td>
 		<td>
-			<input type="button" value="{% i18n "ok" %}" class="edit_button button_ok"/>
+			<input type="button" value="{% i18n "ok" %}" class="edit_button button_standard"/>
 		</td>
 		<td>
 			<input type="button" value="{% i18n "delete" %}" class="delete_button button_standard"/>
@@ -126,7 +126,7 @@
 			<div id="errors_message"></div>
 			{% i18n "holiday_profile_name" %}: <input value="{{"{{"}}profilename{{"}}"}}" type="input" id="holiday-profile-name"/>
 			<div id="holiday-table-div">
-				<table id="holiday-types-list-table">
+				<table class="kernely_table" id="holiday-types-list-table">
 					<tr>
 						<th>{% i18n "holiday_name" %}</th>
 						<th>{% i18n "unlimited_holidays" %}</th>
@@ -168,6 +168,14 @@
 	</script>
 {% endblock %}
 
+{% block adminbuttons %}
+	<div id="holiday_admin_buttons">
+		<input type="button" class="createButton button_standard" value="{% i18n "create" %}"/>
+		<input type="button" class="editButton button_standard" value="{% i18n "edit" %}" disabled="disabled"/>
+		<input type="button" class="usersButton button_standard" value="{% i18n "holiday_profile_users" %}" disabled="disabled"/>
+	</div>
+{% endblock %}
+
 {% block admintitle %}
 	{% i18n "profile_holiday_admin_title" %}
 {% endblock %}
@@ -176,11 +184,6 @@
 	<div id="modal_window_holiday"></div>
 
 	<div id="holiday_admin_container">
-		<div id="holiday_admin_buttons">
-			<input type="button" class="createButton button_standard" value="{% i18n "create" %}"/>
-			<input type="button" class="editButton button_standard" value="{% i18n "edit" %}" disabled="disabled"/>
-			<input type="button" class="usersButton button_standard" value="{% i18n "holiday_profile_users" %}" disabled="disabled"/>
-		</div>
 		<table id="holiday_admin_table" class="kernely_table">
 			
 		</table>

@@ -276,10 +276,11 @@ jQuery.fn.extend({
 			
 			// Considering events
 			if($.isArray(options.eventNames)){
-				console.log("More than one event")
+				// More than one event name ("click", "dblckick"...)
 				$.each(options.eventNames, function(){
 					var name = this;
 					var events = options.events[this];
+					// More than one element reactive to the event name
 					if ($.isArray(events)){
 						$.each(events, function(){
 							$(this.el).bind(name, this.event);
@@ -290,13 +291,12 @@ jQuery.fn.extend({
 				});
 			}
 			else{
-				console.log("One event")
 				var events = options.events[options.eventNames];
 				var name = options.eventNames;
+				
 				if ($.isArray(events)){
-					console.log("More than one function")
 					$.each(events, function(){
-						$(this.el).bind(name, this.event);
+							$(this.el).bind(name, this.event);
 					});
 				} else {
 					$(events.el).bind(name,events.event);

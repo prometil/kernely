@@ -109,6 +109,18 @@ public class HolidayService extends AbstractService {
 	}
 
 	/**
+	 * Gets the holiday profile DTO which matches the id.
+	 * @param id The id of the holiday profile.
+	 * @return The holiday profile, containing his types.
+	 */
+	public HolidayProfileDTO getHolidayProfile(long id){
+		Query query = em.get().createQuery("SELECT h from HolidayProfile h WHERE h.id=:id");
+		query.setParameter("id", id);
+		HolidayProfile profile = (HolidayProfile) query.getSingleResult();
+		return new HolidayProfileDTO(profile);
+	}
+	
+	/**
 	 * Gets the holiday DTO for the holiday type with the id passed in
 	 * parameter.
 	 * 

@@ -90,6 +90,21 @@ public class HolidayAdminController extends AbstractController {
 		}
 		return new ArrayList<HolidayProfileDTO>();
 	}
+
+	/**
+	 * Get a specific holiday profile.
+	 * @return The holiday profile.
+	 */
+	@GET
+	@Path("/{id}")
+	@Produces({MediaType.APPLICATION_JSON})
+	public HolidayProfileDTO getHolidayProfile(@PathParam("id") long id){
+		if (userService.currentUserIsAdministrator()){
+			log.debug("Get holiday profile {}",id);
+			return holidayService.getHolidayProfile(id);
+		}
+		return new HolidayProfileDTO();
+	}
 	
 	/**
 	 * Display the good unity when the administrator edit holidays

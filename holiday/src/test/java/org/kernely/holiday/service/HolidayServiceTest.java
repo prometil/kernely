@@ -404,6 +404,42 @@ public class HolidayServiceTest extends AbstractServiceTest {
 		assertEquals(NAME_1, profile.name);
 		assertEquals(2, profile.holidayTypes.size());
 	}
+	
+	@Test
+	public void getHolidayProfile() {
+		HolidayCreationRequestDTO creation = new HolidayCreationRequestDTO();
+		creation.name = TYPE_1;
+		creation.unlimited = false;
+		creation.effectiveMonth = HolidayType.APRIL;
+		creation.quantity = QUANTITY_1;
+		creation.unity = HolidayType.PERIOD_MONTH;
+		creation.anticipation = false;
+		creation.color = COLOR_1;
+		HolidayDTO holidayType1 = holidayService.createOrUpdateHoliday(creation);
+
+		creation.name = TYPE_2;
+		creation.unlimited = false;
+		creation.effectiveMonth = HolidayType.FEBRUARY;
+		creation.quantity = QUANTITY_2;
+		creation.unity = HolidayType.PERIOD_YEAR;
+		creation.anticipation = true;
+		creation.color = COLOR_2;
+		HolidayDTO holidayType2 = holidayService.createOrUpdateHoliday(creation);
+
+		HolidayProfileCreationRequestDTO profileCreation = new HolidayProfileCreationRequestDTO();
+		profileCreation.name = NAME_1;
+		List<Long> typesId = new ArrayList<Long>();
+		typesId.add(holidayType1.id);
+		typesId.add(holidayType2.id);
+		profileCreation.holidayTypesId = typesId;
+
+		long id = holidayService.createOrUpdateHolidayProfile(profileCreation).id;
+
+		HolidayProfileDTO profile = holidayService.getHolidayProfile(id);
+		
+		assertEquals(NAME_1, profile.name);
+		assertEquals(2, profile.holidayTypes.size());
+	}
 
 	@Test
 	public void createTwoHolidayProfile() {
