@@ -299,7 +299,9 @@ jQuery.fn.extend({
 							$(this.el).bind(name, this.event);
 					});
 				} else {
-					$(events.el).bind(name,events.event);
+					if (events != null){
+						$(events.el).bind(name,events.event);
+					}
 				}
 			}
 		}

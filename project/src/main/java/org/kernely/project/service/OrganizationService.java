@@ -218,4 +218,17 @@ public class OrganizationService extends AbstractService{
 		}
 		return userOrganizations;
 	}
+
+	/**
+	 * Gets an organization.
+	 * @param id The id of the organization.
+	 * @return The DTO of the organization.
+	*/
+	@Transactional
+	public OrganizationDTO getOrganization(long id) {
+		Query query = em.get().createQuery("SELECT o FROM Organization o WHERE id=:id");
+		query.setParameter("id", id);
+		Organization organization = (Organization) query.getSingleResult();
+		return new OrganizationDTO(organization);
+	}
 }

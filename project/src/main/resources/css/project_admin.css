@@ -1,25 +1,5 @@
 /* Common */
-#mask{
-	position:absolute;
-	z-index:9000;
-	background-color:#000;
-	display:none;top:0;
-	left:0;
-}
-
-.closeModal{
-	right:0;
-}
-
-/* Group page*/
-#modal_window_project{
-	position:absolute;
-	width:440px;
-	height:300px;
-	display:none;
-	z-index:9999;
-	padding:20px;
-	top:0;
-	left:0;
-	overflow-y:auto;
+img.project-icon{
+	max-width:100px;
+	max-height:100px;
 }

@@ -60,7 +60,7 @@ public class ProjectAdminController extends AbstractController {
 
 	@Inject
 	private PermissionService permissionService;
-	
+
 	@Inject
 	private GroupService groupService;
 
@@ -73,24 +73,23 @@ public class ProjectAdminController extends AbstractController {
 	 * @return the page admin
 	 */
 	@GET
-	@Produces({ MediaType.TEXT_HTML })
+	@Produces( { MediaType.TEXT_HTML })
 	public Response getPluginAdminPanel() {
 		if (userService.currentUserIsAdministrator()) {
 			return Response.ok(templateRenderer.render("templates/project_admin.html")).build();
 		} else {
-			return Response.status(Status.FORBIDDEN).header("Status","403 Forbidden").build();
+			return Response.status(Status.FORBIDDEN).header("Status", "403 Forbidden").build();
 		}
 	}
 
 	/**
 	 * Get all existing projects in the database
 	 * 
-	 * @return A list of all DTO associated to the existing projects in the
-	 *         database
+	 * @return A list of all DTO associated to the existing projects in the database
 	 */
 	@GET
 	@Path("/all")
-	@Produces({ MediaType.APPLICATION_JSON })
+	@Produces( { MediaType.APPLICATION_JSON })
 	public List<ProjectDTO> displayAllProjects() {
 		if (userService.currentUserIsAdministrator()) {
 			log.debug("Call to GET on all projects");
@@ -106,7 +105,7 @@ public class ProjectAdminController extends AbstractController {
 	 */
 	@GET
 	@Path("/combobox")
-	@Produces({ MediaType.APPLICATION_JSON })
+	@Produces( { MediaType.APPLICATION_JSON })
 	public List<OrganizationDTO> getLists() {
 		if (userService.currentUserIsAdministrator()) {
 			log.debug("Call to GET on all organization");
@@ -124,7 +123,7 @@ public class ProjectAdminController extends AbstractController {
 	 */
 	@POST
 	@Path("/create")
-	@Produces({ MediaType.APPLICATION_JSON })
+	@Produces( { MediaType.APPLICATION_JSON })
 	public String create(ProjectCreationRequestDTO project) {
 		if (userService.currentUserIsAdministrator()) {
 			try {
@@ -151,7 +150,7 @@ public class ProjectAdminController extends AbstractController {
 	 */
 	@GET
 	@Path("/delete/{id}")
-	@Produces({ MediaType.TEXT_HTML })
+	@Produces( { MediaType.TEXT_HTML })
 	public Response deleteProject(@PathParam("id") int id) {
 		if (userService.currentUserIsAdministrator()) {
 			projectService.deleteProject(id);
@@ -165,17 +164,33 @@ public class ProjectAdminController extends AbstractController {
 	 * 
 	 * @param id
 	 *            The id of the project
-	 * @return A list of all DTO associated to the users contained in this
-	 *         project
+	 * @return A list of all DTO associated to the users contained in this project
 	 */
 	@GET
 	@Path("/{id}/users")
-	@Produces({ MediaType.APPLICATION_JSON })
+	@Produces( { MediaType.APPLICATION_JSON })
 	public List<UserDTO> getProjectUsers(@PathParam("id") int id) {
 		if (userService.currentUserIsAdministrator()) {
 			return projectService.getProjectUsers(id);
 		}
 		return new ArrayList<UserDTO>();
+	}
+
+	/**
+	 * Get the project associated to a specific id.
+	 * 
+	 * @param id
+	 *            The id of the project
+	 * @return The project DTO
+	 */
+	@POST
+	@Path("/{id}")
+	@Produces( { MediaType.APPLICATION_JSON })
+	public ProjectDTO getProject(@PathParam("id") int id) {
+		if (userService.currentUserIsAdministrator()) {
+			return projectService.getProject(id);
+		}
+		return new ProjectDTO();
 	}
 
 	/**
@@ -189,8 +204,9 @@ public class ProjectAdminController extends AbstractController {
 	@POST
 	@Path("/upload/{name}")
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
-	@Produces({ MediaType.TEXT_HTML })
-	public Response uploadFile(@FormDataParam("file") InputStream uploadedInputStream, @FormDataParam("file") FormDataContentDisposition fileDetail, @PathParam("name") String projectName) {
+	@Produces( { MediaType.TEXT_HTML })
+	public Response uploadFile(@FormDataParam("file") InputStream uploadedInputStream, @FormDataParam("file") FormDataContentDisposition fileDetail,
+			@PathParam("name") String projectName) {
 		if (fileDetail.getFileName().equals("")) {
 			if (userService.currentUserIsAdministrator()) {
 				return Response.ok(templateRenderer.render("templates/project_admin.html")).build();
@@ -235,7 +251,7 @@ public class ProjectAdminController extends AbstractController {
 	 */
 	@GET
 	@Path("/rights/{id}")
-	@Produces({ MediaType.APPLICATION_JSON })
+	@Produces( { MediaType.APPLICATION_JSON })
 	public String getStreamRights(@PathParam("id") int id) {
 		StringBuilder jsonBuilder = new StringBuilder();
 		jsonBuilder.append("{\"permission\":[");
@@ -249,17 +265,17 @@ public class ProjectAdminController extends AbstractController {
 
 			if (contributor) {
 				jsonBuilder.append("{\"user\":\"");
-				jsonBuilder.append(user.id+"\"");
+				jsonBuilder.append(user.id + "\"");
 				jsonBuilder.append(",\"right\":\"contributor\"},");
-			} 
+			}
 			if (manager) {
 				jsonBuilder.append("{\"user\":\"");
-				jsonBuilder.append(user.id+"\"");
+				jsonBuilder.append(user.id + "\"");
 				jsonBuilder.append(",\"right\":\"project_manager\"},");
-			} 
+			}
 			if (client) {
 				jsonBuilder.append("{\"user\":\"");
-				jsonBuilder.append(user.id+"\"");
+				jsonBuilder.append(user.id + "\"");
 				jsonBuilder.append(",\"right\":\"client\"},");
 			}
 		}
@@ -270,20 +286,22 @@ public class ProjectAdminController extends AbstractController {
 
 			if (contributor) {
 				jsonBuilder.append("{\"group\":\"");
-				jsonBuilder.append(group.id+"\"");
+				jsonBuilder.append(group.id + "\"");
 				jsonBuilder.append(",\"right\":\"contributor\"},");
-			} if (manager) {
+			}
+			if (manager) {
 				jsonBuilder.append("{\"group\":\"");
-				jsonBuilder.append(group.id+"\"");
+				jsonBuilder.append(group.id + "\"");
 				jsonBuilder.append(",\"right\":\"project_manager\"},");
-			} if (client) {
+			}
+			if (client) {
 				jsonBuilder.append("{\"group\":\"");
-				jsonBuilder.append(group.id+"\"");
+				jsonBuilder.append(group.id + "\"");
 				jsonBuilder.append(",\"right\":\"client\"},");
 			}
 		}
 		String json = jsonBuilder.toString();
-		if(json.charAt(json.length()-1) == ','){
+		if (json.charAt(json.length() - 1) == ',') {
 			json = json.substring(0, json.length() - 1);
 		}
 		json += "]}";
@@ -291,25 +309,24 @@ public class ProjectAdminController extends AbstractController {
 		return json;
 	}
 
-	
 	/**
 	 * Update right on a project
 	 * 
 	 */
 	@POST
 	@Path("/updaterights")
-	@Produces({ MediaType.APPLICATION_JSON })
+	@Produces( { MediaType.APPLICATION_JSON })
 	public Response updateRights(ProjectRightsUpdateRequestDTO request) {
 		log.debug("Update {} rights of the project : {}", request.rights.size(), request.projectid);
 
 		// delete permissions on the project for the user
-		List<UserDTO> allUsers= userService.getEnabledUsers();
-		for (UserDTO user : allUsers){
-			permissionService.ungrantPermission((int)user.id, Project.RIGHT_CONTRIBUTOR, Project.PROJECT_RESOURCE, request.projectid);
-			permissionService.ungrantPermission((int)user.id, Project.RIGHT_PROJECTMANAGER, Project.PROJECT_RESOURCE, request.projectid);
-			permissionService.ungrantPermission((int)user.id, Project.RIGHT_CLIENT, Project.PROJECT_RESOURCE, request.projectid);
+		List<UserDTO> allUsers = userService.getEnabledUsers();
+		for (UserDTO user : allUsers) {
+			permissionService.ungrantPermission((int) user.id, Project.RIGHT_CONTRIBUTOR, Project.PROJECT_RESOURCE, request.projectid);
+			permissionService.ungrantPermission((int) user.id, Project.RIGHT_PROJECTMANAGER, Project.PROJECT_RESOURCE, request.projectid);
+			permissionService.ungrantPermission((int) user.id, Project.RIGHT_CLIENT, Project.PROJECT_RESOURCE, request.projectid);
 		}
-		
+
 		for (RightOnProjectDTO right : request.rights) {
 			if (right.idType.equals("user")) {
 				log.debug("Right {} for user with id {}", right.permission, right.id);
@@ -321,7 +338,7 @@ public class ProjectAdminController extends AbstractController {
 					if (!right.permission.equals("nothing")) {
 						// Add the requested permission
 						permissionService.grantPermission(right.id, right.permission, Project.PROJECT_RESOURCE, request.projectid);
-						if(right.permission.equals("project_manager")){
+						if (right.permission.equals("project_manager")) {
 							userService.addRoleToUser(right.id, Role.ROLE_PROJECTMANAGER);
 						}
 					}

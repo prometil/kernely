@@ -210,4 +210,11 @@ public class ProjectServiceTest extends AbstractServiceTest {
 		assertEquals(project,projects.get(0));
 	}
 	
+	@Test
+	public void getProjectById(){
+		ProjectDTO project = this.createProject();
+		ProjectDTO found = projectService.getProject(project.id);
+		assertEquals(project, found);
+	}
+	
 }

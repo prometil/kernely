@@ -127,4 +127,19 @@ public class OrganizationAdminController extends AbstractController {
 		return new ArrayList<UserDTO>();
 	}
 	
+	/**
+	 * Get the DTO of an organization.
+	 * @param id The id of the organization
+	 * @return The DTO of the organization.
+	 */
+	@GET
+	@Path("/{id}")
+	@Produces({MediaType.APPLICATION_JSON})
+	public OrganizationDTO getOrganization(@PathParam("id") int id){
+		if (userService.currentUserIsAdministrator()){
+			return organizationService.getOrganization(id);
+		}
+		return new OrganizationDTO();
+	}
+	
 }

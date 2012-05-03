@@ -25,14 +25,20 @@ public class OrganizationServiceTest extends AbstractServiceTest {
 		organization.name=NAME;
 		organization.phone=NAME;
 		organization.zip=NAME;
-		organizationService.createOrganization(organization);
-		return organizationService.getAllOrganizations().get(0);		
+		return organizationService.createOrganization(organization);
+		
 	}
 	
 	@Test
 	public void getOrganizationByNameTest(){
 		createOrganization();
 		assertEquals(NAME, organizationService.getOrganizationByName(NAME).getName());
+	}
+	
+	@Test
+	public void getOrganizationTest(){
+		OrganizationDTO created = createOrganization();
+		assertEquals(NAME, organizationService.getOrganization(created.id).name);
 	}
 	
 	@Test

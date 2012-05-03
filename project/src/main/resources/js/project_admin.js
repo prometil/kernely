@@ -18,12 +18,9 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-
 AppProjectAdmin = (function($){
 	var lineSelected = null;
 	var tableView = null;
-	
-
 	
 	ProjectAdminTableView = Backbone.View.extend({
 		el:"#project_admin_table",
@@ -75,7 +72,7 @@ AppProjectAdmin = (function($){
 	
 	
 	ProjectAdminButtonsView = Backbone.View.extend({
-		el:"#project_admin_container",
+		el:"#project_admin_buttons",
 		
 		events: {
 			"click .createButton" : "createproject",
@@ -91,52 +88,22 @@ AppProjectAdmin = (function($){
 		initialize: function(){
 			this.viewCreate = new ProjectAdminCreateView();
 			this.viewUpdate = new ProjectAdminUpdateView("", "", 0);
-			this.viewIcon = new ProjectAdminIconView("","",0);
-		},
-		
-		showModalWindow: function(){
-			//Get the screen height and width
-       		var maskHeight = $(window).height();
-       		var maskWidth = $(window).width();
-
-       		//Set height and width to mask to fill up the whole screen
-       		$('#mask').css({'width':maskWidth,'height':maskHeight});
-
-       		//transition effect    
-       		$('#mask').fadeIn(500);   
-       		$('#mask').fadeTo("fast",0.7); 
-
-       		//Get the window height and width
-       		var winH = $(window).height();
-      		var winW = $(window).width();
-
-        	//Set the popup window to center
-       		$("#modal_window_project").css('top',  winH/2-$("#modal_window_project").height()/2);
-     		$("#modal_window_project").css('left', winW/2-$("#modal_window_project").width()/2);
-     		$("#modal_window_project").css('background-color', "#EEEEEE");
-     		$("input:text").each(function(){this.value="";});
-     		//transition effect
-     		$("#modal_window_project").fadeIn(500);
 		},
 		
 		createproject: function(){
-			this.showModalWindow();
 			this.viewCreate.render();
 		},
 		
 		editproject: function(){
-			this.showModalWindow();
-			this.viewUpdate.setFields(lineSelected.vname, lineSelected.vicon, lineSelected.vid, lineSelected.vorganization);
+			this.viewUpdate.setFields(lineSelected);
 			this.viewUpdate.render();
 		},
 		
 		deleteproject: function(){
-			var template = $("#confirm-project-deletion-template").html();
+			var html = $("#confirm-project-deletion-template").html();
+			var title = $("#create-template").html();
 			
-			var view = {name: lineSelected.vname};
-			var html = Mustache.to_html(template, view);
-			
-			$.kernelyConfirm(html, this.confirmDeleteProject);
+			$.kernelyConfirm(title, html, this.confirmDeleteProject);
 		},
 		
 		confirmDeleteProject: function(){
@@ -151,9 +118,31 @@ AppProjectAdmin = (function($){
 		},
 		
 		iconproject: function(){
-			this.showModalWindow();
-			this.viewIcon.setFields(lineSelected.vname, lineSelected.vicon, lineSelected.vid, lineSelected.vorganization)
-			this.viewIcon.render();
+			// Get data about the project
+			$.ajax({
+				url:"/admin/projects/"+lineSelected,
+				type: "POST",
+				dataType : "json",
+				processData: false,
+				contentType: "application/json; charset=utf-8",
+				success: function(data){
+					var template = $("#popup-project-admin-icon-template").html();
+					var iconToDisplay = data.icon;
+					if (data.icon == null || data.icon == "undefined" || data.icon == ""){
+						iconToDisplay = "default.png";
+					}
+					var view = {icon : iconToDisplay, name : data.name};
+					var html = Mustache.to_html(template, view);
+					var title =$("#edit-template").html();
+					
+					// Create the dialog
+					$("#modal_window_project").kernely_dialog({
+						title: title,
+						content: html
+					});
+					$("#modal_window_project").kernely_dialog("open");
+				}
+			});
 		},
 		
 		render:function(){
@@ -165,15 +154,23 @@ AppProjectAdmin = (function($){
 		el: "#modal_window_project",
 		
 		events:{
-			"click .closeModal" : "closemodal",
-			"click .createProject" : "registerproject"
 		},
 		
 		initialize:function(){
 		},
 		
 		render : function(){
-			var template = $("#popup-project-admin-create-template").html();
+			var parent = this;
+			var html = $("#popup-project-admin-create-template").html();
+			var title = $("#create-template").html();
+			$("#modal_window_project").kernely_dialog({
+				title: title,
+				content: html,
+				eventNames:'click',
+				events:{
+					'click': {"el":".createProject", "event":parent.registerproject}
+				}
+			});
 			$.ajax({
 				type: "GET",
 				url:"/admin/projects/combobox",
@@ -191,19 +188,13 @@ AppProjectAdmin = (function($){
 						}
 						$("#combo").append('<select name="organization-choice" id="combobox">' + option + '</select>');
 					}
+					$("#modal_window_project").kernely_dialog("open");
+					
 				}
 			});
-			var view = {};
-			var html = Mustache.to_html(template, view);
-			$(this.el).html(html);
 			return this;
 		},
-		
-		closemodal: function(){
-			$('#modal_window_project').hide();
-       		$('#mask').hide();
-		},
-		
+
 		registerproject: function(){
 			var json = '{"id":"0", "name":"'+$('input[name*="name"]').val() +'",' +'"organization":"'+$('#combobox').val() + '"}';
 			$.ajax({
@@ -215,8 +206,7 @@ AppProjectAdmin = (function($){
 				contentType: "application/json; charset=utf-8",
 				success: function(data){
 					if (data.result == "ok"){
-						$('#modal_window_project').hide();
-						$('#mask').hide();
+						$("#modal_window_project").kernely_dialog("close");
 						
 						var successHtml = $("#project-created-updated-template").html();
 						$.writeMessage("success",successHtml);
@@ -233,69 +223,84 @@ AppProjectAdmin = (function($){
 		el: "#modal_window_project",
 				
 		events:{
-			"click .closeModal" : "closemodal",
-			"click .updateProject" : "updateproject"
+		},
+	
+		vid : null,
+		orgaId: null,
+		
+		initialize:function(lineSelected){
+			this.vid = lineSelected;
 		},
 		
-		initialize:function(name, icon, id, organization){
-			this.vid = id;
-			this.vname = name;
-			this.vicon = icon;
-			this.vorganization = organization;
-			
-		},
-		
-		setFields: function(name, icon, id, organization){
-			this.vid = id;
-			this.vname = name;
-			this.vicon = icon;
-			this.vorganization = organization;
+		setFields: function(lineSelected){
+			this.vid = lineSelected;
 		},
 		
 		render : function(){
-			var template = $("#popup-project-admin-update-template").html();
 			var parent = this;
+			// Get data about project
 			$.ajax({
-				type: "GET",
-				url:"/admin/projects/combobox",
-				dataType:"json",
+				url:"/admin/projects/"+lineSelected,
+				type: "POST",
+				dataType : "json",
+				processData: false,
+				contentType: "application/json; charset=utf-8",
 				success: function(data){
-					if(data != null){
-						var option = "";
-						if (data.organizationDTO.length > 1){
-							$.each(data.organizationDTO, function(index, value){
-								if (this.name==parent.vorganization.name){
-									option = option + '<option value="' + this.name + '"selected="selected">'+ this.name +'</option>' ;
+					var template = $("#popup-project-admin-update-template").html();
+					var view = {name : data.name};
+					var html = Mustache.to_html(template, view);
+					
+					parent.orgaId = data.organization.id;
+
+					var title = $("#edit-template").html();
+					$("#modal_window_project").kernely_dialog({
+						title: title,
+						content: html,
+						eventNames:'click',
+						events:{
+							'click': {"el":".updateProject", "event":parent.updateproject}
+						}
+					});
+					
+					
+					$.ajax({
+						type: "GET",
+						url:"/admin/projects/combobox",
+						dataType:"json",
+						success: function(data){
+							if(data != null){
+								var option = "";
+								if (data.organizationDTO.length > 1){
+									$.each(data.organizationDTO, function(index, value){
+										if (this.id == parent.orgaId){
+											option = option + '<option value="' + this.name + '"selected="selected">'+ this.name +'</option>' ;
+										}
+										else{
+											option = option + '<option value="' + this.name + '">'+ this.name +'</option>' ;
+										}
+									});
 								}
 								else{
-									option = option + '<option value="' + this.name + '">'+ this.name +'</option>' ;
+									option = option + '<option value="' + data.organizationDTO.name + '">'+ data.organizationDTO.name +'</option>' ;
 								}
-							});
+								$("#combo").append('<select name="organization-choice" id="combobox">' + option + '</select>');
+							}
+							new ProjectUserTableView(parent.vid).render();
+							
+							$("#modal_window_project").kernely_dialog("open");
 						}
-						else{
-							option = option + '<option value="' + data.organizationDTO.name + '">'+ data.organizationDTO.name +'</option>' ;
-						}
-						$("#combo").append('<select name="organization-choice" id="combobox">' + option + '</select>');
-					}
+					});
 				}
 			});
-			var view = {name : this.vname};
-			var html = Mustache.to_html(template, view);
-			$(this.el).html(html);
-			new ProjectUserTableView(this.vid).render();
+			
 			return this;
-		},
-		
-		closemodal: function(){
-			$('#modal_window_project').hide();
-       		$('#mask').hide();
 		},
 		
 		updateproject: function(){
 			var count = 0;
 			var users = "";
-			var parent=this;
-			var json = '{"id":"'+this.vid+'", "name":"'+$('input[name*="name"]').val() + '", "icon":"'+this.vicon + '", "organization":"'+$('#combobox').val() +'"}';
+			var parent = this;
+			var json = '{"id":"'+lineSelected+'", "name":"'+$('input[name*="name"]').val() + '", "icon":"'+this.vicon + '", "organization":"'+$('#combobox').val() +'"}';
 			$.ajax({
 				url:"/admin/projects/create",
 				data: json,
@@ -324,7 +329,9 @@ AppProjectAdmin = (function($){
 						else{
 							right = '"rights":{}';
 						}
-						var json2 = '{"projectid":"'+parent.vid+'",'+ right +'}';
+						var json2 = '{"projectid":"'+lineSelected+'",'+ right +'}';
+						
+
 						$.ajax({
 							url:"/admin/projects/updaterights",
 							data: json2,
@@ -337,11 +344,11 @@ AppProjectAdmin = (function($){
 							}
 						});
 						
-						$('#modal_window_project').hide();
-						$('#mask').hide();
+						$("#modal_window_project").kernely_dialog("close");
 						
 						var successHtml= $("#project-created-updated-template").html();
 						$.writeMessage("success",successHtml);
+
 						tableView.reload();
 					} else {
 						$.writeMessage("error",data.result,"#errors_message");
@@ -349,40 +356,6 @@ AppProjectAdmin = (function($){
 				}
 			});
 		}
-	}) 
-	
-	ProjectAdminIconView = Backbone.View.extend({
-		el: "#modal_window_project",
-		
-		events:{
-			"click .closeModal" : "closemodal",
-		},
-		
-		initialize:function(name, icon, id){
-			this.vid = id;
-			this.vname = name;
-			this.vicon = icon;
-		},
-		
-		setFields: function(name, icon, id){
-			this.vid = id;
-			this.vname = name;
-			this.vicon = icon;
-		},
-		
-		render : function(){
-			var template = $("#popup-project-admin-icon-template").html();
-			var view = {icon : this.vicon, name : this.vname};
-			var html = Mustache.to_html(template, view);
-			$(this.el).html(html);
-			return this;
-		},
-		
-		closemodal: function(){
-			$('#modal_window_project').hide();
-       		$('#mask').hide();
-		},
-		
 	}) 
 	
 	UserCBTableView = Backbone.View.extend({

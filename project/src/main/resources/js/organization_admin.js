@@ -71,7 +71,7 @@ AppOrganizationAdmin = (function($){
 	})	
 
 	 OrganizationAdminButtonsView = Backbone.View.extend({
-		el:"#organization_admin_container",
+		el:"#organization_admin_buttons",
 		
 		events: {
 			"click .createButton" : "createorganization",
@@ -79,98 +79,23 @@ AppOrganizationAdmin = (function($){
 			"click .deleteButton" : "deleteorganization"
 		},
 		
-		viewCreate:null,
-		viewUpdate:null,
-		
 		initialize: function(){
-			this.viewCreate = new  OrganizationAdminCreateView();
-			this.viewUpdate = new  OrganizationAdminUpdateView("", 0);
-		},
-		
-		showModalWindow: function(){
-			//Get the screen height and width
-       		var maskHeight = $(window).height();
-       		var maskWidth = $(window).width();
-
-       		//Set height and width to mask to fill up the whole screen
-       		$('#mask').css({'width':maskWidth,'height':maskHeight});
-
-       		//transition effect    
-       		$('#mask').fadeIn(500);   
-       		$('#mask').fadeTo("fast",0.7); 
-
-       		//Get the window height and width
-       		var winH = $(window).height();
-      		var winW = $(window).width();
-
-        	//Set the popup window to center
-       		$("#modal_window_organization").css('top',  winH/2-$("#modal_window_organization").height()/2);
-     		$("#modal_window_organization").css('left', winW/2-$("#modal_window_organization").width()/2);
-     		$("#modal_window_organization").css('background-color', "#EEEEEE");
-     		$("input:text").each(function(){this.value="";});
-     		//transition effect
-     		$("#modal_window_organization").fadeIn(500);
 		},
 		
 		createorganization: function(){
-			this.showModalWindow();
-			this.viewCreate.render();
-		},
-		
-		editorganization: function(){
-			this.showModalWindow();
-			this.viewUpdate.setFields(lineSelected.vid, lineSelected.vname, lineSelected.vaddress, lineSelected.vzip, lineSelected.vcity, lineSelected.vphone, lineSelected.vfax);
-			this.viewUpdate.render();
-		},
-		
-		deleteorganization: function(){
-			var template = $("#confirm-organization-deletion-template").html();
-			
-			var view = {name: lineSelected.vname};
-			var html = Mustache.to_html(template, view);
-			
-			$.kernelyConfirm(html,this.confirmDeleteOrganization);
-		},
-		
-		confirmDeleteOrganization: function(){
-			$.ajax({
-				url:"/admin/organizations/delete/" + lineSelected,
-				success: function(){
-					var successHtml = $("#organization-deleted-template").html();
-					$.writeMessage("success",successHtml);
-					tableView.reload();
+			// Create the dialog
+			var parent = this;
+			var html = $("#popup-organization-admin-create-template").html();
+			var titleTemplate = $("#create-template").html();
+			$("#modal_window_organization").kernely_dialog({
+				title: titleTemplate,
+				content: html,
+				eventNames:'click',
+				events:{
+					'click': {"el":".createOrganization", "event":parent.registerorganization}
 				}
 			});
-		},
-		
-		render:function(){
-			return this; 
-		}
-	})
-	
-	OrganizationAdminCreateView = Backbone.View.extend({
-		el: "#modal_window_organization",
-		
-		events:{
-			"click .closeModal" : "closemodal",
-			"click .createOrganization" : "registerorganization"
-		},
-		
-		initialize:function(){
-		},
-		
-		render : function(){
-			var template = $("#popup-organization-admin-create-template").html();
-			
-			var view = {};
-			var html = Mustache.to_html(template, view);
-			$(this.el).html(html);
-			return this;
-		},
-		
-		closemodal: function(){
-			$('#modal_window_organization').hide();
-       		$('#mask').hide();
+			$("#modal_window_organization").kernely_dialog("open");
 		},
 		
 		registerorganization: function(){
@@ -184,60 +109,43 @@ AppOrganizationAdmin = (function($){
 				contentType: "application/json; charset=utf-8",
 				success: function(data){
 					if (data.result == "ok"){
-						$('#modal_window_organization').hide();
-						$('#mask').hide();
-						
 						var successHtml = $("#organization-created-updated-template").html();
 						tableView.reload();
+						$("#modal_window_organization").kernely_dialog("close");
 						$.writeMessage("success",successHtml);
 					} else {
 						$.writeMessage("error",data.result,"#errors_message");
 					}
 				}
 			});
-		}
-	}) 
+		},
+		
+		editorganization: function(){
+			var parent = this;
 
-	OrganizationAdminUpdateView = Backbone.View.extend({
-		el: "#modal_window_organization",
-		
-		events:{
-			"click .closeModal" : "closemodal",
-			"click .updateOrganization" : "updateorganization"
-		},
-		
-		initialize:function(id, name, address, zip, city, phone, fax){
-			this.vid = id;
-			this.vname = name;
-			this.vaddress = address;
-			this.vcity=city;
-			this.vzip=zip;
-			this.vphone=phone;
-			this.vfax=fax;
-		},
-		
-		setFields: function(id, name, address, zip, city, phone, fax){
-			this.vid = id;
-			this.vname = name;
-			this.vaddress = address;
-			this.vcity=city;
-			this.vzip=zip;
-			this.vphone=phone;
-			this.vfax=fax;
-		},
-		
-		render : function(){
-			var template = $("#popup-organization-admin-update-template").html();
-			var view = {name : this.vname, address : this.vaddress, zip : this.vzip, city : this.vcity, phone : this.vphone, fax : this.vfax};
-			var html = Mustache.to_html(template, view);
-			$(this.el).html(html);
-			new UserCBListView(this.vid).render();
-			return this;
-		},
-		
-		closemodal: function(){
-			$('#modal_window_organization').hide();
-       		$('#mask').hide();
+			// Get data from organization
+			$.ajax({
+				type:"GET",
+				url:"/admin/organizations/"+lineSelected,
+				dataType:"json",
+				success: function(data){
+					// Create the dialog
+					var template = $("#popup-organization-admin-update-template").html();
+					var view = {name : data.name, address : data.address, zip : data.zip, city : data.city, phone : data.phone, fax : data.fax};
+					var html = Mustache.to_html(template, view);
+					new UserCBListView(data.id).render();
+					var titleTemplate = $("#create-template").html();
+					$("#modal_window_organization").kernely_dialog({
+						title: titleTemplate,
+						content: html,
+						eventNames:'click',
+						events:{
+							'click': {"el":".updateOrganization", "event":parent.updateorganization}
+						}
+					});
+					$("#modal_window_organization").kernely_dialog("open");
+				}
+			});
 		},
 		
 		updateorganization: function(){
@@ -260,7 +168,7 @@ AppOrganizationAdmin = (function($){
 			else{
 				users = '"users":{}';
 			}
-			var json = '{"id":"' +this.vid +'", "name":"'+$('input[name*="name"]').val()+'",'+ '"address":"'+$('input[name*="address"]').val() +'",'+ '"zip":"'+$('input[name*="zip"]').val()+'",' + '"city":"'+$('input[name*="city"]').val() +'",' + '"phone":"'+$('input[name*="phone"]').val()  +'",'+ '"fax":"'+$('input[name*="fax"]').val() + '", ' +users+'}';
+			var json = '{"id":"' + lineSelected +'", "name":"'+$('input[name*="name"]').val()+'",'+ '"address":"'+$('input[name*="address"]').val() +'",'+ '"zip":"'+$('input[name*="zip"]').val()+'",' + '"city":"'+$('input[name*="city"]').val() +'",' + '"phone":"'+$('input[name*="phone"]').val()  +'",'+ '"fax":"'+$('input[name*="fax"]').val() + '", ' +users+'}';
 			$.ajax({
 				url:"/admin/organizations/create",
 				data: json,
@@ -270,9 +178,8 @@ AppOrganizationAdmin = (function($){
 				contentType: "application/json; charset=utf-8",
 				success: function(data){
 					if (data.result == "ok"){
-						$('#modal_window_organization').hide();
-						$('#mask').hide();
 						var successHtml= $("#organization-created-updated-template").html();
+						$("#modal_window_organization").kernely_dialog("close");
 						$.writeMessage("success",successHtml);
 						tableView.reload();
 					} else {
@@ -280,8 +187,30 @@ AppOrganizationAdmin = (function($){
 					}
 				}
 			});
+		},
+		
+		deleteorganization: function(){
+			var html = $("#confirm-organization-deletion-template").html();
+			var title = $("#delete-template").html();
+			
+			$.kernelyConfirm(title,html,this.confirmDeleteOrganization);
+		},
+		
+		confirmDeleteOrganization: function(){
+			$.ajax({
+				url:"/admin/organizations/delete/" + lineSelected,
+				success: function(){
+					var successHtml = $("#organization-deleted-template").html();
+					$.writeMessage("success",successHtml);
+					tableView.reload();
+				}
+			});
+		},
+		
+		render:function(){
+			return this; 
 		}
-	}) 
+	})
 	
 	UserCBListView = Backbone.View.extend({
 		el:"#usersToLink",

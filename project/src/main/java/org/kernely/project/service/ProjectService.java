@@ -103,6 +103,22 @@ public class ProjectService extends AbstractService {
 				.getOrganization()));
 		return dto;
 	}
+	
+	/**
+	 * Get the project with the specific id
+	 * 
+	 * @param id
+	 *            the id of the project
+	 * @return the project DTO
+	 */
+	@Transactional
+	public ProjectDTO getProject(long id) {
+		Query query = em.get().createQuery("Select e FROM Project e WHERE id=:id");
+		query.setParameter("id", id);
+		Project proj = (Project) query.getSingleResult();
+		ProjectDTO dto = new ProjectDTO(proj);
+		return dto;
+	}
 
 	/**
 	 * Create a new Project in database
