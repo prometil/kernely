@@ -104,11 +104,10 @@ AppHolidayAdmin = (function($){
 							},
 							editable:true
 						});
-						console.log("Done here");
-						return parent;
 					}
 				}
 			});
+			return this;
 		}
 	})	
 	
@@ -124,7 +123,6 @@ AppHolidayAdmin = (function($){
 		initialize: function(){
 			viewCreate = this;
 			viewUsers = new HolidayAdminProfileUsersView();
-			console.log("Initialize");
 		},
 		
 		createholiday: function(){
@@ -182,7 +180,6 @@ AppHolidayAdmin = (function($){
 					// Create lines for existing types
 					if ($.isArray(data.holidayTypes)){
 						$.each(data.holidayTypes, function() {
-							console.log("Creation of the line " + this.id);
 							parent.newHolidayLine(false,
 									this.id,
 									this.name,
@@ -276,7 +273,6 @@ AppHolidayAdmin = (function($){
 		
 		setFields: function(id){
 			this.vid = id;
-			console.log("Field set")
 		},
 		
 		render: function(){
@@ -343,13 +339,11 @@ AppHolidayAdmin = (function($){
 				}
 			});
 			$("#modal_window_holiday").kernely_dialog("open");
-			console.log(($(" #addUserButton")).onclick);
 			
 			$("#addUserButton").trigger("click");
 		},
 		
 		addUser: function(){
-			console.log("Add");
 			// Adds only if a user is selected in out listbox
 			if ($("#out-listbox").find(":selected").length > 0){
 				var username = $("#out-listbox").find(":selected")[0].id;
@@ -363,8 +357,6 @@ AppHolidayAdmin = (function($){
 		},
 		
 		removeUser: function(){
-			console.log("Remove");
-
 			// Adds only if a user is selected in in listbox
 			if ($("#in-listbox").find(":selected").length > 0){
 				var username = $("#in-listbox").find(":selected")[0].id;
@@ -402,7 +394,7 @@ AppHolidayAdmin = (function($){
 					var successHtml = $("#holiday-success-message-template").html();
 					$.writeMessage("success",successHtml);
 					$("#modal_window_holiday").kernely_dialog("close");
-					// tableView.reload();
+					tableView.reload();
 				}
 			});
 			
@@ -430,7 +422,6 @@ AppHolidayAdmin = (function($){
 		vcolor:"#FFFFFF",
 		
 		initialize: function(editmode, id, name, unlimited, quantity, unity, effectivemonth,anticipation, color){
-			console.log("rank : "+arrayIndex);
 			this.vrank = arrayIndex;
 			
 			this.veditmode = editmode;
