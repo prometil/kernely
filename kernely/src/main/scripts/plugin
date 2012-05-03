@@ -1,0 +1,4 @@
+#!/bin/sh
+
+
+java -cp "lib/*" org.kernely.cli.PluginCli $*
