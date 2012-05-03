@@ -9,25 +9,18 @@
 
     <fileSets>
         <fileSet>
-            <directory>bin</directory>
+            <directory>src/main/scripts</directory>
             <outputDirectory>bin</outputDirectory>
             <fileMode>0755</fileMode>
             <directoryMode>0755</directoryMode>
             <lineEnding>unix</lineEnding>
             <includes>
-                <include>elasticsearch.in.sh</include>
-                <include>elasticsearch</include>
+                <include>kernely</include>
                 <include>plugin</include>
             </includes>
         </fileSet>
 
-        <fileSet>
-            <directory>lib/sigar</directory>
-            <outputDirectory>lib/sigar</outputDirectory>
-            <excludes>
-                <exclude>*.dll</exclude>
-            </excludes>
-        </fileSet>
+        
     </fileSets>
 
     <componentDescriptors>
