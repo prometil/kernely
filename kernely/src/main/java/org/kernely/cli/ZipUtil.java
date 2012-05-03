@@ -10,7 +10,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 /**
- * Http downloader tool
+ * Zip utility class
  * 
  */
 public class ZipUtil {

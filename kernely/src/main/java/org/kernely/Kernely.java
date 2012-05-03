@@ -31,7 +31,6 @@ import org.eclipse.jetty.servlet.FilterHolder;
 import org.eclipse.jetty.servlet.FilterMapping;
 import org.eclipse.jetty.servlet.ServletHandler;
 import org.eclipse.jetty.webapp.WebAppContext;
-import org.kernely.classpath.ClasspathUpdater;
 import org.kernely.error.KernelyErrorHandler;
 import org.kernely.guice.GuiceServletConfig;
 import org.kernely.migrator.Migrator;
