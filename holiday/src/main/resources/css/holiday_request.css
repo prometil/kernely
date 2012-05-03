@@ -74,6 +74,10 @@ buttons-container{
 	cursor:pointer;
 }
 
+.balance-cell:last-child{
+	border:0;
+}
+
 .balance-cell:hover{
 	background-color:#e7e7e7;
 }

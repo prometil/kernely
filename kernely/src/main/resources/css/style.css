@@ -72,6 +72,8 @@ html {
 }
 
 .container_generic{
+	position:relative;
+	z-index:1;
 	border:1px solid #a0a2a3;
 	background-color:#f6f6f6;
 	float:left;	
@@ -92,6 +94,21 @@ h1 {
 
 .button-bar{
 	padding-top:10px;	
+}
+
+#container_footer{
+	position:relative;
+	width:100%;
+	margin-top:70px;
+	height:auto;
+	border-top:1px solid #a0a2a3;
+	z-index:0;
+}
+
+.k_footer{
+	position:absolute;
+	margin-top:-151px;
+	z-index:-1;
 }
 
 /* header (logo, menu and profile)*/
@@ -239,7 +256,7 @@ div#profilePU-footer{
 	width:238px;
 	height:238px;
 	background-color:#3e3d40;
-	z-index:1;
+	z-index:5;
 	color:#FFFFFF;
 	text-align:center;
 	font-weight:bold;
@@ -286,11 +303,11 @@ div.button-bar {
 }
 
 /*************************************************************/
-/*					General style for component				 */
+/*	General style for component	                     */
 /*************************************************************/
 
 /* Buttons style */
-.button, .button_ok, .button_standard {
+.button, .button_ok, .button_standard, .button_emphasis {
 	min-width:70px;
 	width:auto;
 	height:28px;
@@ -302,6 +319,12 @@ div.button-bar {
 	background-color:#97ad17;
 	color:#efebe3;
 	border: 1px solid #90a516;
+}
+
+.button_emphasis{
+	background-color:#3e3d40;
+	color:#FFFFFF;
+	border: 1px solid #e6e7e7;
 }
 
 .button_ok:hover{
@@ -355,12 +378,19 @@ table.kernely_table td{
 	color:#656567;
 	padding-left:5px;
 	padding-right:5px;
+	padding-top:2px;
+	padding-bottom:2px;
 }
 
 table.kernely_table th{
 	background-color: #e3e4e4;
 }
 
+/* Input fields */
+.kernely_input{
+	border:1px solid #aeafb0;
+	height:20px;
+}
 
 /* Helpers */
 .clickable{
@@ -397,6 +427,15 @@ table.kernely_table th{
 	margin-bottom:10px;
 	float:right;
 }
+
+/* Datepickers*/
+.ui-datepicker-trigger{
+}
+
+.hasDatepicker{
+
+}
+
 
 /* notifications*/
 div#notification_container{

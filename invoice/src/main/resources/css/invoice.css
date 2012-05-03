@@ -1,42 +1,15 @@
-#invoice-header{
-
-}
-
-#invoice-visualization{
-	padding: 5px;
-	width:800px;
-}
-
-#invoice-details{
-	width:800px;
-}
-
-#invoice-history{
-
-}
-
 #invoice-button-bar{
-
+	margin-top:35px;
+	float:right;
+}
+#invoice-details{
+	margin-top:35px;
+	margin-bottom:25px;
 }
 
-#invoicing-main{
-
-}
-
-#invoicing-header{
-
-}
-
-#invoicing-buttons-bar{
-
-}
-
-#invoices-list{
-
-}
-
-#invoice-line-details{
-	width:100%;
+#invoice-details-new-button-bar{
+	float:right;
+	margin-bottom:10px;
 }
 
 #organization-selector, #organization-selector option{
@@ -66,11 +39,7 @@
 	width:200px;
 }
 
-#from{
-	width:100px;
-}
-
-#to{
+#from,#to{
 	width:100px;
 }
 
@@ -78,24 +47,16 @@
 	width:100%;
 }
 
-.edit-invoice{
-	cursor:pointer;
-}
-
-.delete-invoice{
-	cursor:pointer
-}
-
 .general-informations-fields{
-	width:100px;
+	width:95px;
+}
+
+#invoice-general-informations-table{
+	width:100%;
 }
 
 .object-field{
-	width:300px;
-}
-
-.id-field{
-	display:none;
+	width:100%;
 }
 
 .unpaid{
@@ -111,7 +72,7 @@
 }
 
 .pending{
-	color:#000000;
+	color:#000;
 }
 
 #errors_message{
@@ -119,8 +80,51 @@
 }
 
 #invoice-comment{
+	width:670px;
+	height:90px;
+	border:1px solid #aeb0b0;
+}
+
+/* Invoice table lines */
+.id-field{
+	display:none;
+}
+
+.description-field, .quantity-field, .unitprice-field{
 	width:100%;
-	height:50px;
+}
+
+td.label-column{
+	width:110px;
+}
+
+#invoice-line-details{
+	text-align:center;
+}
+
+.description-column{
+	width:40%;
+}
+
+.quantity-column, .unitprice-column{
+	width:15%;
+}
+
+.amount-column{
+	width:10%;
+}
+
+.vat-column{
+	width:15%;
+}
+
+.delete-column{
+	width:5%;
+}
+
+tbody#invoice-lines td{
+	padding-top:2px;
+	padding-bottom:2px;
 }
 
 /* Common */

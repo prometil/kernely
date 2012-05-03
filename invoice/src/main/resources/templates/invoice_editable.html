@@ -17,12 +17,12 @@
 
 	<script type="text/html" id="invoice-line-editable-template">
 		<td class="id-field"><input type="text" name="id-field[]" value="{{"{{"}}id{{"}}"}}"/></td>
-		<td><input type="text" name="designation-field[]" value="{{"{{"}}description{{"}}"}}"/></td>
-		<td><input type="text" class="quantity-field" name="quantity-field[]" value="{{"{{"}}quantity{{"}}"}}"/></td>
-		<td><input type="text" class="unitprice-field" name="unitprice-field[]" value="{{"{{"}}unitprice{{"}}"}}"/></td>
+		<td><input type="text" class="description-field kernely_input" name="designation-field[]" value="{{"{{"}}description{{"}}"}}"/></td>
+		<td><input type="text" class="quantity-field kernely_input" name="quantity-field[]" value="{{"{{"}}quantity{{"}}"}}"/></td>
+		<td><input type="text" class="unitprice-field kernely_input" name="unitprice-field[]" value="{{"{{"}}unitprice{{"}}"}}"/></td>
 		<td class="line-amount">{{"{{"}}amount{{"}}"}}</td>
-		<td><select name="vat-field[]" class="vat-field"></select> %</td>
-		<td><img src="/img/delete.png" class="delete-invoice-line"/></td>
+		<td><select name="vat-field[]" class="vat-field kernely_input"></select> %</td>
+		<td><img src="/images/icons/delete_icon.png" class="delete-invoice-line"/></td>
 	</script>
 
 {% endblock %}
@@ -37,43 +37,44 @@
 		</div>
 		<!-- General informations -->
 		<div id="invoice-general-informations">
-			{% i18n "invoice-code" %} : <input type="text" class="general-informations-fields" name="invoice-code" value="{{invoice.code}}"/><br/>
-			{% i18n "invoice-publication" %} : <input type="text" class="general-informations-fields" id="invoice-publication" name="invoice-sending" value="{{invoice.datePublicationString}}"/><br/>
-			{% i18n "invoice-term" %} : <input type="text" class="general-informations-fields" id="invoice-term" name="invoice-term" value="{{invoice.dateTermString}}"/>
-			<input type="text" class="general-informations-fields" name="invoice-devise" value="&euro;"/><br/>
-			{% i18n "invoice-object" %} : <input type="text" class="general-informations-fields object-field" name="invoice-object" value="{{invoice.object}}"/>
+			<table id="invoice-general-informations-table">
+				<tr><td class="label-column">{% i18n "invoice-code" %}</td><td><input type="text" class="general-informations-fields kernely_input" name="invoice-code" value="{{invoice.code}}"/></td></tr>
+				<tr><td class="label-column">{% i18n "invoice-publication" %}</td><td><input type="text" class="general-informations-fields kernely_input" id="invoice-publication" name="invoice-sending" value="{{invoice.datePublicationString}}"/></td></tr>
+				<tr><td class="label-column">{% i18n "invoice-term" %}</td><td><input type="text" class="general-informations-fields kernely_input" id="invoice-term" name="invoice-term" value="{{invoice.dateTermString}}"/></td>
+					<td><input type="text" class="general-informations-fields kernely_input" name="invoice-devise kernely_input" value="&euro;"/></td></tr>
+				<tr><td class="label-column">{% i18n "invoice-object" %}</td><td colspan="2"><input type="text" class="general-informations-fields object-field kernely_input" name="invoice-object" value="{{invoice.object}}"/></td></tr>
+			</table>
 		</div>
 		<!-- Invoice details -->
 		<br/>
 		<div id="invoice-details">
-			<input type="button" id="new-invoice-line" value="{% i18n "invoice-new-line" %}"/>
-			<table id="invoice-line-details">
+			<div id="invoice-details-new-button-bar">
+				<input type="button" class="button_emphasis" id="new-invoice-line" value="{% i18n "invoice-new-line" %}"/>
+			</div>
+			<table id="invoice-line-details" class="kernely_table">
 				<tr>
 					<th class="id-field"><!--id of the line--></th>
-					<th>{% i18n "invoice-line-description" %}</th>
-					<th>{% i18n "invoice-line-quantity" %}</th>
-					<th>{% i18n "invoice-line-unit-price" %}</th>
-					<th>{% i18n "invoice-line-amount" %}</th>
-					<th>{% i18n "invoice-line-vat" %}</th>
-					<th><!-- Column for the delete button --></th>
+					<th class="description-column">{% i18n "invoice-line-description" %}</th>
+					<th class="quantity-column">{% i18n "invoice-line-quantity" %}</th>
+					<th class="unitprice-column">{% i18n "invoice-line-unit-price" %}</th>
+					<th class="amount-column">{% i18n "invoice-line-amount" %}</th>
+					<th class="vat-column">{% i18n "invoice-line-vat" %}</th>
+					<th class="delete-column"><!-- Column for the delete button --></th>
 				</tr>
 				<tbody id="invoice-lines">
 					
 				</tbody>
-				<tbody id="additional-informations">
-				
-				</tbody>
 			</table>
 		</div>
 		
-		{% i18n "invoice-comment" %}<br/>
+		<div class="subtitle">{% i18n "invoice-comment" %}</div>
 		<textarea id="invoice-comment" name="invoice-comment">{{invoice.comment}}</textarea>
 		
 		<!-- Footer button bar -->
 		<div id="invoice-button-bar">
-			<input type="button" id="export-invoice" value="{% i18n "export" %}"/>
-			<input type="button" id="cancel-invoice" value="{% i18n "cancel" %}" onClick="window.location = '/invoice/view/${invoice.id}';"/>
-			<input type="submit" id="validate-invoice" value="{% i18n "ok" %}"/>
+			<input type="button" id="export-invoice"  class="button_emphasis" value="{% i18n "export" %}"/>
+			<input type="button" id="cancel-invoice" class="button_standard" value="{% i18n "cancel" %}" onClick="window.location = '/invoice/view/${invoice.id}';"/>
+			<input type="submit" id="validate-invoice" class="button_ok" value="{% i18n "ok" %}"/>
 		</div>
 	</form>
 {% endblock %}
