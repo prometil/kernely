@@ -204,7 +204,7 @@ public class PluginManager {
 	 * @param prefixes
 	 *            the prefix of the configuration key
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private void addConfiguration(AbstractConfiguration configuration, Map<String, Object> configurations, List<String> prefixes) {
 		Joiner joiner = Joiner.on(".").skipNulls();
 		for (Map.Entry<String, Object> config : configurations.entrySet()) {

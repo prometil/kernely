@@ -36,21 +36,21 @@ import com.ning.http.client.AsyncHttpClient;
 import com.ning.http.client.HttpResponseBodyPart;
 import com.ning.http.client.HttpResponseHeaders;
 import com.ning.http.client.HttpResponseStatus;
-import com.ning.http.client.Response;
-import com.sun.tools.internal.xjc.Plugin;
 
 /**
- * The plugin cli
+ * The plugin cli to install, list, show and update the plugin system
  * 
  */
 @SuppressWarnings("unchecked")
 public class PluginCli {
 
-	private static final String METADATA_DIRECTORY = "metadata";
-
+	private static final String METADATA_DIRECTORY = ".metadata";
 
 	/**
+	 * The cli main method
+	 * 
 	 * @param args
+	 *            the args of the cli, obviously
 	 */
 	public static void main(String[] args) {
 
@@ -64,28 +64,12 @@ public class PluginCli {
 			File metadataFile = new File(pluginMedataPath);
 			if (args.length > 0) {
 				if ("update".equals(args[0])) {
-					// update the list from the repository
-					System.out.println("Udpating from " + repository);
-					if (metadataFile.exists()) {
-						Git wrap;
-						try {
-							wrap = Git.wrap(new FileRepository(metadataFile));
-							wrap.pull();
-						} catch (IOException e) {
-							System.out.println("Cannot locate repository in " + metadataFile);
-						}
-
-					} else {
-						System.out.println("Initializing data to " + metadataFile);
-						CloneCommand clone = Git.cloneRepository();
-						clone.setURI(repository);
-						clone.setDirectory(metadataFile);
-						clone.setBare(false);
-						clone.call();
-					}
-					System.out.println("Done!");
+					update(repository, metadataFile);
 
 				} else if ("list".equals(args[0])) {
+					if (!metadataFile.exists()) {
+						update(repository, metadataFile);
+					}
 					List<String> list = Arrays.asList(metadataFile.list(new FilenameFilter() {
 
 						@Override
@@ -119,7 +103,7 @@ public class PluginCli {
 							String format = "%1$-10.10s : %2$-200.200s\n";
 							formatter.format(format, "Name", m.name);
 							formatter.format(format, "Version", m.version);
-							formatter.format(format, "Repository", m.repository);
+							formatter.format(format, "Repository", m.url);
 							formatter.format(format, "Author", m.author);
 							formatter.format(format, "Description", m.description);
 							System.out.println(sb);
@@ -142,19 +126,20 @@ public class PluginCli {
 						} else {
 
 							try {
-								
+
 								final File dlFile = File.createTempFile(pluginName, "zip");
-								String url = m.repository + "/" + pluginName;
+								String url = m.url + "/" + pluginName;
 								try {
 									final FileOutputStream stream = new FileOutputStream(dlFile);
 
 									System.out.println("Try to load the plugin from " + url);
 
 									AsyncHttpClient asyncHttpClient = new AsyncHttpClient();
-									Future<Response> f;
+									Future<String> f;
 									try {
-										f = asyncHttpClient.prepareGet(url).execute(new AsyncHandler() {
+										f = asyncHttpClient.prepareGet(url).execute(new AsyncHandler<String>() {
 											ConsoleProgressMonitor downloadMonitor;
+
 											@Override
 											public STATE onBodyPartReceived(HttpResponseBodyPart bodyPart) throws Exception {
 												downloadMonitor.tick();
@@ -163,13 +148,13 @@ public class PluginCli {
 											}
 
 											@Override
-											public Object onCompleted() throws Exception {
+											public String onCompleted() throws Exception {
 												downloadMonitor.end();
 												pluginDirectory.mkdir();
 												// unzip the file
 												ZipInputStream zin = new ZipInputStream(Files.newInputStreamSupplier(dlFile).getInput());
 												ZipUtil.extractToFolder(zin, pluginDirectory, new ConsoleProgressMonitor("Extracting"));
-												
+
 												System.out.println("Done! You can know restart your server.");
 												return null;
 											}
@@ -189,7 +174,7 @@ public class PluginCli {
 
 											@Override
 											public void onThrowable(Throwable arg0) {
-												System.out.println("A problem occured while downloading "+pluginName);
+												System.out.println("A problem occured while downloading " + pluginName);
 											}
 
 										});
@@ -232,6 +217,37 @@ public class PluginCli {
 			System.out.println("Cannot load core.xml!");
 		}
 
+	}
+
+	/**
+	 * Update the metadata repository
+	 * 
+	 * @param repository
+	 *            the repostory
+	 * @param metadataFile
+	 *            the metadata file
+	 */
+	private static void update(String repository, File metadataFile) {
+		// update the list from the repository
+		System.out.println("Udpating from " + repository);
+		if (metadataFile.exists()) {
+			Git wrap;
+			try {
+				wrap = Git.wrap(new FileRepository(metadataFile));
+				wrap.pull();
+			} catch (IOException e) {
+				System.out.println("Cannot locate repository in " + metadataFile);
+			}
+
+		} else {
+			System.out.print("-> Initializing data to " + metadataFile);
+			CloneCommand clone = Git.cloneRepository();
+			clone.setURI(repository);
+			clone.setDirectory(metadataFile);
+			clone.setBare(false);
+			clone.call();
+		}
+		System.out.println("- Done!");
 	}
 
 	/**

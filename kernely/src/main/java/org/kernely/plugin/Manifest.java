@@ -12,7 +12,7 @@ public class Manifest {
 	public String description = "";
 	public String author = "";
 	public String pluginClass = "";
-	public String repository = "";
+	public String url = "";
 
 	@Override
 	public String toString() {
