@@ -100,10 +100,10 @@ public class PluginCli {
 
 							StringBuilder sb = new StringBuilder();
 							Formatter formatter = new Formatter(sb, Locale.US);
-							String format = "%1$-10.10s : %2$-200.200s\n";
+							String format = "%1$-15.15s : %2$-200.200s\n";
 							formatter.format(format, "Name", m.name);
 							formatter.format(format, "Version", m.version);
-							formatter.format(format, "Repository", m.url);
+							formatter.format(format, "Download url", m.url);
 							formatter.format(format, "Author", m.author);
 							formatter.format(format, "Description", m.description);
 							System.out.println(sb);
@@ -128,16 +128,15 @@ public class PluginCli {
 							try {
 
 								final File dlFile = File.createTempFile(pluginName, "zip");
-								String url = m.url + "/" + pluginName;
 								try {
 									final FileOutputStream stream = new FileOutputStream(dlFile);
 
-									System.out.println("Try to load the plugin from " + url);
+									System.out.println("Try to load the plugin from " + m.url);
 
 									AsyncHttpClient asyncHttpClient = new AsyncHttpClient();
 									Future<String> f;
 									try {
-										f = asyncHttpClient.prepareGet(url).execute(new AsyncHandler<String>() {
+										f = asyncHttpClient.prepareGet(m.url).execute(new AsyncHandler<String>() {
 											ConsoleProgressMonitor downloadMonitor;
 
 											@Override
