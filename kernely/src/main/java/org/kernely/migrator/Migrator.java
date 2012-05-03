@@ -112,15 +112,24 @@ public class Migrator {
 	public void migrate() {
 		Connection conn = null;
 		Properties connectionProps = new Properties();
-		try {
-			String hibernateDriverName = configuration.getString("hibernate.connection.driver_class");
-			if (hibernateDriverName != null) {
-				log.debug("Hibernate driver : {}", hibernateDriverName);
+
+		String hibernateDriverName = configuration.getString("hibernate.connection.driver_class");
+		if (hibernateDriverName != null) {
+			log.debug("Hibernate driver : {}", hibernateDriverName);
+			try {
 				Class.forName(hibernateDriverName);
 				connectionProps.put("user", configuration.getString("hibernate.connection.username"));
 				connectionProps.put("password", configuration.getString("hibernate.connection.password"));
 				conn = DriverManager.getConnection(configuration.getString("hibernate.connection.url"), connectionProps);
-
+			} catch (ClassNotFoundException e1) {
+				log.error("Hibernate driver class is not defined");
+				System.exit(0);
+			} catch (SQLException e) {
+				log.error("Cannot connect to postgresql");
+				System.exit(0);
+			}
+			
+			try {
 				// initialise the database
 				DatabaseMetaData metaData = conn.getMetaData();
 				ResultSet rs = metaData.getTables(null, null, "kernely_schema_version", null);
@@ -164,24 +173,22 @@ public class Migrator {
 					}
 
 				}
-			} else {
-				log.error("Hibernate driver class is not defined");
-				System.exit(0);
-			}
-
-		} catch (ClassNotFoundException e) {
-			log.error("", e);
-		} catch (SQLException e) {
-			log.error("SQL error ", e);
-		} finally {
-			if (conn != null) {
-				try {
-					conn.rollback();
-					conn.close();
-				} catch (SQLException e) {
-					// nothing to do
+			} catch (SQLException e) {
+				log.error("SQL error ", e);
+			} finally {
+				if (conn != null) {
+					try {
+						conn.rollback();
+						conn.close();
+					} catch (SQLException e) {
+						// nothing to do
+					}
 				}
 			}
+		} else {
+			log.error("Hibernate driver class is not defined");
+			System.exit(0);
 		}
+
 	}
 }
