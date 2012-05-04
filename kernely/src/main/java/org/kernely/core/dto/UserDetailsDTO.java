@@ -28,8 +28,9 @@ import org.kernely.core.model.UserDetails;
 
 /**
  * The details of the user
+ * 
  * @author b.grandperret
- *
+ * 
  */
 @XmlRootElement
 public class UserDetailsDTO {
@@ -38,87 +39,87 @@ public class UserDetailsDTO {
 	 * The id of the user detail
 	 */
 	public long id;
-	
+
 	/**
 	 * The firstname of the user
 	 */
 	public String firstname = "";
-	
+
 	/**
 	 * The lastname of the user
 	 */
 	public String lastname = "";
-	
+
 	/**
-	 * The image of  the user
+	 * The image of the user
 	 */
 	public String image = "default_user.png";
-	
+
 	/**
-	 * The  email of the user
+	 * The email of the user
 	 */
 	public String email = "";
-	
+
 	/**
 	 * The adress of the hser
 	 */
 	public String adress = "";
-	
+
 	/**
 	 * The zip code of the user
 	 */
 	public String zip = "";
-	
+
 	/**
-	 * The city of the user 
+	 * The city of the user
 	 */
 	public String city = "";
-	
+
 	/**
 	 * the homephone of the user
 	 */
 	public String homephone = "";
-	
+
 	/**
 	 * The mobilephone of the user
 	 */
 	public String mobilephone = "";
-	
+
 	/**
 	 * The businessphone of the user
 	 */
 	public String businessphone = "";
-	
+
 	/**
 	 * The brth of the user
 	 */
 	public String birth = "";
-	
+
 	/**
 	 * The nationality of the user
 	 */
 	public String nationality = "";
-	
+
 	/**
 	 * The social security number of the user
 	 */
 	public String ssn = "";
-	
+
 	/**
 	 * the civility of the user
 	 */
 	public Integer civility = 0;
-	
+
 	/**
-	 * The user link to the user detail 
+	 * The user link to the user detail
 	 */
 	public UserDTO user;
-	
+
 	/**
 	 * The hire date of this user
 	 */
 	public Date hire;
-	
+
 	/**
 	 * The hire date in String format of this user, used fir display
 	 */
@@ -152,12 +153,18 @@ public class UserDetailsDTO {
 
 	/**
 	 * Constructor using a model
+	 * 
 	 * @param details
 	 */
 	public UserDetailsDTO(UserDetails details) {
 		this.firstname = details.getFirstname();
 		this.lastname = details.getName();
-		this.image = details.getImage();
+		if (details.getImage() != null) {
+			this.image = details.getImage();
+		} else {
+			this.image = "default_profile_user.png";
+		}
+
 		this.email = details.getMail();
 		this.adress = details.getAdress();
 		this.zip = details.getZip();
@@ -191,7 +198,9 @@ public class UserDetailsDTO {
 		this.user = new UserDTO(details.getUser());
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#hashCode()
 	 */
 	@Override
@@ -204,7 +213,9 @@ public class UserDetailsDTO {
 		return result;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	@Override
@@ -230,7 +241,5 @@ public class UserDetailsDTO {
 			return false;
 		return true;
 	}
-	
-	
 
 }
