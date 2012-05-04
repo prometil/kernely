@@ -7,6 +7,7 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
@@ -74,6 +75,10 @@ public class ExpenseAdminController extends AbstractController {
 	@Path("/type/create")
 	@Produces( { MediaType.APPLICATION_JSON })
 	public String createExpenseType(ExpenseTypeCreationDTO request) {
+		System.out.println("DIRECT "+request.id);
+		System.out.println("DIRECT "+request.direct);
+		System.out.println("NAME "+request.name);
+		System.out.println("RATIO "+request.ratio);
 		if (userService.currentUserIsAdministrator()){
 			try{
 				expenseService.createOrUpdateExpenseType(request);
@@ -101,5 +106,20 @@ public class ExpenseAdminController extends AbstractController {
 			return Response.ok().build();
 		}
 		return Response.status(Status.FORBIDDEN).build();
+	}
+	
+	/**
+	 * Get the expense with the given id
+	 * @param id The id of the expense
+	 * @return The expense DTO
+	 */
+	@GET
+	@Path("/type/{id}")
+	@Produces( { MediaType.APPLICATION_JSON })
+	public ExpenseTypeDTO getExpenseType(@PathParam("id") long id) {
+		if (userService.currentUserIsAdministrator()){
+			return expenseService.getExpenseTypeById(id);
+		}
+		return new ExpenseTypeDTO();
 	}
 }

@@ -12,23 +12,29 @@
 	<script type="text/javascript" src="/js/expense_type_admin.js"></script>
 {% endblock %}
 
+{% block adminbuttons %}
+	<div id="expense_type_admin_buttons">
+		<input type="button" class="createButton button_standard" value="{% i18n "create" %}"/>
+		<input type="button" class="editButton button_standard" value="{% i18n "edit" %}" disabled="disabled"/>
+		<input type="button" class="deleteButton button_standard" value="{% i18n "delete" %}" disabled="disabled"/>
+	</div>
+{% endblock %}
+
 {% block admin %}
 	<div id="expense_type_admin_container">
-	        <div id="expense_type_admin_buttons">
-	                <input type="button" class="createButton button_standard" value="{% i18n "create" %}"/>
-	                <input type="button" class="editButton button_standard" value="{% i18n "edit" %}" disabled="disabled"/>
-	                <input type="button" class="deleteButton button_standard" value="{% i18n "delete" %}" disabled="disabled"/>
-	        </div>
 	        <table id="expense_type_admin_table" class="kernely_table">
 	                
 	        </table>
 	</div>
 	<div id="expense_type_header"></div>
-	<div id="mask"></div>
 	<div id="modal_window_expense_type"></div>
 {% endblock %}
 	
 {% block subtemplate %}
+	<!-- Templates for titles of dialogs -->
+	<script type="text/html" id="create-template">{% i18n "create" %}</script>
+	<script type="text/html" id="edit-template">{% i18n "edit" %}</script>
+	<script type="text/html" id="delete-template">{% i18n "delete" %}</script>
 
 	<script type="text/html" id="table-expense-name-column">
 		{% i18n "expense_type_name" %}
@@ -53,30 +59,28 @@
 	<script type="text/html" id="no-template">{% i18n "no" %}</script>
 
 	<script type="text/html" id="popup-expense-type-admin-create-template">
-		<input type="button" value="{% i18n "close" %}" class="closeModal"/><br/>
+		<div id="errors_message"></div>
 		<fieldset>
 		<legend>{% i18n "expense_type_informations" %}</legend>
 		{% i18n "expense_type_name" %}: <input type="text" name="name"/><br/>
 		{% i18n "expense_type_direct" %}: <input type="checkbox" class="expense-type-cb" name="direct"/> 
 		{% i18n "expense_type_ratio" %}: <input type="text" name="ratio" id="ratio_field"/>
 		</fieldset>
-		<br/>
-		
-		<input type="button" value="{% i18n "create" %}" class="create_expense_type"/>
-		<div id="errors_message"></div>
+		<div class="dialog-buttons-container">
+			<input type="button" value="{% i18n "create" %}" class="create_expense_type button_ok"/>
+		</div>
 	</script>
 
 	<script type="text/html" id="popup-expense-type-admin-update-template">
-		<input type="button" value="{% i18n "close" %}" class="closeModal"/><br/>
+		<div id="errors_message"></div>
 		<fieldset>
 		<legend>{% i18n "expense_type_informations" %}</legend>
 		{% i18n "expense_type_name" %}: <input type="text" name="name" value="{{"{{"}}name{{"}}"}}"/><br/>
-		{% i18n "expense_type_direct" %}: <input type="checkbox" name="direct"/> 
+		{% i18n "expense_type_direct" %}: <input type="checkbox" class="expense-type-cb" name="direct"/> 
 		{% i18n "expense_type_ratio" %}: <input type="text" name="ratio" value="{{"{{"}}ratio{{"}}"}}" id="ratio_field"/>
 		</fieldset>
-		<br/>
-		
-		<input type="button" value="{% i18n "update" %}" class="updateExpenseType"/>
-		<div id="errors_message"></div>
+		<div class="dialog-buttons-container">
+			<input type="button" value="{% i18n "update" %}" class="updateExpenseType button_ok"/>
+		</div>
 	</script>
 {% endblock %}

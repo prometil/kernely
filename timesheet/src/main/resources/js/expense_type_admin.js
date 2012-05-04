@@ -53,7 +53,7 @@ AppExpenseType = (function($){
 	})
 	
 	ExpenseTypeAdminButtonsView = Backbone.View.extend({
-		el:"#expense_type_admin_container",
+		el:"#expense_type_admin_buttons",
 		
 		events: {
 			"click .createButton" : "createType",
@@ -69,47 +69,18 @@ AppExpenseType = (function($){
 			this.viewUpdate = new ExpenseTypeAdminUpdateView("","","",0);
 		},
 		
-		showModalWindow: function(){
-			//Get the screen height and width
-       		var maskHeight = $(window).height();
-       		var maskWidth = $(window).width();
-
-
-            //Set height and width to mask to fill up the whole screen
-            $('#mask').css({'width':maskWidth,'height':maskHeight});
-
-            //transition effect    
-            $('#mask').fadeIn(500);   
-            $('#mask').fadeTo("fast",0.7); 
-
-            //Get the window height and width
-            var winH = $(window).height();
-            var winW = $(window).width();
-
-
-        	//Set the popup window to center
-       		$("#modal_window_expense_type").css('top',  winH/2-$("#modal_window_expense_type").height()/2);
-     		$("#modal_window_expense_type").css('left', winW/2-$("#modal_window_expense_type").width()/2);
-     		$("#modal_window_expense_type").css('background-color', "#EEEEEE");
-     		$("input:text").each(function(){this.value="";});
-     		//transition effect
-     		$("#modal_window_expense_type").fadeIn(500);
-		},
-		
 		createType: function(){
-			this.showModalWindow();
 			this.viewCreate.render();
 		},
 		
 		editType: function(){
-			this.showModalWindow();
-			this.viewUpdate.setFields(lineSelected.vname,lineSelected.vdirect,lineSelected.vratio, lineSelected.vid);
 			this.viewUpdate.render();
 		},
 		
 		deleteType: function(){
+			var title = $("#delete-template").html();
 			var template = $("#expense-type-delete-confirm-template").html();
-			$.kernelyConfirm(template,this.confirmDeleteType);
+			$.kernelyConfirm(title,template,this.confirmDeleteType);
 		},
 		
 		confirmDeleteType: function(){
@@ -133,21 +104,24 @@ AppExpenseType = (function($){
 	ExpenseTypeAdminCreateView = Backbone.View.extend({
 		el: "#modal_window_expense_type",
 		
-		events:{
-			"click .closeModal" : "closemodal",
-			"click .create_expense_type" : "createType",
-			"click .expense-type-cb" : "manageDirect"
-		},
-		
-		initialize:function(){
-		},
-		
 		render : function(){
-			var template = $("#popup-expense-type-admin-create-template").html();
+			var parent = this;
+			var html = $("#popup-expense-type-admin-create-template").html();
+			var title = $("#create-template").html();
 			
-			var view = {};
-			var html = Mustache.to_html(template, view);
-			$(this.el).html(html);
+			$("#modal_window_expense_type").kernely_dialog({
+				title: title,
+				content: html,
+				eventNames:'click',
+				events:{
+					 'click': [
+					           	{"el":".create_expense_type", "event":parent.createType},
+								{"el":".expense-type-cb", "event":parent.manageDirect}
+					          ]
+				}
+			});
+			$("#modal_window_expense_type").kernely_dialog("open");
+			
 			return this;
 		},
 		manageDirect: function(){
@@ -158,10 +132,6 @@ AppExpenseType = (function($){
 			else{
 				$('#ratio_field').removeAttr("readonly");
 			}
-		},
-		closemodal: function(){
-			$('#modal_window_expense_type').hide();
-       		$('#mask').hide();
 		},
 		
 		createType: function(){
@@ -175,9 +145,7 @@ AppExpenseType = (function($){
 				contentType: "application/json; charset=utf-8",
 				success: function(data){
 				  if (data.result == "Ok"){
-					$('#modal_window_expense_type').hide();
-	       			$('#mask').hide();
-
+					  $("#modal_window_expense_type").kernely_dialog("close");
 	       			var successHtml = $("#success-message-template").html();
 					$.writeMessage("success",successHtml);
 					tableView.reload();
@@ -192,31 +160,46 @@ AppExpenseType = (function($){
 	ExpenseTypeAdminUpdateView = Backbone.View.extend({
 		el: "#modal_window_expense_type",
 		
-		vid: null,
-		vname: null,
-		vdirect: null,
-		vratio: null,
-		
-		events:{
-			"click .closeModal" : "closemodal",
-			"click .updateExpenseType" : "updateType",
-			"click .expense-type-cb" : "manageDirect"
+		render : function(){
+			var parent = this;
+			$.ajax({
+				url:"/admin/expense/type/"+lineSelected,
+				type: "GET",
+				dataType: "json",
+				processData: false,
+				contentType: "application/json; charset=utf-8",
+				success: function(data){
+				console.log(data.direct)
+					var template = $("#popup-expense-type-admin-update-template").html();
+					var view = {name : data.name, ratio: data.ratio};
+					var html = Mustache.to_html(template, view);
+					var title = $("#edit-template").html();
+					
+					$("#modal_window_expense_type").kernely_dialog({
+						title: title,
+						content: html,
+						eventNames:'click',
+						events:{
+							 'click': [
+							           	{"el":".updateExpenseType", "event":parent.updateType},
+										{"el":".expense-type-cb", "event":parent.manageDirect}
+							          ]
+						}
+					});
+					if(data.direct == "true"){
+						$('input[name*="direct"]').attr('checked','checked');
+						$('#ratio_field').attr("readonly", "readonly");
+					}
+					
+					$("#modal_window_expense_type").kernely_dialog("open");
+				}
+			});
+			
+			return this;
 		},
 		
-		initialize:function(name, direct, ratio, id){
-			this.vid = id;
-			this.vname = name;
-			this.vdirect = direct;
-			this.vratio = ratio;
-		},
-		
-		setFields: function(name, direct, ratio, id){
-			this.vid = id;
-			this.vname = name;
-			this.vdirect = direct;
-			this.vratio = ratio;
-		},
 		manageDirect: function(){
+		console.log("MANAGE DIRECT");
 			if($('input[name*="direct"]').is(":checked")){
 				$('#ratio_field').val(1.0);
 				$('#ratio_field').attr("readonly", "readonly");
@@ -225,29 +208,10 @@ AppExpenseType = (function($){
 				$('#ratio_field').removeAttr("readonly");
 			}
 		},
-		render : function(){
-			var template = $("#popup-expense-type-admin-update-template").html();
-			
-			var view = {name : this.vname, ratio: this.vratio};
-			var html = Mustache.to_html(template, view);
-			$(this.el).html(html);
-			
-			if(this.vdirect == "true"){
-				$('input[name*="direct"]').attr('checked','checked');
-				$('#ratio_field').attr("readonly", "readonly");
-			}
-			
-			
-			return this;
-		},
-		
-		closemodal: function(){
-			$('#modal_window_expense_type').hide();
-       		$('#mask').hide();
-		},
 		
 		updateType: function(){
-			var json = '{"id":"'+this.vid+'", "name":"'+$('input[name*="name"]').val()+'","direct":"'+$('input[name*="direct"]').is(":checked")+'", "ratio":"'+$('input[name*="ratio"]').val()+'}';
+			var json = '{"id":"'+lineSelected+'", "name":"'+$('input[name*="name"]').val()+'","direct":"'+$('input[name*="direct"]').is(":checked")+'", "ratio":'+$('input[name*="ratio"]').val()+'}';
+			console.log(json)
 			$.ajax({
 				url:"/admin/expense/type/create",
 				data: json,
@@ -257,9 +221,7 @@ AppExpenseType = (function($){
 				contentType: "application/json; charset=utf-8",
 				success: function(data){
 					if (data.result == "Ok"){
-						$('#modal_window_expense_type').hide();
-						$('#mask').hide();
-
+						$("#modal_window_expense_type").kernely_dialog("close");
 						var successHtml = $("#success-message-template").html();
 						$.writeMessage("success",successHtml);
 						tableView.reload();
