@@ -65,7 +65,6 @@ public class PluginCli {
 			if (args.length > 0) {
 				if ("update".equals(args[0])) {
 					update(repository, metadataFile);
-
 				} else if ("list".equals(args[0])) {
 					if (!metadataFile.exists()) {
 						update(repository, metadataFile);
@@ -116,6 +115,9 @@ public class PluginCli {
 					}
 
 				} else if ("install".equals(args[0])) {
+					if (!metadataFile.exists()) {
+						update(repository, metadataFile);
+					}
 					Descriptor m = loadManifest(pluginMedataPath, args[1]);
 					if (m != null) {
 						final String pluginName = args[1];
