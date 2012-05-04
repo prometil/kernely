@@ -20,16 +20,12 @@
 
 package org.kernely.error;
 
-import groovy.text.SimpleTemplateEngine;
-
 import java.io.IOException;
 import java.io.Writer;
-import java.net.URL;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.io.IOUtils;
-import org.codehaus.groovy.control.CompilationFailedException;
 import org.eclipse.jetty.server.handler.ErrorHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,32 +34,17 @@ import org.slf4j.LoggerFactory;
  * Error handler to trace error in logs instead of displaying it on screen.
  */
 public class KernelyErrorHandler extends ErrorHandler {
-	
-	
-	//the logger
+
+	// the logger
 	private static Logger log = LoggerFactory.getLogger(KernelyErrorHandler.class);
-	
 
 	/**
-	 * When an error is detected, display a custom page instead of displaying stack trace on screen.
+	 * When an error is detected, display a custom page instead of displaying
+	 * stack trace on screen.
 	 */
 	@Override
 	protected void writeErrorPage(HttpServletRequest request, Writer writer, int code, String message, boolean showStacks) throws IOException {
-		
-		log.error("{} - {} - {}",new Object[]{message, code, request.getRequestURI()});
-		SimpleTemplateEngine engine = new SimpleTemplateEngine();
-		URL layout = KernelyErrorHandler.class.getResource("/templates/gsp/error.gsp");
-		try {
-			String body = engine.createTemplate(layout).make().toString();
-			IOUtils.write(body, writer);
-		} catch (CompilationFailedException e) {
-			log.error("Oops something went wrong on the error page", e);
-		} catch (ClassNotFoundException e) {
-			log.error("Oops something went wrong on the error page", e);
-		}
-		
+		log.error("{} - {} - {}", new Object[] { message, code, request.getRequestURI() });
+		IOUtils.write("Error", writer);
 	}
-
-	
-
 }
