@@ -193,7 +193,7 @@ public class UserController extends AbstractController {
 
 		SecureRandom random = new SecureRandom();
 		String fileName = new BigInteger(130, random).toString(32) + "." + extension[extension.length - 1];
-		String prefix = configuration.getString("workpath.url");
+		String prefix = configuration.getString("workspace");
 		String uploadedFileLocation = prefix + "/images/" + fileName; // /core/src/main/resources
 		try {
 			FileUtils.copyInputStreamToFile(uploadedInputStream, new File(uploadedFileLocation));
