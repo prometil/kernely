@@ -45,6 +45,7 @@ AppStreamAdmin = (function($){
 			$(".editButton").removeAttr('disabled');
 			$(".lockButton").removeAttr('disabled');
 			$(".unlockButton").removeAttr('disabled');
+			$(".rightsButton").removeAttr('disabled');
 			lineSelected = e.data.line;
 		},
 		render: function(){
@@ -75,7 +76,7 @@ AppStreamAdmin = (function($){
 	
 	
 	StreamAdminButtonsView = Backbone.View.extend({
-		el:"#stream_admin_container",
+		el:"#stream_admin_buttons",
 		
 		events: {
 			"click .createButton" : "createstream",
@@ -84,62 +85,30 @@ AppStreamAdmin = (function($){
 			"click .unlockButton" : "unlockstream",
 			"click .rightsButton" : "changestreamrights"
 		},
-		
 
 		viewRightsUpdate:null,
 		viewCreate:null,
 		viewUpdate:null,
-
 		
 		initialize: function(){
 			this.viewCreate =  new StreamAdminCreateView("", 0,"");
 			this.viewUpdate = new StreamAdminUpdateView("", 0,"");
-			this.viewRightsUpdate = new StreamRightsUpdateView("",0);
-		},
-		
-		showModalWindow: function(){
-			//Get the screen height and width
-       		var maskHeight = $(window).height();
-       		var maskWidth = $(window).width();
-
-       		//Set height and width to mask to fill up the whole screen
-       		$('#mask').css({'width':maskWidth,'height':maskHeight});
-
-       		//transition effect    
-       		$('#mask').fadeIn(500);   
-       		$('#mask').fadeTo("fast",0.7); 
-
-       		//Get the window height and width
-       		var winH = $(window).height();
-      		var winW = $(window).width();
-
-        	//Set the popup window to center
-       		$("#streams_modal_window").css('top',  winH/2-$("#streams_modal_window").height()/2);
-     		$("#streams_modal_window").css('left', winW/2-$("#streams_modal_window").width()/2);
-     		$("#streams_modal_window").css('background-color', "#EEEEEE");
-     		$("input:text").each(function(){this.value="";});
-     		//transition effect
-     		$("#streams_modal_window").fadeIn(500);
+			this.viewRightsUpdate = new StreamRightsUpdateView();
 		},
 		
 		createstream: function(){
-			this.showModalWindow();
 			this.viewCreate.render();
 		},
 		
 		editstream: function(){
-			this.showModalWindow();
-			this.viewUpdate.setFields(lineSelected.vname, lineSelected.vid,lineSelected.vcategory);
+			this.viewUpdate.setFields(lineSelected);
 			this.viewUpdate.render();
 		},
 		
 		lockstream: function(){
-			var template = $("#confirm-stream-lock-template").html();
-			
-			var view = {stream: lineSelected.vname};
-			var html = Mustache.to_html(template, view);
-			
-			$.kernelyConfirm(html,this.confirmLockStream);
+			var html = $("#confirm-stream-lock-template").html();
+			var title = $("#lock-template").html();
+			$.kernelyConfirm(title,html,this.confirmLockStream);
 		},
 		
 		confirmLockStream: function(){
@@ -154,11 +123,10 @@ AppStreamAdmin = (function($){
 		},
 		
 		unlockstream: function(){
-			var template = $("#confirm-stream-unlock-template").html();
-			var view = {stream: lineSelected.vname};
-			var html = Mustache.to_html(template, view);
+			var html = $("#confirm-stream-unlock-template").html();
+			var title = $("#unlock-template").html();
 
-			$.kernelyConfirm(html, this.confirmUnlockStream);
+			$.kernelyConfirm(title,html, this.confirmUnlockStream);
 		},
 		
 		confirmUnlockStream: function(){
@@ -173,8 +141,6 @@ AppStreamAdmin = (function($){
 		},
 		
 		changestreamrights:function (){
-			this.showModalWindow();
-			this.viewRightsUpdate.setFields(lineSelected.vname, lineSelected.vid);
 			this.viewRightsUpdate.render();
 		},
 		
@@ -186,41 +152,30 @@ AppStreamAdmin = (function($){
 	StreamRightsUpdateView = Backbone.View.extend({
 		el: "#streams_modal_window",
 		
-		events:{
-			"click .closeModal" : "closemodal",
-			"click .updateStream" : "updatestreamrights",
-			"click #usersTab" : "showUsersRights",
-			"click #groupsTab" : "showGroupsRights"
-		},
-		
-		vid: null,
-		vname: null,
-		vcategory: null,
-		initialize:function(name, id,category){
-			this.vid = id;
-			this.vname = name;
-			this.vcategory = category;
-		},
-		setFields: function(name, id,category){
-			this.vid = id;
-			this.vname = name;
-			this.vcategory = category;
-		},
 		render : function(){
-			var template = $("#popup-stream-rights-update-template").html();
+			var parent = this;
+			var html = $("#popup-stream-rights-update-template").html();
+			var title = $("#rights-template").html();
 			
-			var view = {title : this.vname};
-			var html = Mustache.to_html(template, view);
-			$(this.el).html(html);
+			$("#streams_modal_window").kernely_dialog({
+				title: title,
+				content: html,
+				eventNames:'click',
+				events:{
+					 'click': [
+					           	{"el":".updateStream", "event":parent.updatestreamrights},
+								{"el":"#usersTab", "event":parent.showUsersRights},
+								{"el":"#groupsTab", "event":parent.showGroupsRights}
+					          ]
+				}
+			});
 			
-			new UserSelectView(this.vid).render();
-			new GroupSelectView(this.vid).render();
+			new UserSelectView(lineSelected).render();
+			new GroupSelectView(lineSelected).render();
+			
+			$("#streams_modal_window").kernely_dialog("open");
+
 			return this;
-		},
-		
-		closemodal: function(){
-			$('#streams_modal_window').hide();
-       		$('#mask').hide();
 		},
 
 		showUsersRights: function(){
@@ -268,7 +223,7 @@ AppStreamAdmin = (function($){
 			else{
 				rights = '"rights":{}';
 			}
-			var json = '{"streamid":"'+this.vid+'",'+ rights +'}';
+			var json = '{"streamid":"'+lineSelected+'",'+ rights +'}';
 
 			$.ajax({
 				url:"/admin/streams/updaterights",
@@ -279,11 +234,8 @@ AppStreamAdmin = (function($){
 				contentType: "application/json; charset=utf-8",
 				success: function(data){
 					if (data.result == "ok"){
-						$('#streams_modal_window').hide();
-						$('#mask').hide();
-						
+						$("#streams_modal_window").kernely_dialog("close");
 						var successHtml = $("#rights-updated-template").html();
-
 						$.writeMessage("success",successHtml);
 					} else {
 						$.writeMessage("error",data.result,"#errors_message");
@@ -436,11 +388,6 @@ AppStreamAdmin = (function($){
 		vname: null,
 		vcategory : null,
 
-		events:{
-			"click .closeModal" : "closemodal",
-			"click .sendStream" : "registerstream"
-		},
-		
 		initialize:function(name, id,category){
 			this.vid = id;
 			this.vname = name;
@@ -448,17 +395,22 @@ AppStreamAdmin = (function($){
 		},
 
 		render : function(){
+			var parent = this;
+		
 			var template = $("#popup-stream-admin-template").html();
-			
 			var view = {name : this.vname, category:this.vcategory};
 			var html = Mustache.to_html(template, view);
-			$(this.el).html(html);
+			var title = $("#create-template").html();
+			$("#streams_modal_window").kernely_dialog({
+				title: title,
+				content: html,
+				eventNames:'click',
+				events:{
+					'click': {"el":".sendStream", "event":parent.registerstream}
+				}
+			});
+			$("#streams_modal_window").kernely_dialog("open");
 			return this;
-		},
-		
-		closemodal: function(){
-			$('#streams_modal_window').hide();
-       		$('#mask').hide();
 		},
 		
 		registerstream: function(){
@@ -471,9 +423,7 @@ AppStreamAdmin = (function($){
 				contentType: "application/json; charset=utf-8",
 				success: function(data){
 					if (data.result == "ok"){
-						$('#streams_modal_window').hide();
-	       				$('#mask').hide();
-
+						$("#streams_modal_window").kernely_dialog("close");
 	       				var html = $("#stream-created-template").html();
 
 						$.writeMessage("success",html);
@@ -494,46 +444,44 @@ AppStreamAdmin = (function($){
 		vname: null,
 		vcategory : null,
 
-		events:{
-			"click .closeModal" : "closemodal",
-			"click .updateDataStream" : "updatestream"
+		initialize:function(id){
+			this.vid = id;
 		},
 		
-		initialize:function(name, id,category){
+		setFields: function(id){
 			this.vid = id;
-			this.vname = name;
-			this.vcategory = category;
-		},
-		
-		setFields: function(name, id,category){
-			this.vid = id;
-			this.vname = name;
-			this.vcategory = category;
 		},
 		
 		render : function(){
-			var template = $("#popup-stream-admin-update-template").html();
+			var parent = this;
 			$.ajax({
 				type: "GET",
-				url : "/admin/streams/combo/" + this.vid,
+				url : "/admin/streams/" + lineSelected,
 				dataType:"json",
 				success: function(data){
+					var template = $("#popup-stream-admin-update-template").html();
+					var view = {name : data.title, category:data.category};
+					var html = Mustache.to_html(template, view);
+					var title = $("#edit-template").html();
+					$("#streams_modal_window").kernely_dialog({
+						title: title,
+						content: html,
+						eventNames:'click',
+						events:{
+							'click': {"el":".updateDataStream", "event":parent.updatestream}
+						}
+					});
+					$("#streams_modal_window").kernely_dialog("open");
+					
 					$("#category option[value='"+data.category+"']").attr("selected", "selected");
 				}
 			});
-			var view = {name : this.vname, category:this.vcategory};
-			var html = Mustache.to_html(template, view);
-			$(this.el).html(html);
+
 			return this;
 		},
 		
-		closemodal: function(){
-			$('#streams_modal_window').hide();
-       		$('#mask').hide();
-		},
-		
 		updatestream: function(){
-			var json = '{"id":"'+this.vid+'", "name":"'+$('input[name*="name"]').val() + '", "category":"'+$("#category").val() +'"}';
+			var json = '{"id":"'+lineSelected+'", "name":"'+$('input[name*="name"]').val() + '", "category":"'+$("#category").val() +'"}';
 			$.ajax({
 				url:"/admin/streams/update",
 				data: json,
@@ -542,9 +490,7 @@ AppStreamAdmin = (function($){
 				contentType: "application/json; charset=utf-8",
 				success: function(data){
 					if (data.result == "ok"){
-						$('#streams_modal_window').hide();
-	       				$('#mask').hide();
-	       				
+						$("#streams_modal_window").kernely_dialog("close");
 	       				var html = $("#stream-updated-template").html();
 	       				
 						$.writeMessage("success",html);

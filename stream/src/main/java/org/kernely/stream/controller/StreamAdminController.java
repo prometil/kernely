@@ -133,17 +133,17 @@ public class StreamAdminController extends AbstractController {
 	/**
 	 * update a stream with the given informations
 	 * 
-	 * @return "Ok", not useful.
+	 * @return "Ok"
 	 */
 	@POST
 	@Path("/update")
 	@Produces({ MediaType.APPLICATION_JSON })
-	public Response update(StreamCreationRequestDTO stream) {
+	public String update(StreamCreationRequestDTO stream) {
 		if (userService.currentUserIsAdministrator()){
 			streamService.updateStream(stream);
-			return Response.ok().build();
+			return "{\"result\":\"ok\"}";
 		}
-		return Response.status(Status.FORBIDDEN).build();
+		return "{\"result\":\"You are not administrator\"}";
 	}
 
 	/**
@@ -302,12 +302,13 @@ public class StreamAdminController extends AbstractController {
 
 	/**
 	 * Display the good category when the administrator edit streams
+	 * @param id Id of the stream
 	 * @return
 	 */
 	@GET
-	@Path("/combo/{stream}")
+	@Path("/{id}")
 	@Produces({ MediaType.APPLICATION_JSON })
-	public StreamDTO getComboCategory(@PathParam("stream") int id) {
+	public StreamDTO getComboCategory(@PathParam("id") int id) {
 		if (userService.currentUserIsAdministrator()) {
 			return streamService.getStream(id);
 		}

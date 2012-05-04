@@ -22,7 +22,7 @@
 	</script>
 
 	<script type="text/html" id="popup-stream-admin-template">
-		<input type="button" value="{% i18n "close" %}" class="closeModal"/><br/>
+		<div id="errors_message"></div>
 		<fieldset>
 		<legend>{% i18n "stream_informations" %}</legend>
 		{% i18n "name" %}: <input type="text" name="name" value="{{"{{"}}name{{"}}"}}"/><br/>
@@ -33,13 +33,14 @@
 			<option value="streams/others">{% i18n "stream_category_other" %}</option>
 		</select>
 		</fieldset>
-		<br/>
-		<input type="button" value="{% i18n "create" %}" class="sendStream"/><br/>
-		<div id="errors_message"></div>
+		<div class="dialog-buttons-container">
+			<input type="button" value="{% i18n "create" %}" class="sendStream button_ok"/><br/>
+		</div>
+		
 	</script>
 	
 	<script type="text/html" id="popup-stream-admin-update-template">
-		<input type="button" value="{% i18n "close" %}" class="closeModal"/><br/>
+		<div id="errors_message"></div>
 		<fieldset>
 		<legend>{% i18n "stream_informations" %}</legend>
 		{% i18n "name" %}: <input type="text" name="name" value="{{"{{"}}name{{"}}"}}"/><br/>
@@ -52,8 +53,9 @@
 		</div> 
 		</fieldset>
 		<br/>
-		<input type="button" value="{% i18n "update" %}" class="updateDataStream"/><br/>
-		<div id="errors_message"></div>
+		<div class="dialog-buttons-container">
+			<input type="button" value="{% i18n "update" %}" class="updateDataStream button_ok"/><br/>
+		</div>
 	</script>
 	
 	<script type="text/html" id="confirm-stream-lock-template">
@@ -111,6 +113,13 @@
 	</script>
 	
 	
+	<!-- Templates for titles of dialogs -->
+	<script type="text/html" id="create-template">{% i18n "create" %}</script>
+	<script type="text/html" id="edit-template">{% i18n "edit" %}</script>
+	<script type="text/html" id="delete-template">{% i18n "delete" %}</script>
+	<script type="text/html" id="lock-template">{% i18n "lock" %}</script>
+	<script type="text/html" id="unlock-template">{% i18n "unlock" %}</script>
+	<script type="text/html" id="rights-template">{% i18n "rights" %}</script>
 	
 	<!-- Template for the user rights view  -->
 	<script type="text/html" id="popup-stream-rights-update-template">
@@ -127,26 +136,29 @@
 			<!-- Filled by ajax  -->
 		</div>
 	</fieldset>
-	<br/>
-	<input type="button" value="{% i18n "update" %}" class="updateStream"/>
+	<div class="dialog-buttons-container">
+		<input type="button" value="{% i18n "update" %}" class="updateStream button_ok"/>
+	</div>
 	</script>
 
 {% endblock %}
 
+{% block adminbuttons %}
+	<div id="stream_admin_buttons">
+		<input type="button" class="createButton button_standard" value="{% i18n "create" %}"/>
+		<input type="button" class="editButton button_standard" value="{% i18n "edit" %}" disabled="disabled"/>
+		<input type="button" class="lockButton button_standard" value="{% i18n "lock" %}" disabled="disabled"/>
+		<input type="button" class="unlockButton button_standard" value="{% i18n "unlock" %}" disabled="disabled"/>
+		<input type="button" class="rightsButton button_standard" value="{% i18n "stream_rights" %}" disabled="disabled"/>
+	</div>
+{% endblock %}
+
 {% block admin %}
 	<div id="stream_header"></div>
-		<div id="mask"></div>
 		<div id="streams_modal_window">
 	</div>
 
 	<div id="stream_admin_container">
-		<div id="stream_admin_buttons">
-			<input type="button" class="createButton button_standard" value="{% i18n "create" %}"/>
-			<input type="button" class="editButton button_standard" value="{% i18n "edit" %}" disabled="disabled"/>
-			<input type="button" class="lockButton button_standard" value="{% i18n "lock" %}" disabled="disabled"/>
-			<input type="button" class="unlockButton button_standard" value="{% i18n "unlock" %}" disabled="disabled"/>
-			<input type="button" class="rightsButton button_standard" value="{% i18n "stream_rights" %}" disabled="disabled"/>
-		</div>
 		<table id="stream_admin_table" class="kernely_table">
 			
 		</table>
