@@ -6,7 +6,7 @@ package org.kernely.plugin;
 /**
  * A plugin manifest.
  */
-public class Manifest {
+public class Descriptor {
 	public String name = "";
 	public String version = "";
 	public String description = "";

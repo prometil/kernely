@@ -58,7 +58,7 @@ public abstract class AbstractPlugin extends AbstractModule {
 	protected Logger log = LoggerFactory.getLogger(this.getClass());
 	
 	
-	protected Manifest manifest;
+	protected Descriptor manifest;
 
 	// the controller list
 	private List<Class<? extends AbstractController>> controllers;
@@ -297,7 +297,7 @@ public abstract class AbstractPlugin extends AbstractModule {
 	 * Set the plugin manifest
 	 * @param m the manifest to set
 	 */
-	public void setManifest(Manifest m) {
+	public void setManifest(Descriptor m) {
 		manifest = m;
 		
 	}

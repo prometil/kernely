@@ -20,11 +20,16 @@
 package org.kernely.plugin;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
@@ -35,6 +40,10 @@ import org.apache.commons.configuration.CombinedConfiguration;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.HierarchicalConfiguration;
 import org.apache.commons.configuration.XMLConfiguration;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.filefilter.DirectoryFileFilter;
+import org.apache.commons.io.filefilter.IOFileFilter;
+import org.apache.commons.io.filefilter.SuffixFileFilter;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -50,15 +59,86 @@ import com.google.common.base.Joiner;
 public class PluginManager {
 	private static Logger log = LoggerFactory.getLogger(PluginManager.class);
 
+	// the plugin list
 	private List<AbstractPlugin> plugins;
 
+	// the configuration
 	private CombinedConfiguration configuration;
 
-	private PluginManager() {
-		plugins = findPlugins();
-	}
-
+	// the plugin instance
 	private static PluginManager instance;
+
+	/**
+	 * Construct the plugin manager
+	 */
+	private PluginManager() {
+		String configFile = "core.xml";
+		try {
+			configuration = new CombinedConfiguration();
+			URL resource = getDefaultClassLoader().getResource(configFile);
+			XMLConfiguration config = new XMLConfiguration(resource);
+			configuration.addConfiguration(config);
+			updateClasspath();
+			plugins = findPlugins();
+		} catch (ConfigurationException e3) {
+			log.error("Cannot load {}", configFile);
+		}
+
+	}
+	/**
+	 * Updates the class path with the plugins found in the plugins directory 
+	 */
+	@SuppressWarnings("rawtypes")
+	private void updateClasspath() {
+		String pluginPath = configuration.getString("plugins.directory");
+		File pluginsDir = new File(pluginPath);
+		if (!pluginsDir.exists()) {
+			return;
+		}
+		if (!pluginsDir.isDirectory()) {
+			return;
+		}
+
+		String[] pluginsDirectories = pluginsDir.list();
+		try {
+			URLClassLoader urlClassLoader = (URLClassLoader) ClassLoader.getSystemClassLoader();
+			
+			Class urlClass = URLClassLoader.class;
+			Method method = urlClass.getDeclaredMethod("addURL", new Class[] { URL.class });
+			method.setAccessible(true);
+			for (String path : pluginsDirectories) {
+				File file = new File(pluginPath+File.separator+path);
+				log.debug("Looking for jars in {}", file);
+				if(file.isDirectory()){
+					IOFileFilter filter = new SuffixFileFilter(".jar");
+					Collection<File> listFiles = FileUtils.listFiles(file, filter, DirectoryFileFilter.INSTANCE);
+					for (File jar : listFiles) {
+						try {
+							method.invoke(urlClassLoader, new Object[] { jar.toURI().toURL() });
+						} catch (IllegalAccessException e) {
+							log.error("Classpath udpate failed, api change ?", e);
+						} catch (InvocationTargetException e) {
+							log.error("Classpath udpate failed, api change ?", e);
+						} catch (SecurityException e) {
+							log.error("Classpath udpate failed, api change ?", e);
+						} catch (MalformedURLException e) {
+							log.error("Invalid url ?", e);
+						}
+					}
+				}
+				else{
+					log.debug("Not a directory dude!");
+				}
+				
+
+			}
+		} catch (IllegalArgumentException e) {
+			log.error("Classpath udpate failed, api change ?", e);
+		} catch (NoSuchMethodException e) {
+			log.error("No such method, api change ?", e);
+		}
+
+	}
 
 	public static PluginManager getInstance() {
 		if (instance == null) {
@@ -84,93 +164,84 @@ public class PluginManager {
 		List<AbstractPlugin> plugins = new ArrayList<AbstractPlugin>();
 
 		ObjectMapper mapper = new ObjectMapper();
-		configuration = new CombinedConfiguration();
-
+	
 		// add core plugin
-		
+
 		CorePlugin corePlugin = new CorePlugin();
-		
+
 		log.info("Loading plugin {}-{}", corePlugin.getName(), corePlugin.getVersion());
 		plugins.add(corePlugin);
-		String configFile = "core.xml";
+
+		Enumeration<URL> resources;
 		try {
-			URL resource = getDefaultClassLoader().getResource(configFile);
-			XMLConfiguration config = new XMLConfiguration(resource);
-			configuration.addConfiguration(config);
-			
-			Enumeration<URL> resources;
-			try {
-				log.debug("Looking for plugin.json files");
-				resources = getDefaultClassLoader().getResources("plugin.json");
-				while (resources.hasMoreElements()) {
-					URL u = resources.nextElement();
+			log.debug("Looking for plugin.json files");
+			resources = getDefaultClassLoader().getResources("plugin.json");
+			while (resources.hasMoreElements()) {
+				URL u = resources.nextElement();
 
-					BufferedReader in = new BufferedReader(new InputStreamReader(u.openStream()));
-					try {
-						Map<String, Object> pluginData = mapper.readValue(in, Map.class);
-						Manifest m = new Manifest();
-						m.name = (String) pluginData.get("name");
-						m.author = (String) pluginData.get("version");
-						m.description = (String) pluginData.get("definition");
-						m.version = (String) pluginData.get("version");
-						// load configuration
+				BufferedReader in = new BufferedReader(new InputStreamReader(u.openStream()));
+				try {
+					Map<String, Object> pluginData = mapper.readValue(in, Map.class);
+					Descriptor m = new Descriptor();
+					m.name = (String) pluginData.get("name");
+					m.author = (String) pluginData.get("version");
+					m.description = (String) pluginData.get("definition");
+					m.version = (String) pluginData.get("version");
+					// load configuration
 
-						log.info("Loading plugin {}-{}", m.name, m.version);
+					log.info("Loading plugin {}-{}", m.name, m.version);
 
-						Object object = pluginData.get("plugin");
-						if (object != null) {
-							String pluginClassName = (String) object;
-							Class<? extends AbstractPlugin> pluginClass;
+					Object object = pluginData.get("plugin");
+					if (object != null) {
+						String pluginClassName = (String) object;
+						Class<? extends AbstractPlugin> pluginClass;
+						try {
+							pluginClass = (Class<? extends AbstractPlugin>) getDefaultClassLoader().loadClass(pluginClassName);
+							AbstractPlugin plugin;
 							try {
-								pluginClass = (Class<? extends AbstractPlugin>) getDefaultClassLoader().loadClass(pluginClassName);
-								AbstractPlugin plugin;
-								try {
-									plugin = pluginClass.getConstructor().newInstance();
-									plugin.setManifest(m);
-									plugins.add(plugin);
-								} catch (NoSuchMethodException e1) {
-									log.error("Cannot find contructor for [{}]", m.name);
-								} catch (IllegalArgumentException e) {
-									log.error("Cannot call contructor for [{}]", m.name);
-								} catch (SecurityException e) {
-									log.error("Cannot call contructor for [{}]", m.name);
-								} catch (InstantiationException e) {
-									log.error("Cannot call contructor for [{}]", m.name);
-								} catch (IllegalAccessException e) {
-									log.error("Cannot call contructor for [{}]", m.name);
-								} catch (InvocationTargetException e) {
-									log.error("Cannot call contructor for [{}]", m.name);
-								}
-
-							} catch (ClassNotFoundException e2) {
-								log.error("Cannot find class [{}]", pluginClassName);
+								plugin = pluginClass.getConstructor().newInstance();
+								plugin.setManifest(m);
+								plugins.add(plugin);
+							} catch (NoSuchMethodException e1) {
+								log.error("Cannot find contructor for [{}]", m.name);
+							} catch (IllegalArgumentException e) {
+								log.error("Cannot call contructor for [{}]", m.name);
+							} catch (SecurityException e) {
+								log.error("Cannot call contructor for [{}]", m.name);
+							} catch (InstantiationException e) {
+								log.error("Cannot call contructor for [{}]", m.name);
+							} catch (IllegalAccessException e) {
+								log.error("Cannot call contructor for [{}]", m.name);
+							} catch (InvocationTargetException e) {
+								log.error("Cannot call contructor for [{}]", m.name);
 							}
 
-							// plugins.put(plugin.name(), plugin);
-							for (Map.Entry<String, Object> entry : pluginData.entrySet()) {
-								if (entry.getKey().equals("configuration")) {
-									configuration.addConfiguration(getConfiguration((Map<String, Object>) entry.getValue()));
-								}
-							}
-						} else {
-							log.warn("Cannot find plugin definition in plugin.json, nothing has been loaded");
+						} catch (ClassNotFoundException e2) {
+							log.error("Cannot find class [{}]", pluginClassName);
 						}
 
-					} catch (JsonParseException e1) {
-						log.error("Cannot parse json plug-in definition", e1);
-					} catch (JsonMappingException e1) {
-						log.error("Cannot convert json plug-in definition", e1);
-					} catch (IOException e1) {
-						log.error("Cannot read json plug-in definition", e1);
+						// plugins.put(plugin.name(), plugin);
+						for (Map.Entry<String, Object> entry : pluginData.entrySet()) {
+							if (entry.getKey().equals("configuration")) {
+								configuration.addConfiguration(getConfiguration((Map<String, Object>) entry.getValue()));
+							}
+						}
+					} else {
+						log.warn("Cannot find plugin definition in plugin.json, nothing has been loaded");
 					}
-					in.close();
 
+				} catch (JsonParseException e1) {
+					log.error("Cannot parse json plug-in definition", e1);
+				} catch (JsonMappingException e1) {
+					log.error("Cannot convert json plug-in definition", e1);
+				} catch (IOException e1) {
+					log.error("Cannot read json plug-in definition", e1);
 				}
-			} catch (IOException e) {
-				log.error("Cannot find plug-in definition ", e);
+				in.close();
+
 			}
-		} catch (ConfigurationException e3) {
-			log.error("Cannot load {}, stopping", configFile);
+		} catch (IOException e) {
+			log.error("Cannot find plug-in definition ", e);
 		}
 
 		return plugins;

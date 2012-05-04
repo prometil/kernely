@@ -21,7 +21,7 @@ import org.apache.commons.configuration.XMLConfiguration;
 import org.eclipse.jgit.api.CloneCommand;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.storage.file.FileRepository;
-import org.kernely.plugin.Manifest;
+import org.kernely.plugin.Descriptor;
 
 import scala.actors.threadpool.Arrays;
 
@@ -71,7 +71,6 @@ public class PluginCli {
 						update(repository, metadataFile);
 					}
 					List<String> list = Arrays.asList(metadataFile.list(new FilenameFilter() {
-
 						@Override
 						public boolean accept(File dir, String name) {
 							return name.endsWith(".json");
@@ -86,7 +85,8 @@ public class PluginCli {
 					String format = "%1$-20.20s";
 					for (List<String> part : partition) {
 						for (String plugin : part) {
-							formatter.format(format, plugin);
+							Descriptor loadManifest = loadManifest(pluginMedataPath+File.separator+plugin);
+							formatter.format(format, loadManifest.name);
 						}
 						sb.append("\n");
 					}
@@ -95,7 +95,7 @@ public class PluginCli {
 				} else if ("show".equals(args[0])) {
 
 					if (args.length == 2) {
-						Manifest m = loadManifest(pluginMedataPath, args[1]);
+						Descriptor m = loadManifest(pluginMedataPath, args[1]);
 						if (m != null) {
 
 							StringBuilder sb = new StringBuilder();
@@ -116,7 +116,7 @@ public class PluginCli {
 					}
 
 				} else if ("install".equals(args[0])) {
-					Manifest m = loadManifest(pluginMedataPath, args[1]);
+					Descriptor m = loadManifest(pluginMedataPath, args[1]);
 					if (m != null) {
 						final String pluginName = args[1] + "-" + m.version;
 						final File pluginDirectory = new File(pluginDirectoryPath + File.separator + pluginName);
@@ -124,28 +124,22 @@ public class PluginCli {
 							System.out.println("Plugin already installed");
 
 						} else {
-
 							try {
-
 								final File dlFile = File.createTempFile(pluginName, "zip");
 								try {
 									final FileOutputStream stream = new FileOutputStream(dlFile);
-
 									System.out.println("Try to load the plugin from " + m.url);
-
 									AsyncHttpClient asyncHttpClient = new AsyncHttpClient();
 									Future<String> f;
 									try {
 										f = asyncHttpClient.prepareGet(m.url).execute(new AsyncHandler<String>() {
 											ConsoleProgressMonitor downloadMonitor;
-
 											@Override
 											public STATE onBodyPartReceived(HttpResponseBodyPart bodyPart) throws Exception {
 												downloadMonitor.tick();
 												bodyPart.writeTo(stream);
 												return STATE.CONTINUE;
 											}
-
 											@Override
 											public String onCompleted() throws Exception {
 												downloadMonitor.end();
@@ -180,27 +174,22 @@ public class PluginCli {
 										f.get();
 
 									} catch (IOException e) {
-										// TODO Auto-generated catch block
-										e.printStackTrace();
+										System.out.println("Cannot install plugin");
 									} catch (InterruptedException e) {
-										// TODO Auto-generated catch block
-										e.printStackTrace();
+										System.out.println("Cannot install plugin");
 									} catch (ExecutionException e) {
-										// TODO Auto-generated catch block
-										e.printStackTrace();
+										System.out.println("Cannot install plugin");
 									} finally {
 										asyncHttpClient.close();
 									}
 								} catch (IOException e2) {
-									System.out.println("Cannot download plugin");
+									System.out.println("Cannot install plugin");
 								}
 
 							} catch (FileNotFoundException e1) {
-								// TODO Auto-generated catch block
-								e1.printStackTrace();
+								System.out.println("Cannot install plugin");
 							} catch (IOException e) {
-								// TODO Auto-generated catch block
-								e.printStackTrace();
+								System.out.println("Cannot install plugin");
 							}
 						}
 
@@ -258,12 +247,12 @@ public class PluginCli {
 	 *            the plugin name to look for
 	 * @return the loaded manifest or null if the manifest cannot be found.
 	 */
-	private static Manifest loadManifest(String metadataPath, String pluginName) {
+	private static Descriptor loadManifest(String metadataPath, String pluginName) {
 		File pluginFile = new File(metadataPath + File.separator + pluginName + ".json");
 		if (pluginFile.exists()) {
 			Gson g = new Gson();
 			try {
-				return g.fromJson(Files.newReader(pluginFile, Charsets.UTF_8), Manifest.class);
+				return g.fromJson(Files.newReader(pluginFile, Charsets.UTF_8), Descriptor.class);
 			} catch (JsonSyntaxException e) {
 				return null;
 			} catch (JsonIOException e) {
@@ -276,5 +265,26 @@ public class PluginCli {
 			return null;
 		}
 	}
-
+	/**
+	 * The manifest
+	 * @param file the file
+	 * @return
+	 */
+	private static Descriptor loadManifest(String file){
+		File pluginFile = new File(file);
+		if (pluginFile.exists()) {
+			Gson g = new Gson();
+			try {
+				return g.fromJson(Files.newReader(pluginFile, Charsets.UTF_8), Descriptor.class);
+			} catch (JsonSyntaxException e) {
+				return null;
+			} catch (JsonIOException e) {
+				return null;
+			} catch (FileNotFoundException e) {
+				return null;
+			}
+		} else {
+			return null;
+		}
+	}
 }

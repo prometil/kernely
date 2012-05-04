@@ -39,7 +39,7 @@ import org.kernely.core.model.Role;
 import org.kernely.core.model.User;
 import org.kernely.core.model.UserDetails;
 import org.kernely.plugin.AbstractPlugin;
-import org.kernely.plugin.Manifest;
+import org.kernely.plugin.Descriptor;
 import org.kernely.service.mail.MailJob;
 import org.kernely.service.mail.MailService;
 import org.kernely.service.mail.Mailer;
@@ -76,7 +76,7 @@ public class CorePlugin extends AbstractPlugin {
 	public CorePlugin() {
 	
 		super();
-		Manifest coreManifest = new Manifest();
+		Descriptor coreManifest = new Descriptor();
 		coreManifest.name = "core";
 		coreManifest.version = "0.1";
 		this.setManifest(coreManifest);

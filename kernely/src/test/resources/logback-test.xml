@@ -32,7 +32,7 @@
 	<logger name="org.hibernate" level="ERROR"/>
 	<logger name="org.apache.shiro" level="ERROR"/>
 	<logger name="org.quartz" level="ERROR"/>
-	<logger name="org.kernely" level="INFO" />
+	<logger name="org.kernely" level="DEBUG" />
   <root level="INFO"> 
     <appender-ref ref="STDOUT" />
   </root>
