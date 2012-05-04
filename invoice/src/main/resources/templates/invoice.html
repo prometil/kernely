@@ -4,64 +4,68 @@
 	{% i18n "invoice-view-title" %}
 {% endblock %}
 
+{% block css%}
+	<link rel="stylesheet" type="text/css" href="/css/invoice.css"/>
+{% endblock %}
+
 {% block content %}
 	<div id="invoice-visualization">
 		<!-- Invoice button bar -->
-		<div id="invoice-button-bar">
-			<input type="button" id="export-invoice" value="{% i18n "export" %}"/>
-			<input type="button" id="edit-invoice" value="{% i18n "edit" %}" onClick="window.location = '/invoice/edit/{{invoice.id}}';"/>
+		<div id="invoicing-buttons-bar">
+			<input type="button" class="button_emphasis" id="export-invoice" value="{% i18n "export" %}"/>
+			<input type="button" class="button_emphasis" id="edit-invoice" value="{% i18n "edit" %}" onClick="window.location = '/invoice/edit/{{invoice.id}}';"/>
 		</div>
 		<!-- Invoice header -->
 		<div id="invoice-header">
 			<h2><span>{% i18n "invoice" %}</span> {{invoice.organizationName}}</h2>
 		</div>
 		<!-- General informations -->
-		<div id="invoice-general-informations">
-			{% i18n "invoice-code" %} : {{invoice.code}}<br/>
-			{% i18n "invoice-publication" %} : {{invoice.datePublicationString}}<br/>
-			{% i18n "invoice-term" %} : {{invoice.dateTermString}}<br/>
-			{% i18n "invoice-object" %} : {{invoice.object}}<br/><br/>
-			
-			{% i18n "invoice-address-invoicing" %} : <br/>
-			<b>{{invoice.organizationName}}</b><br/>
-			{{invoice.organizationAddress}}<br/>
-			{{invoice.organizationZip}} {{invoice.organizationCity}}
+		<div id="invoice-general-informations">			
+			<table id="invoice-general-informations-table">
+				<tr><td class="label-column">{% i18n "invoice-code" %}</td><td>{{invoice.code}}</td><td class="text-right"><b>{{invoice.organizationName}}</b></td></tr>
+				<tr><td class="label-column">{% i18n "invoice-publication" %}</td><td>{{invoice.datePublicationString}}</td><td class="text-right">{{invoice.organizationAddress}}</td></tr>
+				<tr><td class="label-column">{% i18n "invoice-term" %}</td><td>{{invoice.dateTermString}}</td><td class="text-right">{{invoice.organizationZip}} {{invoice.organizationCity}}</td></tr>
+				<tr><td class="label-column">{% i18n "invoice-object" %}</td><td colspan="2">{{invoice.object}}</td></tr>
+			</table>
 		</div>
 		<!-- Invoice details -->
 		<br/>
 		<div id="invoice-details">
-			<table id="invoice-line-details">
-				<tr>
+			<table id="invoice-line-details-visualization" class="kernely_table">
+				<tr class="invoice-lines-header">
 					<th>{% i18n "invoice-line-description" %}</th>
 					<th>{% i18n "invoice-line-quantity" %}</th>
 					<th>{% i18n "invoice-line-unit-price" %}</th>
 					<th>{% i18n "invoice-line-amount" %}</th>
 					<th>{% i18n "invoice-line-vat" %}</th>
 				</tr>
-				<tbody id="invoice-lines">
+				<tbody id="invoice-lines-vis">
 					{% for value in invoiceLines %}
 						<tr>
-							<td>{{value.designation}}</td>
+							<td class="text-left">{{value.designation}}</td>
 							<td>{{value.quantity}}</td>
 							<td>{{value.unitPrice}}</td>
-							<td>{{value.amount}}</td>
+							<td class="text-right">{{value.amount}}</td>
 							<td>{{value.vat}} %</td>
 						</tr>
 					{% endfor %}
 				</tbody>
 				<tbody id="additional-informations">
-					
+					<tr>
+						<td colspan="3" class="text-right">{% i18n "invoice-total-df" %}</td><td class="text-right">{{invoice.amountDf}}</td><td class="hidden"></td>
+					</tr>
+					{% for value in invoiceVats %}
+						<tr>
+							<td colspan="3" class="text-right">{% i18n "invoice-line-vat" %} {{value.value}}%</td><td class="text-right">{{value.amount}}</td><td class="hidden"></td>
+						</tr>
+					{% endfor %}
+					<tr class="total-line">
+						<td colspan="3" class="text-right">{% i18n "invoice-total" %}</td><td class="text-right">{{invoice.amount}}</td><td class="hidden"></td>
+					</tr>
 				</tbody>
 			</table>
-			{% i18n "invoice-total-df" %} : {{invoice.amountDf}}<br/>
-			{% for value in invoiceVats %}
-				{% i18n "invoice-line-vat" %} {{value.value}} % : {{value.amount}}<br/>
-			{% endfor %}
-			<br/>
-			{% i18n "invoice-total" %} : {{invoice.amount}}
-			<br/>	
-			{% i18n "invoice-comment" %}<br/>
-			<textarea id="invoice-comment" readonly="readonly">{{invoice.comment}}</textarea>
+			<div class="subtitle">{% i18n "invoice-comment" %}</div>
+			<div id="invoice-comment">{{invoice.comment}}</div>
 		</div>
 	</div>
 {% endblock %}

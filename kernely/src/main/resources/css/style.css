@@ -31,7 +31,7 @@ html {
 
 /* Containers */
 
-#main_title{
+.main_title{
 	height:auto;
 	font-size:20px;
 	color:#97ad17;
@@ -342,6 +342,10 @@ div.button-bar {
 	color:#000;
 }
 
+
+.button_emphasis:hover{
+	background-color:#2b2b2d;
+}
 /* Table style */
 table.kernely_table tr:nth-child(odd) {
     background-color: #F6F6F6;
@@ -392,6 +396,13 @@ table.kernely_table th{
 	height:20px;
 }
 
+.ui-datepicker-trigger {
+	position:relative;
+	margin-left : 5px;
+    	vertical-align : top;
+	margin-top:2px;
+}
+
 /* Helpers */
 .clickable{
 	cursor:pointer;
@@ -399,6 +410,31 @@ table.kernely_table th{
 
 .clear{
 	clear:both;
+}
+
+.text-right{
+	text-align:right;
+}
+
+.text-left{
+	text-align:left;
+}
+
+.text-center{
+	text-align:center;
+}
+
+.text-black{
+	color:#000;
+}
+
+.text-bold-black{
+	color:#000;
+	font-weight:bold;
+}
+
+.hidden{
+	visibility:hidden;
 }
 
 /* Dialogs */

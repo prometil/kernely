@@ -12,9 +12,10 @@
 {% endblock %}
 
 {% block template %}
-	<script type="text/html" id="invoice-line-template">
-	</script>
-
+	<script type="text/html" id="confirm-remove-invoice-template">{% i18n "invoice_remove_confirm" %}</script>
+	
+	<script type="text/html" id="delete-template">{% i18n "delete" %}</script>
+	
 	<script type="text/html" id="invoice-line-editable-template">
 		<td class="id-field"><input type="text" name="id-field[]" value="{{"{{"}}id{{"}}"}}"/></td>
 		<td><input type="text" class="description-field kernely_input" name="designation-field[]" value="{{"{{"}}description{{"}}"}}"/></td>
@@ -31,6 +32,10 @@
 	<form action="/invoice/update/{{invoice.id}}" method="POST" id="invoice-edition">
 		
 		<span id="invoice-visu-i" style="display:none;">{{invoice.id}}</span>
+		<!-- Invoice button bar -->
+		<div id="invoicing-buttons-bar">
+			<input type="button" class="button_emphasis" id="delete-invoice" value="{% i18n "delete" %}"/>
+		</div>
 		<!-- Invoice header -->
 		<div id="invoice-header">
 			<h2><span>{% i18n "invoice" %}</span> {{invoice.organizationName}}</h2>
@@ -62,7 +67,6 @@
 					<th class="delete-column"><!-- Column for the delete button --></th>
 				</tr>
 				<tbody id="invoice-lines">
-					
 				</tbody>
 			</table>
 		</div>
@@ -73,7 +77,7 @@
 		<!-- Footer button bar -->
 		<div id="invoice-button-bar">
 			<input type="button" id="export-invoice"  class="button_emphasis" value="{% i18n "export" %}"/>
-			<input type="button" id="cancel-invoice" class="button_standard" value="{% i18n "cancel" %}" onClick="window.location = '/invoice/view/${invoice.id}';"/>
+			<input type="button" id="cancel-invoice" class="button_standard" value="{% i18n "cancel" %}" onClick="window.location = '/invoice/view/{{invoice.id}}';"/>
 			<input type="submit" id="validate-invoice" class="button_ok" value="{% i18n "ok" %}"/>
 		</div>
 	</form>

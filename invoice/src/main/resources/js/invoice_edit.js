@@ -5,10 +5,30 @@ AppInvoiceEdit = (function($){
 	InvoiceEditionMainView = Backbone.View.extend({
 		el:"#invoice-edition",
 		events:{
-		
+			"click #delete-invoice" : "deleteInvoice"
 		},
 		initialize: function(){
 			
+		},
+		deleteInvoice: function(){
+			var parent = this;
+			var template = $("#confirm-remove-invoice-template").html();
+			
+			var view = {invoiceNumber: this.number};
+			var html = Mustache.to_html(template, view);
+			
+			$.kernelyConfirm($("#delete-template").text(), html,this.confirmDeleteInvoice, this);
+		},
+		confirmDeleteInvoice: function(parent){
+			$.ajax({
+				type: "GET",
+				url:"/invoice/delete",
+				data:{invoiceId : $("#invoice-visu-i").text()},
+				contentType: "application/json; charset=utf-8",
+				success: function(data){
+					window.location = "/invoice";
+				}
+			});
 		},
 		render: function(){
 			new InvoiceGeneralInfoView().render();

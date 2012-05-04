@@ -1,5 +1,8 @@
 package org.kernely.invoice.controller;
 
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -87,7 +90,7 @@ public class InvoiceController extends AbstractController{
 				return organizationService.getOrganizationForProjectManager();
 			}			
 		}
-		return null;
+		return new ArrayList<OrganizationDTO>();
 	}
 	
 	/**
@@ -110,7 +113,7 @@ public class InvoiceController extends AbstractController{
 				return projectService.getProjectsForProjectManagerLinkedToOrganization(organizationId);
 			}
 		}
-		return null;
+		return new ArrayList<ProjectDTO>();
 	}
 	
 	/**
@@ -127,7 +130,7 @@ public class InvoiceController extends AbstractController{
 			
 			return invoiceService.getInvoicesPerOrganizationAndProject(organizationId, projectId);
 		}
-		return null;
+		return new ArrayList<InvoiceDTO>();
 	}
 	
 	/**
@@ -165,7 +168,7 @@ public class InvoiceController extends AbstractController{
 		if(userService.currentUserHasRole(Role.ROLE_PROJECTMANAGER) || userService.currentUserHasRole(Role.ROLE_BOOKKEEPER)){
 			return invoiceService.createOrUpdateInvoiceLine(request);
 		}
-		return null;
+		return new InvoiceLineDTO();
 	}
 	
 	/**
@@ -176,13 +179,21 @@ public class InvoiceController extends AbstractController{
 	@GET
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Path("/delete")
-	@Produces({MediaType.APPLICATION_JSON})
-	public String deleteInvoice(@QueryParam("invoiceId") long invoiceId){
+	@Produces( { MediaType.TEXT_HTML })
+	public Response deleteInvoice(@QueryParam("invoiceId") long invoiceId){
 		if(userService.currentUserHasRole(Role.ROLE_PROJECTMANAGER) || userService.currentUserHasRole(Role.ROLE_BOOKKEEPER)){
 			invoiceService.deleteInvoice(invoiceId);
-			return "{\"result\":\"Ok\"}";
+			URI uri;
+			try {
+				uri = new URI("/invoice");
+				return Response.temporaryRedirect(uri).status(303).build();
+			} catch (URISyntaxException e) {
+				UriBuilder uriBuilder = UriBuilder.fromPath("/invoice");
+				return Response.temporaryRedirect(uriBuilder.build()).status(303).build();
+			}
+			
 		}
-		return null;
+		return Response.status(Status.FORBIDDEN).build();
 	}
 	
 	/**
@@ -198,7 +209,7 @@ public class InvoiceController extends AbstractController{
 		if(userService.currentUserHasRole(Role.ROLE_PROJECTMANAGER) || userService.currentUserHasRole(Role.ROLE_BOOKKEEPER)){
 			return invoiceService.setInvoiceAsPublished(invoiceId);
 		}
-		return null;
+		return new InvoiceDTO();
 	}
 	
 	/**
@@ -214,7 +225,7 @@ public class InvoiceController extends AbstractController{
 		if(userService.currentUserHasRole(Role.ROLE_PROJECTMANAGER) || userService.currentUserHasRole(Role.ROLE_BOOKKEEPER)){
 			return invoiceService.setInvoiceAsPaid(invoiceId);
 		}
-		return null;
+		return new InvoiceDTO();
 	}
 	
 	/**
@@ -230,7 +241,7 @@ public class InvoiceController extends AbstractController{
 		if(userService.currentUserHasRole(Role.ROLE_PROJECTMANAGER) || userService.currentUserHasRole(Role.ROLE_BOOKKEEPER)){
 			return invoiceService.setInvoiceAsUnpaid(invoiceId);
 		}
-		return null;
+		return new InvoiceDTO();
 	}
 	
 	/**
@@ -244,11 +255,15 @@ public class InvoiceController extends AbstractController{
 	public Response visualizeInvoice(@PathParam("invoiceId") long invoiceId) {
 		if(userService.currentUserHasRole(Role.ROLE_PROJECTMANAGER) || userService.currentUserHasRole(Role.ROLE_BOOKKEEPER)){
 			InvoiceDTO invoiceDTO = invoiceService.getInvoiceById(invoiceId);
-			Map<String, Object> map =new HashMap<String, Object>();
-			map.put("invoice", invoiceDTO);
-			map.put("invoiceLines", invoiceDTO.lines);
-			map.put("invoiceVats", invoiceDTO.vats);
-			return Response.ok(templateRenderer.render("templates/invoice.html", map)).build();
+			if(invoiceDTO != null){
+				Map<String, Object> map =new HashMap<String, Object>();
+				map.put("invoice", invoiceDTO);
+				map.put("invoiceLines", invoiceDTO.lines);
+				map.put("invoiceVats", invoiceDTO.vats);
+				return Response.ok(templateRenderer.render("templates/invoice.html", map)).build();
+			}
+			UriBuilder uriBuilder = UriBuilder.fromPath("/invoice");
+			return Response.temporaryRedirect(uriBuilder.build()).status(303).build();
 		}
 		return Response.status(Status.FORBIDDEN).build();
 	}
@@ -264,11 +279,16 @@ public class InvoiceController extends AbstractController{
 	public Response editInvoice(@PathParam("invoiceId") long invoiceId) {
 		if(userService.currentUserHasRole(Role.ROLE_PROJECTMANAGER) || userService.currentUserHasRole(Role.ROLE_BOOKKEEPER)){
 			InvoiceDTO invoiceDTO = invoiceService.getInvoiceById(invoiceId);
-			
-			Map<String, Object> map =new HashMap<String, Object>();
-			map.put("invoice", invoiceDTO);
-			
-			return Response.ok(templateRenderer.render("templates/invoice_editable.html", map)).build();
+			if(invoiceDTO != null){
+				
+				Map<String, Object> map =new HashMap<String, Object>();
+				map.put("invoice", invoiceDTO);
+				map.put("invoiceLines", invoiceDTO.lines);
+				return Response.ok(templateRenderer.render("templates/invoice_editable.html", map)).build();
+			}	
+			UriBuilder uriBuilder = UriBuilder.fromPath("/invoice");
+			return Response.temporaryRedirect(uriBuilder.build()).status(303).build();
+
 		}
 		return Response.status(Status.FORBIDDEN).build();
 	}
@@ -297,6 +317,7 @@ public class InvoiceController extends AbstractController{
 	@Produces({ MediaType.TEXT_HTML })
 	public Response updateInvoice(MultivaluedMap<String, String> formParams, @PathParam("invoiceId") long invoiceId){
 		InvoiceLineCreationRequestDTO lineRequest = new InvoiceLineCreationRequestDTO();
+		float amountCalculated = 0.0F;
 		for(int i = 0; i < formParams.get("designation-field[]").size(); i++){
 			String id = formParams.get("id-field[]").get(i);
 			if(id.equals("")){
@@ -324,6 +345,7 @@ public class InvoiceController extends AbstractController{
 				
 				lineRequest.invoiceId = invoiceId;
 				invoiceService.createOrUpdateInvoiceLine(lineRequest);
+				amountCalculated += (lineRequest.quantity * lineRequest.unitPrice)*(1 + (lineRequest.vat/100));
 			}
 		}
 		InvoiceCreationRequestDTO invoiceRequest = new InvoiceCreationRequestDTO();
@@ -334,6 +356,7 @@ public class InvoiceController extends AbstractController{
 		invoiceRequest.object = formParams.get("invoice-object").get(0);
 		invoiceRequest.code = formParams.get("invoice-code").get(0);
 		invoiceRequest.comment = formParams.get("invoice-comment").get(0);
+		invoiceRequest.amount = amountCalculated;
 		invoiceService.createOrUpdateInvoice(invoiceRequest);
 		UriBuilder uriBuilder = UriBuilder.fromPath("/invoice/view/" + invoiceId);
 		// Status 303 allows to redirect a request from POST to GET

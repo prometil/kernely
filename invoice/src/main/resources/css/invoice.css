@@ -2,41 +2,59 @@
 	margin-top:35px;
 	float:right;
 }
+
+div#invoice-creation-container{
+	width:335px;
+	margin-left:16px;
+	height:auto;
+	margin-bottom:16px;
+	margin-top:18px;
+}
+
+.invoice-create-category{
+	font-weight:bold;
+	color:#000;
+	padding:10px 0 10px 0;
+}
+
+div#invoice-create-buttons{
+	margin-top:50px;
+}
+
+div.separator-top-25{
+	margin-top:25px;
+}
+
 #invoice-details{
 	margin-top:35px;
 	margin-bottom:25px;
 }
 
-#invoice-details-new-button-bar{
+#invoice-filters{
+	margin:25px 20px 20px 20px;;
+}
+
+#invoice-details-new-button-bar, #invoicing-buttons-bar{
 	float:right;
 	margin-bottom:10px;
 }
 
-#organization-selector, #organization-selector option{
-	cursor:pointer;
+.invoice-status-img{
+	margin-top:3px;
 }
 
+#organization-selector, #organization-selector option,
 #project-selector, #project-selector option{
 	cursor:pointer;
 }
-
-#modal_window_invoice{
-	position:absolute;
-	width:250px;
-	height:300px;
-	display:none;
-	z-index:9999;
-	padding:20px;
-	top:0;
-	left:0;
+#organization-selector-mod, #project-selector-mod{
+	width:100%;
 }
 
-#organization-selector-mod{
-	width:200px;
-}
-
-#project-selector-mod{
-	width:200px;
+#project-selector, #organization-selector{
+	width:100%;
+	height:20px;
+	border:1px solid #b1b3b3;
 }
 
 #from,#to{
@@ -57,26 +75,6 @@
 
 .object-field{
 	width:100%;
-}
-
-.unpaid{
-	color:red;
-}
-
-.paid{
-	color:green;
-}
-
-.unpublished{
-	color:grey;
-}
-
-.pending{
-	color:#000;
-}
-
-#errors_message{
-	color: red;
 }
 
 #invoice-comment{
@@ -122,18 +120,46 @@ td.label-column{
 	width:5%;
 }
 
-tbody#invoice-lines td{
+table#invoice-line-details-visualization{
+	border:none;
+	text-align:center;
+}
+
+table#invoice-line-details-visualization tr.invoice-lines-header th{
+	border-top:1px solid #a0a2a3;
+}
+
+table#invoice-line-details-visualization tr.invoice-lines-header th:first-child{
+	border-left:1px solid #a0a2a3;
+}
+
+tbody#invoice-lines td, tbody#invoice-lines-vis td{
 	padding-top:2px;
 	padding-bottom:2px;
 }
 
-/* Common */
-#mask{
-	position:absolute;
-	z-index:9000;
-	background-color:#000;
-	display:none;top:0;
-	left:0;
+tbody#invoice-lines-vis td:first-child{
+	border-left:1px solid #a0a2a3;
+}
+
+tbody#invoice-lines-vis tr:last-child td{
+	border-bottom:1px solid #a0a2a3;
+}
+
+table#invoice-line-details-visualization tbody#additional-informations{
+	margin-top:10px;
+	border-top:1px solid #a0a2a3;
+}
+
+table#invoice-line-details-visualization tbody#additional-informations td{
+	background-color:#f6f6f6;
+	border-right:none;
+	color:#000;
+}
+
+tbody#additional-informations tr.total-line{
+	font-weight:bold;
+	color:#000;
 }
 
 

@@ -5,8 +5,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
+import java.util.Map.Entry;
 
 import javax.persistence.Query;
 
@@ -96,6 +96,7 @@ public class InvoiceService extends AbstractService{
 		invoice.setDatePublication(publication);
 		invoice.setDateTerm(term);
 		invoice.setDateCreation(DateTime.now().toDate());
+		invoice.setAmount(request.amount);
 		
 		if(request.id == 0){
 			invoice.setStatus(Invoice.INVOICE_UNDEFINED);
@@ -159,8 +160,6 @@ public class InvoiceService extends AbstractService{
 		Set<InvoiceLine> lines = invoice.getLines();
 		lines.add(invoiceLine);
 		invoice.setLines(lines);
-		float amount = invoice.getAmount() + (request.quantity * request.unitPrice)*(1 + (request.vat/100));
-		invoice.setAmount(amount);
 		em.get().merge(invoice);
 		
 		return new InvoiceLineDTO(invoiceLine);
@@ -252,18 +251,22 @@ public class InvoiceService extends AbstractService{
 	 */
 	@Transactional
 	public InvoiceDTO getInvoiceById(long invoiceId){
-		InvoiceDTO invoiceDTO = new InvoiceDTO(em.get().find(Invoice.class, invoiceId));
-		invoiceDTO.lines = this.getLinesForInvoice(invoiceId);
-		float amountDf = this.getInvoiceTotalAmountDutyFree(invoiceId);
-		invoiceDTO.amountDf = amountDf;
-		List<VatDTO> vats = this.getAmountByVAT(invoiceId);
-		invoiceDTO.vats = vats;
-		float amountTotal = amountDf;
-		for(VatDTO v : vats){
-			amountTotal += v.amount;
+		Invoice invoice = em.get().find(Invoice.class, invoiceId);
+		if(invoice != null){
+			InvoiceDTO invoiceDTO = new InvoiceDTO(invoice);
+			invoiceDTO.lines = this.getLinesForInvoice(invoiceId);
+			float amountDf = this.getInvoiceTotalAmountDutyFree(invoiceId);
+			invoiceDTO.amountDf = amountDf;
+			List<VatDTO> vats = this.getAmountByVAT(invoiceId);
+			invoiceDTO.vats = vats;
+			float amountTotal = amountDf;
+			for(VatDTO v : vats){
+				amountTotal += v.amount;
+			}
+			invoiceDTO.amount = amountTotal;
+			return invoiceDTO;
 		}
-		invoiceDTO.amount = amountTotal;
-		return invoiceDTO;
+		return null;
 	}
 	
 	/**
@@ -375,11 +378,14 @@ public class InvoiceService extends AbstractService{
 	public List<InvoiceLineDTO> getLinesForInvoice(long invoiceId){
 		Invoice invoice = em.get().find(Invoice.class, invoiceId);
 		List<InvoiceLineDTO> lines = new ArrayList<InvoiceLineDTO>();
-		for(InvoiceLine line : invoice.getLines()){
-			lines.add(new InvoiceLineDTO(line));
+		if(invoice != null){
+			if(invoice.getLines() != null){
+				for(InvoiceLine line : invoice.getLines()){
+					lines.add(new InvoiceLineDTO(line));
+				}
+			}
 		}
 		return lines;
-		
 	}
 	
 	/**

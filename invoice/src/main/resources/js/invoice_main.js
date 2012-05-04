@@ -1,6 +1,7 @@
 AppInvoiceMain = (function($){
 	
 	var tableView = null;
+	var lineSelected = null;
 	
 	InvoiceMainView = Backbone.View.extend({
 		el:"#invoicing-main",
@@ -13,29 +14,85 @@ AppInvoiceMain = (function($){
 		},
 		
 		render: function(){
-			new InvoiceButtonView().render();
+			new InvoiceButtonsView().render();
+			new InvoiceFilterView().render();
 			tableView = new InvoiceTableView().render();
 			return this;
 		}
 	})
 	
-	InvoiceButtonView = Backbone.View.extend({
+	InvoiceButtonsView = Backbone.View.extend({
 		el:"#invoicing-buttons-bar",
 		
 		creationWindow : null,
 		
 		events:{
-			"change #organization-selector" : "loadProjects",
-			"change #organization-selector, #project-selector" : "refreshInvoices",
-			"click #new-invoice" : "openCreationWindow"
+			"click .invoice-publish" : "publish",
+			"click .invoice-paid" : "paid",
+			"click .invoice-unpaid" : "unpaid",
+			"click #new-invoice" : "create"
 		},
 		
 		initialize: function(){
 			this.creationWindow = new InvoiceCreationView();
 		},
 		
-		openCreationWindow: function(){
+		create: function(){
 			this.creationWindow.render();
+		},
+		
+		publish: function(){
+			var parent = this;
+			$.ajax({
+				type: "GET",
+				url:"/invoice/publish",
+				data:{invoiceId : lineSelected},
+				success: function(data){
+					$("#"+data.id).html($("#invoice-status-" + data.status).html());
+				}
+			});
+		},
+		
+		paid: function(){
+			var parent = this;
+			$.ajax({
+				type: "GET",
+				url:"/invoice/paid",
+				data:{invoiceId : lineSelected},
+				success: function(data){
+					$("#"+data.id).html($("#invoice-status-" + data.status).html());
+				}
+			});
+		},
+		
+		unpaid: function(){
+			var parent = this;
+			$.ajax({
+				type: "GET",
+				url:"/invoice/unpaid",
+				data:{invoiceId : lineSelected},
+				success: function(data){
+					$("#"+data.id).html($("#invoice-status-" + data.status).html());
+				}
+			});
+		},
+		
+		render: function(){
+			return this;
+		}
+	})
+	
+	InvoiceFilterView = Backbone.View.extend({
+		el:"#invoice-filters",
+		
+		creationWindow : null,
+		
+		events:{
+			"change #organization-selector" : "loadProjects",
+			"change #organization-selector, #project-selector" : "refreshInvoices"
+		},
+		
+		initialize: function(){
 		},
 		
 		refreshInvoices: function(){
@@ -96,164 +153,62 @@ AppInvoiceMain = (function($){
 	})
 	
 	InvoiceTableView = Backbone.View.extend({
-		el:"#invoices",
+		el:"#invoices-table",
 		
 		events:{
 		
 		},
 		
 		initialize: function(){
+			var parent = this;
 			
+			var templateStatusColumn = $("#table-status-column").text();
+			var templateNumberColumn = $("#table-number-column").text();
+			var templateClientColumn = $("#table-client-column").text();
+			var templateProjectColumn = $("#table-project-column").text();
+			var templateAmountColumn = $("#table-amount-column").text();
+			$(parent.el).kernely_table({
+				columns:[templateStatusColumn, templateNumberColumn, templateClientColumn, templateProjectColumn, templateAmountColumn, "", ""],
+				editable:true
+			});
 		},
-		
+		selectLine : function(e){
+			lineSelected = e.data.line;
+		},
 		render: function(){
 			var parent = this;
-			$(this.el).html("");
 			$.ajax({
 				type:"GET",
 				url:"/invoice/specific",
 				data:{organizationId : $('#organization-selector').val(), projectId : $('#project-selector').val()},
 				success: function(data){
 					if(data != null){
-						if(data.invoiceDTO.length > 1){
-							var elt = $(parent.el);
-							$.each(data.invoiceDTO, function(){
-								elt.append(new InvoiceTableLineView(this.id, this.status, this.code, this.organizationName, this.projectName, this.amount).render().el);
+						var dataInvoice = data.invoiceDTO;
+						if($.isArray(dataInvoice)){
+							$.each(dataInvoice, function(){
+								this.status = '<span id="'+this.id+'">' + $("#invoice-status-"+this.status).html() + '<span>';
+								this.buttonView = '<a href="/invoice/view/'+this.id+'">'+ $("#invoice-view-button").html() + '</a>';
+								this.buttonEdit = '<a href="/invoice/edit/'+this.id+'">'+ $("#invoice-edit-button").html() + '</a>';
 							});
 						}
 						else{
-							$(parent.el).append(new InvoiceTableLineView(data.invoiceDTO.id, data.invoiceDTO.status, data.invoiceDTO.code, data.invoiceDTO.organizationName, data.invoiceDTO.projectName, data.invoiceDTO.amount).render().el);
+							dataInvoice.status = '<span id="'+this.id+'">' + $("#invoice-status-"+dataInvoice.status).html() + '<span>';
+							dataInvoice.buttonView = '<a href="/invoice/view/'+dataInvoice.id+'">'+ $("#invoice-view-button").html() + '</a>';
+							dataInvoice.buttonEdit = '<a href="/invoice/edit/'+dataInvoice.id+'">'+ $("#invoice-edit-button").html() + '</a>';
 						}
+						$(parent.el).reload_table({
+							data: dataInvoice,
+							idField:"id",
+							elements:["status", "code", "organizationName", "projectName", "amount", "buttonView", "buttonEdit"],
+							eventNames:["click"],
+							events:{
+								"click": parent.selectLine
+							},
+							editable:true
+						});
 					}
 				}
 			});
-			return this;
-		}
-	})
-	
-	InvoiceTableLineView = Backbone.View.extend({
-		tagName:"tr",
-		
-		id: null,
-		status: null,
-		number: null,
-		client: null,
-		project: null,
-		amount: null,
-		
-		events:{
-			"click .delete-invoice" : "deleteinvoice",
-			"click .invoice-publish" : "publishinvoice",
-			"click .invoice-paid" : "paidinvoice",
-			"click .invoice-unpaid" : "unpaidinvoice"
-		},
-		
-		initialize: function(id, status, number, client, project, amount){
-			this.id = id;
-			this.status = status;
-			this.number = number;
-			this.client = client;
-			this.project = project;
-			this.amount = amount;
-		},
-		
-		publishinvoice: function(){
-			var parent = this;
-			$.ajax({
-				type: "GET",
-				url:"/invoice/publish",
-				data:{invoiceId : parent.id},
-				success: function(data){
-					parent.status = data.status;
-					parent.render();
-				}
-			});
-		},
-		
-		paidinvoice: function(){
-			var parent = this;
-			$.ajax({
-				type: "GET",
-				url:"/invoice/paid",
-				data:{invoiceId : parent.id},
-				success: function(data){
-					parent.status = data.status;
-					parent.render();
-				}
-			});
-		},
-		
-		unpaidinvoice: function(){
-			var parent = this;
-			$.ajax({
-				type: "GET",
-				url:"/invoice/unpaid",
-				data:{invoiceId : parent.id},
-				success: function(data){
-					parent.status = data.status;
-					parent.render();
-				}
-			});
-		},
-		
-		deleteinvoice: function(){
-			var parent = this;
-			var template = $("#confirm-remove-invoice-template").html();
-			
-			var view = {invoiceNumber: this.number};
-			var html = Mustache.to_html(template, view);
-			
-			$.kernelyConfirm(html,this.confirmDeleteInvoice, this);
-		},
-		
-		confirmDeleteInvoice: function(parent){
-			$.ajax({
-				type: "GET",
-				url:"/invoice/delete",
-				data:{invoiceId : parent.id},
-				success: function(data){
-					$(parent.el).remove();
-				}
-			});
-		},
-				
-		render: function(){
-			var template = $("#invoice-line-template").html();
-			var templateStatus = $("#invoice-status-" + this.status).html();
-			var statusStyle;
-
-			if(this.status == 0){
-				statusStyle = "pending";
-			}
-			else if(this.status == 1){
-				statusStyle = "paid";
-			}
-			else if(this.status == 2){
-				statusStyle = "unpaid";
-			}
-			else if(this.status == 3){
-				statusStyle = "unpublished";
-			}
-			var view = {status : templateStatus, statusStyle: statusStyle, number : this.number, client : this.client, project : this.project, amount : this.amount, invoiceId: this.id};
-			var html = Mustache.to_html(template, view);
-			$(this.el).html(html);
-			
-			if(this.status == 0){
-				$(this.el).find(".invoice-publish").attr("disabled", "disabled");
-			}
-			else if(this.status == 1){
-				$(this.el).find(".invoice-paid").attr("disabled", "disabled");
-				$(this.el).find(".invoice-publish").attr("disabled", "disabled");
-			}
-			else if(this.status == 2){
-				$(this.el).find(".invoice-publish").attr("disabled", "disabled");
-				$(this.el).find(".invoice-unpaid").attr("disabled", "disabled");
-			}
-			else if(this.status == 3){
-				$(this.el).find(".invoice-paid").attr("disabled", "disabled");
-				$(this.el).find(".invoice-unpaid").attr("disabled", "disabled");
-			}
-			
 			return this;
 		}
 	})
@@ -268,44 +223,42 @@ AppInvoiceMain = (function($){
 		dates: null,
 		
 		events:{
-			"click .cancel_invoice,  .closeModal" : "closemodal",
+			"click .cancel_invoice" : "cancelInvoice",
 			"click .create_invoice" : "createinvoice",
 			"change #organization-selector-mod" : "loadProjects"
 		},
 	
 		initialize: function(){
+			var parent = this;
+			var template = $("#invoice-creation-window").html();
+			var titleTemplate = $("#create-template").html();
+			$(this.el).kernely_dialog({
+				title: titleTemplate,
+				content: template,
+				eventNames:'click',
+				width:"395px"
+			});
+			
+			this.dates = $( "#from, #to" ).datepicker({
+				showOn: "both",
+				buttonImage: "/images/icons/calendar_icon.png",
+				buttonImageOnly: true,
+				defaultDate: "+1w",
+				changeMonth: true,
+				onSelect: function( selectedDate ) {
+				var option = this.id == "from" ? "minDate" : "maxDate",
+						instance = $( this ).data( "datepicker" ),
+						date = $.datepicker.parseDate(
+								instance.settings.dateFormat ||
+								$.datepicker._defaults.dateFormat,
+								selectedDate, instance.settings );
+					parent.dates.not( this ).datepicker( "option", option, date );
+				}
+			});
 		},
 		
-		showModalWindow: function(){
-			//Get the screen height and width
-       		var maskHeight = $(window).height();
-       		var maskWidth = $(window).width();
-
-
-            //Set height and width to mask to fill up the whole screen
-            $('#mask').css({'width':maskWidth,'height':maskHeight});
-
-            //transition effect    
-            $('#mask').fadeIn(500);   
-            $('#mask').fadeTo("fast",0.7); 
-
-            //Get the window height and width
-            var winH = $(window).height();
-            var winW = $(window).width();
-
-
-        	//Set the popup window to center
-       		$("#modal_window_invoice").css('top',  winH/2-$("#modal_window_invoice").height()/2);
-     		$("#modal_window_invoice").css('left', winW/2-$("#modal_window_invoice").width()/2);
-     		$("#modal_window_invoice").css('background-color', "#EEEEEE");
-     		$("input:text").each(function(){this.value="";});
-     		//transition effect
-     		$("#modal_window_invoice").fadeIn(500);
-		},
-		
-		closemodal: function(){
-			$('#modal_window_invoice').hide();
-       		$('#mask').hide();
+		cancelInvoice: function(){
+			$(this.el).kernely_dialog("close");
 		},
 		
 		loadProjects: function(){
@@ -351,7 +304,7 @@ AppInvoiceMain = (function($){
 				success: function(data){
 				console.log(data);
 					if(data.result=="Ok"){
-						parent.closemodal();
+						$(parent.el).kernely_dialog("close");
 						var successHtml = $("#invoice-creation-success-template").html();
 						$.writeMessage("success",successHtml);
 						tableView.render();
@@ -365,9 +318,8 @@ AppInvoiceMain = (function($){
 		
 		render: function(){
 			var parent = this;
-			this.showModalWindow();
-			var html = $("#invoice-creation-window").html();
-			$(this.el).html(html);
+
+			$(this.el).kernely_dialog("open");
 			
 			$.ajax({
 				type: "GET",
@@ -390,19 +342,7 @@ AppInvoiceMain = (function($){
 					}
 				}
 			});
-			this.dates = $( "#from, #to" ).datepicker({
-				defaultDate: "+1w",
-				changeMonth: true,
-				onSelect: function( selectedDate ) {
-				var option = this.id == "from" ? "minDate" : "maxDate",
-						instance = $( this ).data( "datepicker" ),
-						date = $.datepicker.parseDate(
-								instance.settings.dateFormat ||
-								$.datepicker._defaults.dateFormat,
-								selectedDate, instance.settings );
-				parent.dates.not( this ).datepicker( "option", option, date );
-			}
-			});
+			
 			
 			return this;
 		}
