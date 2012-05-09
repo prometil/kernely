@@ -17,58 +17,30 @@
  * License along with Kernely.
  * If not, see <http://www.gnu.org/licenses/>.
  */
-  html, body {
-  position: relative ;
-  height: 100%;
-  width:1200px;
-  margin-left:auto;
-  margin-right:auto;
-  }
-  
-
-div#header{
-  height: 71px;
-  background: #f5f5f5;
-  border-bottom: 1px solid #e5e5e5;
+body, html{
+  background-color:#2D2D2D;
+  background-image:none;
 }
-
-
-div#logo{
-  margin-top:15px;
-  margin-left :20px;
-  float:left;
+#logo{
+  float:center;
+  display:block;
+  width:150px;
+  margin:auto;
 }
-
-
-div#space{
-	height:50px;
-	width:100%;
-}
-
-div#information{
-  float: left;
-  height: 300px;
-  margin-left:auto;
-  margin-right:auto;
-  padding:40px 40px 40px 40px;
-  width: 300px;
+input{
+  margin-top:10px;
 }
 
 div#login{
-  background: #f2f2f2;
-  float: right;
-    margin-left:auto;
+  background: #f5f5f5;
+  border:#A0A2A3 1px solid;
+  float: center;
+  margin-top:200px;
+  margin-left:auto;
   margin-right:auto;
-  padding:40px 40px 40px 40px;
-  height: 300px;
-  width: 300px;
+  padding:20px;
+  height: 180px;
+  width: 200px;
   line-height: 5px;
-}
-
-div#connection{
-	float:left;
-}
-
-div#remember{
-	float:right;
+  clear:both;
 }
