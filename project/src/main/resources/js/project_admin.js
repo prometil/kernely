@@ -31,7 +31,7 @@ AppProjectAdmin = (function($){
 			
 			var templateNameColumn = $("#table-project-name-column").text();
 			this.table = $(parent.el).kernely_table({
-				columns:[{"name":templateNameColumn, "style":""],
+				columns:[{"name":templateNameColumn, "style":""}],
 				idField:"id",
 				elements:["name"],
 				eventNames:["click"],
