@@ -37,10 +37,6 @@ public class ExpenseService extends AbstractService {
 	 */
 	@Transactional
 	public ExpenseTypeDTO createOrUpdateExpenseType(ExpenseTypeCreationDTO request){
-		System.out.println("DIRECT "+request.id);
-		System.out.println("DIRECT "+request.direct);
-		System.out.println("NAME "+request.name);
-		System.out.println("RATIO "+request.ratio);
 		if (request == null) {
 			throw new IllegalArgumentException("Request cannot be null ");
 		}
