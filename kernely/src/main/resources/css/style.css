@@ -218,6 +218,7 @@ div#profile_popup{
 	height:126px;
 	background-color:#FFFFFF;
 	display:none;
+	z-index:4;
 }
 
 div#profilePU-content{
@@ -355,15 +356,36 @@ table.kernely_table tr:nth-child(even) {
 }
 
 table.kernely_table{
-	border-top: 1px solid #a0a2a3;
-	border-left: 1px solid #a0a2a3;
-	border-bottom: 1px solid #a0a2a3;
 	width:100%;
 	border-spacing:0px;
 }
 
 table.kernely_table tr{
 	height:25px;
+}
+
+table.kernely_table tr td:first-child{
+	border-left: 1px solid #a0a2a3;
+}
+
+table.kernely_table thead tr:first-child th{
+	border-top: 1px solid #a0a2a3;
+}
+
+table.kernely_table thead tr:first-child th:first-child{
+	border-left: 1px solid #a0a2a3;
+}
+
+table.kernely_table tr:last-child td:first-child{
+	border-left: 1px solid #a0a2a3;
+}
+
+table.kernely_table tr:last-child td:last-child{
+	border-right: 1px solid #a0a2a3;
+}
+
+table.kernely_table tr:last-child td{
+	border-bottom: 1px solid #a0a2a3;
 }
 
 table.kernely_table tr.line_selected{
@@ -437,6 +459,34 @@ table.kernely_table th{
 	visibility:hidden;
 }
 
+.no-margin{
+	margin:0;
+}
+
+.general-bg{
+	background-color:#f6f6f6 !important;
+}
+
+.no-border-left{
+	border-left:none !important;
+}
+
+.no-border-top{
+	border-top:none !important;
+}
+
+.no-border-bottom{
+	border-bottom:none !important;
+}
+
+.no-border-right{
+	border-right:none !important;
+}
+
+.icon-column{
+	width:50px !important;
+}
+
 /* Dialogs */
 .ui-widget-header{
 	background:#e4e4e4;
@@ -462,6 +512,10 @@ table.kernely_table th{
 	margin-top:10px;
 	margin-bottom:10px;
 	float:right;
+}
+
+.classic-buttons-bar{
+	text-align:right;
 }
 
 /* Datepickers*/

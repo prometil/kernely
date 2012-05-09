@@ -159,6 +159,8 @@ AppInvoiceMain = (function($){
 		
 		},
 		
+		table: null,
+		
 		initialize: function(){
 			var parent = this;
 			
@@ -167,9 +169,21 @@ AppInvoiceMain = (function($){
 			var templateClientColumn = $("#table-client-column").text();
 			var templateProjectColumn = $("#table-project-column").text();
 			var templateAmountColumn = $("#table-amount-column").text();
-			$(parent.el).kernely_table({
-				columns:[templateStatusColumn, templateNumberColumn, templateClientColumn, templateProjectColumn, templateAmountColumn, "", ""],
-				editable:true
+			this.table = $(parent.el).kernely_table({
+				columns:[
+				       {"name":templateStatusColumn, "style":"text-center"},
+				       {"name":templateNumberColumn, "style":""},
+				       {"name":templateClientColumn, "style":""},
+				       {"name":templateProjectColumn, "style":""},
+				       {"name":templateAmountColumn, "style":"text-center"},
+				       {"name":"", "style":["general-bg", "text-center", "no-border-right", "no-border-top", "no-border-bottom"]},
+				       {"name":"", "style":["general-bg", "text-center", "no-border-right", "no-border-top", "no-border-bottom"]}],
+				idField:"id",
+				elements:["status", "code", "organizationName", "projectName", "amount", "buttonView", "buttonEdit"],
+				eventNames:["click"],
+				events:{
+					"click": parent.selectLine
+				}
 			});
 		},
 		selectLine : function(e){
@@ -196,16 +210,7 @@ AppInvoiceMain = (function($){
 							dataInvoice.buttonView = '<a href="/invoice/view/'+dataInvoice.id+'">'+ $("#invoice-view-button").html() + '</a>';
 							dataInvoice.buttonEdit = '<a href="/invoice/edit/'+dataInvoice.id+'">'+ $("#invoice-edit-button").html() + '</a>';
 						}
-						$(parent.el).reload_table({
-							data: dataInvoice,
-							idField:"id",
-							elements:["status", "code", "organizationName", "projectName", "amount", "buttonView", "buttonEdit"],
-							eventNames:["click"],
-							events:{
-								"click": parent.selectLine
-							},
-							editable:true
-						});
+						parent.table.reload(dataInvoice);
 					}
 				}
 			});

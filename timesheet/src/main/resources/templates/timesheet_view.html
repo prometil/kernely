@@ -10,13 +10,16 @@
 {% endblock %}
 
 {% block css %}
-	<link rel="stylesheet" type="text/css" href="/css/timesheet_view.css"/>
+	<link rel="stylesheet" type="text/css" href="/css/timesheet.css"/>
 {% endblock %}
 
 {% block left %}
-	<div id="admin_sidebar_container">
-		<div class="admin_plugin_menu"></div>
-	</div>
+<div id="profile_mask"></div>
+<div id="left_profile_arrow"></div>
+<div id='left_profile_container'>
+	<img src="/images/{{currentUser.image}}" id="image_left_profile"/>
+	<div id="left_profile_name">{{currentUser.firstname}} {{currentUser.lastname}}</div>
+</div>
 {% endblock %}
 
 {% block template %}
@@ -69,46 +72,41 @@
 	</script>
 	
 	<script type="text/html" id="timesheet-table-template">
-		<table id="timesheet-table-{{"{{"}}tableId{{"}}"}}" border="0">
-		<tbody id="timesheet-content-{{"{{"}}tableId{{"}}"}}">
-			<tr id="date-line-{{"{{"}}tableId{{"}}"}}"></tr>
-		<tbody>
-		<tbody>
-		<tr id="columnTotalsRow-{{"{{"}}tableId{{"}}"}}">
-			<td>{%  i18n "timesheet_total" %}</td>
-			<td></td>
-			<td></td>
-			<td></td>
-			<td></td>
-			<td></td>
-			<td></td>
-			<td></td>
-			<td></td>
-		</tr>
-		</tbody>
-		<tbody id="timesheet-expense-{{"{{"}}tableId{{"}}"}}">
-			<tr id="expense-line-{{"{{"}}tableId{{"}}"}}"><td></td></tr>
-		<tbody>
+		<table id="timesheet-table-{{"{{"}}tableId{{"}}"}}" class="timesheet-table">
+			<tbody id="timesheet-content-{{"{{"}}tableId{{"}}"}}" class="timesheet-content">
+				<tr id="date-line-{{"{{"}}tableId{{"}}"}}"  class="date-line"></tr>
+			</tbody>
+			<tbody>
+				<tr id="columnTotalsRow-{{"{{"}}tableId{{"}}"}}" class="columnTotalsRow">
+					<td>{%  i18n "timesheet_total" %}</td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+				</tr>
+			</tbody>
+			<tbody id="timesheet-expense-{{"{{"}}tableId{{"}}"}}" class="timesheet-expense">
+				<tr id="expense-line-{{"{{"}}tableId{{"}}"}}" class="expense-line"><td></td></tr>
+			<tbody>
 		</table>
 	</script>
 {% endblock%}
 
 {% block content %}
 	<div id="timesheet-main">
-		<div id="monthSelector"></div>
-		<table>
-			<tr>
-			<th></th>
-			<th>{%  i18n "day_1_short" %}</th>
-			<th>{%  i18n "day_2_short" %}</th>
-			<th>{%  i18n "day_3_short" %}</th>
-			<th>{%  i18n "day_4_short" %}</th>
-			<th>{%  i18n "day_5_short" %}</th>
-			<th>{%  i18n "day_6_short" %}</th>
-			<th>{%  i18n "day_7_short" %}</th></tr>
-		</table>
-		<div id="timesheet-div"></div>
-		<input class="hidden" type="button" id="validate-month" value="{%  i18n "validate_timesheet" %}"/>
-		<span class="hidden" id="month-validated-message">{%  i18n "timesheet_month_validated_message" %}</span>
+		<div class="classic-buttons-bar">
+			<input type="button" class="button_standard no-margin" value="{% i18n "week" %}" onClick="window.location='/timesheet'"/>
+			<input type="button" class="button_emphasis no-margin" value="{% i18n "month" %}"/>
+		</div>
+		<div id="timesheet-layout">
+			<div id="monthSelector"></div>
+			<div id="timesheet-div"></div>
+			<input class="hidden" type="button" id="validate-month" value="{%  i18n "validate_timesheet" %}"/>
+			<span class="hidden" id="month-validated-message">{%  i18n "timesheet_month_validated_message" %}</span>
+		</div>
 	</div>
 {% endblock%}

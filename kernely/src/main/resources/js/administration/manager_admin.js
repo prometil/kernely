@@ -26,14 +26,23 @@ AppManagerAdmin = (function($){
 		events:{
 		
 		},
+		table:null,
 		initialize:function(){
 			var parent = this; 
 			
 			var templateNameColumn = $("#table-manager-name-column").text();
 			var templateManagedColumn = $("#table-manager-users-column").text();
-			$(parent.el).kernely_table({
-				columns:[templateNameColumn, templateManagedColumn],
-				editable:true
+			this.table = $(parent.el).kernely_table({
+				idField:"id",
+				columns:[
+				      {"name":templateNameColumn, style:""},
+				      {"name":templateManagedColumn, style:"text-center"}
+				],
+				elements:["name", "nbUsers"],
+				eventNames:["click"],
+				events:{
+					"click": parent.selectLine
+				}
 			});
 		},
 		selectLine : function(e){
@@ -54,16 +63,7 @@ AppManagerAdmin = (function($){
 
 					if(data != null){
 						var dataManager = data.managerDTO;
-						$(parent.el).reload_table({
-							data: dataManager,
-							idField:"id",
-							elements:["name", "nbUsers"],
-							eventNames:["click"],
-							events:{
-								"click": parent.selectLine
-							},
-							editable:true
-						});
+						parent.table.reload(dataManager);
 					}
 				}
 			});

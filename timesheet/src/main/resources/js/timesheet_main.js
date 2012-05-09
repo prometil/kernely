@@ -264,7 +264,8 @@ AppTimeSheet = (function($){
 			for (var i = 0 ; i < this.data.dates.length ; i++){
 				$("#date-line").append("<td>" + this.data.stringDates[i] + "</td>");
 			}
-
+			template = $("#total-template").text();
+			$("#date-line").append("<td class='total'>"+ template +"</td>");
 			// Build projects rows only if the timesheet exists
 			if (this.data.timeSheet != null){
 				// Build rows with data
@@ -351,7 +352,7 @@ AppTimeSheet = (function($){
 			allDayCells[this.projectId] = new Object();
 			
 			// Set the title
-			$(this.el).append("<td>" + projectName + "</td>");
+			$(this.el).append("<td class='text-bold-black'>" + projectName + "</td>");
 			
 			if (empty){
 				// Create an empty day in timesheet to memorize the project
@@ -381,7 +382,7 @@ AppTimeSheet = (function($){
 						}
 						
 						// Create the total cell
-						$(parent.el).append('<td class="columnTotal">' + parent.total + '</td>');
+						$(parent.el).append('<td class="total">' + parent.total + '</td>');
 						
 						// Create the delete button
 						var buttonTemplate = $("#delete-button-template").html();
@@ -428,7 +429,7 @@ AppTimeSheet = (function($){
 				}
 
 				// Create the total cell
-				$(this.el).append('<td class="columnTotal">' + this.total + '</td>');
+				$(this.el).append('<td class="total">' + this.total + '</td>');
 				
 				// Create the delete button
 				var buttonTemplate = $("#delete-button-template").html();
@@ -439,7 +440,7 @@ AppTimeSheet = (function($){
 		
 		actualizeTotal: function(value){
 			this.total = value;
-			$("td.columnTotal", this.el).html(this.total);
+			$("td.total", this.el).html(this.total);
 		},
 		
 		removeLine : function(){
@@ -450,7 +451,7 @@ AppTimeSheet = (function($){
 			var view = {project: this.projectName};
 			var html = Mustache.to_html(template, view);
 			
-			$.kernelyConfirm(html,this.confirmRemoveLine,this);
+			$.kernelyConfirm($("#delete-template").text(), html,this.confirmRemoveLine,this);
 		},
 		
 		confirmRemoveLine: function(parent){
@@ -508,7 +509,9 @@ AppTimeSheet = (function($){
 			"click span" : "increment",
 			"click .editButton" : "edit",
 			"keypress input[type=text]": "filterOnEnter",
-			"blur input[type=text]" : "onBlur"
+			"blur input[type=text]" : "onBlur",
+			"mouseover" : "displayIcon",
+			"mouseout" : "hideIcon"
 		},
 		initialize: function(index, amount, day, projectId, dayId){
 			lastClicked = this;
@@ -523,6 +526,14 @@ AppTimeSheet = (function($){
 			
 			// Insert into the cells array
 			allDayCells[this.projectId][index] = this;
+		},
+		
+		displayIcon: function(){
+			$(this.el).find(".editButton").show();
+		},
+		
+		hideIcon: function(){
+			$(this.el).find(".editButton").hide();
 		},
 		
 		increment : function(event){
@@ -677,8 +688,6 @@ AppTimeSheet = (function($){
 		initialize: function(days){
 			// The id of the model of days are given in parameter
 			this.days = days;
-			$(this.el).css("background-color", "#FAB600");
-			
 		},
 		
 		setTotals: function(){
@@ -1131,10 +1140,8 @@ AppTimeSheet = (function($){
 			$(this.el).removeClass("time-cell-selected");
 		},
 		selectTime : function(){
+			$(".time-cell-selected").removeClass("time-cell-selected");
 			$(this.el).addClass("time-cell-selected");
-			if (currentCellPickerSelected != null){
-				currentCellPickerSelected.unselect();
-			}
 			currentCellPickerSelected = this;
 		},
 		

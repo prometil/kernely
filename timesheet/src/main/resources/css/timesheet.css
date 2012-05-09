@@ -1,49 +1,100 @@
 .time-cell{
-	width:170px;
-	height:30px;
-	padding-top:20px;
-	text-align:center;
-	cursor: pointer;
-	margin-top: 5px;
-	-moz-border-radius:20px;
-    	-moz-box-shadow:0px 2px 2px 0px rgba(0, 0, 0, 0.5),
-              0px 2px 2px 0px rgba(255, 255, 255, 0.5) inset;
-   	 -webkit-border-radius:20px;
-   	 -webkit-box-shadow:0px 2px 2px 0px rgba(0, 0, 0, 0.5),
-                 0px 2px 2px 0px rgba(255, 255, 255, 0.5) inset;
-   	 border-radius:20px;
-  	 box-shadow:0px 2px 2px 0px rgba(0, 0, 0, 0.5),
-             0px 2px 2px 0px rgba(255, 255, 255, 0.5) inset;
-	
+	width:100%;
+	height:35px;
+	border-bottom:1px solid #a0a2a3;
+	cursor:pointer;
+	font-weight:bold;
+	color:#000;
+}
+
+.time-cell:last-child{
+	border:none;
 }
 
 .time-cell-selected{
-	opacity:0.6;
+	background-color:#3e3d40;
+	color:#FFFFFF;
+}
+table.timesheet-table{	
+	border-spacing:7px 7px;
 }
 
-td.timeSheetDetail{
-	width:100px;
-	height:30px;
-	background-color:lightblue;
+table.timesheet-table td{
+	border:1px solid #9c9e9f;
+	width:62px;
+	height:27px;
 	text-align:center;
+	vertical-align:middle;
 }
+
+table.timesheet-table tr.date-line td{
+	background-color:#e3e4e4;
+	font-weight:bold;	
+}
+
+table.timesheet-table tr.columnTotalsRow td, table.timesheet-table td.total{
+	background-color:#97ad17;
+	font-weight:bold;
+	color:#FFFFFF;
+	
+}
+
+table.timesheet-table tr.expense-line td{
+	font-weight:bold;
+	color:#000;
+	height:55px;
+}
+
+
+div.edit-timesheet-icon{
+	position:absolute;
+	background-color:#c8c8c8;
+	width:15px;
+	top:0;
+}
+
 
 img.editButton{
 	position:absolute;
-	margin-top:-7px;
+	top:0;
+	right:0;
+	display:none;
 }
 
-.editAmount{
+
+div.editAmount, span.editAmount{
+	position:relative;
 	float:left;
-	width:70px;
-	height:20px;
+	width:58px;
+	min-height:13px;
 	display:block;
 	cursor:pointer;
+}
+
+input.editAmount{
+	float:left;
+	width:54px;
+	height:20px;
+	display:block;
+	text-align:center;
 }
 
 .timesheet-project-select{
 	width:200px;
 }
+
+#timesheet-layout{
+	position:relative;
+	border:1px solid #9c9e9f;
+	width:100%;
+	height:auto;
+}
+
+
+
+
+
+
 
 #modal_window_expense{
 	position:absolute;

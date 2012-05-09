@@ -17,45 +17,7 @@
  * License along with Kernely.
  * If not, see <http://www.gnu.org/licenses/>.
  */
-#profile_header{
-	height:50px;
-	text-align:center;
-	font-size:20px;
-	font-weight:bold;
-}
-
-#profile_top_container{
-	height:560px;
-}
-
 #image_name{
 	max-width:295px;
 	max-height: 245px;
-}
-
-#profile_image{
-	padding-top:10px;
-	height:550px;
-	width:380px;
-	float:left;
-	text-align:center;
-	border-top:1px solid black;
-}
-
-#profile_information{
-	height:550px;
-	width:545px;
-	float:left;
-	text-align:left;
-	border-left:1px solid black; 
-	border-top:1px solid black; 
-	padding:15px;
-}
-
-.edit_button{
-	margin-left : 15px;
-}
-
-#profile_bottom_container{
-
 }

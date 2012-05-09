@@ -7,15 +7,27 @@ AppExpenseType = (function($){
 		events:{
 		
 		},
+		
+		table:null,
+		
 		initialize:function(){
 			var parent = this;
 			
 			var templateNameColumn = $("#table-expense-name-column").text();
 			var templateDirectColumn = $("#table-expense-direct-column").text();
 			var templateRatioColumn = $("#table-expense-ratio-column").text();
-			$(parent.el).kernely_table({
-				columns:[templateNameColumn, templateDirectColumn, templateRatioColumn],
-				editable:true
+			this.table = $(parent.el).kernely_table({
+				columns:[
+				      {"name":templateNameColumn,"style":""},
+				      {"name":templateDirectColumn,"style":""},
+				      {"name":templateRatioColumn,"style":""}
+				],
+				idField:"id",
+				elements:["name", "direct", "ratio"],
+				eventNames:["click"],
+				events:{
+					"click": parent.selectLine
+				}
 			});
 		},
 		selectLine : function(e){
@@ -35,16 +47,7 @@ AppExpenseType = (function($){
 				success: function(data){
 					if (data != null){
 						var dataExpense = data.expenseTypeDTO;
-						$(parent.el).reload_table({
-							data: dataExpense,
-							idField:"id",
-							elements:["name", "direct", "ratio"],
-							eventNames:["click"],
-							events:{
-								"click": parent.selectLine
-							},
-							editable:true
-						});
+						parent.table.reload(dataExpense);
 					}
 				}
 			});

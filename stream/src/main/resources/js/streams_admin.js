@@ -27,14 +27,24 @@ AppStreamAdmin = (function($){
 		events:{
 		
 		},
+		table:null,
 		initialize:function(){
 			var parent = this;
 			
 			var templateNameColumn = $("#table-stream-name-column").text();
 			var templateCategoryColumn = $("#table-stream-category-column").text();
-			$(parent.el).kernely_table({
-				columns:[templateNameColumn, templateCategoryColumn],
-				editable:true
+			var templateTypeColumn = $("#table-stream-type-column").text();
+			this.table = $(parent.el).kernely_table({
+				columns:[
+				      {"name":templateTypeColumn, "style":["text-center","icon-column"]},
+				      {"name":templateNameColumn, "style":""},
+				      {"name":templateCategoryColumn, "style":"text-center"}],
+				idField:"id",
+				elements:["type", "title", "category"],
+				eventNames:["click"],
+				events:{
+					"click": parent.selectLine
+				}
 			});
 			
 		},
@@ -57,16 +67,58 @@ AppStreamAdmin = (function($){
 				success: function(data){
 					if (data != null){
 						var dataStream = data.streamDTO;
-						$(parent.el).reload_table({
-							data: dataStream,
-							idField:"id",
-							elements:["title", "category"],
-							eventNames:["click"],
-							events:{
-								"click": parent.selectLine
-							},
-							editable:true
-						});
+						if($.isArray(dataStream)){
+							$.each(dataStream, function(){
+								if(this.locked == "true"){
+									this.type = '<img src="/images/stream-lock-icon.png"/>';
+								}
+								else{
+									if(this.category == "streams/users"){
+										this.type = '<img src="/images/stream-user-icon.png"/>';
+									}
+									else{
+										if(this.category == "streams/others"){
+											this.type = '<img src="/images/stream-other-icon.png"/>';
+										}
+										else{
+											if(this.category == "streams/plugins"){
+												this.type = '<img src="/images/stream-plugin-icon.png"/>';
+											}
+											else{
+												this.type='';
+											}
+										}
+									}
+								}
+							});
+						}
+						else{
+							if(dataStream.locked == "true"){
+								dataStream.type = '<img src="/images/stream-lock-icon.png"/>';
+							}
+							else{
+								if(dataStream.category == "streams/users"){
+									dataStream.type = '<img src="/images/stream-user-icon.png"/>';
+								}
+								else{
+									console.log(1);
+									if(dataStream.category == "streams/others"){
+										dataStream.type = '<img src="/images/stream-other-icon.png"/>';
+									}
+									else{
+										console.log(dataStream.category);
+										if(dataStream.category == "streams/plugins"){
+											dataStream.type = '<img src="/images/stream-plugin-icon.png"/>';
+											console.log(3);
+										}
+										else{
+											dataStream.type='';
+										}
+									}
+								}
+							}
+						}
+						parent.table.reload(dataStream);
 					}
 				}
 			});

@@ -25,6 +25,8 @@
     UserAdminTableView = Backbone.View.extend({
 		el:"#user_admin_table",
 
+		table:null,
+		
 		initialize:function(){
 			var parent = this;
 			
@@ -32,9 +34,22 @@
 			var templateFirstnameColumn = $("#table-user-firstname-column").text();
 			var templateUsernameColumn = $("#table-user-username-column").text();
 			var templateEmailColumn = $("#table-user-email-column").text();
-			$(parent.el).kernely_table({
-				columns:["", templateNameColumn, templateFirstnameColumn, templateUsernameColumn, templateEmailColumn],			
-				editable:true
+			this.table = $(parent.el).kernely_table({
+				idField:"id",
+				
+				columns:[
+						{"name":"", style:["general-bg", "text-center", "no-border-left", "no-border-top", "no-border-bottom", "icon-column"]},
+						{"name":templateNameColumn, style:""}, 
+						{"name":templateFirstnameColumn, style:""},
+						{"name":templateUsernameColumn, style:""},
+						{"name":templateEmailColumn, style:""}
+				],
+				elements:["user.locked", "lastname", "firstname", "user.username", "email"],
+				
+				eventNames:["click"],
+				events:{
+					"click": parent.selectLine
+				}
 			});
 		},
 		selectLine : function(e){
@@ -73,17 +88,7 @@
 								dataUser.user.locked = '';
 							}
 						}
-						
-						$(parent.el).reload_table({
-							data: dataUser,
-							idField:"id",
-							elements:["user.locked", "lastname", "firstname", "user.username", "email"],
-							eventNames:["click"],
-							events:{
-								"click": parent.selectLine
-							},
-							editable:true
-						});
+						parent.table.reload(dataUser);
 					}
 				}
 			});

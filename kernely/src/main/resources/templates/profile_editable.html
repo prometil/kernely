@@ -71,31 +71,41 @@
 {% endblock %}
 
 {% block content %}
-
-	<div id="profile_header">{% i18n "profile_page_of" %} {{details.firstname}} {{details.lastname}}</div>
-	<div id="profile_top_container">
-		<div id="profile_image">
-			<img src="/images/{{details.image}}" id="image_name" name="{{details.image}}"/>
-			<form action="/user/upload" method="post" enctype="multipart/form-data">
-	 			<input type="file" name="file"/>
-			   <input type="submit" value="{% i18n "upload" %}" />
-			</form>
-		</div>
-		<div id="profile_information">
-			<table style="width:100%" id="profile_table">
-				<tr>
-					<td>{% i18n "civility" %}</td>
-					<td><span id="profile_civility" style="display: none;">{{details.civility}}</span>
-						<input type="radio" class="edit_button_civility" name="civility" value="1"> {% i18n "civility.mister" %} </input> 
-						<input type="radio" class="edit_button_civility" name="civility" value="2"> {% i18n "civility.madam" %} </input>
-						<input type="radio" class="edit_button_civility" name="civility" value="3"> {% i18n "civility.miss" %} </input>
-					</td>
-					<td>
-					</td>
-				</tr>
-			</table>
-		</div>
+	<div id="profile_information">
+		<table id="profile_table" class="kernely_table">
+			<tr>
+				<td>{% i18n "image" %}</td>
+				<td>
+					<form action="/user/upload" method="post" enctype="multipart/form-data">
+						<input type="file" name="file" class="file"/>
+						<input type="submit" value="{% i18n "upload" %}" class="button_emphasis"/>
+					</form>
+				</td>
+			</tr>
+			<tr>
+				<td>{% i18n "civility" %}</td>
+				<td><span id="profile_civility" style="display: none;">{{details.civility}}</span>
+					<input type="radio" class="edit_button_civility" name="civility" value="1"> {% i18n "civility.mister" %} </input> 
+					<input type="radio" class="edit_button_civility" name="civility" value="2"> {% i18n "civility.madam" %} </input>
+					<input type="radio" class="edit_button_civility" name="civility" value="3"> {% i18n "civility.miss" %} </input>
+				</td>
+			</tr>
+		</table>
 	</div>
 	<div style="clear:both;"></div>
-	<div id="profile_bottom_container"><div>
+{% endblock %}
+
+{% block left %}
+<div id="profile_mask"></div>
+<div id="left_profile_arrow"></div>
+<div id='left_profile_container'>
+	<img src="/images/{{currentUser.image}}" id="image_left_profile"/>
+	<div id="left_profile_name">{{currentUser.firstname}} {{currentUser.lastname}}</div>
+</div>
+
+
+{% endblock %}
+
+{% block title %}
+{% i18n "profile_page_of" %} {{details.firstname}} {{details.lastname}}
 {% endblock %}

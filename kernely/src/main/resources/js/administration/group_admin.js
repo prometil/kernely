@@ -25,14 +25,24 @@ AppGroupAdmin = (function($){
 	GroupAdminTableView = Backbone.View.extend({
 		el:"#group_admin_table",
 		
+		table: null,
+		
 		initialize:function(){
 			var parent = this;
 			
 			var templateNameColumn = $("#table-group_name-column").text();
 			var templateMembersColumn = $("#table-group_members-column").text();
-			$(parent.el).kernely_table({
-				columns:[templateNameColumn, templateMembersColumn],
-				editable:true
+			this.table = $(parent.el).kernely_table({
+				idField:"id",
+				columns:[
+				         {"name" : templateNameColumn, "style": ""},
+				         {"name" : templateMembersColumn, "style" : "text-center"}
+				],
+				elements:["name", "nbUser"],
+				eventNames:["click"],
+				events:{
+					"click": parent.selectLine
+				}
 			});
 		},
 		selectLine : function(e){
@@ -52,16 +62,7 @@ AppGroupAdmin = (function($){
 				success: function(data){
 					if(data != null){
 						var dataGroup = data.groupDTO;
-						$(parent.el).reload_table({
-							data: dataGroup,
-							idField:"id",
-							elements:["name", "nbUser"],
-							eventNames:["click"],
-							events:{
-								"click": parent.selectLine
-							},
-							editable:true
-						});
+						parent.table.reload(dataGroup);
 					}
 				}
 			});

@@ -86,6 +86,8 @@ TableLineView = Backbone.View.extend({
 	tagName: "tr",
 	className: 'kernely_table_line',
 	
+	styles:null,
+	
 	data: null,
 	
 	events: {
@@ -97,7 +99,8 @@ TableLineView = Backbone.View.extend({
 	
 	idLine: null,
 	
-	initialize: function(idLine, data,eventNames, events){
+	initialize: function(idLine, data,eventNames, events, styles){
+		this.styles = styles;		
 		this.data = data;
 		this.idLine = idLine;
 		var parent = this;
@@ -126,62 +129,99 @@ TableLineView = Backbone.View.extend({
 	},
 	render:function(){
 		var parent = this;
+		var i = 0;
 		if($.isArray(this.data)){
 			$.each(this.data, function(){
-				$(parent.el).append("<td>"+this+"</td>");
+				var td = document.createElement("td");
+				$(td).html("" + this); // String casting
+				if($.isArray(parent.styles[i])){
+					$.each(parent.styles[i], function(){
+						$(td).addClass(""+this); // String casting
+					});
+				}
+				else{
+					$(td).addClass(parent.styles[i]);
+				}
+				$(parent.el).append($(td));
+				i++;
 			});
 		}
 		else{
-			$(this.el).append("<td>"+this.data+"</td>");
+			var td = document.createElement("td");
+			$(td).html(this.data);
+			if($.isArray(parent.styles[i])){
+				$.each(parent.styles[i], function(){
+					$(td).addClass("" + this);
+				});
+			}
+			else{
+				$(td).addClass(parent.styles[i]);
+			}
+			$(this.el).append($(td));
 		}
 		return this;
 	}
 	
 });
 
-jQuery.fn.extend({
-	// Defines a generic behavior for all tables in the application
-	// The "options" parameter is the configuration of the table,
-	// It contains 8 fields :
-	// - data : The data to display in the table
-	// - idField : The name of the field representing the id of the current line
-	// - elements : The name of the fields present in data to localize the values
-	// - columns : The names of the columns to diaplay in the header of the table
-	// - eventName : The names of the different custom events to implements
-	// - events : The association between the name and the function called of a custom event
-	// - reload : If true, only reload the given data in the table
-	// - editable : 
-	kernely_table: function(options){
-		// Force options to be an object
-		options = options || {};
-		options.events = options.events || {};
-		options.eventNames = options.eventNames || {};
-		if(!options.reload){
-			// Add the header to the table
-			var thead = document.createElement("thead");
-			var tr = document.createElement("tr");
-			if($.isArray(options.columns)){
-				$.each(options.columns, function(){
-					$(tr).append("<th>"+ this +"</th>");
+TableView = Backbone.View.extend({
+	
+	columns:null,
+	
+	styles:null,
+	
+	elements:null,
+	
+	idField: null,
+	
+	events:null,
+	
+	eventName:null,
+	
+	initialize: function(element){
+		this.styles= new Array();
+		this.el = element;
+	},
+	
+	render: function(){
+		// Add the header to the table
+		var thead = document.createElement("thead");
+		var tr = document.createElement("tr");
+		var parent = this;
+		$.each(parent.columns, function(){
+			var th = document.createElement("th");
+			$(th).html(this.name); // String casting
+			if($.isArray(this.style)){
+				$.each(this.style, function(){
+					$(th).addClass("" + this);
 				});
 			}
 			else{
-				$(tr).append("<th>"+ options.columns +"</th>");
+				$(th).addClass(this.style);
 			}
-			$(thead).append($(tr));
-			this.append($(thead));
-		}
+			$(tr).append($(th));
+			parent.styles.push(this.style);
+		});
+		$(thead).append($(tr));
+		this.el.append($(thead));
+		return this;
+	},
 	
-		if(typeof(options.data) != "undefined"){
-			var table = this;
-			if($.isArray(options.data)){
+	reload:function(data){
+		var body = this.el.find("tbody");
+		body.empty();
+		
+		if(typeof(data) != "undefined"){
+			var table = $(this.el);
+			var view = this;
+			if($.isArray(data)){
 				var parent;
-				$.each(options.data, function(){
+				$.each(data, function(){
 					var array = new Array();
 					parent = this;
 					var elem;
-					if($.isArray(options.elements)){
-						$.each(options.elements, function(){
+					if($.isArray(view.elements)){
+						$.each(view.elements, function(){
 							if(this.lastIndexOf(".") != -1){
 								var temp = this.split(".");
 								elem = parent;
@@ -199,44 +239,66 @@ jQuery.fn.extend({
 						});
 					}
 					else{
-						if(options.elements.lastIndexOf(".") != -1){
-							var temp = options.elements.split(".");
+						if(view.elements.lastIndexOf(".") != -1){
+							var temp = view.elements.split(".");
 							elem = parent;
 							$.each(temp, function(){
 								elem = elem[this];
 							});
 						}
 						else{
-							elem = parent[options.elements];
+							elem = parent[view.elements];
 						}
 						if(typeof(elem) == "undefined"){
 							elem = "";
 						}
-						array.push(parent[option.elements]);
+						array.push(parent[view.elements]);
 					}
-					table.append(new TableLineView(parent[options.idField],array, options.eventName, options.events).render().el);
+					table.append(new TableLineView(this[view.idField],array, view.eventName, view.events, view.styles).render().el);
 				});
 			}
 			else{
 				var array = new Array();
-				if($.isArray(options.elements)){
-					$.each(options.elements, function(){
-						array.push(options.data[this]);
+				if($.isArray(view.elements)){
+					$.each(view.elements, function(){
+						array.push(data[this]);
 					});
 				}
 				else{
-					array.push(options.data[option.elements]);
+					array.push(data[elements]);
 				}
-				table.append(new TableLineView(options.data[options.idField], array, options.eventName, options.events).render().el);
+				table.append(new TableLineView(data[view.idField], array, view.eventName, view.events, view.styles).render().el);
 			}
 		}
-	},
+	}
+	
+});
 
-	reload_table: function(options){
-		var body = this.find("tbody");
-		body.empty();
-		options.reload = true;
-		this.kernely_table(options);
+jQuery.fn.extend({
+	// Defines a generic behavior for all tables in the application
+	// The "options" parameter is the configuration of the table,
+	// It contains 8 fields :
+	// - data : The data to display in the table
+	// - idField : The name of the field representing the id of the current line
+	// - elements : The name of the fields present in data to localize the values
+	// - columns : The names of the columns to diaplay in the header of the table
+	// - eventName : The names of the different custom events to implements
+	// - events : The association between the name and the function called of a custom event
+	kernely_table: function(options){
+		// Force options to be an object
+		options = options || {};
+		options.columns = options.columns || {};
+		options.events = options.events || {};
+		options.eventNames = options.eventNames || {};
+		
+		var table = new TableView(this);
+		table.columns = options.columns;
+		table.elements = options.elements;
+		table.idField = options.idField;
+		table.events = options.events;
+		table.eventName = options.eventName;
+		table.render();
+		return table;
 	},
 	
 	// Defines a generic behavior for all dialogs in the application
@@ -304,6 +366,27 @@ jQuery.fn.extend({
 					}
 				}
 			}
+		}
+	},
+	
+	kernely_date_navigator: function(options){
+		var mode;
+		// Force options to be an object
+		options = options || {};
+		options.events = options.events || {};
+		mode = options.mode;
+		if(mode != null){
+			var imgp = document.createElement("img");
+			$(imgp).attr("src", "/images/icons/previous_icon.png");
+			var span = document.createElement("span");
+			$(span).addClass("k-ui-navigator");
+			$(span).text("coucou");
+			var imgn = document.createElement("img");
+			$(imgn).attr("src", "/images/icons/next_icon.png");
+			
+			this.append(imgp);
+			this.append(span);
+			this.append(imgn);
 		}
 	}
 

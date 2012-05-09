@@ -32,13 +32,15 @@
 		<br/>
 		<div id="invoice-details">
 			<table id="invoice-line-details-visualization" class="kernely_table">
-				<tr class="invoice-lines-header">
-					<th>{% i18n "invoice-line-description" %}</th>
-					<th>{% i18n "invoice-line-quantity" %}</th>
-					<th>{% i18n "invoice-line-unit-price" %}</th>
-					<th>{% i18n "invoice-line-amount" %}</th>
-					<th>{% i18n "invoice-line-vat" %}</th>
-				</tr>
+				<thead>
+					<tr class="invoice-lines-header">
+						<th>{% i18n "invoice-line-description" %}</th>
+						<th>{% i18n "invoice-line-quantity" %}</th>
+						<th>{% i18n "invoice-line-unit-price" %}</th>
+						<th>{% i18n "invoice-line-amount" %}</th>
+						<th>{% i18n "invoice-line-vat" %}</th>
+					</tr>
+				</thead>
 				<tbody id="invoice-lines-vis">
 					{% for value in invoiceLines %}
 						<tr>
