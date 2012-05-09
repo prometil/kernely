@@ -16,7 +16,7 @@
 	<script type="text/javascript" src="/js/jquery.ui.datepicker-en-US.js"></script>
 	<script type="text/javascript" src="/js/jquery.ui.datepicker-fr-FR.js"></script>
 	<script type="text/javascript" src="/js/kernely.ui.js"></script>
-	
+	<script type="text/javascript" src="/js/menu.js"></script>
 	{% block javascript %}
 		<!-- additional javascript-->
 	
@@ -66,12 +66,24 @@
 			<div id="header">
 				<div id="menu">
 					<div id="title"></div>
+					<ul class="topnav">
 					
-					{% for c in menu %}
-						<a class="menu_item" href="{{c.link}}">{{c.name}}</a>
+					
+					{% for menu in menu %}
+						<li>
+							<a class="menu_item" href="#">{{menu.name}}</a>
+							
+							<ul class="subnav">
+							{% for item in menu.items %}
+								<li>
+									<a class="sub_menu_item" href="{{item.link}}">{% i18n item.nameKey %}</a>
+								</li>
+							{% endfor %}
+							</ul>
+						</li>
 					{% endfor %}
 					{% if admin %}
-						<a class="menu_item" href="/admin">{% i18n "administration" %}</a>
+						<a class="admin" href="/admin">{% i18n "administration" %}</a>
 					{% endif %}
 					
 				</div>

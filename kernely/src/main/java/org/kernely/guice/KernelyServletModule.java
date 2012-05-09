@@ -26,10 +26,13 @@ import org.apache.commons.configuration.AbstractConfiguration;
 import org.apache.commons.configuration.CombinedConfiguration;
 import org.eclipse.jetty.servlet.DefaultServlet;
 import org.kernely.controller.AbstractController;
+import org.kernely.menu.MenuItem;
+import org.kernely.menu.MenuManager;
 import org.kernely.plugin.AbstractPlugin;
 import org.kernely.plugin.PluginManager;
 import org.kernely.resource.ResourceLocator;
 import org.kernely.servlet.MediaServlet;
+import org.kernely.template.SobaTemplateRenderer;
 import org.quartz.SchedulerFactory;
 import org.quartz.impl.StdSchedulerFactory;
 import org.slf4j.Logger;
@@ -57,17 +60,25 @@ public class KernelyServletModule extends JerseyServletModule {
 	@Override
 	protected void configureServlets() {
 
+		MenuManager menuManager = new MenuManager();
+		
 		// Bind all Jersey resources detected in plugins
 		for (AbstractPlugin plugin : PluginManager.getPlugins()) {
 			for (Class<? extends AbstractController> controllerClass : plugin.getControllers()) {
 				log.debug("Register controller {}", controllerClass);
 				bind(controllerClass);
+				
+			}
+			for(MenuItem item : plugin.getMenuItems()){
+				menuManager.add(plugin.getName(), item);
 			}
 		}
 		CombinedConfiguration configuration = PluginManager.getConfiguration();
 		bind(AbstractConfiguration.class).toInstance(configuration);
 		bind(ResourceLocator.class);
 		bind(PluginManager.class).toInstance(PluginManager.getInstance());
+		bind(MenuManager.class).toInstance(menuManager);
+		bind(SobaTemplateRenderer.class);
 		
 		
 		// persistence

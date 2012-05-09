@@ -34,6 +34,7 @@ import javax.ws.rs.core.Response;
 
 import org.apache.shiro.SecurityUtils;
 import org.kernely.controller.AbstractController;
+import org.kernely.menu.Menu;
 import org.kernely.stream.dto.StreamCommentCreationRequestDTO;
 import org.kernely.stream.dto.StreamDTO;
 import org.kernely.stream.dto.StreamMessageCreationRequestDTO;
@@ -67,9 +68,9 @@ public class StreamController extends AbstractController {
 	 */
 	@GET
 	@Produces( { MediaType.TEXT_HTML })
+	@Menu("stream")
 	public Response display() {
 		log.debug("Call to GET on streams");
-
 		return Response.ok(templateRenderer.render("templates/streams.html")).build();
 	}
 

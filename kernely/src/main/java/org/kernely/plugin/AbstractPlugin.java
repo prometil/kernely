@@ -19,6 +19,7 @@
  */
 package org.kernely.plugin;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -29,9 +30,14 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 import javax.annotation.PostConstruct;
+import javax.ws.rs.Path;
 
+import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.kernely.controller.AbstractController;
 import org.kernely.core.dto.AdminPageDTO;
+import org.kernely.menu.Menu;
+import org.kernely.menu.MenuItem;
+import org.kernely.menu.MenuManager;
 import org.kernely.migrator.Migration;
 import org.kernely.persistence.AbstractModel;
 import org.quartz.Job;
@@ -40,6 +46,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.inject.AbstractModule;
+import com.google.inject.Inject;
 import com.google.inject.Module;
 import com.google.inject.TypeLiteral;
 import com.google.inject.matcher.Matchers;
@@ -54,10 +61,9 @@ import com.google.inject.spi.TypeListener;
  * 
  */
 public abstract class AbstractPlugin extends AbstractModule {
-	
+
 	protected Logger log = LoggerFactory.getLogger(this.getClass());
-	
-	
+
 	protected Descriptor manifest;
 
 	// the controller list
@@ -77,14 +83,18 @@ public abstract class AbstractPlugin extends AbstractModule {
 
 	// the name of the abstract plugin
 	private List<String> menus;
-	
+
 	// the path of the plugin
 	private List<String> path;
+
+	// menu items
+	private List<MenuItem> menuItems = new ArrayList<MenuItem>();
 
 	/**
 	 * the constructor
 	 * 
-	 * @param pName the name of the plugin
+	 * @param pName
+	 *            the name of the plugin
 	 */
 	public AbstractPlugin() {
 		menus = new ArrayList<String>();
@@ -94,9 +104,7 @@ public abstract class AbstractPlugin extends AbstractModule {
 		adminPages = new ArrayList<AdminPageDTO>();
 		jobs = new HashMap<Class<? extends Job>, Trigger>();
 		migrations = new TreeSet<Migration>();
-		
-		
-		
+
 	}
 
 	/**
@@ -123,6 +131,7 @@ public abstract class AbstractPlugin extends AbstractModule {
 
 	/**
 	 * Register a new model.
+	 * 
 	 * @param model
 	 */
 	protected void registerModel(Class<? extends AbstractModel> model) {
@@ -131,32 +140,94 @@ public abstract class AbstractPlugin extends AbstractModule {
 	}
 
 	/**
-	 * register a new controller
+	 * register a new controller in the application, and look for menu.
+	 * 
 	 * @param controller
 	 */
 	protected void registerController(Class<? extends AbstractController> controller) {
+
+		// introspect all the class
+		Method[] methods = controller.getDeclaredMethods();
+		Annotation[] annotations = controller.getAnnotations();
+		Path prefixPath = null;
+		for (Annotation anno : annotations) {
+			if (Path.class.getName().equals(anno.annotationType().getName())) {
+				prefixPath = (Path) anno;
+			}
+		}
+
+		for (Method method : methods) {
+			Annotation[] annos = method.getAnnotations();
+			Menu menu = null;
+			Path path = null;
+			RequiresRoles roles = null;
+			for (Annotation anno : annos) {
+				if (Menu.class.getName().equals(anno.annotationType().getName())) {
+					menu = (Menu) anno;
+				}
+				if (Path.class.getName().equals(anno.annotationType().getName())) {
+					path = (Path) anno;
+				}
+				if (RequiresRoles.class.getName().equals(anno.annotationType().getName())) {
+					roles = (RequiresRoles) anno;
+				}
+			}
+			if ( menu != null && (path != null || prefixPath != null)) {
+				String link = "";
+				if(prefixPath != null){
+					link = prefixPath.value();
+				}
+				if(path != null){
+					link = link+"/"+path.value();
+				}
+			
+				if (roles != null) {
+					log.debug("Add menu {} -> {}", menu.value(), link);
+					menuItems.add(new MenuItem(menu.value(), link, roles.value()));
+				} else {
+					log.debug("Add menu {} -> {}", menu.value(), link);
+					menuItems.add(new MenuItem(menu.value(), link));
+				}
+			}
+
+		}
 		controllers.add(controller);
 	}
-	
+
+	/**
+	 * Register a menu
+	 * 
+	 * @param key
+	 *            the composed key (i.e key1/key2/key3)
+	 * @param path
+	 */
+	protected void registerMenu(String key, String path) {
+
+	}
+
 	/**
 	 * Register a new path
-	 * @param String path
+	 * 
+	 * @param String
+	 *            path
 	 */
-	protected void registerPath(String path){
+	protected void registerPath(String path) {
 		this.path.add(path);
 	}
-	
+
 	/**
 	 * Register a new name
-	 * @param String name
+	 * 
+	 * @param String
+	 *            name
 	 */
-	protected void registerName(String name){
+	protected void registerName(String name) {
 		this.menus.add(name);
 	}
-	
 
 	/**
 	 * return the module
+	 * 
 	 * @return
 	 */
 	public Module getModule() {
@@ -233,22 +304,19 @@ public abstract class AbstractPlugin extends AbstractModule {
 		return jobs;
 	}
 
-	
 	protected void configure() {
 		// do nothing
 		bindListener(Matchers.any(), new TypeListener() {
-		    public <I> void hear(final TypeLiteral<I> typeLiteral, TypeEncounter<I> typeEncounter) {
-		        typeEncounter.register(new InjectionListener<I>() {
-		            public void afterInjection(Object i) {
-		                Object m = (Object) i;
-		               
-		                //test if method has a post construct annotation
-		                for (Method method : m.getClass().getMethods())
-		                {
-		                    if (method.isAnnotationPresent(PostConstruct.class))
-		                    { 
-		                    	log.trace("Exectute post construct method on class {}-> method {}", m.getClass(),method.getName());
-		                        try {
+			public <I> void hear(final TypeLiteral<I> typeLiteral, TypeEncounter<I> typeEncounter) {
+				typeEncounter.register(new InjectionListener<I>() {
+					public void afterInjection(Object i) {
+						Object m = (Object) i;
+
+						// test if method has a post construct annotation
+						for (Method method : m.getClass().getMethods()) {
+							if (method.isAnnotationPresent(PostConstruct.class)) {
+								log.trace("Exectute post construct method on class {}-> method {}", m.getClass(), method.getName());
+								try {
 									method.invoke(m);
 								} catch (IllegalArgumentException e) {
 									log.debug("Cannot execute post construct method");
@@ -257,29 +325,29 @@ public abstract class AbstractPlugin extends AbstractModule {
 								} catch (InvocationTargetException e) {
 									log.debug("Cannot access method {}", method);
 								}
-		                    }
-		                }
-		            }
-		        });
-		    }
+							}
+						}
+					}
+				});
+			}
 		});
 		configurePlugin();
 	}
-	
+
 	public abstract void configurePlugin();
-	
 
 	/**
 	 * Register the migration script
+	 * 
 	 * @param migration
 	 */
 	protected void registerMigration(Migration migration) {
 		migrations.add(migration);
 	}
 
-
 	/**
 	 * Return all the migration script
+	 * 
 	 * @return a set of Migration
 	 */
 	public SortedSet<Migration> getMigrations() {
@@ -295,11 +363,17 @@ public abstract class AbstractPlugin extends AbstractModule {
 
 	/**
 	 * Set the plugin manifest
-	 * @param m the manifest to set
+	 * 
+	 * @param m
+	 *            the manifest to set
 	 */
 	public void setManifest(Descriptor m) {
 		manifest = m;
-		
+
+	}
+
+	public List<MenuItem> getMenuItems() {
+		return menuItems;
 	}
 
 }

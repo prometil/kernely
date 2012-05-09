@@ -23,6 +23,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -61,12 +62,13 @@ import com.google.inject.persist.Transactional;
 public class UserService extends AbstractService {
 
 	private static Logger log = LoggerFactory.getLogger(UserService.class);
-	
+
 	@Inject
 	private EventBus eventBus;
 
 	@Inject
 	private PasswordService passwordService;
+
 	/**
 	 * Create a new user in database.
 	 * 
@@ -97,8 +99,6 @@ public class UserService extends AbstractService {
 
 		User user = new User();
 		user.setUsername(request.username.trim());
-
-		
 
 		// Retrieve the role User, automatically given to a user.
 
@@ -132,7 +132,8 @@ public class UserService extends AbstractService {
 	}
 
 	/**
-	 * Update the profile of the specific user with the informations contained in the DTO
+	 * Update the profile of the specific user with the informations contained
+	 * in the DTO
 	 * 
 	 * @param u
 	 *            The DTO containing all informations about the user to update
@@ -177,16 +178,17 @@ public class UserService extends AbstractService {
 
 	/**
 	 * Get the user model from his username
+	 * 
 	 * @param username
 	 * @return user model
 	 */
 	@Transactional
-	public User getUserByUsername(String username){
+	public User getUserByUsername(String username) {
 		Query query = em.get().createQuery("SELECT u FROM User u WHERE username=:username");
 		query.setParameter("username", username);
 		return (User) query.getSingleResult();
 	}
-	
+
 	/**
 	 * Lock the user who has the id 'id'
 	 * 
@@ -202,7 +204,7 @@ public class UserService extends AbstractService {
 		ule.setUser(u);
 		eventBus.post(ule);
 	}
-	
+
 	/**
 	 * Update an user from the administration
 	 * 
@@ -234,7 +236,7 @@ public class UserService extends AbstractService {
 		}
 
 		User u = em.get().find(User.class, ud.getUser().getId());
-		
+
 		ud.setFirstname(request.firstname);
 		ud.setName(request.lastname);
 		ud.setHire(request.hire);
@@ -249,13 +251,13 @@ public class UserService extends AbstractService {
 		if (!request.roles.isEmpty() && (!(request.roles.get(0).name == null))) {
 			for (RoleDTO r : request.roles) {
 				roles.add(em.get().find(Role.class, r.id));
-				log.debug("User {} has now role {}",request.username,r.id);
+				log.debug("User {} has now role {}", request.username, r.id);
 			}
 		}
 		// Add the user Role.
 		roles.add(roleUser);
 		u.setRoles(roles);
-		
+
 		em.get().merge(u);
 	}
 
@@ -266,7 +268,7 @@ public class UserService extends AbstractService {
 	 */
 	@SuppressWarnings("unchecked")
 	@Transactional
-	public List<UserDTO> getAllUsers() {	
+	public List<UserDTO> getAllUsers() {
 		Query query = em.get().createQuery("SELECT e FROM User e");
 		List<User> collection = (List<User>) query.getResultList();
 		List<UserDTO> dtos = new ArrayList<UserDTO>();
@@ -275,7 +277,7 @@ public class UserService extends AbstractService {
 		}
 		return dtos;
 	}
-	
+
 	/**
 	 * Gets the lists of all clients contained in the database.
 	 * 
@@ -283,13 +285,13 @@ public class UserService extends AbstractService {
 	 */
 	@SuppressWarnings("unchecked")
 	@Transactional
-	public List<UserDetailsDTO> getAllClients() {			
+	public List<UserDetailsDTO> getAllClients() {
 		Query query = em.get().createQuery("SELECT e FROM User e");
 		List<User> collection = (List<User>) query.getResultList();
 		List<UserDTO> dtos = new ArrayList<UserDTO>();
 		for (User user : collection) {
-			for(Role role : user.getAllRoles()){
-				if (role.getName().equals(Role.ROLE_CLIENT)){
+			for (Role role : user.getAllRoles()) {
+				if (role.getName().equals(Role.ROLE_CLIENT)) {
 					dtos.add(new UserDTO(user.getUsername(), user.isLocked(), user.getId()));
 				}
 			}
@@ -300,9 +302,7 @@ public class UserService extends AbstractService {
 		}
 		return userDetailsDTO;
 	}
-	
-	
-	
+
 	/**
 	 * Gets the lists of all users contained in the database.
 	 * 
@@ -338,7 +338,7 @@ public class UserService extends AbstractService {
 		UserDetails ud = (UserDetails) query.getSingleResult();
 		return new UserDetailsDTO(ud);
 	}
-	
+
 	/**
 	 * Get details by id.
 	 * 
@@ -383,7 +383,7 @@ public class UserService extends AbstractService {
 		}
 		return dtos;
 	}
-	
+
 	/**
 	 * Get all Details about all users enabled in the database
 	 * 
@@ -404,7 +404,8 @@ public class UserService extends AbstractService {
 	/**
 	 * Verify if the current user has the role of administrator.
 	 * 
-	 * @return true if the current user has the role of administrator, false otherwise.
+	 * @return true if the current user has the role of administrator, false
+	 *         otherwise.
 	 */
 	public boolean currentUserIsAdministrator() {
 		return SecurityUtils.getSubject().hasRole(Role.ROLE_ADMINISTRATOR);
@@ -412,32 +413,37 @@ public class UserService extends AbstractService {
 
 	/**
 	 * Verify if the current user has the role of human resource
-	 * @return true if the current user has the role of human resource, false otherwise.
+	 * 
+	 * @return true if the current user has the role of human resource, false
+	 *         otherwise.
 	 */
-	public boolean currentUserIsHumanResource(){
-		return SecurityUtils.getSubject().hasRole(Role.ROLE_HUMANRESOURCE); 
+	public boolean currentUserIsHumanResource() {
+		return SecurityUtils.getSubject().hasRole(Role.ROLE_HUMANRESOURCE);
 	}
-	
+
 	/**
 	 * Verify if the current user has the role of project manager
-	 * @return true if the current user has the role of project manager, false otherwise.
+	 * 
+	 * @return true if the current user has the role of project manager, false
+	 *         otherwise.
 	 */
-	public boolean currentUserIsProjectManager(){
-		return SecurityUtils.getSubject().hasRole(Role.ROLE_PROJECTMANAGER); 
+	public boolean currentUserIsProjectManager() {
+		return SecurityUtils.getSubject().hasRole(Role.ROLE_PROJECTMANAGER);
 	}
-	
+
 	/**
 	 * Verify if the current user has the role of client
+	 * 
 	 * @return true if the current user has the role of client, false otherwise.
 	 */
-	public boolean currentUserIsClient(){
-		return SecurityUtils.getSubject().hasRole(Role.ROLE_CLIENT); 
+	public boolean currentUserIsClient() {
+		return SecurityUtils.getSubject().hasRole(Role.ROLE_CLIENT);
 	}
-	
-	public boolean currentUserHasRole(String role){
+
+	public boolean currentUserHasRole(String role) {
 		return SecurityUtils.getSubject().hasRole(role);
 	}
-	
+
 	/**
 	 * Retrieve the list of RoleDTO from an userdetails id
 	 * 
@@ -462,47 +468,51 @@ public class UserService extends AbstractService {
 		}
 		return dtos;
 	}
-	
+
 	/**
 	 * Adds a role with the given name to the user with the given id
-	 * @param userId Id of the concerned user
-	 * @param role Name of the concerned role
+	 * 
+	 * @param userId
+	 *            Id of the concerned user
+	 * @param role
+	 *            Name of the concerned role
 	 */
 	@Transactional
-	public void addRoleToUser(long userId, String role){
+	public void addRoleToUser(long userId, String role) {
 		User user = em.get().find(User.class, userId);
 		Query roleQuery = em.get().createQuery("SELECT r FROM Role r WHERE name = :roleName");
 		roleQuery.setParameter("roleName", role);
-		try{
-			Role r = (Role)roleQuery.getSingleResult();
+		try {
+			Role r = (Role) roleQuery.getSingleResult();
 			Set<Role> roles = user.getRoles();
 			roles.add(r);
 			user.setRoles(roles);
 			em.get().merge(user);
-		}
-		catch(NoResultException nre){
+		} catch (NoResultException nre) {
 			log.debug("There is no role existing with the name {} !", role);
 		}
 	}
-	
+
 	/**
 	 * Removes the role with the given name to the user with the given id
-	 * @param userId Id of the concerned user
-	 * @param role Name of the concerned role
+	 * 
+	 * @param userId
+	 *            Id of the concerned user
+	 * @param role
+	 *            Name of the concerned role
 	 */
 	@Transactional
-	public void removeRoleToUser(long userId, String role){
+	public void removeRoleToUser(long userId, String role) {
 		User user = em.get().find(User.class, userId);
 		Query roleQuery = em.get().createQuery("SELECT r FROM Role r WHERE name = :roleName");
 		roleQuery.setParameter("roleName", role);
-		try{
-			Role r = (Role)roleQuery.getSingleResult();
+		try {
+			Role r = (Role) roleQuery.getSingleResult();
 			Set<Role> roles = user.getRoles();
 			roles.remove(r);
 			user.setRoles(roles);
 			em.get().merge(user);
-		}
-		catch(NoResultException nre){
+		} catch (NoResultException nre) {
 			log.debug("There is no role existing with the name {} !", role);
 		}
 	}
@@ -510,7 +520,8 @@ public class UserService extends AbstractService {
 	/**
 	 * Get all users managed by a manager.
 	 * 
-	 * @param The username of the manager
+	 * @param The
+	 *            username of the manager
 	 * @return the users
 	 */
 	@Transactional
@@ -535,17 +546,18 @@ public class UserService extends AbstractService {
 	/**
 	 * Get the manager and his users
 	 * 
-	 * @param the id of the manager to get
+	 * @param the
+	 *            id of the manager to get
 	 * @return The manager DTO, containing his users
 	 */
-	public ManagerDTO getManager(long id){
+	public ManagerDTO getManager(long id) {
 		Query query = em.get().createQuery("Select u FROM User u WHERE u.id=:id");
 		query.setParameter("id", id);
 		User m = (User) query.getSingleResult();
 		ManagerDTO manager = new ManagerDTO(id, m.getUsername(), this.getUsers(m.getUsername()));
 		return manager;
 	}
-	
+
 	/**
 	 * Update all user of the list with the new manager
 	 * 
@@ -622,7 +634,7 @@ public class UserService extends AbstractService {
 			em.get().merge(user);
 		}
 	}
-	
+
 	/**
 	 * Delete an existing manager in database
 	 * 
@@ -684,19 +696,21 @@ public class UserService extends AbstractService {
 		}
 		return false;
 	}
-	
+
 	/**
-	 * Retrieve all users managed by the current user authorized to access the application
+	 * Retrieve all users managed by the current user authorized to access the
+	 * application
+	 * 
 	 * @return A set of DTO according to all user authorized managed
 	 */
 	@Transactional
-	public Set<UserDTO> getUsersAuthorizedManaged(){
-		if(!this.isManager(this.getAuthenticatedUserModel().getUsername())){        
+	public Set<UserDTO> getUsersAuthorizedManaged() {
+		if (!this.isManager(this.getAuthenticatedUserModel().getUsername())) {
 			throw new UnauthorizedException("Only managers can access to this functionality!");
 		}
 		Set<UserDTO> managedCleaned = new HashSet<UserDTO>();
-		for(User u : this.getAuthenticatedUserModel().getUsers()){
-			if(!u.isLocked()){
+		for (User u : this.getAuthenticatedUserModel().getUsers()) {
+			if (!u.isLocked()) {
 				managedCleaned.add(new UserDTO(u));
 			}
 		}
@@ -716,14 +730,34 @@ public class UserService extends AbstractService {
 		query.setParameter("username", username);
 
 		List<User> managers = (List<User>) query.getResultList();
-		
+
 		List<UserDTO> managersDTO = new ArrayList<UserDTO>();
-		
-		for (User manager : managers){
+
+		for (User manager : managers) {
 			managersDTO.add(new UserDTO(manager));
 		}
-		
+
 		return managersDTO;
+	}
+
+	/**
+	 * Return all the roles of the current user
+	 * @return a non-null set of roles, which coul be empty
+	 */
+	@SuppressWarnings("unchecked")
+	public Set<String> getCurrentUserRoles() {
+		if(SecurityUtils.getSubject().getPrincipal() == null){
+			return Collections.EMPTY_SET;
+		}
+		Query query = em.get().createQuery("Select u FROM User u WHERE u.username=:name");
+		query.setParameter("name", SecurityUtils.getSubject().getPrincipal());
+		User user = (User) query.getSingleResult();
+
+		Set<String> roles = new HashSet<String>();
+		for (Role role : user.getAllRoles()) {
+			roles.add(role.getName());
+		}
+		return roles;
 	}
 
 }

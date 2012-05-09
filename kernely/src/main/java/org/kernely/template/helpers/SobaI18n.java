@@ -24,6 +24,7 @@ import soba.SobaEngine;
 import soba.context.Context;
 import soba.extension.Extension;
 import soba.node.ExtensionNode;
+import soba.node.SimpleAttributeAccess;
 
 /**
  * @author g.breton
@@ -35,8 +36,7 @@ public class SobaI18n extends Extension {
 
 	@Inject
 	private AbstractConfiguration configuration;
-	
-	
+
 	@Inject
 	private PluginManager pluginManager;
 
@@ -52,31 +52,39 @@ public class SobaI18n extends Extension {
 
 	@PostConstruct
 	public void construct() {
-	
+
 		String lang = configuration.getString("locale.lang");
 		String country = configuration.getString("locale.country");
-		
+
 		List<AbstractPlugin> plugins = pluginManager.getPlugins();
 		List<String> names = new ArrayList<String>();
-		for (AbstractPlugin plugin : plugins){
+		for (AbstractPlugin plugin : plugins) {
 			names.add(plugin.getName());
 		}
-		
+
 		Locale locale = new Locale(lang, country);
 		messages = new Messages(locale, names);
 	}
 
 	@Override
-	public void execute(ExtensionNode node, SobaEngine engine, Writer writer,
-			Context context) {
+	public void execute(ExtensionNode node, SobaEngine engine, Writer writer, Context context) {
+
 		if (node.parameters().size() > 0) {
-			String key = (String) node.parameters().head();
+			String key = "";
+			if (node.parameters().head() instanceof String) {
+				key = (String) node.parameters().head();
+			} else if (node.parameters().head() instanceof SimpleAttributeAccess) {
+				SimpleAttributeAccess sa = (SimpleAttributeAccess) node.parameters().head();
+				key = context.getAttributeVariable(sa.name(), sa.attributeName()).toString();
+
+			}
 			try {
-				log.trace("i18n value for {} is {}", key,messages.getKey(key));
+				log.trace("i18n value for {} is {}", key, messages.getKey(key));
 				writer.write(messages.getKey(key));
 			} catch (IOException e) {
 				log.error("Cannot write on writer", e);
 			}
+
 		}
 
 	}

@@ -15,6 +15,9 @@ import javax.annotation.PostConstruct;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 import org.kernely.core.service.UserService;
+import org.kernely.menu.MenuItem;
+import org.kernely.menu.MenuManager;
+import org.kernely.menu.PluginMenu;
 import org.kernely.plugin.AbstractPlugin;
 import org.kernely.plugin.PluginManager;
 import org.kernely.template.helpers.SobaI18n;
@@ -36,11 +39,15 @@ public class SobaTemplateRenderer {
 
 	@Inject
 	private UserService userService;
+	
 	@Inject
 	private PluginManager pluginsLoader;
 	
 	@Inject
 	private SobaI18n i18n;
+	
+	@Inject
+	private MenuManager menuManager;
 	
 	@PostConstruct
 	public void configure(){
@@ -95,20 +102,10 @@ public class SobaTemplateRenderer {
 	 * @return the binding enhanced
 	 */
 	private Map<String, Object> enhanceBinding(Map<String, Object> binding) {
-		ArrayList<Menu> menus = new ArrayList<Menu>();
-		for (AbstractPlugin plugin : pluginsLoader.getPlugins()) {
-			if (plugin.getPath() != null) {
-				List<String> path = plugin.getPath();
-				int i = 0;
-				for (String pPath : path) {
-					if (pPath != null) {
-
-							menus.add(new Menu(plugin.getMenus().get(i), pPath));
-							i++;
-					}
-				}
-			}
-		}
+		
+		
+		List<PluginMenu> menus = menuManager.generateMenu(userService.getCurrentUserRoles());
+		
 		binding.put("menu", menus);
 		if (userService.currentUserIsAdministrator()) {
 			binding.put("admin", true);
@@ -120,11 +117,6 @@ public class SobaTemplateRenderer {
 			binding.put("currentUser", userService.getUserDetails(userService.getAuthenticatedUserDTO().username));
 			binding.put("currentUserLogin", userService.getAuthenticatedUserDTO().username);
 		}
-		/*
-		 * String lang = configuration.getString("locale.lang"); String country
-		 * = configuration.getString("locale.country"); binding.put("i18n", new
-		 * I18n(new Locale(lang,country)));
-		 */
 		return binding;
 	}
 
