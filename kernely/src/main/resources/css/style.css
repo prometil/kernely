@@ -76,7 +76,7 @@ html {
 	z-index:1;
 	border:1px solid #a0a2a3;
 	background-color:#f6f6f6;
-	float:left;	
+	float:left;
 	height:auto;
 	min-height:20px;
 	margin:0 auto;
@@ -93,7 +93,7 @@ h1 {
 }
 
 .button-bar{
-	padding-top:10px;	
+	padding-top:10px;
 }
 
 #container_footer{
@@ -154,28 +154,105 @@ div#menu {
 }
 
 a.menu_item, a.menu_item_selected{
-	height:40px;
-	width:95px;
-	text-align:center;
+	height:35px;
+	width:105px;
 	float:left;
 	color:#FFF;
-	padding-top:10px;
+	padding-top:15px;
 	cursor:pointer;
+	padding-right:10px;
+	padding-left:10px;
+	background: url(/images/icons/arrow.png) no-repeat 100px 22px;
 }
 
+a.admin{
+	height:35px;
+	width:105px;
+	float:left;
+	color:#FFF;
+	padding-top:15px;
+	cursor:pointer;
+	padding-right:10px;
+	padding-left:10px;
+}
+a.admin:hover{
+	background-color:#000;
+}
 a.menu_item:hover{
 	background-color:#000;
+	background: #000 url(/images/icons/arrow_hover.png) no-repeat 100px 22px;
 }
 
 a.menu_item_selected{
 	background-color:#000;
+}
+a.menu_item:hover .{
+	background-color:#000;
+	background: #000 url(/images/icons/arrow_hover.png) no-repeat 5px center;
+}
+a.sub_menu_item{
+	padding-top:10px;
+	padding-left:10px;
+	padding-bottom:10px;
+}
+a.sub_menu_item a{
+	padding-top:10px;
+	padding-left:10px;
+	padding-bottom:10px;
+	display:block;
+}
+/* menu*/
+
+ul.topnav {
+	list-style: none;
+	padding: 0 20px;
+	margin: 0;
+	float: left;
+	width: 920px;
+	background: #222;
+	background: url(topnav_bg.gif) repeat-x;
+}
+ul.topnav li {
+	float: left;
+	margin: 0;
+	padding: 0 15px 0 0;
+	position: relative; /*--Declare X and Y axis base for sub navigation--*/
+}
+ul.topnav li a{
+
+	color: #fff;
+	display: block;
+	text-decoration: none;
+	float: left;
+}
+
+
+ul.topnav li span.subhover {background-position: center bottom; cursor: pointer;} /*--Hover effect for trigger--*/
+
+ul.topnav li ul.subnav {
+	list-style: none;
+	position: absolute; /*--Important - Keeps subnav from affecting main navigation flow--*/
+	left: 0; top: 50px;
+	background: #333;
+	margin: 0; padding: 0;
+	display: none;
+	float: left;
+	width: 170px;
+	border: 1px solid #111;
+}
+ul.topnav li ul.subnav li{
+	margin: 0; padding: 0;
+	border-top: 1px solid #252525; /*--Create bevel effect--*/
+	border-bottom: 1px solid #2D2D2D; /*--Create bevel effect--*/
+	clear: both;
+	width: 170px;
 }
 
 /* header profile */
 div#menu_header_profile {
 	height: 50px;
    	position: relative;
-	float:right; 
+	float:right;
    	color:#FFF;
    	font-size:10px;
 }
@@ -488,6 +565,21 @@ table.kernely_table th{
 }
 
 /* Dialogs */
+fieldset{
+	padding: 10px 0 10px 0;
+	border:none;
+}
+
+legend{
+	font-weight: bold;
+	color: black;
+}
+
+.ui-widget-overlay {
+	background: #666;
+	opacity: .50;
+}
+
 .ui-widget-header{
 	background:#e4e4e4;
 	border: 0px;
@@ -562,3 +654,8 @@ div.info-notification{
 	font-weight: normal;
 	font-style: italic;
 }
+
+
+
+
+

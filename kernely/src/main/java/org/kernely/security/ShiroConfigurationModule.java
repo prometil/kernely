@@ -34,8 +34,11 @@ public class ShiroConfigurationModule extends ShiroWebModule {
 		bindRealm().to(KernelyRealm.class);
 		bindConstant().annotatedWith(Names.named("shiro.loginUrl")).to(
 				"/user/login");
-		this.addFilterChain("/favicon.ico", ANON);
+		addFilterChain("/images/favicon.ico", ANON);
+		addFilterChain("/images/Kernely.png", ANON);
 		addFilterChain("/css/login.css", ANON);
+		addFilterChain("/css/style.css", ANON);
+		addFilterChain("/css/style.css", ANON);
 		addFilterChain("/user/login", AUTHC);
 		addFilterChain("/**", USER);
 		

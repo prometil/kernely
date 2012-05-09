@@ -40,11 +40,14 @@ import javax.ws.rs.core.Response;
 import org.apache.commons.configuration.AbstractConfiguration;
 import org.apache.commons.io.FileUtils;
 import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.kernely.controller.AbstractController;
 import org.kernely.core.dto.UserDTO;
 import org.kernely.core.dto.UserDetailsDTO;
 import org.kernely.core.dto.UserDetailsUpdateRequestDTO;
+import org.kernely.core.model.Role;
 import org.kernely.core.service.UserService;
+import org.kernely.menu.Menu;
 import org.kernely.template.SobaTemplateRenderer;
 
 import com.google.inject.Inject;
@@ -89,6 +92,7 @@ public class UserController extends AbstractController {
 	@GET
 	@Path("/login")
 	@Produces( { MediaType.TEXT_HTML })
+	
 	public Response login() {
 		Map<String,Object> map = new HashMap<String,Object>();
 		return Response.ok(templateRenderer.render("templates/login.html",map)).build();
@@ -102,6 +106,7 @@ public class UserController extends AbstractController {
 	@POST
 	@Path("/login")
 	@Produces( { MediaType.TEXT_HTML })
+	@RequiresRoles(Role.ROLE_USER)
 	public Response postLogin() {
 		log.info("Login attempt : is authenticated {}", SecurityUtils.getSubject().isAuthenticated());
 		return Response.ok(templateRenderer.render("templates/login.html")).build();
@@ -157,6 +162,7 @@ public class UserController extends AbstractController {
 	 */
 	@POST
 	@Path("/{login}/profile/update")
+
 	public UserDetailsDTO editProfil(UserDetailsUpdateRequestDTO user) {
 
 		UserDetailsDTO ud = userService.getUserDetails(userService.getAuthenticatedUserDTO().username);

@@ -105,6 +105,7 @@ AppTimeSheetMonth = (function($){
 		rowsTotals: null,
 		columnsTotals: null,
 		calendarIndex: null,
+		projectsId: null,
 		
 		initialize: function(data,calendarIndex){
 			this.calendarIndex = calendarIndex;
@@ -149,7 +150,7 @@ AppTimeSheetMonth = (function($){
 				}
 			}
 			this.columnsTotals[index] = columnTotal;
-
+			
 			// Actualize the row total
 			allProjectRows[projectId].actualizeTotal(rowTotal);
 
@@ -164,14 +165,26 @@ AppTimeSheetMonth = (function($){
 		calculateAllTotals: function(){
 			var allTotal = 0;
 			var atLeastOneProject = false;
-			for (var project in allDayCells){
-				atLeastOneProject = true;
-				if (allDayCells[project] != null){
-					for (var i = 0; i < 7; i++){
-						allTotal += this.calculateTotal(project,i);
+			
+			if (! $.isArray(this.data.projectsId) && this.data.projectsId != null){
+				var array = new Array();
+				array.push(this.data.projectsId);
+				this.data.projectsId = array;
+			}
+			
+			if (this.data.projectsId != null){
+				var i;
+				for (i = 0; i < this.data.projectsId.length ; i++){
+					var projectId = this.data.projectsId[i];
+					atLeastOneProject = true;
+					if (allDayCells[projectId] != null){
+						for (var j = 0; j < 7; j++){
+							allTotal += this.calculateTotal(projectId,i);
+						}
 					}
 				}
 			}
+			
 			if (! atLeastOneProject){
 				// Set all totals to 0
 				for (var i = 0; i < 8 ; i++){
@@ -402,8 +415,6 @@ AppTimeSheetMonth = (function($){
 			// The id of the model of days are given in parameter
 			this.days = days;
 			this.calendarIndex = calendarIndex;
-			$(this.el).css("background-color", "#FAB600");
-			
 		},
 		
 		setTotals: function(){

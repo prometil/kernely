@@ -88,7 +88,7 @@ public class PluginManager {
 	/**
 	 * Updates the class path with the plugins found in the plugins directory 
 	 */
-	@SuppressWarnings("rawtypes")
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private void updateClasspath() {
 		String pluginPath = configuration.getString("plugins.directory");
 		File pluginsDir = new File(pluginPath);
@@ -102,14 +102,13 @@ public class PluginManager {
 		String[] pluginsDirectories = pluginsDir.list();
 		try {
 			URLClassLoader urlClassLoader = (URLClassLoader) ClassLoader.getSystemClassLoader();
-			
 			Class urlClass = URLClassLoader.class;
 			Method method = urlClass.getDeclaredMethod("addURL", new Class[] { URL.class });
 			method.setAccessible(true);
 			for (String path : pluginsDirectories) {
 				File file = new File(pluginPath+File.separator+path);
 				log.debug("Looking for jars in {}", file);
-				if(file.isDirectory()){
+				if(file.isDirectory() && !file.isHidden()){
 					IOFileFilter filter = new SuffixFileFilter(".jar");
 					Collection<File> listFiles = FileUtils.listFiles(file, filter, DirectoryFileFilter.INSTANCE);
 					for (File jar : listFiles) {
@@ -126,11 +125,6 @@ public class PluginManager {
 						}
 					}
 				}
-				else{
-					log.debug("Not a directory dude!");
-				}
-				
-
 			}
 		} catch (IllegalArgumentException e) {
 			log.error("Classpath udpate failed, api change ?", e);
@@ -162,13 +156,9 @@ public class PluginManager {
 	@SuppressWarnings("unchecked")
 	private List<AbstractPlugin> findPlugins() {
 		List<AbstractPlugin> plugins = new ArrayList<AbstractPlugin>();
-
 		ObjectMapper mapper = new ObjectMapper();
-	
 		// add core plugin
-
 		CorePlugin corePlugin = new CorePlugin();
-
 		log.info("Loading plugin {}-{}", corePlugin.getName(), corePlugin.getVersion());
 		plugins.add(corePlugin);
 
@@ -203,24 +193,28 @@ public class PluginManager {
 								plugin.setManifest(m);
 								plugins.add(plugin);
 							} catch (NoSuchMethodException e1) {
+								e1.printStackTrace();
 								log.error("Cannot find contructor for [{}]", m.name);
 							} catch (IllegalArgumentException e) {
+								e.printStackTrace();
 								log.error("Cannot call contructor for [{}]", m.name);
 							} catch (SecurityException e) {
+								e.printStackTrace();
 								log.error("Cannot call contructor for [{}]", m.name);
 							} catch (InstantiationException e) {
+								e.printStackTrace();
 								log.error("Cannot call contructor for [{}]", m.name);
 							} catch (IllegalAccessException e) {
+								e.printStackTrace();
 								log.error("Cannot call contructor for [{}]", m.name);
 							} catch (InvocationTargetException e) {
+								e.printStackTrace();
 								log.error("Cannot call contructor for [{}]", m.name);
 							}
 
 						} catch (ClassNotFoundException e2) {
 							log.error("Cannot find class [{}]", pluginClassName);
 						}
-
-						// plugins.put(plugin.name(), plugin);
 						for (Map.Entry<String, Object> entry : pluginData.entrySet()) {
 							if (entry.getKey().equals("configuration")) {
 								configuration.addConfiguration(getConfiguration((Map<String, Object>) entry.getValue()));

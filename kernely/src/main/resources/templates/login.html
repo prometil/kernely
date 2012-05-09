@@ -1,31 +1,18 @@
 <html>
 	<head>
-	<link rel="stylesheet" type="text/css" href="/css/login.css"/>	
+	<link rel="stylesheet" type="text/css" href="/css/style.css"/>	
+	<link rel="stylesheet" type="text/css" href="/css/login.css"/>
+	<link rel="icon" type="image/png" href="/images/favicon.ico" />
 	</head>
 	<body>
-	<div id="header" >
-		<div id="logo">{% i18n "title" %}</div>
-	
-	</div>
-	
-	<div id="space">
-	
-	</div>
-	<div id="information">
-		
-	</div>
-	
 	<div id="login">
+		<img id="logo" src="/images/Kernely.png" alt="Kernely"/>
 		<form action="" method="POST">
-			{% i18n "connection" %}<br/>
-			<p><input name="username" type="text" placeholder="{% i18n "username" %}"/></p>
-			<p><input name="password" type="password"  placeholder="{% i18n "password" %}"/></p>
-			<div id="connection"> 
-				<input type="submit" value="{% i18n "login" %}"/>
-			</div> 
-			<div id="remember">
-			<input type="checkbox" name="rememberMe" value="true"/>
-				{% i18n "remember_me" %}?<br/>
+			<input class="kernely_input" name="username" type="text" placeholder="{% i18n "username" %}"/>
+			<input class="kernely_input" name="password" type="password"  placeholder="{% i18n "password" %}"/>
+			<br/><input type="checkbox" name="rememberMe" value="true"/> {% i18n "remember_me" %}?
+			<div class="dialog-buttons-container" id="connection">
+				<input class="button_ok" type="submit" value="{% i18n "login" %}"/>
 			</div>
 		</form>
 	</div>
