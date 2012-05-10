@@ -24,27 +24,6 @@ AppHolidayAdmin = (function($){
 	var selectorView = null;
 	var monthSelected = 0;
 	var yearSelected = 0;
-	var app_router = null;
-	
-	Router = Backbone.Router.extend({
-
-		routes: {
-			"/month/:month/:year":  "visualize",
-			"*actions" : "defaultRoute"
-		},
-		
-		initialize: function() {
-		},
-
-		visualize: function(month, year) {
-			tableView.change(month, year);
-		},
-		
-		defaultRoute: function(){
-			tableView.change(0, 0);
-		}
-	})
-	
 	
 	HolidaySummaryLineView = Backbone.View.extend({
 		tagName: "tr",
@@ -126,7 +105,6 @@ AppHolidayAdmin = (function($){
 				success: function(data){
 					if (data != null){
 						// Build each table
-						console.log("Building tables...");
 						// Create array from single profile summary
 						var view;
 						if (! $.isArray(data.holidayProfilesSummaryDTO)){
@@ -149,7 +127,6 @@ AppHolidayAdmin = (function($){
 							});
 						}
 						
-		    			selectorView.actualize();
 					}
 				}
 			});
@@ -157,7 +134,7 @@ AppHolidayAdmin = (function($){
 		change: function(month, year){
 			monthSelected = month;
 			yearSelected = year;
-			this.reload();
+			tableView.reload();
 		},
 		render: function(){
 			return this;
@@ -248,49 +225,14 @@ AppHolidayAdmin = (function($){
 	
 	HolidayMonthSelectorView = Backbone.View.extend({
 		el:"#monthSelector",
-		events:{
-			"click .minusMonth" : "minusMonth",
-			"click .plusMonth" : "plusMonth",
-		},
-		
-		app_router:null,
-		
-		initialize: function(router){
-			app_router = router;
-		},
 		render: function(){
-			var template = $("#calendarSelector").html();
-			var monthTemp = monthSelected+1;
-			var template2 = $("#"+ monthTemp +"-month-template").html();
-			var view = {month : template2, year: yearSelected};
-			var html = Mustache.to_html(template, view);
-			$(this.el).html(html);
+			var selector = $("#monthSelector").kernely_date_navigator(
+					{
+						"onchange":tableView.change
+					}
+			);
 			return this;
 		},
-		plusMonth: function(){
-			monthSelected ++;
-			monthSelected = ((monthSelected)%13);
-			if(monthSelected == 0){
-				monthSelected = 1;
-				yearSelected ++;
-			}
-			this.actualize();
-			app_router.navigate("/month/" + monthSelected + "/" + yearSelected, {trigger: true, replace: true});
-		},
-		minusMonth: function(){
-			monthSelected --;
-			monthSelected = ((monthSelected)%13);
-			if(monthSelected == 0){
-				monthSelected = 12;
-				yearSelected --;
-			}
-			this.actualize();
-			app_router.navigate("/month/" + monthSelected + "/" + yearSelected, {trigger: true, replace: true});
-		},
-		actualize: function(){
-			var template = $("#"+ monthSelected +"-month-template").html();
-			$("#month_current").text(template + " " + yearSelected);
-		}
 	})
 	
 
@@ -299,10 +241,6 @@ AppHolidayAdmin = (function($){
 	self.start = function(){
 		tableView = new HolidaySummaryTableView().render();
 		selectorView = new HolidayMonthSelectorView().render();
-		// Instantiate the router
-		app_router = new Router;
-	    // Start Backbone history a neccesary step for bookmarkable URL's
-	    Backbone.history.start();
 	}
 	return self;
 })
