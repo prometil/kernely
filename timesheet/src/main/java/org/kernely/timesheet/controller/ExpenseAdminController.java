@@ -1,6 +1,5 @@
 package org.kernely.timesheet.controller;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.ws.rs.Consumes;
@@ -12,10 +11,10 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
 
+import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.kernely.controller.AbstractController;
-import org.kernely.core.service.UserService;
+import org.kernely.core.model.Role;
 import org.kernely.template.SobaTemplateRenderer;
 import org.kernely.timesheet.dto.ExpenseTypeCreationDTO;
 import org.kernely.timesheet.dto.ExpenseTypeDTO;
@@ -34,21 +33,15 @@ public class ExpenseAdminController extends AbstractController {
 	@Inject
 	private ExpenseService expenseService;
 	
-	@Inject
-	private UserService userService;
-	
 	/**
 	 * Set the template
 	 * @return the page admin
 	 */
 	@GET
+	@RequiresRoles(Role.ROLE_ADMINISTRATOR)
 	@Produces( { MediaType.TEXT_HTML })
 	public Response getPluginAdminPanel(){
-		if (userService.currentUserIsAdministrator()){
-			return Response.ok(templateRenderer.render("templates/expense_type_admin.html")).build();
-		} else{
-			return Response.status(Status.FORBIDDEN).build();
-		}
+		return Response.ok(templateRenderer.render("templates/expense_type_admin.html")).build();
 	}
 	
 	/**
@@ -57,13 +50,11 @@ public class ExpenseAdminController extends AbstractController {
 	 */
 	@GET
 	@Path("/type/all")
+	@RequiresRoles(Role.ROLE_ADMINISTRATOR)
 	@Produces( { MediaType.APPLICATION_JSON })
 	public List<ExpenseTypeDTO> displayAllExpenseTypes(){
-		if (userService.currentUserIsAdministrator()){
-			log.debug("Call to GET on all expense types");
-			return expenseService.getAllExpenseTypes();
-		}
-		return new ArrayList<ExpenseTypeDTO>();
+		log.debug("Call to GET on all expense types");
+		return expenseService.getAllExpenseTypes();
 	}
 	
 	/**
@@ -73,22 +64,16 @@ public class ExpenseAdminController extends AbstractController {
 	 */
 	@POST
 	@Path("/type/create")
+	@RequiresRoles(Role.ROLE_ADMINISTRATOR)
 	@Produces( { MediaType.APPLICATION_JSON })
 	public String createExpenseType(ExpenseTypeCreationDTO request) {
-		System.out.println("DIRECT "+request.id);
-		System.out.println("DIRECT "+request.direct);
-		System.out.println("NAME "+request.name);
-		System.out.println("RATIO "+request.ratio);
-		if (userService.currentUserIsAdministrator()){
-			try{
-				expenseService.createOrUpdateExpenseType(request);
-				return "{\"result\":\"Ok\"}";
-			}
-			catch (IllegalArgumentException iae) {
-				return "{\"result\":\""+ iae.getMessage() +"\"}";
-			}
+		try{
+			expenseService.createOrUpdateExpenseType(request);
+			return "{\"result\":\"Ok\"}";
 		}
-		return "{\"result\":\"Error\"}";
+		catch (IllegalArgumentException iae) {
+			return "{\"result\":\""+ iae.getMessage() +"\"}";
+		}
 	}
 	
 	/**
@@ -98,14 +83,12 @@ public class ExpenseAdminController extends AbstractController {
 	 */
 	@GET
 	@Path("/type/delete")
+	@RequiresRoles(Role.ROLE_ADMINISTRATOR)
 	@Consumes( { MediaType.APPLICATION_JSON })
 	@Produces( { MediaType.APPLICATION_JSON })
 	public Response deleteExpenseType(@QueryParam("idType") long id) {
-		if (userService.currentUserIsAdministrator()){
-			expenseService.deleteExpenseType(id);
-			return Response.ok().build();
-		}
-		return Response.status(Status.FORBIDDEN).build();
+		expenseService.deleteExpenseType(id);
+		return Response.ok().build();
 	}
 	
 	/**
@@ -115,11 +98,9 @@ public class ExpenseAdminController extends AbstractController {
 	 */
 	@GET
 	@Path("/type/{id}")
+	@RequiresRoles(Role.ROLE_ADMINISTRATOR)
 	@Produces( { MediaType.APPLICATION_JSON })
 	public ExpenseTypeDTO getExpenseType(@PathParam("id") long id) {
-		if (userService.currentUserIsAdministrator()){
-			return expenseService.getExpenseTypeById(id);
-		}
-		return new ExpenseTypeDTO();
+		return expenseService.getExpenseTypeById(id);
 	}
 }

@@ -39,8 +39,9 @@ AppTimeSheetMonth = (function($){
 			});
 		},
 		
-		initialize: function(){
-			
+		render: function(month,year){
+			monthSelected = month;
+			yearSelected = year;
 			// Delete old data
 			allProjectRows = new Object();
 			timeSheetId = new Array();
@@ -56,7 +57,6 @@ AppTimeSheetMonth = (function($){
 					// Create the views
 					monthSelected = data.month;
 					yearSelected = data.year;					
-					monthSelector.refresh();
 					
 					// Update validate button
 					if (data.validated == "true"){
@@ -92,9 +92,6 @@ AppTimeSheetMonth = (function($){
 
 				}
 			});
-		},
-		
-		render: function(){
 			return this;
 		}
 	}),
@@ -472,56 +469,23 @@ AppTimeSheetMonth = (function($){
 	
 	TimeMonthSelectorView = Backbone.View.extend({
 		el:"#monthSelector",
-		events:{
-			"click .minusMonth" : "minusMonth",
-			"click .plusMonth" : "plusMonth",
-			"click #month_current" : "currentMonth"
-		},
-		initialize: function(){
-			
-		},
 		render: function(){
-			var template = $("#calendarSelector").html();
-			var htmlMonth = $("#"+monthSelected+"-month-template").html();
-			var view = {month : htmlMonth, year: yearSelected};
-			html = Mustache.to_html(template, view);
-			$(this.el).html(html);
+			console.log("RENDER")
+			var selector = $("#monthSelector").kernely_date_navigator(
+					{
+						"onchange":mainView.render
+					}
+			);
 			return this;
 		},
-		refresh: function(){
-			this.render();
-		},
-		plusMonth: function(){
-			monthSelected ++;
-			monthSelected = ((monthSelected)%13);
-			if(monthSelected == 0){
-				monthSelected = 1;
-				yearSelected ++;
-			}
-			mainView.initialize();
-		},
-		minusMonth: function(){
-			monthSelected --;
-			monthSelected = ((monthSelected)%13);
-			if(monthSelected == 0){
-				monthSelected = 12;
-				yearSelected --;
-			}
-			mainView.initialize();
-		},
-		currentMonth:function(){
-			monthSelected = 0;
-			monthSelected = 0;
-			mainView.initialize();
-		}
 	})
 
 	// Initialization of the application
 	var self = {};
 	self.start = function(){
+		mainView = new TimeSheetPageView();
 		monthSelector = new TimeMonthSelectorView().render();
 
-		mainView = new TimeSheetPageView().render();
 	}
 	return self;
 })

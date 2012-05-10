@@ -1,5 +1,8 @@
 package org.kernely.timesheet.controller;
 
+import java.net.URI;
+import java.net.URISyntaxException;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -14,12 +17,15 @@ import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.kernely.controller.AbstractController;
 import org.kernely.core.service.UserService;
+import org.kernely.menu.Menu;
 import org.kernely.template.SobaTemplateRenderer;
 import org.kernely.timesheet.dto.TimeSheetCalendarDTO;
 import org.kernely.timesheet.dto.TimeSheetDayDTO;
 import org.kernely.timesheet.dto.TimeSheetDetailDTO;
 import org.kernely.timesheet.dto.TimeSheetMonthDTO;
 import org.kernely.timesheet.service.TimeSheetService;
+
+import ch.qos.logback.core.status.Status;
 
 import com.google.inject.Inject;
 
@@ -43,6 +49,7 @@ public class TimeSheetController extends AbstractController {
 	 * @return the main time sheet page
 	 */
 	@GET
+	@Menu("timesheet")
 	@Produces( { MediaType.TEXT_HTML })
 	public Response getTimeSheetPanel() {
 		return Response.ok(templateRenderer.render("templates/timesheet_main_page.html")).build();
@@ -90,14 +97,35 @@ public class TimeSheetController extends AbstractController {
 	}
 	
 	/**
-	 * Set the template of month visualization
+	 * Redirects to the actual day.
 	 * 
 	 * @return the monthly time sheet page
 	 */
 	@GET
 	@Produces( { MediaType.TEXT_HTML })
-	@Path("/view")
-	public Response getTimeSheetVisualizationPanel() {
+	@Menu("timesheet_month_title")
+	@Path("bymonth")
+	public Response getTimeSheetVisualization() {
+		// Get current date
+		try {
+			String path = "timesheet/bymonth/view/#/month/" + DateTime.now().getMonthOfYear() + "/" + DateTime.now().getYear();
+			URI newUri = new URI(path);
+			return Response.temporaryRedirect(newUri).status(303).build();
+		} catch (URISyntaxException e) {
+			e.printStackTrace();
+			return Response.status(Status.ERROR).build();
+		}
+	}
+	
+	/**
+	 * Redirects to the actual day.
+	 * 
+	 * @return the monthly time sheet page
+	 */
+	@GET
+	@Produces( { MediaType.TEXT_HTML })
+	@Path("bymonth/view")
+	public Response viewTimeSheetVisualizationPanel() {
 		return Response.ok(templateRenderer.render("templates/timesheet_view.html")).build();
 	}
 	
