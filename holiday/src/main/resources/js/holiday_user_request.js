@@ -24,14 +24,24 @@ AppHolidayUserRequest = (function($){
 	HolidayUserRequestPendingTableView = Backbone.View.extend({
 		el:"#user_pending_request_table",
 		
+		table:null,
 		initialize:function(){
 			var parent = this;
 			var templateCommentColumn = $("#table-request-comment-column").text();
 			var templateBeginColumn = $("#table-begin-date-column").text();
 			var templateEndColumn = $("#table-end-date-column").text();
-			$(parent.el).kernely_table({
-				columns:[templateCommentColumn, templateBeginColumn, templateEndColumn],
-				editable:true
+			this.table = $(parent.el).kernely_table({
+				columns:[
+				       {"name":templateCommentColumn, "style":""},
+				       {"name":templateBeginColumn, "style":"text-center"},
+				       {"name":templateEndColumn, "style":"text-center"}
+				 ],
+				idField:"id",
+				elements:["requesterComment", "beginDateString", "endDateString"],
+				eventNames:["click"],
+				events:{
+					"click": parent.selectLine
+				}
 			});
 			$.ajax({
 				type:"GET",
@@ -40,16 +50,7 @@ AppHolidayUserRequest = (function($){
 				success: function(data){
 					if(data != null){
 						var dataRequest = data.holidayRequestDTO;
-						$(parent.el).reload_table({
-							data: dataRequest,
-							idField:"id",
-							elements:["requesterComment", "beginDateString", "endDateString"],
-							eventNames:["click"],
-							events:{
-								"click": parent.selectLine
-							},
-							editable:true
-						});
+						parent.table.reload(dataRequest);
 					}
 				}
 			});
@@ -72,6 +73,7 @@ AppHolidayUserRequest = (function($){
 	HolidayUserRequestTableView = Backbone.View.extend({
 		el:"#user_request_table",
 		
+		table:null,
 		initialize:function(){
 			var parent = this;
 			var templateManagerColumn = $("#table-manager-column").text();
@@ -80,9 +82,16 @@ AppHolidayUserRequest = (function($){
 			var templateEndColumn = $("#table-end-date-column").text();
 			var templateStatusColumn = $("#table-status-column").text();
 			
-			$(parent.el).kernely_table({
-				columns:[templateManagerColumn, templateCommentColumn, templateBeginColumn, templateEndColumn, templateStatusColumn],
-				editable:true
+			this.table = $(parent.el).kernely_table({
+				columns:[
+				       {"name":templateManagerColumn, style:""},
+				       {"name":templateCommentColumn, style:""},
+				       {"name":templateBeginColumn, style:"text-center"},
+				       {"name":templateEndColumn, style:"text-center"},
+				       {"name":templateStatusColumn, style:""}
+				],
+				idField:"id",
+				elements:["managerComment", "requesterComment", "beginDateString", "endDateString", "status"]
 			});
 		
 			$.ajax({
@@ -110,12 +119,7 @@ AppHolidayUserRequest = (function($){
 								dataRequest.status = $("#status-denied-template").html();
 							}
 						}
-						$(parent.el).reload_table({
-							data: dataRequest,
-							idField:"id",
-							elements:["managerComment", "requesterComment", "beginDateString", "endDateString", "status"],
-							editable:false
-						});
+						parent.table.reload(dataRequest);
 					}
 				}
 			});

@@ -27,13 +27,19 @@ AppOrganizationAdmin = (function($){
 	OrganizationAdminTableView = Backbone.View.extend({
 		el:"#organization_admin_table",
 		
+		table: null,
 		initialize:function(){
 			var parent = this;
 			
 			var templateNameColumn = $("#table-organization-name-column").text();
-			$(parent.el).kernely_table({
-				columns:[templateNameColumn],
-				editable:true
+			this.table= $(parent.el).kernely_table({
+				idField:"id",
+				elements:["name"],
+				eventNames:["click"],
+				events:{
+					"click": parent.selectLine
+				},
+				columns:[{"name":templateNameColumn, style:""}]
 			});
 		},
 		reload: function(){
@@ -53,16 +59,7 @@ AppOrganizationAdmin = (function($){
 				success: function(data){
 					if(data != null){
 						var dataOrganization = data.organizationDTO;
-						$(parent.el).reload_table({
-							data: dataOrganization,
-							idField:"id",
-							elements:["name"],
-							eventNames:["click"],
-							events:{
-								"click": parent.selectLine
-							},
-							editable:true
-						});
+						parent.table.reload(dataOrganization);
 					}
 				}
 			});

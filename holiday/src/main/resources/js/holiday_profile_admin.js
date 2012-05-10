@@ -46,15 +46,24 @@ AppHolidayAdmin = (function($){
 	HolidayAdminTableView = Backbone.View.extend({
 		el:"#holiday_admin_table",
 		
+		table:null, 
 		initialize:function(){
 			var parent = this;
 			
 			var templateNameColumn = $("#table-profile-name-column").text();
 			var templateTypesColumn = $("#table-profile-types-column").text();
 			var templateUsersColumn = $("#table-profile-users-column").text();
-			$(parent.el).kernely_table({
-				columns:[templateNameColumn, templateTypesColumn, templateUsersColumn],
-				editable:true
+			this.table = $(parent.el).kernely_table({
+				columns:[
+				        {"name":templateNameColumn,"style":""},
+				        {"name":templateTypesColumn, "style":""},
+				        {"name":templateUsersColumn, "style":"text-center"}],
+				idField:"id",
+				elements:["name", "typesString", "nbUsers"],
+				eventNames:["click"],
+				events:{
+					"click": parent.selectLine
+				}
 			});
 		},
 		
@@ -94,16 +103,7 @@ AppHolidayAdmin = (function($){
 //							dataProfile.typesString = (dataProfile.holidayTypes.name); 
 //						}
 						
-						$(parent.el).reload_table({
-							data: dataProfile,
-							idField:"id",
-							elements:["name", "typesString", "nbUsers"],
-							eventNames:["click"],
-							events:{
-								"click": parent.selectLine
-							},
-							editable:true
-						});
+						parent.table.reload(dataProfile);
 					}
 				}
 			});

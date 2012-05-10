@@ -25,13 +25,19 @@ AppProjectAdmin = (function($){
 	ProjectAdminTableView = Backbone.View.extend({
 		el:"#project_admin_table",
 		
+		table:null,
 		initialize:function(){
 			var parent = this;
 			
 			var templateNameColumn = $("#table-project-name-column").text();
-			$(parent.el).kernely_table({
-				columns:[templateNameColumn],
-				editable:true
+			this.table = $(parent.el).kernely_table({
+				columns:[{"name":templateNameColumn, "style":""}],
+				idField:"id",
+				elements:["name"],
+				eventNames:["click"],
+				events:{
+					"click": parent.selectLine
+				}
 			});
 			
 		},
@@ -53,16 +59,7 @@ AppProjectAdmin = (function($){
 				success: function(data){
 					if(data != null){
 						var dataProject = data.projectDTO;
-						$(parent.el).reload_table({
-							data: dataProject,
-							idField:"id",
-							elements:["name"],
-							eventNames:["click"],
-							events:{
-								"click": parent.selectLine
-							},
-							editable:true
-						});
+						parent.table.reload(dataProject);
 					}
 				}
 			});

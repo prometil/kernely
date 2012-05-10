@@ -86,6 +86,8 @@ TableLineView = Backbone.View.extend({
 	tagName: "tr",
 	className: 'kernely_table_line',
 	
+	styles:null,
+	
 	data: null,
 	
 	events: {
@@ -97,7 +99,8 @@ TableLineView = Backbone.View.extend({
 	
 	idLine: null,
 	
-	initialize: function(idLine, data,eventNames, events){
+	initialize: function(idLine, data,eventNames, events, styles){
+		this.styles = styles;		
 		this.data = data;
 		this.idLine = idLine;
 		var parent = this;
@@ -126,17 +129,232 @@ TableLineView = Backbone.View.extend({
 	},
 	render:function(){
 		var parent = this;
+		var i = 0;
 		if($.isArray(this.data)){
 			$.each(this.data, function(){
-				$(parent.el).append("<td>"+this+"</td>");
+				var td = document.createElement("td");
+				$(td).html("" + this); // String casting
+				if($.isArray(parent.styles[i])){
+					$.each(parent.styles[i], function(){
+						$(td).addClass(""+this); // String casting
+					});
+				}
+				else{
+					$(td).addClass(parent.styles[i]);
+				}
+				$(parent.el).append($(td));
+				i++;
 			});
 		}
 		else{
-			$(this.el).append("<td>"+this.data+"</td>");
+			var td = document.createElement("td");
+			$(td).html(this.data);
+			if($.isArray(parent.styles[i])){
+				$.each(parent.styles[i], function(){
+					$(td).addClass("" + this);
+				});
+			}
+			else{
+				$(td).addClass(parent.styles[i]);
+			}
+			$(this.el).append($(td));
 		}
 		return this;
 	}
 	
+});
+
+/* View used to generate table lines.*/
+TableLineView = Backbone.View.extend({
+        tagName: "tr",
+        className: 'kernely_table_line',
+        
+        styles:null,
+        
+        data: null,
+        
+        events: {
+                "click" : "select",
+                "mouseover" : "over",
+                "mouseout" : "out"
+        },
+        
+        
+        idLine: null,
+        
+        initialize: function(idLine, data,eventNames, events, styles){
+                this.styles = styles;                
+                this.data = data;
+                this.idLine = idLine;
+                var parent = this;
+                if($.isArray(eventNames)){
+                        $.each(eventNames, function(){
+                                $(parent.el).bind(this, {line: parent.idLine} ,events[this]);
+                        });
+                }
+                else{
+                        $(parent.el).bind(eventNames, {line: parent.idLine} ,events[eventNames]);
+                }
+                
+                $(this.el).bind("click", {line: this.idLine} ,events["click"]);
+                return this;
+        },
+        
+        select : function(){
+                $(".line_selected").removeClass("line_selected");
+                $(this.el).addClass("line_selected");
+        },
+        over : function(){
+                $(this.el).addClass("over");
+        },
+        out : function(){
+                $(this.el).removeClass("over");
+        },
+        render:function(){
+                var parent = this;
+                var i = 0;
+                if($.isArray(this.data)){
+                        $.each(this.data, function(){
+                                var td = document.createElement("td");
+                                $(td).html("" + this); // String casting
+                                if($.isArray(parent.styles[i])){
+                                        $.each(parent.styles[i], function(){
+                                                $(td).addClass(""+this); // String casting
+                                        });
+                                }
+                                else{
+                                        $(td).addClass(parent.styles[i]);
+                                }
+                                $(parent.el).append($(td));
+                                i++;
+                        });
+                }
+                else{
+                        var td = document.createElement("td");
+                        $(td).html(this.data);
+                        if($.isArray(parent.styles[i])){
+                                $.each(parent.styles[i], function(){
+                                        $(td).addClass("" + this);
+                                });
+                        }
+                        else{
+                                $(td).addClass(parent.styles[i]);
+                        }
+                        $(this.el).append($(td));
+                }
+                return this;
+        }
+        
+});
+
+TableView = Backbone.View.extend({
+        
+        columns:null,
+        
+        styles:null,
+        
+        elements:null,
+        
+        idField: null,
+        
+        events:null,
+        
+        eventName:null,
+        
+        initialize: function(element){
+                this.styles= new Array();
+                this.el = element;
+        },
+        
+        render: function(){
+                // Add the header to the table
+                var thead = document.createElement("thead");
+                var tr = document.createElement("tr");
+                var parent = this;
+                $.each(parent.columns, function(){
+                        var th = document.createElement("th");
+                        $(th).html(this.name); // String casting
+                        if($.isArray(this.style)){
+                                $.each(this.style, function(){
+                                        $(th).addClass("" + this);
+                                });
+                        }
+                        else{
+                                $(th).addClass(this.style);
+                        }
+                        $(tr).append($(th));
+                        parent.styles.push(this.style);
+                });
+                $(thead).append($(tr));
+                this.el.append($(thead));
+                return this;
+        },
+        
+        reload:function(data){
+                var body = this.el.find("tbody");
+                body.empty();
+                
+                if(typeof(data) != "undefined"){
+                        var table = $(this.el);
+                        var view = this;
+                        if($.isArray(data)){
+                                var parent;
+                                $.each(data, function(){
+                                        var array = new Array();
+                                        parent = this;
+                                        var elem;
+                                        if($.isArray(view.elements)){
+                                                $.each(view.elements, function(){
+                                                        if(this.lastIndexOf(".") != -1){
+                                                                var temp = this.split(".");
+                                                                elem = parent;
+                                                                $.each(temp, function(){
+                                                                        elem = elem[this];
+                                                                });
+                                                        }
+                                                        else{
+                                                                elem = parent[this];
+                                                        }
+                                                        if(typeof(elem) == "undefined"){
+                                                                elem = "";
+                                                        }
+                                                        array.push(elem);
+                                                });
+                                        }
+                                        else{
+                                                if(view.elements.lastIndexOf(".") != -1){
+                                                        var temp = view.elements.split(".");
+                                                        elem = parent;
+                                                        $.each(temp, function(){
+                                                                elem = elem[this];
+                                                        });
+                                                }
+                                                else{
+                                                        elem = parent[view.elements];
+                                                }
+                                                if(typeof(elem) == "undefined"){
+                                                        elem = "";
+                                                }
+                                                array.push(parent[view.elements]);
+                                        }
+                                        table.append(new TableLineView(this[view.idField],array, view.eventName, view.events, view.styles).render().el);
+                                });
+                        }
+                        else{
+                                var array = new Array();
+                                if($.isArray(view.elements)){
+                                        $.each(view.elements, function(){
+                                                array.push(data[this]);
+                                        });
+                                }
+                                else{
+                                        array.push(data[elements]);
+                                }
+                                table.append(new TableLineView(data[view.idField], array, view.eventName, view.events, view.styles).render().el);
+                        }
+                }
+        }
+        
 });
 
 DateNavigatorRouter = Backbone.Router.extend({
@@ -271,94 +489,21 @@ jQuery.fn.extend({
 	// - columns : The names of the columns to diaplay in the header of the table
 	// - eventName : The names of the different custom events to implements
 	// - events : The association between the name and the function called of a custom event
-	// - reload : If true, only reload the given data in the table
-	// - editable : 
 	kernely_table: function(options){
 		// Force options to be an object
 		options = options || {};
+		options.columns = options.columns || {};
 		options.events = options.events || {};
 		options.eventNames = options.eventNames || {};
-		if(!options.reload){
-			// Add the header to the table
-			var thead = document.createElement("thead");
-			var tr = document.createElement("tr");
-			if($.isArray(options.columns)){
-				$.each(options.columns, function(){
-					$(tr).append("<th>"+ this +"</th>");
-				});
-			}
-			else{
-				$(tr).append("<th>"+ options.columns +"</th>");
-			}
-			$(thead).append($(tr));
-			this.append($(thead));
-		}
-	
-		if(typeof(options.data) != "undefined"){
-			var table = this;
-			if($.isArray(options.data)){
-				var parent;
-				$.each(options.data, function(){
-					var array = new Array();
-					parent = this;
-					var elem;
-					if($.isArray(options.elements)){
-						$.each(options.elements, function(){
-							if(this.lastIndexOf(".") != -1){
-								var temp = this.split(".");
-								elem = parent;
-								$.each(temp, function(){
-									elem = elem[this];
-								});
-							}
-							else{
-								elem = parent[this];
-							}
-							if(typeof(elem) == "undefined"){
-								elem = "";
-							}
-							array.push(elem);
-						});
-					}
-					else{
-						if(options.elements.lastIndexOf(".") != -1){
-							var temp = options.elements.split(".");
-							elem = parent;
-							$.each(temp, function(){
-								elem = elem[this];
-							});
-						}
-						else{
-							elem = parent[options.elements];
-						}
-						if(typeof(elem) == "undefined"){
-							elem = "";
-						}
-						array.push(parent[option.elements]);
-					}
-					table.append(new TableLineView(parent[options.idField],array, options.eventName, options.events).render().el);
-				});
-			}
-			else{
-				var array = new Array();
-				if($.isArray(options.elements)){
-					$.each(options.elements, function(){
-						array.push(options.data[this]);
-					});
-				}
-				else{
-					array.push(options.data[option.elements]);
-				}
-				table.append(new TableLineView(options.data[options.idField], array, options.eventName, options.events).render().el);
-			}
-		}
-	},
-
-	reload_table: function(options){
-		var body = this.find("tbody");
-		body.empty();
-		options.reload = true;
-		this.kernely_table(options);
+		
+		var table = new TableView(this);
+		table.columns = options.columns;
+		table.elements = options.elements;
+		table.idField = options.idField;
+		table.events = options.events;
+		table.eventName = options.eventName;
+		table.render();
+		return table;
 	},
 	
 	// Defines a generic behavior for all dialogs in the application

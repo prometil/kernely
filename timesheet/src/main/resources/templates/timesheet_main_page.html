@@ -14,6 +14,10 @@
 {% endblock %}
 
 {% block template %}
+	<script type="text/html" id="delete-template">{% i18n "delete" %}</script>
+
+	<script type="text/html" id="total-template">{% i18n "timesheet_total" %}</script>
+	
 	<script type="text/html" id="locale-lang">{% i18n "locale_lang" %}</script>
 	<script type="text/html" id="locale-country">{% i18n "locale_country" %}</script>
 	
@@ -22,8 +26,8 @@
 	<script type="text/html" id="confirm-remove-expense-line-template">{% i18n "timesheet_remove_expense_line_confirm" %}</script>
 	<script type="text/html" id="total-template">{% i18n "timesheet_total" %}</script>
 	<script type="text/html" id="expense-line-title-template">{% i18n "expense_line_title" %}</script>
-	<script type="text/html" id="delete-button-template"><input type="button" class="deleteButton" value="{% i18n "delete" %}"/></script>
-	<script type="text/html" id="detail-template"><span class="editAmount">{{"{{"}}amount{{"}}"}}</span><img class="editButton" src="../images/edit.png"/></script>
+	<script type="text/html" id="delete-button-template"><img class="deleteButton" src="/images/icons/delete_icon.png"/></script>
+	<script type="text/html" id="detail-template"><div class="editAmount"><span class="editAmount">{{"{{"}}amount{{"}}"}}</span><img class="editButton" src="../images/edit-timesheet-icon.png"/></div></script>
 	<script type="text/html" id="detail-edit-template"><input type="text" class="editAmount" value="{{"{{"}}amount{{"}}"}}"/></script>
 	
 	<script type="text/html" id="time-amount-025">15 {% i18n "timesheet_minutes" %}</script>
@@ -35,7 +39,7 @@
 	<script type="text/html" id="time-amount-8">8 {% i18n "timesheet_hours" %}</script>
 	
 	<script type="text/html" id="time-cell-template">
-	<span id="time-cell-name">{{"{{"}}amount{{"}}"}}</span>
+		<span id="time-cell-name">{{"{{"}}amount{{"}}"}}</span>
 	</script>
 	
 	<script type="text/html" id="calendarSelector">
@@ -83,45 +87,52 @@
 	<div id="modal_window_expense"></div>
 
 	<div id="timesheet-main">
-		<div id="weekSelector"></div>
-		<select class="timesheet-project-select" id="project-select"></select>
-		<input type="button" id="add-project-button" value="{% i18n "timesheet_add_project" %}"/><a href="/timesheet/view">{% i18n "timesheet_view_month" %}</a>
-		<div id="timesheet-div">
-			<table id="timesheet-table" border="0">
-				<tr>
-					<th></th>
-					<th>{% i18n "day_1_short" %}</th>
-					<th>{% i18n "day_2_short" %}</th>
-					<th>{% i18n "day_3_short" %}</th>
-					<th>{% i18n "day_4_short" %}</th>
-					<th>{% i18n "day_5_short" %}</th>
-					<th>{% i18n "day_6_short" %}</th>
-					<th>{% i18n "day_7_short" %}</th></tr>
-				<tbody id="timesheet-content">
-					<tr id="date-line"></tr>
-				<tbody>
-				<tbody>
-				<tr id="columnTotalsRow">
-					<td>{% i18n "timesheet_total" %}</td>
-					<td></td>
-					<td></td>
-					<td></td>
-					<td></td>
-					<td></td>
-					<td></td>
-					<td></td>
-					<td></td>
-				</tr>
-			</tbody>
-				<tbody id="timesheet-expense">
-					<tr id="expense-line"><td></td></tr>
-				<tbody>
-			</table>
+		<div class="classic-buttons-bar">
+			<input type="button" class="button_emphasis no-margin" value="{% i18n "week" %}"/>
+			<input type="button" class="button_standard no-margin" value="{% i18n "month" %}" onClick="window.location='/timesheet/view'"/>
+		</div>
+		<div id="timesheet-layout">
+			<div id="weekSelector"></div>
+			<select class="timesheet-project-select" id="project-select"></select>
+			<input type="button" id="add-project-button" class="button_standard" value="{% i18n "timesheet_add_project" %}"/>
+			<div id="timesheet-div">
+				<table id="timesheet-table" class="timesheet-table">
+					<tbody id="timesheet-content" class="timesheet-content">
+						<tr id="date-line" class="date-line"></tr>
+					</tbody>
+					<tbody>
+						<tr id="columnTotalsRow" class="columnTotalsRow">
+							<td>{% i18n "timesheet_total" %}</td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+						</tr>
+					</tbody>
+					<tbody id="timesheet-expense" class="timesheet-expense">
+						<tr id="expense-line" class="expense-line"><td></td></tr>
+					<tbody>
+				</table>
+			</div>
 		</div>
 	</div>	
 {% endblock %}
+
 {% block right %}
 	<div id="timePicker">
 		<!-- Time picker to set time into days and projects -->
 	</div>	
+{% endblock %}
+
+{% block left %}
+<div id="profile_mask"></div>
+<div id="left_profile_arrow"></div>
+<div id='left_profile_container'>
+	<img src="/images/{{currentUser.image}}" id="image_left_profile"/>
+	<div id="left_profile_name">{{currentUser.firstname}} {{currentUser.lastname}}</div>
+</div>
 {% endblock %}

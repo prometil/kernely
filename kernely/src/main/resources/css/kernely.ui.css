@@ -1,0 +1,9 @@
+/** Date Navigator **/
+.k-ui-navigator{
+	border:1px solid #3e3d40;
+	width:80px;
+	height:15px;
+	color:#3e3d40;
+	font-size:13px;
+	text-align:center;
+}

@@ -23,7 +23,7 @@
 		<td><input type="text" class="unitprice-field kernely_input" name="unitprice-field[]" value="{{"{{"}}unitprice{{"}}"}}"/></td>
 		<td class="line-amount">{{"{{"}}amount{{"}}"}}</td>
 		<td><select name="vat-field[]" class="vat-field kernely_input"></select> %</td>
-		<td><img src="/images/icons/delete_icon.png" class="delete-invoice-line"/></td>
+		<td class="delete-column"><img src="/images/icons/delete_icon.png" class="delete-invoice-line"/></td>
 	</script>
 
 {% endblock %}
@@ -57,15 +57,17 @@
 				<input type="button" class="button_emphasis" id="new-invoice-line" value="{% i18n "invoice-new-line" %}"/>
 			</div>
 			<table id="invoice-line-details" class="kernely_table">
-				<tr>
-					<th class="id-field"><!--id of the line--></th>
-					<th class="description-column">{% i18n "invoice-line-description" %}</th>
-					<th class="quantity-column">{% i18n "invoice-line-quantity" %}</th>
-					<th class="unitprice-column">{% i18n "invoice-line-unit-price" %}</th>
-					<th class="amount-column">{% i18n "invoice-line-amount" %}</th>
-					<th class="vat-column">{% i18n "invoice-line-vat" %}</th>
-					<th class="delete-column"><!-- Column for the delete button --></th>
-				</tr>
+				<thead>
+					<tr>
+						<th class="id-field"><!--id of the line--></th>
+						<th class="description-column">{% i18n "invoice-line-description" %}</th>
+						<th class="quantity-column">{% i18n "invoice-line-quantity" %}</th>
+						<th class="unitprice-column">{% i18n "invoice-line-unit-price" %}</th>
+						<th class="amount-column">{% i18n "invoice-line-amount" %}</th>
+						<th class="vat-column">{% i18n "invoice-line-vat" %}</th>
+						<th class="delete-column"><!-- Column for the delete button --></th>
+					</tr>
+				</thead>
 				<tbody id="invoice-lines">
 				</tbody>
 			</table>
