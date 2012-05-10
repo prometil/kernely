@@ -139,6 +139,128 @@ TableLineView = Backbone.View.extend({
 	
 });
 
+DateNavigatorRouter = Backbone.Router.extend({
+	element:null,
+	navigator:null,
+	onchange: null,
+	
+	routes: {
+		"/day/:day/:month/:year":  "selectDay",
+		"/month/:month/:year":  "selectMonth",
+		"/year/:year":  "selectYear",
+		"*actions" : "defaultRoute"
+	},
+	
+	initialize: function(element, onchange){
+		this.element = element;
+		this.onchange = onchange;
+        Backbone.history.start();
+	},
+
+	selectMonth: function(month,year){
+		if (this.navigator == null){
+			this.navigator = new DateNavigatorView(this,this.element, this.onchange, null, month, year);
+		}
+	},
+	selectDay: function(){
+		
+	},
+	selectYear: function(){
+		
+	},
+	defaultRoute: function(){
+		
+	}
+});
+
+DateNavigatorView = Backbone.View.extend({
+
+	daySelected:null,
+    monthSelected:null,
+    yearSelected:null,
+    router:null,
+    onchange: null,
+    defaultDay: null,
+    defaultMonth: null,
+    defaultYear: null,
+    
+    initialize: function(router,element, onchange, day, month, year){
+		// Start Backbone history a neccesary step for bookmarkable URL's
+		var parent = this;
+		this.onchange = onchange;
+		this.router = router;
+		this.daySelected = day;
+		this.defaultDay = day;
+		this.monthSelected = month;
+		this.defaultMonth = month;
+		this.yearSelected = year;
+		this.defaultYear = year;
+		
+		this.el = element;
+		var imgp = document.createElement("img");
+		$(imgp).attr("src", "/images/icons/previous_icon.png");
+	    $(imgp).addClass("clickable");
+	    var span = document.createElement("span");
+	    $(span).addClass("k-ui-navigator");
+	    var imgn = document.createElement("img");
+	    $(imgn).addClass("clickable");
+	    $(imgn).attr("src", "/images/icons/next_icon.png");
+	    this.el.append(imgp);
+	    this.el.append(span);
+	    this.el.append(imgn);
+	    if (day == null){
+	    	// Display month and year
+	        var template = $("#"+ month +"-month-template").html();
+	        $(span).text(template + " " + this.yearSelected);
+	    	
+	        // Associates events for month management
+	        $(imgp).bind("click", function(){parent.previousMonth(parent.monthSelected,parent.yearSelected)});
+	        $(span).bind("click", function(){parent.toDefaultMonth()});
+	        $(imgn).bind("click", function(){parent.nextMonth(parent.monthSelected,parent.yearSelected)});
+		    this.onchange(this.monthSelected, this.yearSelected);
+
+	    }
+	    return this;
+    },
+    
+	nextMonth: function(){
+		this.monthSelected ++;
+		if(this.monthSelected == 13){
+			this.monthSelected = 1;
+			this.yearSelected ++;
+		}
+		this.actualizeMonth();
+	},
+	
+	toDefaultMonth: function(){
+		this.monthSelected = this.defaultMonth;
+		this.yearSeleted = this.defaultYear;
+		this.actualizeMonth();
+	},
+	
+	previousMonth: function(){
+		this.monthSelected --;
+		if(this.monthSelected == 0){
+			this.monthSelected = 12;
+			this.yearSelected --;
+		}
+		this.actualizeMonth();
+
+	},
+	
+	actualizeMonth: function(){
+		this.router.navigate("/month/" + this.monthSelected + "/" + this.yearSelected, {trigger: true, replace: true});
+    	// Display month and year
+        var template = $("#"+ this.monthSelected +"-month-template").html();
+        $(".k-ui-navigator").text(template + " " + this.yearSelected);
+	    this.onchange(this.monthSelected, this.yearSelected);
+	},
+	
+    render: function(){
+            return this;
+    }
+});
+
 jQuery.fn.extend({
 	// Defines a generic behavior for all tables in the application
 	// The "options" parameter is the configuration of the table,
@@ -305,6 +427,24 @@ jQuery.fn.extend({
 				}
 			}
 		}
+	},
+	
+	// Fills an element with a navigator of dates
+	// The navigator is automatically created by the url :
+	// - url : /#/day/X/Y/Z => day navigator, where X is the day, Y the month and Z the year
+	// - url : /#/month/X/Y => month navigator, where Y is the month and Z the year
+	// - url : /#/year/Z => year navigator, where Z is the year
+	// options can be filled with the following data :
+	// - onchange : the function to call when the date change.
+	//				this function will be called with a number
+	//				of arguments depending of the url at the
+	//				creation of the selector (three arguments
+	//				for a day selector for instance).
+	kernely_date_navigator: function(options){
+        // Force options to be an object
+        options = options || {};
+        var router = new DateNavigatorRouter(this,options.onchange);
 	}
+	
 
 });
