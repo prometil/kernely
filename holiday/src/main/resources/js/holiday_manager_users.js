@@ -13,34 +13,11 @@ AppHolidayManagerUsers = (function($){
 	// How many days in the month
 	var nbDays = 0;
 	
-	Router = Backbone.Router.extend({
-
-		routes: {
-			"/month/:month/:year":  "visualize",
-			"*actions" : "defaultRoute"
-		},
-		
-		initialize: function() {
-		},
-
-		visualize: function(month, year) {
-			mainView.change(month, year);
-		},
-		
-		defaultRoute: function(){
-			mainView.change(0, 0);
-		}
-		
-	})
-	
 	HolidayManagerUserMainView = Backbone.View.extend({
 		el:"#main-manager-page-content",
-		events:{
-		
-		},
-		
+
 		initialize: function(){
-			
+			mainView = this;
 		},
 		
 		render: function(){
@@ -53,7 +30,7 @@ AppHolidayManagerUsers = (function($){
 		change: function(month, year){
 			monthSelected = month;
 			yearSelected = year;
-			this.reloadTable(month, year);
+			mainView.reloadTable(month, year);
 		},
 		reloadTable: function(month, year){
 			$.ajax({
@@ -65,7 +42,6 @@ AppHolidayManagerUsers = (function($){
 					legendView.render(data);
 					monthSelected = data.month;
 					yearSelected = data.year;
-					selectorView.actualize();
 				}
 			});
 		}
@@ -73,46 +49,14 @@ AppHolidayManagerUsers = (function($){
 	
 	HolidayManagerMonthSelectorView = Backbone.View.extend({
 		el:"#monthSelector",
-		events:{
-			"click .minusMonth" : "minusMonth",
-			"click .plusMonth" : "plusMonth",
-		},
-		initialize: function(){
-			
-		},
 		render: function(){
-			var template = $("#calendarSelector").html();
-			var monthTemp = monthSelected+1;
-			var template2 = $("#"+ monthTemp +"-month-template").html();
-			var view = {month : template2, year: yearSelected};
-			var html = Mustache.to_html(template, view);
-			$(this.el).html(html);
+			var selector = $("#monthSelector").kernely_date_navigator(
+					{
+						"onchange":mainView.change
+					}
+			);
 			return this;
 		},
-		plusMonth: function(){
-			monthSelected ++;
-			monthSelected = ((monthSelected)%13);
-			if(monthSelected == 0){
-				monthSelected = 1;
-				yearSelected ++;
-			}
-			this.actualize();
-			app_router.navigate("/month/" + monthSelected + "/" + yearSelected, {trigger: true, replace: true});
-		},
-		minusMonth: function(){
-			monthSelected --;
-			monthSelected = ((monthSelected)%13);
-			if(monthSelected == 0){
-				monthSelected = 12;
-				yearSelected --;
-			}
-			this.actualize();
-			app_router.navigate("/month/" + monthSelected + "/" + yearSelected, {trigger: true, replace: true});
-		},
-		actualize: function(){
-			var template = $("#"+ monthSelected +"-month-template").html();
-			$("#month_current").text(template + " " + yearSelected);
-		}
 	})
 	
 	HolidayManagerUserTableLineView = Backbone.View.extend({
@@ -285,10 +229,6 @@ AppHolidayManagerUsers = (function($){
 	var self = {};
 	self.start = function(){
 		mainView = new HolidayManagerUserMainView().render();
-		// Instantiate the router
-		app_router = new Router;
-	    // Start Backbone history a neccesary step for bookmarkable URL's
-	    Backbone.history.start();
 	}
 	return self;
 })

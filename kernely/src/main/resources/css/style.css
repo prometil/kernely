@@ -508,6 +508,14 @@ table.kernely_table th{
     	vertical-align : top;
 	margin-top:2px;
 }
+/* Date navigator */
+.k-ui-navigator{
+        width:100px;
+        color:#3e3d40;
+        font-size:13px;
+        text-align:center;
+	cursor:pointer;
+}
 
 /* Helpers */
 .clickable{
