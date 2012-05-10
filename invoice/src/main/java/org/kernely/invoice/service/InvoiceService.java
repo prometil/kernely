@@ -28,8 +28,6 @@ import org.kernely.project.model.Organization;
 import org.kernely.project.model.Project;
 import org.kernely.project.service.ProjectService;
 import org.kernely.service.AbstractService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
@@ -41,7 +39,7 @@ import com.google.inject.persist.Transactional;
 @Singleton
 public class InvoiceService extends AbstractService{
 	
-	private static final Logger log = LoggerFactory.getLogger(InvoiceService.class);
+//	private static final Logger log = LoggerFactory.getLogger(InvoiceService.class);
 	
 	@Inject
 	private UserService userService;

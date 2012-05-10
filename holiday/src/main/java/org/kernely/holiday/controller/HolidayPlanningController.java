@@ -11,6 +11,7 @@ import javax.ws.rs.core.Response;
 import org.kernely.controller.AbstractController;
 import org.kernely.holiday.dto.HolidayUsersManagerDTO;
 import org.kernely.holiday.service.HolidayHumanResourceService;
+import org.kernely.menu.Menu;
 import org.kernely.template.SobaTemplateRenderer;
 
 import com.google.inject.Inject;
@@ -19,7 +20,7 @@ import com.google.inject.Inject;
  * The holiday controller for the
  * human resource role
  */
-@Path("holiday/planning")
+@Path("/holiday/planning")
 public class HolidayPlanningController extends AbstractController{
 	@Inject
 	private SobaTemplateRenderer templateRenderer;
@@ -33,6 +34,7 @@ public class HolidayPlanningController extends AbstractController{
 	 */
 	@GET
 	@Produces( { MediaType.TEXT_HTML })
+	@Menu("planning")
 	public Response getHolidayManagerUsersPanel(){
 		return Response.ok(templateRenderer.render("templates/holiday_planning.html")).build();
 	}

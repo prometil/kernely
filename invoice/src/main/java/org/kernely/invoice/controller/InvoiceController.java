@@ -17,9 +17,10 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriBuilder;
 
+import org.apache.shiro.authz.annotation.Logical;
+import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.kernely.controller.AbstractController;
 import org.kernely.core.model.Role;
 import org.kernely.core.service.UserService;
@@ -29,6 +30,7 @@ import org.kernely.invoice.dto.InvoiceLineCreationRequestDTO;
 import org.kernely.invoice.dto.InvoiceLineDTO;
 import org.kernely.invoice.dto.VatDTO;
 import org.kernely.invoice.service.InvoiceService;
+import org.kernely.menu.Menu;
 import org.kernely.project.dto.OrganizationDTO;
 import org.kernely.project.dto.ProjectDTO;
 import org.kernely.project.service.OrganizationService;
@@ -64,12 +66,11 @@ public class InvoiceController extends AbstractController{
 	 */
 	@GET
 	@Produces( { MediaType.TEXT_HTML })
+	@RequiresRoles(value = {Role.ROLE_PROJECTMANAGER, Role.ROLE_BOOKKEEPER}, logical = Logical.OR)
+	@Menu("invoice")
 	public Response getInvoicePanel(){
-		if(userService.currentUserHasRole(Role.ROLE_PROJECTMANAGER) || userService.currentUserHasRole(Role.ROLE_BOOKKEEPER)){
-			Map<String, Object> map =new HashMap<String, Object>();
-			return Response.ok(templateRenderer.render("templates/invoice_overview.html", map)).build();
-		}
-		return Response.status(Status.FORBIDDEN).build();
+		Map<String, Object> map =new HashMap<String, Object>();
+		return Response.ok(templateRenderer.render("templates/invoice_overview.html", map)).build();
 	}
 	
 	/**
@@ -80,6 +81,7 @@ public class InvoiceController extends AbstractController{
 	 */
 	@GET
 	@Path("/organizations")
+	@RequiresRoles(value = {Role.ROLE_PROJECTMANAGER, Role.ROLE_BOOKKEEPER}, logical = Logical.OR)
 	@Produces({MediaType.APPLICATION_JSON})
 	public List<OrganizationDTO> getOrganizationForRole(){
 		if(userService.currentUserHasRole(Role.ROLE_BOOKKEEPER)){
@@ -102,6 +104,7 @@ public class InvoiceController extends AbstractController{
 	 */
 	@GET
 	@Path("/projects")
+	@RequiresRoles(value = {Role.ROLE_PROJECTMANAGER, Role.ROLE_BOOKKEEPER}, logical = Logical.OR)
 	@Produces({MediaType.APPLICATION_JSON})
 	public List<ProjectDTO> getProjectForRole(@QueryParam("organizationId") long organizationId){
 		
@@ -124,13 +127,10 @@ public class InvoiceController extends AbstractController{
 	 */
 	@GET
 	@Path("/specific")
+	@RequiresRoles(value = {Role.ROLE_PROJECTMANAGER, Role.ROLE_BOOKKEEPER}, logical = Logical.OR)
 	@Produces({MediaType.APPLICATION_JSON})
 	public List<InvoiceDTO> getInvoicesPerOrganizationAndProject(@QueryParam("organizationId") long organizationId, @QueryParam("projectId") long projectId){
-		if(userService.currentUserHasRole(Role.ROLE_PROJECTMANAGER) || userService.currentUserHasRole(Role.ROLE_BOOKKEEPER)){
-			
-			return invoiceService.getInvoicesPerOrganizationAndProject(organizationId, projectId);
-		}
-		return new ArrayList<InvoiceDTO>();
+		return invoiceService.getInvoicesPerOrganizationAndProject(organizationId, projectId);
 	}
 	
 	/**
@@ -140,19 +140,17 @@ public class InvoiceController extends AbstractController{
 	 */
 	@POST
 	@Path("/create")
+	@RequiresRoles(value = {Role.ROLE_PROJECTMANAGER, Role.ROLE_BOOKKEEPER}, logical = Logical.OR)
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Produces({MediaType.APPLICATION_JSON})
 	public String createInvoice(InvoiceCreationRequestDTO request){
-		if(userService.currentUserHasRole(Role.ROLE_PROJECTMANAGER) || userService.currentUserHasRole(Role.ROLE_BOOKKEEPER)){
-			try{
-				invoiceService.createOrUpdateInvoice(request);
-				return "{\"result\":\"Ok\"}";
-			}
-			catch(IllegalArgumentException iae){
-				return "{\"result\":\""+iae.getMessage()+"\"}";
-			}
+		try{
+			invoiceService.createOrUpdateInvoice(request);
+			return "{\"result\":\"Ok\"}";
 		}
-		return null;
+		catch(IllegalArgumentException iae){
+			return "{\"result\":\""+iae.getMessage()+"\"}";
+		}
 	}
 	
 	/**
@@ -162,13 +160,11 @@ public class InvoiceController extends AbstractController{
 	 */
 	@POST
 	@Path("/line/create")
+	@RequiresRoles(value = {Role.ROLE_PROJECTMANAGER, Role.ROLE_BOOKKEEPER}, logical = Logical.OR)
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Produces({MediaType.APPLICATION_JSON})
 	public InvoiceLineDTO createInvoiceLine(InvoiceLineCreationRequestDTO request){
-		if(userService.currentUserHasRole(Role.ROLE_PROJECTMANAGER) || userService.currentUserHasRole(Role.ROLE_BOOKKEEPER)){
-			return invoiceService.createOrUpdateInvoiceLine(request);
-		}
-		return new InvoiceLineDTO();
+		return invoiceService.createOrUpdateInvoiceLine(request);
 	}
 	
 	/**
@@ -178,22 +174,19 @@ public class InvoiceController extends AbstractController{
 	 */
 	@GET
 	@Consumes({MediaType.APPLICATION_JSON})
+	@RequiresRoles(value = {Role.ROLE_PROJECTMANAGER, Role.ROLE_BOOKKEEPER}, logical = Logical.OR)
 	@Path("/delete")
 	@Produces( { MediaType.TEXT_HTML })
 	public Response deleteInvoice(@QueryParam("invoiceId") long invoiceId){
-		if(userService.currentUserHasRole(Role.ROLE_PROJECTMANAGER) || userService.currentUserHasRole(Role.ROLE_BOOKKEEPER)){
-			invoiceService.deleteInvoice(invoiceId);
-			URI uri;
-			try {
-				uri = new URI("/invoice");
-				return Response.temporaryRedirect(uri).status(303).build();
-			} catch (URISyntaxException e) {
-				UriBuilder uriBuilder = UriBuilder.fromPath("/invoice");
-				return Response.temporaryRedirect(uriBuilder.build()).status(303).build();
-			}
-			
+		invoiceService.deleteInvoice(invoiceId);
+		URI uri;
+		try {
+			uri = new URI("/invoice");
+			return Response.temporaryRedirect(uri).status(303).build();
+		} catch (URISyntaxException e) {
+			UriBuilder uriBuilder = UriBuilder.fromPath("/invoice");
+			return Response.temporaryRedirect(uriBuilder.build()).status(303).build();
 		}
-		return Response.status(Status.FORBIDDEN).build();
 	}
 	
 	/**
@@ -203,13 +196,11 @@ public class InvoiceController extends AbstractController{
 	 */
 	@GET
 	@Consumes({MediaType.APPLICATION_JSON})
+	@RequiresRoles(value = {Role.ROLE_PROJECTMANAGER, Role.ROLE_BOOKKEEPER}, logical = Logical.OR)
 	@Path("/publish")
 	@Produces({MediaType.APPLICATION_JSON})
 	public InvoiceDTO publishInvoice(@QueryParam("invoiceId") long invoiceId){
-		if(userService.currentUserHasRole(Role.ROLE_PROJECTMANAGER) || userService.currentUserHasRole(Role.ROLE_BOOKKEEPER)){
-			return invoiceService.setInvoiceAsPublished(invoiceId);
-		}
-		return new InvoiceDTO();
+		return invoiceService.setInvoiceAsPublished(invoiceId);
 	}
 	
 	/**
@@ -219,13 +210,11 @@ public class InvoiceController extends AbstractController{
 	 */
 	@GET
 	@Consumes({MediaType.APPLICATION_JSON})
+	@RequiresRoles(value = {Role.ROLE_PROJECTMANAGER, Role.ROLE_BOOKKEEPER}, logical = Logical.OR)
 	@Path("/paid")
 	@Produces({MediaType.APPLICATION_JSON})
 	public InvoiceDTO payInvoice(@QueryParam("invoiceId") long invoiceId){
-		if(userService.currentUserHasRole(Role.ROLE_PROJECTMANAGER) || userService.currentUserHasRole(Role.ROLE_BOOKKEEPER)){
-			return invoiceService.setInvoiceAsPaid(invoiceId);
-		}
-		return new InvoiceDTO();
+		return invoiceService.setInvoiceAsPaid(invoiceId);
 	}
 	
 	/**
@@ -235,13 +224,11 @@ public class InvoiceController extends AbstractController{
 	 */
 	@GET
 	@Consumes({MediaType.APPLICATION_JSON})
+	@RequiresRoles(value = {Role.ROLE_PROJECTMANAGER, Role.ROLE_BOOKKEEPER}, logical = Logical.OR)
 	@Path("/unpaid")
 	@Produces({MediaType.APPLICATION_JSON})
 	public InvoiceDTO unpayInvoice(@QueryParam("invoiceId") long invoiceId){
-		if(userService.currentUserHasRole(Role.ROLE_PROJECTMANAGER) || userService.currentUserHasRole(Role.ROLE_BOOKKEEPER)){
-			return invoiceService.setInvoiceAsUnpaid(invoiceId);
-		}
-		return new InvoiceDTO();
+		return invoiceService.setInvoiceAsUnpaid(invoiceId);
 	}
 	
 	/**
@@ -251,21 +238,19 @@ public class InvoiceController extends AbstractController{
 	 */
 	@GET
 	@Path("/view/{invoiceId}")
+	@RequiresRoles(value = {Role.ROLE_PROJECTMANAGER, Role.ROLE_BOOKKEEPER}, logical = Logical.OR)
 	@Produces( { MediaType.TEXT_HTML })
 	public Response visualizeInvoice(@PathParam("invoiceId") long invoiceId) {
-		if(userService.currentUserHasRole(Role.ROLE_PROJECTMANAGER) || userService.currentUserHasRole(Role.ROLE_BOOKKEEPER)){
-			InvoiceDTO invoiceDTO = invoiceService.getInvoiceById(invoiceId);
-			if(invoiceDTO != null){
-				Map<String, Object> map =new HashMap<String, Object>();
-				map.put("invoice", invoiceDTO);
-				map.put("invoiceLines", invoiceDTO.lines);
-				map.put("invoiceVats", invoiceDTO.vats);
-				return Response.ok(templateRenderer.render("templates/invoice.html", map)).build();
-			}
-			UriBuilder uriBuilder = UriBuilder.fromPath("/invoice");
-			return Response.temporaryRedirect(uriBuilder.build()).status(303).build();
+		InvoiceDTO invoiceDTO = invoiceService.getInvoiceById(invoiceId);
+		if(invoiceDTO != null){
+			Map<String, Object> map =new HashMap<String, Object>();
+			map.put("invoice", invoiceDTO);
+			map.put("invoiceLines", invoiceDTO.lines);
+			map.put("invoiceVats", invoiceDTO.vats);
+			return Response.ok(templateRenderer.render("templates/invoice.html", map)).build();
 		}
-		return Response.status(Status.FORBIDDEN).build();
+		UriBuilder uriBuilder = UriBuilder.fromPath("/invoice");
+		return Response.temporaryRedirect(uriBuilder.build()).status(303).build();
 	}
 	
 	/**
@@ -275,22 +260,19 @@ public class InvoiceController extends AbstractController{
 	 */
 	@GET
 	@Path("/edit/{invoiceId}")
+	@RequiresRoles(value = {Role.ROLE_PROJECTMANAGER, Role.ROLE_BOOKKEEPER}, logical = Logical.OR)
 	@Produces( { MediaType.TEXT_HTML })
 	public Response editInvoice(@PathParam("invoiceId") long invoiceId) {
-		if(userService.currentUserHasRole(Role.ROLE_PROJECTMANAGER) || userService.currentUserHasRole(Role.ROLE_BOOKKEEPER)){
-			InvoiceDTO invoiceDTO = invoiceService.getInvoiceById(invoiceId);
-			if(invoiceDTO != null){
-				
-				Map<String, Object> map =new HashMap<String, Object>();
-				map.put("invoice", invoiceDTO);
-				map.put("invoiceLines", invoiceDTO.lines);
-				return Response.ok(templateRenderer.render("templates/invoice_editable.html", map)).build();
-			}	
-			UriBuilder uriBuilder = UriBuilder.fromPath("/invoice");
-			return Response.temporaryRedirect(uriBuilder.build()).status(303).build();
-
-		}
-		return Response.status(Status.FORBIDDEN).build();
+		InvoiceDTO invoiceDTO = invoiceService.getInvoiceById(invoiceId);
+		if(invoiceDTO != null){
+			
+			Map<String, Object> map =new HashMap<String, Object>();
+			map.put("invoice", invoiceDTO);
+			map.put("invoiceLines", invoiceDTO.lines);
+			return Response.ok(templateRenderer.render("templates/invoice_editable.html", map)).build();
+		}	
+		UriBuilder uriBuilder = UriBuilder.fromPath("/invoice");
+		return Response.temporaryRedirect(uriBuilder.build()).status(303).build();
 	}
 	
 	/**
@@ -300,6 +282,7 @@ public class InvoiceController extends AbstractController{
 	 */
 	@GET
 	@Path("/lines")
+	@RequiresRoles(value = {Role.ROLE_PROJECTMANAGER, Role.ROLE_BOOKKEEPER}, logical = Logical.OR)
 	@Produces({MediaType.APPLICATION_JSON})
 	public List<InvoiceLineDTO> getInvoiceLine(@QueryParam("invoiceId") long invoiceId){
 		return invoiceService.getLinesForInvoice(invoiceId);
@@ -313,6 +296,7 @@ public class InvoiceController extends AbstractController{
 	 */
 	@POST
 	@Path("/update/{invoiceId}")
+	@RequiresRoles(value = {Role.ROLE_PROJECTMANAGER, Role.ROLE_BOOKKEEPER}, logical = Logical.OR)
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Produces({ MediaType.TEXT_HTML })
 	public Response updateInvoice(MultivaluedMap<String, String> formParams, @PathParam("invoiceId") long invoiceId){
@@ -365,6 +349,7 @@ public class InvoiceController extends AbstractController{
 	
 	@GET
 	@Path("/vat")
+	@RequiresRoles(value = {Role.ROLE_PROJECTMANAGER, Role.ROLE_BOOKKEEPER}, logical = Logical.OR)
 	@Produces({MediaType.APPLICATION_JSON})
 	public List<VatDTO> getVat(){
 		return invoiceService.getVAT();

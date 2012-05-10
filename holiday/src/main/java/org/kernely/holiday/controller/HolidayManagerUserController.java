@@ -6,10 +6,10 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
 
+import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.kernely.controller.AbstractController;
-import org.kernely.core.service.UserService;
+import org.kernely.core.model.Role;
 import org.kernely.holiday.dto.HolidayUsersManagerDTO;
 import org.kernely.holiday.service.HolidayManagerUserService;
 import org.kernely.template.SobaTemplateRenderer;
@@ -19,7 +19,7 @@ import com.google.inject.Inject;
 /**
  * Controller for the managed users holidays
  */
-@Path("holiday/manager/users")
+@Path("/holiday/manager/users")
 public class HolidayManagerUserController extends AbstractController{
 	@Inject
 	private SobaTemplateRenderer templateRenderer;
@@ -27,20 +27,15 @@ public class HolidayManagerUserController extends AbstractController{
 	@Inject
 	private HolidayManagerUserService holidayManagerService;
 	
-	@Inject
-	private UserService userService;
-	
 	/**
 	 * Get the template for holiday manager page
 	 * @return The template
 	 */
 	@GET
 	@Produces( { MediaType.TEXT_HTML })
+	@RequiresRoles(Role.ROLE_USERMANAGER)
 	public Response getHolidayManagerUsersPanel(){
-		if(userService.isManager(userService.getAuthenticatedUserDTO().username)){
-			return Response.ok(templateRenderer.render("templates/holiday_manager_users.html")).build();
-		}
-		return Response.status(Status.FORBIDDEN).build();
+		return Response.ok(templateRenderer.render("templates/holiday_manager_users.html")).build();
 	}
 	
 	/**
@@ -51,11 +46,9 @@ public class HolidayManagerUserController extends AbstractController{
 	 */
 	@GET
 	@Path("/all")
+	@RequiresRoles(Role.ROLE_USERMANAGER)
 	@Produces( {MediaType.APPLICATION_JSON} )
 	public HolidayUsersManagerDTO getAllRequestsOfAllUsers(@QueryParam("month") int month, @QueryParam("year") int year){
-		if(userService.isManager(userService.getAuthenticatedUserDTO().username)){	
-			return  holidayManagerService.getHolidayForAllManagedUsersForMonth(month, year);
-		}
-		return new HolidayUsersManagerDTO();
+		return  holidayManagerService.getHolidayForAllManagedUsersForMonth(month, year);
 	}
 }
