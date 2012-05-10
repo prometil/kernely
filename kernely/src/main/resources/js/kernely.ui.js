@@ -96,6 +96,9 @@ TableLineView = Backbone.View.extend({
 		"mouseout" : "out"
 	},
 	
+	eventNames:null,
+	
+	eventsActions:null,
 	
 	idLine: null,
 	
@@ -103,17 +106,10 @@ TableLineView = Backbone.View.extend({
 		this.styles = styles;		
 		this.data = data;
 		this.idLine = idLine;
-		var parent = this;
-		if($.isArray(eventNames)){
-			$.each(eventNames, function(){
-				$(parent.el).bind(this, {line: parent.idLine} ,events[this]);
-			});
-		}
-		else{
-			$(parent.el).bind(eventNames, {line: parent.idLine} ,events[eventNames]);
-		}
 		
-		$(this.el).bind("click", {line: this.idLine} ,events["click"]);
+		this.eventNames = eventNames;
+		this.eventsActions = events;
+		
 		return this;
 	},
 	
@@ -158,6 +154,31 @@ TableLineView = Backbone.View.extend({
 				$(td).addClass(parent.styles[i]);
 			}
 			$(this.el).append($(td));
+		}
+		
+		if($.isArray(this.eventNames)){
+			$.each(this.eventNames, function(){
+				
+				if(this.lastIndexOf('.') != -1){
+					var event = this.substring(0, this.lastIndexOf('.')-1);
+					var element= this.substring(this.lastIndexOf('.'));
+					$(parent.el).find(element).bind("" + event, {line: parent.idLine} ,parent.eventsActions[this]);
+				}
+				else{
+					$(parent.el).bind("" + this, {line: parent.idLine} ,parent.eventsActions[this]);
+				}
+				
+			});
+		}
+		else{
+			if(this.eventNames.lastIndexOf('.') != -1){
+				var event = this.eventNames.substring(0, this.eventNames.lastIndexOf('.')-1);
+				var element= this.eventNames.substring(this.eventNames.lastIndexOf('.'));
+				$(parent.el).find(element).bind("" + event, {line: parent.idLine} ,parent.eventsActions[this.eventNames]);
+			}
+			else{
+				$(parent.el).bind("" + this.eventNames, {line: parent.idLine} ,parent.eventsActions[this.eventNames]);
+			}
 		}
 		return this;
 	}
@@ -296,7 +317,7 @@ jQuery.fn.extend({
 		table.elements = options.elements;
 		table.idField = options.idField;
 		table.events = options.events;
-		table.eventName = options.eventName;
+		table.eventName = options.eventNames;
 		table.render();
 		return table;
 	},

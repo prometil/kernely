@@ -80,7 +80,6 @@ AppHolidayUserRequest = (function($){
 			var templateCommentColumn = $("#table-request-comment-column").text();
 			var templateBeginColumn = $("#table-begin-date-column").text();
 			var templateEndColumn = $("#table-end-date-column").text();
-			var templateStatusColumn = $("#table-status-column").text();
 			
 			this.table = $(parent.el).kernely_table({
 				columns:[
@@ -88,7 +87,7 @@ AppHolidayUserRequest = (function($){
 				       {"name":templateCommentColumn, style:""},
 				       {"name":templateBeginColumn, style:"text-center"},
 				       {"name":templateEndColumn, style:"text-center"},
-				       {"name":templateStatusColumn, style:""}
+				       {"name":"", style:["general-bg", "text-center", "no-border-right", "no-border-top", "no-border-bottom", "icon-column"]}
 				],
 				idField:"id",
 				elements:["managerComment", "requesterComment", "beginDateString", "endDateString", "status"]
@@ -104,19 +103,19 @@ AppHolidayUserRequest = (function($){
 						if($.isArray(dataRequest)){
 							$.each(dataRequest, function(){
 								if(this.status == 1){
-									this.status = $("#status-accepted-template").html();
+									this.status = "<img src='/images/icons/accept_icon.png' />";
 								}
 								else{
-									this.status = $("#status-denied-template").html();
+									this.status = "<img src='/images/icons/deny_icon.png' />";
 								}
 							});
 						}
 						else{
 							if(dataRequest.status == 1){
-								dataRequest.status = $("#status-accepted-template").html();
+								dataRequest.status = "<img src='/images/icons/accept_icon.png' />";
 							}
 							else{
-								dataRequest.status = $("#status-denied-template").html();
+								dataRequest.status = "<img src='/images/icons/deny_icon.png' />";
 							}
 						}
 						parent.table.reload(dataRequest);

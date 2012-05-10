@@ -119,10 +119,10 @@ public class HolidayManagerRequestController extends AbstractController {
 	 * @return ok
 	 */
 	@GET
-	@Path("/comment/{id}/{comment}")
+	@Path("/comment/{id}")
 	@RequiresRoles(Role.ROLE_USERMANAGER)
 	@Produces({MediaType.TEXT_HTML})
-	public Response managerCommentHoliday(@PathParam("id")int idRequest, @PathParam("comment")String managerComment){
+	public Response managerCommentHoliday(@PathParam("id")int idRequest, @QueryParam("comment") String managerComment){
 		holidayRequestService.addManagerCommentary(idRequest, managerComment);
 		return Response.ok().build();			
 	}

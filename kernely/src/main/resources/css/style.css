@@ -445,6 +445,7 @@ table.kernely_table{
 
 table.kernely_table tr{
 	height:25px;
+	cursor:pointer;
 }
 
 table.kernely_table tr td:first-child{
@@ -568,6 +569,10 @@ table.kernely_table th{
 
 .icon-column{
 	width:50px !important;
+}
+
+.separate{
+	margin-top:40px;
 }
 
 /* Dialogs */
