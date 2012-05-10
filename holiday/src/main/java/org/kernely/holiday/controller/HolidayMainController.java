@@ -14,6 +14,7 @@ import org.kernely.controller.AbstractController;
 import org.kernely.holiday.dto.HolidayRequestDTO;
 import org.kernely.holiday.model.HolidayRequest;
 import org.kernely.holiday.service.HolidayRequestService;
+import org.kernely.menu.Menu;
 import org.kernely.template.SobaTemplateRenderer;
 
 import com.google.inject.Inject;
@@ -35,6 +36,7 @@ public class HolidayMainController extends AbstractController {
 	 */
 	@GET
 	@Produces( { MediaType.TEXT_HTML })
+	@Menu("my_holiday")
 	public Response getHolidayHomePage(){
 		return Response.ok(templateRenderer.render("templates/holiday_main_page.html")).build();
 	}

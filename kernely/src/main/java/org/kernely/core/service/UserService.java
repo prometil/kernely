@@ -575,7 +575,8 @@ public class UserService extends AbstractService {
 		if (manager.equals("")) {
 			throw new IllegalArgumentException("Manager cannot be an empty string");
 		}
-		if (list.get(0).id == 0) {
+		// If we update with an empty list, we delete the manager
+		if (list.get(0).id == 0 || list.size() == 0) {
 			deleteManager(manager);
 			return;
 		}
@@ -613,6 +614,11 @@ public class UserService extends AbstractService {
 
 		// add the new users
 		userManager.setUsers(users);
+		
+		if(users.size()>0){
+			this.addRoleToUser(userManager.getId(), Role.ROLE_USERMANAGER);
+		}
+		
 		em.get().merge(userManager);
 	}
 
@@ -629,6 +635,7 @@ public class UserService extends AbstractService {
 		User userManager = (User) query.getSingleResult();
 		Set<User> managed = userManager.getUsers();
 		userManager.setUsers(new HashSet<User>());
+		this.removeRoleToUser(userManager.getId(), Role.ROLE_USERMANAGER);
 		for (User user : managed) {
 			user.getManagers().remove(userManager);
 			em.get().merge(user);
@@ -647,6 +654,7 @@ public class UserService extends AbstractService {
 		query.setParameter("username", username);
 		User userManager = (User) query.getSingleResult();
 		Set<User> managed = userManager.getUsers();
+		this.removeRoleToUser(userManager.getId(), Role.ROLE_USERMANAGER);
 		userManager.setUsers(new HashSet<User>());
 		for (User user : managed) {
 			user.getManagers().remove(userManager);

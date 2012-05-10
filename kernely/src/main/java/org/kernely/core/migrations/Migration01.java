@@ -186,6 +186,10 @@ public class Migration01 extends Migration {
 		Insert bookKeeperRole = Insert.into("kernely_role");
 		bookKeeperRole.set(DataBaseConstants.ID_COLUMN, "8");
 		bookKeeperRole.set("name", "Book keeper");
+		
+		Insert userManagerRole = Insert.into("kernely_role");
+		projectManagerRole.set(DataBaseConstants.ID_COLUMN, "9");
+		projectManagerRole.set("name", "User manager");
 				
 		commands.add(userRole);
 		commands.add(adminRole);
@@ -193,6 +197,7 @@ public class Migration01 extends Migration {
 		commands.add(projectManagerRole);
 		commands.add(clientRole);
 		commands.add(bookKeeperRole);
+		commands.add(userManagerRole);
 		
 		//the table group permision
 		CreateTable groupPermission = CreateTable.name("kernely_group_permissions");

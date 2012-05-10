@@ -11,18 +11,19 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
 
+import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.kernely.controller.AbstractController;
-import org.kernely.core.service.UserService;
+import org.kernely.core.model.Role;
 import org.kernely.holiday.dto.CalendarRequestDTO;
 import org.kernely.holiday.dto.HolidayDetailDTO;
 import org.kernely.holiday.dto.HolidayRequestDTO;
 import org.kernely.holiday.model.HolidayRequest;
 import org.kernely.holiday.service.HolidayRequestService;
+import org.kernely.menu.Menu;
 import org.kernely.template.SobaTemplateRenderer;
 
 import com.google.inject.Inject;
@@ -37,9 +38,6 @@ public class HolidayManagerRequestController extends AbstractController {
 	private SobaTemplateRenderer templateRenderer;
 	
 	@Inject
-	private UserService userService;
-	
-	@Inject
 	private HolidayRequestService holidayRequestService ; 
 	
 	/**
@@ -47,12 +45,11 @@ public class HolidayManagerRequestController extends AbstractController {
 	 * @return the page 
 	 */
 	@GET
+	@RequiresRoles(Role.ROLE_USERMANAGER)
+	@Menu("request_management")
 	@Produces( { MediaType.TEXT_HTML })
 	public Response getHolidayRequestPage(){
-		if (userService.isManager(userService.getAuthenticatedUserDTO().username)){	
-			return Response.ok(templateRenderer.render("templates/holiday_request_management.html")).build();
-		}
-		return Response.status(Status.FORBIDDEN).build();
+		return Response.ok(templateRenderer.render("templates/holiday_request_management.html")).build();
 	}
 	
 	/**
@@ -61,14 +58,12 @@ public class HolidayManagerRequestController extends AbstractController {
 	 */
 	@GET
 	@Path("/all/pending")
+	@RequiresRoles(Role.ROLE_USERMANAGER)
 	@Produces({MediaType.APPLICATION_JSON})
 	public List<HolidayRequestDTO> displayAllHolidayRequestPending()
 	{
-		if (userService.isManager(userService.getAuthenticatedUserDTO().username)){
-			log.debug("Call to GET on all holiday request pending");
-			return holidayRequestService.getSpecificRequestsForManagers(HolidayRequest.PENDING_STATUS);
-		}
-		return new ArrayList<HolidayRequestDTO>();
+		log.debug("Call to GET on all holiday request pending");
+		return holidayRequestService.getSpecificRequestsForManagers(HolidayRequest.PENDING_STATUS);
 	}
 	
 	/**
@@ -77,17 +72,16 @@ public class HolidayManagerRequestController extends AbstractController {
 	 */
 	@GET
 	@Path("/all/status")
+	@RequiresRoles(Role.ROLE_USERMANAGER)
 	@Produces({MediaType.APPLICATION_JSON})
 	public List<HolidayRequestDTO> displayAllHolidayRequestStatus()
 	{
-		if (userService.isManager(userService.getAuthenticatedUserDTO().username)){
-			log.debug("Call to GET on all holiday request accepted or denied");
-			List<HolidayRequestDTO> lhr = new ArrayList<HolidayRequestDTO>();
-			lhr.addAll(holidayRequestService.getSpecificRequestsForManagers(HolidayRequest.ACCEPTED_STATUS));
-			lhr.addAll(holidayRequestService.getSpecificRequestsForManagers(HolidayRequest.DENIED_STATUS));
-			return lhr; 
-		}
-		return new ArrayList<HolidayRequestDTO>();
+		log.debug("Call to GET on all holiday request accepted or denied");
+		List<HolidayRequestDTO> lhr = new ArrayList<HolidayRequestDTO>();
+		lhr.addAll(holidayRequestService.getSpecificRequestsForManagers(HolidayRequest.ACCEPTED_STATUS));
+		lhr.addAll(holidayRequestService.getSpecificRequestsForManagers(HolidayRequest.DENIED_STATUS));
+		return lhr; 
+		
 	}
 	
 	/**
@@ -97,13 +91,11 @@ public class HolidayManagerRequestController extends AbstractController {
 	 */
 	@GET
 	@Path("/accept/{id}")
+	@RequiresRoles(Role.ROLE_USERMANAGER)
 	@Produces({MediaType.TEXT_HTML})
 	public Response acceptHoliday(@PathParam("id")int idRequest){
-		if (userService.isManager(userService.getAuthenticatedUserDTO().username)){
-			holidayRequestService.acceptRequest(idRequest);
-			return Response.ok().build(); 			
-		}
-		return Response.status(Status.FORBIDDEN).build();
+		holidayRequestService.acceptRequest(idRequest);
+		return Response.ok().build(); 			
 	}
 	
 	/**
@@ -113,13 +105,11 @@ public class HolidayManagerRequestController extends AbstractController {
 	 */
 	@GET
 	@Path("/deny/{id}")
+	@RequiresRoles(Role.ROLE_USERMANAGER)
 	@Produces({MediaType.TEXT_HTML})
 	public Response denyHoliday(@PathParam("id")int idRequest){
-		if (userService.isManager(userService.getAuthenticatedUserDTO().username)){
-			holidayRequestService.denyRequest(idRequest);
-			return Response.ok().build();			
-		}
-		return Response.status(Status.FORBIDDEN).build();
+		holidayRequestService.denyRequest(idRequest);
+		return Response.ok().build();			
 	}
 	
 	/**
@@ -130,13 +120,11 @@ public class HolidayManagerRequestController extends AbstractController {
 	 */
 	@GET
 	@Path("/comment/{id}/{comment}")
+	@RequiresRoles(Role.ROLE_USERMANAGER)
 	@Produces({MediaType.TEXT_HTML})
 	public Response managerCommentHoliday(@PathParam("id")int idRequest, @PathParam("comment")String managerComment){
-		if (userService.isManager(userService.getAuthenticatedUserDTO().username)){
-			holidayRequestService.addManagerCommentary(idRequest, managerComment);
-			return Response.ok().build();			
-		}
-		return Response.status(Status.FORBIDDEN).build();
+		holidayRequestService.addManagerCommentary(idRequest, managerComment);
+		return Response.ok().build();			
 	}
 	
 	/**
@@ -146,9 +134,9 @@ public class HolidayManagerRequestController extends AbstractController {
 	 */
 	@GET
 	@Path("/get/{id}")
+	@RequiresRoles(Role.ROLE_USERMANAGER)
 	@Produces(MediaType.APPLICATION_JSON)
 	public List<HolidayDetailDTO> getDetailsInterval(@PathParam("id")int idRequest){
-		if (userService.isManager(userService.getAuthenticatedUserDTO().username)){
 			List<HolidayDetailDTO> hddto =  holidayRequestService.getHolidayRequestDetails(idRequest);
 			Date firstDay = hddto.get(0).day;
 			Date lastDay = hddto.get(0).day;
@@ -175,8 +163,6 @@ public class HolidayManagerRequestController extends AbstractController {
 			hddto.add(firstHoliday);
 			hddto.add(lastHoliday);
 			return hddto;
-		}
-		return new ArrayList<HolidayDetailDTO>();
 	}
 	
 	/**
@@ -186,12 +172,10 @@ public class HolidayManagerRequestController extends AbstractController {
 	 */
 	@GET
 	@Path("/details/{id}")
+	@RequiresRoles(Role.ROLE_USERMANAGER)
 	@Produces(MediaType.APPLICATION_JSON)
 	public List<HolidayDetailDTO> getDetails(@PathParam("id")int idRequest){
-		if (userService.isManager(userService.getAuthenticatedUserDTO().username)){
-			return holidayRequestService.getHolidayRequestDetailsByOrder(idRequest);
-		}
-		return new ArrayList<HolidayDetailDTO>();
+		return holidayRequestService.getHolidayRequestDetailsByOrder(idRequest);
 	}
 	
 	/**
@@ -202,6 +186,7 @@ public class HolidayManagerRequestController extends AbstractController {
 	 */
 	@GET
 	@Path("construct")
+	@RequiresRoles(Role.ROLE_USERMANAGER)
 	@Produces(MediaType.APPLICATION_JSON)
 	public CalendarRequestDTO constructCalendar(@QueryParam("dateBegin")String dateBegin,@QueryParam("dateEnd")String dateEnd){
 		DateTimeFormatter fmt = DateTimeFormat.forPattern("yyyy-MM-dd");

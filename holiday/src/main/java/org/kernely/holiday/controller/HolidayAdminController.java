@@ -20,7 +20,6 @@
 
 package org.kernely.holiday.controller;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.ws.rs.GET;
@@ -31,10 +30,11 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
 
+import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.kernely.controller.AbstractController;
 import org.kernely.core.dto.UserDetailsDTO;
+import org.kernely.core.model.Role;
 import org.kernely.core.service.UserService;
 import org.kernely.holiday.dto.HolidayCreationRequestDTO;
 import org.kernely.holiday.dto.HolidayDTO;
@@ -66,6 +66,7 @@ public class HolidayAdminController extends AbstractController {
 	 */
 	@GET
 	@Produces( { MediaType.TEXT_HTML })
+	@RequiresRoles(Role.ROLE_ADMINISTRATOR)
 	public Response getPluginAdminPanel(){
 		Response page;
 		if (userService.currentUserIsAdministrator()){
@@ -82,13 +83,11 @@ public class HolidayAdminController extends AbstractController {
 	 */
 	@GET
 	@Path("/all")
+	@RequiresRoles(Role.ROLE_ADMINISTRATOR)
 	@Produces({MediaType.APPLICATION_JSON})
 	public List<HolidayProfileDTO> displayAllHoliday(){
-		if (userService.currentUserIsAdministrator()){
-			log.debug("Call to GET on all holiday profiles");
-			return holidayService.getAllProfiles();
-		}
-		return new ArrayList<HolidayProfileDTO>();
+		log.debug("Call to GET on all holiday profiles");
+		return holidayService.getAllProfiles();
 	}
 
 	/**
@@ -97,13 +96,11 @@ public class HolidayAdminController extends AbstractController {
 	 */
 	@GET
 	@Path("/{id}")
+	@RequiresRoles(Role.ROLE_ADMINISTRATOR)
 	@Produces({MediaType.APPLICATION_JSON})
 	public HolidayProfileDTO getHolidayProfile(@PathParam("id") long id){
-		if (userService.currentUserIsAdministrator()){
-			log.debug("Get holiday profile {}",id);
-			return holidayService.getHolidayProfile(id);
-		}
-		return new HolidayProfileDTO();
+		log.debug("Get holiday profile {}",id);
+		return holidayService.getHolidayProfile(id);
 	}
 	
 	/**
@@ -112,12 +109,10 @@ public class HolidayAdminController extends AbstractController {
 	 */
 	@GET
 	@Path("/combo/{holiday}")
+	@RequiresRoles(Role.ROLE_ADMINISTRATOR)
 	@Produces({MediaType.APPLICATION_JSON})
 	public HolidayDTO getComboUnity(@PathParam("holiday") int id ) {
-		if (userService.currentUserIsAdministrator()){
-			return holidayService.getHolidayDTO(id) ;		
-		}
-		return new HolidayDTO();
+		return holidayService.getHolidayDTO(id) ;		
 	}
 
 	/**
@@ -127,13 +122,11 @@ public class HolidayAdminController extends AbstractController {
 	 */
 	@POST
 	@Path("/create")
+	@RequiresRoles(Role.ROLE_ADMINISTRATOR)
 	@Produces({MediaType.APPLICATION_JSON})
 	public Response create(HolidayProfileCreationRequestDTO holiday){
-		if (userService.currentUserIsAdministrator()){
-			holidayService.createOrUpdateHolidayProfile(holiday);
-			return Response.ok().build();
-		}
-		return Response.status(Status.FORBIDDEN).build();		
+		holidayService.createOrUpdateHolidayProfile(holiday);
+		return Response.ok().build();
 	}
 	
 	/**
@@ -143,12 +136,10 @@ public class HolidayAdminController extends AbstractController {
 	 */
 	@POST
 	@Path("/createtype")
+	@RequiresRoles(Role.ROLE_ADMINISTRATOR)
 	@Produces({MediaType.APPLICATION_JSON})
 	public HolidayDTO createType(HolidayCreationRequestDTO holiday){
-		if (userService.currentUserIsAdministrator()){
-			return holidayService.createOrUpdateHoliday(holiday);
-		}
-		return new HolidayDTO();		
+		return holidayService.createOrUpdateHoliday(holiday);
 	}
 	
 	/**
@@ -158,15 +149,13 @@ public class HolidayAdminController extends AbstractController {
 	 */
 	@GET
 	@Path("/profile/users")
+	@RequiresRoles(Role.ROLE_ADMINISTRATOR)
 	@Produces({MediaType.APPLICATION_JSON})
 	public HolidayProfileUsersDTO getProfileUsers(@QueryParam("id") int id){
-		if (userService.currentUserIsAdministrator()){
-			List<UserDetailsDTO> in = holidayService.getUsersInProfile(id);
-			List<UserDetailsDTO> out = holidayService.getUsersNotInProfile(id);
-			log.debug("Profile {} is associated to {} users",id,in.size());
-			return new HolidayProfileUsersDTO(id,in,out);
-		}
-		return new HolidayProfileUsersDTO();		
+		List<UserDetailsDTO> in = holidayService.getUsersInProfile(id);
+		List<UserDetailsDTO> out = holidayService.getUsersNotInProfile(id);
+		log.debug("Profile {} is associated to {} users",id,in.size());
+		return new HolidayProfileUsersDTO(id,in,out);
 	}
 	
 	/**
@@ -175,16 +164,12 @@ public class HolidayAdminController extends AbstractController {
 	 * @return ok 
 	 */
 	@POST
+	@RequiresRoles(Role.ROLE_ADMINISTRATOR)
 	@Path("/profile/users/update")
 	@Produces({MediaType.APPLICATION_JSON})
 	public Response updateUsers(HolidayProfileUpdateUsersRequestDTO request){
-		// Check if request is not null.
-		if(request != null && userService.currentUserIsAdministrator()){
-			holidayService.updateProfileUsers(request.id,request.usernames);
-			return Response.ok().build();
-		}
-		return Response.status(Status.FORBIDDEN).build();
-		
+		holidayService.updateProfileUsers(request.id,request.usernames);
+		return Response.ok().build();
 	}
 
 }
