@@ -159,8 +159,7 @@ App = (function($){
 		},
 		deleteMessage: function(){
 			var html = $("#confirm-deletion-template").html();
-			
-			$.kernelyConfirm(html, this.confirmDeleteMessage, this);
+			$.kernelyConfirm($("#delete-confirm-template").text(),html, this.confirmDeleteMessage, this);
 		},
 		
 		confirmDeleteMessage: function(parent){

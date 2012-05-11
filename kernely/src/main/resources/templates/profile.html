@@ -4,19 +4,13 @@
 {% endblock %}
 
 {% block content %}
-<div id="profile_header" style="height:50px;text-align:center;font-size:20px;font-weight:bold;">{% i18n "profile_page_of" %} {{details.firstname}} {{details.lastname}}</div>
-<div id="profile_top_container" style="height:560px;">
-
-	<div id="profile_image">
-		<img src="/images/{{details.image}}" id="image_name" name="{{details.image}}"/>
-	</div>
 	<div id="profile_information">
-		<table style="width:100%">
+		<table class="kernely_table">
 			<tr><td>{% i18n "civility" %}</td><td><span id="profile_civility">
 				{% if (details.civility == 1) %}
-					{% i18n "civility.mister") %}
+					{% i18n "civility.mister" %}
 				{% elseif (details.civility == 2) %}
-					{% i18n "civility.madam") %}
+					{% i18n "civility.madam" %}
 				{% elseif (details.civility == 3) %}
 					{% i18n "civility.miss" %}
 				{% endif %}		
@@ -26,7 +20,7 @@
 		
 			<tr><td>{% i18n "firstname" %}</td><td><span id="profile_firstname">{{details.firstname}}</span></td></tr>
 		
-			<tr><td>{% i18n "email" %}</td><td><span id="profile_mail"><a href="mailto:{{details.email}}">${details.email}</a></span></span></td></tr>
+			<tr><td>{% i18n "email" %}</td><td><span id="profile_mail"><a href="mailto:{{details.email}}">{{details.email}}</a></span></span></td></tr>
 		
 			<tr><td>{% i18n "address" %}</td><td><span id="profile_adress">{{details.adress}}</span></td></tr>
 		
@@ -47,6 +41,17 @@
 			<tr><td>{% i18n "security_social_number" %}</td><td><span id="profile_ssn">{{details.ssn}}</span></td></tr>
 		</table>
 	</div>
+{% endblock %}
+
+{% block left %}
+<div id="profile_mask"></div>
+<div id="left_profile_arrow"></div>
+<div id='left_profile_container'>
+	<img src="/images/{{details.image}}" id="image_name" name="{{details.image}}"/>
+	<div id="left_profile_name">{{details.firstname}} {{details.lastname}}</div>
 </div>
-<div id="profile_bottom_container"><div>
+{% endblock %}
+
+{% block title %}
+{% i18n "profile_page_of" %} {{details.firstname}} {{details.lastname}}
 {% endblock %}

@@ -302,6 +302,10 @@ img.img_miniprofile{
 	height:28px;
 }
 
+img#image_name{
+	max-height:197px;
+}
+
 /* mini-profile pop up */
 div#profile_popup{
 	right:5px;
