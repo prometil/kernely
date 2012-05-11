@@ -4,12 +4,17 @@
 {% endblock %}
 
 {% block css %}
-	<link rel="stylesheet" type="text/css" href="/css/holiday_manager_users.css"/>
+	<link rel="stylesheet" type="text/css" href="/css/holiday_request.css"/>
+	<link rel="stylesheet" type="text/css" href="/css/holiday_planning_summary.css"/>
 {% endblock %}
 
 {% block template %}
 	<script type="text/html" id="balance-cells-legend">
-		<span style="font-weight:bold;">{{"{{"}}name{{"}}"}}</span>
+	<span style="font-weight:bold;">{{"{{"}}name{{"}}"}}</span>
+	</script>
+	<script type="text/html" id="type-cell-template">
+		<div class="balance-cell-amount"></div>
+		<div class="balance-cell-title">{{"{{"}}name{{"}}"}}</div>
 	</script>
 {% endblock %}
 
@@ -26,16 +31,26 @@
 			<input type="button" class="button_emphasis" value="{% i18n "back_to_planning"%}" onClick='window.location="/holiday/planning"'/>
 		</div>
 		<div id="main-manager-table-content">
-			<table id="usersHoliday" cellspacing="0">
+			<div class="wrapper1">
+				<div class="top-scroll-bar">
+				</div>
+			</div>
+			<div class="wrapper2">
+				<div class="table-container-scroll">
+					<table id="usersHoliday" class="kernely_table" cellspacing="0">
 				
-			</table>
-		</div>
-		
-		<div id="color-legend">
-		
+					</table>
+				</div>
+			</div>
 		</div>
 	</div>
 {% endblock %}
+
+{% block right %}
+	<div id="color-legend">
+	</div>
+{% endblock %}
+
 {% block left %}
 <div id="profile_mask"></div>
 <div id="left_profile_arrow"></div>

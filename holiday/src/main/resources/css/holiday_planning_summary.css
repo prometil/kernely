@@ -1,82 +1,27 @@
-tr:nth-child(odd) {
-    background-color: #FFFFFF
-}
-tr:nth-child(even) {
-    background-color: #EEEEEE
-}
-
-.balance-cell-legend{
-	width:180px;
-	float:left;
-	height:20px;
-	padding-top:5px;
-	margin-right:15px;
-	text-align:center;
-	margin-top: 5px;
-	-moz-border-radius:20px;
-    	-moz-box-shadow:0px 2px 2px 0px rgba(0, 0, 0, 0.5),
-              0px 2px 2px 0px rgba(255, 255, 255, 0.5) inset;
-   	 -webkit-border-radius:20px;
-   	 -webkit-box-shadow:0px 2px 2px 0px rgba(0, 0, 0, 0.5),
-                 0px 2px 2px 0px rgba(255, 255, 255, 0.5) inset;
-   	 border-radius:20px;
-  	 box-shadow:0px 2px 2px 0px rgba(0, 0, 0, 0.5),
-             0px 2px 2px 0px rgba(255, 255, 255, 0.5) inset;
+.wrapper1, .wrapper2{
+	width: 100%;
+	border: none;
+	overflow-x: scroll;
+	overflow-y:hidden;
 }
 
-#usersHoliday{
-	width:auto;
-	height:auto;
+.wrapper1{
+	height: 20px;
 }
 
-.column-part-day-user{
-
+.wrapper2{
+	height: auto;
 }
 
-.row-header-user{
-	width:80px;
-	border-left: 1px solid black;
+.top-scroll-bar {
+	width:1000px;
+	height: 20px;
 }
 
-.table-header{
-	text-align:center;
+.table-container-scroll {
+	width:1000px;
+	height: auto;
+	overflow: auto;
 }
 
-.day-header-cell{
-	width:28px;
-	border-top: 1px solid black;
-}
 
-.border-element-r-b{
-	border-right: 1px solid black;
-	border-bottom: 1px solid black;
-}
-
-span #month_current{
-	display:block;
-	width:80px;
-}
-
-th.summary{
-	background-color:red;
-	border: 1px solid black;
-}
-
-table.holiday_summary_profile_table{
-	margin:30px;
-}
-
-th.holiday-summary-table-header{
-	min-width:100px;
-}
-
-td.holiday-summary-taken-pending{
-	text-align:center;
-}
-
-caption.holiday-summary-table-caption{
-	min-width:200px;
-	text-decoration:underline;
-	font-weight:bold;
-	text-align:left;
-}

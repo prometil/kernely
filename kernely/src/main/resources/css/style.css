@@ -144,6 +144,11 @@ div#header a {
 	text-decoration: none;
 }
 
+div#header a:hover {
+	color: #97ad17;
+	text-decoration: none;
+}
+
 /* menu*/
 div#menu {
 	left:0;
@@ -193,6 +198,7 @@ a.menu_item_selected{
 }
 a.menu_item:hover .{
 	background-color:#000;
+	color:#97ad17;
 	background: #000 url(/images/icons/arrow_hover.png) no-repeat 5px center;
 }
 a.sub_menu_item{
@@ -215,7 +221,7 @@ ul.topnav {
 	float: left;
 	width: 920px;
 	background: #222;
-	background: url(topnav_bg.gif) repeat-x;
+	background: url("/images/menu_background.png") repeat-x;
 }
 ul.topnav li {
 	float: left;
@@ -581,6 +587,10 @@ table.kernely_table th{
 
 .separate{
 	margin-top:40px;
+}
+
+.table-layout-fixed{	
+	table-layout:fixed;
 }
 
 /* Dialogs */

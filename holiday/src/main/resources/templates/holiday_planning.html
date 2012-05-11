@@ -4,6 +4,7 @@
 {% endblock %}
 
 {% block css %}
+	<link rel="stylesheet" type="text/css" href="/css/holiday_request.css"/>
 	<link rel="stylesheet" type="text/css" href="/css/holiday_planning_summary.css"/>
 {% endblock %}
 
@@ -11,7 +12,10 @@
 	<script type="text/html" id="balance-cells-legend">
 		<span style="font-weight:bold;">{{"{{"}}name{{"}}"}}</span>
 	</script>
-	
+	<script type="text/html" id="type-cell-template">
+	<div class="balance-cell-amount"></div>
+	<div class="balance-cell-title">{{"{{"}}name{{"}}"}}</div>
+</script>
 {% endblock %}
 
 {% block title %}
@@ -26,14 +30,23 @@
 			<input type="button" class="button_emphasis" value="{% i18n "my_collaborators"%}" onClick='window.location="/holiday/manager/users"'/>
 		</div>
 		<div id="main-human-table-content">
-			<table id="usersHoliday" cellspacing="0">
-				
-			</table>
+			<div class="wrapper1">
+				<div class="top-scroll-bar">
+				</div>
+			</div>
+			<div class="wrapper2">
+				<div class="table-container-scroll">
+					<table id="usersHoliday" class="kernely_table">
+						
+					</table>
+				</div>
+			</div>
 		</div>
-		
-		<div id="color-legend">
-		
-		</div>
+	</div>
+{% endblock %}
+
+{% block right %}
+	<div id="color-legend">
 	</div>
 {% endblock %}
 
