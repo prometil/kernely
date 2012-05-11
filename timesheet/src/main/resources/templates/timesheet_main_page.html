@@ -63,15 +63,15 @@
 			{% i18n "expense_comment" %}<br/><textarea disabled="disabled" id="expense-comment"></textarea>
 		</div>
 		</fieldset>
-		<input type="button" value="{% i18n "ok" %}" class="create_expense"/>
+		<div class="dialog-buttons-container">
+			<input type="button" value="{% i18n "ok" %}" class="create_expense button_ok"/>
+		</div>
 	</script>
 
 
 {% endblock %}
 
 {% block content %}
-	<div id="mask"></div>
-	
 	<div id="modal_window_expense"></div>
 
 	<div id="timesheet-main">

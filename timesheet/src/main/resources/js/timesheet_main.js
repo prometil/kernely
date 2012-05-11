@@ -32,49 +32,6 @@ AppTimeSheet = (function($){
 			mainView = this;
 			new TimePicker().render();
 			weekSelector = new TimeWeekSelectorView().render();
-			$.ajax({
-				type: "GET",
-				url:"/project/list",
-				success: function(data){
-					// Create the views
-					if (data != null){
-						if ($.isArray(data.projectDTO)){
-							$.each(data.projectDTO, function(){
-								$('#project-select')
-						          .append($('<option>', { value : this.id })
-						          .text(this.name));
-							});
-
-						} else if (data.projectDTO != null){
-						     $('#project-select')
-					          .append($('<option>', { value : data.projectDTO.id })
-					          .text(data.projectDTO.name));
-						}
-					}
-					$.ajax({
-						type: "GET",
-						url:"/timesheet/calendar",
-						data:{week:weekSelected, year:yearSelected},
-						success: function(data){
-
-							// Reset display
-							$("#timesheet-content").html('<tr id="date-line"></tr>');
-							
-							// Create the views
-							weekSelected = data.week;
-							yearSelected = data.year;
-							calendar = new CalendarView(data).render();
-							expense = new TimeSheetExpenseLineView(data.stringDates).render();
-							expense.setTotals();
-							if(data.timeSheet != null){
-								timeSheetId = data.timeSheet.id;
-							} else {
-								timeSheetId = 0;
-							}
-						}
-					});
-				}
-			});
 		},
 		addProject: function(){
 			var amounts = new Array();
@@ -771,60 +728,31 @@ AppTimeSheet = (function($){
 		el:"#modal_window_expense",
 		
 		idDay : null,
-		
-		events:{
-			"click .closeModal" : "closemodal",
-			"click .create_expense" : "closemodal",
-			
-		},
-	
-		initialize: function(){
-		},
-		
-		showModalWindow: function(){
-			//Get the screen height and width
-       		var maskHeight = $(window).height();
-       		var maskWidth = $(window).width();
 
-
-            //Set height and width to mask to fill up the whole screen
-            $('#mask').css({'width':maskWidth,'height':maskHeight});
-
-            //transition effect    
-            $('#mask').fadeIn(500);   
-            $('#mask').fadeTo("fast",0.7); 
-
-            //Get the window height and width
-            var winH = $(window).height();
-            var winW = $(window).width();
-
-
-        	//Set the popup window to center
-       		$("#modal_window_expense").css('top',  winH/2-$("#modal_window_expense").height()/2);
-     		$("#modal_window_expense").css('left', winW/2-$("#modal_window_expense").width()/2);
-     		$("#modal_window_expense").css('background-color', "#EEEEEE");
-     		$("input:text").each(function(){this.value="";});
-     		//transition effect
-     		$("#modal_window_expense").fadeIn(500);
-		},
-		
 		closemodal: function(){
-			$('#modal_window_expense').hide();
-       		$('#mask').hide();
-       		expense.setTotals();
+			$("#modal_window_expense").kernely_dialog("close");
+			mainView.reloadCalendar(weekSelected, yearSelected);
 		},
-		
 		render: function(day){
 			this.idDay = day;
-			this.showModalWindow();
-			var html = $("#expense-window").html();
-			$(this.el).html(html);
+			
+			var parent = this;
+			var template = $("#expense-window").html();
+			var titleTemplate = $("#expense-line-title-template").html();
+			$("#modal_window_expense").kernely_dialog({
+				title: titleTemplate,
+				content: template,
+				eventNames:'click',
+				events:{
+					'click': {"el":".create_expense", "event":parent.closemodal}
+				}
+			});
+			$("#modal_window_expense").kernely_dialog("open");
 			
 			tableExpenseView = new ExpenseTableView(this.idDay);
 			tableExpenseView.render();
 			new ExpenseFormView(this.idDay).render();
 			return this;
-			
 		}
 	})
 	
@@ -956,7 +884,8 @@ AppTimeSheet = (function($){
 		
 		delete: function(){
 			var message = $("#confirm-remove-expense-line-template").html();
-			$.kernelyConfirm(message,this.confirmDelete,this);
+			var title = $("#delete-template").html();
+			$.kernelyConfirm(title,message,this.confirmDelete,this);
 		},
 		
 		confirmDelete: function(parent){
