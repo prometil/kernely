@@ -46,21 +46,22 @@
 		<span id="errors_message"></span>
 		<fieldset>
 		<legend>{% i18n "expense-header-table" %}</legend>
-		<table id="expense-table">
-			<tr>
-				<th>{% i18n "expense_amount" %}</th>
-				<th>{% i18n "expense_type" %}</th>
-				<th><!-- Column for the edit button --></th>
-				<th><!-- Column for the delete button --></th>
-			</tr>
+		<table id="expense-table" class="kernely_table">
+			<thead>
+				<tr>
+					<th>{% i18n "expense_amount" %}</th>
+					<th>{% i18n "expense_type" %}</th>
+					<th><!-- Column for the edit button --></th>
+					<th><!-- Column for the delete button --></th>
+				</tr>
+			</thead>
 			<tbody id="expenses-lines">
 			</tbody>
 		</table>
 		<div id="expense-form">
-			{% i18n "expense_amount" %}: <input type="text" name="amount" id="expense-amount"/>
+			{% i18n "expense_amount" %}: <input class="kernely_input" type="text" name="amount" id="expense-amount"/>
 			<select id="expense-type-select"></select>
-			<input type="button" id="submit-expense" value="{% i18n "create" %}"/><br/>
-			{% i18n "expense_comment" %}<br/><textarea disabled="disabled" id="expense-comment"></textarea>
+			<input type="button" class="button_emphasis" id="submit-expense" value="{% i18n "create" %}"/><br/>
 		</div>
 		</fieldset>
 		<div class="dialog-buttons-container">

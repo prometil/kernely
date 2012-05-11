@@ -565,6 +565,10 @@ table.kernely_table th{
 	background-color:#f6f6f6 !important;
 }
 
+.dialog-bg{
+	background-color:#EEEEEE !important;
+}
+
 .no-border-left{
 	border-left:none !important;
 }
