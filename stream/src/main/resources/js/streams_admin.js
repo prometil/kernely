@@ -212,13 +212,11 @@ AppStreamAdmin = (function($){
 			$("#streams_modal_window").kernely_dialog({
 				title: title,
 				content: html,
-				eventNames:'click',
+				eventNames:['click .updateStream','click .usersTab','click .groupsTab'],
 				events:{
-					 'click': [
-					           	{"el":".updateStream", "event":parent.updatestreamrights},
-								{"el":"#usersTab", "event":parent.showUsersRights},
-								{"el":"#groupsTab", "event":parent.showGroupsRights}
-					          ]
+					'click .updateStream' : parent.updatestreamrights,
+					"click .usersTab" : parent.showUsersRights,
+					"click .groupsTab" : parent.showGroupsRights
 				}
 			});
 			
@@ -456,9 +454,9 @@ AppStreamAdmin = (function($){
 			$("#streams_modal_window").kernely_dialog({
 				title: title,
 				content: html,
-				eventNames:'click',
+				eventNames:'click .sendStream',
 				events:{
-					'click': {"el":".sendStream", "event":parent.registerstream}
+					'click .sendStream' : parent.registerstream
 				}
 			});
 			$("#streams_modal_window").kernely_dialog("open");
@@ -518,9 +516,9 @@ AppStreamAdmin = (function($){
 					$("#streams_modal_window").kernely_dialog({
 						title: title,
 						content: html,
-						eventNames:'click',
+						eventNames:'click .updateDataStream',
 						events:{
-							'click': {"el":".updateDataStream", "event":parent.updatestream}
+							'click .updateDataStream' : parent.updatestream
 						}
 					});
 					$("#streams_modal_window").kernely_dialog("open");

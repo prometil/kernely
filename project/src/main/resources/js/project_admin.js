@@ -163,9 +163,9 @@ AppProjectAdmin = (function($){
 			$("#modal_window_project").kernely_dialog({
 				title: title,
 				content: html,
-				eventNames:'click',
+				eventNames:'click .createProject',
 				events:{
-					'click': {"el":".createProject", "event":parent.registerproject}
+					'click .createProject' : parent.registerproject
 				}
 			});
 			$.ajax({
@@ -253,9 +253,9 @@ AppProjectAdmin = (function($){
 					$("#modal_window_project").kernely_dialog({
 						title: title,
 						content: html,
-						eventNames:'click',
+						eventNames:'click .updateProject',
 						events:{
-							'click': {"el":".updateProject", "event":parent.updateproject}
+							'click .updateProject' : parent.updateproject
 						}
 					});
 					

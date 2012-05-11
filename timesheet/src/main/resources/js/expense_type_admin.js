@@ -115,12 +115,10 @@ AppExpenseType = (function($){
 			$("#modal_window_expense_type").kernely_dialog({
 				title: title,
 				content: html,
-				eventNames:'click',
+				eventNames: ['click .create_expense_type','click .expense-type-cb'],
 				events:{
-					 'click': [
-					           	{"el":".create_expense_type", "event":parent.createType},
-								{"el":".expense-type-cb", "event":parent.manageDirect}
-					          ]
+					 'click .create_expense_type' : parent.createType,
+					  'click .expense-type-cb' : parent.manageDirect
 				}
 			});
 			$("#modal_window_expense_type").kernely_dialog("open");
@@ -181,12 +179,10 @@ AppExpenseType = (function($){
 					$("#modal_window_expense_type").kernely_dialog({
 						title: title,
 						content: html,
-						eventNames:'click',
+						eventNames: ['click .updateExpenseType', 'click .expense-type-cb'],
 						events:{
-							 'click': [
-							           	{"el":".updateExpenseType", "event":parent.updateType},
-										{"el":".expense-type-cb", "event":parent.manageDirect}
-							          ]
+								"click .updateExpenseType" : parent.updateType,
+								"click .expense-type-cb" : parent.manageDirect
 						}
 					});
 					if(data.direct == "true"){

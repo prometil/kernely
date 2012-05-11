@@ -116,9 +116,9 @@
 			$("#modal_window_user").kernely_dialog({
 				title: titleTemplate,
 				content: template,
-				eventNames:'click',
+				eventNames:'click .createUser',
 				events:{
-					'click': {"el":".createUser", "event":parent.createNewUser}
+					"click .createUser" : parent.createNewUser
 				}
 			});
 			$("#modal_window_user").kernely_dialog("open");
@@ -165,9 +165,9 @@
 					$("#modal_window_user").kernely_dialog({
 						title: titleTemplate,
 						content: html,
-						eventNames:'click',
+						eventNames:'click .updateUser',
 						events:{
-							'click': {"el":".updateUser", "event":parent.updateuser}
+							'click .updateUser' : parent.updateuser
 						}
 					});
 					

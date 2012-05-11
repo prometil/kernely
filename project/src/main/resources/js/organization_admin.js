@@ -80,6 +80,7 @@ AppOrganizationAdmin = (function($){
 		},
 		
 		createorganization: function(){
+			console.log("FUNCTION "+parent.registerorganization);
 			// Create the dialog
 			var parent = this;
 			var html = $("#popup-organization-admin-create-template").html();
@@ -87,9 +88,9 @@ AppOrganizationAdmin = (function($){
 			$("#modal_window_organization").kernely_dialog({
 				title: titleTemplate,
 				content: html,
-				eventNames:'click',
+				eventNames:'click .createOrganization',
 				events:{
-					'click': {"el":".createOrganization", "event":parent.registerorganization}
+					'click .createOrganization' : parent.registerorganization
 				}
 			});
 			$("#modal_window_organization").kernely_dialog("open");
@@ -135,9 +136,9 @@ AppOrganizationAdmin = (function($){
 					$("#modal_window_organization").kernely_dialog({
 						title: titleTemplate,
 						content: html,
-						eventNames:'click',
+						eventNames:'click .updateOrganization',
 						events:{
-							'click': {"el":".updateOrganization", "event":parent.updateorganization}
+							'click .updateOrganization' : parent.updateorganization
 						}
 					});
 					$("#modal_window_organization").kernely_dialog("open");

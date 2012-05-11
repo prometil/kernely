@@ -96,9 +96,9 @@ AppManagerAdmin = (function($){
 					$("#modal_window_manager").kernely_dialog({
 						title: titleTemplate,
 						content: template,
-						eventNames:'click',
+						eventNames:'click .createManager',
 						events:{
-							'click': {"el":".createManager", "event":parent.registermanager}
+							'click .createManager' : parent.registermanager
 						}
 					});
 					
@@ -198,9 +198,9 @@ AppManagerAdmin = (function($){
 					$("#modal_window_manager").kernely_dialog({
 						title: titleTemplate,
 						content: html,
-						eventNames:'click',
+						eventNames:'click .updateManager',
 						events:{
-							'click': {"el":".updateManager", "event":parent.updatemanager}
+							'click .updateManager' : parent.updatemanager
 						}
 					});
 				
