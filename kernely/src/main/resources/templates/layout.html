@@ -34,11 +34,28 @@
 	
 	</head>
 	<body>
+	<!-- Template for confirm dialog -->
 	<script type="text/html" id="kernely-confirm-dialog-template">
 		<div id="kernely-confirm-message">{{"{{"}}question{{"}}"}}</div>
 		<div id="kernely-confirm-buttons"><input id="confirm-no-button" class="button_standard" type="button" value="{% i18n "no" %}" />
 		<input id="confirm-yes-button" class="button_ok" type="button" value="{% i18n "yes" %}" /></div>
 	</script>
+	<!-- Template for week selector-->
+	<script type="text/html" id="week-selector-template">{% i18n "week" %}</script>
+	
+	<script type="text/html" id="1-month-template">{%  i18n "january" %}</script>
+	<script type="text/html" id="2-month-template">{%  i18n "february" %}</script>
+	<script type="text/html" id="3-month-template">{%  i18n "march" %}</script>
+	<script type="text/html" id="4-month-template">{%  i18n "april" %}</script>
+	<script type="text/html" id="5-month-template">{%  i18n "may" %}</script>
+	<script type="text/html" id="6-month-template">{%  i18n "june" %}</script>
+	<script type="text/html" id="7-month-template">{%  i18n "july" %}</script>
+	<script type="text/html" id="8-month-template">{%  i18n "august" %}</script>
+	<script type="text/html" id="9-month-template">{%  i18n "september" %}</script>
+	<script type="text/html" id="10-month-template">{%  i18n "october" %}</script>
+	<script type="text/html" id="11-month-template">{%  i18n "november" %}</script>
+	<script type="text/html" id="12-month-template">{%  i18n "december" %}</script>
+
 		{% block template %}
 			<!-- all templates -->
 		{% endblock %}

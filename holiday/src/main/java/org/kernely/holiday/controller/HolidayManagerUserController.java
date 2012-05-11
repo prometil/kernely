@@ -42,7 +42,6 @@ public class HolidayManagerUserController extends AbstractController{
 	@GET
 	@Produces( { MediaType.TEXT_HTML })
 	@RequiresRoles(Role.ROLE_USERMANAGER)
-	@Menu("holiday_menu_manager_summary")
 	public Response getHolidayManagerUsersPage() {
 		// Get current date
 		try {

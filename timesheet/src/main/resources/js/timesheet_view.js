@@ -470,7 +470,6 @@ AppTimeSheetMonth = (function($){
 	TimeMonthSelectorView = Backbone.View.extend({
 		el:"#monthSelector",
 		render: function(){
-			console.log("RENDER")
 			var selector = $("#monthSelector").kernely_date_navigator(
 					{
 						"onchange":mainView.render

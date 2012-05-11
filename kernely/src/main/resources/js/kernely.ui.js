@@ -366,6 +366,7 @@ DateNavigatorRouter = Backbone.Router.extend({
 		"/day/:day/:month/:year":  "selectDay",
 		"/month/:month/:year":  "selectMonth",
 		"/year/:year":  "selectYear",
+		"/week/:week/:year" : "selectWeek",
 		"*actions" : "defaultRoute"
 	},
 	
@@ -377,7 +378,7 @@ DateNavigatorRouter = Backbone.Router.extend({
 
 	selectMonth: function(month,year){
 		if (this.navigator == null){
-			this.navigator = new DateNavigatorView(this,this.element, this.onchange, null, month, year);
+			this.navigator = new DateNavigatorView(this,this.element, this.onchange, null, null, month, year);
 		}
 	},
 	selectDay: function(){
@@ -385,6 +386,11 @@ DateNavigatorRouter = Backbone.Router.extend({
 	},
 	selectYear: function(){
 		
+	},
+	selectWeek: function(week, year){
+		if (this.navigator == null){
+			this.navigator = new DateNavigatorView(this,this.element, this.onchange, null, week, null, year);
+		}
 	},
 	defaultRoute: function(){
 		
@@ -402,13 +408,31 @@ DateNavigatorView = Backbone.View.extend({
     defaultMonth: null,
     defaultYear: null,
     
-    initialize: function(router,element, onchange, day, month, year){
+    
+    render: function(){
+	var template = $("#calendarSelector").html();
+	var template4Week = $("#week-selector-template").html();
+	var view4Week = {week : weekSelected};
+	var html = Mustache.to_html(template4Week, view4Week);
+	var view = {week : html, year: yearSelected};
+	html = Mustache.to_html(template, view);
+	$(this.el).html(html);
+	return this;
+},
+refresh: function(){
+	this.render();
+},
+    
+    
+    initialize: function(router,element, onchange, day, week, month, year){
 		// Start Backbone history a neccesary step for bookmarkable URL's
 		var parent = this;
 		this.onchange = onchange;
 		this.router = router;
 		this.daySelected = day;
 		this.defaultDay = day;
+		this.weekSelected = week;
+		this.defaultWeek = week;
 		this.monthSelected = month;
 		this.defaultMonth = month;
 		this.yearSelected = year;
@@ -426,8 +450,8 @@ DateNavigatorView = Backbone.View.extend({
 	    this.el.append(imgp);
 	    this.el.append(span);
 	    this.el.append(imgn);
-	    if (day == null){
-	    	// Display month and year
+	    if (day == null && week == null && month != null && year != null){
+	    	// Display month selector
 	        var template = $("#"+ month +"-month-template").html();
 	        $(span).text(template + " " + this.yearSelected);
 	    	
@@ -436,7 +460,16 @@ DateNavigatorView = Backbone.View.extend({
 	        $(span).bind("click", function(){parent.toDefaultMonth()});
 	        $(imgn).bind("click", function(){parent.nextMonth(parent.monthSelected,parent.yearSelected)});
 		    this.onchange(this.monthSelected, this.yearSelected);
-
+	    } else if (day == null && week != null && month == null && year != null){
+	    	// Display week selector
+	        var template = $("#week-selector-template").html();
+	        $(span).text(template + " " + this.weekSelected + " (" + this.yearSelected+ ")");
+	    	
+	        // Associates events for month management
+	        $(imgp).bind("click", function(){parent.previousWeek(parent.weekSelected,parent.yearSelected)});
+	        $(span).bind("click", function(){parent.toDefaultWeek()});
+	        $(imgn).bind("click", function(){parent.nextWeek(parent.weekSelected,parent.yearSelected)});
+		    this.onchange(this.weekSelected, this.yearSelected);
 	    }
 	    return this;
     },
@@ -452,7 +485,7 @@ DateNavigatorView = Backbone.View.extend({
 	
 	toDefaultMonth: function(){
 		this.monthSelected = this.defaultMonth;
-		this.yearSeleted = this.defaultYear;
+		this.yearSelected = this.defaultYear;
 		this.actualizeMonth();
 	},
 	
@@ -463,7 +496,28 @@ DateNavigatorView = Backbone.View.extend({
 			this.yearSelected --;
 		}
 		this.actualizeMonth();
-
+	},
+	
+	nextWeek: function(){
+		this.weekSelected ++;
+		if(this.weekSelected == 53){
+			this.weekSelected = 1;
+			this.yearSelected ++;
+		}
+		this.actualizeWeek();
+	},
+	previousWeek: function(){
+		this.weekSelected --;
+		if(this.weekSelected == 0){
+			this.weekSelected = 52;
+			this.yearSelected --;
+		}
+		this.actualizeWeek();
+	},
+	toDefaultWeek:function(){
+		this.weekSelected = this.defaultWeek;
+		this.yearSelected = this.defaultYear;
+		this.actualizeWeek();
 	},
 	
 	actualizeMonth: function(){
@@ -472,6 +526,14 @@ DateNavigatorView = Backbone.View.extend({
         var template = $("#"+ this.monthSelected +"-month-template").html();
         $(".k-ui-navigator").text(template + " " + this.yearSelected);
 	    this.onchange(this.monthSelected, this.yearSelected);
+	},
+	
+	actualizeWeek: function(){
+		this.router.navigate("/week/" + this.weekSelected + "/" + this.yearSelected, {trigger: true, replace: true});
+    	// Display week and year
+        var template = $("#week-selector-template").html();
+        $(".k-ui-navigator").text(template + " " + this.weekSelected + " (" + this.yearSelected+ ")");
+	    this.onchange(this.weekSelected, this.yearSelected);
 	},
 	
     render: function(){
@@ -579,6 +641,7 @@ jQuery.fn.extend({
 	// - url : /#/day/X/Y/Z => day navigator, where X is the day, Y the month and Z the year
 	// - url : /#/month/X/Y => month navigator, where Y is the month and Z the year
 	// - url : /#/year/Z => year navigator, where Z is the year
+	// - url : /#/week/w/Y => week navigator, where w is the week and Y the year
 	// options can be filled with the following data :
 	// - onchange : the function to call when the date change.
 	//				this function will be called with a number

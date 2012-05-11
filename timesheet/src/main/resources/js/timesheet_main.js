@@ -29,6 +29,7 @@ AppTimeSheet = (function($){
 			"click #add-project-button" : "addProject",
 		},
 		initialize: function(){
+			mainView = this;
 			new TimePicker().render();
 			weekSelector = new TimeWeekSelectorView().render();
 			$.ajax({
@@ -62,7 +63,6 @@ AppTimeSheet = (function($){
 							// Create the views
 							weekSelected = data.week;
 							yearSelected = data.year;
-							weekSelector.refresh();
 							calendar = new CalendarView(data).render();
 							expense = new TimeSheetExpenseLineView(data.stringDates).render();
 							expense.setTotals();
@@ -87,7 +87,9 @@ AppTimeSheet = (function($){
 		render: function(){
 			return this;
 		},
-		reloadCalendar: function(){
+		reloadCalendar: function(week, year){
+			weekSelected = week;
+			yearSelected = year;
 			// Empty the projects combo box
 			$("#project-select").html("");
 			
@@ -127,7 +129,6 @@ AppTimeSheet = (function($){
 							// Create the views
 							weekSelected = data.week;
 							yearSelected = data.year;
-							weekSelector.refresh();
 							calendar = new CalendarView(data).render();
 							expense = new TimeSheetExpenseLineView(data.stringDates).render();
 							expense.setTotals();
@@ -1034,51 +1035,14 @@ AppTimeSheet = (function($){
 	
 	TimeWeekSelectorView = Backbone.View.extend({
 		el:"#weekSelector",
-		events:{
-			"click .minusWeek" : "minusWeek",
-			"click .plusWeek" : "plusWeek",
-			"click #week_current" : "currentWeek"
-		},
-		initialize: function(){
-			
-		},
 		render: function(){
-			var template = $("#calendarSelector").html();
-			var template4Week = $("#week-selector-template").html();
-			var view4Week = {week : weekSelected};
-			var html = Mustache.to_html(template4Week, view4Week);
-			var view = {week : html, year: yearSelected};
-			html = Mustache.to_html(template, view);
-			$(this.el).html(html);
+			var selector = $("#weekSelector").kernely_date_navigator(
+					{
+						"onchange":mainView.reloadCalendar
+					}
+			);
 			return this;
 		},
-		refresh: function(){
-			this.render();
-		},
-		plusWeek: function(){
-			weekSelected ++;
-			weekSelected = ((weekSelected)%53);
-			if(weekSelected == 0){
-				weekSelected = 1;
-				yearSelected ++;
-			}
-			mainView.reloadCalendar();
-		},
-		minusWeek: function(){
-			weekSelected --;
-			weekSelected = ((weekSelected)%53);
-			if(weekSelected == 0){
-				weekSelected = 52;
-				yearSelected --;
-			}
-			mainView.reloadCalendar();
-		},
-		currentWeek:function(){
-			weekSelected = 0;
-			yearSelected = 0;
-			mainView.reloadCalendar();
-			
-		}
 	})
 	
 	TimePicker = Backbone.View.extend({

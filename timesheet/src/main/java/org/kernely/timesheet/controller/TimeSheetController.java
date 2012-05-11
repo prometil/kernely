@@ -44,7 +44,7 @@ public class TimeSheetController extends AbstractController {
 	private TimeSheetService timeSheetService;
 
 	/**
-	 * Set the template
+	 * Redirects to the current date.
 	 * 
 	 * @return the main time sheet page
 	 */
@@ -52,8 +52,28 @@ public class TimeSheetController extends AbstractController {
 	@Menu("timesheet")
 	@Produces( { MediaType.TEXT_HTML })
 	public Response getTimeSheetPanel() {
+		// Get current date
+		try {
+			String path = "timesheet/view/#/week/" + DateTime.now().getWeekOfWeekyear() + "/" + DateTime.now().getYear();
+			URI newUri = new URI(path);
+			return Response.temporaryRedirect(newUri).status(303).build();
+		} catch (URISyntaxException e) {
+			e.printStackTrace();
+			return Response.status(Status.ERROR).build();
+		}
+	}
+	
+	/**
+	 * Display the timesheet page.
+	 * @return the main time sheet page
+	 */
+	@GET
+	@Path("/view")
+	@Produces( { MediaType.TEXT_HTML })
+	public Response viewTimeSheetPanel() {
 		return Response.ok(templateRenderer.render("templates/timesheet_main_page.html")).build();
 	}
+	
 	
 	
 

@@ -42,18 +42,8 @@
 		<span id="time-cell-name">{{"{{"}}amount{{"}}"}}</span>
 	</script>
 	
-	<script type="text/html" id="calendarSelector">
-		<img class="minusWeek" alt="<" src="/images/previous.png"/>
-		<span id="week_current" style="width:100px;">{{"{{"}}week{{"}}"}} ({{"{{"}}year{{"}}"}})</span>
-		<img class="plusWeek" alt=">" src="/images/next.png"/>
-	</script>
-	
-	<script type="text/html" id="week-selector-template">
-	{% i18n "timesheet_week_title" %} {{"{{"}}week{{"}}"}}
-	</script>
-	
 	<script type="text/html" id="expense-window">
-		<input type="button" value="{% i18n "close" %}" class="closeModal"/><br/>
+		<span id="errors_message"></span>
 		<fieldset>
 		<legend>{% i18n "expense-header-table" %}</legend>
 		<table id="expense-table">
@@ -74,8 +64,6 @@
 		</div>
 		</fieldset>
 		<input type="button" value="{% i18n "ok" %}" class="create_expense"/>
-		<br/>
-		<span id="errors_message"></span>
 	</script>
 
 
