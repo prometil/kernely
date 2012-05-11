@@ -61,7 +61,7 @@ public class MediaServlet extends HttpServlet {
 		URL url;
 		try {
 			// retrieve the path in the config file.
-			String prefix = configuration.getString("workpath.url");
+			String prefix = configuration.getString("workspace");
 			url = resourceLocator.getResource(prefix, servletPath);
 			if (url == null) {
 				log.error("Cannot find url {}", servletPath);

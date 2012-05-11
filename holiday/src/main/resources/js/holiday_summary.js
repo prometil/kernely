@@ -144,7 +144,7 @@ AppHolidayAdmin = (function($){
 	
 	HolidayProfileTableView = Backbone.View.extend({
 		tagName:"table",
-		className:"holiday_summary_profile_table",
+		className:"kernely_table table-layout-fixed",
 		
 		name:null,
 		usersSummaries:null,
@@ -171,10 +171,10 @@ AppHolidayAdmin = (function($){
 				this.usersSummaries = newTab;
 			}
 			
-			$(this.el).html('<caption class="holiday-summary-table-caption">'+this.name+'</caption>');
+			$(tableView.el).append('<div class="subtitle">'+this.name+'</div>');
 
 			// Build header (profile types)
-			var header = '<tr><th class="holiday-summary-table-header">Users</th>';
+			var header = '<thead><tr><th>Users</th>';
 			
 			var firstUser = this.usersSummaries[0];
 			
@@ -190,9 +190,9 @@ AppHolidayAdmin = (function($){
 				}
 				
 				$.each(types, function() {
-					header += '<th class="holiday-summary-table-header">' + this.type.name + '</th><th style="width:15px; background-color:'+this.type.color+'; border:1px solid black;"></th>';
+					header += '<th>' + this.type.name + '</th><th style="width:15px; background-color:'+this.type.color+';"></th>';
 				});
-				header += "</tr>";
+				header += "</tr></thead>";
 				$(this.el).append(header);
 
 				// Build users lines

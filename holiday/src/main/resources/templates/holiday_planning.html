@@ -4,14 +4,11 @@
 {% endblock %}
 
 {% block css %}
+	<link rel="stylesheet" type="text/css" href="/css/holiday_request.css"/>
 	<link rel="stylesheet" type="text/css" href="/css/holiday_planning_summary.css"/>
 {% endblock %}
 
-{% block template %}
-	<script type="text/html" id="balance-cells-legend">
-		<span style="font-weight:bold;">{{"{{"}}name{{"}}"}}</span>
-	</script>
-	
+{% block template %}	
 	<script type="text/html" id="calendarSelector">
 		<img class="minusMonth" src="/images/previous.png"/>
 		<span id="month_current" style="width:100px;">{{"{{"}}month{{"}}"}} {{"{{"}}year{{"}}"}}</span>
@@ -30,6 +27,11 @@
 	<script type="text/html" id="10-month-template">{% i18n "october" %}</script>
 	<script type="text/html" id="11-month-template">{% i18n "november" %}</script>
 	<script type="text/html" id="12-month-template">{% i18n "december" %}</script>
+	
+	<script type="text/html" id="type-cell-template">
+		<div class="balance-cell-amount"></div>
+		<div class="balance-cell-title">{{"{{"}}name{{"}}"}}</div>
+	</script>
 {% endblock %}
 
 {% block title %}
@@ -44,14 +46,23 @@
 			<input type="button" class="button_emphasis" value="{% i18n "my_collaborators"%}" onClick='window.location="/holiday/manager/users"'/>
 		</div>
 		<div id="main-human-table-content">
-			<table id="usersHoliday" cellspacing="0">
-				
-			</table>
+			<div class="wrapper1">
+				<div class="top-scroll-bar">
+				</div>
+			</div>
+			<div class="wrapper2">
+				<div class="table-container-scroll">
+					<table id="usersHoliday" class="kernely_table">
+						
+					</table>
+				</div>
+			</div>
 		</div>
-		
-		<div id="color-legend">
-		
-		</div>
+	</div>
+{% endblock %}
+
+{% block right %}
+	<div id="color-legend">
 	</div>
 {% endblock %}
 

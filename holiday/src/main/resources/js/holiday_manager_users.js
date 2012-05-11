@@ -18,6 +18,14 @@ AppHolidayManagerUsers = (function($){
 
 		initialize: function(){
 			mainView = this;
+			$(".wrapper1").scroll(function(){
+		        $(".wrapper2")
+		            .scrollLeft($(".wrapper1").scrollLeft());
+		    });
+		    $(".wrapper2").scroll(function(){
+		        $(".wrapper1")
+		            .scrollLeft($(".wrapper2").scrollLeft());
+		    });
 		},
 		
 		render: function(){
@@ -140,17 +148,19 @@ AppHolidayManagerUsers = (function($){
 				class:'table-header border-element-r-b'
 			});
 			
-			lineHeader.append($("<td>", {
+			lineHeader.append($("<th>", {
 				class: "border-element-r-b"
 			}));
 			for(var i = 1; i <= this.data.nbDays; i++){
-				lineHeader.append($("<td>", {
+				lineHeader.append($("<th>", {
 					class: 'day-header-cell border-element-r-b',
 					colspan: 2,
 					text: i
 				}));
 			}
-			$(this.el).append(lineHeader);
+			var thead = document.createElement("thead");
+			$(thead).append(lineHeader);
+			$(this.el).append($(thead));
 			
 			
 			
@@ -201,7 +211,7 @@ AppHolidayManagerUsers = (function($){
 	
 	HolidayManagerColorCellView = Backbone.View.extend({
 		tagName:"div",
-		className: "balance-cell-legend",
+		className: "balance-cell",
 		
 		color:null,
 		name:null,
@@ -217,11 +227,11 @@ AppHolidayManagerUsers = (function($){
 		},
 		
 		render : function(){
-			var template = $("#balance-cells-legend").html();
+			var template = $("#type-cell-template").html();
             var view = {name: this.name};
             var html = Mustache.to_html(template, view);
             $(this.el).html(html);
-            $(this.el).css('background-color', this.color);
+            $(this.el).find(".balance-cell-amount").css('background-color', this.color);
 			return this;
 		}
 	})

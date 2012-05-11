@@ -163,6 +163,7 @@ TableLineView = Backbone.View.extend({
 					var event = this.substring(0, this.lastIndexOf('.')-1);
 					var element= this.substring(this.lastIndexOf('.'));
 					$(parent.el).find(element).bind("" + event, {line: parent.idLine} ,parent.eventsActions[this]);
+					
 				}
 				else{
 					$(parent.el).bind("" + this, {line: parent.idLine} ,parent.eventsActions[this]);
@@ -183,89 +184,6 @@ TableLineView = Backbone.View.extend({
 		return this;
 	}
 	
-});
-
-/* View used to generate table lines.*/
-TableLineView = Backbone.View.extend({
-        tagName: "tr",
-        className: 'kernely_table_line',
-        
-        styles:null,
-        
-        data: null,
-        
-        events: {
-                "click" : "select",
-                "mouseover" : "over",
-                "mouseout" : "out"
-        },
-        
-        
-        idLine: null,
-        
-        initialize: function(idLine, data,eventNames, events, styles){
-                this.styles = styles;                
-                this.data = data;
-                this.idLine = idLine;
-                var parent = this;
-                if($.isArray(eventNames)){
-                        $.each(eventNames, function(){
-                                $(parent.el).bind(this, {line: parent.idLine} ,events[this]);
-                        });
-                }
-                else{
-                        $(parent.el).bind(eventNames, {line: parent.idLine} ,events[eventNames]);
-                }
-                
-                $(this.el).bind("click", {line: this.idLine} ,events["click"]);
-                return this;
-        },
-        
-        select : function(){
-                $(".line_selected").removeClass("line_selected");
-                $(this.el).addClass("line_selected");
-        },
-        over : function(){
-                $(this.el).addClass("over");
-        },
-        out : function(){
-                $(this.el).removeClass("over");
-        },
-        render:function(){
-                var parent = this;
-                var i = 0;
-                if($.isArray(this.data)){
-                        $.each(this.data, function(){
-                                var td = document.createElement("td");
-                                $(td).html("" + this); // String casting
-                                if($.isArray(parent.styles[i])){
-                                        $.each(parent.styles[i], function(){
-                                                $(td).addClass(""+this); // String casting
-                                        });
-                                }
-                                else{
-                                        $(td).addClass(parent.styles[i]);
-                                }
-                                $(parent.el).append($(td));
-                                i++;
-                        });
-                }
-                else{
-                        var td = document.createElement("td");
-                        $(td).html(this.data);
-                        if($.isArray(parent.styles[i])){
-                                $.each(parent.styles[i], function(){
-                                        $(td).addClass("" + this);
-                                });
-                        }
-                        else{
-                                $(td).addClass(parent.styles[i]);
-                        }
-                        $(this.el).append($(td));
-                }
-                return this;
-        }
-        
 });
 
 TableView = Backbone.View.extend({
@@ -515,7 +433,7 @@ jQuery.fn.extend({
 		options = options || {};
 		options.columns = options.columns || {};
 		options.events = options.events || {};
-		options.eventNames = options.eventNames || {};
+		options.eventNames = options.eventNames || "";
 		
 		var table = new TableView(this);
 		table.columns = options.columns;
