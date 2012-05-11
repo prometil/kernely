@@ -841,7 +841,7 @@ AppTimeSheet = (function($){
 					}
 					
 					p.append(select);
-					var html = '<td><input type="text" name="amount-update" id="expense-amount-update" value="'+parent.vamount+'"/></td><td>'+ p.html() +'</td><td><span class="update">Edit</span></td><td></td>';
+					var html = '<td><input class="kernely_input" type="text" name="amount-update" id="expense-amount-update" value="'+parent.vamount+'"/></td><td>'+ p.html() +'</td><td class="text-center"><img class="update" src="/images/icons/update_icon.png"/></td><td></td>';
 					$("#expense-comment").val(parent.vcomment);
 			        $(parent.el).html(html);
 				}
@@ -872,7 +872,7 @@ AppTimeSheet = (function($){
 					parent.vtypename = data.typeName;
 					parent.vtyperatio = data.typeRatio;
 					
-					var template = '<td>{{amount}} &euro;</td><td>{{typeName}}</td><td><span class="editLine">Edit</span></td><td><span class="deleteLine">Delete</span></td>';
+					var template = '<td>{{amount}} &euro;</td><td>{{typeName}}</td><td class="text-center"><img class="editLine" src="/images/icons/edit_icon.png"/></td><td class="text-center"><img class="deleteLine" src="/images/icons/delete_icon.png"/></td>';
 		            var view = {amount : parent.vamount, typeName: parent.vtypename};
 		            var html = Mustache.to_html(template, view);
 		            $("#expense-comment").val("");
@@ -900,7 +900,7 @@ AppTimeSheet = (function($){
 		},
 		
 		render:function(){
-            var template = '<td>{{amount}} &euro;</td><td>{{typeName}}</td><td><span class="editLine">Edit</span></td><td><span class="deleteLine">Delete</span></td>';
+            var template = '<td>{{amount}} &euro;</td><td>{{typeName}}</td><td class="text-center"><img class="editLine" src="/images/icons/edit_icon.png"/></td><td class="text-center"><img class="deleteLine" src="/images/icons/delete_icon.png" /></td>';
             var view = {amount : this.vamount, typeName: this.vtypename};
             var html = Mustache.to_html(template, view);
             
