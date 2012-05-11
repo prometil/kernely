@@ -31,11 +31,25 @@ div#admin_buttons{
 }
 
 /* Common */
-div.menu_admin, div.menu_admin_selected{
+div.menu_admin{
 	border-bottom:1px solid #a0a2a3;
 	width:223px;
 	height:43px;
 	padding-left:15px;
+	color:#2D2D2D;
+	font-weight:bold;
+	cursor:pointer;
+}
+
+div.menu_admin_selected{
+	border-bottom:1px solid #a0a2a3;
+	width:223px;
+	height:43px;
+	padding-left:15px;
+	color:#FFF;
+	background-color:#2D2D2D;
+	font-weight:bold;
+	cursor:pointer;
 }
 
 div.menu_admin:last-child{

@@ -16,7 +16,6 @@ import org.kernely.controller.AbstractController;
 import org.kernely.core.model.Role;
 import org.kernely.holiday.dto.HolidayUsersManagerDTO;
 import org.kernely.holiday.service.HolidayManagerUserService;
-import org.kernely.menu.Menu;
 import org.kernely.template.SobaTemplateRenderer;
 
 import ch.qos.logback.core.status.Status;

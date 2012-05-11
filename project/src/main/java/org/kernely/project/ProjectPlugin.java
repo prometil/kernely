@@ -33,7 +33,7 @@ public class ProjectPlugin extends AbstractPlugin {
 		registerModel(Project.class);
 		registerModel(Organization.class);
 		registerAdminPage("Project admin", "/admin/projects");
-		registerAdminPage("organization admin", "/admin/organizations");
+		registerAdminPage("Organization admin", "/admin/organizations");
 		registerMigration(new Migration01());
 	}
 
