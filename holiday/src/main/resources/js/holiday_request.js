@@ -347,7 +347,6 @@ AppHolidayRequest = (function($){
 			if(this.data.details != null && this.data.details.length > 1){
 				$.each(this.data.details, function(){
 					if(this.nbAvailable != -1){
-						console.log("test");
 						$("#limited-balances").append(new HolidayRequestColorPickerCell(this.nameOfType, this.nbAvailable, this.color, this.idOfType).render().el);
 					}
 					else{
@@ -428,7 +427,7 @@ AppHolidayRequest = (function($){
 		},
 		
 		updateCounter : function(){
-			$(this.el).find('span.available-cpt').text(this.nbAvailable);
+			$(this.el).find('.balance-cell-amount').text(this.nbAvailable);
 		}
 		
 	})
