@@ -37,7 +37,6 @@ import org.kernely.controller.AbstractController;
 import org.kernely.core.dto.AdminPageDTO;
 import org.kernely.menu.Menu;
 import org.kernely.menu.MenuItem;
-import org.kernely.menu.MenuManager;
 import org.kernely.migrator.Migration;
 import org.kernely.persistence.AbstractModel;
 import org.quartz.Job;
@@ -46,7 +45,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.inject.AbstractModule;
-import com.google.inject.Inject;
 import com.google.inject.Module;
 import com.google.inject.TypeLiteral;
 import com.google.inject.matcher.Matchers;
@@ -145,7 +143,6 @@ public abstract class AbstractPlugin extends AbstractModule {
 	 * @param controller
 	 */
 	protected void registerController(Class<? extends AbstractController> controller) {
-
 		// introspect all the class
 		Method[] methods = controller.getDeclaredMethods();
 		Annotation[] annotations = controller.getAnnotations();

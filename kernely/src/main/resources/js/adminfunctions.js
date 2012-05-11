@@ -61,17 +61,27 @@ AppAdmin = (function($){
 		vadminpath: null,
 		
 		events: {
-
+			"click":"changePage",
+			"mouseover":"hover",
+			"mouseout":"unhover"
 		},
 		initialize:function(admin, adminpath){
 			this.vadmin = admin;
 			this.vadminpath = adminpath;
 		},
+		changePage:function(){
+			document.location.href=this.vadminpath;
+		},
+		hover:function(){
+			$(this.el).removeClass("menu_admin");
+			$(this.el).addClass("menu_admin_selected");
+		},
+		unhover:function(){
+			$(this.el).removeClass("menu_admin_selected");
+			$(this.el).addClass("menu_admin");
+		},
 		render: function(){
-			var template = "<a href='{{adminpath}}'>{{admin}}</a><br/>";
-			var view = {adminpath : this.vadminpath , admin : this.vadmin};
-			var html = Mustache.to_html(template, view);
-			$(this.el).html(html);
+			$(this.el).html("<br/>"+this.vadmin);
             $(this.el).appendTo($("#admin_sidebar_container"));
 			return this;			
 		}
