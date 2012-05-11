@@ -48,6 +48,8 @@ html {
 
 #main{
 	width:1245px;
+	position:relative;
+	z-index:1;
 	height:auto;
 	min-height:200px;
 	margin-top:50px;
@@ -56,11 +58,15 @@ html {
 }
 
 #container_right {
+	position:relative;
+	z-index:1;
 	width:220px;
 	margin-left:13px;
 }
 
 #container_left {
+	position:relative;
+	z-index:2;
 	width:238px;
 	border-right:0px;
 }
@@ -72,8 +78,6 @@ html {
 }
 
 .container_generic{
-	position:relative;
-	z-index:1;
 	border:1px solid #a0a2a3;
 	background-color:#f6f6f6;
 	float:left;
