@@ -27,8 +27,6 @@ App = (function($){
 		commentLoaded : false,
 		
 		events: {
-		    "mouseover "  : "showOptions",
-		    "mouseout "  : "hideOptions",
 		    "mouseover .message-buttons" : "showButtons",
 		    "mouseout .message-buttons" : "hideButtons",
 		    "click .loadcomment": "loadComment",
@@ -126,12 +124,6 @@ App = (function($){
 		hideButtons: function(){
 			$("#buttons" + this.message.id).fadeTo(0,0.2);
 		},
-		showOptions: function(){
-			$(this.el).addClass("selected")
-		},
-		hideOptions: function(){
-			$(this.el).removeClass("selected")
-		},
 		sendComment: function(){
 			var parent = this
 			if ($("#comment-input"+this.message.id).val()=="")
@@ -167,8 +159,7 @@ App = (function($){
 		},
 		deleteMessage: function(){
 			var html = $("#confirm-deletion-template").html();
-			
-			$.kernelyConfirm(html, this.confirmDeleteMessage, this);
+			$.kernelyConfirm($("#delete-confirm-template").text(),html, this.confirmDeleteMessage, this);
 		},
 		
 		confirmDeleteMessage: function(parent){

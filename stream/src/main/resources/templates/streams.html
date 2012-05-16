@@ -16,27 +16,31 @@
 		<div id="mess-{{"{{"}}id{{"}}"}}" class='mess'>
 			<div class="mess-left-side">
 				<div class="message-image">
-					<img class="message-img-image" src='/img/picture.png'/>
+					<img class="message-img-image" src='/images/message_icon.png'/>
 				</div>
 			</div>
 			<div class="mess-right-side">
-				<div  class='message-content'>
-					<div class="message-buttons" id="buttons{{"{{"}}id{{"}}"}}">
-					 <img id="delete{{"{{"}}id{{"}}"}}" class="deleteButton" src="/img/delete.png"/>
-					</div>
-					{{"{{"}}message{{"}}"}}
+				<div class="message-buttons" id="buttons{{"{{"}}id{{"}}"}}">
+					<img id="delete{{"{{"}}id{{"}}"}}" class="deleteButton" src="/images/icons/delete_icon.png"/>
 				</div>
 				<div class="message-author-info">
-					<span class="info-message">{% i18n "posted_by" %}</span>
+					<span class="author">{{"{{"}}author{{"}}"}}</span> <img src="/images/separator_icon.png" /> <span class="date">{{"{{"}}date{{"}}"}}</span> <img src="/images/separator_icon.png" /> <span class="stream">{{"{{"}}stream{{"}}"}}</span>
+				</div>
+				<div  class='message-content'>
+					{{"{{"}}message{{"}}"}}
 				</div>
 				<div class="comment-field">
-					<div id="comments-{{"{{"}}id{{"}}"}}"></div>
 					<div id="other_comment{{"{{"}}id{{"}}"}}" class="other-comment"><span class="loadcomment">{% i18n "view_comments" %}<span/></div>
-					<div id="input_comment{{"{{"}}id{{"}}"}}" class="input-comment"><input type="text" value='{% i18n "comment_here" %}' class="input-comment-field-dis" /></div>
+					<div id="comments-{{"{{"}}id{{"}}"}}"></div>
+					<div id="input_comment{{"{{"}}id{{"}}"}}" class="input-comment"><input type="text" value='{% i18n "comment_here" %}' class="input-comment-field-dis kernely_input" /></div>
 				</div>
 			</div>
 			<div style="clear:both;"></div>	
 		</div>
+	</script>
+	
+	<script type="text/html" id="delete-confirm-template">
+		{% i18n "delete" %}
 	</script>
 	
 	<script type="text/html" id="view-comments-template">
@@ -67,18 +71,18 @@
 		<div id="comment-{{"{{"}}id{{"}}"}}" class='comment'>
 			<div class="comment-left-side">
 				<div class="comment-image">
-					<img class="comment-img-image" src='{{"{{"}}commentPicture{{"}}"}}'/>
+					<img class="comment-img-image" src='/images/comment_icon.png'/>
 				</div>
 			</div>
 			<div class="comment-right-side">
-				<div class='comment-content'>
-					<div class="comment-buttons" id="comm_buttons{{"{{"}}id{{"}}"}}">
-						<img id="delete{{"{{"}}id{{"}}"}}" class="deleteCommentButton" src="/img/delete.png"/>
-					</div>
-					{{"{{"}}comment{{"}}"}}
+				<div class="comment-buttons" id="comm_buttons{{"{{"}}id{{"}}"}}">
+					<img id="delete{{"{{"}}id{{"}}"}}" class="deleteCommentButton" src="/images/icons/delete_icon.png"/>
 				</div>
 				<div class="comment-author-info">
-					<span class="info-comment">{% i18n "comment_posted_by" %}</span>
+					<span class="author">{{"{{"}}author{{"}}"}}</span> <span class="date"> - {{"{{"}}date{{"}}"}}</span>
+				</div>
+				<div class='comment-content'>
+					{{"{{"}}comment{{"}}"}}
 				</div>
 			</div>
 			<div style="clear:both;"></div>
@@ -111,7 +115,7 @@
 			<div>
 				<textarea id="message-input"></textarea>		
 				<div class="button-bar" id="combo">
-					<a id="share-message"  class="button share-message" href="javascript:void(0)" >{% i18n "share_button" %}</a>
+					<input type="button" id="share-message"  class="share-message button_ok" value="{% i18n "share_button" %}"/></a>
 				</div>
 			</div>
 			<div id="streams-messages">
@@ -126,6 +130,7 @@
 
 {% block left %}
 <div id="profile_mask"></div>
+<div id="left_profile_arrow"></div>
 <div id='left_profile_container'>
 	<img src="/images/{{currentUser.image}}" id="image_left_profile"/>
 	<div id="left_profile_name">{{currentUser.firstname}} {{currentUser.lastname}}</div>

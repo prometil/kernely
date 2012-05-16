@@ -143,13 +143,10 @@ public class UserService extends AbstractService {
 		if (u == null) {
 			throw new IllegalArgumentException("Request cannot be null ");
 		}
-		if (u.birth != null && u.birth.equals("")) {
-			throw new IllegalArgumentException("A birth date must be like dd/MM/yyyy");
-		}
-
+		
 		// parse the string date in class Date
 		String date = u.birth;
-		if (u.birth == null) {
+		if (u.birth == null || u.birth.equals("")) {
 			date = "00/00/0000";
 		}
 		DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
@@ -169,7 +166,9 @@ public class UserService extends AbstractService {
 			uDetails.setSsn(u.ssn);
 			uDetails.setZip(u.zip);
 			uDetails.setCivility(u.civility);
-			uDetails.setImage(u.image);
+			if(u.image != null && !u.image.equals("")){
+				uDetails.setImage(u.image);
+			}
 			return new UserDetailsDTO(uDetails);
 		} catch (ParseException e) {
 			return null;

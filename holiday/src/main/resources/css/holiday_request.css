@@ -88,9 +88,13 @@ buttons-container{
 
 .balance-cell-amount{
 	margin-left:15px;
+	margin-top:8px;
+	padding-top:7px;
 	width:30px;
-	height:30px;
+	height:23px;
 	float:left;
+	font-weight:bold;
+	text-align:center;
 }
 
 .balance-cell-title{
@@ -98,7 +102,7 @@ buttons-container{
 	margin-left:10px;
 	float:left;
 	width:165px;
-	padding-top:5px;
+	padding-top:2px;
 }
 
 .balance-cell-selected{
