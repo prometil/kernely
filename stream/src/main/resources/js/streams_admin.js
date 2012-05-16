@@ -231,15 +231,15 @@ AppStreamAdmin = (function($){
 		showUsersRights: function(){
 			$("#usersToRight").removeClass("tabHiddenContent").addClass("tabContent").show();
 			$("#groupsToRight").removeClass("tabContent").addClass("tabHiddenContent").show();
-			$("#usersTab").removeClass("tab").addClass("selectedTab").show();
-			$("#groupsTab").removeClass("selectedTab").addClass("tab").show();
+			$(".usersTab").removeClass("button_standard").addClass("button_emphasis").show();
+			$(".groupsTab").removeClass("button_emphasis").addClass("button_standard").show();
 		},
 		
 		showGroupsRights: function(){
 			$("#usersToRight").removeClass("tabContent").addClass("tabHiddenContent").show();
 			$("#groupsToRight").removeClass("tabHiddenContent").addClass("tabContent").show();
-			$("#groupsTab").removeClass("tab").addClass("selectedTab").show();
-			$("#usersTab").removeClass("selectedTab").addClass("tab").show();
+			$(".groupsTab").removeClass("button_standard").addClass("button_emphasis").show();
+			$(".usersTab").removeClass("button_emphasis").addClass("button_standard").show();
 		},
 	
 		updatestreamrights: function(){
