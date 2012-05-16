@@ -440,7 +440,6 @@ public class HolidayBalanceService extends AbstractService {
 	public HolidayBalanceDTO getProcessedBalance(long holidayTypeInstanceId, long userId) {
 		User user = em.get().find(User.class, userId);
 		HolidayTypeInstance typeInstance = em.get().find(HolidayTypeInstance.class, holidayTypeInstanceId);
-
 		Query balanceRequest = em.get().createQuery(
 				"SELECT b FROM HolidayBalance b WHERE user=:user AND holidayTypeInstance=:type ORDER BY end_date DESC");
 		balanceRequest.setParameter("user", user);

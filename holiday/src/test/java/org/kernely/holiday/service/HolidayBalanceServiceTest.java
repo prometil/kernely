@@ -1343,15 +1343,13 @@ public class HolidayBalanceServiceTest extends AbstractServiceTest {
 		UserDTO user = createUserOldHiredForTest();
 		// With anticipated holiday type
 		HolidayDTO type = createHolidayTypeUnlimitedForTest();
-
 		HolidayBalanceDTO actual = holidayBalanceService.createHolidayBalance(type.id, user.id);
 		assertEquals(0, actual.availableBalance, 0);
 		assertEquals(0, actual.availableBalanceUpdated, 0);
 
 		// Clean balances
 		holidayBalanceService.removeDaysInAvailableUpdatedFromRequest(type.instanceId, user.id, 1000);
-
-		actual = holidayBalanceService.getProcessedBalance(type.id, user.id);
+		actual = holidayBalanceService.getProcessedBalance(type.instanceId, user.id);
 		assertEquals(0, actual.availableBalance, 0);
 		assertEquals(0, actual.availableBalanceUpdated, 0);
 

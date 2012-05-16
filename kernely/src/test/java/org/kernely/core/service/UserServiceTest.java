@@ -96,13 +96,6 @@ public class UserServiceTest extends AbstractServiceTest{
 		service.updateUserProfile(null);		
 	}
 	
-	@Test(expected=IllegalArgumentException.class)
-	public void updateUserWithErrorDate(){
-		UserDetailsUpdateRequestDTO request = new UserDetailsUpdateRequestDTO();
-		request.birth="";
-		service.updateUserProfile(request);		
-	}
-	
 	@Test
 	public void getUserDetails(){
 		createUserRole();
