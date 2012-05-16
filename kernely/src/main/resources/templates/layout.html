@@ -69,12 +69,12 @@
 							{{currentUser.firstname}} {{currentUser.lastname}} ({{currentUserLogin}})<br/>
 							{{currentUser.email}}<br/>
 							<br/>
-							<a href="/user/{{currentUserLogin}}/profile">{% i18n "profile" %}</a>
+							<input type="button" value="{% i18n "profile" %}" class="button_emphasis" onClick='window.location="/user/{{currentUserLogin}}/profile"'/>
 						</div>
 					</div>
 					<div id="profilePU-footer">
 						<hr/>
-						<a href="/user/logout">{% i18n "logout" %}</a>
+						<input type="button" value="{% i18n "logout" %}" class="button_emphasis" onClick='window.location="/user/logout"'/>
 					</div>
 				</div>
 			</script>
