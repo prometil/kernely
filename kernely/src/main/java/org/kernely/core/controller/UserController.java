@@ -106,7 +106,6 @@ public class UserController extends AbstractController {
 	@POST
 	@Path("/login")
 	@Produces( { MediaType.TEXT_HTML })
-	@RequiresRoles(Role.ROLE_USER)
 	public Response postLogin() {
 		log.info("Login attempt : is authenticated {}", SecurityUtils.getSubject().isAuthenticated());
 		return Response.ok(templateRenderer.render("templates/login.html")).build();

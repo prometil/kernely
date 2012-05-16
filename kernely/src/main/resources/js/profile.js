@@ -81,7 +81,7 @@ AppProfile= (function($){
 		},
 
 		overLine : function(){
-			$("#profile_"+this.vinput).css("background-color", "#DDDDDD");
+			$("#profile_"+this.vinput).css("background-color", "#e3f38d");
 			$("#profile_"+this.vinput).css("cursor", "pointer");
 		},
 		outLine : function(){

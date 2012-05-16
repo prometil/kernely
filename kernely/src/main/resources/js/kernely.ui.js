@@ -543,7 +543,7 @@ jQuery.fn.extend({
 							modal:true,
 							title: options.title,
 							resizable: false,
-							zIndex: 2});
+							zIndex: 12});
 
 			var parent = this;
 			this.eventNames = options.eventNames;

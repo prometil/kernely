@@ -171,10 +171,13 @@ AppHolidayUserRequest = (function($){
 		render:function(){
 			var parent = this;
 			this.formRequest = $.kernelyDialog("#new-request-form",150,300);
-			$("#cancel-request-form").bind("click",function(){$(parent.formRequest).dialog( "close" );});
+			$("#cancel-request-form").bind("click",function(){$(parent.formRequest).kernely_dialog( "close" );});
 			var dates = $( "#from, #to" ).datepicker({
+				showOn: "both",
+				buttonImage: "/images/icons/calendar_icon.png",
+				buttonImageOnly: true,
 				defaultDate: "+1w",
-				changeMonth: true,
+				changeMonth: false,
 				onSelect: function( selectedDate ) {
 					var option = this.id == "from" ? "minDate" : "maxDate",
 							instance = $( this ).data( "datepicker" ),
@@ -193,7 +196,7 @@ AppHolidayUserRequest = (function($){
 		},
 		
 		newRequest : function(){
-			$(this.formRequest).dialog( "open" );
+			$(this.formRequest).kernely_dialog( "open" );
 
 		},
 		
