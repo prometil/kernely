@@ -40,27 +40,29 @@
 	<script type="text/html" id="invoice-creation-window">
 		<div id="errors_message"></div>
 		<div id="invoice-creation-container">
-			<div>
-				<div class="invoice-create-category">{% i18n "choose-organization" %}</div>
-				<select id="organization-selector-mod">
-					<option></option>
-				</select>
-			</div>
-			<div class="separator-top-25">
-				<div class="invoice-create-category">{% i18n "choose-project" %}</div>
-				<select id="project-selector-mod" disabled="disabled">
-					<option></option>
-				</select>
-			</div>
-			<div class="separator-top-25">
-				<div class="invoice-create-category">{% i18n "choose-period" %}</div>
-				<label class="text-bold-black" for="from">{% i18n "from_date" %} </label><input readonly="readonly" type="text" id="from" class="kernely_input" name="from"/>
-				<label class="text-bold-black" for="to"> {% i18n "to_date" %} </label><input readonly="readonly" type="text" id="to" class="kernely_input" name="to"/>
-			</div>
-			<div id="invoice-create-buttons" class="dialog-buttons-container">
-				<input type="button" value="{% i18n "cancel" %}" class="cancel_invoice button_standard"/>
-				<input type="button" value="{% i18n "create" %}" class="create_invoice button_ok"/>
-			</div>
+			<form action="/invoice/create" method="POST">
+				<div>
+					<div class="invoice-create-category">{% i18n "choose-organization" %}</div>
+					<select id="organization-selector-mod" name="organization">
+						<option></option>
+					</select>
+				</div>
+				<div class="separator-top-25">
+					<div class="invoice-create-category">{% i18n "choose-project" %}</div>
+					<select id="project-selector-mod" disabled="disabled" name="project">
+						<option></option>
+					</select>
+				</div>
+				<div class="separator-top-25">
+					<div class="invoice-create-category">{% i18n "choose-period" %}</div>
+					<label class="text-bold-black" for="from">{% i18n "from_date" %} </label><input readonly="readonly" type="text" id="from" class="kernely_input" name="from"/>
+					<label class="text-bold-black" for="to"> {% i18n "to_date" %} </label><input readonly="readonly" type="text" id="to" class="kernely_input" name="to"/>
+				</div>
+				<div id="invoice-create-buttons" class="dialog-buttons-container">
+					<input type="button" value="{% i18n "cancel" %}" class="cancel_invoice button_standard"/>
+					<input type="submit" value="{% i18n "create" %}" class="create_invoice button_ok"/>
+				</div>
+			</form>
 		</div>
 	</script>
 	

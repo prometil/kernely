@@ -201,14 +201,14 @@ AppInvoiceMain = (function($){
 						if($.isArray(dataInvoice)){
 							$.each(dataInvoice, function(){
 								this.status = '<span id="'+this.id+'">' + $("#invoice-status-"+this.status).html() + '<span>';
-								this.buttonView = '<a href="/invoice/view/'+this.id+'">'+ $("#invoice-view-button").html() + '</a>';
-								this.buttonEdit = '<a href="/invoice/edit/'+this.id+'">'+ $("#invoice-edit-button").html() + '</a>';
+								this.buttonView = '<a href="/invoice/'+this.id+'/view">'+ $("#invoice-view-button").html() + '</a>';
+								this.buttonEdit = '<a href="/invoice/'+this.id+'/edit">'+ $("#invoice-edit-button").html() + '</a>';
 							});
 						}
 						else{
 							dataInvoice.status = '<span id="'+this.id+'">' + $("#invoice-status-"+dataInvoice.status).html() + '<span>';
-							dataInvoice.buttonView = '<a href="/invoice/view/'+dataInvoice.id+'">'+ $("#invoice-view-button").html() + '</a>';
-							dataInvoice.buttonEdit = '<a href="/invoice/edit/'+dataInvoice.id+'">'+ $("#invoice-edit-button").html() + '</a>';
+							dataInvoice.buttonView = '<a href="/invoice/'+dataInvoice.id+'/view">'+ $("#invoice-view-button").html() + '</a>';
+							dataInvoice.buttonEdit = '<a href="/invoice/'+dataInvoice.id+'/edit">'+ $("#invoice-edit-button").html() + '</a>';
 						}
 						parent.table.reload(dataInvoice);
 					}
@@ -229,7 +229,6 @@ AppInvoiceMain = (function($){
 		
 		events:{
 			"click .cancel_invoice" : "cancelInvoice",
-			"click .create_invoice" : "createinvoice",
 			"change #organization-selector-mod" : "loadProjects"
 		},
 	
@@ -258,6 +257,28 @@ AppInvoiceMain = (function($){
 								$.datepicker._defaults.dateFormat,
 								selectedDate, instance.settings );
 					parent.dates.not( this ).datepicker( "option", option, date );
+				}
+			});
+			
+			$.ajax({
+				type: "GET",
+				url:"/invoice/organizations",
+				success: function(data){
+					// Create the views
+					if (data != null){
+						if ($.isArray(data.organizationDTO)){
+							$.each(data.organizationDTO, function(){
+								$('#organization-selector-mod')
+									.append($('<option>', { value : this.id })
+									.text(this.name));
+							});
+
+						} else if (data.organizationDTO != null){
+							$('#organization-selector-mod')
+								.append($('<option>', { value : data.organizationDTO.id })
+								.text(data.organizationDTO.name));
+						}
+					}
 				}
 			});
 		},
@@ -293,62 +314,8 @@ AppInvoiceMain = (function($){
 			});
 		},
 		
-		createinvoice: function(){
-			var parent = this;
-			var json = '{"id":"0","object":"","projectId":"'+ $('#project-selector-mod').val()
-			           +'","datePublication":"'+ this.dates[0].value
-			           +'","dateTerm":"'+ this.dates[1].value
-			           +'"}';
-			$.ajax({
-				type:"POST",
-				url:"/invoice/create",
-				data: json,
-				dataType: "json",
-				contentType: "application/json; charset=utf-8",
-				processData: false,
-				success: function(data){
-				console.log(data);
-					if(data.result=="Ok"){
-						$(parent.el).kernely_dialog("close");
-						var successHtml = $("#invoice-creation-success-template").html();
-						$.writeMessage("success",successHtml);
-						tableView.render();
-					}
-					else{
-						$.writeMessage("error", data.result, "#errors_message");
-					}
-				}
-			});
-		},
-		
 		render: function(){
-			var parent = this;
-
-			$(this.el).kernely_dialog("open");
-			
-			$.ajax({
-				type: "GET",
-				url:"/invoice/organizations",
-				success: function(data){
-					// Create the views
-					if (data != null){
-						if ($.isArray(data.organizationDTO)){
-							$.each(data.organizationDTO, function(){
-								$('#organization-selector-mod')
-									.append($('<option>', { value : this.id })
-									.text(this.name));
-							});
-
-						} else if (data.organizationDTO != null){
-							$('#organization-selector-mod')
-								.append($('<option>', { value : data.organizationDTO.id })
-								.text(data.organizationDTO.name));
-						}
-					}
-				}
-			});
-			
-			
+			$(this.el).kernely_dialog("open");			
 			return this;
 		}
 	})

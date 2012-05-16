@@ -13,7 +13,7 @@
 		<!-- Invoice button bar -->
 		<div id="invoicing-buttons-bar">
 			<input type="button" class="button_emphasis" id="export-invoice" value="{% i18n "export" %}"/>
-			<input type="button" class="button_emphasis" id="edit-invoice" value="{% i18n "edit" %}" onClick="window.location = '/invoice/edit/{{invoice.id}}';"/>
+			<input type="button" class="button_emphasis" id="edit-invoice" value="{% i18n "edit" %}" onClick="window.location = '/invoice/{{invoice.id}}/edit';"/>
 		</div>
 		<!-- Invoice header -->
 		<div id="invoice-header">

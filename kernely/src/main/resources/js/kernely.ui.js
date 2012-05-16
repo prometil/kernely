@@ -293,6 +293,10 @@ TableView = Backbone.View.extend({
                                 table.append(new TableLineView(data[view.idField], array, view.eventName, view.events, view.styles).render().el);
                         }
                 }
+        },
+        
+        clear: function(){
+        	this.el.find("tbody").empty();
         }
         
 });
@@ -539,7 +543,7 @@ jQuery.fn.extend({
 							modal:true,
 							title: options.title,
 							resizable: false,
-							zIndex: 2});
+							zIndex: 12});
 
 			var parent = this;
 			this.eventNames = options.eventNames;

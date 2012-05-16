@@ -15,8 +15,8 @@ AppHolidayUserRequest = (function($){
 		},
 		
 		render:function(){
-			tableView1 = new HolidayUserRequestPendingTableView();
-			tableView2 = new HolidayUserRequestTableView();
+			tableView1 = new HolidayUserRequestPendingTableView().render();
+			tableView2 = new HolidayUserRequestTableView().render();
 			buttonView = new HolidayUserButtonsView().render();
 		}
 	})
@@ -43,6 +43,17 @@ AppHolidayUserRequest = (function($){
 					"click": parent.selectLine
 				}
 			});
+		},
+		selectLine : function(e){
+			$("#button_canceled").removeAttr('disabled');
+			lineSelected = e.data.line;
+		},
+		reload: function(){
+			this.render();
+		},
+		
+		render: function(){
+			var parent = this;
 			$.ajax({
 				type:"GET",
 				url:"/holiday/all/pending",
@@ -52,20 +63,11 @@ AppHolidayUserRequest = (function($){
 						var dataRequest = data.holidayRequestDTO;
 						parent.table.reload(dataRequest);
 					}
+					else{
+						parent.table.clear();
+					}
 				}
 			});
-		},
-		selectLine : function(e){
-			$("#button_canceled").removeAttr('disabled');
-			lineSelected = e.data.line;
-		},
-		reload: function(){
-			$(".user_pending_request_table_line").html("");
-			this.initialize();
-			this.render();
-		},
-		
-		render: function(){
 			return this;
 		}
 	})
@@ -93,6 +95,15 @@ AppHolidayUserRequest = (function($){
 				elements:["managerComment", "requesterComment", "beginDateString", "endDateString", "status"]
 			});
 		
+			
+		},
+		
+		reload: function(){
+			this.render();
+		},
+		
+		render: function(){
+			var parent = this;
 			$.ajax({
 				type:"GET",
 				url:"/holiday/all/status",
@@ -122,15 +133,6 @@ AppHolidayUserRequest = (function($){
 					}
 				}
 			});
-		},
-		
-		reload: function(){
-			$(".user_request_table_line").html("");
-			this.initialize();
-			this.render();
-		},
-		
-		render: function(){
 			return this;
 		}
 	})
@@ -169,10 +171,13 @@ AppHolidayUserRequest = (function($){
 		render:function(){
 			var parent = this;
 			this.formRequest = $.kernelyDialog("#new-request-form",150,300);
-			$("#cancel-request-form").bind("click",function(){$(parent.formRequest).dialog( "close" );});
+			$("#cancel-request-form").bind("click",function(){$(parent.formRequest).kernely_dialog( "close" );});
 			var dates = $( "#from, #to" ).datepicker({
+				showOn: "both",
+				buttonImage: "/images/icons/calendar_icon.png",
+				buttonImageOnly: true,
 				defaultDate: "+1w",
-				changeMonth: true,
+				changeMonth: false,
 				onSelect: function( selectedDate ) {
 					var option = this.id == "from" ? "minDate" : "maxDate",
 							instance = $( this ).data( "datepicker" ),
@@ -191,7 +196,7 @@ AppHolidayUserRequest = (function($){
 		},
 		
 		newRequest : function(){
-			$(this.formRequest).dialog( "open" );
+			$(this.formRequest).kernely_dialog( "open" );
 
 		},
 		
@@ -200,7 +205,7 @@ AppHolidayUserRequest = (function($){
 			var view = {};
 			var html = Mustache.to_html(template, view);
 			
-			$.kernelyConfirm(html,this.confirmCancel);
+			$.kernelyConfirm($("#holiday-cancel-template").text(),html,this.confirmCancel);
 		},
 		confirmCancel: function(){
 			$.ajax({

@@ -15,6 +15,10 @@
 	<script type="text/html" id="holiday-canceled-template">
 		{% i18n "canceled" %}
 	 </script>
+	 
+	 <script type="text/html" id="holiday-cancel-template">
+		{% i18n "cancel" %}
+	 </script>
 	
 	 <script type="text/html" id="status-denied-template">
 	 	<span style="color:red;">{% i18n "denied" %}</span>
@@ -54,8 +58,8 @@
 	
 	<script type="text/html" id="new-request-form">
 		<form method="POST" action="/holiday/request/">
-			<label for="from">{% i18n "from_date" %} </label><input readonly="readonly" type="text" id="from" name="from"/><br/>
-			<label for="to"> {% i18n "to_date" %} </label><input readonly="readonly" type="text" id="to" name="to"/><br/>
+			<label for="from">{% i18n "from_date" %} </label><input class="kernely_input" readonly="readonly" type="text" id="from" name="from"/><br/>
+			<label for="to"> {% i18n "to_date" %} </label><input class="kernely_input" readonly="readonly" type="text" id="to" name="to"/><br/>
 			<div class="dialog-buttons-container">
 				<input id="submitPeriod" class="button_ok" type="submit" value="{% i18n "ok" %}"/>
 				<input id="cancel-request-form" class="button_standard" type="button" value="{% i18n "cancel" %}"/>

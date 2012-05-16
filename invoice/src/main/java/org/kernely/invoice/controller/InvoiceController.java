@@ -141,15 +141,30 @@ public class InvoiceController extends AbstractController{
 	@POST
 	@Path("/create")
 	@RequiresRoles(value = {Role.ROLE_PROJECTMANAGER, Role.ROLE_BOOKKEEPER}, logical = Logical.OR)
-	@Consumes({MediaType.APPLICATION_JSON})
-	@Produces({MediaType.APPLICATION_JSON})
-	public String createInvoice(InvoiceCreationRequestDTO request){
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	@Produces( { MediaType.TEXT_HTML })
+	public Response createInvoice(MultivaluedMap<String, String> formParams){
+		
+		InvoiceCreationRequestDTO request = new InvoiceCreationRequestDTO();
+		request.id = 0;
+		request.object="";
+		request.projectId = Integer.parseInt(formParams.get("project").get(0));
+		request.datePublication = formParams.get("from").get(0);
+		request.dateTerm = formParams.get("to").get(0);
+		
+		URI uri;
 		try{
-			invoiceService.createOrUpdateInvoice(request);
-			return "{\"result\":\"Ok\"}";
+			InvoiceDTO invoice = invoiceService.createOrUpdateInvoice(request);
+			uri = new URI("/invoice/" + invoice.id + "/edit");
+			return Response.temporaryRedirect(uri).status(303).build();
 		}
 		catch(IllegalArgumentException iae){
-			return "{\"result\":\""+iae.getMessage()+"\"}";
+			UriBuilder uriBuilder = UriBuilder.fromPath("/invoice");
+			return Response.temporaryRedirect(uriBuilder.build()).status(303).build();
+		}
+		catch (URISyntaxException e) {
+			UriBuilder uriBuilder = UriBuilder.fromPath("/invoice");
+			return Response.temporaryRedirect(uriBuilder.build()).status(303).build();
 		}
 	}
 	
@@ -237,7 +252,7 @@ public class InvoiceController extends AbstractController{
 	 * @return An html page
 	 */
 	@GET
-	@Path("/view/{invoiceId}")
+	@Path("/{invoiceId}/view")
 	@RequiresRoles(value = {Role.ROLE_PROJECTMANAGER, Role.ROLE_BOOKKEEPER}, logical = Logical.OR)
 	@Produces( { MediaType.TEXT_HTML })
 	public Response visualizeInvoice(@PathParam("invoiceId") long invoiceId) {
@@ -259,7 +274,7 @@ public class InvoiceController extends AbstractController{
 	 * @return An html page
 	 */
 	@GET
-	@Path("/edit/{invoiceId}")
+	@Path("/{invoiceId}/edit")
 	@RequiresRoles(value = {Role.ROLE_PROJECTMANAGER, Role.ROLE_BOOKKEEPER}, logical = Logical.OR)
 	@Produces( { MediaType.TEXT_HTML })
 	public Response editInvoice(@PathParam("invoiceId") long invoiceId) {
@@ -342,7 +357,7 @@ public class InvoiceController extends AbstractController{
 		invoiceRequest.comment = formParams.get("invoice-comment").get(0);
 		invoiceRequest.amount = amountCalculated;
 		invoiceService.createOrUpdateInvoice(invoiceRequest);
-		UriBuilder uriBuilder = UriBuilder.fromPath("/invoice/view/" + invoiceId);
+		UriBuilder uriBuilder = UriBuilder.fromPath("/invoice/" + invoiceId + "/view");
 		// Status 303 allows to redirect a request from POST to GET
 		return Response.temporaryRedirect(uriBuilder.build()).status(303).build();
 	}
