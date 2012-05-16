@@ -26,10 +26,11 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
+import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.kernely.controller.AbstractController;
 import org.kernely.core.dto.RoleDTO;
+import org.kernely.core.model.Role;
 import org.kernely.core.service.RoleService;
-import org.kernely.core.service.UserService;
 
 import com.google.inject.Inject;
 
@@ -43,9 +44,6 @@ public class RoleController extends AbstractController {
 	@Inject
 	private RoleService roleService;
 	
-	@Inject
-	private UserService userService;
-	
 	/**
 	 * Get all roles contained in the database
 	 * @return A list of all DTO associated to the roles contained in the database
@@ -53,12 +51,10 @@ public class RoleController extends AbstractController {
 	@GET
 	@Path("/all")
 	@Produces({MediaType.APPLICATION_JSON})
+	@RequiresRoles(Role.ROLE_ADMINISTRATOR)
 	public List<RoleDTO> getAllRoles()
 	{
-		if (userService.currentUserIsAdministrator()){
-			return roleService.getAllRoles();
-		}
-		return null;
+		return roleService.getAllRoles();
 	}
 	
 }

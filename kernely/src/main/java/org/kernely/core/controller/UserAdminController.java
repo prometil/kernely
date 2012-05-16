@@ -30,12 +30,13 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
 
+import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.kernely.controller.AbstractController;
 import org.kernely.core.dto.RoleDTO;
 import org.kernely.core.dto.UserCreationRequestDTO;
 import org.kernely.core.dto.UserDetailsDTO;
+import org.kernely.core.model.Role;
 import org.kernely.core.service.UserService;
 import org.kernely.template.SobaTemplateRenderer;
 
@@ -59,15 +60,12 @@ public class UserAdminController extends AbstractController{
 	 */
 	@GET
 	@Produces( { MediaType.TEXT_HTML })
+	@RequiresRoles(Role.ROLE_ADMINISTRATOR)
 	public Response displayPage()
 	{
 		Map<String, Object> map =new HashMap<String, Object>();
 		// Display the admin page only if the user is admin.
-		if (userService.currentUserIsAdministrator()) {
-			return Response.ok(templateRenderer.render("templates/admin/user_admin.html", map)).build();
-		} else {
-			return Response.status(Status.FORBIDDEN).build();
-		}
+		return Response.ok(templateRenderer.render("templates/admin/user_admin.html", map)).build();
 	}
 
 	/**
@@ -77,13 +75,11 @@ public class UserAdminController extends AbstractController{
 	@GET
 	@Path("/all")
 	@Produces({MediaType.APPLICATION_JSON})
+	@RequiresRoles(Role.ROLE_ADMINISTRATOR)
 	public List<UserDetailsDTO> displayAllUsers()
 	{
-		if (userService.currentUserIsAdministrator()){
-			log.debug("Call to GET on all users");
-			return userService.getAllUserDetails();
-		}
-		return null;
+		log.debug("Call to GET on all users");
+		return userService.getAllUserDetails();
 	}
 
 	/**
@@ -93,13 +89,11 @@ public class UserAdminController extends AbstractController{
 	@GET
 	@Path("/client")
 	@Produces({MediaType.APPLICATION_JSON})
+	@RequiresRoles(Role.ROLE_ADMINISTRATOR)
 	public List<UserDetailsDTO> displayAllClients()
 	{
-		if (userService.currentUserIsAdministrator()){
-			log.debug("Call to GET on all users");
-			return userService.getAllClients();
-		}	
-		return null;
+		log.debug("Call to GET on all users");
+		return userService.getAllClients();
 	}
 	
 	
@@ -110,13 +104,11 @@ public class UserAdminController extends AbstractController{
 	@GET
 	@Path("/enabled")
 	@Produces({MediaType.APPLICATION_JSON})
+	@RequiresRoles(Role.ROLE_ADMINISTRATOR)
 	public List<UserDetailsDTO> displayEnabledUsers()
 	{
-		if (userService.currentUserIsAdministrator()){
-			log.debug("Call to GET on enabled users");
-			return userService.getEnabledUserDetails();
-		}
-		return null;
+		log.debug("Call to GET on enabled users");
+		return userService.getEnabledUserDetails();
 	}
 
 	/**
@@ -126,24 +118,22 @@ public class UserAdminController extends AbstractController{
 	@POST
 	@Path("/create")
 	@Produces({MediaType.APPLICATION_JSON})
+	@RequiresRoles(Role.ROLE_ADMINISTRATOR)
 	public String create(UserCreationRequestDTO user)
 	{
-		if (userService.currentUserIsAdministrator()){
-			try{
-				log.debug("Create a user");
-				if(user.id == 0){
-					userService.createUser(user);
-				}
-				else{
-					userService.updateUser(user);
-				}
-				return "{\"result\":\"ok\"}";
-			} catch (IllegalArgumentException iae) {
-				log.debug(iae.getMessage());
-				return "{\"result\":\""+iae.getMessage()+"\"}";
+		try{
+			log.debug("Create a user");
+			if(user.id == 0){
+				userService.createUser(user);
 			}
+			else{
+				userService.updateUser(user);
+			}
+			return "{\"result\":\"ok\"}";
+		} catch (IllegalArgumentException iae) {
+			log.debug(iae.getMessage());
+			return "{\"result\":\""+iae.getMessage()+"\"}";
 		}
-		return null;
 	}
 
 	/**
@@ -154,12 +144,10 @@ public class UserAdminController extends AbstractController{
 	@GET
 	@Path("/lock/{id}")
 	@Produces({MediaType.APPLICATION_JSON})
+	@RequiresRoles(Role.ROLE_ADMINISTRATOR)
 	public String lock(@PathParam("id") int id){
-		if (userService.currentUserIsAdministrator()){
-			userService.lockUser(id);
-			return "{\"result\":\"ok\"}";
-		}
-		return null;
+		userService.lockUser(id);
+		return "{\"result\":\"ok\"}";
 	}
 
 	/**
@@ -170,11 +158,9 @@ public class UserAdminController extends AbstractController{
 	@GET
 	@Path("/{id}/roles")
 	@Produces({MediaType.APPLICATION_JSON})
+	@RequiresRoles(Role.ROLE_ADMINISTRATOR)
 	public List<RoleDTO> getUserRoles(@PathParam("id") int id){
-		if (userService.currentUserIsAdministrator()){
-			return userService.getUserRoles(id);
-		}
-		return null;
+		return userService.getUserRoles(id);
 	}
 	
 	/**
@@ -185,11 +171,9 @@ public class UserAdminController extends AbstractController{
 	@GET
 	@Path("/details/{id}")
 	@Produces({MediaType.APPLICATION_JSON})
+	@RequiresRoles(Role.ROLE_ADMINISTRATOR)
 	public UserDetailsDTO getUserDetails(@PathParam("id") long id){
-		if (userService.currentUserIsAdministrator()){
-			return userService.getUserDetails(id);
-		}
-		return null;
+		return userService.getUserDetails(id);
 	}
 
 }

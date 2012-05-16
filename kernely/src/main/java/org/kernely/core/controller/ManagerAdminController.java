@@ -32,12 +32,13 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
 
+import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.kernely.controller.AbstractController;
 import org.kernely.core.dto.ManagerCreationRequestDTO;
 import org.kernely.core.dto.ManagerDTO;
 import org.kernely.core.dto.UserDTO;
+import org.kernely.core.model.Role;
 import org.kernely.core.service.UserService;
 import org.kernely.template.SobaTemplateRenderer;
 
@@ -61,16 +62,12 @@ public class ManagerAdminController extends AbstractController {
 	 */
 	@GET
 	@Produces({ MediaType.TEXT_HTML })
+	@RequiresRoles(Role.ROLE_ADMINISTRATOR)
 	public Response displayPage() {
 
 		Map<String, Object> map = new HashMap<String, Object>();
 		// Display the admin page only if the user is admin.
-		if (userService.currentUserIsAdministrator()) {
-			return Response.ok(templateRenderer.render("templates/admin/manager_admin.html", map)).build();
-		} else {
-			return Response.status(Status.FORBIDDEN).build();
-		}
-		
+		return Response.ok(templateRenderer.render("templates/admin/manager_admin.html", map)).build();
 	}
 
 	/**
@@ -106,12 +103,10 @@ public class ManagerAdminController extends AbstractController {
 	@POST
 	@Path("/create")
 	@Produces({ MediaType.APPLICATION_JSON })
-	public String create(ManagerCreationRequestDTO manager) {
-		if (userService.currentUserIsAdministrator()) {
-			userService.updateManager(manager.manager, manager.users);
-			return "{\"result\":\"ok\"}";
-		}
-		return null;
+	@RequiresRoles(Role.ROLE_ADMINISTRATOR)
+	public Response create(ManagerCreationRequestDTO manager) {
+		userService.updateManager(manager.manager, manager.users);
+		return Response.ok().build();
 	}
 
 	/**
@@ -124,12 +119,10 @@ public class ManagerAdminController extends AbstractController {
 	@POST
 	@Path("/update")
 	@Produces({ MediaType.APPLICATION_JSON })
-	public String update(ManagerCreationRequestDTO manager) {
-		if (userService.currentUserIsAdministrator()) {
-			userService.updateManager(manager.manager, manager.users);
-			return "{\"result\":\"ok\"}";
-		}
-		return null;
+	@RequiresRoles(Role.ROLE_ADMINISTRATOR)
+	public Response update(ManagerCreationRequestDTO manager) {
+		userService.updateManager(manager.manager, manager.users);
+		return Response.ok().build();
 	}
 
 	/**
@@ -141,12 +134,10 @@ public class ManagerAdminController extends AbstractController {
 	@GET
 	@Path("/all")
 	@Produces({ MediaType.APPLICATION_JSON })
+	@RequiresRoles(Role.ROLE_ADMINISTRATOR)
 	public List<ManagerDTO> displayAllManager() {
-		if (userService.currentUserIsAdministrator()) {
 			Set<ManagerDTO> setManagers = userService.getAllManager();
 			return new ArrayList<ManagerDTO>(setManagers);
-		}
-		return null;
 	}
 
 	/**
@@ -159,12 +150,9 @@ public class ManagerAdminController extends AbstractController {
 	@GET
 	@Path("/users/{username}")
 	@Produces({ MediaType.APPLICATION_JSON })
+	@RequiresRoles(Role.ROLE_ADMINISTRATOR)
 	public List<UserDTO> getListManaged(@PathParam("username") String manager) {
-		if (userService.currentUserIsAdministrator()) {
-			return userService.getUsers(manager);
-		}
-		return null;
-
+		return userService.getUsers(manager);
 	}
 
 	/**
@@ -176,12 +164,10 @@ public class ManagerAdminController extends AbstractController {
 	@GET
 	@Path("/delete/{id}")
 	@Produces({ MediaType.TEXT_HTML })
-	public String lock(@PathParam("id") long id) {
-		if (userService.currentUserIsAdministrator()) {
-			userService.deleteManager(id);
-			return "Ok";
-		}
-		return null;
+	@RequiresRoles(Role.ROLE_ADMINISTRATOR)
+	public Response lock(@PathParam("id") long id) {
+		userService.deleteManager(id);
+		return Response.ok().build();
 	}
 
 	/**
@@ -193,10 +179,8 @@ public class ManagerAdminController extends AbstractController {
 	@GET
 	@Path("/{id}")
 	@Produces({ MediaType.APPLICATION_JSON })
+	@RequiresRoles(Role.ROLE_ADMINISTRATOR)
 	public ManagerDTO getManager(@PathParam("id") long id) {
-		if (userService.currentUserIsAdministrator()) {
-			return userService.getManager(id);
-		}
-		return null;
+		return userService.getManager(id);
 	}
 }

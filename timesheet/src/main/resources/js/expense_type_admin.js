@@ -170,7 +170,6 @@ AppExpenseType = (function($){
 				processData: false,
 				contentType: "application/json; charset=utf-8",
 				success: function(data){
-				console.log(data.direct)
 					var template = $("#popup-expense-type-admin-update-template").html();
 					var view = {name : data.name, ratio: data.ratio};
 					var html = Mustache.to_html(template, view);
@@ -198,7 +197,6 @@ AppExpenseType = (function($){
 		},
 		
 		manageDirect: function(){
-		console.log("MANAGE DIRECT");
 			if($('input[name*="direct"]').is(":checked")){
 				$('#ratio_field').val(1.0);
 				$('#ratio_field').attr("readonly", "readonly");
@@ -210,7 +208,6 @@ AppExpenseType = (function($){
 		
 		updateType: function(){
 			var json = '{"id":"'+lineSelected+'", "name":"'+$('input[name*="name"]').val()+'","direct":"'+$('input[name*="direct"]').is(":checked")+'", "ratio":'+$('input[name*="ratio"]').val()+'}';
-			console.log(json)
 			$.ajax({
 				url:"/admin/expense/type/create",
 				data: json,

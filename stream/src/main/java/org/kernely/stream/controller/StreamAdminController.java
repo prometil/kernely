@@ -19,7 +19,6 @@
  */
 package org.kernely.stream.controller;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.ws.rs.GET;
@@ -29,11 +28,12 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
 
+import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.kernely.controller.AbstractController;
 import org.kernely.core.dto.GroupDTO;
 import org.kernely.core.dto.UserDTO;
+import org.kernely.core.model.Role;
 import org.kernely.core.service.GroupService;
 import org.kernely.core.service.PermissionService;
 import org.kernely.core.service.UserService;
@@ -80,13 +80,10 @@ public class StreamAdminController extends AbstractController {
 	@GET
 	@Path("/main")
 	@Produces({ MediaType.TEXT_HTML })
+	@RequiresRoles(Role.ROLE_ADMINISTRATOR)
 	public Response getPluginAdminPanel() {
 		log.debug("getting stream administration main page");
-		if (userService.currentUserIsAdministrator()) {
-			return Response.ok(templateRenderer.render("templates/streams_admin.html")).build();
-		} else {
-			return Response.status(Status.FORBIDDEN).build();
-		}
+		return Response.ok(templateRenderer.render("templates/streams_admin.html")).build();
 	}
 
 	/**
@@ -96,15 +93,11 @@ public class StreamAdminController extends AbstractController {
 	 */
 	@GET
 	@Path("/all")
+	@RequiresRoles(Role.ROLE_ADMINISTRATOR)
 	@Produces({ MediaType.APPLICATION_JSON})
 	public List<StreamDTO> displayAllStreams() {
-		if (userService.currentUserIsAdministrator()) {
-			log.debug("Call to GET on all streams");
-			return streamService.getAllStreams();
-			
-		} else {
-			return new ArrayList<StreamDTO>();
-		}
+		log.debug("Call to GET on all streams");
+		return streamService.getAllStreams();
 	}
 
 	/**
@@ -114,20 +107,18 @@ public class StreamAdminController extends AbstractController {
 	 */
 	@POST
 	@Path("/create")
+	@RequiresRoles(Role.ROLE_ADMINISTRATOR)
 	@Produces({ MediaType.APPLICATION_JSON })
 	public String create(StreamCreationRequestDTO stream) {
 		log.debug("Create a user");
 
-		if (userService.currentUserIsAdministrator()){
-			try {
-				streamService.createStream(stream.name, stream.category);
-			} catch (IllegalArgumentException iae) {
-				log.debug(iae.getMessage());
-				return "{\"result\":\"" + iae.getMessage() + "\"}";
-			}
+		try {
+			streamService.createStream(stream.name, stream.category);
+			return "{\"result\":\"ok\"}";
+		} catch (IllegalArgumentException iae) {
+			log.debug(iae.getMessage());
+			return "{\"result\":\"" + iae.getMessage() + "\"}";
 		}
-		
-		return "{\"result\":\"ok\"}";
 	}
 	
 	/**
@@ -137,13 +128,11 @@ public class StreamAdminController extends AbstractController {
 	 */
 	@POST
 	@Path("/update")
+	@RequiresRoles(Role.ROLE_ADMINISTRATOR)
 	@Produces({ MediaType.APPLICATION_JSON })
 	public String update(StreamCreationRequestDTO stream) {
-		if (userService.currentUserIsAdministrator()){
-			streamService.updateStream(stream);
-			return "{\"result\":\"ok\"}";
-		}
-		return "{\"result\":\"You are not administrator\"}";
+		streamService.updateStream(stream);
+		return "{\"result\":\"ok\"}";
 	}
 
 	/**
@@ -155,13 +144,11 @@ public class StreamAdminController extends AbstractController {
 	 */
 	@GET
 	@Path("/lock/{id}")
+	@RequiresRoles(Role.ROLE_ADMINISTRATOR)
 	@Produces({ MediaType.APPLICATION_JSON })
 	public String lock(@PathParam("id") int id) {
-		if (userService.currentUserIsAdministrator()) {
-			streamService.lockStream(id);
-			return "{\"result\":\"ok\"}";
-		}
-		return "{\"result\":\"You are not administrator\"}";
+		streamService.lockStream(id);
+		return "{\"result\":\"ok\"}";
 	}
 
 	/**
@@ -173,13 +160,12 @@ public class StreamAdminController extends AbstractController {
 	 */
 	@GET
 	@Path("/unlock/{id}")
+	@RequiresRoles(Role.ROLE_ADMINISTRATOR)
 	@Produces({ MediaType.APPLICATION_JSON })
 	public String unlock(@PathParam("id") int id) {
-		if (userService.currentUserIsAdministrator()) {
-			streamService.unlockStream(id);
-			return "{\"result\":\"ok\"}";
-		}
-		return "{\"result\":\"You are not administrator\"}";
+		streamService.unlockStream(id);
+		return "{\"result\":\"ok\"}";
+		
 	}
 
 	/**
@@ -251,6 +237,7 @@ public class StreamAdminController extends AbstractController {
 	 */
 	@POST
 	@Path("/updaterights")
+	@RequiresRoles(Role.ROLE_ADMINISTRATOR)
 	@Produces({ MediaType.APPLICATION_JSON })
 	public String updateRights(StreamRightsUpdateRequestDTO request) {
 		log.debug("Update {} rights of the stream : {}", request.rights.size(),request.streamid);
@@ -307,12 +294,11 @@ public class StreamAdminController extends AbstractController {
 	 */
 	@GET
 	@Path("/{id}")
+	@RequiresRoles(Role.ROLE_ADMINISTRATOR)
 	@Produces({ MediaType.APPLICATION_JSON })
 	public StreamDTO getComboCategory(@PathParam("id") int id) {
-		if (userService.currentUserIsAdministrator()) {
-			return streamService.getStream(id);
-		}
-		return new StreamDTO();
+		return streamService.getStream(id);
+		
 	}
 
 }
