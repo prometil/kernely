@@ -158,7 +158,6 @@ AppInvoiceEdit = (function($){
 		processAmount: function(){
 			var amount = $(this.el).find(".quantity-field").val() * $(this.el).find(".unitprice-field").val();
 			$(this.el).find(".line-amount").text(amount);
-			console.log(this.id);
 		},
 		render: function(){
 			var template = $("#invoice-line-editable-template").html();
@@ -185,18 +184,35 @@ AppInvoiceEdit = (function($){
 						if(!valueInConf && typeof(parent.vat) != "undefined"){
 							options += '<option selected="selected" value="'+parent.vat+'">'+parent.vat+'</option>';
 						}
+						var select = document.createElement("select");
+						$(select).addClass("vat-field");
+						$(select).addClass("kernely_input");
+						$(select).attr("name", "vat-field[]");
+						$(select).append(options);
+						$(parent.el).find(".vat-column").append($(select)).append("%");
 					}
 					else{
-						if(data.vatDTO.value == parent.vat){
-							options = '<option value="'+data.vatDTO.value+'">'+data.vatDTO.value+'</option>';
-						}
-						else{
+						if(data.vatDTO.value != parent.vat && parent.vat != null){
 							options += '<option selected="selected" value="'+parent.vat+'">'+parent.vat+'</option>';
 							options += '<option value="'+data.vatDTO.value+'">'+data.vatDTO.value+'</option>';
-						}	
-						$(this.el).find(".vat-field").attr("disabled", "disabled");
+							var select = document.createElement("select");
+							$(select).addClass("vat-field");
+							$(select).addClass("kernely_input");
+							$(select).attr("name", "vat-field[]");
+							$(select).append(options);
+							$(parent.el).find(".vat-column").append($(select)).append("%");
+						}
+						else{
+							var input = document.createElement("input");
+							$(input).addClass("vat-field");
+							$(input).addClass("kernely_input");
+							$(input).attr("name", "vat-field[]");
+							$(input).attr("readonly", "readonly");
+							$(input).attr("value", data.vatDTO.value);
+							$(input).css("width","40px");
+							$(parent.el).find(".vat-column").append($(input)).append("%");
+						}
 					}
-					$(parent.el).find(".vat-field").append(options);
 				}
 			});
 			return this;
