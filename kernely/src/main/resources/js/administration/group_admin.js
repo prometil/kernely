@@ -90,9 +90,9 @@ AppGroupAdmin = (function($){
 			$("#modal_window_group").kernely_dialog({
 				title: titleTemplate,
 				content: template,
-				eventNames:'click',
+				eventNames:'click .createGroup',
 				events:{
-					'click': {"el":".createGroup", "event":parent.registergroup}
+					'click .createGroup' : parent.registergroup
 				}
 			});
 			$("#modal_window_group").kernely_dialog("open");
@@ -140,9 +140,9 @@ AppGroupAdmin = (function($){
 					$("#modal_window_group").kernely_dialog({
 						title: titleTemplate,
 						content: html,
-						eventNames:'click',
+						eventNames:'click .updateGroup',
 						events:{
-							'click': {"el":".updateGroup", "event":parent.updategroup}
+							'click .updateGroup' : parent.updategroup
 						}
 					});
 					

@@ -44,6 +44,7 @@ $.extend({
 			autoOpen: false,
 			height: vh,
 			width: vw,
+			resizable:false,
 			modal: true
 		});
 		return div;
@@ -545,35 +546,31 @@ jQuery.fn.extend({
 							zIndex: 2});
 
 			var parent = this;
+			this.eventNames = options.eventNames;
+			this.eventsActions = options.events;
 			
-			// Considering events
-			if($.isArray(options.eventNames)){
-				// More than one event name ("click", "dblckick"...)
-				$.each(options.eventNames, function(){
-					var name = this;
-					var events = options.events[this];
-					// More than one element reactive to the event name
-					if ($.isArray(events)){
-						$.each(events, function(){
-							$(this.el).bind(name, this.event);
-						});
-					} else {
-						$(options.events[this].el).bind(this, options.events[this].event);
+			if($.isArray(this.eventNames)){
+				$.each(this.eventNames, function(){
+					
+					if(this.lastIndexOf('.') != -1){
+						var event = this.substring(0, this.lastIndexOf('.')-1);
+						var element= this.substring(this.lastIndexOf('.'));
+						$(parent).find(element).bind("" + event, parent.eventsActions[this]);
 					}
+					else{
+						$(parent).find(element).bind("" + this, parent.eventsActions[this]);
+					}
+					
 				});
 			}
 			else{
-				var events = options.events[options.eventNames];
-				var name = options.eventNames;
-				
-				if ($.isArray(events)){
-					$.each(events, function(){
-							$(this.el).bind(name, this.event);
-					});
-				} else {
-					if (events != null){
-						$(events.el).bind(name,events.event);
-					}
+				if((""+this.eventNames).lastIndexOf('.') != -1){
+					var event = this.eventNames.substring(0, this.eventNames.lastIndexOf('.')-1);
+					var element= this.eventNames.substring(this.eventNames.lastIndexOf('.'));
+					$(parent).find(element).bind("" + event, parent.eventsActions[this.eventNames]);
+				}
+				else{
+					$(parent.el).bind("" + this.eventNames, parent.eventsActions[this.eventNames]);
 				}
 			}
 		}

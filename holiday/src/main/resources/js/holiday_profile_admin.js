@@ -135,11 +135,10 @@ AppHolidayAdmin = (function($){
 			$("#modal_window_holiday").kernely_dialog({
 				title: titleTemplate,
 				content: html,
-				eventNames:'click',
+				eventNames:[ 'click .newHolidayButton' , "click .createHolidayProfile" ],
 				events:{
-					'click': [
-					          {"el":"#newHolidayButton", "event":parent.newHolidayLine},
-					          {"el":"#createHolidayProfile", "event":parent.createUpdateHolidayProfile}]
+					       "click .newHolidayButton" : parent.newHolidayLine,
+					       "click .createHolidayProfile" : parent.createUpdateHolidayProfile
 				}
 			});
 			$("#modal_window_holiday").kernely_dialog("open");
@@ -158,11 +157,10 @@ AppHolidayAdmin = (function($){
 			$("#modal_window_holiday").kernely_dialog({
 				title: titleTemplate,
 				content: html,
-				eventNames:'click',
+				eventNames:['click .newHolidayButton',"click .createHolidayProfile"],
 				events:{
-					'click': [
-					          {"el":"#newHolidayButton", "event":parent.newHolidayLine},
-					          {"el":"#createHolidayProfile", "event":parent.createUpdateHolidayProfile}]
+					'click .newHolidayButton' : parent.newHolidayLine,
+					"click .createHolidayProfile" : parent.createUpdateHolidayProfile
 				}
 			});
 			
@@ -329,13 +327,11 @@ AppHolidayAdmin = (function($){
 				title: titleTemplate,
 				content: html,
 				width: '480px',
-				eventNames:"click",
+				eventNames:["click .addUserButton", "click .removeUserButton", "click .updateUsersButton"],
 				events:{
-					"click": [
-					          {"el":"#addUserButton", "event":parent.addUser},
-					          {"el":"#removeUserButton", "event":parent.removeUser},
-					          {"el":"#updateUsersButton", "event":parent.updateUsers}
-					          ]
+					    "click .addUserButton" : parent.addUser,
+					    "click .removeUserButton" : parent.removeUser,
+					    "click .updateUsersButton" : parent.updateUsers
 				}
 			});
 			$("#modal_window_holiday").kernely_dialog("open");

@@ -168,10 +168,10 @@ AppHolidayUserRequest = (function($){
 			this.vrequesterComment=requesterComment;
 		},
 		
-	
 		render:function(){
+			var parent = this;
 			this.formRequest = $.kernelyDialog("#new-request-form",150,300);
-			
+			$("#cancel-request-form").bind("click",function(){$(parent.formRequest).dialog( "close" );});
 			var dates = $( "#from, #to" ).datepicker({
 				defaultDate: "+1w",
 				changeMonth: true,
@@ -194,6 +194,7 @@ AppHolidayUserRequest = (function($){
 		
 		newRequest : function(){
 			$(this.formRequest).dialog( "open" );
+
 		},
 		
 		canceled:function(){

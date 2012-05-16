@@ -127,19 +127,15 @@
 	
 	<!-- Template for the user rights view  -->
 	<script type="text/html" id="popup-stream-rights-update-template">
-	<input type="button" value="{% i18n "close" %}" class="closeModal"/><br/>
-	<div class="selectedTab" id="usersTab">{% i18n "stream_users_rights_tab" %}</div>
-	<div class="tab" id="groupsTab">{% i18n "stream_groups_rights_tab" %}</div>
-	<br/>
-	<fieldset>
-	<legend>{% i18n "stream_rights_text" %} {{"{{"}}title{{"}}"}}</legend>
-		<div class="tabContent" id="usersToRight">
-			<!-- Filled by ajax  -->
-		</div>
-		<div class="tabHiddenContent" id="groupsToRight">
-			<!-- Filled by ajax  -->
-		</div>
-	</fieldset>
+	<input type="button" class="button_emphasis usersTab" value="{% i18n "stream_users_rights_tab" %}"/>
+	<input type="button" class="button_standard groupsTab" value="{% i18n "stream_groups_rights_tab" %}"/>
+	<br/><br/>
+	<div class="tabContent" id="usersToRight">
+		<!-- Filled by ajax  -->
+	</div>
+	<div class="tabHiddenContent" id="groupsToRight">
+		<!-- Filled by ajax  -->
+	</div>
 	<div class="dialog-buttons-container">
 		<input type="button" value="{% i18n "update" %}" class="updateStream button_ok"/>
 	</div>

@@ -29,7 +29,6 @@ AppAdmin = (function($){
                    dataType:"json",
                    success: function(data){
                             $.each(data.pluginDTO, function() {
-
                             	// If the plugin doesn't have an admin page, then do nothing
                             	if(this.adminPages != null && typeof(this.adminPages) != "undefined"){
 	                            	if (this.adminPages.length > 1){
