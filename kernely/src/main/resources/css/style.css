@@ -620,6 +620,11 @@ legend{
 .ui-widget-overlay {
 	background: #666;
 	opacity: .50;
+	z-index:11 !important;
+}
+
+.ui-dialog{
+	z-index:12 !important;
 }
 
 .ui-widget-header{

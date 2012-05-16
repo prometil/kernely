@@ -292,6 +292,10 @@ TableView = Backbone.View.extend({
                                 table.append(new TableLineView(data[view.idField], array, view.eventName, view.events, view.styles).render().el);
                         }
                 }
+        },
+        
+        clear: function(){
+        	this.el.find("tbody").empty();
         }
         
 });
