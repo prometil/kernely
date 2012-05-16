@@ -742,9 +742,9 @@ AppTimeSheet = (function($){
 			$("#modal_window_expense").kernely_dialog({
 				title: titleTemplate,
 				content: template,
-				eventNames:'click',
+				eventNames:'click .create_expense',
 				events:{
-					'click': {"el":".create_expense", "event":parent.closemodal}
+					'click .create_expense': parent.closemodal
 				}
 			});
 			$("#modal_window_expense").kernely_dialog("open");
