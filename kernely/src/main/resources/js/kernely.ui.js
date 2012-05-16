@@ -44,6 +44,7 @@ $.extend({
 			autoOpen: false,
 			height: vh,
 			width: vw,
+			resizable:true,
 			modal: true
 		});
 		return div;
