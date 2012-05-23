@@ -66,7 +66,7 @@ public class Kernely {
 
 		// Load all detected plugins
 		List<AbstractPlugin> plugins = PluginManager.getPlugins();
-
+		
 		// configure
 		CombinedConfiguration combinedConfiguration = PluginManager.getConfiguration();
 
