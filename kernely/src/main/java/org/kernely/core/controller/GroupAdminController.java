@@ -30,14 +30,14 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
 
+import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.kernely.controller.AbstractController;
 import org.kernely.core.dto.GroupCreationRequestDTO;
 import org.kernely.core.dto.GroupDTO;
 import org.kernely.core.dto.UserDTO;
+import org.kernely.core.model.Role;
 import org.kernely.core.service.GroupService;
-import org.kernely.core.service.UserService;
 import org.kernely.template.SobaTemplateRenderer;
 
 import com.google.inject.Inject;
@@ -54,9 +54,6 @@ public class GroupAdminController extends AbstractController {
 	@Inject
 	private GroupService groupService;
 	
-	@Inject
-	private UserService userService;
-	
 	/**
 	 * Get all existing groups in the database
 	 * @return A list of all DTO associated to the existing groups in the database
@@ -64,13 +61,11 @@ public class GroupAdminController extends AbstractController {
 	@GET
 	@Path("/all")
 	@Produces({MediaType.APPLICATION_JSON})
+	@RequiresRoles(Role.ROLE_ADMINISTRATOR)
 	public List<GroupDTO> displayAllGroups()
 	{
-		if (userService.currentUserIsAdministrator()){
-			log.debug("Call to GET on all groups");
-			return groupService.getAllGroups();
-		}
-		return null;
+		log.debug("Call to GET on all groups");
+		return groupService.getAllGroups();
 	}
 	
 	/**
@@ -79,17 +74,13 @@ public class GroupAdminController extends AbstractController {
 	 */
 	@GET
 	@Produces( { MediaType.TEXT_HTML })
+	@RequiresRoles(Role.ROLE_ADMINISTRATOR)
 	public Response displayPage()
 	{
-		
 		Map<String, Object> map =new HashMap<String, Object>();
 		Response page;
 		// Display the admin page only if the user is admin.
-		if (userService.currentUserIsAdministrator()) {
-			page = Response.ok(templateRenderer.render("templates/admin/group_admin.html", map)).build();
-		} else {
-			page = Response.status(Status.FORBIDDEN).build();
-		}
+		page = Response.ok(templateRenderer.render("templates/admin/group_admin.html", map)).build();
 		return page;
 	}
 	
@@ -101,24 +92,22 @@ public class GroupAdminController extends AbstractController {
 	@POST
 	@Path("/create")
 	@Produces({MediaType.APPLICATION_JSON})
+	@RequiresRoles(Role.ROLE_ADMINISTRATOR)
 	public String create(GroupCreationRequestDTO group)
 	{
-		if (userService.currentUserIsAdministrator()){
-			try{
-				log.debug("Create a user");
-				if(group.id == 0){
-					groupService.createGroup(group);
-				}
-				else{
-					groupService.updateGroup(group);
-				}
-				return "{\"result\":\"ok\"}";
-			} catch (IllegalArgumentException iae) {
-				log.debug(iae.getMessage());
-				return "{\"result\":\""+iae.getMessage()+"\"}";
+		try{
+			log.debug("Create a user");
+			if(group.id == 0){
+				groupService.createGroup(group);
 			}
+			else{
+				groupService.updateGroup(group);
+			}
+			return "{\"result\":\"ok\"}";
+		} catch (IllegalArgumentException iae) {
+			log.debug(iae.getMessage());
+			return "{\"result\":\""+iae.getMessage()+"\"}";
 		}
-		return null;
 	}
 	
 	/**
@@ -129,12 +118,10 @@ public class GroupAdminController extends AbstractController {
 	@GET
 	@Path("/delete/{id}")
 	@Produces( { MediaType.TEXT_HTML })
-	public String lock(@PathParam("id") int id){
-		if (userService.currentUserIsAdministrator()){
-			groupService.deleteGroup(id);
-			return "Ok";
-		}
-		return null;
+	@RequiresRoles(Role.ROLE_ADMINISTRATOR)
+	public Response lock(@PathParam("id") int id){
+		groupService.deleteGroup(id);
+		return Response.ok().build();
 	}
 	
 	/**
@@ -145,11 +132,9 @@ public class GroupAdminController extends AbstractController {
 	@GET
 	@Path("/{id}/users")
 	@Produces({MediaType.APPLICATION_JSON})
+	@RequiresRoles(Role.ROLE_ADMINISTRATOR)
 	public List<UserDTO> getGroupUsers(@PathParam("id") int id){
-		if (userService.currentUserIsAdministrator()){
-			return groupService.getGroupUsers(id);
-		}
-		return null;
+		return groupService.getGroupUsers(id);
 	}
 	
 	/**
@@ -160,11 +145,9 @@ public class GroupAdminController extends AbstractController {
 	@GET
 	@Path("/{id}")
 	@Produces({MediaType.APPLICATION_JSON})
+	@RequiresRoles(Role.ROLE_ADMINISTRATOR)
 	public GroupDTO getGroup(@PathParam("id") long id){
-		if (userService.currentUserIsAdministrator()){
-			return groupService.getGroup(id);
-		}
-		return new GroupDTO();
+		return groupService.getGroup(id);
 	}
 
 }

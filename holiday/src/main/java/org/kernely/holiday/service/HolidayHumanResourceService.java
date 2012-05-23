@@ -47,9 +47,6 @@ public class HolidayHumanResourceService extends AbstractService{
 	 */
 	@Transactional
 	public HolidayUsersManagerDTO getHolidayForAllUsersForMonth(int month, int year){
-		if(!userService.currentUserIsHumanResource()){	
-			throw new UnauthorizedException("Only human resource can access to this functionality !");
-		}
 
 		int monthNeeded;
 		int yearNeeded;

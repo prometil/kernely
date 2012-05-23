@@ -260,8 +260,6 @@ public class InvoiceController extends AbstractController{
 		if(invoiceDTO != null){
 			Map<String, Object> map =new HashMap<String, Object>();
 			map.put("invoice", invoiceDTO);
-			map.put("invoiceLines", invoiceDTO.lines);
-			map.put("invoiceVats", invoiceDTO.vats);
 			return Response.ok(templateRenderer.render("templates/invoice.html", map)).build();
 		}
 		UriBuilder uriBuilder = UriBuilder.fromPath("/invoice");

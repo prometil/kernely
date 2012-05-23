@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigInteger;
 import java.security.SecureRandom;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.ws.rs.Consumes;
@@ -20,6 +19,7 @@ import javax.ws.rs.core.Response.Status;
 
 import org.apache.commons.configuration.AbstractConfiguration;
 import org.apache.commons.io.FileUtils;
+import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.kernely.controller.AbstractController;
 import org.kernely.core.dto.GroupDTO;
 import org.kernely.core.dto.UserDTO;
@@ -74,12 +74,9 @@ public class ProjectAdminController extends AbstractController {
 	 */
 	@GET
 	@Produces( { MediaType.TEXT_HTML })
+	@RequiresRoles(Role.ROLE_ADMINISTRATOR)
 	public Response getPluginAdminPanel() {
-		if (userService.currentUserIsAdministrator()) {
-			return Response.ok(templateRenderer.render("templates/project_admin.html")).build();
-		} else {
-			return Response.status(Status.FORBIDDEN).header("Status", "403 Forbidden").build();
-		}
+		return Response.ok(templateRenderer.render("templates/project_admin.html")).build();
 	}
 
 	/**
@@ -89,13 +86,11 @@ public class ProjectAdminController extends AbstractController {
 	 */
 	@GET
 	@Path("/all")
+	@RequiresRoles(Role.ROLE_ADMINISTRATOR)
 	@Produces( { MediaType.APPLICATION_JSON })
 	public List<ProjectDTO> displayAllProjects() {
-		if (userService.currentUserIsAdministrator()) {
-			log.debug("Call to GET on all projects");
-			return projectService.getAllProjects();
-		}
-		return new ArrayList<ProjectDTO>();
+		log.debug("Call to GET on all projects");
+		return projectService.getAllProjects();
 	}
 
 	/**
@@ -105,13 +100,11 @@ public class ProjectAdminController extends AbstractController {
 	 */
 	@GET
 	@Path("/combobox")
+	@RequiresRoles(Role.ROLE_ADMINISTRATOR)
 	@Produces( { MediaType.APPLICATION_JSON })
 	public List<OrganizationDTO> getLists() {
-		if (userService.currentUserIsAdministrator()) {
-			log.debug("Call to GET on all organization");
-			return organizationService.getAllOrganizations();
-		}
-		return new ArrayList<OrganizationDTO>();
+		log.debug("Call to GET on all organization");
+		return organizationService.getAllOrganizations();
 	}
 
 	/**
@@ -123,22 +116,20 @@ public class ProjectAdminController extends AbstractController {
 	 */
 	@POST
 	@Path("/create")
+	@RequiresRoles(Role.ROLE_ADMINISTRATOR)
 	@Produces( { MediaType.APPLICATION_JSON })
 	public String create(ProjectCreationRequestDTO project) {
-		if (userService.currentUserIsAdministrator()) {
-			try {
-				if (project.id == 0) {
-					projectService.createProject(project);
-				} else {
-					projectService.updateProject(project);
-				}
-				return "{\"result\":\"ok\"}";
-			} catch (IllegalArgumentException iae) {
-				log.debug(iae.getMessage());
-				return "{\"result\":\"" + iae.getMessage() + "\"}";
+		try {
+			if (project.id == 0) {
+				projectService.createProject(project);
+			} else {
+				projectService.updateProject(project);
 			}
+			return "{\"result\":\"ok\"}";
+		} catch (IllegalArgumentException iae) {
+			log.debug(iae.getMessage());
+			return "{\"result\":\"" + iae.getMessage() + "\"}";
 		}
-		return "";
 	}
 
 	/**
@@ -151,12 +142,10 @@ public class ProjectAdminController extends AbstractController {
 	@GET
 	@Path("/delete/{id}")
 	@Produces( { MediaType.TEXT_HTML })
+	@RequiresRoles(Role.ROLE_ADMINISTRATOR)
 	public Response deleteProject(@PathParam("id") int id) {
-		if (userService.currentUserIsAdministrator()) {
-			projectService.deleteProject(id);
-			return Response.ok().build();
-		}
-		return Response.status(Status.FORBIDDEN).build();
+		projectService.deleteProject(id);
+		return Response.ok().build();
 	}
 
 	/**
@@ -168,12 +157,10 @@ public class ProjectAdminController extends AbstractController {
 	 */
 	@GET
 	@Path("/{id}/users")
+	@RequiresRoles(Role.ROLE_ADMINISTRATOR)
 	@Produces( { MediaType.APPLICATION_JSON })
 	public List<UserDTO> getProjectUsers(@PathParam("id") int id) {
-		if (userService.currentUserIsAdministrator()) {
-			return projectService.getProjectUsers(id);
-		}
-		return new ArrayList<UserDTO>();
+		return projectService.getProjectUsers(id);
 	}
 
 	/**
@@ -185,12 +172,10 @@ public class ProjectAdminController extends AbstractController {
 	 */
 	@POST
 	@Path("/{id}")
+	@RequiresRoles(Role.ROLE_ADMINISTRATOR)
 	@Produces( { MediaType.APPLICATION_JSON })
 	public ProjectDTO getProject(@PathParam("id") int id) {
-		if (userService.currentUserIsAdministrator()) {
-			return projectService.getProject(id);
-		}
-		return new ProjectDTO();
+		return projectService.getProject(id);
 	}
 
 	/**
@@ -203,6 +188,7 @@ public class ProjectAdminController extends AbstractController {
 	 */
 	@POST
 	@Path("/upload/{name}")
+	@RequiresRoles(Role.ROLE_ADMINISTRATOR)
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	@Produces( { MediaType.TEXT_HTML })
 	public Response uploadFile(@FormDataParam("file") InputStream uploadedInputStream, @FormDataParam("file") FormDataContentDisposition fileDetail,
@@ -235,11 +221,7 @@ public class ProjectAdminController extends AbstractController {
 		projectService.updateProjectIcon(projectName, fileName);
 
 		// get the dto modified
-		if (userService.currentUserIsAdministrator()) {
-			return Response.ok(templateRenderer.render("templates/project_admin.html")).build();
-		} else {
-			return Response.status(Status.FORBIDDEN).build();
-		}
+		return Response.ok(templateRenderer.render("templates/project_admin.html")).build();
 	}
 
 	/**
@@ -315,6 +297,7 @@ public class ProjectAdminController extends AbstractController {
 	 */
 	@POST
 	@Path("/updaterights")
+	@RequiresRoles(Role.ROLE_ADMINISTRATOR)
 	@Produces( { MediaType.APPLICATION_JSON })
 	public Response updateRights(ProjectRightsUpdateRequestDTO request) {
 		log.debug("Update {} rights of the project : {}", request.rights.size(), request.projectid);

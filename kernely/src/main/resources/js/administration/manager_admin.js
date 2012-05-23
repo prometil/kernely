@@ -169,14 +169,10 @@ AppManagerAdmin = (function($){
 				processData: false,
 				contentType: "application/json; charset=utf-8",
 				success: function(data){
-					if (data.result == "ok"){
-						var successHtml = $("#manager-success-template").html();
-						$.writeMessage("success",successHtml);
-						$("#modal_window_manager").kernely_dialog("close");
-						tableView.reload();
-					} else {
-						$.writeMessage("error",data.result,"#errors_message");
-					}
+					var successHtml = $("#manager-success-template").html();
+					$.writeMessage("success",successHtml);
+					$("#modal_window_manager").kernely_dialog("close");
+					tableView.reload();
 				}
 			});
 		},
@@ -273,14 +269,10 @@ AppManagerAdmin = (function($){
 				processData: false,
 				contentType: "application/json; charset=utf-8",
 				success: function(data){
-					if (data.result == "ok"){
-						var successHtml = $("#manager-success-template").html();
-						$.writeMessage("success",successHtml);
-						$('#modal_window_manager').kernely_dialog("close");
-						tableView.reload();
-					} else {
-						$.writeMessage("error",data.result,"#errors_message");
-					}
+					var successHtml = $("#manager-success-template").html();
+					$.writeMessage("success",successHtml);
+					$('#modal_window_manager').kernely_dialog("close");
+					tableView.reload();
 				}
 			});
 		},

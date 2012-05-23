@@ -1,6 +1,5 @@
 package org.kernely.project.controller;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.ws.rs.GET;
@@ -10,11 +9,11 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
 
+import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.kernely.controller.AbstractController;
 import org.kernely.core.dto.UserDTO;
-import org.kernely.core.service.UserService;
+import org.kernely.core.model.Role;
 import org.kernely.project.dto.OrganizationCreationRequestDTO;
 import org.kernely.project.dto.OrganizationDTO;
 import org.kernely.project.service.OrganizationService;
@@ -30,9 +29,6 @@ public class OrganizationAdminController extends AbstractController {
 	@Inject
 	private SobaTemplateRenderer templateRenderer;
 
-	@Inject
-	private UserService userService;
-
 	@Inject 
 	private OrganizationService organizationService;
 	
@@ -43,12 +39,9 @@ public class OrganizationAdminController extends AbstractController {
 	 */
 	@GET
 	@Produces({ MediaType.TEXT_HTML })
+	@RequiresRoles(Role.ROLE_ADMINISTRATOR)
 	public Response getPluginAdminPanel() {
-		if (userService.currentUserIsAdministrator()) {
-			return Response.ok(templateRenderer.render("templates/organization_admin.html")).build();
-		} else {
-			return Response.status(Status.FORBIDDEN).build();
-		}
+		return Response.ok(templateRenderer.render("templates/organization_admin.html")).build();
 	}
 	
 	/**
@@ -59,13 +52,11 @@ public class OrganizationAdminController extends AbstractController {
 	 */
 	@GET
 	@Path("/all")
+	@RequiresRoles(Role.ROLE_ADMINISTRATOR)
 	@Produces({MediaType.APPLICATION_JSON})
 	public List<OrganizationDTO> displayAllOrganizations() {
-		if (userService.currentUserIsAdministrator()) {
-			log.debug("Call to GET on all organizations");
-			return organizationService.getAllOrganizations();
-		}
-		return new ArrayList<OrganizationDTO>();
+		log.debug("Call to GET on all organizations");
+		return organizationService.getAllOrganizations();
 	}
 	
 	/**
@@ -75,24 +66,22 @@ public class OrganizationAdminController extends AbstractController {
 	 */
 	@POST
 	@Path("/create")
+	@RequiresRoles(Role.ROLE_ADMINISTRATOR)
 	@Produces({MediaType.APPLICATION_JSON})
 	public String create(OrganizationCreationRequestDTO organization)
 	{
-		if (userService.currentUserIsAdministrator()){
-			try{
-				if(organization.id==0){
-					organizationService.createOrganization(organization);
-				}
-				else{
-					organizationService.updateOrganization(organization);
-				}
-				return "{\"result\":\"ok\"}";
-			} catch (IllegalArgumentException iae) {
-				log.debug(iae.getMessage());
-				return "{\"result\":\""+iae.getMessage()+"\"}";
+		try{
+			if(organization.id==0){
+				organizationService.createOrganization(organization);
 			}
+			else{
+				organizationService.updateOrganization(organization);
+			}
+			return "{\"result\":\"ok\"}";
+		} catch (IllegalArgumentException iae) {
+			log.debug(iae.getMessage());
+			return "{\"result\":\""+iae.getMessage()+"\"}";
 		}
-		return null;
 	}
 
 	
@@ -103,13 +92,11 @@ public class OrganizationAdminController extends AbstractController {
 	 */
 	@GET
 	@Path("/delete/{id}")
+	@RequiresRoles(Role.ROLE_ADMINISTRATOR)
 	@Produces( { MediaType.TEXT_HTML })
 	public Response deleteOrganization(@PathParam("id") int id){
-		if (userService.currentUserIsAdministrator()){
-			organizationService.deleteOrganization(id);
-			return Response.ok().build();
-		}
-		return Response.status(Status.FORBIDDEN).build();
+		organizationService.deleteOrganization(id);
+		return Response.ok().build();
 	}
 	
 	/**
@@ -119,12 +106,10 @@ public class OrganizationAdminController extends AbstractController {
 	 */
 	@GET
 	@Path("/{id}/users")
+	@RequiresRoles(Role.ROLE_ADMINISTRATOR)
 	@Produces({MediaType.APPLICATION_JSON})
 	public List<UserDTO> getOrganizationUsers(@PathParam("id") int id){
-		if (userService.currentUserIsAdministrator()){
-			return organizationService.getOrganizationUsers(id);
-		}
-		return new ArrayList<UserDTO>();
+		return organizationService.getOrganizationUsers(id);
 	}
 	
 	/**
@@ -134,12 +119,10 @@ public class OrganizationAdminController extends AbstractController {
 	 */
 	@GET
 	@Path("/{id}")
+	@RequiresRoles(Role.ROLE_ADMINISTRATOR)
 	@Produces({MediaType.APPLICATION_JSON})
 	public OrganizationDTO getOrganization(@PathParam("id") int id){
-		if (userService.currentUserIsAdministrator()){
-			return organizationService.getOrganization(id);
-		}
-		return new OrganizationDTO();
+		return organizationService.getOrganization(id);
 	}
 	
 }
