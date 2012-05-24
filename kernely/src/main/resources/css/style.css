@@ -549,6 +549,11 @@ table.kernely_table th{
 	text-align:left;
 }
 
+.float-left{
+	float:left;
+}
+
+
 .text-center{
 	text-align:center;
 }

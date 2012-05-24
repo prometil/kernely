@@ -217,11 +217,19 @@ AppTimeSheet = (function($){
 			// List of the headers : contains days
 			var headerList = new Array();
 
-			// Build the header
+			// Build the title
+			var template = $("#from-to-template").html();
+			
+			var view = {date_from: this.data.stringDates[0], date_to: this.data.stringDates[6]};
+			var html = Mustache.to_html(template, view);
+			
+			$("#dates-title").html(html);
+			
+			// Build the header of the table
 			var template = $("#project-title-template").html();
 			$("#date-line").append("<td>"+template+"</td>");
 			for (var i = 0 ; i < this.data.dates.length ; i++){
-				$("#date-line").append("<td>" + this.data.stringDates[i] + "</td>");
+				$("#date-line").append($("#day-"+i+"-cell-template").html());
 			}
 			template = $("#total-template").text();
 			$("#date-line").append("<td class='total'>"+ template +"</td>");
