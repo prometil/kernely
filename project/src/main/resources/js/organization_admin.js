@@ -80,7 +80,6 @@ AppOrganizationAdmin = (function($){
 		},
 		
 		createorganization: function(){
-			console.log("FUNCTION "+parent.registerorganization);
 			// Create the dialog
 			var parent = this;
 			var html = $("#popup-organization-admin-create-template").html();

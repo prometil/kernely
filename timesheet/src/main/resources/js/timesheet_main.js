@@ -182,8 +182,8 @@ AppTimeSheet = (function($){
 			var allTotal = 0;
 			var atLeastOneProject = false;
 			for (var project in allDayCells){
-				atLeastOneProject = true;
 				if (allDayCells[project] != null){
+					atLeastOneProject = true;
 					for (var i = 0; i < 7; i++){
 						allTotal += this.calculateTotal(project,i);
 					}
@@ -193,7 +193,8 @@ AppTimeSheet = (function($){
 				// Set all totals to 0
 				for (var i = 0; i < 8 ; i++){
 					// Actualize the column total
-					$("#columnTotalsRow").find("td").eq(parseInt(parseInt(i)+1)).html(0);
+					var cell = $("#columnTotalsRow").find("td").eq(parseInt(parseInt(i)+1));
+					cell.html(0);
 				}
 			}
 		},
@@ -303,6 +304,8 @@ AppTimeSheet = (function($){
 		},
 		initialize: function(projectName, projectId, timeSheetDays, days, empty){
 			allProjectRows[projectId] = this;
+			allDayCells[projectId] = this;
+			
 			
 			this.projectId = projectId;
 			this.projectName = projectName;
@@ -553,6 +556,12 @@ AppTimeSheet = (function($){
 				// Get value and increment
 				var totalColumn = calendar.getColumnTotal(this.index);
 				var val = parseFloat($(".editAmount", this.el).val());
+				if (isNaN(val)){
+					val = 0;
+				}
+				if (val < 0){
+					val = 0;
+				}
 				var newTotalColumn = totalColumn + val - this.amount;
 				// Limitation considering the column
 				if (newTotalColumn > MAX_VALUE){
@@ -731,7 +740,6 @@ AppTimeSheet = (function($){
 
 		closemodal: function(){
 			$("#modal_window_expense").kernely_dialog("close");
-			mainView.reloadCalendar(weekSelected, yearSelected);
 		},
 		render: function(day){
 			this.idDay = day;
@@ -814,6 +822,7 @@ AppTimeSheet = (function($){
             this.vtypename = typeName;
             this.vtyperatio = typeRatio;
             this.vcomment = comment;
+            mainView.reloadCalendar(weekSelected, yearSelected);
 		},
 		
 		edit: function(){
@@ -878,6 +887,7 @@ AppTimeSheet = (function($){
 		            $("#expense-comment").val("");
 		            $('#expense-comment').attr("disabled","disabled");
 		            $(parent.el).html(html);
+		            mainView.reloadCalendar(weekSelected, yearSelected);
 				}
 			});
 		},
@@ -895,6 +905,7 @@ AppTimeSheet = (function($){
 				data:{idExpense: parent.vid},
 				success: function(){
 					$(parent.el).remove();
+					mainView.reloadCalendar(weekSelected, yearSelected);
 				}
 			});
 		},
