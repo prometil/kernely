@@ -11,7 +11,6 @@
 	<script type="text/javascript" src="/js/underscore.js"></script>
 	<script type="text/javascript" src="/js/backbone.js"></script>
 	<script type="text/javascript" src="/js/miniprofile.js"></script>
-	
 	<script type="text/javascript" src="/js/jquery-ui-1.8.16.min.js"></script>
 	<script type="text/javascript" src="/js/jquery.ui.datepicker-en-US.js"></script>
 	<script type="text/javascript" src="/js/jquery.ui.datepicker-fr-FR.js"></script>
@@ -31,7 +30,22 @@
 	{% endblock %}
 	
 	<link rel="icon" type="image/png" href="/images/favicon.ico" />
-	
+	<!--
+		<script type="text/javascript">
+			$(document).ready(function(){
+				if ( window.addEventListener ) {  
+					   var kkeys = [], code = "38,38,40,40,37,39,37,39,66,65";  
+					   window.addEventListener("keydown", function(e){  
+					       kkeys.push( e.keyCode );  
+					       if ( kkeys.toString().indexOf( code ) >= 0 ){
+					    	   kkeys = [];
+					    	  
+					       }
+					  }, true);  
+				}
+			});
+		</script>
+	-->
 	</head>
 	<body>
 	<!-- Template for confirm dialog -->

@@ -188,8 +188,8 @@ public class Migration01 extends Migration {
 		bookKeeperRole.set("name", "Book keeper");
 		
 		Insert userManagerRole = Insert.into("kernely_role");
-		projectManagerRole.set(DataBaseConstants.ID_COLUMN, "9");
-		projectManagerRole.set("name", "User manager");
+		userManagerRole.set(DataBaseConstants.ID_COLUMN, "9");
+		userManagerRole.set("name", "User manager");
 				
 		commands.add(userRole);
 		commands.add(adminRole);
@@ -293,7 +293,7 @@ public class Migration01 extends Migration {
 		commands.add(mail);
 		
 		//sequence 
-		RawSql hibernateSequence = new RawSql("CREATE SEQUENCE hibernate_sequence START 10");
+		RawSql hibernateSequence = new RawSql("CREATE SEQUENCE hibernate_sequence START 100000");
 		commands.add(hibernateSequence);
 		
 		return commands;

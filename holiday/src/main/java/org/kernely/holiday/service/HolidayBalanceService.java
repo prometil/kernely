@@ -412,8 +412,9 @@ public class HolidayBalanceService extends AbstractService {
 					"SELECT b FROM HolidayBalance b WHERE user=:user AND holidayTypeInstance=:type AND endDate <= :date ORDER BY begin_date ASC");
 			balanceRequest.setParameter("date", DateTime.now().toDateMidnight().toDate());
 		}
-
+		
 		balanceRequest.setParameter("user", user);
+		
 		balanceRequest.setParameter("type", typeInstance);
 		try {
 			List<HolidayBalance> balances = (List<HolidayBalance>) balanceRequest.getResultList();

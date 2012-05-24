@@ -1,3 +1,6 @@
+
+
+
 $.extend({
 	// Writes a message for the user.
 	// If div is not defined, write in the default div.

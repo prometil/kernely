@@ -85,10 +85,11 @@ public class PluginManager {
 		}
 
 	}
+
 	/**
-	 * Updates the class path with the plugins found in the plugins directory 
+	 * Updates the class path with the plugins found in the plugins directory
 	 */
-	@SuppressWarnings({ "rawtypes", "unchecked" })
+	@SuppressWarnings( { "rawtypes", "unchecked" })
 	private void updateClasspath() {
 		String pluginPath = configuration.getString("plugins.directory");
 		File pluginsDir = new File(pluginPath);
@@ -106,13 +107,14 @@ public class PluginManager {
 			Method method = urlClass.getDeclaredMethod("addURL", new Class[] { URL.class });
 			method.setAccessible(true);
 			for (String path : pluginsDirectories) {
-				File file = new File(pluginPath+File.separator+path);
+				File file = new File(pluginPath + File.separator + path);
 				log.debug("Looking for jars in {}", file);
-				if(file.isDirectory() && !file.isHidden()){
+				if (file.isDirectory() && !file.isHidden()) {
 					IOFileFilter filter = new SuffixFileFilter(".jar");
 					Collection<File> listFiles = FileUtils.listFiles(file, filter, DirectoryFileFilter.INSTANCE);
 					for (File jar : listFiles) {
 						try {
+
 							method.invoke(urlClassLoader, new Object[] { jar.toURI().toURL() });
 						} catch (IllegalAccessException e) {
 							log.error("Classpath udpate failed, api change ?", e);
@@ -123,6 +125,18 @@ public class PluginManager {
 						} catch (MalformedURLException e) {
 							log.error("Invalid url ?", e);
 						}
+					}
+				} else if (file.isFile() && !file.isHidden() && file.getName().endsWith(".jar")) {
+					try {
+						method.invoke(urlClassLoader, new Object[] { file.toURI().toURL() });
+					} catch (IllegalAccessException e) {
+						log.error("Classpath udpate failed, api change ?", e);
+					} catch (InvocationTargetException e) {
+						log.error("Classpath udpate failed, api change ?", e);
+					} catch (SecurityException e) {
+						log.error("Classpath udpate failed, api change ?", e);
+					} catch (MalformedURLException e) {
+						log.error("Invalid url ?", e);
 					}
 				}
 			}
@@ -269,7 +283,7 @@ public class PluginManager {
 	 * @param prefixes
 	 *            the prefix of the configuration key
 	 */
-	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@SuppressWarnings( { "unchecked", "rawtypes" })
 	private void addConfiguration(AbstractConfiguration configuration, Map<String, Object> configurations, List<String> prefixes) {
 		Joiner joiner = Joiner.on(".").skipNulls();
 		for (Map.Entry<String, Object> config : configurations.entrySet()) {
