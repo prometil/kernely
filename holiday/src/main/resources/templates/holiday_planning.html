@@ -1,4 +1,4 @@
-{% extends "templates/layout.html" %}
+{% extends "templates/layout_without_sidebar.html" %}
 {% block javascript %}
 	<script type="text/javascript" src="/js/holiday_planning.js"></script>
 {% endblock %}
@@ -46,7 +46,7 @@
 {% endblock %}
 
 {% block right %}
-	<div id="color-legend">
+	<div id="color-legend" class="right_block">
 	</div>
 {% endblock %}
 

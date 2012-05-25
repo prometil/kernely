@@ -58,6 +58,7 @@ html {
 }
 
 #container_right {
+	float:left;
 	position:relative;
 	z-index:1;
 	width:220px;
@@ -77,14 +78,42 @@ html {
 	height:100%;
 }
 
+#container_central_and_left {
+	z-index:1;
+	position:relative;
+	width:914px;
+	padding:20px 45px 20px 45px;
+	height:100%;
+}
+
 .container_generic{
 	border:1px solid #a0a2a3;
 	background-color:#f6f6f6;
 	float:left;
 	height:auto;
 	min-height:20px;
-	margin:0 auto;
-	margin: 0 auto 0 auto;
+	width:100%;
+	margin: 0 0 20px 0;
+}
+
+.right_block{
+	border:1px solid #a0a2a3;
+	background-color:#f6f6f6;
+	float:left;
+	height:auto;
+	min-height:20px;
+	width:184px;
+	padding:20px;
+	margin: 0 0 20px 0;
+}
+
+.right_block_without_padding{
+	border:1px solid #a0a2a3;
+	background-color:#f6f6f6;
+	float:left;
+	height:auto;
+	min-height:20px;
+	margin: 0 0 20px 0;
 }
 
 h1 {
