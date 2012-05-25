@@ -1,7 +1,6 @@
 AppHolidayUserRequest = (function($){
 	var lineSelected = null;
 	var tableView1 = null;
-	var tableView2 = null;
 	var buttonView = null;
 	
 	HolidayUserRequestPageView = Backbone.View.extend({
@@ -16,7 +15,9 @@ AppHolidayUserRequest = (function($){
 		
 		render:function(){
 			tableView1 = new HolidayUserRequestPendingTableView().render();
-			tableView2 = new HolidayUserRequestTableView().render();
+			
+			new HolidayUserYearContainerView();
+			
 			buttonView = new HolidayUserButtonsView().render();
 		}
 	})
@@ -72,11 +73,85 @@ AppHolidayUserRequest = (function($){
 		}
 	})
 	
+	HolidayUserYearContainerView = Backbone.View.extend({
+		el:"#statued_requests",
+		
+		nbYear: null,
+		
+		initialize:function(){
+			parent = this;
+			$.ajax({
+				type:"GET",
+				url:"/holiday/years",
+				dataType:"json",
+				success: function(data){
+					parent.nbYear = data.begin - data.end;
+					var i = data.begin;
+					$(parent.el).append(new HolidayUserYearBlockView(i, true).render().el);
+					i --;
+					while(i >= data.end){
+						$(parent.el).append(new HolidayUserYearBlockView(i, false).render().el);
+						i --;
+					}
+				}
+			});
+		},
+	
+		render: function(){
+			return this;
+		}
+	})
+	
+	HolidayUserYearBlockView = Backbone.View.extend({
+		tagName:"div",
+		className:"year-block",
+		
+		year : null,
+		initVisible: null,
+		
+		events:{
+			"click .header-block-year":"showHideContent"
+		},
+		
+		initialize:function(year, visible){
+			this.year = year;
+			this.initVisible = visible;
+		},
+		
+		showHideContent : function(){
+			if($(this.el).find(".content-block-year").is(":visible")){
+				$(this.el).find(".content-block-year").slideUp(500);
+			}
+			else{
+				$(this.el).find(".content-block-year").slideDown(500);
+			}
+		},
+		
+		render: function(){
+			var template = $("#year-block-request").html();
+			var view = {year: this.year};
+			var html = Mustache.to_html(template, view);
+			$(this.el).html(html);
+			$(this.el).find(".content-block-year").html(new HolidayUserRequestTableView(this.year).render().el);
+			
+			if(this.initVisible){
+				if(!$(this.el).find(".content-block-year").is(":visible")){
+					$(this.el).find(".content-block-year").css("display", "block");
+				}
+			}
+			return this;
+		}
+	})
+	
 	HolidayUserRequestTableView = Backbone.View.extend({
-		el:"#user_request_table",
+		tagName:"table",
+		className:"kernely_table",
 		
 		table:null,
-		initialize:function(){
+		year : null,
+		
+		initialize:function(year){
+			this.year = year;
 			var parent = this;
 			var templateManagerColumn = $("#table-manager-column").text();
 			var templateCommentColumn = $("#table-request-comment-column").text();
@@ -106,7 +181,8 @@ AppHolidayUserRequest = (function($){
 			var parent = this;
 			$.ajax({
 				type:"GET",
-				url:"/holiday/all/status",
+				url:"/holiday/all/status/date",
+				data:{year : parent.year},
 				dataType:"json",
 				success: function(data){
 					if(data != null){

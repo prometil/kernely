@@ -26,9 +26,9 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.Map.Entry;
 
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
@@ -52,6 +52,7 @@ import org.kernely.holiday.dto.HolidayDetailDTO;
 import org.kernely.holiday.dto.HolidayProfileDTO;
 import org.kernely.holiday.dto.HolidayRequestCreationRequestDTO;
 import org.kernely.holiday.dto.HolidayRequestDTO;
+import org.kernely.holiday.dto.IntervalDTO;
 import org.kernely.holiday.model.HolidayRequest;
 import org.kernely.holiday.model.HolidayRequestDetail;
 import org.kernely.holiday.model.HolidayType;
@@ -264,6 +265,23 @@ public class HolidayRequestService extends AbstractService {
 			return null;
 		}
 	}
+	
+	public IntervalDTO getYearsCountForCurrentUser(){
+		IntervalDTO interval = new IntervalDTO();
+		interval.begin = DateTime.now().getYear();
+		Query query = em.get().createQuery("SELECT  min(beginDate) from HolidayRequest r WHERE user = :user");
+		query.setParameter("user", this.getAuthenticatedUserModel());
+		try {
+			Date date = (Date)query.getSingleResult();
+			interval.end = new DateTime(date).getYear();
+			return interval;
+		} catch (NoResultException e) {
+			log.debug("There is no holiday waiting requests");
+			interval.end = DateTime.now().getYear();
+			return interval;
+		}
+		
+	}
 
 	/**
 	 * Retrieve all the request with a given status for the current user
@@ -274,10 +292,27 @@ public class HolidayRequestService extends AbstractService {
 	 */
 	@SuppressWarnings("unchecked")
 	@Transactional
-	public List<HolidayRequestDTO> getAllRequestsWithStatusForCurrentUser(int status) {
-		Query query = em.get().createQuery("SELECT  r from HolidayRequest r WHERE  status = :status AND user = :user");
-		query.setParameter("status", status);
-		query.setParameter("user", this.getAuthenticatedUserModel());
+	public List<HolidayRequestDTO> getAllRequestsWithStatusForCurrentUser(int status, int year) {
+		Query query;
+		if(year < 0){
+			query = em.get().createQuery("SELECT  r from HolidayRequest r WHERE  status = :status AND user = :user");
+			query.setParameter("status", status);
+			query.setParameter("user", this.getAuthenticatedUserModel());
+		}
+		else if(year > 0){
+			query = em.get().createQuery("SELECT  r from HolidayRequest r WHERE  status = :status AND user = :user AND beginDate < :date1 AND beginDate > :date2");
+			query.setParameter("status", status);
+			query.setParameter("user", this.getAuthenticatedUserModel());
+			query.setParameter("date1", new DateTime().withMonthOfYear(12).withDayOfMonth(31).withYear(year).toDateMidnight().toDate());
+			query.setParameter("date2", new DateTime().withMonthOfYear(1).withDayOfMonth(1).withYear(year).toDateMidnight().toDate());
+		}
+		else{
+			query = em.get().createQuery("SELECT  r from HolidayRequest r WHERE  status = :status AND user = :user AND beginDate < :date1 AND beginDate > :date2");
+			query.setParameter("status", status);
+			query.setParameter("user", this.getAuthenticatedUserModel());
+			query.setParameter("date1", new DateTime().withMonthOfYear(12).withDayOfMonth(31).toDateMidnight().toDate());
+			query.setParameter("date2", new DateTime().withMonthOfYear(1).withDayOfMonth(1).toDateMidnight().toDate());
+		}
 		try {
 			List<HolidayRequest> requests = (List<HolidayRequest>) query.getResultList();
 			List<HolidayRequestDTO> requestsDTO = new ArrayList<HolidayRequestDTO>();

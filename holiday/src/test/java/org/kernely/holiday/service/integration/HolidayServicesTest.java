@@ -290,7 +290,7 @@ public class HolidayServicesTest extends AbstractServiceTest {
 		holidayRequestService.acceptRequest(request.id);
 
 		authenticateAs(USERNAME_USER1);
-		List<HolidayRequestDTO> dtos = holidayRequestService.getAllRequestsWithStatusForCurrentUser(HolidayRequest.ACCEPTED_STATUS);
+		List<HolidayRequestDTO> dtos = holidayRequestService.getAllRequestsWithStatusForCurrentUser(HolidayRequest.ACCEPTED_STATUS, -1);
 		assertEquals(MANAGER_COMMENT, dtos.get(0).managerComment);
 
 		balance1 = balanceService.getProcessedBalance(type1.instanceId, user.id);
@@ -303,7 +303,7 @@ public class HolidayServicesTest extends AbstractServiceTest {
 		assertEquals(-2, balance1.availableBalance, 0); 
 		assertEquals(getAvailableType1ForTheYear(balance1) - 2, balance1.availableBalanceUpdated, 0);
 
-		assertEquals(1, holidayRequestService.getAllRequestsWithStatusForCurrentUser(HolidayRequest.PAST_STATUS).size());
+		assertEquals(1, holidayRequestService.getAllRequestsWithStatusForCurrentUser(HolidayRequest.PAST_STATUS, -1).size());
 	}
 	
 	@Test
@@ -387,7 +387,7 @@ public class HolidayServicesTest extends AbstractServiceTest {
 		holidayRequestService.acceptRequest(request.id);
 
 		authenticateAs(USERNAME_USER1);
-		List<HolidayRequestDTO> dtos = holidayRequestService.getAllRequestsWithStatusForCurrentUser(HolidayRequest.ACCEPTED_STATUS);
+		List<HolidayRequestDTO> dtos = holidayRequestService.getAllRequestsWithStatusForCurrentUser(HolidayRequest.ACCEPTED_STATUS, -1);
 		assertEquals(MANAGER_COMMENT, dtos.get(0).managerComment);
 
 		balance1 = balanceService.getProcessedBalance(type1.instanceId, user.id);
@@ -400,7 +400,7 @@ public class HolidayServicesTest extends AbstractServiceTest {
 		assertEquals(0, balance1.availableBalance, 0); 
 		assertEquals(0, balance1.availableBalanceUpdated, 0);
 
-		assertEquals(1, holidayRequestService.getAllRequestsWithStatusForCurrentUser(HolidayRequest.PAST_STATUS).size());
+		assertEquals(1, holidayRequestService.getAllRequestsWithStatusForCurrentUser(HolidayRequest.PAST_STATUS, -1).size());
 	}
 
 	

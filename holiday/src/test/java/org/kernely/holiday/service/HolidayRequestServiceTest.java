@@ -341,7 +341,7 @@ public class HolidayRequestServiceTest extends AbstractServiceTest{
 
 		holidayRequestService.registerRequestAndDetails(request);
 
-		List<HolidayRequestDTO> dtos = holidayRequestService.getAllRequestsWithStatusForCurrentUser(HolidayRequest.PENDING_STATUS);
+		List<HolidayRequestDTO> dtos = holidayRequestService.getAllRequestsWithStatusForCurrentUser(HolidayRequest.PENDING_STATUS, -1);
 		assertEquals(1, dtos.size());
 		
 		// Reload balance
@@ -381,7 +381,7 @@ public class HolidayRequestServiceTest extends AbstractServiceTest{
 		authenticateAs(USERNAME_USER1);
 		this.createHolidayRequestForUser(user1DTO.id, type.id);
 		
-		List<HolidayRequestDTO> dtos = holidayRequestService.getAllRequestsWithStatusForCurrentUser(HolidayRequest.PENDING_STATUS);
+		List<HolidayRequestDTO> dtos = holidayRequestService.getAllRequestsWithStatusForCurrentUser(HolidayRequest.PENDING_STATUS, -1);
 		assertEquals(1, dtos.size());
 
 		// Reload balance
@@ -400,7 +400,7 @@ public class HolidayRequestServiceTest extends AbstractServiceTest{
 		assertEquals(0, dtos.size());
 		
 		authenticateAs(USERNAME_USER1);
-		List<HolidayRequestDTO> acceptedDtos = holidayRequestService.getAllRequestsWithStatusForCurrentUser(HolidayRequest.ACCEPTED_STATUS);
+		List<HolidayRequestDTO> acceptedDtos = holidayRequestService.getAllRequestsWithStatusForCurrentUser(HolidayRequest.ACCEPTED_STATUS, -1);
 		assertEquals(1, acceptedDtos.size());
 		
 		// Reload balance
@@ -422,7 +422,7 @@ public class HolidayRequestServiceTest extends AbstractServiceTest{
 		holidayBalanceService.incrementBalance(type.id, user1DTO.id);
 		this.createHolidayRequestForUser(user1DTO.id, type.id);
 
-		List<HolidayRequestDTO> dtos = holidayRequestService.getAllRequestsWithStatusForCurrentUser(HolidayRequest.PENDING_STATUS);
+		List<HolidayRequestDTO> dtos = holidayRequestService.getAllRequestsWithStatusForCurrentUser(HolidayRequest.PENDING_STATUS, -1);
 		
 		holidayRequestService.acceptRequest(dtos.get(0).id);
 	}
@@ -450,7 +450,7 @@ public class HolidayRequestServiceTest extends AbstractServiceTest{
 		holidayRequestService.addManagerCommentary(dtos.get(0).id, MANAGER_COMMENT);
 		
 		authenticateAs(USERNAME_USER1);
-		dtos = holidayRequestService.getAllRequestsWithStatusForCurrentUser(HolidayRequest.PENDING_STATUS);
+		dtos = holidayRequestService.getAllRequestsWithStatusForCurrentUser(HolidayRequest.PENDING_STATUS, -1);
 		assertEquals(MANAGER_COMMENT, dtos.get(0).managerComment);
 	}
 	
@@ -522,7 +522,7 @@ public class HolidayRequestServiceTest extends AbstractServiceTest{
 		assertEquals(QUANTITY*3, balance.availableBalance, 0);
 		
 		authenticateAs(USERNAME_USER1);
-		List<HolidayRequestDTO> deniedDtos = holidayRequestService.getAllRequestsWithStatusForCurrentUser(HolidayRequest.DENIED_STATUS);
+		List<HolidayRequestDTO> deniedDtos = holidayRequestService.getAllRequestsWithStatusForCurrentUser(HolidayRequest.DENIED_STATUS, -1);
 		assertEquals(1, deniedDtos.size());
 	}
 	
@@ -538,7 +538,7 @@ public class HolidayRequestServiceTest extends AbstractServiceTest{
 		authenticateAs(USERNAME_USER1);
 		this.createHolidayRequestForUser(user1DTO.id, type.id);
 
-		List<HolidayRequestDTO> dtos = holidayRequestService.getAllRequestsWithStatusForCurrentUser(HolidayRequest.PENDING_STATUS);
+		List<HolidayRequestDTO> dtos = holidayRequestService.getAllRequestsWithStatusForCurrentUser(HolidayRequest.PENDING_STATUS, -1);
 		
 		holidayRequestService.denyRequest(dtos.get(0).id);
 	}
@@ -570,7 +570,7 @@ public class HolidayRequestServiceTest extends AbstractServiceTest{
 		assertEquals(QUANTITY*3, balance.availableBalance, 0);
 		assertEquals(getAvailableForTheYear(balance) -2, balance.availableBalanceUpdated, 0);
 
-		List<HolidayRequestDTO> dtos = holidayRequestService.getAllRequestsWithStatusForCurrentUser(HolidayRequest.PENDING_STATUS);
+		List<HolidayRequestDTO> dtos = holidayRequestService.getAllRequestsWithStatusForCurrentUser(HolidayRequest.PENDING_STATUS, -1);
 		assertEquals(1, dtos.size());
 		
 		holidayRequestService.cancelRequest(dtos.get(0).id);
@@ -581,9 +581,9 @@ public class HolidayRequestServiceTest extends AbstractServiceTest{
 		assertEquals(QUANTITY*3, balance.availableBalance, 0);
 		assertEquals(getAvailableForTheYear(balance), balance.availableBalanceUpdated, 0);
 		
-		dtos = holidayRequestService.getAllRequestsWithStatusForCurrentUser(HolidayRequest.PENDING_STATUS);
-		dtos.addAll(holidayRequestService.getAllRequestsWithStatusForCurrentUser(HolidayRequest.DENIED_STATUS));
-		dtos.addAll(holidayRequestService.getAllRequestsWithStatusForCurrentUser(HolidayRequest.ACCEPTED_STATUS));
+		dtos = holidayRequestService.getAllRequestsWithStatusForCurrentUser(HolidayRequest.PENDING_STATUS, -1);
+		dtos.addAll(holidayRequestService.getAllRequestsWithStatusForCurrentUser(HolidayRequest.DENIED_STATUS, -1));
+		dtos.addAll(holidayRequestService.getAllRequestsWithStatusForCurrentUser(HolidayRequest.ACCEPTED_STATUS, -1));
 		assertEquals(0, dtos.size());
 	}
 	
@@ -602,16 +602,16 @@ public class HolidayRequestServiceTest extends AbstractServiceTest{
 				
 		this.createHolidayRequestForUser(user1DTO.id, type.id);
 
-		List<HolidayRequestDTO> dtos = holidayRequestService.getAllRequestsWithStatusForCurrentUser(HolidayRequest.PENDING_STATUS);
+		List<HolidayRequestDTO> dtos = holidayRequestService.getAllRequestsWithStatusForCurrentUser(HolidayRequest.PENDING_STATUS, -1);
 		assertEquals(1, dtos.size());
 		
 		holidayRequestService.archiveRequest(dtos.get(0).id);
 		
-		dtos = holidayRequestService.getAllRequestsWithStatusForCurrentUser(HolidayRequest.PENDING_STATUS);
-		dtos.addAll(holidayRequestService.getAllRequestsWithStatusForCurrentUser(HolidayRequest.DENIED_STATUS));
-		dtos.addAll(holidayRequestService.getAllRequestsWithStatusForCurrentUser(HolidayRequest.ACCEPTED_STATUS));
+		dtos = holidayRequestService.getAllRequestsWithStatusForCurrentUser(HolidayRequest.PENDING_STATUS, -1);
+		dtos.addAll(holidayRequestService.getAllRequestsWithStatusForCurrentUser(HolidayRequest.DENIED_STATUS, -1));
+		dtos.addAll(holidayRequestService.getAllRequestsWithStatusForCurrentUser(HolidayRequest.ACCEPTED_STATUS, -1));
 		assertEquals(0, dtos.size());
-		assertEquals(1,holidayRequestService.getAllRequestsWithStatusForCurrentUser(HolidayRequest.PAST_STATUS).size());
+		assertEquals(1,holidayRequestService.getAllRequestsWithStatusForCurrentUser(HolidayRequest.PAST_STATUS, -1).size());
 
 	}
 	
