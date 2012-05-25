@@ -154,13 +154,4 @@ public class HolidayHumanResourceServiceTest extends AbstractServiceTest {
 //		assertEquals(dto.nbDays, currentDate.dayOfMonth().getMaximumValue());
 //		assertEquals(dto.usersManaged.size(), 3);
 //	}
-
-	@Test(expected = UnauthorizedException.class)
-	public void getHolidayForAllUsersForMonthUnauthorizedTest() {
-		this.createUserRoleForTest();
-		this.createUser1ForTest();
-		this.authenticateAs(USERNAME_USER1);
-		holidayHumanResourceForTest.getHolidayForAllUsersForMonth(0, 0);
-	}
-
 }

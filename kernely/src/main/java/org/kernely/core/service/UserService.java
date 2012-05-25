@@ -272,7 +272,7 @@ public class UserService extends AbstractService {
 		List<User> collection = (List<User>) query.getResultList();
 		List<UserDTO> dtos = new ArrayList<UserDTO>();
 		for (User user : collection) {
-			dtos.add(new UserDTO(user.getUsername(), user.isLocked(), user.getId()));
+			dtos.add(new UserDTO(user));
 		}
 		return dtos;
 	}

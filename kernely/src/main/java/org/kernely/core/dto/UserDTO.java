@@ -27,7 +27,7 @@ import org.kernely.core.model.User;
  * DTO for user data, contains only his name.
  */
 @XmlRootElement
-public class UserDTO {
+public class UserDTO implements Comparable<UserDTO>{
 
 	/**
 	 * The id of the user  
@@ -131,5 +131,15 @@ public class UserDTO {
 			return false;
 		}
 		return true;
+	}
+
+	@Override
+	public int compareTo(UserDTO o) {
+		/**
+		 * Compare a UserDTO to an other, by last name then first name.
+		 */
+		System.out.println(this.userDetails);
+		System.out.println(o.userDetails);
+		return (this.userDetails.lastname + this.userDetails.firstname).compareTo(o.userDetails.lastname + o.userDetails.firstname);
 	}
 }
