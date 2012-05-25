@@ -29,6 +29,7 @@ import org.kernely.holiday.controller.HolidayPlanningController;
 import org.kernely.holiday.controller.HolidayRequestController;
 import org.kernely.holiday.controller.HolidaySummaryController;
 import org.kernely.holiday.event.HolidayUserEventHandler;
+import org.kernely.holiday.extender.HolidayDateExtender;
 import org.kernely.holiday.job.HolidaysDailyJob;
 import org.kernely.holiday.job.HolidaysMonthlyJob;
 import org.kernely.holiday.migrations.Migration01;
@@ -52,6 +53,7 @@ import org.quartz.TriggerBuilder;
 
 import com.google.common.eventbus.EventBus;
 import com.google.inject.Inject;
+import com.google.inject.Singleton;
 
 /**
  * The Plugin for holiday
@@ -69,7 +71,7 @@ public class HolidayPlugin extends AbstractPlugin {
 	/**
 	 * Default constructor
 	 */
-	@SuppressWarnings({ "unchecked" })
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public HolidayPlugin(){
 		super();
 		registerPath("/holiday");
@@ -137,6 +139,7 @@ public class HolidayPlugin extends AbstractPlugin {
 	 */
 	@Override
 	public void configurePlugin() {
+		bind(HolidayDateExtender.class).in(Singleton.class);
 		bind(HolidayService.class);
 		bind(HolidayRequestService.class);
 		bind(HolidayManagerUserService.class);

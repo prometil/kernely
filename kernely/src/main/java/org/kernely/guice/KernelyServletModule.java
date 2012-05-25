@@ -19,8 +19,12 @@
  */
 package org.kernely.guice;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.Iterator;
 import java.util.Properties;
+
+import javax.annotation.PostConstruct;
 
 import org.apache.commons.configuration.AbstractConfiguration;
 import org.apache.commons.configuration.CombinedConfiguration;
@@ -39,8 +43,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.inject.Singleton;
+import com.google.inject.TypeLiteral;
+import com.google.inject.matcher.Matchers;
 import com.google.inject.persist.PersistFilter;
 import com.google.inject.persist.jpa.JpaPersistModule;
+import com.google.inject.spi.InjectionListener;
+import com.google.inject.spi.TypeEncounter;
+import com.google.inject.spi.TypeListener;
 import com.sun.jersey.guice.JerseyServletModule;
 import com.sun.jersey.guice.spi.container.servlet.GuiceContainer;
 
@@ -52,7 +61,6 @@ public class KernelyServletModule extends JerseyServletModule {
 
 	private static Logger log = LoggerFactory.getLogger(KernelyServletModule.class);
 
-
 	/**
 	 * Bind the servlet of the application
 	 */
@@ -61,15 +69,15 @@ public class KernelyServletModule extends JerseyServletModule {
 	protected void configureServlets() {
 
 		MenuManager menuManager = new MenuManager();
-		
+
 		// Bind all Jersey resources detected in plugins
 		for (AbstractPlugin plugin : PluginManager.getPlugins()) {
 			for (Class<? extends AbstractController> controllerClass : plugin.getControllers()) {
 				log.debug("Register controller {}", controllerClass);
 				bind(controllerClass);
-				
+
 			}
-			for(MenuItem item : plugin.getMenuItems()){
+			for (MenuItem item : plugin.getMenuItems()) {
 				menuManager.add(plugin.getName(), item);
 			}
 		}
@@ -79,8 +87,7 @@ public class KernelyServletModule extends JerseyServletModule {
 		bind(PluginManager.class).toInstance(PluginManager.getInstance());
 		bind(MenuManager.class).toInstance(menuManager);
 		bind(SobaTemplateRenderer.class);
-		
-		
+
 		// persistence
 		Iterator<String> keys = configuration.getKeys("hibernate");
 		Properties properties = new Properties();
@@ -94,20 +101,57 @@ public class KernelyServletModule extends JerseyServletModule {
 		install(module);
 		filter("/*").through(PersistFilter.class);
 
-		//bind the scheduler factory
+		// bind the scheduler factory
 		bind(SchedulerFactory.class).to(StdSchedulerFactory.class);
 
 		// Allows to retrieve resources .js, .css, .png
 		bind(DefaultServlet.class).in(Singleton.class);
 		bind(MediaServlet.class).in(Singleton.class);
-	
-		//serve resource type
+
+		// serve resource type
 		serve("*.ico").with(MediaServlet.class);
 		serve("*.js").with(MediaServlet.class);
 		serve("*.css").with(MediaServlet.class);
 		serve("*.png").with(MediaServlet.class);
 		serve("*.jpg").with(MediaServlet.class);
 		serve("/*").with(GuiceContainer.class);
-		
+
+		bindListener(Matchers.any(), new TypeListener() {
+			public <I> void hear(final TypeLiteral<I> typeLiteral, TypeEncounter<I> typeEncounter) {
+				Class<? super I> type = typeLiteral.getRawType();
+
+				for (Method method : type.getMethods()) {
+					if (method.isAnnotationPresent(PostConstruct.class)) {
+
+						typeEncounter.register(new InjectionListener<I>() {
+							public void afterInjection(Object i) {
+								Object m = (Object) i;
+								// test if method has a post construct
+								// annotation
+								for (Method method : m.getClass().getMethods()) {
+
+									if (method.isAnnotationPresent(PostConstruct.class)) {
+
+										log.trace("Exectute post construct method on class {}-> method {}", m.getClass(), method.getName());
+										try {
+											method.invoke(m);
+										} catch (IllegalArgumentException e) {
+											log.debug("Cannot execute post construct method");
+										} catch (IllegalAccessException e) {
+											log.debug("Cannot access method {}", method);
+										} catch (InvocationTargetException e) {
+											log.debug("Cannot access method {}", method);
+										}
+									}
+								}
+							}
+						});
+
+					}
+				}
+
+			}
+		});
+
 	}
 }

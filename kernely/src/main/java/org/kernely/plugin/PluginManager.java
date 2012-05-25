@@ -32,6 +32,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -48,6 +49,7 @@ import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.kernely.core.CorePlugin;
+import org.kernely.extension.Extender;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -68,10 +70,13 @@ public class PluginManager {
 	// the plugin instance
 	private static PluginManager instance;
 
+	private Map<String, List<Extender>> extenders;
+
 	/**
 	 * Construct the plugin manager
 	 */
 	private PluginManager() {
+		extenders = new HashMap<String, List<Extender>>();
 		String configFile = "core.xml";
 		try {
 			configuration = new CombinedConfiguration();
@@ -89,7 +94,7 @@ public class PluginManager {
 	/**
 	 * Updates the class path with the plugins found in the plugins directory
 	 */
-	@SuppressWarnings( { "rawtypes", "unchecked" })
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private void updateClasspath() {
 		String pluginPath = configuration.getString("plugins.directory");
 		File pluginsDir = new File(pluginPath);
@@ -283,7 +288,7 @@ public class PluginManager {
 	 * @param prefixes
 	 *            the prefix of the configuration key
 	 */
-	@SuppressWarnings( { "unchecked", "rawtypes" })
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private void addConfiguration(AbstractConfiguration configuration, Map<String, Object> configurations, List<String> prefixes) {
 		Joiner joiner = Joiner.on(".").skipNulls();
 		for (Map.Entry<String, Object> config : configurations.entrySet()) {
@@ -326,6 +331,39 @@ public class PluginManager {
 	 */
 	public static CombinedConfiguration getConfiguration() {
 		return getInstance().configuration;
+	}
+
+	/**
+	 * Register an extension point
+	 * 
+	 * @param name
+	 *            the name of the point of ext
+	 * @param extender
+	 *            the extension point to register
+	 */
+	public static void registerExtender(String name, Extender extender) {
+		log.debug("Register extender point for extension point {}", name);
+		Map<String, List<Extender>> extendersMap = getInstance().extenders;
+		List<Extender> extendersList = new ArrayList<Extender>();
+		if (extendersMap.containsKey(name)) {
+			extendersList = extendersMap.get(name);
+		}
+		extendersList.add(extender);
+		extendersMap.put(name, extendersList);
+	}
+
+	/**
+	 * Returns the list of extenders for a given extension point
+	 * 
+	 * @return the list of extenders of an empty collection if there isn't any
+	 *         extenders
+	 */
+	public static List<Extender> getExtenders(String name) {
+		Map<String, List<Extender>> extendersMap = getInstance().extenders;
+		if (extendersMap.containsKey(name)) {
+			return extendersMap.get(name);
+		}
+		return new ArrayList<Extender>();
 	}
 
 }
