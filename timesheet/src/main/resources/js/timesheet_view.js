@@ -42,6 +42,10 @@ AppTimeSheetMonth = (function($){
 		render: function(month,year){
 			monthSelected = month;
 			yearSelected = year;
+			
+			var text = $("#"+month+"-month-template").html();
+			$("#dates-title").html(text+ " "+year);
+			
 			// Delete old data
 			allProjectRows = new Object();
 			timeSheetId = new Array();

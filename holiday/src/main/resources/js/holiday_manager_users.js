@@ -39,6 +39,9 @@ AppHolidayManagerUsers = (function($){
 			monthSelected = month;
 			yearSelected = year;
 			mainView.reloadTable(month, year);
+			
+			var text = $("#"+month+"-month-template").html();
+			$("#dates-title").html(text+ " "+year);
 		},
 		reloadTable: function(month, year){
 			$.ajax({

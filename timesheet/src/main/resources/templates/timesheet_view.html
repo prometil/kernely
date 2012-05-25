@@ -76,14 +76,16 @@
 {% block content %}
 	<div id="timesheet-main">
 		<div class="classic-buttons-bar">
+			<div id="monthSelector"></div>
 			<input type="button" class="button_standard no-margin" value="{% i18n "week" %}" onClick="window.location='/timesheet'"/>
 			<input type="button" class="button_emphasis no-margin" value="{% i18n "month" %}"/>
 		</div>
 		<div id="timesheet-layout">
-			<div id="monthSelector"></div>
+			<div id="dates-title" class="text-bold-black"></div>
 			<div id="timesheet-div"></div>
-			<input class="hidden button_ok" type="button" id="validate-month" value="{%  i18n "validate_timesheet" %}"/>
-			<span class="hidden" id="month-validated-message">{%  i18n "timesheet_month_validated_message" %}</span>
+				<div id="dates-title"></div>
+				<input class="hidden button_ok" type="button" id="validate-month" value="{%  i18n "validate_timesheet" %}"/>
+				<span class="hidden" id="month-validated-message">{%  i18n "timesheet_month_validated_message" %}</span>
 		</div>
 	</div>
 {% endblock%}
