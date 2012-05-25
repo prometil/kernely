@@ -73,9 +73,6 @@ public class TimeSheetController extends AbstractController {
 	public Response viewTimeSheetPanel() {
 		return Response.ok(templateRenderer.render("templates/timesheet_main_page.html")).build();
 	}
-	
-	
-	
 
 	/**
 	 * Gets days associated to the current week.

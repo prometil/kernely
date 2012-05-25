@@ -21,6 +21,11 @@ public class TimeSheetCalendarDTO {
 	 * List of projects id, ordered alphabetically
 	 */
 	public List<Long> projectsId;
+
+	/**
+	 * List of projects id used last week, ordered alphabetically
+	 */
+	public List<Long> lastWeekProjectsId;
 	
 	/**
 	 * Dates of the week, in Date format
@@ -42,13 +47,14 @@ public class TimeSheetCalendarDTO {
 	 */
 	public int year;
 	
-	public TimeSheetCalendarDTO(int week, int year, TimeSheetDTO timeSheet, List<Date> dates, List<String> stringDates, List<Long> projectsId) {
+	public TimeSheetCalendarDTO(int week, int year, TimeSheetDTO timeSheet, List<Date> dates, List<String> stringDates, List<Long> projectsId, List<Long> lastWeekProjectsId) {
 		this.week = week;
 		this.year = year;
 		this.timeSheet = timeSheet;
 		this.dates = dates;
 		this.stringDates = stringDates;
 		this.projectsId = projectsId;
+		this.lastWeekProjectsId = lastWeekProjectsId;
 	}
 
 	/**

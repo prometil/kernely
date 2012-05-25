@@ -47,6 +47,9 @@
 	<script type="text/html" id="day-5-cell-template"><td class="text-bold-black">{% i18n "day_6_short" %}</td></script>
 	<script type="text/html" id="day-6-cell-template"><td class="text-bold-black">{% i18n "day_7_short" %}</td></script>
 
+	<script type="text/html" id="last-week-projects-template">{% i18n "timesheet_last_week_projects" %}</script>
+	<script type="text/html" id="all-projects-template">{% i18n "timesheet_all_projects" %}</script>
+	
 	<script type="text/html" id="from-to-template"><td>{% i18n "from_date_timesheet" %} {{"{{"}}date_from{{"}}"}} {% i18n "to_date_timesheet" %} {{"{{"}}date_to{{"}}"}}</td></script>
 
 	<script type="text/html" id="time-cell-template">
@@ -126,7 +129,7 @@
 {% endblock %}
 
 {% block right %}
-	<div id="timePicker">
+	<div id="timePicker" class="right_block_without_padding">
 		<!-- Time picker to set time into days and projects -->
 	</div>	
 {% endblock %}

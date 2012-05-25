@@ -16,7 +16,8 @@ AppTimeSheet = (function($){
 	var weekSelected = 0;
 	var yearSelected = 0;
 	var timeSheetId = 0;
-
+	var allProjectsList = 0;
+	var lastWeekProjectsIdList = 0;
 	
 	var tableExpenseView = null;
 	var expense = null;
@@ -41,48 +42,83 @@ AppTimeSheet = (function($){
 			}
 			calendar.addRow($("#project-select option:selected").text(),$("#project-select option:selected").val(),amounts,true);
 		},
+		
+		searchProject: function(id){
+			var result;
+			$.each(allProjectsList, function(){
+				if (id == this.id){
+					result = this;
+					return;
+				}
+			});
+			return result;
+		},
+		
 		render: function(){
 			return this;
 		},
 		reloadCalendar: function(week, year){
 			weekSelected = week;
 			yearSelected = year;
+
 			// Empty the projects combo box
 			$("#project-select").html("");
-			
+
 			// Reload projects
 			$.ajax({
 				type: "GET",
 				url:"/project/list",
 				success: function(data){
+
 					// Create the views
 					if (data != null){
+						allProjectsList = data.projectDTO;
+						var label = $("#all-projects-template").html();
+						var toAdd = '<optgroup id="project-select-all" label="'+label+'">';
 						if ($.isArray(data.projectDTO)){
 							$("#project-select").removeAttr("disabled");
 							$("#add-project-button").removeAttr("disabled");
 						
 							$.each(data.projectDTO, function(){
-								$('#project-select')
-						          .append($('<option>', { value : this.id })
-						          .text(this.name));
+								toAdd += '<option value='+this.id+'>'+this.name+'</option>'
 							});
 
 						} else if (data.projectDTO != null){
 							$("#project-select").removeAttr("disabled");
 							$("#add-project-button").removeAttr("disabled");
-						     $('#project-select')
-					          .append($('<option>', { value : data.projectDTO.id })
-					          .text(data.projectDTO.name));
+							toAdd += '<option value='+data.projectDTO.id+'>'+data.projectDTO.name+'</option>'
 						}
+						toAdd += '</optgroup>';
+						$("#project-select").append(toAdd);
+
 					}
 					$.ajax({
 						type: "GET",
 						url:"/timesheet/calendar",
 						data:{week:weekSelected, year:yearSelected},
 						success: function(data){
+							// Set last week projects in combobox
+							var label = $("#last-week-projects-template").html();
+							
+							var toAdd = '<optgroup id="project-select-last-week" label="'+label+'">';
+							if (data.lastWeekProjectsId != null){
+								lastWeekProjectsIdList = data.lastWeekProjectsId;
+								if ($.isArray(data.lastWeekProjectsId)){
+									$.each(data.lastWeekProjectsId, function(){
+										toAdd+='<option value='+this+'>'+mainView.searchProject(this).name+'</option>';
+									});
+
+								} else if (data.lastWeekProjectsId != null){
+									toAdd+='<option value='+data.lastWeekProjectsId+'>'+mainView.searchProject(data.lastWeekProjectsId).name+'</option>';
+								}
+							}
+							toAdd += '</optgroup>';
+							$("#project-select").prepend(toAdd);
+							
+							$('#project-select-last-week option:first-child').attr("selected","selected");
+							
 							// Reset display
 							$("#timesheet-content").html('<tr id="date-line"></tr>');
-							
 							// Create the views
 							weekSelected = data.week;
 							yearSelected = data.year;
@@ -425,10 +461,25 @@ AppTimeSheet = (function($){
 		
 		confirmRemoveLine: function(parent){
 			// Put the project in the combo box
-			$('#project-select')
+			$('#project-select-all')
 	          .append($('<option>', { value : parent.projectId })
 	          .text(parent.projectName));
 
+			// If needed, add the project in the last week group
+			if ($.isArray(lastWeekProjectsIdList)){
+				$.each(lastWeekProjectsIdList, function(){
+					if (this == parent.projectId){
+						$('#project-select-last-week')
+				          .append($('<option>', { value : parent.projectId })
+				          .text(mainView.searchProject(parent.projectId).name));
+					}
+				});
+			} else if (lastWeekProjectsIdList != null && lastWeekProjectsIdList == parent.projectId){
+				$('#project-select-last-week')
+		          .append($('<option>', { value : parent.projectId })
+		          .text(mainView.searchProject(parent.projectId).name));
+			}
+			
 			$("#project-select").removeAttr("disabled");
 			$("#add-project-button").removeAttr("disabled");
 
