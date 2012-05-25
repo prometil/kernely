@@ -71,7 +71,7 @@ public class HolidayHumanResourceService extends AbstractService{
 		List<HolidayUserManagedDTO> managedDTO = new ArrayList<HolidayUserManagedDTO>();
 		Set<CalendarBalanceDetailDTO> balancesDTO = new HashSet<CalendarBalanceDetailDTO>();
 
-		Set<UserDTO> users = new HashSet<UserDTO>(userService.getEnabledUsers());
+		Set<UserDTO> users = new TreeSet<UserDTO>(userService.getEnabledUsers());
 
 		List<HolidayDetailDTO> detailsDTO ;
 

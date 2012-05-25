@@ -40,6 +40,16 @@ public class UserDTO implements Comparable<UserDTO>{
 	public String username;
 	
 	/**
+	 * The name of the user. Usefull to sort.
+	 */
+	public String name;
+	
+	/**
+	 * The firstname of the user. Usefull to sort.
+	 */
+	public String firstname;
+	
+	/**
 	 * The indicator if the user is locked or not 
 	 */
 	public boolean locked;
@@ -87,6 +97,8 @@ public class UserDTO implements Comparable<UserDTO>{
 		this.username = u.getUsername();
 		this.locked = u.isLocked();
 		this.id = u.getId();
+		this.firstname = u.getUserDetails().getFirstname();
+		this.name = u.getUserDetails().getName();
 	}
 
 	/**
@@ -133,13 +145,11 @@ public class UserDTO implements Comparable<UserDTO>{
 		return true;
 	}
 
+	/**
+	 * Compare two users with their name and firstname.
+	 */
 	@Override
 	public int compareTo(UserDTO o) {
-		/**
-		 * Compare a UserDTO to an other, by last name then first name.
-		 */
-		System.out.println(this.userDetails);
-		System.out.println(o.userDetails);
-		return (this.userDetails.lastname + this.userDetails.firstname).compareTo(o.userDetails.lastname + o.userDetails.firstname);
+		return (this.name.toLowerCase() + " " + this.firstname.toLowerCase()).compareTo(o.name.toLowerCase() +" "+ o.firstname.toLowerCase());
 	}
 }

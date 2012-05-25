@@ -310,11 +310,14 @@ public class UserService extends AbstractService {
 	@SuppressWarnings("unchecked")
 	@Transactional
 	public List<UserDTO> getEnabledUsers() {
-		Query query = em.get().createQuery("SELECT e FROM User e WHERE locked = false");
+		Query query = em.get().createQuery("SELECT u FROM User u WHERE locked = false");
 		List<User> collection = (List<User>) query.getResultList();
 		List<UserDTO> dtos = new ArrayList<UserDTO>();
 		for (User user : collection) {
-			dtos.add(new UserDTO(user.getUsername(), user.isLocked(), user.getId()));
+			UserDTO udto = new UserDTO(user.getUsername(), user.isLocked(), user.getId());
+			udto.name = user.getUserDetails().getName();
+			udto.firstname = user.getUserDetails().getFirstname();
+			dtos.add(udto);
 		}
 		return dtos;
 

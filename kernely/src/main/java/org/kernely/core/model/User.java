@@ -327,16 +327,15 @@ public class User extends AbstractModel implements Comparable<User> {
 		return true;
 	}
 
-
-	
+	@Override
 	public int compareTo(User other) {
 		if(this.userDetails != null && other.getUserDetails() != null
 				&& this.userDetails.getName() != null && other.getUserDetails().getName() != null){
 			if(!this.userDetails.getName().equals(other.getUserDetails().getName())){
-				return this.userDetails.getName().compareTo(other.getUserDetails().getName());
+				return this.userDetails.getName().toLowerCase().compareTo(other.getUserDetails().getName().toLowerCase());
 			}
 			else{
-				return this.userDetails.getFirstname().compareTo(other.getUserDetails().getFirstname());
+				return this.userDetails.getFirstname().toLowerCase().compareTo(other.getUserDetails().getFirstname().toLowerCase());
 			}
 		}
 		else{
