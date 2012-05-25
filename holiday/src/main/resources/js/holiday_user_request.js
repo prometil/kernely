@@ -15,10 +15,23 @@ AppHolidayUserRequest = (function($){
 		
 		render:function(){
 			tableView1 = new HolidayUserRequestPendingTableView().render();
-			
 			new HolidayUserYearContainerView();
-			
 			buttonView = new HolidayUserButtonsView().render();
+			$.ajax({
+				type: 'GET',
+				url:"/holiday/balances",
+				dataType: "json",
+				success: function(data){
+					if(data.calendarBalanceDetailDTO != null && data.calendarBalanceDetailDTO.length > 1){
+						$.each(data.calendarBalanceDetailDTO, function(){
+							$("#balance-summary").append(new HolidayRequestColorPickerCell(this.nameOfType, this.nbAvailable, this.color, this.idOfType, this.limitOfAnticipation).render().el);
+		                });
+					}
+					else{
+						$("#balance-summary").append(new HolidayRequestColorPickerCell(data.calendarBalanceDetailDTO.nameOfType, data.calendarBalanceDetailDTO.nbAvailable, data.calendarBalanceDetailDTO.color, data.calendarBalanceDetailDTO.idOfType, data.calendarBalanceDetailDTO.limitOfAnticipation).render().el);				
+					}
+				}
+			});
 		}
 	})
 	
@@ -293,6 +306,39 @@ AppHolidayUserRequest = (function($){
 					$("#button_canceled").attr('disabled','disabled');
 				}
 			});
+		}
+		
+	})
+	
+	HolidayRequestColorPickerCell = Backbone.View.extend({
+		tagName:"div",
+		className: "balance-cell",
+		
+		color:null,
+		name:null,
+		nbAvailable:0.0,
+		limitOfAnticipation:0.0,
+		idType: null,
+		
+		initialize : function(name, avail, color, idType, anticipation){
+			this.color = color;
+			this.name = name;
+			this.nbAvailable = avail;
+			this.idType = idType;
+			this.limitOfAnticipation = anticipation * (-1);
+		},
+		
+		render : function(){
+			var template;
+            var view;
+            
+			template = $("#balance-cell-template").html();
+			view =  {name: this.name, available: this.nbAvailable};
+			
+            var html = Mustache.to_html(template, view);
+            $(this.el).html(html);
+            $(this.el).find(".balance-cell-amount").css('background-color', this.color);
+			return this;
 		}
 		
 	})

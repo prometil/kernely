@@ -848,6 +848,52 @@ public class HolidayRequestService extends AbstractService {
 			return null;
 		}
 	}
+	
+	/**
+	 * Create the summary of all balances in all the profiles associated to the
+	 * current user and for all type of each profile, calculate the available
+	 * balance.
+	 * 
+	 * @return a list of calendar balance detail dto
+	 */
+	@SuppressWarnings("unchecked")
+	public List<CalendarBalanceDetailDTO> getBalanceSummaryForCurrentUser(){
+		long userId = this.getAuthenticatedUserModel().getId();
+		List<CalendarBalanceDetailDTO> details = new ArrayList<CalendarBalanceDetailDTO>();
+		float availableDays;
+
+		Query typeRequest = em.get().createQuery("SELECT t FROM HolidayTypeInstance t WHERE :user member of t.users");
+		typeRequest.setParameter("user", this.getAuthenticatedUserModel());
+		try{
+			List<HolidayTypeInstance> types = typeRequest.getResultList();
+			// Retrieve first all limited 
+			List<HolidayBalanceDTO> balancesList;
+			for (HolidayTypeInstance type : types) {
+				if(!type.isUnlimited()){
+					availableDays = 0.0F;
+					balancesList = new ArrayList<HolidayBalanceDTO>(balanceService.getHolidayBalancesAvailable(type.getId(), userId));
+					for (HolidayBalanceDTO hb : balancesList) {
+						availableDays += hb.availableBalanceUpdated;
+					}
+
+					float limitOfAnticipation;
+					if(type.isAnticipated()){
+						availableDays -= balancesList.get(balancesList.size() - 1).availableBalance;
+						limitOfAnticipation = type.getQuantity() * type.getPeriodUnit();
+					}
+					else {
+						limitOfAnticipation = 0;
+					}
+									
+					details.add(new CalendarBalanceDetailDTO(type.getName(), availableDays, type.getColor(), type.getId(), limitOfAnticipation));
+				}
+			}
+			return details;
+		}
+		catch(NoResultException nre){
+			return null;
+		}
+	}
 
 	/**
 	 * Send a mail to all managers which have to accept or deny a request.

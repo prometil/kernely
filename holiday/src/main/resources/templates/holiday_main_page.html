@@ -5,6 +5,7 @@
 
 {% block css %}
 	<link rel="stylesheet" type="text/css" href="/css/holiday_user_request.css"/>
+	<link rel="stylesheet" type="text/css" href="/css/holiday_request.css"/>
 {% endblock %}
 
 {% block template %}	
@@ -71,6 +72,13 @@
 		<div class="header-block-year clickable">{{"{{"}}year{{"}}"}}</div>
 		<div class="content-block-year">{% i18n "no-data" %}</div>
 	</script>
+	
+	<script type="text/html" id="balance-cell-template">
+		<div class="balance-cell">
+			<div class="balance-cell-amount">{{"{{"}}available{{"}}"}}</div>
+			<div class="balance-cell-title">{{"{{"}}name{{"}}"}}</div>
+		</div>
+	</script>
 {% endblock %}
 
 {% block title %}
@@ -83,7 +91,7 @@
 			<input type="button" class="button_emphasis" id="new_request" value="{% i18n "new-request" %}" />
 		</div>
 		<div class="subtitle">{% i18n "title_table_1" %}</div>
-		<div class="classic-buttons-bar">
+		<div class="dialog-buttons-container">
 			<input type="button" class="button_emphasis" id="button_canceled" value="{% i18n "cancel" %}" disabled="disabled"/>
 		</div>
 		<table id="user_pending_request_table" class="kernely_table">
@@ -102,6 +110,11 @@
 	<div id='left_profile_container'>
 		<img src="/images/{{currentUser.image}}" id="image_left_profile"/>
 		<div id="left_profile_name">{{currentUser.firstname}} {{currentUser.lastname}}</div>
+	</div>
+{% endblock %}
+
+{% block right %}
+	<div id="balance-summary" class="right_block_without_padding">
 	</div>
 {% endblock %}
 
