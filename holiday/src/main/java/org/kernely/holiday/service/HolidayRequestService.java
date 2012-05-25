@@ -774,22 +774,24 @@ public class HolidayRequestService extends AbstractService {
 			List<HolidayTypeInstance> types = typeRequest.getResultList();
 			// Retrieve first all limited 
 			List<HolidayBalanceDTO> balancesList;
-			HolidayBalanceDTO balanceAnticipated;
 			for (HolidayTypeInstance type : types) {
 				if(!type.isUnlimited()){
 					availableDays = 0.0F;
 					balancesList = new ArrayList<HolidayBalanceDTO>(balanceService.getHolidayBalancesAvailable(type.getId(), userId));
-					if(type.isAnticipated()){
-						balanceAnticipated = balancesList.get(balancesList.size() - 1);
-						balancesList.remove(balancesList.size() - 1);
-						details.add(new CalendarBalanceDetailDTO(type.getName() + "(anticipation)", balanceAnticipated.availableBalanceUpdated, type.getColor(), type.getId()));
-					}
 					for (HolidayBalanceDTO hb : balancesList) {
 						availableDays += hb.availableBalanceUpdated;
 					}
-					if(availableDays > 0.0F){
-						details.add(new CalendarBalanceDetailDTO(type.getName(), availableDays, type.getColor(), type.getId()));					
+
+					float limitOfAnticipation;
+					if(type.isAnticipated()){
+						availableDays -= balancesList.get(balancesList.size() - 1).availableBalance;
+						limitOfAnticipation = type.getQuantity() * type.getPeriodUnit();
 					}
+					else {
+						limitOfAnticipation = 0;
+					}
+									
+					details.add(new CalendarBalanceDetailDTO(type.getName(), availableDays, type.getColor(), type.getId(), limitOfAnticipation));
 				}
 			}
 			// Now, retrieve all unlimited types associated to the current profiles of the user.
@@ -801,7 +803,7 @@ public class HolidayRequestService extends AbstractService {
 					if(t.unlimited){
 						type = em.get().find(HolidayType.class, t.id);
 						instance = type.getCurrentInstance();
-						details.add(new CalendarBalanceDetailDTO(instance.getName(), -1F, instance.getColor(), instance.getId()));
+						details.add(new CalendarBalanceDetailDTO(instance.getName(), 9999F, instance.getColor(), instance.getId(), 0));
 					}
 				}
 			}

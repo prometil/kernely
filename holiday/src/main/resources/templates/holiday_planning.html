@@ -26,9 +26,11 @@
 	<div id="main-human-page-content">
 		<div id="monthSelector">
 		</div>
-		<div class="classic-buttons-bar">
-			<input type="button" class="button_emphasis" value="{% i18n "my_collaborators"%}" onClick='window.location="/holiday/manager/users"'/>
-		</div>
+		{% if userManager %}
+			<div class="classic-buttons-bar">
+				<input type="button" class="button_emphasis" value="{% i18n "my_collaborators"%}" onClick='window.location="/holiday/manager/users"'/>
+			</div>
+		{% endif %}
 		<div id="main-human-table-content">
 			<div class="wrapper1">
 				<div class="top-scroll-bar">

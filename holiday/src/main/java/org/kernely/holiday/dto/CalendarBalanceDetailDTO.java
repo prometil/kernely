@@ -29,6 +29,11 @@ public class CalendarBalanceDetailDTO {
 	public long idOfType;
 	
 	/**
+	 * Limit of the anticipation possible in this type
+	 */
+	public float limitOfAnticipation;
+	
+	/**
 	 * Default constructor
 	 */
 	public CalendarBalanceDetailDTO(){}
@@ -40,11 +45,12 @@ public class CalendarBalanceDetailDTO {
 	 * @param color Color associated to this balance
 	 * @param typeId HolidayType associated to this balance
 	 */
-	public CalendarBalanceDetailDTO(String name, float available, String color, long typeId){
+	public CalendarBalanceDetailDTO(String name, float available, String color, long typeId, float limitOfAnticipation){
 		this.color = color;
 		this.nameOfType = name;
 		this.nbAvailable = available;
 		this.idOfType = typeId;
+		this.limitOfAnticipation = limitOfAnticipation;
 	}
 
 	/* (non-Javadoc)

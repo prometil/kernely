@@ -18,6 +18,10 @@
             <source>NOTICE.txt</source>
             <outputDirectory>/</outputDirectory>
         </file>
+        <file>
+            <source>src/main/resources/core.xml</source>
+            <outputDirectory>/conf</outputDirectory>
+        </file>
     </files>
     
 </component>

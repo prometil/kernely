@@ -73,15 +73,28 @@ public class PluginManager {
 	 */
 	private PluginManager() {
 		String configFile = "core.xml";
+		String confPath = "conf";
+		File confDir = new File(confPath + "/" + configFile);
 		try {
 			configuration = new CombinedConfiguration();
-			URL resource = getDefaultClassLoader().getResource(configFile);
+			URL resource;
+			
+			
+			if(!confDir.exists()){
+				resource = getDefaultClassLoader().getResource(configFile);
+			}
+			else{
+				resource = confDir.toURI().toURL();
+			}
+			
 			XMLConfiguration config = new XMLConfiguration(resource);
 			configuration.addConfiguration(config);
 			updateClasspath();
 			plugins = findPlugins();
 		} catch (ConfigurationException e3) {
 			log.error("Cannot load {}", configFile);
+		} catch (MalformedURLException e) {
+			log.error("Cannot find {}", confDir);
 		}
 
 	}
