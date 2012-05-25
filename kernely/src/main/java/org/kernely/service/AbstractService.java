@@ -42,7 +42,8 @@ public abstract class AbstractService {
 	 * @return user
 	 */
 	protected User getAuthenticatedUserModel(){
-		Query query = em.get().createQuery("SELECT e FROM User e WHERE username ='"+ SecurityUtils.getSubject().getPrincipal() +"'");
+		Query query = em.get().createQuery("SELECT e FROM User e WHERE username = :username");
+		query.setParameter("username", SecurityUtils.getSubject().getPrincipal());
 		return (User)query.getSingleResult();
 	}
 }

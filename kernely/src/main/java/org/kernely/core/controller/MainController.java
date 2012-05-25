@@ -20,6 +20,8 @@
 
 package org.kernely.core.controller;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -29,6 +31,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.apache.commons.configuration.AbstractConfiguration;
 import org.kernely.controller.AbstractController;
 import org.kernely.template.SobaTemplateRenderer;
 
@@ -43,6 +46,8 @@ public class MainController extends AbstractController {
 	@Inject
 	private SobaTemplateRenderer templateRenderer;
 
+	@Inject
+	private AbstractConfiguration configuration;
 
 	/**
 	 * Get the main page of the application
@@ -52,8 +57,15 @@ public class MainController extends AbstractController {
 	@GET
 	@Produces({ MediaType.TEXT_HTML })
 	public Response getUI() {
-		Map<String, Object> map =new HashMap<String, Object>();
-		return Response.ok(templateRenderer.render("templates/home.html", map)).build();
+		String homePage = configuration.getString("home");
+		URI uri;
+		try {
+			uri = new URI(homePage);
+			return Response.temporaryRedirect(uri).status(303).build();
+		} catch (URISyntaxException e) {
+			Map<String, Object> map =new HashMap<String, Object>();
+			return Response.ok(templateRenderer.render("templates/home.html", map)).build();
+		}
 	}
 
 }

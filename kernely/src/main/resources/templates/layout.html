@@ -107,7 +107,7 @@
 							<ul class="subnav">
 							{% for item in menu.items %}
 								<li>
-									<a class="sub_menu_item" href="{{item.link}}">{% i18n item.nameKey %}</a>
+									<a href="{{item.link}}"><div class="sub_menu_item">{% i18n item.nameKey %}</div></a>
 								</li>
 							{% endfor %}
 							</ul>
