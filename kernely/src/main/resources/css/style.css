@@ -43,6 +43,7 @@ html {
 	font-size:13px;
 	color:#97ad17;
 	font-weight:bold;
+	font-size:15px;
 	margin: 5px 0 5px 0;
 }
 
@@ -234,16 +235,11 @@ a.menu_item:hover .{
 	color:#97ad17;
 	background: #000 url(/images/icons/arrow_hover.png) no-repeat 5px center;
 }
-a.sub_menu_item{
+div.sub_menu_item{
 	padding-top:10px;
 	padding-left:10px;
 	padding-bottom:10px;
-}
-a.sub_menu_item a{
-	padding-top:10px;
-	padding-left:10px;
-	padding-bottom:10px;
-	display:block;
+	width:160px;
 }
 /* menu*/
 

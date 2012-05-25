@@ -66,6 +66,11 @@
 			</div>
 		</form>
 	</script>
+	
+	<script type="text/html" id="year-block-request">
+		<div class="header-block-year clickable">{{"{{"}}year{{"}}"}}</div>
+		<div class="content-block-year">{% i18n "no-data" %}</div>
+	</script>
 {% endblock %}
 
 {% block title %}
@@ -75,16 +80,19 @@
 {% block content %}	
 	<div id="request-manager-main">
 		<div id="holiday_button_container">
-			<input type="button" class="button_standard" id="button_canceled" value="{% i18n "canceled" %}" disabled="disabled"/>
-			<input type="button" class="button_standard" id="new_request" value="{% i18n "new-request" %}" />
+			<input type="button" class="button_emphasis" id="new_request" value="{% i18n "new-request" %}" />
 		</div>
 		<div class="subtitle">{% i18n "title_table_1" %}</div>
+		<div class="classic-buttons-bar">
+			<input type="button" class="button_emphasis" id="button_canceled" value="{% i18n "cancel" %}" disabled="disabled"/>
+		</div>
 		<table id="user_pending_request_table" class="kernely_table">
 		</table>
 		<br/>
 		<div class="subtitle">{% i18n "title_table_2" %}</div>
-		<table id="user_request_table" class="kernely_table">
-		</table>
+		<div id="statued_requests">
+		
+		</div>
 	</div>
 {% endblock %}
 

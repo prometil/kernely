@@ -93,7 +93,7 @@ public class HolidayHumanResourceService extends AbstractService{
 					detailManagedDTO.add(new HolidayManagedDetailsDTO(det.color, current.getDayOfMonth(), det.am, det.pm));
 				}
 				HolidayTypeInstance instance = em.get().find(HolidayTypeInstance.class, det.typeInstanceId);
-				balancesDTO.add(new CalendarBalanceDetailDTO(instance.getName(), 0, instance.getColor() , instance.getId()));
+				balancesDTO.add(new CalendarBalanceDetailDTO(instance.getName(), 0, instance.getColor() , instance.getId(),0));
 			}
 			String fullname = us.getUserDetails().getFirstname() + " " + us.getUserDetails().getName();
 			managedDTO.add(new HolidayUserManagedDTO(fullname, detailManagedDTO));

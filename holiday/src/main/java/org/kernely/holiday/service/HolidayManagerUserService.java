@@ -99,7 +99,7 @@ public class HolidayManagerUserService extends AbstractService{
 					detailManagedDTO.add(new HolidayManagedDetailsDTO(det.color, current.getDayOfMonth(), det.am, det.pm));
 				}
 				HolidayTypeInstance type = em.get().find(HolidayTypeInstance.class, det.typeInstanceId);
-				balancesDTO.add(new CalendarBalanceDetailDTO(type.getName(), 0, type.getColor() , type.getId()));
+				balancesDTO.add(new CalendarBalanceDetailDTO(type.getName(), 0, type.getColor() , type.getId(), 0));
 			}
 			String fullname = u.getUserDetails().getFirstname() + " " + u.getUserDetails().getName();
 			managedDTO.add(new HolidayUserManagedDTO(fullname, detailManagedDTO));

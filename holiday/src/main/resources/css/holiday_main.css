@@ -1,27 +1,3 @@
-#mask{
-	position:absolute;
-	z-index:1;
-	background-color:#000;
-	display:none;
-	top:0;
-	left:0;
-}
-
-#modal_window_holiday{
-	position:absolute;
-	width:450px;
-	height:300px;
-	display:none;
-	z-index:2;
-	padding:20px;
-	top:0;
-	left:0;
-}
-
-.closeModal{
-	right:0;
-}
-
 #create_fieldset{
 	height:210px;
 }
@@ -44,3 +20,6 @@
 	cursor:pointer;
 	width:100%;
 }
+
+
+

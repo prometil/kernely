@@ -63,7 +63,6 @@ AppHolidayRequest = (function($){
 		sendRequestHolidays: function(){
 			var parent = this;
 			var json = "";
-			var count = 0;
 			// Build the json request
 			json += '{"requesterComment" : "' + $("#requester-comment").val() + '","details":[';
 			$.each(allDayCells, function(){
@@ -75,14 +74,10 @@ AppHolidayRequest = (function($){
 					else{
 						json += '"am": false, "pm": true ,';
 					}
-					json += '"typeInstanceId":' + this.selectedBy + '}';
-					
-					count++;
-					if(count<nbSelected){
-						json += ',';
-					}
+					json += '"typeInstanceId":' + this.selectedBy + '},';
 				}
 			});
+			json = json.substring(0, json.length-1);
 			json += ']}';
 			$.ajax({
 				type: 'POST',
@@ -93,6 +88,7 @@ AppHolidayRequest = (function($){
 				contentType: "application/json; charset=utf-8",
 				success: function(data){
 					window.location = "/holiday";
+					console.log("Redirection...");
 				}
 			});
 			
@@ -247,9 +243,9 @@ AppHolidayRequest = (function($){
 		
 		colorTheWorld : function(event){
 			if(currentCellPickerSelected != null && !this.isHeader && this.available == "true"){
+				console.log( currentCellPickerSelected.limitOfAnticipation);
 				if(this.selectedBy != currentCellPickerSelected.idType){
-
-					if((currentCellPickerSelected.nbAvailable == -1) || (currentCellPickerSelected.nbAvailable >= 0.5)){
+					if((currentCellPickerSelected.nbAvailable == 9999) || (currentCellPickerSelected.nbAvailable > currentCellPickerSelected.limitOfAnticipation)){
 						// Color the cell with the Balance color
 						$(this.el).css('background-color', currentCellPickerSelected.color);
 						// decrease balance's available days
@@ -346,20 +342,20 @@ AppHolidayRequest = (function($){
 			
 			if(this.data.details != null && this.data.details.length > 1){
 				$.each(this.data.details, function(){
-					if(this.nbAvailable != -1){
-						$("#limited-balances").append(new HolidayRequestColorPickerCell(this.nameOfType, this.nbAvailable, this.color, this.idOfType).render().el);
+					if(this.nbAvailable != 9999){
+						$("#limited-balances").append(new HolidayRequestColorPickerCell(this.nameOfType, this.nbAvailable, this.color, this.idOfType, this.limitOfAnticipation).render().el);
 					}
 					else{
-						$("#unlimited-balances").append(new HolidayRequestColorPickerCell(this.nameOfType, this.nbAvailable, this.color, this.idOfType).render().el);
+						$("#unlimited-balances").append(new HolidayRequestColorPickerCell(this.nameOfType, this.nbAvailable, this.color, this.idOfType, this.limitOfAnticipation).render().el);
 					}
                 });
 			}
 			else{
-				if(this.data.details.nbAvailable != -1){
-					$("#limited-balances").append(new HolidayRequestColorPickerCell(this.data.details.nameOfType, this.data.details.nbAvailable, this.data.details.color, this.data.details.idOfType).render().el);				
+				if(this.data.details.nbAvailable != 9999){
+					$("#limited-balances").append(new HolidayRequestColorPickerCell(this.data.details.nameOfType, this.data.details.nbAvailable, this.data.details.color, this.data.details.idOfType, this.data.details.limitOfAnticipation).render().el);				
 				}
 				else{
-					$("#unlimited-balances").append(new HolidayRequestColorPickerCell(this.data.details.nameOfType, this.data.details.nbAvailable, this.data.details.color, this.data.details.idOfType).render().el);					
+					$("#unlimited-balances").append(new HolidayRequestColorPickerCell(this.data.details.nameOfType, this.data.details.nbAvailable, this.data.details.color, this.data.details.idOfType, this.data.details.limitOfAnticipation).render().el);					
 				}
 			}
 			$('#colorSelector').show();
@@ -374,17 +370,19 @@ AppHolidayRequest = (function($){
 		color:null,
 		name:null,
 		nbAvailable:0.0,
+		limitOfAnticipation:0.0,
 		idType: null,
 		
 		events: {
 			"click" : "selectColor"
 		},
 		
-		initialize : function(name, avail, color, idType){
+		initialize : function(name, avail, color, idType, anticipation){
 			this.color = color;
 			this.name = name;
 			this.nbAvailable = avail;
 			this.idType = idType;
+			this.limitOfAnticipation = anticipation * (-1);
 			// We store the object at the rank of the id to make easy the recuperation
 			allCellPicker[idType] = this;
 		},
@@ -392,7 +390,7 @@ AppHolidayRequest = (function($){
 		render : function(){
 			var template;
             var view;
-			if (this.nbAvailable == -1){
+			if (this.nbAvailable == 9999){
 				template = $("#balance-unlimited-cell-template").html();
 				view =  {name: this.name};
 			} else {
@@ -413,21 +411,21 @@ AppHolidayRequest = (function($){
 		},
 		
 		decrease: function(){
-			if (this.nbAvailable != -1){ // Unlimited balances are not modified
-				this.nbAvailable = Math.round((this.nbAvailable - 0.5)*10)/10;
+			if (this.nbAvailable != 9999){ // Unlimited balances are not modified
+				this.nbAvailable = Math.round((parseFloat(this.nbAvailable) - 0.5)*10)/10;
 				this.updateCounter();
 			}
 		},
 		
 		increase: function(){
-			if (this.nbAvailable != -1){ // Unlimited balances are not modified
-				this.nbAvailable = Math.round((this.nbAvailable + 0.5)*10)/10;			
+			if (this.nbAvailable != 9999){ // Unlimited balances are not modified
+				this.nbAvailable = Math.round((parseFloat(this.nbAvailable) + 0.5)*10)/10;			
 				this.updateCounter();
 			}
 		},
 		
 		updateCounter : function(){
-			$(this.el).find('.balance-cell-amount').text(this.nbAvailable);
+			$(this.el).find('.balance-cell-amount').text(parseFloat(this.nbAvailable));
 		}
 		
 	})

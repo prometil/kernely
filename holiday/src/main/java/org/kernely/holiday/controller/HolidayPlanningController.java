@@ -3,6 +3,8 @@ package org.kernely.holiday.controller;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -13,6 +15,8 @@ import javax.ws.rs.core.Response;
 
 import org.joda.time.DateTime;
 import org.kernely.controller.AbstractController;
+import org.kernely.core.model.Role;
+import org.kernely.core.service.UserService;
 import org.kernely.holiday.dto.HolidayUsersManagerDTO;
 import org.kernely.holiday.service.HolidayHumanResourceService;
 import org.kernely.menu.Menu;
@@ -33,6 +37,9 @@ public class HolidayPlanningController extends AbstractController{
 	
 	@Inject
 	private HolidayHumanResourceService holidayHumanResourceService;
+	
+	@Inject
+	private UserService userService;
 	
 	/**
 	 * Redirect to the planning of the actual day
@@ -60,7 +67,9 @@ public class HolidayPlanningController extends AbstractController{
 	@Path("/view")
 	@Produces( { MediaType.TEXT_HTML })
 	public Response getHolidayPlanning(){
-		return Response.ok(templateRenderer.render("templates/holiday_planning.html")).build();
+		Map<String, Object> bindings = new HashMap<String, Object>();
+		bindings.put("userManager", userService.currentUserHasRole(Role.ROLE_USERMANAGER));
+		return Response.ok(templateRenderer.render("templates/holiday_planning.html", bindings)).build();
 	}
 	
 	/**

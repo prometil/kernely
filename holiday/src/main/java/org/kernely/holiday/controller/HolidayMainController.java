@@ -7,11 +7,13 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.kernely.controller.AbstractController;
 import org.kernely.holiday.dto.HolidayRequestDTO;
+import org.kernely.holiday.dto.IntervalDTO;
 import org.kernely.holiday.model.HolidayRequest;
 import org.kernely.holiday.service.HolidayRequestService;
 import org.kernely.menu.Menu;
@@ -50,7 +52,7 @@ public class HolidayMainController extends AbstractController {
 	@Produces({MediaType.APPLICATION_JSON})
 	public List<HolidayRequestDTO> displayAllHolidayRequestPending()
 	{
-		List<HolidayRequestDTO> pendingRequest = holidayRequestService.getAllRequestsWithStatusForCurrentUser(HolidayRequest.PENDING_STATUS);
+		List<HolidayRequestDTO> pendingRequest = holidayRequestService.getAllRequestsWithStatusForCurrentUser(HolidayRequest.PENDING_STATUS, -1);
 		return pendingRequest;
 	}
 	
@@ -64,9 +66,32 @@ public class HolidayMainController extends AbstractController {
 	public List<HolidayRequestDTO> displayAllHolidayRequestStatus()
 	{
 		List<HolidayRequestDTO> lhr = new ArrayList<HolidayRequestDTO>();
-		lhr.addAll(holidayRequestService.getAllRequestsWithStatusForCurrentUser(HolidayRequest.ACCEPTED_STATUS));
-		lhr.addAll(holidayRequestService.getAllRequestsWithStatusForCurrentUser(HolidayRequest.DENIED_STATUS));
+		lhr.addAll(holidayRequestService.getAllRequestsWithStatusForCurrentUser(HolidayRequest.ACCEPTED_STATUS, -1));
+		lhr.addAll(holidayRequestService.getAllRequestsWithStatusForCurrentUser(HolidayRequest.DENIED_STATUS, -1));
 		return lhr;
+	}
+	
+	/**
+	 * Get all existing holiday request with a status of a specific user in the database for a specific year
+	 * @return A list of all DTO associated to the existing holiday requests of a specific user in the database
+	 */
+	@GET
+	@Path("/all/status/date")
+	@Produces({MediaType.APPLICATION_JSON})
+	public List<HolidayRequestDTO> displayHolidayRequestStatusPerYear(@QueryParam("year") int year)
+	{
+		List<HolidayRequestDTO> lhr = new ArrayList<HolidayRequestDTO>();
+		lhr.addAll(holidayRequestService.getAllRequestsWithStatusForCurrentUser(HolidayRequest.ACCEPTED_STATUS, year));
+		lhr.addAll(holidayRequestService.getAllRequestsWithStatusForCurrentUser(HolidayRequest.DENIED_STATUS, year));
+		return lhr;
+	}
+	
+	@GET
+	@Path("/years")
+	@Produces({MediaType.APPLICATION_JSON})
+	public IntervalDTO getYearCountForCurrentUser()
+	{
+		return holidayRequestService.getYearsCountForCurrentUser();
 	}
 	
 	/**
