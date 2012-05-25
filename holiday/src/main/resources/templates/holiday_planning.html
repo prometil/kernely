@@ -1,4 +1,4 @@
-{% extends "templates/layout.html" %}
+{% extends "templates/layout_without_sidebar.html" %}
 {% block javascript %}
 	<script type="text/javascript" src="/js/holiday_planning.js"></script>
 {% endblock %}
@@ -28,6 +28,7 @@
 		</div>
 		{% if userManager %}
 			<div class="classic-buttons-bar">
+				<div id="dates-title" class="text-bold-black"></div>
 				<input type="button" class="button_emphasis" value="{% i18n "my_collaborators"%}" onClick='window.location="/holiday/manager/users"'/>
 			</div>
 		{% endif %}
@@ -48,7 +49,7 @@
 {% endblock %}
 
 {% block right %}
-	<div id="color-legend">
+	<div id="color-legend" class="right_block">
 	</div>
 {% endblock %}
 

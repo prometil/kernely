@@ -86,6 +86,11 @@ input.editAmount{
 
 .timesheet-project-select{
 	width:200px;
+	padding-left:7px;
+}
+
+#title-layout{
+	padding-left:7px;
 }
 
 #timesheet-layout{
@@ -95,7 +100,13 @@ input.editAmount{
 	height:auto;
 }
 
+#weekSelector{
+	float:left;
+}
 
+#dates-title{
+	padding:7px;
+}
 
 
 #expense-comment{

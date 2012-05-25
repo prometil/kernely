@@ -246,8 +246,31 @@ public class TimeSheetService extends AbstractService {
 		for (ProjectDTO project : projects){
 			projectsId.add(Long.valueOf(project.id));
 		}
-
-		return new TimeSheetCalendarDTO(week, year, timeSheet, dates, stringDates, projectsId);
+		
+		// Get projects for the last week, to help user
+		// Build the list of id project, ordered by alphabetical order of project names
+		TimeSheetDTO lastWeekTimeSheet = null;
+		if (week == 1){
+			lastWeekTimeSheet = this.getTimeSheet(52, year -1 , userId, false);
+		} else {
+			lastWeekTimeSheet = this.getTimeSheet(week -1 , year, userId, false);
+		}
+		Set<ProjectDTO> lastWeekProjects = new TreeSet<ProjectDTO>();
+		List<Long> lastWeekProjectsId = new ArrayList<Long>();
+		ProjectDTO lastWeekFoundProject;
+		if (lastWeekTimeSheet != null && lastWeekTimeSheet.columns != null){
+			for (TimeSheetColumnDTO column : lastWeekTimeSheet.columns){
+				for (TimeSheetDetailDTO detail : column.timeSheetDetails){
+					lastWeekFoundProject = new ProjectDTO(detail.projectName, detail.projectId, null, null, null);
+					lastWeekProjects.add(lastWeekFoundProject);
+				}
+			}
+		}
+		for (ProjectDTO project : lastWeekProjects){
+			lastWeekProjectsId.add(Long.valueOf(project.id));
+		}
+		
+		return new TimeSheetCalendarDTO(week, year, timeSheet, dates, stringDates, projectsId, lastWeekProjectsId);
 	}
 
 	/**

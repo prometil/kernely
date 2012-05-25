@@ -1,4 +1,4 @@
-{% extends "templates/layout.html" %}
+{% extends "templates/layout_without_sidebar.html" %}
 {% block javascript %}
 	<script type="text/javascript" src="/js/holiday_summary.js"></script>
 {% endblock %}
@@ -16,14 +16,6 @@
 
 {% block content %}
 	<div id="monthSelector"></div>
+	<div id="dates-title" class="text-bold-black"></div><br/><br/>
 	<div id="holiday-summary"></div>
-{% endblock %}
-
-{% block left %}
-<div id="profile_mask"></div>
-<div id="left_profile_arrow"></div>
-<div id='left_profile_container'>
-	<img src="/images/{{currentUser.image}}" id="image_left_profile"/>
-	<div id="left_profile_name">{{currentUser.firstname}} {{currentUser.lastname}}</div>
-</div>
 {% endblock %}

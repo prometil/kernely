@@ -389,30 +389,31 @@ refresh: function(){
 		var imgp = document.createElement("img");
 		$(imgp).attr("src", "/images/icons/previous_icon.png");
 	    $(imgp).addClass("clickable");
+	    $(imgp).addClass("float-left");
+	    $(imgp).addClass("k-ui-left-button");
+
 	    var span = document.createElement("span");
 	    $(span).addClass("k-ui-navigator");
+	    this.el.addClass("k-ui-navigator-container");
 	    var imgn = document.createElement("img");
 	    $(imgn).addClass("clickable");
+	    $(imgn).addClass("k-ui-right-button");
 	    $(imgn).attr("src", "/images/icons/next_icon.png");
+
+	    var todayTemplate = $("#today-template").html();
+        $(span).text(todayTemplate);
+
 	    this.el.append(imgp);
 	    this.el.append(span);
 	    this.el.append(imgn);
 	    if (day == null && week == null && month != null && year != null){
-	    	// Display month selector
-	        var template = $("#"+ month +"-month-template").html();
-	        $(span).text(template + " " + this.yearSelected);
-	    	
 	        // Associates events for month management
 	        $(imgp).bind("click", function(){parent.previousMonth(parent.monthSelected,parent.yearSelected)});
 	        $(span).bind("click", function(){parent.toDefaultMonth()});
 	        $(imgn).bind("click", function(){parent.nextMonth(parent.monthSelected,parent.yearSelected)});
 		    this.onchange(this.monthSelected, this.yearSelected);
 	    } else if (day == null && week != null && month == null && year != null){
-	    	// Display week selector
-	        var template = $("#week-selector-template").html();
-	        $(span).text(template + " " + this.weekSelected + " (" + this.yearSelected+ ")");
-	    	
-	        // Associates events for month management
+	        // Associates events for week management
 	        $(imgp).bind("click", function(){parent.previousWeek(parent.weekSelected,parent.yearSelected)});
 	        $(span).bind("click", function(){parent.toDefaultWeek()});
 	        $(imgn).bind("click", function(){parent.nextWeek(parent.weekSelected,parent.yearSelected)});
@@ -469,17 +470,11 @@ refresh: function(){
 	
 	actualizeMonth: function(){
 		this.router.navigate("/month/" + this.monthSelected + "/" + this.yearSelected, {trigger: true, replace: true});
-    	// Display month and year
-        var template = $("#"+ this.monthSelected +"-month-template").html();
-        $(".k-ui-navigator").text(template + " " + this.yearSelected);
 	    this.onchange(this.monthSelected, this.yearSelected);
 	},
 	
 	actualizeWeek: function(){
 		this.router.navigate("/week/" + this.weekSelected + "/" + this.yearSelected, {trigger: true, replace: true});
-    	// Display week and year
-        var template = $("#week-selector-template").html();
-        $(".k-ui-navigator").text(template + " " + this.weekSelected + " (" + this.yearSelected+ ")");
 	    this.onchange(this.weekSelected, this.yearSelected);
 	},
 	

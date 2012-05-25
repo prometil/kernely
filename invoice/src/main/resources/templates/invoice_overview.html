@@ -1,4 +1,4 @@
-{% extends "templates/layout.html" %}
+{% extends "templates/layout_without_sidebar.html" %}
 
 {% block javascript %}
 	<script type="text/javascript" src="/js/invoice_main.js"></script>
@@ -113,7 +113,7 @@
 {% endblock %}
 
 {% block right %}
-	<div id="invoice-filters">
+	<div class="right_block" id="invoice-filters"  >
 		<div class="main_title">{% i18n "filters" %}</div>
 		<div class="subtitle">{% i18n "organization" %}</div>
 		<select id="organization-selector">

@@ -43,11 +43,10 @@ public class HolidayHumanResourceService extends AbstractService{
 	 * Retrieves all holidays for all users by the current human resource for the given month
 	 * @param month The number corresponding to the month needed, IE : January = 1, February = 2 ..., if 0, this is the current month
 	 * @param year The year needed, if 0, this is the current year.
-	 * @throws UnauthorizedException if the current user is not human resource  
 	 */
 	@Transactional
 	public HolidayUsersManagerDTO getHolidayForAllUsersForMonth(int month, int year){
-
+		
 		int monthNeeded;
 		int yearNeeded;
 		if(month == 0){
@@ -72,7 +71,7 @@ public class HolidayHumanResourceService extends AbstractService{
 		List<HolidayUserManagedDTO> managedDTO = new ArrayList<HolidayUserManagedDTO>();
 		Set<CalendarBalanceDetailDTO> balancesDTO = new HashSet<CalendarBalanceDetailDTO>();
 
-		Set<UserDTO> users = new HashSet<UserDTO>(userService.getAllUsers());
+		Set<UserDTO> users = new TreeSet<UserDTO>(userService.getEnabledUsers());
 
 		List<HolidayDetailDTO> detailsDTO ;
 

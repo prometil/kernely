@@ -37,7 +37,21 @@
 	<script type="text/html" id="time-amount-4">4 {% i18n "timesheet_hours" %}</script>
 	<script type="text/html" id="time-amount-6">6 {% i18n "timesheet_hours" %}</script>
 	<script type="text/html" id="time-amount-8">8 {% i18n "timesheet_hours" %}</script>
+
+	<script type="text/html" id="day-0-cell-template"><td class="text-bold-black">{% i18n "day_1_short" %}</td></script>
+	<script type="text/html" id="day-0-cell-template"><td class="text-bold-black">{% i18n "day_1_short" %}</td></script>
+	<script type="text/html" id="day-1-cell-template"><td class="text-bold-black">{% i18n "day_2_short" %}</td></script>
+	<script type="text/html" id="day-2-cell-template"><td class="text-bold-black">{% i18n "day_3_short" %}</td></script>
+	<script type="text/html" id="day-3-cell-template"><td class="text-bold-black">{% i18n "day_4_short" %}</td></script>
+	<script type="text/html" id="day-4-cell-template"><td class="text-bold-black">{% i18n "day_5_short" %}</td></script>
+	<script type="text/html" id="day-5-cell-template"><td class="text-bold-black">{% i18n "day_6_short" %}</td></script>
+	<script type="text/html" id="day-6-cell-template"><td class="text-bold-black">{% i18n "day_7_short" %}</td></script>
+
+	<script type="text/html" id="last-week-projects-template">{% i18n "timesheet_last_week_projects" %}</script>
+	<script type="text/html" id="all-projects-template">{% i18n "timesheet_all_projects" %}</script>
 	
+	<script type="text/html" id="from-to-template"><td>{% i18n "from_date_timesheet" %} {{"{{"}}date_from{{"}}"}} {% i18n "to_date_timesheet" %} {{"{{"}}date_to{{"}}"}}</td></script>
+
 	<script type="text/html" id="time-cell-template">
 		<span id="time-cell-name">{{"{{"}}amount{{"}}"}}</span>
 	</script>
@@ -77,13 +91,16 @@
 
 	<div id="timesheet-main">
 		<div class="classic-buttons-bar">
+			<div id="weekSelector"></div>
 			<input type="button" class="button_emphasis no-margin" value="{% i18n "week" %}"/>
 			<input type="button" class="button_standard no-margin" value="{% i18n "month" %}" onClick="window.location='/timesheet/bymonth'"/>
 		</div>
 		<div id="timesheet-layout">
-			<div id="weekSelector"></div>
-			<select class="timesheet-project-select" id="project-select"></select>
-			<input type="button" id="add-project-button" class="button_standard" value="{% i18n "timesheet_add_project" %}"/>
+			<div class="text-bold-black" id="title-layout">
+				<div id="dates-title"></div>
+				<select class="timesheet-project-select" id="project-select"></select>
+				<input type="button" id="add-project-button" class="button_standard" value="{% i18n "timesheet_add_project" %}"/>
+			</div>
 			<div id="timesheet-div">
 				<table id="timesheet-table" class="timesheet-table">
 					<tbody id="timesheet-content" class="timesheet-content">
@@ -112,7 +129,7 @@
 {% endblock %}
 
 {% block right %}
-	<div id="timePicker">
+	<div id="timePicker" class="right_block_without_padding">
 		<!-- Time picker to set time into days and projects -->
 	</div>	
 {% endblock %}

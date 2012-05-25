@@ -4,6 +4,22 @@
 	width:80px;
 	height:15px;
 	color:#3e3d40;
+	background-color:#E3E4E4;
 	font-size:13px;
+	font-weight:bold;
 	text-align:center;
+	float:left;
+}
+
+.k-ui-navigator-container{
+	height:17px;
+}
+
+.k-ui-right-button{
+	padding-left:3px;
+	float:left;
+}
+
+.k-ui-left-button{
+	padding-right:3px;
 }

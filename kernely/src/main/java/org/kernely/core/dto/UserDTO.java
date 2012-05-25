@@ -27,7 +27,7 @@ import org.kernely.core.model.User;
  * DTO for user data, contains only his name.
  */
 @XmlRootElement
-public class UserDTO {
+public class UserDTO implements Comparable<UserDTO>{
 
 	/**
 	 * The id of the user  
@@ -38,6 +38,16 @@ public class UserDTO {
 	 * The username of the user
 	 */
 	public String username;
+	
+	/**
+	 * The name of the user. Usefull to sort.
+	 */
+	public String name;
+	
+	/**
+	 * The firstname of the user. Usefull to sort.
+	 */
+	public String firstname;
 	
 	/**
 	 * The indicator if the user is locked or not 
@@ -87,6 +97,8 @@ public class UserDTO {
 		this.username = u.getUsername();
 		this.locked = u.isLocked();
 		this.id = u.getId();
+		this.firstname = u.getUserDetails().getFirstname();
+		this.name = u.getUserDetails().getName();
 	}
 
 	/**
@@ -131,5 +143,13 @@ public class UserDTO {
 			return false;
 		}
 		return true;
+	}
+
+	/**
+	 * Compare two users with their name and firstname.
+	 */
+	@Override
+	public int compareTo(UserDTO o) {
+		return (this.name.toLowerCase() + " " + this.firstname.toLowerCase()).compareTo(o.name.toLowerCase() +" "+ o.firstname.toLowerCase());
 	}
 }

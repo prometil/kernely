@@ -135,6 +135,10 @@ AppHolidayAdmin = (function($){
 			monthSelected = month;
 			yearSelected = year;
 			tableView.reload();
+			
+			var text = $("#"+month+"-month-template").html();
+			$("#dates-title").html(text+ " "+year);
+
 		},
 		render: function(){
 			return this;
