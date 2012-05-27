@@ -89,7 +89,7 @@ AppInvoiceMain = (function($){
 		
 		events:{
 			"change #organization-selector" : "loadProjects",
-			"change #organization-selector, #project-selector" : "refreshInvoices"
+			"change #status-selector, #organization-selector, #project-selector" : "refreshInvoices"
 		},
 		
 		initialize: function(){
@@ -194,8 +194,9 @@ AppInvoiceMain = (function($){
 			$.ajax({
 				type:"GET",
 				url:"/invoice/specific",
-				data:{organizationId : $('#organization-selector').val(), projectId : $('#project-selector').val()},
+				data:{organizationId : $('#organization-selector').val(), projectId : $('#project-selector').val(), status:$("#status-selector").val()},
 				success: function(data){
+					parent.table.clear();
 					if(data != null){
 						var dataInvoice = data.invoiceDTO;
 						if($.isArray(dataInvoice)){

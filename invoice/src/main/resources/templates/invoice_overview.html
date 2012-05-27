@@ -129,5 +129,13 @@
 			
 			</optgroup>
 		</select>
+		<div class="subtitle">{% i18n "status" %}</div>
+		<select id="status-selector">
+			<option value="-1">All</option>
+			<option value="0">{% i18n "invoice-pending" %}</option>
+			<option value="1">{% i18n "invoice-paid" %}</option>
+			<option value="2">{% i18n "invoice-unpaid" %}</option>
+			<option value="3">{% i18n "invoice-undefined" %}</option>
+		</select>
 	</div>
 {% endblock %}
