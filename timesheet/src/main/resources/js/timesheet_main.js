@@ -153,12 +153,23 @@ AppTimeSheet = (function($){
 			
 			// Initialize blocked days
 			dayStatus = new Object();
+			var atLeastOneNormal = false;
 			for (var i = 0 ; i < 7 ; i++){
 				if ((data.timeSheet != null) && (data.timeSheet.columns[i].day.validated == "true")){
 					dayStatus[i] = "validated";
 				} else {
 					dayStatus[i] = "normal";
+					atLeastOneNormal = true;
 				}
+			}
+			
+			// Hide or show the project selection
+			if (! atLeastOneNormal){
+				$("#project-select").hide();
+				$("#add-project-button").hide();
+			} else {
+				$("#project-select").show();
+				$("#add-project-button").show();
 			}
 			
 			if (data.timeSheet != null){
