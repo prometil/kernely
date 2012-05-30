@@ -1,7 +1,10 @@
 package org.kernely.invoice.controller;
 
+import java.math.BigDecimal;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -259,6 +262,22 @@ public class InvoiceController extends AbstractController{
 		InvoiceDTO invoiceDTO = invoiceService.getInvoiceById(invoiceId);
 		if(invoiceDTO != null){
 			Map<String, Object> map =new HashMap<String, Object>();
+			
+			// To Change with SOBA Filters !
+			
+			BigDecimal bd = new BigDecimal(invoiceDTO.amount);
+			bd=bd.setScale(2,BigDecimal.ROUND_HALF_EVEN);
+			invoiceDTO.amount = bd.floatValue();
+			bd = new BigDecimal(invoiceDTO.amountDf);
+			bd=bd.setScale(2,BigDecimal.ROUND_HALF_EVEN);
+			invoiceDTO.amountDf = bd.floatValue();
+			
+			for(VatDTO v : invoiceDTO.vats){
+				bd = new BigDecimal(v.amount);
+				bd=bd.setScale(2,BigDecimal.ROUND_HALF_EVEN);
+				v.amount = bd.floatValue();
+			}
+			
 			map.put("invoice", invoiceDTO);
 			return Response.ok(templateRenderer.render("templates/invoice.html", map)).build();
 		}

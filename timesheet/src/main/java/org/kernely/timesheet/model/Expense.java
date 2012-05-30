@@ -93,58 +93,5 @@ public class Expense extends AbstractModel {
 	public void setTimeSheetDay(TimeSheetDay timeSheetDay) {
 		this.timeSheetDay = timeSheetDay;
 	}
-
-	/* (non-Javadoc)
-	 * @see java.lang.Object#hashCode()
-	 */
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + Float.floatToIntBits(amount);
-		result = prime * result + ((comment == null) ? 0 : comment.hashCode());
-		result = prime * result + ((typeName == null) ? 0 : typeName.hashCode());
-		result = prime * result + Float.floatToIntBits(typeRatio);
-		return result;
-	}
-
-	/* (non-Javadoc)
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj) {
-			return true;
-		}
-		if (obj == null) {
-			return false;
-		}
-		if (getClass() != obj.getClass()) {
-			return false;
-		}
-		Expense other = (Expense) obj;
-		if (Float.floatToIntBits(amount) != Float.floatToIntBits(other.amount)) {
-			return false;
-		}
-		if (comment == null) {
-			if (other.comment != null) {
-				return false;
-			}
-		} else if (!comment.equals(other.comment)) {
-			return false;
-		}
-		if (typeName == null) {
-			if (other.typeName != null) {
-				return false;
-			}
-		} else if (!typeName.equals(other.typeName)) {
-			return false;
-		}
-		if (Float.floatToIntBits(typeRatio) != Float.floatToIntBits(other.typeRatio)) {
-			return false;
-		}
-		return true;
-	}
-
 	
 }

@@ -46,6 +46,8 @@
 	<script type="text/html" id="day-4-cell-template"><td class="text-bold-black">{% i18n "day_5_short" %}</td></script>
 	<script type="text/html" id="day-5-cell-template"><td class="text-bold-black">{% i18n "day_6_short" %}</td></script>
 	<script type="text/html" id="day-6-cell-template"><td class="text-bold-black">{% i18n "day_7_short" %}</td></script>
+	
+	<script type="text/html" id="too-high-expense">{% i18n "too-high-expense" %}</script>
 
 	<script type="text/html" id="last-week-projects-template">{% i18n "timesheet_last_week_projects" %}</script>
 	<script type="text/html" id="all-projects-template">{% i18n "timesheet_all_projects" %}</script>
@@ -57,7 +59,7 @@
 	</script>
 	
 	<script type="text/html" id="expense-window">
-		<span id="errors_message"></span>
+		<div id="errors_message"></div>
 		<fieldset>
 		<legend>{% i18n "expense-header-table" %}</legend>
 		<table id="expense-table" class="kernely_table">
@@ -79,7 +81,7 @@
 		</div>
 		</fieldset>
 		<div class="dialog-buttons-container">
-			<input type="button" value="{% i18n "close" %}" class="create_expense button_standard"/>
+			<input type="button" value="{% i18n "close" %}" class="create_expense button_emphasis"/>
 		</div>
 	</script>
 

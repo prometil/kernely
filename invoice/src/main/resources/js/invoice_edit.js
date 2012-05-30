@@ -149,14 +149,14 @@ AppInvoiceEdit = (function($){
 			this.description = description;
 			this.quantity = quantity;
 			this.unitPrice = unitPrice;
-			this.amount = amount;
+			this.amount = $.round(amount);
 			this.vat = vat;
 		},
 		deleteLine: function(){
 			$(this.el).remove();
 		},
 		processAmount: function(){
-			var amount = $(this.el).find(".quantity-field").val() * $(this.el).find(".unitprice-field").val();
+			var amount = $.round($(this.el).find(".quantity-field").val() * $(this.el).find(".unitprice-field").val());
 			$(this.el).find(".line-amount").text(amount);
 		},
 		render: function(){

@@ -265,7 +265,6 @@ AppHolidayUserRequest = (function($){
 				showOn: "both",
 				buttonImage: "/images/icons/calendar_icon.png",
 				buttonImageOnly: true,
-				defaultDate: "+1w",
 				changeMonth: false,
 				onSelect: function( selectedDate ) {
 					var option = this.id == "from" ? "minDate" : "maxDate",
