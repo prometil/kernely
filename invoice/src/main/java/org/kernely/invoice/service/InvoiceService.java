@@ -174,7 +174,7 @@ public class InvoiceService extends AbstractService{
 	 */
 	@SuppressWarnings("unchecked")
 	@Transactional
-	public List<InvoiceDTO> getInvoicesPerOrganizationAndProject(long organizationId, long projectId){
+	public List<InvoiceDTO> getInvoicesPerOrganizationAndProject(long organizationId, long projectId, int status){
 		Query request;
 		if(organizationId == 0){
 			if(userService.currentUserHasRole(Role.ROLE_BOOKKEEPER)){
@@ -237,7 +237,9 @@ public class InvoiceService extends AbstractService{
 		InvoiceDTO invoiceDTO;
 		for(Invoice i : invoices){
 			invoiceDTO = new InvoiceDTO(i);
-			invoicesDTO.add(invoiceDTO);
+			if(status == -1 || status == invoiceDTO.status){
+				invoicesDTO.add(invoiceDTO);
+			}
 		}
 		return invoicesDTO;
 	}

@@ -12,6 +12,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.kernely.controller.AbstractController;
+import org.kernely.holiday.dto.CalendarBalanceDetailDTO;
 import org.kernely.holiday.dto.HolidayRequestDTO;
 import org.kernely.holiday.dto.IntervalDTO;
 import org.kernely.holiday.model.HolidayRequest;
@@ -86,6 +87,10 @@ public class HolidayMainController extends AbstractController {
 		return lhr;
 	}
 	
+	/**
+	 * Retrieve the first and last year of all holiday request for the current user
+	 * @return A TimeInval containing first and last year
+	 */
 	@GET
 	@Path("/years")
 	@Produces({MediaType.APPLICATION_JSON})
@@ -105,6 +110,13 @@ public class HolidayMainController extends AbstractController {
 	public Response denyHoliday(@PathParam("id")int idRequest){
 		holidayRequestService.cancelRequest(idRequest);
 		return Response.ok().build(); 			
+	}
+	
+	@GET
+	@Path("/balances")
+	@Produces({MediaType.APPLICATION_JSON})
+	public List<CalendarBalanceDetailDTO> getBalanceSummary(){
+		return holidayRequestService.getBalanceSummaryForCurrentUser();
 	}
 	
 }

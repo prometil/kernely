@@ -1,7 +1,10 @@
 package org.kernely.invoice.controller;
 
+import java.math.BigDecimal;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -129,8 +132,8 @@ public class InvoiceController extends AbstractController{
 	@Path("/specific")
 	@RequiresRoles(value = {Role.ROLE_PROJECTMANAGER, Role.ROLE_BOOKKEEPER}, logical = Logical.OR)
 	@Produces({MediaType.APPLICATION_JSON})
-	public List<InvoiceDTO> getInvoicesPerOrganizationAndProject(@QueryParam("organizationId") long organizationId, @QueryParam("projectId") long projectId){
-		return invoiceService.getInvoicesPerOrganizationAndProject(organizationId, projectId);
+	public List<InvoiceDTO> getInvoicesPerOrganizationAndProject(@QueryParam("organizationId") long organizationId, @QueryParam("projectId") long projectId, @QueryParam("status") int status){
+		return invoiceService.getInvoicesPerOrganizationAndProject(organizationId, projectId, status);
 	}
 	
 	/**
@@ -259,6 +262,22 @@ public class InvoiceController extends AbstractController{
 		InvoiceDTO invoiceDTO = invoiceService.getInvoiceById(invoiceId);
 		if(invoiceDTO != null){
 			Map<String, Object> map =new HashMap<String, Object>();
+			
+			// To Change with SOBA Filters !
+			
+			BigDecimal bd = new BigDecimal(invoiceDTO.amount);
+			bd=bd.setScale(2,BigDecimal.ROUND_HALF_EVEN);
+			invoiceDTO.amount = bd.floatValue();
+			bd = new BigDecimal(invoiceDTO.amountDf);
+			bd=bd.setScale(2,BigDecimal.ROUND_HALF_EVEN);
+			invoiceDTO.amountDf = bd.floatValue();
+			
+			for(VatDTO v : invoiceDTO.vats){
+				bd = new BigDecimal(v.amount);
+				bd=bd.setScale(2,BigDecimal.ROUND_HALF_EVEN);
+				v.amount = bd.floatValue();
+			}
+			
 			map.put("invoice", invoiceDTO);
 			return Response.ok(templateRenderer.render("templates/invoice.html", map)).build();
 		}
@@ -315,34 +334,36 @@ public class InvoiceController extends AbstractController{
 	public Response updateInvoice(MultivaluedMap<String, String> formParams, @PathParam("invoiceId") long invoiceId){
 		InvoiceLineCreationRequestDTO lineRequest = new InvoiceLineCreationRequestDTO();
 		float amountCalculated = 0.0F;
-		for(int i = 0; i < formParams.get("designation-field[]").size(); i++){
-			String id = formParams.get("id-field[]").get(i);
-			if(id.equals("")){
-				lineRequest.id = 0;
-			}else{
-				lineRequest.id = Integer.parseInt(id);
-			}
-			String designation = formParams.get("designation-field[]").get(i);
-			String quantity = formParams.get("quantity-field[]").get(i);
-			String unitPrice = formParams.get("unitprice-field[]").get(i);
-			String vat = formParams.get("vat-field[]").get(i);
-			if(!designation.equals("")){
-				lineRequest.designation = designation;
-				if(quantity.equals("")){
-					lineRequest.quantity = 0.0F;
+		if(formParams.get("designation-field[]") != null){
+			for(int i = 0; i < formParams.get("designation-field[]").size(); i++){
+				String id = formParams.get("id-field[]").get(i);
+				if(id.equals("")){
+					lineRequest.id = 0;
 				}else{
-					lineRequest.quantity = Float.parseFloat(quantity);
+					lineRequest.id = Integer.parseInt(id);
 				}
-				if(unitPrice.equals("")){
-					lineRequest.unitPrice = 0.0F;
-				}else{
-					lineRequest.unitPrice = Float.parseFloat(unitPrice);
+				String designation = formParams.get("designation-field[]").get(i);
+				String quantity = formParams.get("quantity-field[]").get(i);
+				String unitPrice = formParams.get("unitprice-field[]").get(i);
+				String vat = formParams.get("vat-field[]").get(i);
+				if(!designation.equals("")){
+					lineRequest.designation = designation;
+					if(quantity.equals("")){
+						lineRequest.quantity = 0.0F;
+					}else{
+						lineRequest.quantity = Float.parseFloat(quantity);
+					}
+					if(unitPrice.equals("")){
+						lineRequest.unitPrice = 0.0F;
+					}else{
+						lineRequest.unitPrice = Float.parseFloat(unitPrice);
+					}
+					lineRequest.vat = Float.parseFloat(vat);
+					
+					lineRequest.invoiceId = invoiceId;
+					invoiceService.createOrUpdateInvoiceLine(lineRequest);
+					amountCalculated += (lineRequest.quantity * lineRequest.unitPrice)*(1 + (lineRequest.vat/100));
 				}
-				lineRequest.vat = Float.parseFloat(vat);
-				
-				lineRequest.invoiceId = invoiceId;
-				invoiceService.createOrUpdateInvoiceLine(lineRequest);
-				amountCalculated += (lineRequest.quantity * lineRequest.unitPrice)*(1 + (lineRequest.vat/100));
 			}
 		}
 		InvoiceCreationRequestDTO invoiceRequest = new InvoiceCreationRequestDTO();

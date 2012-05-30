@@ -89,7 +89,7 @@ AppInvoiceMain = (function($){
 		
 		events:{
 			"change #organization-selector" : "loadProjects",
-			"change #organization-selector, #project-selector" : "refreshInvoices"
+			"change #status-selector, #organization-selector, #project-selector" : "refreshInvoices"
 		},
 		
 		initialize: function(){
@@ -194,18 +194,21 @@ AppInvoiceMain = (function($){
 			$.ajax({
 				type:"GET",
 				url:"/invoice/specific",
-				data:{organizationId : $('#organization-selector').val(), projectId : $('#project-selector').val()},
+				data:{organizationId : $('#organization-selector').val(), projectId : $('#project-selector').val(), status:$("#status-selector").val()},
 				success: function(data){
+					parent.table.clear();
 					if(data != null){
 						var dataInvoice = data.invoiceDTO;
 						if($.isArray(dataInvoice)){
 							$.each(dataInvoice, function(){
+								this.amount = $.round(this.amount);
 								this.status = '<span id="'+this.id+'">' + $("#invoice-status-"+this.status).html() + '<span>';
 								this.buttonView = '<a href="/invoice/'+this.id+'/view">'+ $("#invoice-view-button").html() + '</a>';
 								this.buttonEdit = '<a href="/invoice/'+this.id+'/edit">'+ $("#invoice-edit-button").html() + '</a>';
 							});
 						}
 						else{
+							dataInvoice.amount = $.round(dataInvoice.amount);
 							dataInvoice.status = '<span id="'+this.id+'">' + $("#invoice-status-"+dataInvoice.status).html() + '<span>';
 							dataInvoice.buttonView = '<a href="/invoice/'+dataInvoice.id+'/view">'+ $("#invoice-view-button").html() + '</a>';
 							dataInvoice.buttonEdit = '<a href="/invoice/'+dataInvoice.id+'/edit">'+ $("#invoice-edit-button").html() + '</a>';

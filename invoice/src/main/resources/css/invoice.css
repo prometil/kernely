@@ -44,14 +44,15 @@ div.separator-top-25{
 }
 
 #organization-selector, #organization-selector option,
-#project-selector, #project-selector option{
+#project-selector, #project-selector option,
+#status-selector, #status-selector option{
 	cursor:pointer;
 }
 #organization-selector-mod, #project-selector-mod{
 	width:100%;
 }
 
-#project-selector, #organization-selector{
+#project-selector, #organization-selector, #status-selector{
 	width:100%;
 	height:20px;
 	border:1px solid #b1b3b3;

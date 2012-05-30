@@ -762,7 +762,7 @@ AppTimeSheet = (function($){
 				}
 				else{
 					if (parent.totals[i] != null){
-						$(parent.el).append(new TimeSheetExpenseCellView(parent.days[i], parent.totals[i].total).render().el);
+						$(parent.el).append(new TimeSheetExpenseCellView(parent.days[i], $.round(parent.totals[i].total)).render().el);
 					}
 				}
 				
@@ -895,11 +895,10 @@ AppTimeSheet = (function($){
 	
 		initialize: function(id, amount, typeName, typeRatio, comment){
             this.vid = id;
-            this.vamount = amount;
+            this.vamount = $.round(amount);
             this.vtypename = typeName;
             this.vtyperatio = typeRatio;
             this.vcomment = comment;
-            mainView.reloadCalendar(weekSelected, yearSelected);
 		},
 		
 		edit: function(){
@@ -937,36 +936,42 @@ AppTimeSheet = (function($){
 		
 		update: function(){
 			var parent = this;
-			var json = '{"id":"'+ this.vid +'", "amount":"' + $('input[name*="amount-update"]').val() + '",';
-			if($("#expense-type-select-update option:selected").val() == 0){
-				json += '"expenseTypeId" : "0", "typeName":"' + this.vtypename + '", "comment":"' + $('#expense-comment').val() +'", "typeRatio":"'+ this.vtyperatio +'", "timesheetDayId":"' + tableExpenseView.idDay + '"}';
+			var amountWithoutSpace = ($('input[name*="amount-update"]').val()).split(' ').join('');
+			if(amountWithoutSpace < 100000){
+				var json = '{"id":"'+ this.vid +'", "amount":"' + amountWithoutSpace + '",';
+				if($("#expense-type-select-update option:selected").val() == 0){
+					json += '"expenseTypeId" : "0", "typeName":"' + this.vtypename + '", "comment":"' + $('#expense-comment').val() +'", "typeRatio":"'+ this.vtyperatio +'", "timesheetDayId":"' + tableExpenseView.idDay + '"}';
+				}
+				else{
+					json += '"expenseTypeId" : "' + $("#expense-type-select-update option:selected").val() + '", "timesheetDayId":"' + tableExpenseView.idDay + '"}';
+				}	
+				
+				$.ajax({
+					type: "POST",
+					url:"/expense/create",
+					data:json,
+					dataType:"json",
+					contentType: "application/json; charset=utf-8",
+					processData: false,
+					success: function(data){
+						parent.vid = data.id;
+						parent.vamount = $.round(data.amount);
+						parent.vtypename = data.typeName;
+						parent.vtyperatio = data.typeRatio;
+						
+						var template = '<td>{{amount}} &euro;</td><td>{{typeName}}</td><td class="text-center"><img class="editLine" src="/images/icons/edit_icon.png"/></td><td class="text-center"><img class="deleteLine" src="/images/icons/delete_icon.png"/></td>';
+			            var view = {amount : parent.vamount, typeName: parent.vtypename};
+			            var html = Mustache.to_html(template, view);
+			            $("#expense-comment").val("");
+			            $('#expense-comment').attr("disabled","disabled");
+			            $(parent.el).html(html);
+			            expense.setTotals();
+					}
+				});
 			}
 			else{
-				json += '"expenseTypeId" : "' + $("#expense-type-select-update option:selected").val() + '", "timesheetDayId":"' + tableExpenseView.idDay + '"}';
-			}	
-			
-			$.ajax({
-				type: "POST",
-				url:"/expense/create",
-				data:json,
-				dataType:"json",
-				contentType: "application/json; charset=utf-8",
-				processData: false,
-				success: function(data){
-					parent.vid = data.id;
-					parent.vamount = data.amount;
-					parent.vtypename = data.typeName;
-					parent.vtyperatio = data.typeRatio;
-					
-					var template = '<td>{{amount}} &euro;</td><td>{{typeName}}</td><td class="text-center"><img class="editLine" src="/images/icons/edit_icon.png"/></td><td class="text-center"><img class="deleteLine" src="/images/icons/delete_icon.png"/></td>';
-		            var view = {amount : parent.vamount, typeName: parent.vtypename};
-		            var html = Mustache.to_html(template, view);
-		            $("#expense-comment").val("");
-		            $('#expense-comment').attr("disabled","disabled");
-		            $(parent.el).html(html);
-		            mainView.reloadCalendar(weekSelected, yearSelected);
-				}
-			});
+				$.writeMessage("error", $("#too-high-expense").text(), "#errors_message");
+			}
 		},
 		
 		delete: function(){
@@ -982,7 +987,7 @@ AppTimeSheet = (function($){
 				data:{idExpense: parent.vid},
 				success: function(){
 					$(parent.el).remove();
-					mainView.reloadCalendar(weekSelected, yearSelected);
+		            expense.setTotals();
 				}
 			});
 		},
@@ -1011,20 +1016,29 @@ AppTimeSheet = (function($){
 		},
 		
 		registerExpense: function(){
-
-			var json = '{"id":"0", "amount":"' + $('input[name*="amount"]').val() + '", "comment":"' + $('#expense-comment').val() + '", "expenseTypeId" : "' + $("#expense-type-select option:selected").val() + '", "timesheetDayId":"' + this.idDay + '"}';
-			$.ajax({
-				type: "POST",
-				url:"/expense/create",
-				data:json,
-				dataType:"json",
-				contentType: "application/json; charset=utf-8",
-				processData: false,
-				success: function(data){
-					timeSheetId = data.associatedTimeSheetId;
-					$(tableExpenseView.el).append(new ExpenseTableLineView(data.id, data.amount, data.typeName, data.typeRatio).render().el);
-				}
-			});
+			var amountWithoutSpace = ($('input[name*="amount"]').val()).split(' ').join('');
+			if(amountWithoutSpace < 100000){
+			
+				var json = '{"id":"0", "amount":"' + amountWithoutSpace + '", "comment":"' + $('#expense-comment').val() + '", "expenseTypeId" : "' + $("#expense-type-select option:selected").val() + '", "timesheetDayId":"' + this.idDay + '"}';
+				$.ajax({
+					type: "POST",
+					url:"/expense/create",
+					data:json,
+					dataType:"json",
+					contentType: "application/json; charset=utf-8",
+					processData: false,
+					success: function(data){
+						timeSheetId = data.associatedTimeSheetId;
+						$(tableExpenseView.el).append(new ExpenseTableLineView(data.id, data.amount, data.typeName, data.typeRatio).render().el);
+						$('input[name*="amount"]').val("");
+						$('input[name*="amount"]').focus();
+			            expense.setTotals();
+					}
+				});
+			}
+			else{
+				$.writeMessage("error", $("#too-high-expense").text(), "#errors_message");
+			}
 		},
 		
 		render: function(){

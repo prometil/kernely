@@ -26,6 +26,17 @@ $.extend({
     	$(vdiv).fadeOut(3000);
 	},
 	
+	round: function(num, dec){
+		var decimal;
+		if(dec == null){
+			decimal = 2;
+		}
+		else{
+			decimal = dec;
+		}
+		return (Math.round(num*Math.pow(10,decimal))/Math.pow(10,decimal)).toFixed(decimal);
+	},
+	
 	// Create a dialog
 		// content : the id of the template of the dialog
 		// h : height
