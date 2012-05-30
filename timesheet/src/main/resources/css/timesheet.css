@@ -32,6 +32,15 @@ table.timesheet-table td{
 	vertical-align:middle;
 }
 
+td.day-validated{
+	cursor:default;
+	background-color:#E3E4E4;
+}
+
+td.day-validated span{
+	cursor:default;
+}
+
 table.timesheet-table tr.date-line td{
 	background-color:#e3e4e4;
 	font-weight:bold;	

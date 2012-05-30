@@ -355,5 +355,4 @@ public class TimeSheetServiceTest extends AbstractServiceTest {
 		assertEquals(new DateTime().withDayOfMonth(26).withMonthOfYear(12).withYear(2011).toDateMidnight().toDate(),monthReport.calendars.get(0).dates.get(0));
 		assertEquals(new DateTime().withDayOfMonth(5).withMonthOfYear(2).withYear(2012).toDateMidnight().toDate(),monthReport.calendars.get(5).dates.get(6));
 	}
-
 }

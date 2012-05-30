@@ -33,6 +33,10 @@ public class TimeSheetDayDTO {
 	 */
 	public long timeSheetId;
 	
+	/**
+	 * If the belongs to a validated timesheet.
+	 */
+	public boolean validated;
 	
 	/**
 	 * Default constructor
@@ -40,13 +44,14 @@ public class TimeSheetDayDTO {
 	public TimeSheetDayDTO(){}
 
 	/**
-	 * Construct a DTO based on a model of TimeSheetDetail
-	 * @param detail The model to represent in this DTO
+	 * Construct a DTO based on a model of TimeSheetDay
+	 * @param day The model to represent in this DTO
 	 */
-	public TimeSheetDayDTO(TimeSheetDay detail){
-		this.id = detail.getId();
-		this.day = detail.getDay();
+	public TimeSheetDayDTO(TimeSheetDay day){
+		this.id = day.getId();
+		this.day = day.getDay();
 		this.dayString = new DateTime(this.day).toString("MM/dd/yyyy");
-		this.timeSheetId = detail.getTimeSheet().getId();
+		this.timeSheetId = day.getTimeSheet().getId();
+		this.validated = day.getStatus() == TimeSheetDay.DAY_VALIDATED;
 	}
 }

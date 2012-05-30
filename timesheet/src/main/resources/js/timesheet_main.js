@@ -18,6 +18,7 @@ AppTimeSheet = (function($){
 	var timeSheetId = 0;
 	var allProjectsList = 0;
 	var lastWeekProjectsIdList = 0;
+	var dayStatus = null;
 	
 	var tableExpenseView = null;
 	var expense = null;
@@ -97,6 +98,7 @@ AppTimeSheet = (function($){
 						url:"/timesheet/calendar",
 						data:{week:weekSelected, year:yearSelected},
 						success: function(data){
+							
 							// Set last week projects in combobox
 							var label = $("#last-week-projects-template").html();
 							
@@ -148,6 +150,17 @@ AppTimeSheet = (function($){
 		},
 		initialize: function(data){
 			this.data = data;
+			
+			// Initialize blocked days
+			dayStatus = new Object();
+			for (var i = 0 ; i < 7 ; i++){
+				if ((data.timeSheet != null) && (data.timeSheet.columns[i].day.validated == "true")){
+					dayStatus[i] = "validated";
+				} else {
+					dayStatus[i] = "normal";
+				}
+			}
+			
 			if (data.timeSheet != null){
 				timeSheetId = data.timeSheet.id;
 			} else {
@@ -283,7 +296,6 @@ AppTimeSheet = (function($){
 							if (this.data.timeSheet.columns[column].timeSheetDetails != null){
 								if (this.data.timeSheet.columns[column].timeSheetDetails.length == null){
 									if (this.data.timeSheet.columns[column].timeSheetDetails.projectId == id){
-										// The detail matches the project id
 										timeSheetDetails.push(this.data.timeSheet.columns[column].timeSheetDetails);
 										projectName = this.data.timeSheet.columns[column].timeSheetDetails.projectName;
 									}
@@ -327,6 +339,7 @@ AppTimeSheet = (function($){
 							}
 						}
 					}
+					
 					parent.addRow(projectName, id, timeSheetDetails, false);
 				}
 				
@@ -349,7 +362,6 @@ AppTimeSheet = (function($){
 		initialize: function(projectName, projectId, timeSheetDays, days, empty){
 			allProjectRows[projectId] = this;
 			allDayCells[projectId] = this;
-			
 			
 			this.projectId = projectId;
 			this.projectName = projectName;
@@ -398,7 +410,6 @@ AppTimeSheet = (function($){
 			} else {
 				// Create a td for each day
 				for (var i = 0 ; i < 7 ; i++){
-
 					var found  = false;
 					// Search for an existing timeSheetDay
 					if(! $.isArray(timeSheetDays)){
@@ -536,6 +547,11 @@ AppTimeSheet = (function($){
 		initialize: function(index, amount, day, projectId, dayId){
 			lastClicked = this;
 			
+			// Change display of the cell if the day has been validated
+			if (dayStatus[index] == "validated"){
+				$(this.el).addClass("day-validated");
+			}
+						
 			this.index = index;
 			this.amount = amount;
 			this.day = day;
@@ -549,7 +565,9 @@ AppTimeSheet = (function($){
 		},
 		
 		displayIcon: function(){
-			$(this.el).find(".editButton").show();
+			if (dayStatus[this.index] != "validated"){
+				$(this.el).find(".editButton").show();
+			}
 		},
 		
 		hideIcon: function(){
@@ -557,7 +575,7 @@ AppTimeSheet = (function($){
 		},
 		
 		increment : function(event){
-			if (! this.editMode){
+			if (! this.editMode && (dayStatus[this.index] != "validated")){
 				
 				var parent = this;
 				if(currentCellPickerSelected != null){

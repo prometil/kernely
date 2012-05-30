@@ -100,6 +100,7 @@ AppHolidayManagerRequest = (function($){
 					if(data != null){
 						var dataRequest = data.holidayRequestDTO;
 						if($.isArray(dataRequest)){
+
 							$.each(dataRequest, function(){
 								this.acceptButton = "<img class='accept clickable' src='/images/icons/rights_icon.png' />";
 								this.denyButton = "<img class='deny clickable' src='/images/icons/delete_icon.png' />";
@@ -111,8 +112,8 @@ AppHolidayManagerRequest = (function($){
 							dataRequest.denyButton = "<img class='deny clickable' src='/images/icons/delete_icon.png' />";
 							dataRequest.visualizeButton = "<img class='visualize clickable' src='/images/icons/visualize_icon.png' />";
 						}
-						parent.table.reload(dataRequest);
 					}
+					parent.table.reload(dataRequest);
 				}
 			});
 			return this;
