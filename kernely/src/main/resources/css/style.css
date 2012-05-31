@@ -466,6 +466,11 @@ div.button-bar {
 	background-color:#e3e4e4;
 	color:#000;
 }
+.button_standard[disabled]{
+	background-color:#F6F6F6;
+	color:#e3e4e4;
+	cursor:default;
+}
 
 
 .button_emphasis:hover{
