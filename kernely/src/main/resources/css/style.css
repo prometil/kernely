@@ -637,6 +637,10 @@ table.kernely_table th{
 	table-layout:fixed;
 }
 
+.user-help{
+	background-color:#e8f3f7 !important;
+}
+
 /* Dialogs */
 fieldset{
 	padding: 10px 0 10px 0;

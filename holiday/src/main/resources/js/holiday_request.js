@@ -64,7 +64,7 @@ AppHolidayRequest = (function($){
 			var parent = this;
 			var json = "";
 			// Build the json request
-			json += '{"requesterComment" : "' + $("#requester-comment").val() + '","details":[';
+			json += '{"requesterComment" : "' + $("#requester-comment").val().replace('\n', "\\n") + '","details":[';
 			$.each(allDayCells, function(){
 				if(this.isSelected){
 					json += '{"day":"'+ this.day +'",';
@@ -104,6 +104,7 @@ AppHolidayRequest = (function($){
 		},
 		
 		render: function(){
+			$(this.el).empty();
 			var parent = this;
 			var view = null;
 			
@@ -338,6 +339,8 @@ AppHolidayRequest = (function($){
 			
 		},
 		render: function(){
+			$("#limited-balances").empty();
+			$("#unlimited-balances").empty();
 			var parent = this;
 			
 			if(this.data.details != null && this.data.details.length > 1){

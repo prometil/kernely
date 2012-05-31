@@ -17,6 +17,7 @@ AppHolidayUserRequest = (function($){
 			tableView1 = new HolidayUserRequestPendingTableView().render();
 			new HolidayUserYearContainerView();
 			buttonView = new HolidayUserButtonsView().render();
+			new HolidayCancelButtonView();
 			$.ajax({
 				type: 'GET',
 				url:"/holiday/balances",
@@ -220,6 +221,9 @@ AppHolidayUserRequest = (function($){
 						}
 						parent.table.reload(dataRequest);
 					}
+					else{
+						parent.table.clear();
+					}
 				}
 			});
 			return this;
@@ -246,7 +250,6 @@ AppHolidayUserRequest = (function($){
 		},
 		
 		events: {
-			"click #button_canceled" : "canceled",
 			"click #new_request" : "newRequest"
 		},
 		
@@ -286,8 +289,17 @@ AppHolidayUserRequest = (function($){
 		newRequest : function(){
 			$(this.formRequest).kernely_dialog( "open" );
 
-		},
+		}		
 		
+	})
+	
+	HolidayCancelButtonView = Backbone.View.extend({
+		el:"#button_canceled",
+		
+		events: {
+			"click" : "canceled"
+		},
+	
 		canceled:function(){
 			var template = $("#cancel-ask-template").html();
 			var view = {};
@@ -295,17 +307,20 @@ AppHolidayUserRequest = (function($){
 			
 			$.kernelyConfirm($("#holiday-cancel-template").text(),html,this.confirmCancel);
 		},
+		
 		confirmCancel: function(){
+			parent = this;
 			$.ajax({
 				url:"/holiday/cancel/" + lineSelected,
 				success: function(){
 					var successHtml = $("#holiday-canceled-template").html();	
 					$.writeMessage("success",successHtml);
 					tableView1.reload();
-					$("#button_canceled").attr('disabled','disabled');
+					$(parent.el).attr('disabled','disabled');
 				}
 			});
 		}
+	
 		
 	})
 	

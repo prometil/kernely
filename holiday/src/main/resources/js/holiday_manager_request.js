@@ -188,6 +188,9 @@ AppHolidayManagerRequest = (function($){
 						}
 						parent.table.reload(dataRequest);
 					}
+					else{
+						parent.table.clear();
+					}
 				}
 			});
 			return this;
@@ -234,6 +237,7 @@ AppHolidayManagerRequest = (function($){
 							$(parent.el).kernely_dialog("close");
 							var successHtml = $("#holiday-accept-template").html();				
 							$.writeMessage("success",successHtml);
+							$("#comment_accept").val("");
 							tableView1.reload();
 							tableView2.reload();
 						}
@@ -286,8 +290,9 @@ AppHolidayManagerRequest = (function($){
 						dataType: "json",
 						success : function(){
 							$(parent.el).kernely_dialog("close");
-							var successHtml = $("#holiday-accept-template").html();				
+							var successHtml = $("#holiday-deny-template").html();				
 							$.writeMessage("success",successHtml);
+							$("#comment_deny").val("");
 							tableView1.reload();
 							tableView2.reload();
 						}

@@ -114,6 +114,7 @@ public class KernelyServletModule extends JerseyServletModule {
 		serve("*.css").with(MediaServlet.class);
 		serve("*.png").with(MediaServlet.class);
 		serve("*.jpg").with(MediaServlet.class);
+		serve("*.gif").with(MediaServlet.class);
 		serve("/*").with(GuiceContainer.class);
 
 		bindListener(Matchers.any(), new TypeListener() {
