@@ -5,6 +5,17 @@
     "author": "kernely.org",
     "description": "Invoice plugin",
     "configuration": 
-        { "vat": "19.6,5.5" 
+        { "vat": "19.6,5.5",
+          "company.invoice" : "Facture",
+          "company.creditnote" : "Avoir",
+          "company.catchword" : "",
+          "company.designation" : "Sarl PROMETIL au capital de 31000 euros",
+          "company.address" : "42 avenue du Général de Croutte 31100",
+          "company.phoneNumber" : "Tel : 05.62.87.52.42    Site internet : www.prometil.com",
+          "company.APE" : "Code APE : 6202A",
+          "company.SIRET" : "N° SIRET : 499 340 834 00013",
+          "company.TVAInterCom" : "N° TVA inter communautaire : FR07499340834",
+          "company.beforedate" : "Avant le : "
     }
+    
 }

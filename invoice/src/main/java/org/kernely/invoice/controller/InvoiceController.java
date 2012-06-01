@@ -1,10 +1,10 @@
 package org.kernely.invoice.controller;
 
+import java.io.IOException;
+import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -17,9 +17,11 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.StreamingOutput;
 import javax.ws.rs.core.UriBuilder;
 
 import org.apache.shiro.authz.annotation.Logical;
@@ -32,6 +34,7 @@ import org.kernely.invoice.dto.InvoiceDTO;
 import org.kernely.invoice.dto.InvoiceLineCreationRequestDTO;
 import org.kernely.invoice.dto.InvoiceLineDTO;
 import org.kernely.invoice.dto.VatDTO;
+import org.kernely.invoice.service.ExportManager;
 import org.kernely.invoice.service.InvoiceService;
 import org.kernely.menu.Menu;
 import org.kernely.project.dto.OrganizationDTO;
@@ -50,6 +53,9 @@ public class InvoiceController extends AbstractController{
 
 	@Inject
 	private InvoiceService invoiceService;
+
+	@Inject
+	private ExportManager exportManager;
 	
 	@Inject
 	private OrganizationService organizationService;
@@ -62,6 +68,7 @@ public class InvoiceController extends AbstractController{
 	
 	@Inject
 	private SobaTemplateRenderer templateRenderer; 
+	
 	
 	/**
 	 * Retrieves the main page of the invoice
@@ -387,5 +394,26 @@ public class InvoiceController extends AbstractController{
 	@Produces({MediaType.APPLICATION_JSON})
 	public List<VatDTO> getVat(){
 		return invoiceService.getVAT();
+	}
+	
+	@GET
+	@Path("/{invoiceId}/export")
+	@Produces({"application/pdf"})
+	@RequiresRoles(value = {Role.ROLE_PROJECTMANAGER, Role.ROLE_BOOKKEEPER}, logical = Logical.OR)
+	public StreamingOutput exportToPdf(@PathParam("invoiceId") final long invoiceId){
+		try {
+		    return new StreamingOutput() {
+		        public void write(OutputStream output) throws IOException, WebApplicationException {
+	    			try {
+						exportManager.exportInvoiceToPdf(invoiceId, output);
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+		        }
+		    };
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 }
