@@ -144,19 +144,19 @@ AppTimeSheetMonth = (function($){
 					rowTotal += parseFloat(allDayCells[projectId][i].amount);
 				}
 			}
-			this.rowsTotals[projectId] = rowTotal;
+			this.rowsTotals[projectId] = rowTotal.toFixed(2);
 			for (var project in allDayCells){
 				if (allDayCells[project] != null){
 					columnTotal += parseFloat(allDayCells[project][index].amount);
 				}
 			}
-			this.columnsTotals[index] = columnTotal;
+			this.columnsTotals[index] = columnTotal.toFixed(2);
 			
 			// Actualize the row total
-			allProjectRows[projectId].actualizeTotal(rowTotal);
+			allProjectRows[projectId].actualizeTotal(rowTotal.toFixed(2));
 
 			// Actualize the column total
-			$("#columnTotalsRow-"+this.calendarIndex).find("td").eq(parseInt(parseInt(index)+1)).html(columnTotal);
+			$("#columnTotalsRow-"+this.calendarIndex).find("td").eq(parseInt(parseInt(index)+1)).html(columnTotal.toFixed(2));
 			
 			this.calculateTimeSheetTotal();
 			

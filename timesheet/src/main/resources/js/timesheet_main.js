@@ -219,19 +219,19 @@ AppTimeSheet = (function($){
 					rowTotal += parseFloat(allDayCells[projectId][i].amount);
 				}
 			}
-			this.rowsTotals[projectId] = rowTotal;
+			this.rowsTotals[projectId] = rowTotal.toFixed(2);
 			for (var project in allDayCells){
 				if (allDayCells[project] != null){
 					columnTotal += parseFloat(allDayCells[project][index].amount);
 				}
 			}
-			this.columnsTotals[index] = columnTotal;
+			this.columnsTotals[index] = columnTotal.toFixed(2);
 
 			// Actualize the row total
-			allProjectRows[projectId].actualizeTotal(rowTotal);
+			allProjectRows[projectId].actualizeTotal(rowTotal.toFixed(2));
 
 			// Actualize the column total
-			$("#columnTotalsRow").find("td").eq(parseInt(parseInt(index)+1)).html(columnTotal);
+			$("#columnTotalsRow").find("td").eq(parseInt(parseInt(index)+1)).html(columnTotal.toFixed(2));
 			
 			this.calculateTimeSheetTotal();
 			
@@ -262,9 +262,9 @@ AppTimeSheet = (function($){
 		calculateTimeSheetTotal: function(){
 			var total = 0;
 			for (var i = 0; i < 7 ; i++){
-				total += this.columnsTotals[i];
+				total += parseFloat(this.columnsTotals[i]);
 			}
-			$("#columnTotalsRow").find("td").eq(8).html(total);
+			$("#columnTotalsRow").find("td").eq(8).html(total.toFixed(2));
 
 		},
 		
@@ -595,10 +595,11 @@ AppTimeSheet = (function($){
 					var val = parseFloat(this.amount) + parseFloat(currentCellPickerSelected.amount);
 					var newTotalColumn = totalColumn + val - this.amount;
 					
+					
 					// Limitation considering the column
 					if (newTotalColumn > MAX_VALUE){
 						if (val > this.amount){
-							this.amount = parseFloat(this.amount) + (MAX_VALUE - totalColumn);
+							this.amount = parseFloat(parseFloat(this.amount) + parseFloat(MAX_VALUE) - parseFloat(totalColumn)).toFixed(2);
 						}
 					} else {
 						this.amount = val;
@@ -650,11 +651,14 @@ AppTimeSheet = (function($){
 				if (val < 0){
 					val = 0;
 				}
-				var newTotalColumn = totalColumn + val - this.amount;
+				val = val.toFixed(2);
+				
+				var newTotalColumn = parseFloat(totalColumn) + parseFloat(val) - parseFloat(this.amount);
+
 				// Limitation considering the column
 				if (newTotalColumn > MAX_VALUE){
 					if (val > this.amount){
-						this.amount += (MAX_VALUE - totalColumn);
+						this.amount = parseFloat(this.amount) + parseFloat(MAX_VALUE) - parseFloat(totalColumn);
 					}
 				} else {
 					this.amount = val;

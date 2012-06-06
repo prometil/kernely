@@ -46,7 +46,6 @@ import org.kernely.service.mail.Mailer;
 import org.kernely.template.TemplateRenderer;
 import org.kernely.template.helpers.SobaI18n;
 import org.quartz.DateBuilder;
-import org.quartz.DateBuilder.IntervalUnit;
 import org.quartz.ScheduleBuilder;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
@@ -54,6 +53,7 @@ import org.quartz.SchedulerFactory;
 import org.quartz.SimpleScheduleBuilder;
 import org.quartz.Trigger;
 import org.quartz.TriggerBuilder;
+import org.quartz.DateBuilder.IntervalUnit;
 import org.quartz.impl.StdSchedulerFactory;
 
 import soba.SobaEngine;

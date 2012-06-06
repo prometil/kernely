@@ -12,8 +12,7 @@
 	<div id="invoice-visualization">
 		<!-- Invoice button bar -->
 		<div id="invoicing-buttons-bar">
-			<input type="button" class="button_emphasis" id="edit-invoice" value="{% i18n "back-to-invoice-list" %}" onClick="window.location = '/invoice';"/>
-			<input type="button" class="button_emphasis" id="export-invoice" value="{% i18n "export" %}"/>
+			<input type="button" class="button_emphasis" id="export-invoice" value="{% i18n "export" %}" onClick="window.location = '/invoice/{{invoice.id}}/export';"/>
 			<input type="button" class="button_emphasis" id="edit-invoice" value="{% i18n "edit" %}" onClick="window.location = '/invoice/{{invoice.id}}/edit';"/>
 		</div>
 		<!-- Invoice header -->
