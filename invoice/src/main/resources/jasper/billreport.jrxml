@@ -203,7 +203,7 @@
 	<detail>
 		<band height="20" splitType="Prevent">
 			<rectangle>
-				<reportElement key="rectangle" stretchType="RelativeToBandHeight" mode="Opaque" x="0" y="0" width="325" height="20"/>
+				<reportElement key="rectangle" stretchType="RelativeToBandHeight" mode="Opaque" x="0" y="0" width="275" height="20"/>
 			</rectangle>
 			<rectangle>
 				<reportElement key="rectangle" stretchType="RelativeToBandHeight" x="275" y="0" width="50" height="20"/>
@@ -214,16 +214,16 @@
 			<rectangle>
 				<reportElement key="rectangle" stretchType="RelativeToBandHeight" x="405" y="0" width="100" height="20"/>
 			</rectangle>
+			<rectangle>
+				<reportElement key="rectangle" stretchType="RelativeToBandHeight" x="505" y="0" width="50" height="20"/>
+			</rectangle>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement key="textField" x="5" y="0" width="320" height="20"/>
+				<reportElement key="textField" x="5" y="0" width="270" height="20"/>
 				<textElement verticalAlignment="Middle">
 					<font size="12" pdfFontName="Times-Roman"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{designation}]]></textFieldExpression>
 			</textField>
-			<rectangle>
-				<reportElement key="rectangle" positionType="FixRelativeToBottom" x="505" y="0" width="50" height="20"/>
-			</rectangle>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement key="textField" x="275" y="0" width="50" height="20"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
