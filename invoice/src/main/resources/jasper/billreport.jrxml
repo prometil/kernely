@@ -39,14 +39,19 @@
 	<parameter name="company_SIRET" class="java.lang.String" isForPrompting="false"/>
 	<parameter name="company_TVAInterCom" class="java.lang.String" isForPrompting="false"/>
 	<parameter name="comments" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["/home/jerome/Bureau/kernely/kernely/invoice/src/main/resources/jasper/"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="path_subReport1" class="java.lang.String"/>
+	<parameter name="vatList" class="java.util.Collection"/>
 	<field name="designation" class="java.lang.String">
 		<fieldDescription><![CDATA[designation]]></fieldDescription>
 	</field>
 	<field name="up" class="java.lang.String">
-		<fieldDescription><![CDATA[pu]]></fieldDescription>
+		<fieldDescription><![CDATA[up]]></fieldDescription>
 	</field>
 	<field name="qty" class="java.lang.String">
-		<fieldDescription><![CDATA[qte]]></fieldDescription>
+		<fieldDescription><![CDATA[qty]]></fieldDescription>
 	</field>
 	<field name="totalLine" class="java.lang.String">
 		<fieldDescription><![CDATA[totalLine]]></fieldDescription>
@@ -139,7 +144,7 @@
 				<textElement verticalAlignment="Middle">
 					<font size="12" isBold="true" isItalic="true" pdfFontName="Times-BoldItalic"/>
 				</textElement>
-				<text><![CDATA[DESIGNATION]]></text>
+				<text><![CDATA[DESIGNATIONS]]></text>
 			</staticText>
 			<textField isBlankWhenNull="true">
 				<reportElement key="textField" x="269" y="20" width="281" height="20"/>
@@ -196,7 +201,7 @@
 		</band>
 	</columnHeader>
 	<detail>
-		<band height="20" splitType="Stretch">
+		<band height="20" splitType="Prevent">
 			<rectangle>
 				<reportElement key="rectangle" stretchType="RelativeToBandHeight" mode="Opaque" x="0" y="0" width="325" height="20"/>
 			</rectangle>
@@ -250,27 +255,46 @@
 		</band>
 	</detail>
 	<columnFooter>
-		<band height="207" splitType="Stretch">
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="71" splitType="Stretch">
+			<textField isBlankWhenNull="true">
+				<reportElement key="textField-6" x="0" y="8" width="555" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="11" isBold="true" pdfFontName="Times-Bold"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{company_designation}+" "+$P{company_address}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement key="textField-7" x="0" y="28" width="555" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="11" isBold="true" isItalic="true" pdfFontName="Times-BoldItalic"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{company_phoneNumber}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement key="textField-8" x="0" y="46" width="555" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="11" isBold="false" pdfFontName="Times-Roman"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{company_APE}+" "+$P{company_SIRET}+" "+$P{company_TVAInterCom}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band height="223" splitType="Stretch">
 			<rectangle>
-				<reportElement key="rectangle" positionType="Float" x="0" y="40" width="455" height="20"/>
+				<reportElement key="rectangle" positionType="Float" x="455" y="56" width="100" height="20"/>
 			</rectangle>
 			<rectangle>
-				<reportElement key="rectangle" positionType="Float" x="455" y="40" width="100" height="20"/>
+				<reportElement key="rectangle" positionType="Float" x="0" y="96" width="455" height="20" backcolor="#97A6AA"/>
 			</rectangle>
 			<rectangle>
-				<reportElement key="rectangle" positionType="Float" x="0" y="60" width="455" height="20"/>
-			</rectangle>
-			<rectangle>
-				<reportElement key="rectangle" positionType="Float" x="455" y="60" width="100" height="20"/>
-			</rectangle>
-			<rectangle>
-				<reportElement key="rectangle" positionType="Float" x="0" y="80" width="455" height="20" backcolor="#97A6AA"/>
-			</rectangle>
-			<rectangle>
-				<reportElement key="rectangle" positionType="Float" x="455" y="80" width="100" height="20" backcolor="#97A6AA"/>
+				<reportElement key="rectangle" positionType="Float" x="455" y="96" width="100" height="20" backcolor="#97A6AA"/>
 			</rectangle>
 			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
-				<reportElement key="textField-9" positionType="Float" isPrintRepeatedValues="false" mode="Transparent" x="0" y="0" width="555" height="40" isRemoveLineWhenBlank="true"/>
+				<reportElement key="textField-9" positionType="Float" isPrintRepeatedValues="false" mode="Transparent" x="0" y="8" width="555" height="40" isRemoveLineWhenBlank="true"/>
 				<box topPadding="4" leftPadding="2" bottomPadding="4" rightPadding="2">
 					<pen lineWidth="1.0" lineStyle="Solid"/>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -284,104 +308,63 @@
 				<textFieldExpression class="java.lang.String"><![CDATA[$P{comments}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement key="staticText" positionType="Float" x="397" y="40" width="53" height="20"/>
+				<reportElement key="staticText" positionType="Float" x="397" y="56" width="53" height="20"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="12" pdfFontName="Times-Roman"/>
 				</textElement>
 				<text><![CDATA[Total HT]]></text>
 			</staticText>
 			<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="false">
-				<reportElement key="textField" positionType="Float" x="455" y="40" width="95" height="20"/>
+				<reportElement key="textField" positionType="Float" x="455" y="56" width="95" height="20"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="12" isBold="true" pdfFontName="Times-Bold"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$P{totalHt}+" "+$P{devise}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement key="staticText" positionType="Float" x="366" y="60" width="27" height="20"/>
-				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font size="12" pdfFontName="Times-Roman"/>
-				</textElement>
-				<text><![CDATA[TVA]]></text>
-			</staticText>
-			<staticText>
-				<reportElement key="staticText" positionType="Float" x="436" y="60" width="14" height="20"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="12" pdfFontName="Times-Roman"/>
-				</textElement>
-				<text><![CDATA[%]]></text>
-			</staticText>
-			<textField isBlankWhenNull="false">
-				<reportElement key="textField" positionType="Float" x="395" y="60" width="39" height="20"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="12" pdfFontName="Times-Roman"/>
-				</textElement>
-				<textFieldExpression class="java.lang.Float"><![CDATA[$P{vat}]]></textFieldExpression>
-			</textField>
-			<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="false">
-				<reportElement key="textField" positionType="Float" x="455" y="60" width="95" height="20"/>
-				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font size="12" isBold="true" pdfFontName="Times-Bold"/>
-				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$P{totalVat}+" "+$P{devise}]]></textFieldExpression>
-			</textField>
-			<staticText>
-				<reportElement key="staticText" positionType="Float" x="350" y="80" width="100" height="20"/>
+				<reportElement key="staticText" positionType="Float" x="350" y="96" width="100" height="20"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="12" isBold="true" pdfFontName="Times-Bold"/>
 				</textElement>
 				<text><![CDATA[TOTAL]]></text>
 			</staticText>
 			<textField pattern="###0.00" isBlankWhenNull="false">
-				<reportElement key="textField" positionType="Float" x="455" y="80" width="95" height="20"/>
+				<reportElement key="textField" positionType="Float" x="455" y="96" width="95" height="20"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="12" isBold="true" pdfFontName="Times-Bold"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$P{total}+" "+$P{devise}]]></textFieldExpression>
 			</textField>
+			<subreport>
+				<reportElement x="0" y="76" width="555" height="20"/>
+				<dataSourceExpression><![CDATA[new JRBeanCollectionDataSource($P{vatList})]]></dataSourceExpression>
+				<subreportExpression class="java.lang.String"><![CDATA[$P{path_subReport1}]]></subreportExpression>
+			</subreport>
+			<rectangle>
+				<reportElement key="rectangle" positionType="Float" x="0" y="56" width="455" height="20"/>
+			</rectangle>
 			<elementGroup>
 				<rectangle>
-					<reportElement key="rectangle-1" positionType="Float" stretchType="RelativeToBandHeight" x="0" y="120" width="555" height="66"/>
+					<reportElement key="rectangle-1" positionType="Float" stretchType="RelativeToBandHeight" x="0" y="175" width="555" height="46"/>
 					<graphicElement>
 						<pen lineWidth="1.0"/>
 					</graphicElement>
 				</rectangle>
 				<textField isBlankWhenNull="true">
-					<reportElement key="textField" positionType="Float" x="5" y="128" width="545" height="50"/>
+					<reportElement key="textField" positionType="Float" x="5" y="185" width="545" height="26"/>
 					<textElement textAlignment="Justified" verticalAlignment="Middle">
 						<font size="12" pdfFontName="Times-Roman"/>
 					</textElement>
 					<textFieldExpression class="java.lang.String"><![CDATA[new String ("Condition de règlement : "+$P{paymentConditions})]]></textFieldExpression>
 				</textField>
 			</elementGroup>
+			<staticText>
+				<reportElement key="staticText" positionType="Float" x="355" y="56" width="100" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="12" isBold="true" pdfFontName="Times-Bold"/>
+				</textElement>
+				<text><![CDATA[TOTAL HT ]]></text>
+			</staticText>
 		</band>
-	</columnFooter>
-	<pageFooter>
-		<band height="60" splitType="Stretch">
-			<textField isBlankWhenNull="true">
-				<reportElement key="textField-6" x="0" y="0" width="555" height="20"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="11" isBold="true" pdfFontName="Times-Bold"/>
-				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$P{company_designation}+" "+$P{company_address}]]></textFieldExpression>
-			</textField>
-			<textField isBlankWhenNull="true">
-				<reportElement key="textField-7" x="0" y="20" width="555" height="20"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="11" isBold="true" isItalic="true" pdfFontName="Times-BoldItalic"/>
-				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$P{company_phoneNumber}]]></textFieldExpression>
-			</textField>
-			<textField isBlankWhenNull="true">
-				<reportElement key="textField-8" x="0" y="40" width="555" height="20"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="11" isBold="false" pdfFontName="Times-Roman"/>
-				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$P{company_APE}+" "+$P{company_SIRET}+" "+$P{company_TVAInterCom}]]></textFieldExpression>
-			</textField>
-		</band>
-	</pageFooter>
-	<summary>
-		<band splitType="Stretch"/>
 	</summary>
 </jasperReport>
