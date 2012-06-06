@@ -41,7 +41,7 @@ public class ExpenseTypeDTO {
 	 */
 	public ExpenseTypeDTO(ExpenseType type){
 		this.id = type.getId();
-		this.name = type.getName();
+		this.name = type.getName() + " (" + type.getRatio() + ")";
 		this.direct = type.isDirect();
 		this.ratio = type.getRatio();
 	}

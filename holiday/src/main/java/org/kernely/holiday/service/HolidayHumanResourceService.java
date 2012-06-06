@@ -1,24 +1,20 @@
 package org.kernely.holiday.service;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
-import org.apache.shiro.authz.UnauthorizedException;
 import org.joda.time.DateTime;
 import org.kernely.core.dto.UserDTO;
 import org.kernely.core.model.User;
 import org.kernely.core.service.UserService;
-import org.kernely.holiday.dto.CalendarBalanceDetailDTO;
 import org.kernely.holiday.dto.HolidayDetailDTO;
 import org.kernely.holiday.dto.HolidayManagedDetailsDTO;
 import org.kernely.holiday.dto.HolidayRequestDTO;
 import org.kernely.holiday.dto.HolidayUserManagedDTO;
 import org.kernely.holiday.dto.HolidayUsersManagerDTO;
 import org.kernely.holiday.model.HolidayRequest;
-import org.kernely.holiday.model.HolidayTypeInstance;
 import org.kernely.service.AbstractService;
 
 import com.google.inject.Inject;
@@ -69,7 +65,6 @@ public class HolidayHumanResourceService extends AbstractService{
 		DateTime last = monthDate.withDayOfMonth(monthDate.dayOfMonth().getMaximumValue());
 
 		List<HolidayUserManagedDTO> managedDTO = new ArrayList<HolidayUserManagedDTO>();
-		Set<CalendarBalanceDetailDTO> balancesDTO = new HashSet<CalendarBalanceDetailDTO>();
 
 		Set<UserDTO> users = new TreeSet<UserDTO>(userService.getEnabledUsers());
 
@@ -90,15 +85,13 @@ public class HolidayHumanResourceService extends AbstractService{
 				DateTime current = new DateTime(det.day);
 				// We remove 1 to first and add 1 to last in order to consider these day in the detail interval
 				if(current.toDateMidnight().isAfter(first.toDateMidnight().minusDays(1)) && current.toDateMidnight().isBefore(last.toDateMidnight().plusDays(1))){
-					detailManagedDTO.add(new HolidayManagedDetailsDTO(det.color, current.getDayOfMonth(), det.am, det.pm));
+					detailManagedDTO.add(new HolidayManagedDetailsDTO("#2d2d2d", current.getDayOfMonth(), det.am, det.pm));
 				}
-				HolidayTypeInstance instance = em.get().find(HolidayTypeInstance.class, det.typeInstanceId);
-				balancesDTO.add(new CalendarBalanceDetailDTO(instance.getName(), 0, instance.getColor() , instance.getId(),0));
 			}
 			String fullname = us.getUserDetails().getFirstname() + " " + us.getUserDetails().getName();
 			managedDTO.add(new HolidayUserManagedDTO(fullname, detailManagedDTO));
 		}
-		HolidayUsersManagerDTO mainDTO = new HolidayUsersManagerDTO(managedDTO, balancesDTO);
+		HolidayUsersManagerDTO mainDTO = new HolidayUsersManagerDTO(managedDTO);
 		mainDTO.nbDays = last.getDayOfMonth();
 		mainDTO.month = monthNeeded;
 		mainDTO.year = yearNeeded;

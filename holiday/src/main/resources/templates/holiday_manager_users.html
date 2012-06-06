@@ -1,4 +1,4 @@
-{% extends "templates/layout_without_sidebar.html" %}
+{% extends "templates/layout_block.html" %}
 {% block javascript %}
 	<script type="text/javascript" src="/js/holiday_manager_users.js"></script>
 {% endblock %}
@@ -28,34 +28,12 @@
 		</div>
 		<div class="classic-buttons-bar">
 			<div id="dates-title" class="text-bold-black"></div>
-			<input type="button" class="button_emphasis" value="{% i18n "back_to_planning"%}" onClick='window.location="/holiday/planning"'/>
+			<input id="btn-planning" type="button" class="button_emphasis" value="{% i18n "back_to_planning"%}"/>
 		</div>
 		<div id="main-manager-table-content">
-			<div class="wrapper1">
-				<div class="top-scroll-bar">
-				</div>
-			</div>
-			<div class="wrapper2">
-				<div class="table-container-scroll">
-					<table id="usersHoliday" class="kernely_table" cellspacing="0">
-				
-					</table>
-				</div>
-			</div>
+			<table id="usersHoliday" class="kernely_table" cellspacing="0">
+		
+			</table>
 		</div>
 	</div>
-{% endblock %}
-
-{% block right %}
-	<div id="color-legend" class="right_block">
-	</div>
-{% endblock %}
-
-{% block left %}
-<div id="profile_mask"></div>
-<div id="left_profile_arrow"></div>
-<div id='left_profile_container'>
-	<img src="/images/{{currentUser.image}}" id="image_left_profile"/>
-	<div id="left_profile_name">{{currentUser.firstname}} {{currentUser.lastname}}</div>
-</div>
 {% endblock %}

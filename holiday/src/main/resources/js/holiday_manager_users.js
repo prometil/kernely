@@ -18,19 +18,13 @@ AppHolidayManagerUsers = (function($){
 
 		initialize: function(){
 			mainView = this;
-			$(".wrapper1").scroll(function(){
-		        $(".wrapper2")
-		            .scrollLeft($(".wrapper1").scrollLeft());
-		    });
-		    $(".wrapper2").scroll(function(){
-		        $(".wrapper1")
-		            .scrollLeft($(".wrapper2").scrollLeft());
-		    });
+			$("#btn-planning").click(function(){
+				window.location="/holiday/planning/#/month/" + monthSelected + "/" + yearSelected;
+			});
 		},
 		
 		render: function(){
 			tableView = new HolidayManagerUserTableView();
-			legendView = new HolidayManagerColorPartView();
 			selectorView = new HolidayManagerMonthSelectorView().render();
 
 			return this;
@@ -50,7 +44,6 @@ AppHolidayManagerUsers = (function($){
 				dataType: "json",
 				success: function(data){
 					tableView.render(data);
-					legendView.render(data);
 					monthSelected = data.month;
 					yearSelected = data.year;
 				}
@@ -177,64 +170,6 @@ AppHolidayManagerUsers = (function($){
 			else{
 				$(parent.el).append(new HolidayManagerUserTableLineView(this.data.usersManaged).render().el);
 			}
-			return this;
-		}
-	})
-	
-	HolidayManagerColorPartView = Backbone.View.extend({
-		el:"#color-legend",
-		
-		events:{
-		
-		},
-		
-		data : null,
-		
-		initialize : function(){
-		},
-		render: function(data){
-			this.data = data;
-			$(this.el).html("");
-			var parent = this;
-			
-			if(typeof(this.data.balances) != "undefined"){
-				if(this.data.balances.length > 1){
-					$.each(this.data.balances, function(){
-	                    $(parent.el).append(new HolidayManagerColorCellView(this.nameOfType, this.color, this.idOfType).render().el);
-					});
-				}
-				else{
-					$(parent.el).append(new HolidayManagerColorCellView(this.data.balances.nameOfType, this.data.balances.color, this.data.balances.idOfType).render().el);
-				}
-			}
-			return this;
-		}
-	})
-	
-	
-	HolidayManagerColorCellView = Backbone.View.extend({
-		tagName:"div",
-		className: "balance-cell",
-		
-		color:null,
-		name:null,
-		idType: null,
-		
-		events: {
-		},
-		
-		initialize : function(name, color, idType){
-			this.color = color;
-			this.name = name;
-			this.idType = idType;
-		},
-		
-		render : function(){
-			var template = $("#type-cell-template").html();
-            var view = {name: this.name};
-            var html = Mustache.to_html(template, view);
-            $(this.el).html(html);
-            $(this.el).find(".balance-cell-amount").css('background-color', this.color);
 			return this;
 		}
 	})

@@ -53,11 +53,6 @@
 						<option></option>
 					</select>
 				</div>
-				<div class="separator-top-25">
-					<div class="invoice-create-category">{% i18n "choose-period" %}</div>
-					<label class="text-bold-black" for="from">{% i18n "from_date" %} </label><input readonly="readonly" type="text" id="from" class="kernely_input" name="from"/>
-					<label class="text-bold-black" for="to"> {% i18n "to_date" %} </label><input readonly="readonly" type="text" id="to" class="kernely_input" name="to"/>
-				</div>
 				<div id="invoice-create-buttons" class="dialog-buttons-container">
 					<input type="button" value="{% i18n "cancel" %}" class="cancel_invoice button_standard"/>
 					<input type="submit" value="{% i18n "create" %}" class="create_invoice button_ok"/>
@@ -117,25 +112,31 @@
 		<div class="main_title">{% i18n "filters" %}</div>
 		<div class="subtitle">{% i18n "organization" %}</div>
 		<select id="organization-selector">
-			<option value="0">All</option>
+			<option value="0">{% i18n "all" %}</option>
 			<optgroup id="organization-select-group" label="{% i18n "organizations" %}">
 				
 			</optgroup>
 		</select>
 		<div class="subtitle">{% i18n "project" %}</div>
 		<select id="project-selector" disabled="disabled">
-			<option value="0">All</option>
+			<option value="0">{% i18n "all" %}</option>
 			<optgroup id="project-select-group" label="{% i18n "projects" %}">
 			
 			</optgroup>
 		</select>
 		<div class="subtitle">{% i18n "status" %}</div>
 		<select id="status-selector">
-			<option value="-1">All</option>
+			<option value="-1">{% i18n "all" %}</option>
 			<option value="0">{% i18n "invoice-pending" %}</option>
 			<option value="1">{% i18n "invoice-paid" %}</option>
 			<option value="2">{% i18n "invoice-unpaid" %}</option>
 			<option value="3">{% i18n "invoice-undefined" %}</option>
 		</select>
+		<div class="subtitle">{% i18n "invoice-period-publication" %}</div>
+		<input type="text" id="from-publi-filter" name="from-publi-filter" class="kernely_input" placeholder="{% i18n "from_date" %}"/>
+		<input type="text" id="to-publi-filter" to="to-publi-filter" class="kernely_input" placeholder="{% i18n "to_date" %}"/>
+		<div class="subtitle">{% i18n "invoice-period-term" %}</div>
+		<input type="text" id="from-term-filter" name="from-term-filter" class="kernely_input" placeholder="{% i18n "from_date" %}"/>
+		<input type="text" id="to-term-filter" name="to-term-filter" class="kernely_input" placeholder="{% i18n "to_date" %}"/>
 	</div>
 {% endblock %}

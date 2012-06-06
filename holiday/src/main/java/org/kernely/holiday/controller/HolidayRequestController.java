@@ -14,6 +14,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 
+import org.apache.commons.configuration.AbstractConfiguration;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -37,6 +38,9 @@ public class HolidayRequestController extends AbstractController {
 	
 	@Inject
 	private HolidayRequestService holidayRequestService;
+	
+	@Inject
+	private AbstractConfiguration configuration;
 
 	/**
 	 * Get the template for holiday request page
@@ -83,7 +87,7 @@ public class HolidayRequestController extends AbstractController {
 		String fromReplaced = date1.replace('-', '/');
 		String toReplaced = date2.replace('-', '/');
 		
-		DateTimeFormatter fmt = DateTimeFormat.forPattern("MM/dd/yyyy");
+		DateTimeFormatter fmt = DateTimeFormat.forPattern(configuration.getString("locale.dateformat"));
 		DateTime d1 = DateTime.parse(fromReplaced, fmt);
 		DateTime d2 = DateTime.parse(toReplaced, fmt);
 		return holidayRequestService.getCalendarRequest(d1, d2);

@@ -53,7 +53,6 @@ AppInvoiceEdit = (function($){
 				showOn: "both",
 				buttonImage: "/images/icons/calendar_icon.png",
 				buttonImageOnly: true,
-				defaultDate: "+1w",
 				changeMonth: true,
 				onSelect: function( selectedDate ) {
 				var option = this.id == "invoice-publication" ? "minDate" : "maxDate",
@@ -65,6 +64,7 @@ AppInvoiceEdit = (function($){
 				parent.dates.not( this ).datepicker( "option", option, date );
 			}
 			});
+			$.datepicker.setDefaults($.datepicker.regional[lang+"-"+country]);
 		}
 	})
 	

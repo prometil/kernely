@@ -1,0 +1,51 @@
+<!--
+
+    Copyright 2011 Prometil SARL
+
+    This file is part of Kernely.
+
+    Kernely is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as
+    published by the Free Software Foundation, either version 3 of
+    the License, or (at your option) any later version.
+
+    Kernely is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public
+    License along with Kernely.
+    If not, see <http://www.gnu.org/licenses/>.
+ 
+-->
+<configuration>
+        <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+                <file>logs/kernely.log</file>
+                <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+                        <!-- daily rollover -->
+                        <fileNamePattern>logs/kernely.%d{yyyy-MM-dd}.log</fileNamePattern>
+
+   				   <!-- keep 30 days' worth of history -->
+  				   <maxHistory>30</maxHistory>
+   				 </rollingPolicy>
+
+			    <encoder>
+			      <pattern>%d{ISO8601} [%-5.5level] %-20.20class{0} - %msg%n</pattern>
+			    </encoder>
+ 		</appender>
+        <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+                <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+                        <pattern>%d{ISO8601} [%-5.5level] %-20.20class{0} - %msg%n</pattern>
+                </encoder>
+        </appender>
+      	<logger name="org.eclipse" level="WARN"/>
+		<logger name="org.hibernate" level="ERROR"/>
+		<logger name="org.apache.shiro" level="ERROR"/>
+		<logger name="org.quartz" level="ERROR"/>
+		<logger name="org.kernely" level="INFO" />
+        <root level="debug">
+                <appender-ref ref="FILE" />
+                <!-- <appender-ref ref="CONSOLE" />-->
+        </root>
+</configuration>

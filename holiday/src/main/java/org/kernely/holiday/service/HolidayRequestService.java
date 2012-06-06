@@ -128,7 +128,7 @@ public class HolidayRequestService extends AbstractService {
 			HolidayRequestDetail detail = new HolidayRequestDetail();
 			detail.setAm(hdcr.am);
 			detail.setPm(hdcr.pm);
-			DateTimeFormatter fmt = DateTimeFormat.forPattern("MM/dd/yyyy");
+			DateTimeFormatter fmt = DateTimeFormat.forPattern(configuration.getString("locale.dateformat"));
 			DateTime day = fmt.parseDateTime(hdcr.day);
 			detail.setDay(day.toDate());
 			HolidayTypeInstance typeInstance = em.get().find(HolidayTypeInstance.class, hdcr.typeInstanceId);
@@ -710,7 +710,7 @@ public class HolidayRequestService extends AbstractService {
 		CalendarRequestDTO calendar = new CalendarRequestDTO();
 		int dayOfWeek1 = date1.getDayOfWeek();
 		int dayOfWeek2 = date2.getDayOfWeek();
-		DateTimeFormatter fmt = DateTimeFormat.forPattern("MM/dd/yyyy");
+		DateTimeFormatter fmt = DateTimeFormat.forPattern(configuration.getString("locale.dateformat"));
 		List<CalendarDayDTO> daysDTO = new ArrayList<CalendarDayDTO>();
 
 		DateTime dtmaj;

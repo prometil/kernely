@@ -62,6 +62,11 @@ div.separator-top-25{
 	width:100px;
 }
 
+#from-publi-filter,#to-publi-filter, #from-term-filter, #to-term-filter{
+	width:150px;
+	margin-bottom:3px;
+}
+
 #invoices-table{
 	width:100%;
 }
@@ -79,7 +84,7 @@ div.separator-top-25{
 }
 
 #invoice-comment{
-	width:670px;
+	width:912px;
 	height:90px;
 	border:1px solid #aeb0b0;
 }

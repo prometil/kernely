@@ -258,16 +258,16 @@ public class InvoiceServiceTest extends AbstractServiceTest{
 		
 		invoiceService.createOrUpdateInvoice(request);
 		
-		List<InvoiceDTO> invoices = invoiceService.getInvoicesPerOrganizationAndProject(0, 0, -1);
+		List<InvoiceDTO> invoices = invoiceService.getInvoicesPerOrganizationAndProject(0, 0, -1, null, null, null, null);
 		assertEquals(4, invoices.size());
 		
-		invoices = invoiceService.getInvoicesPerOrganizationAndProject(organization1.id, 0, -1);
+		invoices = invoiceService.getInvoicesPerOrganizationAndProject(organization1.id, 0, -1, null, null, null, null);
 		assertEquals(2, invoices.size());
 		
-		invoices = invoiceService.getInvoicesPerOrganizationAndProject(organization2.id, 0, -1);
+		invoices = invoiceService.getInvoicesPerOrganizationAndProject(organization2.id, 0, -1, null, null, null, null);
 		assertEquals(2, invoices.size());
 		
-		invoices = invoiceService.getInvoicesPerOrganizationAndProject(organization1.id, project1.id, -1);
+		invoices = invoiceService.getInvoicesPerOrganizationAndProject(organization1.id, project1.id, -1, null, null, null, null);
 		InvoiceDTO invoice = invoices.get(0);
 		
 		assertEquals(OBJECT1, invoice.object);
@@ -275,7 +275,7 @@ public class InvoiceServiceTest extends AbstractServiceTest{
 		assertEquals(project1.name, invoice.projectName);
 		assertEquals(Invoice.INVOICE_UNDEFINED, invoice.status);
 		
-		invoices = invoiceService.getInvoicesPerOrganizationAndProject(organization1.id, project2.id, -1);
+		invoices = invoiceService.getInvoicesPerOrganizationAndProject(organization1.id, project2.id, -1, null, null, null, null);
 		invoice = invoices.get(0);
 		
 		assertEquals(OBJECT2, invoice.object);
@@ -283,7 +283,7 @@ public class InvoiceServiceTest extends AbstractServiceTest{
 		assertEquals(project2.name, invoice.projectName);
 		assertEquals(Invoice.INVOICE_UNDEFINED, invoice.status);
 		
-		invoices = invoiceService.getInvoicesPerOrganizationAndProject(organization1.id, project1.id, -1);
+		invoices = invoiceService.getInvoicesPerOrganizationAndProject(organization1.id, project1.id, -1, null, null, null, null);
 		invoice = invoices.get(0);
 		
 		assertEquals(OBJECT3, invoice.object);
@@ -291,7 +291,7 @@ public class InvoiceServiceTest extends AbstractServiceTest{
 		assertEquals(project3.name, invoice.projectName);
 		assertEquals(Invoice.INVOICE_UNDEFINED, invoice.status);
 		
-		invoices = invoiceService.getInvoicesPerOrganizationAndProject(organization1.id, project1.id, -1);
+		invoices = invoiceService.getInvoicesPerOrganizationAndProject(organization1.id, project1.id, -1, null, null, null, null);
 		invoice = invoices.get(0);
 		
 		assertEquals(OBJECT4, invoice.object);
@@ -308,7 +308,7 @@ public class InvoiceServiceTest extends AbstractServiceTest{
 		createOrganization2ForTest();
 		ProjectDTO project3 = createProject3ForTest();
 		
-		invoiceService.getInvoicesPerOrganizationAndProject(organization1.id, project3.id, -1);
+		invoiceService.getInvoicesPerOrganizationAndProject(organization1.id, project3.id, -1, null, null, null, null);
 	}
 	
 	@Test

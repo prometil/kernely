@@ -12,6 +12,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.apache.commons.configuration.AbstractConfiguration;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -42,6 +43,9 @@ public class TimeSheetController extends AbstractController {
 
 	@Inject
 	private TimeSheetService timeSheetService;
+	
+	@Inject
+	private AbstractConfiguration configuration;
 
 	/**
 	 * Redirects to the current date.
@@ -96,7 +100,7 @@ public class TimeSheetController extends AbstractController {
 	@Path("/day")
 	@Produces( { MediaType.APPLICATION_JSON })
 	public TimeSheetDayDTO getDayForTimeSheet(@QueryParam("day") String day) {
-		DateTimeFormatter fmt = DateTimeFormat.forPattern("MM/dd/yy");
+		DateTimeFormatter fmt = DateTimeFormat.forPattern(configuration.getString("locale.dateformat"));
 		DateTime d1 = DateTime.parse(day, fmt).toDateMidnight().toDateTime();
 		return timeSheetService.getTimeSheetDayDTO(d1.toDate());
 	}

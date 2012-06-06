@@ -54,7 +54,7 @@ AppHolidayManagerRequest = (function($){
 						{"name":"", style:["general-bg", "text-center", "no-border-right", "no-border-top", "no-border-bottom"]},
 						{"name":"", style:["general-bg", "text-center", "no-border-right", "no-border-top", "no-border-bottom"]}
 				],
-				elements:["user", "requesterComment", "beginDateString", "endDateString", "acceptButton", "denyButton", "visualizeButton"],
+				elements:["user", "requesterComment", "beginDate", "endDate", "acceptButton", "denyButton", "visualizeButton"],
 				
 				eventNames:["click", "click .accept", "click .deny", "click .visualize"],
 				events:{
@@ -105,12 +105,16 @@ AppHolidayManagerRequest = (function($){
 								this.acceptButton = "<img class='accept clickable' src='/images/icons/rights_icon.png' />";
 								this.denyButton = "<img class='deny clickable' src='/images/icons/delete_icon.png' />";
 								this.visualizeButton = "<img class='visualize clickable' src='/images/icons/visualize_icon.png' />";
+								this.beginDate = moment(this.beginDate).format("L");
+								this.endDate = moment(this.endDate).format("L");
 							});
 						}
 						else{
 							dataRequest.acceptButton = "<img class='accept clickable' src='/images/icons/rights_icon.png' />";
 							dataRequest.denyButton = "<img class='deny clickable' src='/images/icons/delete_icon.png' />";
 							dataRequest.visualizeButton = "<img class='visualize clickable' src='/images/icons/visualize_icon.png' />";
+							dataRequest.beginDate = moment(this.beginDate).format("L");
+							dataRequest.endDate = moment(this.endDate).format("L");
 						}
 					}
 					parent.table.reload(dataRequest);
@@ -146,7 +150,7 @@ AppHolidayManagerRequest = (function($){
 						{"name":templateEndColumn, style:""},
 						{"name":"", style:["general-bg", "text-center", "no-border-right", "no-border-top", "no-border-bottom"]}
 				],
-				elements:["user", "requesterComment", "managerComment", "beginDateString", "endDateString", "status"],
+				elements:["user", "requesterComment", "managerComment", "beginDate", "endDate", "status"],
 				
 				eventNames:["click"],
 				events:{
@@ -176,6 +180,8 @@ AppHolidayManagerRequest = (function($){
 								else{
 									this.status = "<img src='/images/icons/deny_icon.png' />";
 								}
+								this.beginDate = moment(this.beginDate).format("L");
+								this.endDate = moment(this.endDate).format("L");
 							});
 						}
 						else{
@@ -185,6 +191,8 @@ AppHolidayManagerRequest = (function($){
 							else{
 								dataRequest.status = "<img src='/images/icons/deny_icon.png' />";
 							}
+							dataRequest.beginDate = moment(this.beginDate).format("L");
+							dataRequest.endDate = moment(this.endDate).format("L");
 						}
 						parent.table.reload(dataRequest);
 					}
@@ -430,20 +438,12 @@ AppHolidayManagerRequest = (function($){
 			
 			if (this.listDays.holidayDetailDTO.length>1){
 				$.each(this.listDays.holidayDetailDTO, function(){
-					var year = this.day.substr(0,4);
-					var month = this.day.substr(5,2);
-					var day = this.day.substr(8,2);
-					var dayDone = month+"/"+day+"/"+year;
-					dateTake[iDate] = dayDone;
+					dateTake[iDate] = moment(this.day).format("L");
 					iDate++;
 				});
 			}
 			else {
-				var year = this.listDays.holidayDetailDTO.day.substr(0,4);
-				var month = this.listDays.holidayDetailDTO.day.substr(5,2);
-				var day = this.listDays.holidayDetailDTO.day.substr(8,2);
-				var dayDone = month+"/"+day+"/"+year;
-				dateTake[iDate] = dayDone;
+				dateTake[iDate] = moment(this.listDays.holidayDetailDTO.day).format("L");
 				iDate++;
 			}
 			

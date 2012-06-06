@@ -26,19 +26,21 @@ AppMiniProfile = (function($){
                         "click .displayProfilePU" : "showMiniProfile",
                 },
                 initialize: function(){
-                        
+                	var view = new ProfilePopUpView();
+                    view.render();   
                 },
                 showMiniProfile: function(){
                         if ($("#profile_popup").is(':hidden')){
                                 $("#profile_popup").show()
-                                var view = new ProfilePopUpView();
-                                view.render();
+                                
+                                $("#profile_popup").focus();
                                 
                         }
                         else{
                                 $("#profile_popup").hide()
                         }
                 },
+                test: function(){console.log("tests")},
                 render: function(){
                         return this;
                 }
@@ -49,6 +51,10 @@ AppMiniProfile = (function($){
                 el: "#profile_popup",
                 
                 initialize:function(){},
+                
+                hide: function(){
+                	$(this.el).hide();
+                },
                 
                 render: function(){
                         var template = $("#profile-template").html();
