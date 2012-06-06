@@ -85,7 +85,7 @@ public class InvoiceController extends AbstractController {
 	@GET
 	@Produces( { MediaType.TEXT_HTML })
 	@RequiresRoles(value = { Role.ROLE_PROJECTMANAGER, Role.ROLE_BOOKKEEPER }, logical = Logical.OR)
-	@Menu("invoice")
+	@Menu("invoicing")
 	public Response getInvoicePanel() {
 		Map<String, Object> map = new HashMap<String, Object>();
 		return Response.ok(templateRenderer.render("templates/invoice_overview.html", map)).build();
@@ -173,9 +173,6 @@ public class InvoiceController extends AbstractController {
 			// Adds one day to consider the day specified.
 			endTerm = DateTime.parse(endDateTerm, fmt).plusDays(1).toDateMidnight().toDate();
 		}
-		
-		System.out.println(beginTerm);
-		System.out.println(endTerm);
 		return invoiceService.getInvoicesPerOrganizationAndProject(organizationId, projectId, status, beginPubli, endPubli, beginTerm, endTerm);
 	}
 
