@@ -87,6 +87,14 @@ html {
 	height:100%;
 }
 
+#container_central_left_right {
+	z-index:1;
+	position:relative;
+	width:1153px;
+	padding:20px 45px 20px 45px;
+	height:100%;
+}
+
 .container_generic{
 	border:1px solid #a0a2a3;
 	background-color:#f6f6f6;
@@ -193,6 +201,7 @@ div#menu {
 }
 
 a.menu_item, a.menu_item_selected{
+	text-transform: capitalize; 
 	height:35px;
 	width:105px;
 	float:left;

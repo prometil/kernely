@@ -22,6 +22,10 @@
             <source>src/main/resources/core.xml</source>
             <outputDirectory>/conf</outputDirectory>
         </file>
+        <file>
+            <source>src/main/resources/logback-prod.xml</source>
+            <outputDirectory>/conf</outputDirectory>
+        </file>
     </files>
     
 </component>

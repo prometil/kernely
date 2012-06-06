@@ -412,9 +412,9 @@ public class HolidayBalanceService extends AbstractService {
 					"SELECT b FROM HolidayBalance b WHERE user=:user AND holidayTypeInstance=:type AND endDate <= :date ORDER BY begin_date ASC");
 			balanceRequest.setParameter("date", DateTime.now().toDateMidnight().toDate());
 		}
-		
+
 		balanceRequest.setParameter("user", user);
-		
+
 		balanceRequest.setParameter("type", typeInstance);
 		try {
 			List<HolidayBalance> balances = (List<HolidayBalance>) balanceRequest.getResultList();
@@ -713,7 +713,7 @@ public class HolidayBalanceService extends AbstractService {
 						em.get().merge(currentBalanceModel);
 						break;
 					} else { // Increase the balance until its maximum and
-								// decrease
+						// decrease
 						// the remain quantity to add.
 						currentBalanceModel.setAvailableBalanceUpdated(maxOfThisBalance);
 						remainToAdd -= (maxOfThisBalance - availInThisBalance);
@@ -796,21 +796,31 @@ public class HolidayBalanceService extends AbstractService {
 		for (HolidayProfile profile : holidayProfileService.getAllProfile()) {
 			for (HolidayType type : profile.getHolidayTypes()) {
 				HolidayTypeInstance currentInstance = type.getCurrentInstance();
-				for (User user : currentInstance.getUsers()) {
-					HolidayBalanceDTO balance = this.getProcessedBalance(currentInstance.getId(), user.getId());
-					DateTime beginDate = new DateTime(balance.beginDate);
-					DateTime endDate = new DateTime(balance.endDate);
-					if(now.isAfter(beginDate) && !now.isEqual(beginDate)){
-						this.incrementBalance(currentInstance.getId(), user.getId());
-						if (now.isEqual(endDate) || now.isAfter(endDate)) {
-							if (!type.getCurrentInstance().equals(type.getNextInstance())) {
-								type.setCurrentInstance(type.getNextInstance());
-								em.get().merge(type);
+
+				if (!currentInstance.isUnlimited()) {
+					for (User user : currentInstance.getUsers()) {
+
+						HolidayBalanceDTO balance = this.getProcessedBalance(currentInstance.getId(), user.getId());
+						log.debug("Computing balance for {} with type {} balance is null ? > {}", new Object[] { user.getUsername(),
+								currentInstance.getId(), balance == null });
+						DateTime beginDate = new DateTime(balance.beginDate);
+						DateTime endDate = new DateTime(balance.endDate);
+						if (now.isAfter(beginDate) && !now.isEqual(beginDate)) {
+							this.incrementBalance(currentInstance.getId(), user.getId());
+							if (now.isEqual(endDate) || now.isAfter(endDate)) {
+								if (!type.getCurrentInstance().equals(type.getNextInstance())) {
+									log.debug("Changing instance type for type {} from {} to {}", new Object[] { type.getName(),
+											type.getCurrentInstance().getId(), type.getNextInstance().getId() });
+									type.setCurrentInstance(type.getNextInstance());
+									em.get().merge(type);
+								}
+								log.debug("Creation of the new balance with type {} for the user {}", type.getId(), user.getId());
+								this.createHolidayBalance(type.getId(), user.getId());
 							}
-							this.createHolidayBalance(type.getId(), user.getId());
 						}
 					}
 				}
+
 			}
 		}
 	}

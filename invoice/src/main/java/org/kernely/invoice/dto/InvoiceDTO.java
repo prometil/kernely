@@ -14,6 +14,8 @@ import org.kernely.invoice.model.Invoice;
  */
 @XmlRootElement
 public class InvoiceDTO {
+	
+	private String dateFormat = "MM/dd/yyyy";
 
 	/**
 	 * Id of the invoice
@@ -130,15 +132,13 @@ public class InvoiceDTO {
 	 * Creates this DTO from an Invoice model
 	 * @param invoice The model of invoice to create
 	 */
-	public InvoiceDTO(Invoice invoice){
+	public InvoiceDTO(Invoice invoice, String dateFormat){
+		this.dateFormat = dateFormat;
 		this.id = invoice.getId();
 		this.code = invoice.getCode();
 		this.dateCreation = invoice.getDateCreation();
 		this.datePublication = invoice.getDatePublication();
 		this.dateTerm = invoice.getDateTerm();
-		this.dateCreationString = new DateTime(invoice.getDateCreation()).toString("MM/dd/yyyy");
-		this.datePublicationString = new DateTime(invoice.getDatePublication()).toString("MM/dd/yyyy");
-		this.dateTermString = new DateTime(invoice.getDateTerm()).toString("MM/dd/yyyy");
 		this.object = invoice.getObject();
 		this.status = invoice.getStatus();
 		this.delay = Days.daysBetween(new DateTime(this.datePublication), new DateTime(this.dateTerm)).getDays();
@@ -149,6 +149,18 @@ public class InvoiceDTO {
 		this.projectName = invoice.getProject().getName();
 		this.comment = invoice.getComment(); 
 		this.amount = invoice.getAmount();
+		this.getDateStringified();		
+	}
+	
+	public void setDateFormat(String dateFormat){
+		this.dateFormat = dateFormat;
+		this.getDateStringified();
+	}
+	
+	private void getDateStringified(){
+		this.dateCreationString = new DateTime(this.dateCreation).toString(this.dateFormat);
+		this.datePublicationString = new DateTime(this.datePublication).toString(dateFormat);
+		this.dateTermString = new DateTime(this.dateTerm).toString(dateFormat);
 	}
 	
 }

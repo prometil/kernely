@@ -39,6 +39,7 @@
         <locale>
                 <lang>en</lang>
                 <country>US</country>
+                <dateformat>MM/dd/yyyy</dateformat>
         </locale>
         <workspace>work</workspace>
         <plugins>

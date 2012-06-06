@@ -277,7 +277,9 @@ AppHolidayRequest = (function($){
 						shifted = true;
 						var cpt = lastClicked.viewRank;
 						while(cpt < this.viewRank){
-							allDayCells[cpt].colorTheWorld();
+							if(allDayCells[cpt].selectedBy != currentCellPickerSelected.idType){
+								allDayCells[cpt].colorTheWorld();
+							}
 							cpt ++;
 						}
 					}

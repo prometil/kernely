@@ -1,4 +1,4 @@
-{% extends "templates/layout_without_sidebar.html" %}
+{% extends "templates/layout_block.html" %}
 {% block javascript %}
 	<script type="text/javascript" src="/js/holiday_planning.js"></script>
 {% endblock %}
@@ -26,38 +26,18 @@
 	<div id="main-human-page-content">
 		<div id="monthSelector">
 		</div>
+
+		<div id="dates-title" class="text-bold-black"></div>
 		{% if userManager %}
 			<div class="classic-buttons-bar">
-				<div id="dates-title" class="text-bold-black"></div>
-				<input type="button" class="button_emphasis" value="{% i18n "my_collaborators"%}" onClick='window.location="/holiday/manager/users"'/>
+				<input id="my-collaborators" type="button" class="button_emphasis" value="{% i18n "my_collaborators"%}"/>
 			</div>
 		{% endif %}
 		<div id="main-human-table-content">
-			<div class="wrapper1">
-				<div class="top-scroll-bar">
-				</div>
-			</div>
-			<div class="wrapper2">
-				<div class="table-container-scroll">
-					<table id="usersHoliday" class="kernely_table">
-						
-					</table>
-				</div>
-			</div>
+			
+			<table id="usersHoliday" class="kernely_table">
+				
+			</table>
 		</div>
 	</div>
-{% endblock %}
-
-{% block right %}
-	<div id="color-legend" class="right_block">
-	</div>
-{% endblock %}
-
-{% block left %}
-<div id="profile_mask"></div>
-<div id="left_profile_arrow"></div>
-<div id='left_profile_container'>
-	<img src="/images/{{currentUser.image}}" id="image_left_profile"/>
-	<div id="left_profile_name">{{currentUser.firstname}} {{currentUser.lastname}}</div>
-</div>
 {% endblock %}

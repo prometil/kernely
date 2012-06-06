@@ -5,20 +5,18 @@ package org.kernely.template;
 
 import java.io.StringWriter;
 import java.io.Writer;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.annotation.PostConstruct;
 
+import org.apache.commons.configuration.AbstractConfiguration;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 import org.kernely.core.service.UserService;
-import org.kernely.menu.MenuItem;
 import org.kernely.menu.MenuManager;
 import org.kernely.menu.PluginMenu;
-import org.kernely.plugin.AbstractPlugin;
 import org.kernely.plugin.PluginManager;
 import org.kernely.template.helpers.SobaI18n;
 import org.slf4j.Logger;
@@ -48,6 +46,9 @@ public class SobaTemplateRenderer {
 	
 	@Inject
 	private MenuManager menuManager;
+	
+	@Inject
+	private AbstractConfiguration configuration;
 	
 	@PostConstruct
 	public void configure(){
@@ -112,6 +113,8 @@ public class SobaTemplateRenderer {
 		} else {
 			binding.put("admin", false);
 		}
+		binding.put("lang", configuration.getString("locale.lang"));
+		binding.put("country", configuration.getString("locale.country"));
 		Subject subject = SecurityUtils.getSubject();
 		if (subject.getPrincipal() != null) {
 			binding.put("currentUser", userService.getUserDetails(userService.getAuthenticatedUserDTO().username));

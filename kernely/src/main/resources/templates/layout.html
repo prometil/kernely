@@ -16,6 +16,9 @@
 	<script type="text/javascript" src="/js/jquery.ui.datepicker-fr-FR.js"></script>
 	<script type="text/javascript" src="/js/kernely.ui.js"></script>
 	<script type="text/javascript" src="/js/menu.js"></script>
+	<script type="text/javascript" src="/js/momentjs.js"></script>
+	<script type="text/javascript" src="/js/lang/fr.js"></script>
+	<script type="text/javascript" src="/js/lang/en-gb.js"></script>
 	{% block javascript %}
 		<!-- additional javascript-->
 	
@@ -39,13 +42,19 @@
 					       kkeys.push( e.keyCode );  
 					       if ( kkeys.toString().indexOf( code ) >= 0 ){
 					    	   kkeys = [];
-					    	  
+					    	  // window.open(""); return false;
 					       }
 					  }, true);  
 				}
 			});
 		</script>
 	-->
+	
+		<script type="text/javascript">
+			var lang = "{{lang}}";
+			var country = "{{country}}";
+			moment.lang(lang);
+		</script>
 	</head>
 	<body>
 	<!-- Template for confirm dialog -->

@@ -10,7 +10,6 @@ AppHolidayUserRequest = (function($){
 		},
 	
 		initialize: function(){
-			
 		},
 		
 		render:function(){
@@ -52,7 +51,7 @@ AppHolidayUserRequest = (function($){
 				       {"name":templateEndColumn, "style":"text-center"}
 				 ],
 				idField:"id",
-				elements:["requesterComment", "beginDateString", "endDateString"],
+				elements:["requesterComment", "beginDate", "endDate"],
 				eventNames:["click"],
 				events:{
 					"click": parent.selectLine
@@ -76,6 +75,16 @@ AppHolidayUserRequest = (function($){
 				success: function(data){
 					if(data != null){
 						var dataRequest = data.holidayRequestDTO;
+						if($.isArray(dataRequest)){
+							$.each(dataRequest, function(){
+								this.beginDate = moment(this.beginDate).format("L");
+								this.endDate = moment(this.endDate).format("L");
+							});
+						}
+						else{
+							dataRequest.beginDate = moment(this.beginDate).format("L");
+							dataRequest.endDate = moment(this.endDate).format("L");
+						}
 						parent.table.reload(dataRequest);
 					}
 					else{
@@ -181,7 +190,7 @@ AppHolidayUserRequest = (function($){
 				       {"name":"", style:["general-bg", "text-center", "no-border-right", "no-border-top", "no-border-bottom", "icon-column"]}
 				],
 				idField:"id",
-				elements:["managerComment", "requesterComment", "beginDateString", "endDateString", "status"]
+				elements:["managerComment", "requesterComment", "beginDate", "endDate", "status"]
 			});
 		
 			
@@ -209,6 +218,8 @@ AppHolidayUserRequest = (function($){
 								else{
 									this.status = "<img src='/images/icons/deny_icon.png' />";
 								}
+								this.beginDate = moment(this.beginDate).format("L");
+								this.endDate = moment(this.endDate).format("L");
 							});
 						}
 						else{
@@ -218,6 +229,8 @@ AppHolidayUserRequest = (function($){
 							else{
 								dataRequest.status = "<img src='/images/icons/deny_icon.png' />";
 							}
+							dataRequest.beginDate = moment(this.beginDate).format("L");
+							dataRequest.endDate = moment(this.endDate).format("L");
 						}
 						parent.table.reload(dataRequest);
 					}
@@ -279,8 +292,6 @@ AppHolidayUserRequest = (function($){
 					dates.not( this ).datepicker( "option", option, date );
 				}
 			});
-			var lang = $("#locale-lang").html();
-			var country = $("#locale-country").html();
 			$.datepicker.setDefaults($.datepicker.regional[lang+"-"+country]);
 			
 			return this;
@@ -288,7 +299,6 @@ AppHolidayUserRequest = (function($){
 		
 		newRequest : function(){
 			$(this.formRequest).kernely_dialog( "open" );
-
 		}		
 		
 	})

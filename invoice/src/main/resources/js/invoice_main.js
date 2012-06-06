@@ -89,10 +89,44 @@ AppInvoiceMain = (function($){
 		
 		events:{
 			"change #organization-selector" : "loadProjects",
-			"change #status-selector, #organization-selector, #project-selector" : "refreshInvoices"
+			"change #status-selector, #organization-selector, #project-selector, #from-publi-filter, #to-publi-filter, #from-term-filter, #to-term-filter" : "refreshInvoices"
 		},
 		
 		initialize: function(){
+			// #from-filter, #to-filter
+			var datesPubli = $( "#from-publi-filter, #to-publi-filter" ).datepicker({
+				showOn: "both",
+				buttonImage: "/images/icons/calendar_icon.png",
+				buttonImageOnly: true,
+				changeMonth: false,
+				onSelect: function( selectedDate ) {
+					var option = this.id == "from-publi-filter" ? "minDate" : "maxDate",
+							instance = $( this ).data( "datepicker" ),
+							date = $.datepicker.parseDate(
+									instance.settings.dateFormat ||
+									$.datepicker._defaults.dateFormat,
+									selectedDate, instance.settings );
+					datesPubli.not( this ).datepicker( "option", option, date );
+					$(this).trigger("change");
+				}
+			});
+			var datesTerm = $( "#from-term-filter, #to-term-filter" ).datepicker({
+				showOn: "both",
+				buttonImage: "/images/icons/calendar_icon.png",
+				buttonImageOnly: true,
+				changeMonth: false,
+				onSelect: function( selectedDate ) {
+					var option = this.id == "from-term-filter" ? "minDate" : "maxDate",
+							instance = $( this ).data( "datepicker" ),
+							date = $.datepicker.parseDate(
+									instance.settings.dateFormat ||
+									$.datepicker._defaults.dateFormat,
+									selectedDate, instance.settings );
+					datesTerm.not( this ).datepicker( "option", option, date );
+					$(this).trigger("change");
+				}
+			});
+			$.datepicker.setDefaults($.datepicker.regional[lang+"-"+country]);
 		},
 		
 		refreshInvoices: function(){
@@ -194,7 +228,15 @@ AppInvoiceMain = (function($){
 			$.ajax({
 				type:"GET",
 				url:"/invoice/specific",
-				data:{organizationId : $('#organization-selector').val(), projectId : $('#project-selector').val(), status:$("#status-selector").val()},
+				data:{	
+						organizationId : $('#organization-selector').val(),
+						projectId : $('#project-selector').val(),
+						status:$("#status-selector").val(),
+						beginDatePubli: $("#from-publi-filter").val(),
+						endDatePubli: $("#to-publi-filter").val(),
+						beginDateTerm: $("#from-term-filter").val(),
+						endDateTerm: $("#to-term-filter").val()
+				},
 				success: function(data){
 					parent.table.clear();
 					if(data != null){
@@ -262,6 +304,7 @@ AppInvoiceMain = (function($){
 					parent.dates.not( this ).datepicker( "option", option, date );
 				}
 			});
+			$.datepicker.setDefaults($.datepicker.regional[lang+"-"+country]);
 			
 			$.ajax({
 				type: "GET",

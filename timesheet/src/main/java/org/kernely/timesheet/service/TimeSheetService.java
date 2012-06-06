@@ -10,12 +10,12 @@ import java.util.TreeSet;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
+import org.apache.commons.configuration.AbstractConfiguration;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.kernely.core.model.User;
-import org.kernely.core.service.UserService;
 import org.kernely.project.dto.ProjectDTO;
 import org.kernely.project.model.Project;
 import org.kernely.service.AbstractService;
@@ -45,10 +45,10 @@ import com.google.inject.persist.Transactional;
 public class TimeSheetService extends AbstractService {
 
 	@Inject
-	UserService userService;
-
+	private Mailer mailService;
+	
 	@Inject
-	Mailer mailService;
+	private AbstractConfiguration configuration;
 	
 	protected final Logger log = LoggerFactory.getLogger(this.getClass());
 
@@ -228,7 +228,7 @@ public class TimeSheetService extends AbstractService {
 		Date firstDayOfWeek = new DateTime().withWeekOfWeekyear(week).withYear(year).withDayOfWeek(1).toDateMidnight().toDate();
 		for (int i = 0; i <= 6; i++) {
 			dates.add(new DateTime(firstDayOfWeek).plusDays(i).toDate());
-			stringDates.add(new DateTime(firstDayOfWeek).plusDays(i).toString("MM/dd/yy"));
+			stringDates.add(new DateTime(firstDayOfWeek).plusDays(i).toString(configuration.getString("locale.dateformat")));
 		}
 
 		// Build the list of id project, ordered by alphabetical order of project names
