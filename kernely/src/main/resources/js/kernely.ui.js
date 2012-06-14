@@ -1,6 +1,3 @@
-
-
-
 $.extend({
 	// Writes a message for the user.
 	// If div is not defined, write in the default div.
@@ -368,18 +365,18 @@ DateNavigatorView = Backbone.View.extend({
     
     
     render: function(){
-	var template = $("#calendarSelector").html();
-	var template4Week = $("#week-selector-template").html();
-	var view4Week = {week : weekSelected};
-	var html = Mustache.to_html(template4Week, view4Week);
-	var view = {week : html, year: yearSelected};
-	html = Mustache.to_html(template, view);
-	$(this.el).html(html);
-	return this;
-},
-refresh: function(){
-	this.render();
-},
+		var template = $("#calendarSelector").html();
+		var template4Week = $("#week-selector-template").html();
+		var view4Week = {week : weekSelected};
+		var html = Mustache.to_html(template4Week, view4Week);
+		var view = {week : html, year: yearSelected};
+		html = Mustache.to_html(template, view);
+		$(this.el).html(html);
+		return this;
+	},
+	refresh: function(){
+		this.render();
+	},
     
     
     initialize: function(router,element, onchange, day, week, month, year){
@@ -587,16 +584,16 @@ jQuery.fn.extend({
 	
 	// Fills an element with a navigator of dates
 	// The navigator is automatically created by the url :
-	// - url : /#/day/X/Y/Z => day navigator, where X is the day, Y the month and Z the year
-	// - url : /#/month/X/Y => month navigator, where Y is the month and Z the year
-	// - url : /#/year/Z => year navigator, where Z is the year
+	// - url : /#/day/D/M/Y => day navigator, where D is the day, M the month and Y the year. Not implemented yet.
+	// - url : /#/month/M/Y => month navigator, where M is the month and Y the year
+	// - url : /#/year/Y => year navigator, where Y is the year.  Not implemented yet.
 	// - url : /#/week/w/Y => week navigator, where w is the week and Y the year
 	// options can be filled with the following data :
 	// - onchange : the function to call when the date change.
 	//				this function will be called with a number
 	//				of arguments depending of the url at the
-	//				creation of the selector (three arguments
-	//				for a day selector for instance).
+	//				creation of the selector (month and year in
+	//				a month selector).
 	kernely_date_navigator: function(options){
         // Force options to be an object
         options = options || {};

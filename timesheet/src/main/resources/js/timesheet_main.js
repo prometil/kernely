@@ -152,7 +152,7 @@ AppTimeSheet = (function($){
 			this.data = data;
 			
 			// Initialize blocked days
-			dayStatus = new Object();
+			dayStatus = new Array();
 			var atLeastOneNormal = false;
 			for (var i = 0 ; i < 7 ; i++){
 				if ((data.timeSheet != null) && (data.timeSheet.columns[i].day.validated == "true")){
@@ -412,9 +412,9 @@ AppTimeSheet = (function($){
 						// Create the total cell
 						$(parent.el).append('<td class="total">' + parent.total + '</td>');
 						
-						// Create the delete button
 						var buttonTemplate = $("#delete-button-template").html();
 						$(parent.el).append("<td>" + buttonTemplate + "</td>");
+						
 						timeSheetId = data.timeSheetId;
 					}
 				});
@@ -438,7 +438,6 @@ AppTimeSheet = (function($){
 						for (var j = 0 ; j < timeSheetDays.length ; j++){
 							
 							if (timeSheetDays[j].index == i){
-
 								$(this.el).append(
 										new TimeSheetDayView(timeSheetDays[j].index,
 												timeSheetDays[j].amount,
@@ -458,10 +457,20 @@ AppTimeSheet = (function($){
 				// Create the total cell
 				$(this.el).append('<td class="total">' + this.total + '</td>');
 				
-				// Create the delete button
-				var buttonTemplate = $("#delete-button-template").html();
-				$(this.el).append("<td>" + buttonTemplate + "</td>");
-
+				// Create the delete button only if the row can be deleted :
+				// if the row is filled with undeletable data (because timesheet
+				// has been validated), the delete button does'nt appears
+				var deletionAllowed = true;
+				for (var i = 0; i < dayStatus.length; i++){
+					if (dayStatus[i] == "validated"){
+						deletionAllowed = false;
+					}
+				}
+				
+				if (deletionAllowed){
+					var buttonTemplate = $("#delete-button-template").html();
+					$(this.el).append("<td>" + buttonTemplate + "</td>");
+				}
 			}
 		},
 		
@@ -478,7 +487,17 @@ AppTimeSheet = (function($){
 			var view = {project: this.projectName};
 			var html = Mustache.to_html(template, view);
 			
-			$.kernelyConfirm($("#delete-template").text(), html,this.confirmRemoveLine,this);
+			var totalRow = 0;
+			for (var i = 0 ; i < 7 ; i++){
+				totalRow += parseFloat(allDayCells[this.projectId][i].amount);
+			}
+			
+			// Ask confirm only if the row is filled with data.
+			if (totalRow > 0){
+				$.kernelyConfirm($("#delete-template").text(), html,this.confirmRemoveLine,this);
+			} else {
+				this.confirmRemoveLine(this);
+			}
 		},
 		
 		confirmRemoveLine: function(parent){
