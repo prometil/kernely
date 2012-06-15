@@ -100,6 +100,11 @@
 	<script type="text/html" id="from-column-template">
 	</script>
 	
+	<script type="text/html" id="year-block-request">
+		<div class="header-block-year clickable">{{"{{"}}year{{"}}"}}</div>
+		<div class="content-block-year">{% i18n "no-data" %}</div>
+	</script>
+	
 {% endblock %}
 
 {% block title %}
@@ -122,8 +127,8 @@
 		
 		</table>
 		<div class="subtitle separate">{% i18n "title_table_2" %}</div>
-		<table id="manager_request_table" class="kernely_table">
-			
-		</table>
+		<div id="statued_requests">
+		
+		</div>
 	</div>
 {% endblock %}

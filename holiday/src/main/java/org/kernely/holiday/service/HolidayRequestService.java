@@ -266,12 +266,45 @@ public class HolidayRequestService extends AbstractService {
 		}
 	}
 	
+	/**
+	 * Retrieve the oldest and newest year of all holiday requests made by the current user
+	 * @return An IntervalDTO containing oldest and newest year.
+	 */
 	public IntervalDTO getYearsCountForCurrentUser(){
 		IntervalDTO interval = new IntervalDTO();
 		Query query1 = em.get().createQuery("SELECT  min(beginDate) from HolidayRequest r WHERE user = :user");
 		query1.setParameter("user", this.getAuthenticatedUserModel());
 		Query query2 = em.get().createQuery("SELECT  max(beginDate) from HolidayRequest r WHERE user = :user");
 		query2.setParameter("user", this.getAuthenticatedUserModel());
+		try {
+			Date date1 = (Date)query1.getSingleResult();
+			interval.end = new DateTime(date1).getYear();
+			Date date2 = (Date)query2.getSingleResult();
+			interval.begin = new DateTime(date2).getYear();
+			return interval;
+		} catch (NoResultException e) {
+			log.debug("There is no holiday waiting requests");
+			interval.end = DateTime.now().getYear();
+			return interval;
+		}
+		
+	}
+	
+	/**
+	 * Retrieve the oldest and newest year of all holiday requests made by the current manager's collaborators
+	 * @return An IntervalDTO containing oldest and newest year.
+	 */
+	public IntervalDTO getYearsCountForManagedUsers(){
+		IntervalDTO interval = new IntervalDTO();
+		Set<UserDTO> managedDTO = userService.getUsersAuthorizedManaged();
+		Set<User> managed = new TreeSet<User>();
+		for (UserDTO udto : managedDTO) {
+			managed.add(em.get().find(User.class, udto.id));
+		}
+		Query query1 = em.get().createQuery("SELECT  min(beginDate) from HolidayRequest r WHERE user in :users");
+		query1.setParameter("users", managed);
+		Query query2 = em.get().createQuery("SELECT  max(beginDate) from HolidayRequest r WHERE user in :users");
+		query2.setParameter("users", managed);
 		try {
 			Date date1 = (Date)query1.getSingleResult();
 			interval.end = new DateTime(date1).getYear();
@@ -620,7 +653,7 @@ public class HolidayRequestService extends AbstractService {
 			log.debug("The user {} has tried to delete the request with id {} but he's not the owner of the request", this.getAuthenticatedUserModel().getId(), request.getId());
 			throw new UnauthorizedException("This request isn't yours. You can't delete it.");
 		}
-		if(new DateTime(request.getEndDate()).isBefore(DateTime.now())){
+		if(new DateTime(request.getEndDate()).isBefore(DateTime.now()) && request.getStatus() != 2){
 			log.debug("The user {} has tried to delete the request with id {} but end date is already reached", this.getAuthenticatedUserModel().getId(), request.getId());
 			throw new IllegalArgumentException("You can't cancel this request, end date is already reached.");
 		}
@@ -689,7 +722,7 @@ public class HolidayRequestService extends AbstractService {
 	 */
 	@SuppressWarnings("unchecked")
 	@Transactional
-	public List<HolidayRequestDTO> getSpecificRequestsForManagers(int status) {
+	public List<HolidayRequestDTO> getSpecificRequestsForManagers(int status, int year) {
 		if (!userService.isManager(this.getAuthenticatedUserModel().getUsername())) {
 			throw new UnauthorizedException("Only managers can access to this functionality!");
 		}
@@ -698,7 +731,20 @@ public class HolidayRequestService extends AbstractService {
 		for (UserDTO udto : managedDTO) {
 			managed.add(em.get().find(User.class, udto.id));
 		}
-		Query query = em.get().createQuery("SELECT  r from HolidayRequest r WHERE  status = :status AND user in :users");
+		Query query;
+		if(year < 0){
+			query = em.get().createQuery("SELECT  r from HolidayRequest r WHERE  status = :status AND user in :users");
+		}
+		else if(year > 0){
+			query = em.get().createQuery("SELECT  r from HolidayRequest r WHERE  status = :status AND user in :users AND beginDate < :date1 AND beginDate > :date2");
+			query.setParameter("date1", new DateTime().withMonthOfYear(12).withDayOfMonth(31).withYear(year).toDateMidnight().toDate());
+			query.setParameter("date2", new DateTime().withMonthOfYear(1).withDayOfMonth(1).withYear(year).toDateMidnight().toDate());
+		}
+		else{
+			query = em.get().createQuery("SELECT  r from HolidayRequest r WHERE  status = :status AND user in :users AND beginDate < :date1 AND beginDate > :date2");
+			query.setParameter("date1", new DateTime().withMonthOfYear(12).withDayOfMonth(31).toDateMidnight().toDate());
+			query.setParameter("date2", new DateTime().withMonthOfYear(1).withDayOfMonth(1).toDateMidnight().toDate());
+		}		
 		query.setParameter("status", status);
 		query.setParameter("users", managed);
 		try {
