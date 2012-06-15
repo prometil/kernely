@@ -98,7 +98,7 @@ public class TimeSheetService extends AbstractService {
 		timeSheet.setEndDate(request.end);
 		timeSheet.setUser(user);
 
-		// Build details : one day of the time sheet, from 0 (monday) to 6 (sunday)
+		// Build days : one day of the time sheet, from 0 (monday) to 6 (sunday)
 		if (id == 0) {
 			// Create a new time sheet
 			em.get().persist(timeSheet);
@@ -107,17 +107,17 @@ public class TimeSheetService extends AbstractService {
 			em.get().merge(timeSheet);
 		}
 
-		Set<TimeSheetDay> defaultDetails = new HashSet<TimeSheetDay>();
+		Set<TimeSheetDay> defaultDays = new HashSet<TimeSheetDay>();
 		TimeSheetDay detail;
 		for (int i = 0; i < 7; i++) {
 			detail = getTimeSheetDay(new DateTime(request.begin).plusDays(i).toDateMidnight().toDate(), timeSheet.getId());
 			detail.setDay(new DateTime(request.begin).plusDays(i).toDate());
-			defaultDetails.add(detail);
+			defaultDays.add(detail);
 
 			em.get().persist(detail);
 		}
 
-		timeSheet.setDays(defaultDetails);
+		timeSheet.setDays(defaultDays);
 
 		em.get().merge(timeSheet);
 		return new TimeSheetDTO(timeSheet);
