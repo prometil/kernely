@@ -524,10 +524,16 @@ public class HolidayRequestService extends AbstractService {
 		}
 		log.debug("ACCEPT : Retrieving holiday request with id {}", id);
 		HolidayRequest request = em.get().find(HolidayRequest.class, id);
-		request.setStatus(HolidayRequest.ACCEPTED_STATUS);
-		request.setManager(this.getAuthenticatedUserModel());
-		em.get().merge(request);
-		log.debug("Holiday request with id {} has been accepted", id);
+		if(request != null && request.getStatus() == 2){
+			request.setStatus(HolidayRequest.ACCEPTED_STATUS);
+			request.setManager(this.getAuthenticatedUserModel());
+			em.get().merge(request);
+			log.debug("Holiday request with id {} has been accepted", id);
+		}
+		else{
+			log.debug("Holiday request with id {} can't be accepted", id);
+			throw new IllegalArgumentException("Impossible to accept this request.");
+		}
 	}
 
 	/**
@@ -543,39 +549,47 @@ public class HolidayRequestService extends AbstractService {
 		}
 		log.debug("DENY : Retrieving holiday request with id {}", id);
 		HolidayRequest request = em.get().find(HolidayRequest.class, id);
-		request.setStatus(HolidayRequest.DENIED_STATUS);
-		request.setManager(this.getAuthenticatedUserModel());
-		em.get().merge(request);
-
-		// Update the temporary balance
-		Set<HolidayRequestDetail> details = request.getDetails();
-		Map<HolidayTypeInstance, Float> typeToUpdate = new HashMap<HolidayTypeInstance, Float>();
-		for (HolidayRequestDetail d : details) {
-			float taken = 0F;
-			// We increase the value by 6 because we're counting in 12th of a
-			// day, so 6 represents an half day.
-			if (d.isAm()) {
-				taken += HALF_DAY;
+		if(request != null && request.getStatus() == 2){
+			
+			request.setStatus(HolidayRequest.DENIED_STATUS);
+			request.setManager(this.getAuthenticatedUserModel());
+			em.get().merge(request);
+	
+			// Update the temporary balance
+			Set<HolidayRequestDetail> details = request.getDetails();
+			Map<HolidayTypeInstance, Float> typeToUpdate = new HashMap<HolidayTypeInstance, Float>();
+			for (HolidayRequestDetail d : details) {
+				float taken = 0F;
+				// We increase the value by 6 because we're counting in 12th of a
+				// day, so 6 represents an half day.
+				if (d.isAm()) {
+					taken += HALF_DAY;
+				}
+				if (d.isPm()) {
+					taken += HALF_DAY;
+				}
+	
+				if (typeToUpdate.containsKey(d.getTypeInstance())) {
+					typeToUpdate.put(d.getTypeInstance(), typeToUpdate.get(d.getTypeInstance()) + taken);
+				} else {
+					typeToUpdate.put(d.getTypeInstance(), taken);
+				}
 			}
-			if (d.isPm()) {
-				taken += HALF_DAY;
+	
+			// Update temporary balance
+	
+			Set<Entry<HolidayTypeInstance, Float>> entries = typeToUpdate.entrySet();
+			for (Entry<HolidayTypeInstance, Float> e : entries) {
+				this.balanceService.addDaysInAvailableUpdatedFromRequest(e.getKey().getId(), request.getUser().getId(), e.getValue());
 			}
-
-			if (typeToUpdate.containsKey(d.getTypeInstance())) {
-				typeToUpdate.put(d.getTypeInstance(), typeToUpdate.get(d.getTypeInstance()) + taken);
-			} else {
-				typeToUpdate.put(d.getTypeInstance(), taken);
-			}
+	
+			log.debug("Holiday request with id {} has been denied", id);
+			
 		}
-
-		// Update temporary balance
-
-		Set<Entry<HolidayTypeInstance, Float>> entries = typeToUpdate.entrySet();
-		for (Entry<HolidayTypeInstance, Float> e : entries) {
-			this.balanceService.addDaysInAvailableUpdatedFromRequest(e.getKey().getId(), request.getUser().getId(), e.getValue());
+		else{
+			log.debug("Holiday request with id {} can't be accepted", id);
+			throw new IllegalArgumentException("Impossible to deny this request.");
 		}
-
-		log.debug("Holiday request with id {} has been denied", id);
 	}
 
 	/**

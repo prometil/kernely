@@ -351,6 +351,7 @@ AppHolidayUserRequest = (function($){
 		
 		newRequest : function(){
 			$(this.formRequest).kernely_dialog( "open" );
+			$(this.formRequest).find("input:text").val("");
 		}		
 		
 	})
