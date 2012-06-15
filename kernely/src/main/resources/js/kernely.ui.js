@@ -16,14 +16,18 @@ $.extend({
 			vdiv = div;
 		}
 		
+		var divMess = document.createElement("div");
+		$(divMess).addClass(status+"-notification");
+		$(divMess).html(message);
+		
 		$(vdiv).hide();
 		$(vdiv).stop(true,true);
-    	$(vdiv).removeClass();
-    	$(vdiv).addClass(status+"-notification");
-    	$(vdiv).html(message);
-    	$(vdiv).fadeIn(1000);
-    	$(vdiv).delay(3000);
-    	$(vdiv).fadeOut(3000);
+		$(vdiv).append($(divMess));
+		$(vdiv).show();
+		
+		$(divMess).fadeIn(1000);
+    	$(divMess).delay(3000);
+    	$(divMess).fadeOut(3000);
 	},
 	
 	round: function(num, dec){
@@ -96,6 +100,8 @@ $.extend({
 	}
 });
 
+var kernelyTableGroups = new Array();
+
 /* View used to generate table lines.*/
 TableLineView = Backbone.View.extend({
 	tagName: "tr",
@@ -104,6 +110,10 @@ TableLineView = Backbone.View.extend({
 	styles:null,
 	
 	data: null,
+	
+	editable : true,
+	
+	tableParent : null,
 	
 	events: {
 		"click" : "select",
@@ -117,34 +127,58 @@ TableLineView = Backbone.View.extend({
 	
 	idLine: null,
 	
-	initialize: function(idLine, data,eventNames, events, styles){
+	initialize: function(idLine, data,eventNames, events, styles, tableParent, editable){
 		this.styles = styles;		
 		this.data = data;
 		this.idLine = idLine;
 		
 		this.eventNames = eventNames;
 		this.eventsActions = events;
-		
+		this.editable = editable;
+		this.tableParent = tableParent;
 		return this;
 	},
 	
 	select : function(){
-		$(".line_selected").removeClass("line_selected");
-		$(this.el).addClass("line_selected");
+		if(this.idLine != -1 && this.editable){
+			if(this.tableParent.group == null){
+				$(this.tableParent.el).find(".line_selected").removeClass("line_selected");
+				$(this.tableParent.el).find(this.el).addClass("line_selected");
+			}
+			else{
+				$.each(kernelyTableGroups[this.tableParent.group], function(){
+					
+					this.unselectLine();
+				});
+				$(this.tableParent.el).find(".line_selected").removeClass("line_selected");
+				$(this.tableParent.el).find(this.el).addClass("line_selected");
+			}
+		}
 	},
 	over : function(){
-		$(this.el).addClass("over");
+		if(this.idLine != -1 && this.editable){
+			$(this.el).addClass("over");
+		}
 	},
 	out : function(){
-		$(this.el).removeClass("over");
+		if(this.idLine != -1 && this.editable){
+			$(this.el).removeClass("over");
+		}
 	},
 	render:function(){
 		var parent = this;
-		var i = 0;
-		if($.isArray(this.data)){
-			$.each(this.data, function(){
+		if(this.idLine == -1){
+			var td = document.createElement("td");
+			$(td).attr("colspan", "100%");
+			$(td).html(this.data);
+			$(this.el).append($(td));
+		}
+		else{
+			var i = 0;
+			
+			for(var value in this.data){
 				var td = document.createElement("td");
-				$(td).html("" + this); // String casting
+				$(td).html("" + this.data[value]); // String casting
 				if($.isArray(parent.styles[i])){
 					$.each(parent.styles[i], function(){
 						$(td).addClass(""+this); // String casting
@@ -155,45 +189,32 @@ TableLineView = Backbone.View.extend({
 				}
 				$(parent.el).append($(td));
 				i++;
-			});
-		}
-		else{
-			var td = document.createElement("td");
-			$(td).html(this.data);
-			if($.isArray(parent.styles[i])){
-				$.each(parent.styles[i], function(){
-					$(td).addClass("" + this);
+			}
+			
+			if($.isArray(this.eventNames)){
+				$.each(this.eventNames, function(){
+					
+					if(this.lastIndexOf('.') != -1){
+						var event = this.substring(0, this.lastIndexOf('.')-1);
+						var element= this.substring(this.lastIndexOf('.'));
+						$(parent.el).find(element).bind("" + event, {line: parent.idLine, data: parent.data} ,parent.eventsActions[this]);
+						
+					}
+					else{
+						$(parent.el).bind("" + this, {line: parent.idLine, data: parent.data} ,parent.eventsActions[this]);
+					}
+					
 				});
 			}
 			else{
-				$(td).addClass(parent.styles[i]);
-			}
-			$(this.el).append($(td));
-		}
-		
-		if($.isArray(this.eventNames)){
-			$.each(this.eventNames, function(){
-				
-				if(this.lastIndexOf('.') != -1){
-					var event = this.substring(0, this.lastIndexOf('.')-1);
-					var element= this.substring(this.lastIndexOf('.'));
-					$(parent.el).find(element).bind("" + event, {line: parent.idLine} ,parent.eventsActions[this]);
-					
+				if(this.eventNames.lastIndexOf('.') != -1){
+					var event = this.eventNames.substring(0, this.eventNames.lastIndexOf('.')-1);
+					var element= this.eventNames.substring(this.eventNames.lastIndexOf('.'));
+					$(parent.el).find(element).bind("" + event, {line: parent.idLine, data: parent.data} ,parent.eventsActions[this.eventNames]);
 				}
 				else{
-					$(parent.el).bind("" + this, {line: parent.idLine} ,parent.eventsActions[this]);
+					$(parent.el).bind("" + this.eventNames, {line: parent.idLine, data: parent.data} ,parent.eventsActions[this.eventNames]);
 				}
-				
-			});
-		}
-		else{
-			if(this.eventNames.lastIndexOf('.') != -1){
-				var event = this.eventNames.substring(0, this.eventNames.lastIndexOf('.')-1);
-				var element= this.eventNames.substring(this.eventNames.lastIndexOf('.'));
-				$(parent.el).find(element).bind("" + event, {line: parent.idLine} ,parent.eventsActions[this.eventNames]);
-			}
-			else{
-				$(parent.el).bind("" + this.eventNames, {line: parent.idLine} ,parent.eventsActions[this.eventNames]);
 			}
 		}
 		return this;
@@ -215,12 +236,24 @@ TableView = Backbone.View.extend({
         
         eventName:null,
         
+        editable:true,
+        
+        group:null,
+        
         initialize: function(element){
                 this.styles= new Array();
                 this.el = element;
         },
         
         render: function(){
+        		// Add this table into the tale group
+        		if(this.group != null){
+        			if(kernelyTableGroups[this.group] == null){
+        				kernelyTableGroups[this.group] = new Array();
+        			}
+        			kernelyTableGroups[this.group][kernelyTableGroups[this.group].length] = this;
+        		}
+        	
                 // Add the header to the table
                 var thead = document.createElement("thead");
                 var tr = document.createElement("tr");
@@ -247,14 +280,13 @@ TableView = Backbone.View.extend({
         reload:function(data){
                 var body = this.el.find("tbody");
                 body.empty();
-                
-                if(typeof(data) != "undefined"){
+                if(typeof(data) != "undefined" && data != null){
                         var table = $(this.el);
                         var view = this;
                         if($.isArray(data)){
                                 var parent;
                                 $.each(data, function(){
-                                        var array = new Array();
+                                        var array = {};
                                         parent = this;
                                         var elem;
                                         if($.isArray(view.elements)){
@@ -272,7 +304,7 @@ TableView = Backbone.View.extend({
                                                         if(typeof(elem) == "undefined"){
                                                                 elem = "";
                                                         }
-                                                        array.push(elem);
+                                                        array[this] = elem;
                                                 });
                                         }
                                         else{
@@ -289,28 +321,36 @@ TableView = Backbone.View.extend({
                                                 if(typeof(elem) == "undefined"){
                                                         elem = "";
                                                 }
-                                                array.push(parent[view.elements]);
+                                                array[view.elements] = parent[view.elements];
                                         }
-                                        table.append(new TableLineView(this[view.idField],array, view.eventName, view.events, view.styles).render().el);
+                                        table.append(new TableLineView(this[view.idField],array, view.eventName, view.events, view.styles, view, view.editable).render().el);
                                 });
                         }
                         else{
                                 var array = new Array();
                                 if($.isArray(view.elements)){
                                         $.each(view.elements, function(){
-                                                array.push(data[this]);
+                                                array[this] = data[this];
                                         });
                                 }
                                 else{
-                                        array.push(data[elements]);
+                                        array[elements] = data[elements];
                                 }
-                                table.append(new TableLineView(data[view.idField], array, view.eventName, view.events, view.styles).render().el);
+                                table.append(new TableLineView(data[view.idField], array, view.eventName, view.events, view.styles, view, view.editable).render().el);
                         }
                 }
         },
         
         clear: function(){
         	this.el.find("tbody").empty();
+        },
+        
+        noData: function(){
+        	$(this.el).append(new TableLineView(-1, $("#no-data-template").html(), null, null, this.styles, this, this.editable).render().el);
+        },
+        
+        unselectLine: function(){
+        	$(this.el).find(".line_selected").removeClass("line_selected");
         }
         
 });
@@ -368,18 +408,18 @@ DateNavigatorView = Backbone.View.extend({
     
     
     render: function(){
-	var template = $("#calendarSelector").html();
-	var template4Week = $("#week-selector-template").html();
-	var view4Week = {week : weekSelected};
-	var html = Mustache.to_html(template4Week, view4Week);
-	var view = {week : html, year: yearSelected};
-	html = Mustache.to_html(template, view);
-	$(this.el).html(html);
-	return this;
-},
-refresh: function(){
-	this.render();
-},
+		var template = $("#calendarSelector").html();
+		var template4Week = $("#week-selector-template").html();
+		var view4Week = {week : weekSelected};
+		var html = Mustache.to_html(template4Week, view4Week);
+		var view = {week : html, year: yearSelected};
+		html = Mustache.to_html(template, view);
+		$(this.el).html(html);
+		return this;
+	},
+	refresh: function(){
+		this.render();
+	},
     
     
     initialize: function(router,element, onchange, day, week, month, year){
@@ -504,6 +544,8 @@ jQuery.fn.extend({
 	// - columns : The names of the columns to diaplay in the header of the table
 	// - eventName : The names of the different custom events to implements
 	// - events : The association between the name and the function called of a custom event
+	// - editable : if the lines in the table can be selected
+	// - group : if this table is a part of a group of table. If group doesn't exist, it will create it.
 	kernely_table: function(options){
 		// Force options to be an object
 		options = options || {};
@@ -513,10 +555,12 @@ jQuery.fn.extend({
 		
 		var table = new TableView(this);
 		table.columns = options.columns;
+		table.group = options.group;
 		table.elements = options.elements;
 		table.idField = options.idField;
 		table.events = options.events;
 		table.eventName = options.eventNames;
+		table.editable = options.editable;
 		table.render();
 		return table;
 	},

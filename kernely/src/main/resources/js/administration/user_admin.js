@@ -49,7 +49,8 @@
 				eventNames:["click"],
 				events:{
 					"click": parent.selectLine
-				}
+				},
+				editable:true
 			});
 		},
 		selectLine : function(e){
@@ -89,6 +90,10 @@
 							}
 						}
 						parent.table.reload(dataUser);
+					}
+					else{
+						parent.table.clear();
+						parent.table.noData();
 					}
 				}
 			});

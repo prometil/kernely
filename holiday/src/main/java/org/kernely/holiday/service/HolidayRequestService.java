@@ -268,12 +268,15 @@ public class HolidayRequestService extends AbstractService {
 	
 	public IntervalDTO getYearsCountForCurrentUser(){
 		IntervalDTO interval = new IntervalDTO();
-		interval.begin = DateTime.now().getYear();
-		Query query = em.get().createQuery("SELECT  min(beginDate) from HolidayRequest r WHERE user = :user");
-		query.setParameter("user", this.getAuthenticatedUserModel());
+		Query query1 = em.get().createQuery("SELECT  min(beginDate) from HolidayRequest r WHERE user = :user");
+		query1.setParameter("user", this.getAuthenticatedUserModel());
+		Query query2 = em.get().createQuery("SELECT  max(beginDate) from HolidayRequest r WHERE user = :user");
+		query2.setParameter("user", this.getAuthenticatedUserModel());
 		try {
-			Date date = (Date)query.getSingleResult();
-			interval.end = new DateTime(date).getYear();
+			Date date1 = (Date)query1.getSingleResult();
+			interval.end = new DateTime(date1).getYear();
+			Date date2 = (Date)query2.getSingleResult();
+			interval.begin = new DateTime(date2).getYear();
 			return interval;
 		} catch (NoResultException e) {
 			log.debug("There is no holiday waiting requests");
@@ -599,6 +602,14 @@ public class HolidayRequestService extends AbstractService {
 	public void cancelRequest(long id) {
 		log.debug("CANCEL : Retrieving holiday request with id {}", id);
 		HolidayRequest request = em.get().find(HolidayRequest.class, id);
+		if(!request.getUser().equals(this.getAuthenticatedUserModel())){
+			log.debug("The user {} has tried to delete the request with id {} but he's not the owner of the request", this.getAuthenticatedUserModel().getId(), request.getId());
+			throw new UnauthorizedException("This request isn't yours. You can't delete it.");
+		}
+		if(new DateTime(request.getEndDate()).isBefore(DateTime.now())){
+			log.debug("The user {} has tried to delete the request with id {} but end date is already reached", this.getAuthenticatedUserModel().getId(), request.getId());
+			throw new IllegalArgumentException("You can't cancel this request, end date is already reached.");
+		}
 		Set<HolidayRequestDetail> holidayRequestDetails = request.getDetails();
 
 		// Update the temporary balance

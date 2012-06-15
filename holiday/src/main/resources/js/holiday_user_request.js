@@ -1,7 +1,10 @@
 AppHolidayUserRequest = (function($){
-	var lineSelected = null;
-	var tableView1 = null;
+	var lineSelectedPending = null;
+	var lineSelectedStatued = null;
+	var tablePendingView = null;
+	var tableStatuedGroup = new Array();
 	var buttonView = null;
+	var balanceSummary = null;
 	
 	HolidayUserRequestPageView = Backbone.View.extend({
 		el:"#request-manager-main",
@@ -13,25 +16,45 @@ AppHolidayUserRequest = (function($){
 		},
 		
 		render:function(){
-			tableView1 = new HolidayUserRequestPendingTableView().render();
+			tablePendingView = new HolidayUserRequestPendingTableView().render();
 			new HolidayUserYearContainerView();
 			buttonView = new HolidayUserButtonsView().render();
-			new HolidayCancelButtonView();
+			new HolidayCancelPendingButtonView();
+			new HolidayCancelStatuedButtonView();
+			balanceSummary = new HolidayBalanceSummaryView().render();
+		}
+	})
+	
+	HolidayBalanceSummaryView = Backbone.View.extend({
+		el:"#balance-summary",
+		
+		render:function(){
+			var parent = this;
+			$(parent.el).empty();
 			$.ajax({
 				type: 'GET',
 				url:"/holiday/balances",
 				dataType: "json",
 				success: function(data){
-					if(data.calendarBalanceDetailDTO != null && data.calendarBalanceDetailDTO.length > 1){
-						$.each(data.calendarBalanceDetailDTO, function(){
-							$("#balance-summary").append(new HolidayRequestColorPickerCell(this.nameOfType, this.nbAvailable, this.color, this.idOfType, this.limitOfAnticipation).render().el);
-		                });
+					if(data != null){
+						if(data.calendarBalanceDetailDTO != null && data.calendarBalanceDetailDTO.length > 1){
+							$.each(data.calendarBalanceDetailDTO, function(){
+								$(parent.el).append(new HolidayRequestColorPickerCell(this.nameOfType, this.nbAvailable, this.color, this.idOfType, this.limitOfAnticipation).render().el);
+			                });
+						}
+						else{
+							$(parent.el).append(new HolidayRequestColorPickerCell(data.calendarBalanceDetailDTO.nameOfType, data.calendarBalanceDetailDTO.nbAvailable, data.calendarBalanceDetailDTO.color, data.calendarBalanceDetailDTO.idOfType, data.calendarBalanceDetailDTO.limitOfAnticipation).render().el);				
+						}
 					}
 					else{
-						$("#balance-summary").append(new HolidayRequestColorPickerCell(data.calendarBalanceDetailDTO.nameOfType, data.calendarBalanceDetailDTO.nbAvailable, data.calendarBalanceDetailDTO.color, data.calendarBalanceDetailDTO.idOfType, data.calendarBalanceDetailDTO.limitOfAnticipation).render().el);				
+						$(parent.el).html($("#no-balance-template").html());
 					}
+				},
+				error: function(){
+					$.writeMessage("error",$("#balance-loading-error-template").html());
 				}
 			});
+			return this;
 		}
 	})
 	
@@ -49,18 +72,20 @@ AppHolidayUserRequest = (function($){
 				       {"name":templateCommentColumn, "style":""},
 				       {"name":templateBeginColumn, "style":"text-center"},
 				       {"name":templateEndColumn, "style":"text-center"}
-				 ],
+				],
 				idField:"id",
 				elements:["requesterComment", "beginDate", "endDate"],
 				eventNames:["click"],
 				events:{
 					"click": parent.selectLine
-				}
+				},
+				editable: true
 			});
 		},
 		selectLine : function(e){
-			$("#button_canceled").removeAttr('disabled');
-			lineSelected = e.data.line;
+			
+			$("#button_cancel_pending").removeAttr('disabled');
+			lineSelectedPending = e.data.line;
 		},
 		reload: function(){
 			this.render();
@@ -82,14 +107,18 @@ AppHolidayUserRequest = (function($){
 							});
 						}
 						else{
-							dataRequest.beginDate = moment(this.beginDate).format("L");
-							dataRequest.endDate = moment(this.endDate).format("L");
+							dataRequest.beginDate = moment(dataRequest.beginDate).format("L");
+							dataRequest.endDate = moment(dataRequest.endDate).format("L");
 						}
 						parent.table.reload(dataRequest);
 					}
 					else{
 						parent.table.clear();
+						parent.table.noData();
 					}
+				},
+				error: function(){
+					$.writeMessage("error",$("#pending-loading-error-template").html());
 				}
 			});
 			return this;
@@ -177,6 +206,7 @@ AppHolidayUserRequest = (function($){
 			this.year = year;
 			var parent = this;
 			var templateManagerColumn = $("#table-manager-column").text();
+			var templateManagerCommentColumn = $("#table-manager-comment-column").text();
 			var templateCommentColumn = $("#table-request-comment-column").text();
 			var templateBeginColumn = $("#table-begin-date-column").text();
 			var templateEndColumn = $("#table-end-date-column").text();
@@ -184,15 +214,33 @@ AppHolidayUserRequest = (function($){
 			this.table = $(parent.el).kernely_table({
 				columns:[
 				       {"name":templateManagerColumn, style:""},
-				       {"name":templateCommentColumn, style:""},
+				       {"name":templateManagerCommentColumn, style:"comment-column"},
+				       {"name":templateCommentColumn, style:"comment-column"},
 				       {"name":templateBeginColumn, style:"text-center"},
 				       {"name":templateEndColumn, style:"text-center"},
-				       {"name":"", style:["general-bg", "text-center", "no-border-right", "no-border-top", "no-border-bottom", "icon-column"]}
+				       {"name":"", style:["text-center", "icon-column"]},
+				       {"name":"", style:"invisible"}
 				],
 				idField:"id",
-				elements:["managerComment", "requesterComment", "beginDate", "endDate", "status"]
+				elements:["manager","managerComment", "requesterComment", "beginDate", "endDate", "status", "cancelable"],
+				eventNames:["click"],
+				events:{
+					"click": parent.selectLine
+				},
+				editable:true,
+				group:1
 			});
+			tableStatuedGroup.push(parent);
+		},
 		
+		selectLine : function(e){
+			if(e.data.data.cancelable == "true"){
+				$("#button_cancel_statued").removeAttr('disabled');
+				lineSelectedStatued = e.data.line;
+			}
+			else{
+				$("#button_cancel_statued").attr('disabled', 'disabled');
+			}
 			
 		},
 		
@@ -229,14 +277,18 @@ AppHolidayUserRequest = (function($){
 							else{
 								dataRequest.status = "<img src='/images/icons/deny_icon.png' />";
 							}
-							dataRequest.beginDate = moment(this.beginDate).format("L");
-							dataRequest.endDate = moment(this.endDate).format("L");
+							dataRequest.beginDate = moment(dataRequest.beginDate).format("L");
+							dataRequest.endDate = moment(dataRequest.endDate).format("L");
 						}
 						parent.table.reload(dataRequest);
 					}
 					else{
 						parent.table.clear();
+						parent.table.noData();
 					}
+				},
+				error: function(){
+					$.writeMessage("error",$("#statued-loading-error-template").html());
 				}
 			});
 			return this;
@@ -303,8 +355,8 @@ AppHolidayUserRequest = (function($){
 		
 	})
 	
-	HolidayCancelButtonView = Backbone.View.extend({
-		el:"#button_canceled",
+	HolidayCancelPendingButtonView = Backbone.View.extend({
+		el:"#button_cancel_pending",
 		
 		events: {
 			"click" : "canceled"
@@ -321,12 +373,54 @@ AppHolidayUserRequest = (function($){
 		confirmCancel: function(){
 			parent = this;
 			$.ajax({
-				url:"/holiday/cancel/" + lineSelected,
+				url:"/holiday/cancel/" + lineSelectedPending,
 				success: function(){
 					var successHtml = $("#holiday-canceled-template").html();	
 					$.writeMessage("success",successHtml);
-					tableView1.reload();
-					$(parent.el).attr('disabled','disabled');
+					tablePendingView.reload();
+					balanceSummary.render();
+					$("#button_cancel_pending").attr('disabled','disabled');
+				},
+				error: function(data){
+					$.writeMessage("error",$("#cancel-error-template").html());
+				}
+			});
+		}
+	
+		
+	})
+	
+	HolidayCancelStatuedButtonView = Backbone.View.extend({
+		el:"#button_cancel_statued",
+		
+		events: {
+			"click" : "canceled"
+		},
+	
+		canceled:function(){
+			var template = $("#cancel-ask-template").html();
+			var view = {};
+			var html = Mustache.to_html(template, view);
+			
+			$.kernelyConfirm($("#holiday-cancel-template").text(),html,this.confirmCancel);
+		},
+		
+		confirmCancel: function(){
+			parent = this;
+			$.ajax({
+				url:"/holiday/cancel/" + lineSelectedStatued,
+				success: function(){
+					var successHtml = $("#holiday-canceled-template").html();	
+					$.writeMessage("success",successHtml);
+					for(var view in tableStatuedGroup){
+						console.log(view);
+						tableStatuedGroup[view].reload();
+					}
+					balanceSummary.render();
+					$("#button_cancel_statued").attr('disabled','disabled');
+				},
+				error: function(data){
+					$.writeMessage("error",$("#cancel-error-template").html());
 				}
 			});
 		}
@@ -336,7 +430,7 @@ AppHolidayUserRequest = (function($){
 	
 	HolidayRequestColorPickerCell = Backbone.View.extend({
 		tagName:"div",
-		className: "balance-cell",
+		className: "balance-cell-display",
 		
 		color:null,
 		name:null,

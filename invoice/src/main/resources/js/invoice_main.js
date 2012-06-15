@@ -203,6 +203,7 @@ AppInvoiceMain = (function($){
 			var templateClientColumn = $("#table-client-column").text();
 			var templateProjectColumn = $("#table-project-column").text();
 			var templateAmountColumn = $("#table-amount-column").text();
+			//   {"name":"", "style":["general-bg", "text-center", "no-border-right", "no-border-top", "no-border-bottom"]},
 			this.table = $(parent.el).kernely_table({
 				columns:[
 				       {"name":templateStatusColumn, "style":"text-center"},
@@ -210,8 +211,8 @@ AppInvoiceMain = (function($){
 				       {"name":templateClientColumn, "style":""},
 				       {"name":templateProjectColumn, "style":""},
 				       {"name":templateAmountColumn, "style":"text-center"},
-				       {"name":"", "style":["general-bg", "text-center", "no-border-right", "no-border-top", "no-border-bottom"]},
-				       {"name":"", "style":["general-bg", "text-center", "no-border-right", "no-border-top", "no-border-bottom"]}],
+				       {"name":"", "style":["text-center", "icon-column"]},
+				       {"name":"", "style":["text-center", "icon-column"]}],
 				idField:"id",
 				elements:["status", "code", "organizationName", "projectName", "amount", "buttonView", "buttonEdit"],
 				eventNames:["click"],
@@ -256,6 +257,10 @@ AppInvoiceMain = (function($){
 							dataInvoice.buttonEdit = '<a href="/invoice/'+dataInvoice.id+'/edit">'+ $("#invoice-edit-button").html() + '</a>';
 						}
 						parent.table.reload(dataInvoice);
+					}
+					else{
+						parent.table.clear();
+						parent.table.noData();
 					}
 				}
 			});

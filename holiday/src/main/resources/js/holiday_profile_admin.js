@@ -63,7 +63,8 @@ AppHolidayAdmin = (function($){
 				eventNames:["click"],
 				events:{
 					"click": parent.selectLine
-				}
+				},
+				editable:true
 			});
 		},
 		

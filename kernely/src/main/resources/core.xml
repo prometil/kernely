@@ -37,9 +37,9 @@
         </server>
         <home>/streams</home>
         <locale>
-                <lang>fr</lang>
-                <country>FR</country>
-                <dateformat>dd/MM/yyyy</dateformat>
+                <lang>en</lang>
+                <country>US</country>
+                <dateformat>MM/dd/yyyy</dateformat>
         </locale>
         <workspace>work</workspace>
         <plugins>

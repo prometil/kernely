@@ -455,14 +455,30 @@ div.button-bar {
 	border: 1px solid #90a516;
 }
 
+.button_ok:hover{
+	background-color:#879d08;
+}
+
+.button_ok[disabled]{
+	background-color:#F6F6F6;
+	color:#e3e4e4;
+	cursor:default;
+}
+
 .button_emphasis{
 	background-color:#3e3d40;
 	color:#FFFFFF;
 	border: 1px solid #e6e7e7;
 }
 
-.button_ok:hover{
-	background-color:#879d08;
+.button_emphasis:hover{
+	background-color:#2b2b2d;
+}
+
+.button_emphasis[disabled]{
+	background-color:#F6F6F6;
+	color:#e3e4e4;
+	cursor:default;
 }
 
 .button_standard{
@@ -481,10 +497,6 @@ div.button-bar {
 	cursor:default;
 }
 
-
-.button_emphasis:hover{
-	background-color:#2b2b2d;
-}
 /* Table style */
 table.kernely_table tr:nth-child(odd) {
     background-color: #F6F6F6;
@@ -551,6 +563,10 @@ table.kernely_table th{
 	background-color: #e3e4e4;
 }
 
+table.kernely_table .icon-column{
+	width:30px;
+}
+
 /* Input fields */
 .kernely_input{
 	border:1px solid #aeafb0;
@@ -611,6 +627,10 @@ table.kernely_table th{
 	visibility:hidden;
 }
 
+.invisible{
+	display:none;
+}
+
 .no-margin{
 	margin:0;
 }
@@ -637,10 +657,6 @@ table.kernely_table th{
 
 .no-border-right{
 	border-right:none !important;
-}
-
-.icon-column{
-	width:50px !important;
 }
 
 .separate{
@@ -699,6 +715,9 @@ legend{
 
 .classic-buttons-bar{
 	text-align:right;
+	margin-top:5px;
+	margin-bottom:5px;
+
 }
 
 /* Datepickers*/

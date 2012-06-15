@@ -39,7 +39,8 @@ AppOrganizationAdmin = (function($){
 				events:{
 					"click": parent.selectLine
 				},
-				columns:[{"name":templateNameColumn, style:""}]
+				columns:[{"name":templateNameColumn, style:""}],
+				editable:true
 			});
 		},
 		reload: function(){
@@ -61,6 +62,10 @@ AppOrganizationAdmin = (function($){
 						var dataOrganization = data.organizationDTO;
 						parent.table.reload(dataOrganization);
 					}
+				}
+				else{
+					parent.table.clear();
+					parent.table.noData();
 				}
 			});
 			return this;

@@ -44,7 +44,8 @@ AppStreamAdmin = (function($){
 				eventNames:["click"],
 				events:{
 					"click": parent.selectLine
-				}
+				},
+				editable:true
 			});
 			
 		},
@@ -119,6 +120,10 @@ AppStreamAdmin = (function($){
 							}
 						}
 						parent.table.reload(dataStream);
+					}
+					else{
+						parent.table.clear();
+						parent.table.noData();
 					}
 				}
 			});

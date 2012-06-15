@@ -27,7 +27,8 @@ AppExpenseType = (function($){
 				eventNames:["click"],
 				events:{
 					"click": parent.selectLine
-				}
+				},
+				editable:true
 			});
 		},
 		selectLine : function(e){
@@ -48,6 +49,10 @@ AppExpenseType = (function($){
 					if (data != null){
 						var dataExpense = data.expenseTypeDTO;
 						parent.table.reload(dataExpense);
+					}
+					else{
+						parent.table.clear();
+						parent.table.noData();
 					}
 				}
 			});

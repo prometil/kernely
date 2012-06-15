@@ -42,7 +42,8 @@ AppManagerAdmin = (function($){
 				eventNames:["click"],
 				events:{
 					"click": parent.selectLine
-				}
+				},
+				editable:true
 			});
 		},
 		selectLine : function(e){
@@ -64,6 +65,10 @@ AppManagerAdmin = (function($){
 					if(data != null){
 						var dataManager = data.managerDTO;
 						parent.table.reload(dataManager);
+					}
+					else{
+						parent.table.clear();
+						parent.table.noData();
 					}
 				}
 			});

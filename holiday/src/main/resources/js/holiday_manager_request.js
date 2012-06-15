@@ -50,9 +50,9 @@ AppHolidayManagerRequest = (function($){
 						{"name":templateRequesterColumn, style:""}, 
 						{"name":templateBeginColumn, style:""},
 						{"name":templateEndColumn, style:""},
-						{"name":"", style:["general-bg", "text-center", "no-border-right", "no-border-top", "no-border-bottom"]},
-						{"name":"", style:["general-bg", "text-center", "no-border-right", "no-border-top", "no-border-bottom"]},
-						{"name":"", style:["general-bg", "text-center", "no-border-right", "no-border-top", "no-border-bottom"]}
+						{"name":"", style:["text-center", "icon-column"]},
+						{"name":"", style:["text-center", "icon-column"]},
+						{"name":"", style:["text-center", "icon-column"]}
 				],
 				elements:["user", "requesterComment", "beginDate", "endDate", "acceptButton", "denyButton", "visualizeButton"],
 				
@@ -63,7 +63,8 @@ AppHolidayManagerRequest = (function($){
 					"click .deny" : parent.deny,
 					"click .visualize" : parent.visualize
 					
-				}
+				},
+				editable:true
 			});
 		},
 		
@@ -113,11 +114,15 @@ AppHolidayManagerRequest = (function($){
 							dataRequest.acceptButton = "<img class='accept clickable' src='/images/icons/rights_icon.png' />";
 							dataRequest.denyButton = "<img class='deny clickable' src='/images/icons/delete_icon.png' />";
 							dataRequest.visualizeButton = "<img class='visualize clickable' src='/images/icons/visualize_icon.png' />";
-							dataRequest.beginDate = moment(this.beginDate).format("L");
-							dataRequest.endDate = moment(this.endDate).format("L");
+							dataRequest.beginDate = moment(dataRequest.beginDate).format("L");
+							dataRequest.endDate = moment(dataRequest.endDate).format("L");
 						}
+						parent.table.reload(dataRequest);
 					}
-					parent.table.reload(dataRequest);
+					else{
+						parent.table.clear();
+						parent.table.noData();
+					}
 				}
 			});
 			return this;
@@ -148,14 +153,15 @@ AppHolidayManagerRequest = (function($){
 						{"name":templateManagerColumn, style:""},
 						{"name":templateBeginColumn, style:""},
 						{"name":templateEndColumn, style:""},
-						{"name":"", style:["general-bg", "text-center", "no-border-right", "no-border-top", "no-border-bottom"]}
+						{"name":"", style:["text-center", "icon-column"]}
 				],
 				elements:["user", "requesterComment", "managerComment", "beginDate", "endDate", "status"],
 				
 				eventNames:["click"],
 				events:{
 					"click": parent.selectLine
-				}
+				},
+				editable:true
 			});
 		},
 		
@@ -191,13 +197,14 @@ AppHolidayManagerRequest = (function($){
 							else{
 								dataRequest.status = "<img src='/images/icons/deny_icon.png' />";
 							}
-							dataRequest.beginDate = moment(this.beginDate).format("L");
-							dataRequest.endDate = moment(this.endDate).format("L");
+							dataRequest.beginDate = moment(dataRequest.beginDate).format("L");
+							dataRequest.endDate = moment(dataRequest.endDate).format("L");
 						}
 						parent.table.reload(dataRequest);
 					}
 					else{
 						parent.table.clear();
+						parent.table.noData();
 					}
 				}
 			});

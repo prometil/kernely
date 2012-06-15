@@ -42,7 +42,8 @@ AppGroupAdmin = (function($){
 				eventNames:["click"],
 				events:{
 					"click": parent.selectLine
-				}
+				},
+				editable:true
 			});
 		},
 		selectLine : function(e){
@@ -63,6 +64,10 @@ AppGroupAdmin = (function($){
 					if(data != null){
 						var dataGroup = data.groupDTO;
 						parent.table.reload(dataGroup);
+					}
+					else{
+						parent.table.clear();
+						parent.table.noData();
 					}
 				}
 			});

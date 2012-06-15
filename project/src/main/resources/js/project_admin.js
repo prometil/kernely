@@ -37,7 +37,8 @@ AppProjectAdmin = (function($){
 				eventNames:["click"],
 				events:{
 					"click": parent.selectLine
-				}
+				},
+				editable:true
 			});
 			
 		},
@@ -60,6 +61,10 @@ AppProjectAdmin = (function($){
 					if(data != null){
 						var dataProject = data.projectDTO;
 						parent.table.reload(dataProject);
+					}
+					else{
+						parent.table.clear();
+						parent.table.noData();
 					}
 				}
 			});

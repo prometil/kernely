@@ -1,6 +1,7 @@
 package org.kernely.holiday.controller;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import javax.ws.rs.GET;
@@ -54,6 +55,7 @@ public class HolidayMainController extends AbstractController {
 	public List<HolidayRequestDTO> displayAllHolidayRequestPending()
 	{
 		List<HolidayRequestDTO> pendingRequest = holidayRequestService.getAllRequestsWithStatusForCurrentUser(HolidayRequest.PENDING_STATUS, -1);
+		Collections.sort(pendingRequest);
 		return pendingRequest;
 	}
 	
@@ -69,6 +71,7 @@ public class HolidayMainController extends AbstractController {
 		List<HolidayRequestDTO> lhr = new ArrayList<HolidayRequestDTO>();
 		lhr.addAll(holidayRequestService.getAllRequestsWithStatusForCurrentUser(HolidayRequest.ACCEPTED_STATUS, -1));
 		lhr.addAll(holidayRequestService.getAllRequestsWithStatusForCurrentUser(HolidayRequest.DENIED_STATUS, -1));
+		Collections.sort(lhr);
 		return lhr;
 	}
 	
@@ -84,6 +87,7 @@ public class HolidayMainController extends AbstractController {
 		List<HolidayRequestDTO> lhr = new ArrayList<HolidayRequestDTO>();
 		lhr.addAll(holidayRequestService.getAllRequestsWithStatusForCurrentUser(HolidayRequest.ACCEPTED_STATUS, year));
 		lhr.addAll(holidayRequestService.getAllRequestsWithStatusForCurrentUser(HolidayRequest.DENIED_STATUS, year));
+		Collections.sort(lhr);
 		return lhr;
 	}
 	

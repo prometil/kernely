@@ -27,17 +27,19 @@
 		<div id="monthSelector">
 		</div>
 
-		<div id="dates-title" class="text-bold-black"></div>
-		{% if userManager %}
-			<div class="classic-buttons-bar">
-				<input id="my-collaborators" type="button" class="button_emphasis" value="{% i18n "my_collaborators"%}"/>
-			</div>
-		{% endif %}
-		<div id="main-human-table-content">
-			
+		<div class="header">
+			<div id="dates-title" class="text-bold-black"></div>
+			{% if userManager %}
+				<div class="classic-buttons-bar">
+					<input id="my-collaborators" type="button" class="button_emphasis" value="{% i18n "my_collaborators"%}"/>
+				</div>
+			{% endif %}
+		</div>
+		<div id="main-table-content">
 			<table id="usersHoliday" class="kernely_table">
 				
 			</table>
 		</div>
+		<div class="clear"></div>
 	</div>
 {% endblock %}

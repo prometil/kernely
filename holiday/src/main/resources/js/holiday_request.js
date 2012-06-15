@@ -88,7 +88,6 @@ AppHolidayRequest = (function($){
 				contentType: "application/json; charset=utf-8",
 				success: function(data){
 					window.location = "/holiday";
-					console.log("Redirection...");
 				}
 			});
 			
@@ -244,7 +243,6 @@ AppHolidayRequest = (function($){
 		
 		colorTheWorld : function(event){
 			if(currentCellPickerSelected != null && !this.isHeader && this.available == "true"){
-				console.log( currentCellPickerSelected.limitOfAnticipation);
 				if(this.selectedBy != currentCellPickerSelected.idType){
 					if((currentCellPickerSelected.nbAvailable == 9999) || (currentCellPickerSelected.nbAvailable > currentCellPickerSelected.limitOfAnticipation)){
 						// Color the cell with the Balance color
@@ -275,8 +273,23 @@ AppHolidayRequest = (function($){
 				if(typeof(event) != "undefined"){
 					if(event.shiftKey){
 						shifted = true;
-						var cpt = lastClicked.viewRank;
-						while(cpt < this.viewRank){
+						var currentRank = this.viewRank;
+						// If shift is pushed before click on the first cell.
+						if(lastClicked == null){
+							lastClicked = this;
+						}
+						var lastRank = lastClicked.viewRank;
+						var cpt;
+						var destination;
+						if(currentRank < lastRank){
+							cpt = currentRank;
+							destination = lastRank;
+						}
+						else{
+							cpt = lastRank;
+							destination = currentRank;
+						}						
+						while(cpt < destination){
 							if(allDayCells[cpt].selectedBy != currentCellPickerSelected.idType){
 								allDayCells[cpt].colorTheWorld();
 							}
@@ -344,26 +357,30 @@ AppHolidayRequest = (function($){
 			$("#limited-balances").empty();
 			$("#unlimited-balances").empty();
 			var parent = this;
-			
-			if(this.data.details != null && this.data.details.length > 1){
-				$.each(this.data.details, function(){
-					if(this.nbAvailable != 9999){
-						$("#limited-balances").append(new HolidayRequestColorPickerCell(this.nameOfType, this.nbAvailable, this.color, this.idOfType, this.limitOfAnticipation).render().el);
-					}
-					else{
-						$("#unlimited-balances").append(new HolidayRequestColorPickerCell(this.nameOfType, this.nbAvailable, this.color, this.idOfType, this.limitOfAnticipation).render().el);
-					}
-                });
-			}
-			else{
-				if(this.data.details.nbAvailable != 9999){
-					$("#limited-balances").append(new HolidayRequestColorPickerCell(this.data.details.nameOfType, this.data.details.nbAvailable, this.data.details.color, this.data.details.idOfType, this.data.details.limitOfAnticipation).render().el);				
+			if(this.data.details != null){
+				if(this.data.details != null && this.data.details.length > 1){
+					$.each(this.data.details, function(){
+						if(this.nbAvailable != 9999){
+							$("#limited-balances").append(new HolidayRequestColorPickerCell(this.nameOfType, this.nbAvailable, this.color, this.idOfType, this.limitOfAnticipation).render().el);
+						}
+						else{
+							$("#unlimited-balances").append(new HolidayRequestColorPickerCell(this.nameOfType, this.nbAvailable, this.color, this.idOfType, this.limitOfAnticipation).render().el);
+						}
+	                });
 				}
 				else{
-					$("#unlimited-balances").append(new HolidayRequestColorPickerCell(this.data.details.nameOfType, this.data.details.nbAvailable, this.data.details.color, this.data.details.idOfType, this.data.details.limitOfAnticipation).render().el);					
+					if(this.data.details.nbAvailable != 9999){
+						$("#limited-balances").append(new HolidayRequestColorPickerCell(this.data.details.nameOfType, this.data.details.nbAvailable, this.data.details.color, this.data.details.idOfType, this.data.details.limitOfAnticipation).render().el);				
+					}
+					else{
+						$("#unlimited-balances").append(new HolidayRequestColorPickerCell(this.data.details.nameOfType, this.data.details.nbAvailable, this.data.details.color, this.data.details.idOfType, this.data.details.limitOfAnticipation).render().el);					
+					}
 				}
 			}
-			$('#colorSelector').show();
+			else{
+				$("#limited-balances").html($("#no-balance-template").html());
+				$("#unlimited-balances").html($("#no-balance-template").html());
+			}
 			return this;
 		}
 	})

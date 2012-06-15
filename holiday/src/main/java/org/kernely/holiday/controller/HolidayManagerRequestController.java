@@ -1,6 +1,7 @@
 package org.kernely.holiday.controller;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -80,6 +81,7 @@ public class HolidayManagerRequestController extends AbstractController {
 		List<HolidayRequestDTO> lhr = new ArrayList<HolidayRequestDTO>();
 		lhr.addAll(holidayRequestService.getSpecificRequestsForManagers(HolidayRequest.ACCEPTED_STATUS));
 		lhr.addAll(holidayRequestService.getSpecificRequestsForManagers(HolidayRequest.DENIED_STATUS));
+		Collections.sort(lhr);
 		return lhr; 
 		
 	}

@@ -4,11 +4,28 @@
 {% endblock %}
 
 {% block css %}
-	<link rel="stylesheet" type="text/css" href="/css/holiday_user_request.css"/>
+	<link rel="stylesheet" type="text/css" href="/css/holiday_main.css"/>
 	<link rel="stylesheet" type="text/css" href="/css/holiday_request.css"/>
 {% endblock %}
 
 {% block template %}	
+
+	<script type="text/html" id="cancel-error-template">
+		{% i18n "cancel-request-error" %}
+	</script>
+
+	<script type="text/html" id="balance-loading-error-template">
+		{% i18n "balance-loading-error" %}
+	</script>
+	
+	<script type="text/html" id="pending-loading-error-template">
+		{% i18n "pending-loading-error" %}
+	</script>
+
+	<script type="text/html" id="statued-loading-error-template">
+		{% i18n "statued-loading-error" %}
+	</script>
+
 	<script type="text/html" id="cancel-ask-template">
 		{% i18n "canceled_ask" %}
 	</script>
@@ -74,9 +91,13 @@
 	</script>
 	
 	<script type="text/html" id="balance-cell-template">
-		<div class="balance-cell">
 			<div class="balance-cell-amount">{{"{{"}}available{{"}}"}}</div>
 			<div class="balance-cell-title">{{"{{"}}name{{"}}"}}</div>
+	</script>
+	
+	<script type="text/html" id="no-balance-template">
+		<div class="no-balance-display">
+			{% i18n "no-balance" %}
 		</div>
 	</script>
 {% endblock %}
@@ -90,14 +111,21 @@
 		<div id="holiday_button_container">
 			<input type="button" class="button_emphasis" id="new_request" value="{% i18n "new-request" %}" />
 		</div>
-		<div class="subtitle">{% i18n "title_table_1" %}</div>
-		<div class="dialog-buttons-container">
-			<input type="button" class="button_emphasis" id="button_canceled" value="{% i18n "cancel" %}" disabled="disabled"/>
+		<div>
+			<div class="subtitle">{% i18n "title_table_1" %}</div>
+			<div class="classic-buttons-bar">
+				<input type="button" class="button_emphasis" id="button_cancel_pending" value="{% i18n "cancel" %}" disabled="disabled"/>
+			</div>
 		</div>
 		<table id="user_pending_request_table" class="kernely_table">
 		</table>
 		<br/>
-		<div class="subtitle">{% i18n "title_table_2" %}</div>
+		<div>
+			<div class="subtitle">{% i18n "title_table_2" %}</div>
+			<div class="classic-buttons-bar">
+				<input type="button" class="button_emphasis" id="button_cancel_statued" value="{% i18n "cancel" %}" disabled="disabled"/>
+			</div>
+		</div>
 		<div id="statued_requests">
 		
 		</div>

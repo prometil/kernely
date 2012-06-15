@@ -15,13 +15,18 @@ import org.kernely.holiday.model.HolidayRequestDetail;
  * Dto for holiday request 
  */
 @XmlRootElement
-public class HolidayRequestDTO {
+public class HolidayRequestDTO implements Comparable<HolidayRequestDTO> {
 	private final static String dateFormat = "MM/dd/yyyy";
 
 	/**
 	 * The id of the holiday request DTO 
 	 */
 	public long id;
+	
+	/**
+	 * True if we have the possibility to cancel this request;
+	 */
+	public boolean cancelable;
 	
 	/**
 	 * The begin date of the request
@@ -106,6 +111,7 @@ public class HolidayRequestDTO {
 		for(HolidayRequestDetail hd : request.getDetails()){
 			this.details.add(new HolidayDetailDTO(hd));
 		}
+		this.cancelable = (new DateTime(this.endDate).isAfter(DateTime.now()) && (status == 2 || status == 1));
 	}
 	
 	/** 
@@ -138,5 +144,17 @@ public class HolidayRequestDTO {
 			return false;
 		}
 		return true;
+	}
+
+	@Override
+	public int compareTo(HolidayRequestDTO o) {
+		DateTime beginThis = new DateTime(this.beginDate);
+		DateTime beginOther = new DateTime(o.beginDate);
+		if(beginThis.isAfter(beginOther)){
+			return -1;
+		}
+		else{
+			return 1;
+		}
 	}
 }

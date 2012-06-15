@@ -18,7 +18,6 @@ AppHolidayPlanning = (function($){
 		initialize: function(){
 			mainView = this;
 			$("#my-collaborators").click(function(){
-				alert("/holiday/manager/users/#/month/" + monthSelected + "/" + yearSelected);
 				window.location="/holiday/manager/users/#/month/" + monthSelected + "/" + yearSelected;
 			});
 		},

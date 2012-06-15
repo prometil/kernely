@@ -1,30 +1,10 @@
-.wrapper1, .wrapper2{
-	width: 100%;
-	border: none;
-	overflow-x: scroll;
-	overflow-y:hidden;
-}
-
-.wrapper1{
-	height: 20px;
-}
-
-.wrapper2{
-	height: auto;
-}
-
-.top-scroll-bar {
-	width:1000px;
-	height: 20px;
-}
-
-.table-container-scroll {
-	width:1000px;
-	height: auto;
-	overflow: auto;
-}
-
 #dates-title{
 	float:left;
 	padding:7px 7px 7px 0;
+}
+
+.header{
+	width:100%;
+	margin-bottom:5px;
+	height:28px;
 }
