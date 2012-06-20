@@ -42,7 +42,7 @@ $.extend({
 		// content : the id of the template of the dialog
 		// h : height
 		// w : width
-	kernelyDialog: function(content,h,w){
+	kernelyDialog: function(title, content,h,w){
 		if (h == null){
 			vh = "auto";
 		} else {
@@ -56,6 +56,7 @@ $.extend({
 		div = document.createElement("div");
 		$(div).html($(content).html());
 		$(div).dialog({
+			title : title,
 			autoOpen: false,
 			height: vh,
 			width: vw,

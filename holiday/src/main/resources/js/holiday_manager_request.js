@@ -291,7 +291,8 @@ AppHolidayManagerRequest = (function($){
 		vid: null,
 		
 		events:{
-			"click .validateHolidayRequest" : "accepted"
+			"click .validateHolidayRequest" : "accepted",
+			"click .cancelPopup" : "cancel"
 		},
 		
 		initialize:function(){
@@ -308,6 +309,7 @@ AppHolidayManagerRequest = (function($){
 		
 		render : function(id){
 			this.vid=id;
+			$("#comment_accept").val("");
 			$(this.el).kernely_dialog("open");
 			return this;
 		},
@@ -328,14 +330,18 @@ AppHolidayManagerRequest = (function($){
 							$("#comment_accept").val("");
 							tableView1.reload();
 							for(var view in tableStatuedGroup){
-								console.log(view);
 								tableStatuedGroup[view].reload();
 							}
 						}
 					});
 				}
 			});
+		},
+		
+		cancel : function(){
+			$(this.el).kernely_dialog("close");
 		}
+		
 	})
 
 	HolidayRequestDenyView = Backbone.View.extend({
@@ -344,7 +350,8 @@ AppHolidayManagerRequest = (function($){
 		vid: null,
 		
 		events:{
-			"click .denyHolidayRequest" : "denied"
+			"click .denyHolidayRequest" : "denied",
+			"click .cancelPopup" : "cancel"
 		},
 		
 		initialize:function(){
@@ -361,6 +368,7 @@ AppHolidayManagerRequest = (function($){
 		
 		render : function(id){
 			this.vid=id;
+			$("#comment_deny").val("");
 			$(this.el).kernely_dialog("open");
 			return this;
 		},
@@ -386,13 +394,16 @@ AppHolidayManagerRequest = (function($){
 							$("#comment_deny").val("");
 							tableView1.reload();
 							for(var view in tableStatuedGroup){
-								console.log(view);
 								tableStatuedGroup[view].reload();
 							}
 						}
 					});
 				}
 			});
+		},
+		
+		cancel : function(){
+			$(this.el).kernely_dialog("close");
 		}
 	})
 	
@@ -406,7 +417,8 @@ AppHolidayManagerRequest = (function($){
 		
 		events:{
 			"click #button_accepted" : "acceptModal",
-			"click #button_denied" : "denyModal"			
+			"click #button_denied" : "denyModal",
+			"click #button_close" : "close"
 		},
 		
 		initialize: function(){
@@ -455,6 +467,10 @@ AppHolidayManagerRequest = (function($){
 			});
 			$(this.el).kernely_dialog("open");
 			return this;
+		},
+		
+		close: function(){
+			$(this.el).kernely_dialog("close");
 		},
 		
 		acceptModal:function(){

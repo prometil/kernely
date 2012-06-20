@@ -38,8 +38,8 @@
 	
 	<script type="text/html" id="locale-country">{% i18n "locale_country" %}</script>
 	
-	<script type="text/html" id="accept-template">{% i18n "accept" %}</script>
-	<script type="text/html" id="deny-template">{% i18n "deny" %}</script>
+	<script type="text/html" id="accept-template">{% i18n "accept_title" %}</script>
+	<script type="text/html" id="deny-template">{% i18n "deny_title" %}</script>
 	<script type="text/html" id="visualize-template">{% i18n "visualize" %}</script>
 	
 	<script type="text/html" id="popup-accept-template">
@@ -49,7 +49,8 @@
 		</fieldset>
 		<br/>
 		<div class="dialog-buttons-container">
-			<input type="button" value="{% i18n "ok" %}" class="validateHolidayRequest button_ok"/>
+			<input type="button" value="{% i18n "yes" %}" class="validateHolidayRequest button_ok"/>
+			<input type="button" value="{% i18n "no" %}" class="cancelPopup button_standard"/>
 		</div>
 	</script>
 	
@@ -64,6 +65,7 @@
 		<div class="dialog-buttons-container">
 			<input type="button" class="button_emphasis" id="button_denied" value="{% i18n "deny" %}" />
 			<input type="button" class="button_emphasis" id="button_accepted" value="{% i18n "accept" %}"/>
+			<input type="button" class="button_emphasis" id="button_close" value="{% i18n "close" %}"/>
 		</div>
 	</script>
 	
@@ -73,7 +75,8 @@
 		{% i18n "denied_commentary" %}  <textarea class="comment-area" id="comment_deny"></textarea><br/>
 		</fieldset>
 		<div class="dialog-buttons-container">
-			<input type="button" value="{% i18n "ok" %}" class="denyHolidayRequest button_ok"/>
+			<input type="button" value="{% i18n "yes" %}" class="denyHolidayRequest button_ok"/>
+			<input type="button" value="{% i18n "no" %}" class="cancelPopup button_standard"/>
 		</div>
 	</script>
 	
