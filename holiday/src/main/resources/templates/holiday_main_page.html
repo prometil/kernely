@@ -13,6 +13,14 @@
 		{% i18n "new-request" %}
 	</script>
 	
+	<script type="text/html" id="from-date-error-template">
+		{% i18n "from-date-error" %}
+	</script>
+	
+	<script type="text/html" id="to-date-error-template">
+		{% i18n "to-date-error" %}
+	</script>
+	
 	<script type="text/html" id="cancel-error-template">
 		{% i18n "cancel-request-error" %}
 	</script>
@@ -79,6 +87,7 @@
 	
 	<script type="text/html" id="new-request-form">
 		<form id="request-form" method="POST" action="/holiday/request/">
+			<div id="notification_dialog_to_user"></div>
 			<label for="from">{% i18n "from_date" %} </label><input class="kernely_input" readonly="readonly" type="text" id="from" name="from"/><br/>
 			<label for="to"> {% i18n "to_date" %} </label><input class="kernely_input" readonly="readonly" type="text" id="to" name="to"/><br/>
 			<div class="dialog-buttons-container">

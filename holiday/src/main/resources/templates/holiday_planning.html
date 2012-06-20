@@ -9,13 +9,8 @@
 {% endblock %}
 
 {% block template %}
-	<script type="text/html" id="balance-cells-legend">
-		<span style="font-weight:bold;">{{"{{"}}name{{"}}"}}</span>
-	</script>
-	<script type="text/html" id="type-cell-template">
-	<div class="balance-cell-amount"></div>
-	<div class="balance-cell-title">{{"{{"}}name{{"}}"}}</div>
-</script>
+	<script type="text/html" id="my-collaborators-template">{% i18n "my_collaborators"%}</script>
+	<script type="text/html" id="back-to-planning-template">{% i18n "back_to_planning"%}</script>
 {% endblock %}
 
 {% block title %}
@@ -31,7 +26,7 @@
 			<div id="dates-title" class="text-bold-black"></div>
 			{% if userManager %}
 				<div class="classic-buttons-bar">
-					<input id="my-collaborators" type="button" class="button_emphasis" value="{% i18n "my_collaborators"%}"/>
+					<input id="change-mode" type="button" class="button_emphasis" value="{% i18n "my_collaborators"%}"/>
 				</div>
 			{% endif %}
 		</div>

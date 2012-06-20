@@ -9,8 +9,12 @@
 {% endblock %}
 
 {% block template %}
-	<script type="text/html" id="status-denied-template">
-		{% i18n "denied" %}
+	<script type="text/html" id="acceptance-error-template">
+		{% i18n "acceptance-error" %}
+	</script>
+
+	<script type="text/html" id="refusal-error-template">
+		{% i18n "refusal-error" %}
 	</script>
 	
 	<script type="text/html" id="status-accepted-template">
@@ -43,6 +47,7 @@
 	<script type="text/html" id="visualize-template">{% i18n "visualize" %}</script>
 	
 	<script type="text/html" id="popup-accept-template">
+		<div id="notification_dialog_accept_to_user"></div>
 		<fieldset>	
 		<legend>{% i18n "accepted_ask" %}</legend>
 		{% i18n "accepted_commentary" %} <textarea class="comment-area" id="comment_accept"></textarea><br/>
@@ -54,7 +59,8 @@
 		</div>
 	</script>
 	
-	<script type="text/html" id="popup-visualize-template">		
+	<script type="text/html" id="popup-visualize-template">	
+		<div id="notification_dialog_visu_to_user"></div>
 		<div id="request-main">  
 		<div id="calendarRequest">
 			<table id="calendar-table" border="0">
@@ -62,6 +68,7 @@
 				<tbody>
 			</table>
 		</div>
+		<textarea class="comment-area" id="comment_visu"></textarea><br/>
 		<div class="dialog-buttons-container">
 			<input type="button" class="button_emphasis" id="button_denied" value="{% i18n "deny" %}" />
 			<input type="button" class="button_emphasis" id="button_accepted" value="{% i18n "accept" %}"/>
@@ -70,6 +77,7 @@
 	</script>
 	
 	<script type="text/html" id="popup-deny-template">
+		<div id="notification_dialog_deny_to_user"></div>
 		<fieldset>	
 		<legend>{% i18n "denied_ask" %}</legend>
 		{% i18n "denied_commentary" %}  <textarea class="comment-area" id="comment_deny"></textarea><br/>
@@ -80,8 +88,8 @@
 		</div>
 	</script>
 	
-	<script type="text/html" id="from-column-template">
-		{% i18n "from" %}
+	<script type="text/html" id="requester-column-template">
+		{% i18n "requester" %}
 	</script>
 	
 	<script type="text/html" id="requester-comment-column-template">

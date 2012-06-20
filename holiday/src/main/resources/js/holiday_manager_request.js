@@ -38,7 +38,7 @@ AppHolidayManagerRequest = (function($){
 		initialize:function(){
 			var parent = this;
 			
-			var templateFromColumn = $("#from-column-template").text();
+			var templateFromColumn = $("#requester-column-template").text();
 			var templateRequesterColumn = $("#requester-comment-column-template").text();
 			var templateBeginColumn = $("#begin-column-template").text();
 			var templateEndColumn = $("#end-column-template").text();
@@ -213,7 +213,7 @@ AppHolidayManagerRequest = (function($){
 			this.year = year;
 			var parent = this;
 			
-			var templateFromColumn = $("#from-column-template").text();
+			var templateFromColumn = $("#requester-column-template").text();
 			var templateRequesterColumn = $("#requester-comment-column-template").text();
 			var templateManagerColumn = $("#manager-comment-column-template").text();
 			var templateBeginColumn = $("#begin-column-template").text();
@@ -332,8 +332,14 @@ AppHolidayManagerRequest = (function($){
 							for(var view in tableStatuedGroup){
 								tableStatuedGroup[view].reload();
 							}
+						},
+						error: function(){
+							$.writeMessage("error",$("#acceptance-error-template").html(), "#notification_dialog_accept_to_user");
 						}
 					});
+				},
+				error: function(){
+					$.writeMessage("error",$("#acceptance-error-template").html(), "#notification_dialog_accept_to_user");
 				}
 			});
 		},
@@ -396,8 +402,14 @@ AppHolidayManagerRequest = (function($){
 							for(var view in tableStatuedGroup){
 								tableStatuedGroup[view].reload();
 							}
+						},
+						error: function(){
+							$.writeMessage("error",$("#refusal-error-template").html(), "#notification_dialog_deny_to_user");
 						}
 					});
+				},
+				error: function(){
+					$.writeMessage("error",$("#refusal-error-template").html(), "#notification_dialog_deny_to_user");
 				}
 			});
 		},
@@ -474,13 +486,63 @@ AppHolidayManagerRequest = (function($){
 		},
 		
 		acceptModal:function(){
-			$(this.el).kernely_dialog("close");
-			viewAccept.render(this.vid);
+			var parent = this;
+			$.ajax({
+				url : "/holiday/managers/request/accept/" + this.vid,
+				success : function(){
+					$.ajax({
+						url : "/holiday/managers/request/comment/" + parent.vid,
+						data : {comment: $("#comment_visu").val()},
+						dataType: "json",
+						success : function(){
+							$(parent.el).kernely_dialog("close");
+							var successHtml = $("#holiday-accept-template").html();				
+							$.writeMessage("success",successHtml);
+							$("#comment_visu").val("");
+							tableView1.reload();
+							for(var view in tableStatuedGroup){
+								tableStatuedGroup[view].reload();
+							}
+						},
+						error: function(){
+							$.writeMessage("error",$("#acceptance-error-template").html(), "#notification_dialog_visu_to_user");
+						}
+					});
+				},
+				error: function(){
+					$.writeMessage("error",$("#acceptance-error-template").html(), "#notification_dialog_visu_to_user");
+				}
+			});
 		},
 		
 		denyModal:function(){
-			$(this.el).kernely_dialog("close");
-			viewDeny.render(this.vid);
+			var parent = this ; 
+			$.ajax({
+				url : "/holiday/managers/request/deny/" + this.vid,
+				success : function(){
+					$.ajax({
+						url : "/holiday/managers/request/comment/" + parent.vid,
+						data : {comment: $("#comment_visu").val()},
+						dataType: "json",
+						success : function(){
+							$(parent.el).kernely_dialog("close");
+							var successHtml = $("#holiday-deny-template").html();				
+							$.writeMessage("success",successHtml);
+							$("#comment_visu").val("");
+							tableView1.reload();
+							for(var view in tableStatuedGroup){
+								tableStatuedGroup[view].reload();
+							}
+						},
+						error: function(){
+							$.writeMessage("error",$("#refusal-error-template").html(), "#notification_dialog_visu_to_user");
+						}
+					});
+				},
+				error: function(){
+					$.writeMessage("error",$("#refusal-error-template").html(), "#notification_dialog_visu_to_user");
+				}
+			});
 		}		
 	})
 

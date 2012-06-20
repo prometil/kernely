@@ -15,10 +15,21 @@ AppHolidayPlanning = (function($){
 	HolidayPlanningMainView = Backbone.View.extend({
 		el:"#main-human-page-content",
 		
+		// Mode of table : 0 for all users, 1 for only managed user
+		mode:0,
+		
 		initialize: function(){
 			mainView = this;
-			$("#my-collaborators").click(function(){
-				window.location="/holiday/manager/users/#/month/" + monthSelected + "/" + yearSelected;
+			$("#change-mode").click(function(){
+				if(mainView.mode == 0){
+					mainView.mode = 1;
+					$(this).attr("value", $("#back-to-planning-template").text());
+				}
+				else{
+					mainView.mode = 0;
+					$(this).attr("value", $("#my-collaborators-template").text());
+				}
+				mainView.reloadTable(monthSelected, yearSelected);
 			});
 		},
 		
@@ -37,16 +48,29 @@ AppHolidayPlanning = (function($){
 			$("#dates-title").html(text+ " "+year);
 		},
 		reloadTable: function(month, year){
-			$.ajax({
-				url:"/holiday/planning/all",
-				data: {month: month, year: year},
-				dataType: "json",
-				success: function(data){
-					tableView.render(data);
-					monthSelected = data.month;
-					yearSelected = data.year;
-				}
-			});
+			if(this.mode == 0){
+				$.ajax({
+					url:"/holiday/planning/all",
+					data: {month: month, year: year},
+					dataType: "json",
+					success: function(data){
+						tableView.render(data);
+						monthSelected = data.month;
+						yearSelected = data.year;
+					}
+				});
+			}else if(this.mode == 1){
+				$.ajax({
+					url:"/holiday/manager/users/all",
+					data: {month: month, year: year},
+					dataType: "json",
+					success: function(data){
+						tableView.render(data);
+						monthSelected = data.month;
+						yearSelected = data.year;
+					}
+				});
+			}
 		}
 	})
 	
@@ -137,7 +161,7 @@ AppHolidayPlanning = (function($){
 		},
 		render: function(data){
 			this.data = data;
-			$(this.el).html("");
+			$(this.el).empty();
 			var parent = this;
 			lineHeader = $("<tr>", {
 				class:'table-header border-element-r-b'
