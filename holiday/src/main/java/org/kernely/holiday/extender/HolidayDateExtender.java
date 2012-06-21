@@ -3,7 +3,7 @@
  */
 package org.kernely.holiday.extender;
 
-import java.sql.Date;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -33,6 +33,7 @@ public class HolidayDateExtender extends Extender {
 	@Inject
 	protected HolidayRequestService holidayRequestService;
 	
+	
 	/**
 	 * The method wait for two parameters
 	 * <ul>
@@ -45,23 +46,35 @@ public class HolidayDateExtender extends Extender {
 		Query query = em.get().createQuery("SELECT e FROM User e WHERE username = :username");
 		query.setParameter("username", SecurityUtils.getSubject().getPrincipal());
 		User user = (User)query.getSingleResult();
-		Date date1 = new Date((Long)params.get("start"));
-		Date date2 = new Date((Long)params.get("end"));
+		Date date1 = (Date)params.get("start");
+		Date date2 = (Date)params.get("end");
 		List<HolidayRequestDTO> currentRequests = holidayRequestService.getRequestBetweenDatesWithStatus(date1, date2, user, HolidayRequest.PENDING_STATUS,
 				HolidayRequest.ACCEPTED_STATUS);
 		HashMap<String, Object> result = new HashMap<String, Object>();
 		// Retrieve all days non available in order to disable them in the UI
-		HashMap<java.util.Date, Boolean> newHashMap = Maps.newHashMap();
+		HashMap<Date, Float> newHashMap = Maps.newHashMap();
 		for (HolidayRequestDTO req : currentRequests) {
 			for(HolidayDetailDTO detail : req.details){
-				
-				newHashMap.put(detail.day, detail.am && detail.pm);
+				// If the day is already in the map, it can be at 0.5 or 1. If it is inferior to 1, adds 0.5.
+				if (newHashMap.containsKey(detail.day) && newHashMap.get(detail.day) < 1){
+					newHashMap.put(detail.day, new Float(newHashMap.get(detail.day) + 0.5));
+				} else {
+					// Add 0.5 for am and pm.
+					Float amount = 0F;
+					if (detail.am){
+						amount += 0.5F;
+					}
+					if (detail.pm){
+						amount += 0.5F;
+					}
+					newHashMap.put(detail.day, amount);
+				}
 			}
-			
 			
 		}
 		result.put("dates", newHashMap);
-		return null;
+
+		return result;
 	}
 
 	@Override

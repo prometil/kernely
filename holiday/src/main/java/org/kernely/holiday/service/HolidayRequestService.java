@@ -460,10 +460,10 @@ public class HolidayRequestService extends AbstractService {
 				
 				requestBeginDate = new DateTime(r.getBeginDate());
 				requestEndDate = new DateTime(r.getEndDate());
-				
-				boolean requestBeginsBetweenDates = requestBeginDate.toDateMidnight().isAfter(begin) && requestBeginDate.toDateMidnight().isBefore(end);
-				boolean requestEndsBetweenDates = requestEndDate.toDateMidnight().isAfter(begin) && requestEndDate.toDateMidnight().isBefore(end);
-				if (requestBeginsBetweenDates || requestEndsBetweenDates){
+
+				boolean requestBeginsBetweenDates = requestBeginDate.toDateMidnight().isBefore(end);
+				boolean requestEndsBetweenDates = requestEndDate.toDateMidnight().isAfter(begin);
+				if (requestBeginsBetweenDates && requestEndsBetweenDates){
 					requestsDTO.add(new HolidayRequestDTO(r));
 				}
 			}

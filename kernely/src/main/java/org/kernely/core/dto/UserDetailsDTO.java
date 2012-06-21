@@ -61,7 +61,7 @@ public class UserDetailsDTO {
 	public String email = "";
 
 	/**
-	 * The adress of the hser
+	 * The address of the user
 	 */
 	public String adress = "";
 
@@ -152,11 +152,11 @@ public class UserDetailsDTO {
 	}
 
 	/**
-	 * Constructor using a model
+	 * Constructor of details with the date format.
 	 * 
 	 * @param details
 	 */
-	public UserDetailsDTO(UserDetails details) {
+	public UserDetailsDTO(UserDetails details, String dateFormat) {
 		this.firstname = details.getFirstname();
 		this.lastname = details.getName();
 		if (details.getImage() != null) {
@@ -172,12 +172,10 @@ public class UserDetailsDTO {
 		this.homephone = details.getHomephone();
 		this.mobilephone = details.getMobilephone();
 		this.businessphone = details.getBusinessphone();
+		
 		if (details.getBirth() != null) {
-			String newDateString;
-			Date date = details.getBirth();
-			String newPattern = "dd/MM/yyyy";
-			newDateString = (new SimpleDateFormat(newPattern)).format(date);
-			this.birth = newDateString;
+			
+			this.birth = new SimpleDateFormat(dateFormat).format(details.getBirth());
 		} else {
 			this.birth = "";
 		}
@@ -197,7 +195,16 @@ public class UserDetailsDTO {
 		this.id = details.getId();
 		this.user = new UserDTO(details.getUser());
 	}
-
+	
+	/**
+	 * Constructor of details. Birth date will be displayed in the pattern MM/dd/yyyy.
+	 * 
+	 * @param details
+	 */
+	public UserDetailsDTO(UserDetails details) {
+		this(details, "MM/dd/yyy");
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * 

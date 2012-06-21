@@ -19,9 +19,6 @@
  */
 package org.kernely.core.service;
 
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -32,9 +29,13 @@ import java.util.Set;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
+import org.apache.commons.configuration.AbstractConfiguration;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.credential.PasswordService;
 import org.apache.shiro.authz.UnauthorizedException;
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import org.kernely.core.dto.ManagerDTO;
 import org.kernely.core.dto.RoleDTO;
 import org.kernely.core.dto.UserCreationRequestDTO;
@@ -62,6 +63,9 @@ import com.google.inject.persist.Transactional;
 public class UserService extends AbstractService {
 
 	private static Logger log = LoggerFactory.getLogger(UserService.class);
+
+	@Inject
+	private AbstractConfiguration configuration;
 
 	@Inject
 	private EventBus eventBus;
@@ -126,14 +130,13 @@ public class UserService extends AbstractService {
 
 		// Return a DTO of the new user created
 		UserDTO userDTO = new UserDTO(user);
-		userDTO.userDetails = new UserDetailsDTO(userdetails);
+		userDTO.userDetails = new UserDetailsDTO(userdetails, configuration.getString("locale.dateformat"));
 		return userDTO;
 
 	}
 
 	/**
-	 * Update the profile of the specific user with the informations contained
-	 * in the DTO
+	 * Update the profile of the specific user with the informations contained in the DTO
 	 * 
 	 * @param u
 	 *            The DTO containing all informations about the user to update
@@ -143,36 +146,34 @@ public class UserService extends AbstractService {
 		if (u == null) {
 			throw new IllegalArgumentException("Request cannot be null ");
 		}
-		
+
 		// parse the string date in class Date
 		String date = u.birth;
 		if (u.birth == null || u.birth.equals("")) {
-			date = "00/00/0000";
+			date = "01/01/2000";
 		}
-		DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-		try {
-			Date birth = (Date) formatter.parse(date);
-			UserDetails uDetails = em.get().find(UserDetails.class, u.id);
-			uDetails.setMail(u.email);
-			uDetails.setAdress(u.adress);
-			uDetails.setBirth(birth);
-			uDetails.setBusinessphone(u.businessphone);
-			uDetails.setCity(u.city);
-			uDetails.setFirstname(u.firstname);
-			uDetails.setHomephone(u.homephone);
-			uDetails.setMobilephone(u.mobilephone);
-			uDetails.setName(u.lastname);
-			uDetails.setNationality(u.nationality);
-			uDetails.setSsn(u.ssn);
-			uDetails.setZip(u.zip);
-			uDetails.setCivility(u.civility);
-			if(u.image != null && !u.image.equals("")){
-				uDetails.setImage(u.image);
-			}
-			return new UserDetailsDTO(uDetails);
-		} catch (ParseException e) {
-			return null;
+		DateTimeFormatter formatter = DateTimeFormat.forPattern(configuration.getString("locale.dateformat"));
+
+		Date birth = DateTime.parse(date, formatter).toDateMidnight().toDate();
+		UserDetails uDetails = em.get().find(UserDetails.class, u.id);
+		uDetails.setMail(u.email);
+		uDetails.setAdress(u.adress);
+		uDetails.setBirth(birth);
+		uDetails.setBusinessphone(u.businessphone);
+		uDetails.setCity(u.city);
+		uDetails.setFirstname(u.firstname);
+		uDetails.setHomephone(u.homephone);
+		uDetails.setMobilephone(u.mobilephone);
+		uDetails.setName(u.lastname);
+		uDetails.setNationality(u.nationality);
+		uDetails.setSsn(u.ssn);
+		uDetails.setZip(u.zip);
+		uDetails.setCivility(u.civility);
+		if (u.image != null && !u.image.equals("")) {
+			uDetails.setImage(u.image);
 		}
+		UserDetailsDTO details = new UserDetailsDTO(uDetails,configuration.getString("locale.dateformat"));
+		return details;
 	}
 
 	/**
@@ -338,7 +339,7 @@ public class UserService extends AbstractService {
 		query = em.get().createQuery("SELECT e FROM UserDetails e , User u WHERE e.user = u AND u.id =:id");
 		query.setParameter("id", u.getId());
 		UserDetails ud = (UserDetails) query.getSingleResult();
-		return new UserDetailsDTO(ud);
+		return new UserDetailsDTO(ud,configuration.getString("locale.dateformat"));
 	}
 
 	/**
@@ -353,7 +354,7 @@ public class UserService extends AbstractService {
 		Query query = em.get().createQuery("SELECT e FROM UserDetails e WHERE id=:detailsId");
 		query.setParameter("detailsId", userDetailsId);
 		UserDetails ud = (UserDetails) query.getSingleResult();
-		return new UserDetailsDTO(ud);
+		return new UserDetailsDTO(ud,configuration.getString("locale.dateformat"));
 	}
 
 	/**
@@ -381,7 +382,7 @@ public class UserService extends AbstractService {
 		List<UserDetails> collection = (List<UserDetails>) query.getResultList();
 		List<UserDetailsDTO> dtos = new ArrayList<UserDetailsDTO>();
 		for (UserDetails user : collection) {
-			dtos.add(new UserDetailsDTO(user));
+			dtos.add(new UserDetailsDTO(user,configuration.getString("locale.dateformat")));
 		}
 		return dtos;
 	}
@@ -398,7 +399,7 @@ public class UserService extends AbstractService {
 		List<UserDetails> collection = (List<UserDetails>) query.getResultList();
 		List<UserDetailsDTO> dtos = new ArrayList<UserDetailsDTO>();
 		for (UserDetails user : collection) {
-			dtos.add(new UserDetailsDTO(user));
+			dtos.add(new UserDetailsDTO(user,configuration.getString("locale.dateformat")));
 		}
 		return dtos;
 	}
@@ -406,8 +407,7 @@ public class UserService extends AbstractService {
 	/**
 	 * Verify if the current user has the role of administrator.
 	 * 
-	 * @return true if the current user has the role of administrator, false
-	 *         otherwise.
+	 * @return true if the current user has the role of administrator, false otherwise.
 	 */
 	public boolean currentUserIsAdministrator() {
 		return SecurityUtils.getSubject().hasRole(Role.ROLE_ADMINISTRATOR);
@@ -416,8 +416,7 @@ public class UserService extends AbstractService {
 	/**
 	 * Verify if the current user has the role of human resource
 	 * 
-	 * @return true if the current user has the role of human resource, false
-	 *         otherwise.
+	 * @return true if the current user has the role of human resource, false otherwise.
 	 */
 	public boolean currentUserIsHumanResource() {
 		return SecurityUtils.getSubject().hasRole(Role.ROLE_HUMANRESOURCE);
@@ -426,8 +425,7 @@ public class UserService extends AbstractService {
 	/**
 	 * Verify if the current user has the role of project manager
 	 * 
-	 * @return true if the current user has the role of project manager, false
-	 *         otherwise.
+	 * @return true if the current user has the role of project manager, false otherwise.
 	 */
 	public boolean currentUserIsProjectManager() {
 		return SecurityUtils.getSubject().hasRole(Role.ROLE_PROJECTMANAGER);
@@ -616,11 +614,11 @@ public class UserService extends AbstractService {
 
 		// add the new users
 		userManager.setUsers(users);
-		
-		if(users.size()>0){
+
+		if (users.size() > 0) {
 			this.addRoleToUser(userManager.getId(), Role.ROLE_USERMANAGER);
 		}
-		
+
 		em.get().merge(userManager);
 	}
 
@@ -708,8 +706,7 @@ public class UserService extends AbstractService {
 	}
 
 	/**
-	 * Retrieve all users managed by the current user authorized to access the
-	 * application
+	 * Retrieve all users managed by the current user authorized to access the application
 	 * 
 	 * @return A set of DTO according to all user authorized managed
 	 */
@@ -752,11 +749,12 @@ public class UserService extends AbstractService {
 
 	/**
 	 * Return all the roles of the current user
+	 * 
 	 * @return a non-null set of roles, which coul be empty
 	 */
 	@SuppressWarnings("unchecked")
 	public Set<String> getCurrentUserRoles() {
-		if(SecurityUtils.getSubject().getPrincipal() == null){
+		if (SecurityUtils.getSubject().getPrincipal() == null) {
 			return Collections.EMPTY_SET;
 		}
 		Query query = em.get().createQuery("Select u FROM User u WHERE u.username=:name");

@@ -30,6 +30,7 @@ import org.kernely.holiday.controller.HolidayRequestController;
 import org.kernely.holiday.controller.HolidaySummaryController;
 import org.kernely.holiday.event.HolidayUserEventHandler;
 import org.kernely.holiday.extender.HolidayDateExtender;
+import org.kernely.holiday.extender.NotWorkingDaysExtender;
 import org.kernely.holiday.job.HolidaysDailyJob;
 import org.kernely.holiday.job.HolidaysMonthlyJob;
 import org.kernely.holiday.migrations.Migration01;
@@ -139,7 +140,8 @@ public class HolidayPlugin extends AbstractPlugin {
 	 */
 	@Override
 	public void configurePlugin() {
-		bind(HolidayDateExtender.class).in(Singleton.class);
+		bind(HolidayDateExtender.class).asEagerSingleton();
+		bind(NotWorkingDaysExtender.class).asEagerSingleton();
 		bind(HolidayService.class);
 		bind(HolidayRequestService.class);
 		bind(HolidayManagerUserService.class);

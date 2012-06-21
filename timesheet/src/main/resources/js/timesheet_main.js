@@ -19,6 +19,7 @@ AppTimeSheet = (function($){
 	var allProjectsList = 0;
 	var lastWeekProjectsIdList = 0;
 	var dayStatus = null;
+	var availableDates = null;
 	
 	var tableExpenseView = null;
 	var expense = null;
@@ -98,7 +99,7 @@ AppTimeSheet = (function($){
 						url:"/timesheet/calendar",
 						data:{week:weekSelected, year:yearSelected},
 						success: function(data){
-							
+							availableDates = data.availableDates;
 							// Set last week projects in combobox
 							var label = $("#last-week-projects-template").html();
 							
@@ -581,7 +582,12 @@ AppTimeSheet = (function($){
 			if (dayStatus[index] == "validated"){
 				$(this.el).addClass("day-validated");
 			}
-						
+			if (availableDates[index] == 0){
+				$(this.el).addClass("day-unavailable");
+			}
+			if (availableDates[index] == 0.5){
+				$(this.el).addClass("day-half-available");
+			}
 			this.index = index;
 			this.amount = amount;
 			this.day = day;
@@ -595,7 +601,7 @@ AppTimeSheet = (function($){
 		},
 		
 		displayIcon: function(){
-			if (dayStatus[this.index] != "validated"){
+			if (! $(this.el).hasClass("day-validated") && ! $(this.el).hasClass("day-unavailable")){
 				$(this.el).find(".editButton").show();
 			}
 		},
@@ -605,20 +611,20 @@ AppTimeSheet = (function($){
 		},
 		
 		increment : function(event){
-			if (! this.editMode && (dayStatus[this.index] != "validated")){
+			if (! this.editMode && (dayStatus[this.index] != "validated") && availableDates[this.index] > 0){
 				
 				var parent = this;
 				if(currentCellPickerSelected != null){
+					
 					// Get value and increment
 					var totalColumn = calendar.getColumnTotal(this.index);
 					var val = parseFloat(this.amount) + parseFloat(currentCellPickerSelected.amount);
 					var newTotalColumn = totalColumn + val - this.amount;
 					
-					
 					// Limitation considering the column
-					if (newTotalColumn > MAX_VALUE){
+					if (newTotalColumn > (MAX_VALUE * availableDates[this.index] )){
 						if (val > this.amount){
-							this.amount = parseFloat(parseFloat(this.amount) + parseFloat(MAX_VALUE) - parseFloat(totalColumn)).toFixed(2);
+							this.amount = parseFloat(parseFloat(this.amount) + parseFloat(MAX_VALUE * availableDates[this.index]) - parseFloat(totalColumn)).toFixed(2);
 						}
 					} else {
 						this.amount = val;
@@ -675,9 +681,9 @@ AppTimeSheet = (function($){
 				var newTotalColumn = parseFloat(totalColumn) + parseFloat(val) - parseFloat(this.amount);
 
 				// Limitation considering the column
-				if (newTotalColumn > MAX_VALUE){
+				if (newTotalColumn > (MAX_VALUE * availableDates[this.index])){
 					if (val > this.amount){
-						this.amount = parseFloat(this.amount) + parseFloat(MAX_VALUE) - parseFloat(totalColumn);
+						this.amount = parseFloat(this.amount) + parseFloat(MAX_VALUE * availableDates[this.index]) - parseFloat(totalColumn);
 					}
 				} else {
 					this.amount = val;

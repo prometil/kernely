@@ -34,7 +34,21 @@ table.timesheet-table td{
 
 td.day-validated{
 	cursor:default;
+	background-color:#A0A2A3;
+}
+
+td.day-unavailable{
+	cursor:default;
+	background:url("/images/cross.png") no-repeat;
+	background-position:center;
+}
+
+td.day-half-available{
 	background-color:#E3E4E4;
+}
+
+td.day-unavailable span{
+	cursor:default;
 }
 
 td.day-validated span{

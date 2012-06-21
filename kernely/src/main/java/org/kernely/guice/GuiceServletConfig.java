@@ -103,6 +103,7 @@ public class GuiceServletConfig extends GuiceServletContextListener {
 			plugin.start();
 		}
 
+	
 		// get all jobs
 		Scheduler scheduler = injector.getInstance(Scheduler.class);
 		GuiceSchedulerFactory guiceSchedulerFactory = injector.getInstance(GuiceSchedulerFactory.class);

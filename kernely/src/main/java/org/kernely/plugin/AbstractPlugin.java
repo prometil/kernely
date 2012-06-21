@@ -20,6 +20,7 @@
 package org.kernely.plugin;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -28,6 +29,7 @@ import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import javax.annotation.PostConstruct;
 import javax.ws.rs.Path;
 
 import org.apache.shiro.authz.annotation.RequiresRoles;
@@ -44,6 +46,11 @@ import org.slf4j.LoggerFactory;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Module;
+import com.google.inject.TypeLiteral;
+import com.google.inject.matcher.Matchers;
+import com.google.inject.spi.InjectionListener;
+import com.google.inject.spi.TypeEncounter;
+import com.google.inject.spi.TypeListener;
 
 /**
  * The abstract class for a plugin
@@ -295,6 +302,7 @@ public abstract class AbstractPlugin extends AbstractModule {
 	}
 
 	protected void configure() {
+		
 		configurePlugin();
 	}
 
