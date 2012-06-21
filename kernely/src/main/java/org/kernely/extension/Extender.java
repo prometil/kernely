@@ -33,11 +33,10 @@ public abstract class Extender {
 	
 	/**
 	 * Register the current extender instance in the plugin manager
-	 * it shoule be done automatically by when inject through the plugin
+	 * it should be done automatically by when inject through the plugin
 	 */
 	@PostConstruct
 	public void register(){
-		System.out.println("post consturx");
 		PluginManager.registerExtender(getExtensionPointName(), this);
 	}
 }

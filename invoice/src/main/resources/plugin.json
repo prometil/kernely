@@ -6,6 +6,7 @@
     "description": "Invoice plugin",
     "configuration": 
         { "vat": "19.6,5.5",
+          "notWorkingDays": "6,7",
           "company.invoice" : "Facture",
           "company.creditnote" : "Avoir",
           "company.catchword" : "",

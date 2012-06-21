@@ -27,8 +27,7 @@ import soba.node.ExtensionNode;
 import soba.node.SimpleAttributeAccess;
 
 /**
- * @author g.breton
- * 
+ * Class which manage Soba i18n.
  */
 public class SobaI18n extends Extension {
 

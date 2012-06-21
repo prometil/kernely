@@ -2,8 +2,10 @@ package org.kernely.timesheet.service;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -16,6 +18,7 @@ import org.joda.time.DateTimeZone;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.kernely.core.model.User;
+import org.kernely.extension.Extender;
 import org.kernely.project.dto.ProjectDTO;
 import org.kernely.project.model.Project;
 import org.kernely.service.AbstractService;
@@ -106,15 +109,14 @@ public class TimeSheetService extends AbstractService {
 			// Update case
 			em.get().merge(timeSheet);
 		}
-
 		Set<TimeSheetDay> defaultDays = new HashSet<TimeSheetDay>();
-		TimeSheetDay detail;
+		TimeSheetDay day;
 		for (int i = 0; i < 7; i++) {
-			detail = getTimeSheetDay(new DateTime(request.begin).plusDays(i).toDateMidnight().toDate(), timeSheet.getId());
-			detail.setDay(new DateTime(request.begin).plusDays(i).toDate());
-			defaultDays.add(detail);
+			day = getTimeSheetDay(new DateTime(request.begin).plusDays(i).toDateMidnight().toDate(), timeSheet.getId());
+			day.setDay(new DateTime(request.begin).plusDays(i).toDate());
+			defaultDays.add(day);
 
-			em.get().persist(detail);
+			em.get().persist(day);
 		}
 
 		timeSheet.setDays(defaultDays);
@@ -195,7 +197,9 @@ public class TimeSheetService extends AbstractService {
 
 			return toReturn;
 		} catch (NoResultException nre) {
+			log.debug("No timesheet found for week {} and user {}",week,userId);
 			if (withCreation) {
+				log.debug("Creating timesheet for week {} and user {}",week,userId);
 				// Create the time sheet if not founded.
 				TimeSheetCreationRequestDTO creationRequest = new TimeSheetCreationRequestDTO();
 				creationRequest.begin = firstDay;
@@ -218,9 +222,10 @@ public class TimeSheetService extends AbstractService {
 	 *            The year.
 	 * @param userIdThe
 	 *            id of the user.
-	 * @parma withCreation If true, will create the timesheet if it does not exists, and return it.
 	 */
+	@SuppressWarnings("unchecked")
 	public TimeSheetCalendarDTO getTimeSheetCalendar(int week, int year, long userId) {
+		
 		TimeSheetDTO timeSheet = this.getTimeSheet(week, year, userId, false);
 
 		List<Date> dates = new ArrayList<Date>();
@@ -270,7 +275,40 @@ public class TimeSheetService extends AbstractService {
 			lastWeekProjectsId.add(Long.valueOf(project.id));
 		}
 		
-		return new TimeSheetCalendarDTO(week, year, timeSheet, dates, stringDates, projectsId, lastWeekProjectsId);
+		// Build the list of dates which can not receive amount of time (holiday...)
+		log.debug("Searching for unavailable dates in timesheet...");
+		HashMap<String, Object> args = new HashMap<String,Object>();
+		HashMap<Date, Float> result = new HashMap<Date,Float>();
+
+		Map<Date, Float> unavailable = new HashMap<Date, Float>();
+		args.put("start", firstDayOfWeek);
+		args.put("end", new DateTime(firstDayOfWeek).plusDays(7).toDate());
+		
+		List<Extender> datesExtenders = org.kernely.plugin.PluginManager.getExtenders("date");
+		for (Extender dateExtender : datesExtenders){
+			log.debug("Date extender found");
+			result = (HashMap<Date, Float>) dateExtender.call(args).get("dates");
+			for (Date d : result.keySet()){
+				// If the day is marked as "true", the day is not available
+				if (result.get(d) > 0){
+					unavailable.put(d,result.get(d));
+				}
+			}
+		}
+		
+		List<Float> available = new ArrayList<Float>();
+		
+		log.debug("{} unavailable dates found for this timesheet",unavailable.size());
+		
+		for (Date d : dates){
+			if (unavailable.containsKey(d)){
+				available.add(1-unavailable.get(d));
+			} else {
+				available.add(1F);
+			}
+		}
+		
+		return new TimeSheetCalendarDTO(week, year, timeSheet, dates, stringDates, available, projectsId, lastWeekProjectsId);
 	}
 
 	/**

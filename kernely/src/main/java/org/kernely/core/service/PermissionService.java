@@ -29,6 +29,7 @@ import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
 import javax.persistence.Query;
 
+import org.apache.commons.configuration.AbstractConfiguration;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.AuthorizationException;
 import org.kernely.core.dto.PermissionDTO;
@@ -41,6 +42,7 @@ import org.kernely.service.AbstractService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.google.inject.persist.Transactional;
 
@@ -51,6 +53,8 @@ import com.google.inject.persist.Transactional;
 @Singleton
 public class PermissionService extends AbstractService {
 
+	@Inject
+	private AbstractConfiguration configuration;
 
 	private static Logger log = LoggerFactory.getLogger(PermissionService.class);
 
@@ -455,14 +459,14 @@ public class PermissionService extends AbstractService {
 			// Add all users which have directly the permission
 			for (User u : users) {
 				dto = new UserDTO(u.getUsername(), u.getId());
-				dto.userDetails = new UserDetailsDTO(u.getUserDetails());
+				dto.userDetails = new UserDetailsDTO(u.getUserDetails(),configuration.getString("locale.dateformat"));
 				usersDTO.add(dto);
 			}
 			// Add all users which inherit permission by their groups
 			for (Group g : p.getGroups()){
 				for (User u : g.getUsers()){
 					dto = new UserDTO(u.getUsername(), u.getId());
-					dto.userDetails = new UserDetailsDTO(u.getUserDetails());
+					dto.userDetails = new UserDetailsDTO(u.getUserDetails(),configuration.getString("locale.dateformat"));
 					usersDTO.add(dto);
 				}
 			}

@@ -40,20 +40,20 @@ AppProfile= (function($){
 	}
 	
 	function retrieveUserDetails(){
-		userd.email= $('#profile_mail').text();
-		userd.lastname=  $('#profile_lastname').text();
-		userd.firstname = $('#profile_firstname').text();
-		userd.adress=  $('#profile_adress').text();
-		userd.zip=  $('#profile_zip').text();
-		userd.city=  $('#profile_city').text();
-		userd.homephone=  $('#profile_homephone').text();
-		userd.mobilephone=  $('#profile_mobilephone').text();
-		userd.businessphone=  $('#profile_businessphone').text();
-		userd.birth=$('#profile_birth').text();
-		userd.nationality=  $('#profile_nationality').text();
-		userd.ssn=  $('#profile_ssn').text();
+		userd.email= $('#profile_email_div').text();
+		userd.lastname=  $('#profile_lastname_div').text();
+		userd.firstname = $('#profile_firstname_div').text();
+		userd.adress=  $('#profile_adress_div').text();
+		userd.zip=  $('#profile_zip_div').text();
+		userd.city=  $('#profile_city_div').text();
+		userd.homephone=  $('#profile_homephone_div').text();
+		userd.mobilephone=  $('#profile_mobilephone_div').text();
+		userd.businessphone=  $('#profile_businessphone_div').text();
+		userd.birth=$('#profile_birth_div').text();
+		userd.nationality=  $('#profile_nationality_div').text();
+		userd.ssn=  $('#profile_ssn_div').text();
 		userd.civility = $('input[name=civility]:checked').val();
-		userd.image = $('#image_name').attr('name');
+		userd.image = $('#image_name_div').attr('name');
 	}
 	
 	InputView = Backbone.View.extend({	 
@@ -90,51 +90,16 @@ AppProfile= (function($){
 		},
 		
 		render:function(){
-			var template = $("#profile-"+this.vinput+"-template").html();
-			var view = {input : this.vinput, data : this.vuser};
-			var html = Mustache.to_html(template, view);
+			var i18nName = $("#profile-"+this.vinput+"-template").html();
+			var html = '<td>'+i18nName+'</td><td id="profile_'+this.vinput+'" class="span_profile"><div id="profile_'+this.vinput+'_div">'+this.vuser+'</div>'+
+						'<input id="edit_'+this.vinput+'_field" name="'+this.vinput+'" class="invisible profile_'+this.vinput+'" type="text" MAXLENGTH='+this.vlength+' value="' + this.vuser + '"/></td>';
 			$(this.el).html(html);
 			return this;
 		},
 		
-		save:function(){	
+		save:function(){
 			retrieveUserDetails();
-			if (this.vinput=="mail"){
-				userd.email=$("#edit_"+this.vinput+"_field").val();
-			}
-			if (this.vinput=="lastname"){
-				userd.lastname=$("#edit_"+this.vinput+"_field").val();
-			}
-			if (this.vinput=="firstname"){
-				userd.firstname=$("#edit_"+this.vinput+"_field").val();
-			}
-			if (this.vinput=="city"){
-				userd.city=$("#edit_"+this.vinput+"_field").val();
-			}
-			if (this.vinput=="zip"){
-				userd.zip=$("#edit_"+this.vinput+"_field").val();
-			}
-			if (this.vinput=="adress"){
-				userd.adress=$("#edit_"+this.vinput+"_field").val();
-			}
-			if (this.vinput=="homephone"){
-				userd.homephone=$("#edit_"+this.vinput+"_field").val();
-			}
-			if (this.vinput=="mobilephone"){
-				userd.mobilephone=$("#edit_"+this.vinput+"_field").val();
-			}
-			if (this.vinput=="businessphone"){
-				userd.businessphone=$("#edit_"+this.vinput+"_field").val();
-			}
-			if (this.vinput=="nationality"){
-				userd.nationality=$("#edit_"+this.vinput+"_field").val();
-			}
-			if(this.vinput=="ssn"){
-				userd.ssn=$("#edit_"+this.vinput+"_field").val();		
-			}
-			if(this.vinput=="birth"){
-				userd.birth=$("#edit_"+this.vinput+"_field").val();
-			}
+			userd[this.vinput] = $("#edit_"+this.vinput+"_field").val();
 			var parent=this;
 			var json = JSON.stringify(userd);
 			$.ajax({
@@ -148,57 +113,42 @@ AppProfile= (function($){
                         processData: false,
                         contentType: "application/json; charset=utf-8",
 						success:function(data){
-							var vresult; 
-							if (parent.vinput=="mail"){
-								vresult = data.email;
-							}
-							if (parent.vinput=="lastname"){
-								vresult = data.lastname;						
-							}
-							if (parent.vinput=="firstname"){
-								vresult = data.firstname;
-							}
-							if (parent.vinput=="city"){
-								vresult = data.city;
-							}
-							if (parent.vinput=="zip"){
-								vresult = data.zip;
-							}
-							if (parent.vinput=="adress"){
-								vresult = data.adress;
-							}
-							if (parent.vinput=="homephone"){
-								vresult = data.homephone;
-							}
-							if (parent.vinput=="mobilephone"){
-								vresult = data.mobilephone;
-							}
-							if (parent.vinput=="businessphone"){
-								vresult = data.businessphone;
-							}
-							if (parent.vinput=="nationality"){
-								vresult = data.nationality ;
-							}
-							if(parent.vinput=="ssn"){
-								vresult = data.ssn;
-							}
-							if(parent.vinput=="birth"){
-								vresult = data.birth;
-							}
-							$("#profile_"+parent.vinput).html( vresult);
+							vresult = data[parent.vinput];
+							$("#profile_"+parent.vinput+"_div").html( vresult);
+							$("#profile_"+parent.vinput+"_div").removeClass("invisible");
+							$("#edit_"+parent.vinput+"_field").addClass("invisible");
 						}
 					});
 				}
-			});			
-			$("#profile_"+this.vinput).html($("#edit_"+this.vinput+"_field").text());
-			$("#profile_"+this.vinput).addClass("span_profile");
-						
+			});
+			
+			$("#profile_"+this.vinput).css("background-color", "transparent");
+			$("#profile_"+this.vinput).css("cursor", "auto");
 		},
 		
 		edit:function(){
-			$("#profile_"+this.vinput).removeClass("span_profile");
-			$("#profile_"+this.vinput).html("<input id='edit_"+this.vinput+"_field' name='"+this.vinput+"' class='profile_"+this.vinput+"' type='text' MAXLENGTH="+this.vlength+" value='" + $("#profile_" + this.vinput).text() + "'/>");
+			var parent = this;
+			$("#profile_"+this.vinput+"_div").addClass("invisible");
+			$("#edit_"+this.vinput+"_field").removeClass("invisible");
+			$.datepicker.regional[lang+"-"+country];
+			
+			if (this.vinput == "birth"){
+				// Set the datepicker for date of birth
+				$( "#edit_birth_field" ).datepicker({
+					changeMonth:true,
+					changeYear:true,
+					buttonImage: "/images/icons/calendar_icon.png",
+					buttonImageOnly: true,
+					onSelect: function(selectedDate,inst){
+						$("#profile_birth_div").html(selectedDate);
+						$("#edit_birth_field").val(selectedDate);
+						parent.save();
+					}
+				});
+			}
+			$.datepicker.setDefaults($.datepicker.regional[lang+"-"+country]);
 			document.getElementById("edit_"+this.vinput+"_field").focus();
+			
 			flag.edit=this.vinput;
 		},
 		
@@ -206,7 +156,7 @@ AppProfile= (function($){
 			 if (e.keyCode == 13){
 				 this.save();
 			 }
-		},
+	},
 		
 		onBlur : function(){
 			this.save();	
@@ -243,16 +193,16 @@ AppProfile= (function($){
 						success: function(details){
 							parent.addInput("lastname","50",details.lastname);
 							parent.addInput("firstname","50",details.firstname);	
-							parent.addInput("mail","50",details.email);
+							parent.addInput("email","50",details.email);
 							parent.addInput("adress","100",details.adress); 
-							parent.addInput("zip", "5",details.zip);
-							parent.addInput("city","30",details.city);
+							parent.addInput("zip", "20",details.zip);
+							parent.addInput("city","60",details.city);
 							parent.addInput("nationality","30",details.nationality);
-							parent.addInput("homephone","10",details.homephone);
-							parent.addInput("mobilephone","10",details.mobilephone);
-							parent.addInput("businessphone","10",details.businessphone);
+							parent.addInput("homephone","20",details.homephone);
+							parent.addInput("mobilephone","20",details.mobilephone);
+							parent.addInput("businessphone","20",details.businessphone);
 							parent.addInput("birth","10",details.birth);
-							parent.addInput("ssn","20",details.ssn);							
+							parent.addInput("ssn","20",details.ssn);
 						}
 					});
 				}

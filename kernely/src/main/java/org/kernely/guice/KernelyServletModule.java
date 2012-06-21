@@ -120,20 +120,20 @@ public class KernelyServletModule extends JerseyServletModule {
 		bindListener(Matchers.any(), new TypeListener() {
 			public <I> void hear(final TypeLiteral<I> typeLiteral, TypeEncounter<I> typeEncounter) {
 				Class<? super I> type = typeLiteral.getRawType();
-
 				for (Method method : type.getMethods()) {
 					if (method.isAnnotationPresent(PostConstruct.class)) {
-
 						typeEncounter.register(new InjectionListener<I>() {
+							
+							
 							public void afterInjection(Object i) {
+								
 								Object m = (Object) i;
 								// test if method has a post construct
 								// annotation
 								for (Method method : m.getClass().getMethods()) {
-
+									
 									if (method.isAnnotationPresent(PostConstruct.class)) {
-
-										log.trace("Exectute post construct method on class {}-> method {}", m.getClass(), method.getName());
+										log.trace("Execute post construct method on class {}-> method {}", m.getClass(), method.getName());
 										try {
 											method.invoke(m);
 										} catch (IllegalArgumentException e) {

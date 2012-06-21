@@ -32,12 +32,26 @@ table.timesheet-table td{
 	vertical-align:middle;
 }
 
-td.day-validated{
+.day-validated{
 	cursor:default;
+	background-color:#A0A2A3;
+}
+
+.day-unavailable{
+	cursor:default;
+	background:url("/images/cross.png") no-repeat;
+	background-position:center;
+}
+
+.day-half-available{
 	background-color:#E3E4E4;
 }
 
-td.day-validated span{
+.day-unavailable span{
+	cursor:default;
+}
+
+.day-validated span{
 	cursor:default;
 }
 
@@ -59,6 +73,13 @@ table.timesheet-table tr.expense-line td{
 	height:55px;
 }
 
+div.legend{
+	float:left;
+	margin-right:15px;
+	border:1px solid #9c9e9f;
+	width:62px;
+	height:27px;
+}
 
 div.edit-timesheet-icon{
 	position:absolute;
