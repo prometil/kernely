@@ -149,4 +149,10 @@ buttons-container{
 	float:right;
 }
 
+.comment-area{
+	width:100%;
+	border:1px solid #a0a2a3;
+	height:50px;
+}
+
 

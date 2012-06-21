@@ -22,6 +22,7 @@ import org.kernely.core.model.Role;
 import org.kernely.holiday.dto.CalendarRequestDTO;
 import org.kernely.holiday.dto.HolidayDetailDTO;
 import org.kernely.holiday.dto.HolidayRequestDTO;
+import org.kernely.holiday.dto.IntervalDTO;
 import org.kernely.holiday.model.HolidayRequest;
 import org.kernely.holiday.service.HolidayRequestService;
 import org.kernely.menu.Menu;
@@ -64,7 +65,7 @@ public class HolidayManagerRequestController extends AbstractController {
 	public List<HolidayRequestDTO> displayAllHolidayRequestPending()
 	{
 		log.debug("Call to GET on all holiday request pending");
-		return holidayRequestService.getSpecificRequestsForManagers(HolidayRequest.PENDING_STATUS);
+		return holidayRequestService.getSpecificRequestsForManagers(HolidayRequest.PENDING_STATUS, -1);
 	}
 	
 	/**
@@ -79,11 +80,39 @@ public class HolidayManagerRequestController extends AbstractController {
 	{
 		log.debug("Call to GET on all holiday request accepted or denied");
 		List<HolidayRequestDTO> lhr = new ArrayList<HolidayRequestDTO>();
-		lhr.addAll(holidayRequestService.getSpecificRequestsForManagers(HolidayRequest.ACCEPTED_STATUS));
-		lhr.addAll(holidayRequestService.getSpecificRequestsForManagers(HolidayRequest.DENIED_STATUS));
+		lhr.addAll(holidayRequestService.getSpecificRequestsForManagers(HolidayRequest.ACCEPTED_STATUS, -1));
+		lhr.addAll(holidayRequestService.getSpecificRequestsForManagers(HolidayRequest.DENIED_STATUS, -1));
 		Collections.sort(lhr);
 		return lhr; 
 		
+	}
+	
+	/**
+	 * Get all existing holiday request with a status of a specific user in the database for a specific year
+	 * @return A list of all DTO associated to the existing holiday requests of a specific user in the database
+	 */
+	@GET
+	@Path("/all/status/date")
+	@Produces({MediaType.APPLICATION_JSON})
+	public List<HolidayRequestDTO> displayHolidayRequestStatusPerYear(@QueryParam("year") int year)
+	{
+		List<HolidayRequestDTO> lhr = new ArrayList<HolidayRequestDTO>();
+		lhr.addAll(holidayRequestService.getSpecificRequestsForManagers(HolidayRequest.ACCEPTED_STATUS, year));
+		lhr.addAll(holidayRequestService.getSpecificRequestsForManagers(HolidayRequest.DENIED_STATUS, year));
+		Collections.sort(lhr);
+		return lhr;
+	}
+	
+	/**
+	 * Retrieve the first and last year of all holiday request for the current user
+	 * @return A TimeInval containing first and last year
+	 */
+	@GET
+	@Path("/years")
+	@Produces({MediaType.APPLICATION_JSON})
+	public IntervalDTO getYearCountForCurrentUser()
+	{
+		return holidayRequestService.getYearsCountForManagedUsers();
 	}
 	
 	/**

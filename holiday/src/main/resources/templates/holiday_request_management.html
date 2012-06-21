@@ -4,6 +4,7 @@
 {% endblock %}
 
 {% block css %}
+	<link rel="stylesheet" type="text/css" href="/css/holiday_main.css"/>
 	<link rel="stylesheet" type="text/css" href="/css/holiday_request.css"/>
 {% endblock %}
 
@@ -44,7 +45,7 @@
 	<script type="text/html" id="popup-accept-template">
 		<fieldset>	
 		<legend>{% i18n "accepted_ask" %}</legend>
-		{% i18n "accepted_commentary" %} <input class="kernely_input" type="text" id="comment_accept" size="40"/><br/>
+		{% i18n "accepted_commentary" %} <textarea class="comment-area" id="comment_accept"></textarea><br/>
 		</fieldset>
 		<br/>
 		<div class="dialog-buttons-container">
@@ -69,7 +70,7 @@
 	<script type="text/html" id="popup-deny-template">
 		<fieldset>	
 		<legend>{% i18n "denied_ask" %}</legend>
-		{% i18n "denied_commentary" %} <input class="kernely_input" type="text" id="comment_deny" size="40"/><br/>
+		{% i18n "denied_commentary" %}  <textarea class="comment-area" id="comment_deny"></textarea><br/>
 		</fieldset>
 		<div class="dialog-buttons-container">
 			<input type="button" value="{% i18n "ok" %}" class="denyHolidayRequest button_ok"/>
@@ -99,6 +100,11 @@
 	<script type="text/html" id="from-column-template">
 	</script>
 	
+	<script type="text/html" id="year-block-request">
+		<div class="header-block-year clickable">{{"{{"}}year{{"}}"}}</div>
+		<div class="content-block-year">{% i18n "no-data" %}</div>
+	</script>
+	
 {% endblock %}
 
 {% block title %}
@@ -121,8 +127,8 @@
 		
 		</table>
 		<div class="subtitle separate">{% i18n "title_table_2" %}</div>
-		<table id="manager_request_table" class="kernely_table">
-			
-		</table>
+		<div id="statued_requests">
+		
+		</div>
 	</div>
 {% endblock %}

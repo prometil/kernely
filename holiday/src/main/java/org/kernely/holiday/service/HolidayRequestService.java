@@ -266,12 +266,45 @@ public class HolidayRequestService extends AbstractService {
 		}
 	}
 	
+	/**
+	 * Retrieve the oldest and newest year of all holiday requests made by the current user
+	 * @return An IntervalDTO containing oldest and newest year.
+	 */
 	public IntervalDTO getYearsCountForCurrentUser(){
 		IntervalDTO interval = new IntervalDTO();
 		Query query1 = em.get().createQuery("SELECT  min(beginDate) from HolidayRequest r WHERE user = :user");
 		query1.setParameter("user", this.getAuthenticatedUserModel());
 		Query query2 = em.get().createQuery("SELECT  max(beginDate) from HolidayRequest r WHERE user = :user");
 		query2.setParameter("user", this.getAuthenticatedUserModel());
+		try {
+			Date date1 = (Date)query1.getSingleResult();
+			interval.end = new DateTime(date1).getYear();
+			Date date2 = (Date)query2.getSingleResult();
+			interval.begin = new DateTime(date2).getYear();
+			return interval;
+		} catch (NoResultException e) {
+			log.debug("There is no holiday waiting requests");
+			interval.end = DateTime.now().getYear();
+			return interval;
+		}
+		
+	}
+	
+	/**
+	 * Retrieve the oldest and newest year of all holiday requests made by the current manager's collaborators
+	 * @return An IntervalDTO containing oldest and newest year.
+	 */
+	public IntervalDTO getYearsCountForManagedUsers(){
+		IntervalDTO interval = new IntervalDTO();
+		Set<UserDTO> managedDTO = userService.getUsersAuthorizedManaged();
+		Set<User> managed = new TreeSet<User>();
+		for (UserDTO udto : managedDTO) {
+			managed.add(em.get().find(User.class, udto.id));
+		}
+		Query query1 = em.get().createQuery("SELECT  min(beginDate) from HolidayRequest r WHERE user in :users");
+		query1.setParameter("users", managed);
+		Query query2 = em.get().createQuery("SELECT  max(beginDate) from HolidayRequest r WHERE user in :users");
+		query2.setParameter("users", managed);
 		try {
 			Date date1 = (Date)query1.getSingleResult();
 			interval.end = new DateTime(date1).getYear();
@@ -524,10 +557,16 @@ public class HolidayRequestService extends AbstractService {
 		}
 		log.debug("ACCEPT : Retrieving holiday request with id {}", id);
 		HolidayRequest request = em.get().find(HolidayRequest.class, id);
-		request.setStatus(HolidayRequest.ACCEPTED_STATUS);
-		request.setManager(this.getAuthenticatedUserModel());
-		em.get().merge(request);
-		log.debug("Holiday request with id {} has been accepted", id);
+		if(request != null && request.getStatus() == 2){
+			request.setStatus(HolidayRequest.ACCEPTED_STATUS);
+			request.setManager(this.getAuthenticatedUserModel());
+			em.get().merge(request);
+			log.debug("Holiday request with id {} has been accepted", id);
+		}
+		else{
+			log.debug("Holiday request with id {} can't be accepted", id);
+			throw new IllegalArgumentException("Impossible to accept this request.");
+		}
 	}
 
 	/**
@@ -543,39 +582,47 @@ public class HolidayRequestService extends AbstractService {
 		}
 		log.debug("DENY : Retrieving holiday request with id {}", id);
 		HolidayRequest request = em.get().find(HolidayRequest.class, id);
-		request.setStatus(HolidayRequest.DENIED_STATUS);
-		request.setManager(this.getAuthenticatedUserModel());
-		em.get().merge(request);
-
-		// Update the temporary balance
-		Set<HolidayRequestDetail> details = request.getDetails();
-		Map<HolidayTypeInstance, Float> typeToUpdate = new HashMap<HolidayTypeInstance, Float>();
-		for (HolidayRequestDetail d : details) {
-			float taken = 0F;
-			// We increase the value by 6 because we're counting in 12th of a
-			// day, so 6 represents an half day.
-			if (d.isAm()) {
-				taken += HALF_DAY;
+		if(request != null && request.getStatus() == 2){
+			
+			request.setStatus(HolidayRequest.DENIED_STATUS);
+			request.setManager(this.getAuthenticatedUserModel());
+			em.get().merge(request);
+	
+			// Update the temporary balance
+			Set<HolidayRequestDetail> details = request.getDetails();
+			Map<HolidayTypeInstance, Float> typeToUpdate = new HashMap<HolidayTypeInstance, Float>();
+			for (HolidayRequestDetail d : details) {
+				float taken = 0F;
+				// We increase the value by 6 because we're counting in 12th of a
+				// day, so 6 represents an half day.
+				if (d.isAm()) {
+					taken += HALF_DAY;
+				}
+				if (d.isPm()) {
+					taken += HALF_DAY;
+				}
+	
+				if (typeToUpdate.containsKey(d.getTypeInstance())) {
+					typeToUpdate.put(d.getTypeInstance(), typeToUpdate.get(d.getTypeInstance()) + taken);
+				} else {
+					typeToUpdate.put(d.getTypeInstance(), taken);
+				}
 			}
-			if (d.isPm()) {
-				taken += HALF_DAY;
+	
+			// Update temporary balance
+	
+			Set<Entry<HolidayTypeInstance, Float>> entries = typeToUpdate.entrySet();
+			for (Entry<HolidayTypeInstance, Float> e : entries) {
+				this.balanceService.addDaysInAvailableUpdatedFromRequest(e.getKey().getId(), request.getUser().getId(), e.getValue());
 			}
-
-			if (typeToUpdate.containsKey(d.getTypeInstance())) {
-				typeToUpdate.put(d.getTypeInstance(), typeToUpdate.get(d.getTypeInstance()) + taken);
-			} else {
-				typeToUpdate.put(d.getTypeInstance(), taken);
-			}
+	
+			log.debug("Holiday request with id {} has been denied", id);
+			
 		}
-
-		// Update temporary balance
-
-		Set<Entry<HolidayTypeInstance, Float>> entries = typeToUpdate.entrySet();
-		for (Entry<HolidayTypeInstance, Float> e : entries) {
-			this.balanceService.addDaysInAvailableUpdatedFromRequest(e.getKey().getId(), request.getUser().getId(), e.getValue());
+		else{
+			log.debug("Holiday request with id {} can't be accepted", id);
+			throw new IllegalArgumentException("Impossible to deny this request.");
 		}
-
-		log.debug("Holiday request with id {} has been denied", id);
 	}
 
 	/**
@@ -606,7 +653,7 @@ public class HolidayRequestService extends AbstractService {
 			log.debug("The user {} has tried to delete the request with id {} but he's not the owner of the request", this.getAuthenticatedUserModel().getId(), request.getId());
 			throw new UnauthorizedException("This request isn't yours. You can't delete it.");
 		}
-		if(new DateTime(request.getEndDate()).isBefore(DateTime.now())){
+		if(new DateTime(request.getEndDate()).isBefore(DateTime.now()) && request.getStatus() != 2){
 			log.debug("The user {} has tried to delete the request with id {} but end date is already reached", this.getAuthenticatedUserModel().getId(), request.getId());
 			throw new IllegalArgumentException("You can't cancel this request, end date is already reached.");
 		}
@@ -675,7 +722,7 @@ public class HolidayRequestService extends AbstractService {
 	 */
 	@SuppressWarnings("unchecked")
 	@Transactional
-	public List<HolidayRequestDTO> getSpecificRequestsForManagers(int status) {
+	public List<HolidayRequestDTO> getSpecificRequestsForManagers(int status, int year) {
 		if (!userService.isManager(this.getAuthenticatedUserModel().getUsername())) {
 			throw new UnauthorizedException("Only managers can access to this functionality!");
 		}
@@ -684,7 +731,20 @@ public class HolidayRequestService extends AbstractService {
 		for (UserDTO udto : managedDTO) {
 			managed.add(em.get().find(User.class, udto.id));
 		}
-		Query query = em.get().createQuery("SELECT  r from HolidayRequest r WHERE  status = :status AND user in :users");
+		Query query;
+		if(year < 0){
+			query = em.get().createQuery("SELECT  r from HolidayRequest r WHERE  status = :status AND user in :users");
+		}
+		else if(year > 0){
+			query = em.get().createQuery("SELECT  r from HolidayRequest r WHERE  status = :status AND user in :users AND beginDate < :date1 AND beginDate > :date2");
+			query.setParameter("date1", new DateTime().withMonthOfYear(12).withDayOfMonth(31).withYear(year).toDateMidnight().toDate());
+			query.setParameter("date2", new DateTime().withMonthOfYear(1).withDayOfMonth(1).withYear(year).toDateMidnight().toDate());
+		}
+		else{
+			query = em.get().createQuery("SELECT  r from HolidayRequest r WHERE  status = :status AND user in :users AND beginDate < :date1 AND beginDate > :date2");
+			query.setParameter("date1", new DateTime().withMonthOfYear(12).withDayOfMonth(31).toDateMidnight().toDate());
+			query.setParameter("date2", new DateTime().withMonthOfYear(1).withDayOfMonth(1).toDateMidnight().toDate());
+		}		
 		query.setParameter("status", status);
 		query.setParameter("users", managed);
 		try {

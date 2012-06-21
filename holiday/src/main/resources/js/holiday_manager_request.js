@@ -2,7 +2,7 @@ AppHolidayManagerRequest = (function($){
 	
 	var mainView = null;
 	var tableView1 = null;
-	var tableView2 = null;
+	var tableStatuedGroup = new Array();
 	var viewVisualize = null;
 	var dates = new Array();
 	var viewAccept =null;
@@ -22,7 +22,7 @@ AppHolidayManagerRequest = (function($){
 		
 		render:function(){
 			tableView1 = new HolidayManagerRequestPendingTableView().render();
-			tableView2 = new HolidayManagerRequestTableView().render();
+			new HolidayUserYearContainerView();
 		}
 	})
 
@@ -129,14 +129,88 @@ AppHolidayManagerRequest = (function($){
 		}
 	})
 	
-	HolidayManagerRequestTableView = Backbone.View.extend({
-		el:"#manager_request_table",
-		events:{
+	
+	HolidayUserYearContainerView = Backbone.View.extend({
+		el:"#statued_requests",
 		
+		nbYear: null,
+		
+		initialize:function(){
+			parent = this;
+			$.ajax({
+				type:"GET",
+				url:"/holiday/managers/request/years",
+				dataType:"json",
+				success: function(data){
+					parent.nbYear = data.begin - data.end;
+					var i = data.begin;
+					$(parent.el).append(new HolidayUserYearBlockView(i, true).render().el);
+					i --;
+					while(i >= data.end){
+						$(parent.el).append(new HolidayUserYearBlockView(i, false).render().el);
+						i --;
+					}
+				}
+			});
+		},
+	
+		render: function(){
+			return this;
+		}
+	})
+	
+	HolidayUserYearBlockView = Backbone.View.extend({
+		tagName:"div",
+		className:"year-block",
+		
+		year : null,
+		initVisible: null,
+		
+		events:{
+			"click .header-block-year":"showHideContent"
 		},
 		
+		initialize:function(year, visible){
+			this.year = year;
+			this.initVisible = visible;
+		},
+		
+		showHideContent : function(){
+			if($(this.el).find(".content-block-year").is(":visible")){
+				$(this.el).find(".content-block-year").slideUp(500);
+			}
+			else{
+				$(this.el).find(".content-block-year").slideDown(500);
+			}
+		},
+		
+		render: function(){
+			var template = $("#year-block-request").html();
+			var view = {year: this.year};
+			var html = Mustache.to_html(template, view);
+			$(this.el).html(html);
+			$(this.el).find(".content-block-year").html(new HolidayManagerRequestTableView(this.year).render().el);
+			
+			if(this.initVisible){
+				if(!$(this.el).find(".content-block-year").is(":visible")){
+					$(this.el).find(".content-block-year").css("display", "block");
+				}
+			}
+			return this;
+		}
+	})
+	
+	
+	HolidayManagerRequestTableView = Backbone.View.extend({
+		tagName:"table",
+		className:"kernely_table",
+		
+		year: null,
+		
 		table: null, 
-		initialize:function(){
+		
+		initialize:function(year){
+			this.year = year;
 			var parent = this;
 			
 			var templateFromColumn = $("#from-column-template").text();
@@ -156,13 +230,11 @@ AppHolidayManagerRequest = (function($){
 						{"name":"", style:["text-center", "icon-column"]}
 				],
 				elements:["user", "requesterComment", "managerComment", "beginDate", "endDate", "status"],
-				
-				eventNames:["click"],
-				events:{
-					"click": parent.selectLine
-				},
-				editable:true
+
+				editable:false,
+				group:1
 			});
+			tableStatuedGroup.push(parent);
 		},
 		
 		reload: function(){
@@ -173,7 +245,8 @@ AppHolidayManagerRequest = (function($){
 			var parent = this;
 			$.ajax({
 				type:"GET",
-				url:"/holiday/managers/request/all/status",
+				url:"/holiday/managers/request/all/status/date",
+				data:{year : parent.year},
 				dataType:"json",
 				success: function(data){
 					if(data != null){
@@ -254,7 +327,10 @@ AppHolidayManagerRequest = (function($){
 							$.writeMessage("success",successHtml);
 							$("#comment_accept").val("");
 							tableView1.reload();
-							tableView2.reload();
+							for(var view in tableStatuedGroup){
+								console.log(view);
+								tableStatuedGroup[view].reload();
+							}
 						}
 					});
 				}
@@ -309,7 +385,10 @@ AppHolidayManagerRequest = (function($){
 							$.writeMessage("success",successHtml);
 							$("#comment_deny").val("");
 							tableView1.reload();
-							tableView2.reload();
+							for(var view in tableStatuedGroup){
+								console.log(view);
+								tableStatuedGroup[view].reload();
+							}
 						}
 					});
 				}
