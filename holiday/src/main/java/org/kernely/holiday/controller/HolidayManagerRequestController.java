@@ -225,4 +225,13 @@ public class HolidayManagerRequestController extends AbstractController {
 		DateTime d2 = DateTime.parse(dateEnd, fmt);
 		return holidayRequestService.getCalendarRequest(d1, d2);
 	}
+	
+	@GET
+	@Path("/visualize")
+	@RequiresRoles(Role.ROLE_USERMANAGER)
+	@Produces(MediaType.APPLICATION_JSON)
+	public CalendarRequestDTO getRequestDetails(@QueryParam("idrequest")long idRequest){
+		return holidayRequestService.getCalendarRequest(idRequest);
+	}
+
 }

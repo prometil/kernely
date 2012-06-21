@@ -860,6 +860,127 @@ public class HolidayRequestService extends AbstractService {
 		calendar.details = this.buildColorPickerForRequest();
 		return calendar;
 	}
+	
+	/**
+	 * Build the calendar for request holidays. Returns the weeks concerned by
+	 * the dates given in param. Verify in existing request if the days are
+	 * available. Finally, build the color picker containing all balance
+	 * available with their associated color
+	 * 
+	 * @param idRequest The id of the request to represent
+	 * @return A DTO containing all days concerned by the request
+	 */
+	@Transactional
+	public CalendarRequestDTO getCalendarRequest(long idRequest) {
+		HolidayRequest request = em.get().find(HolidayRequest.class, idRequest);
+		if(request == null){
+			log.debug("[VISUALIZE REQUEST] Impossible to retrieve the request with id {}" + idRequest);
+			throw new IllegalArgumentException("Impossible to retrieve the request with the id " + idRequest);
+		}
+		List<HolidayRequestDetail> details = new ArrayList<HolidayRequestDetail>(request.getDetails());
+		Collections.sort(details);
+		HolidayRequestDetail firstDayDetail = details.get(0);
+		HolidayRequestDetail lastDayDetail = details.get(details.size() -1);
+		
+		DateTime firstday = new DateTime(firstDayDetail.getDay());
+		int dayOfWeekFirstDay = firstday.getDayOfWeek();
+		DateTime lastday = new DateTime(lastDayDetail.getDay());
+		int dayOfWeekLastDay = lastday.getDayOfWeek();
+		
+		CalendarRequestDTO calendar = new CalendarRequestDTO();
+		
+		DateTimeFormatter fmt = DateTimeFormat.forPattern(configuration.getString("locale.dateformat"));
+		List<CalendarDayDTO> daysDTO = new ArrayList<CalendarDayDTO>();
+
+		DateTime dtmaj;
+
+		List<HolidayDetailDTO> allDayReserved = new HolidayRequestDTO(request).details;
+
+		// We add the first days of the week in not available for the graphic
+		// interface
+		CalendarDayDTO dayDTO;
+		
+		for (int i = 1; i < dayOfWeekFirstDay; i++) {
+			dtmaj = firstday.minusDays(dayOfWeekFirstDay - i);
+			// The end of the week is not displayed
+			if (dtmaj.getDayOfWeek() < DAYS_IN_WEEK) {
+				dayDTO = new CalendarDayDTO(dtmaj.toString(fmt), false, false, dtmaj.getWeekOfWeekyear());
+				dayDTO.morningHolidayTypeColor = "none";
+				dayDTO.afternoonHolidayTypeColor = "none";
+				daysDTO.add(dayDTO);
+			}
+		}
+
+		// We add one day to date2 to consider the date2's day. Else, it doesn't
+		// consider the last day.
+		Days days = Days.daysBetween(firstday.toDateMidnight(), lastday.plusDays(1).toDateMidnight());
+
+		for (int i = 0; i < days.getDays(); i++) {
+			
+			dtmaj = firstday.plusDays(i);
+			
+			dayDTO = new CalendarDayDTO();
+			dayDTO.morningAvailable = true;
+			dayDTO.afternoonAvailable = true;
+			dayDTO.morningHolidayTypeColor= "none";
+			dayDTO.afternoonHolidayTypeColor= "none";
+			dayDTO.day = dtmaj.toString(fmt);
+			dayDTO.week = dtmaj.getWeekOfWeekyear();
+			
+			// The end of the week is not displayed
+			if (dtmaj.getDayOfWeek() < DAYS_IN_WEEK) {
+				for (HolidayDetailDTO detail : allDayReserved) {
+					if (new DateTime(detail.day).toDateMidnight().isEqual(dtmaj.toDateMidnight())) {
+						if (detail.am) {
+							dayDTO.morningAvailable = !detail.am;
+							dayDTO.morningHolidayTypeColor = detail.color;
+							dayDTO.morningHolidayTypeId = detail.typeInstanceId;
+							dayDTO.morningHolidayTypeName = detail.type;
+						}
+						if (detail.pm) {
+							dayDTO.afternoonAvailable = !detail.pm;
+							dayDTO.afternoonHolidayTypeColor = detail.color;
+							dayDTO.afternoonHolidayTypeId = detail.typeInstanceId;
+							dayDTO.afternoonHolidayTypeName = detail.type;
+						}
+					}
+				}
+				daysDTO.add(dayDTO);
+			}
+		}
+
+		// We add the last days of the week in not available for the graphic
+		// interface
+		for (int i = dayOfWeekLastDay + 1; i <= DAYS_IN_WEEK + 1; i++) {
+			dtmaj = lastday.plusDays(i - dayOfWeekLastDay);
+			// The end of the week is not displayed
+			if (dtmaj.getDayOfWeek() < DAYS_IN_WEEK) {
+				dayDTO = new CalendarDayDTO(dtmaj.toString(fmt), false, false, dtmaj.getWeekOfWeekyear());
+				dayDTO.morningHolidayTypeColor = "none";
+				dayDTO.afternoonHolidayTypeColor = "none";
+				daysDTO.add(dayDTO);
+			}
+		}
+
+		int weekPlace1 = firstday.getWeekOfWeekyear();
+		int weekPlace2 = lastday.getWeekOfWeekyear();
+		// We add +1 to consider 2 weeks
+		// IE : Week 52 - Week 51 = 2 week and not 1
+		if (weekPlace1 <= weekPlace2) {
+			calendar.nbWeeks = ((weekPlace2 - weekPlace1) + 1);
+		}
+		// We consider the fact that an interval can be on 2 different years
+		// IE : Week 52 of 2011 and Week 1 of 2012.
+		else {
+			calendar.nbWeeks = ((weekPlace2 + (52 - weekPlace1) + 1));
+		}
+
+		calendar.startWeek = firstday.getWeekOfWeekyear();
+		calendar.days = daysDTO;
+		calendar.details = this.buildColorPickerForRequest();
+		return calendar;
+		
+	}
 
 	/**
 	 * Create the color picker Retrieve all the profiles associated to the

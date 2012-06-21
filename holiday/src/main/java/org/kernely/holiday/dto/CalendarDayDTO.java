@@ -31,6 +31,36 @@ public class CalendarDayDTO {
 	public boolean afternoonAvailable;
 	
 	/**
+	 * Id of the holiday type concerned by the morning of this day
+	 */
+	public long morningHolidayTypeId;
+	
+	/**
+	 * Id of the holiday type concerned by the afternoon of this day
+	 */
+	public long afternoonHolidayTypeId;
+	
+	/**
+	 * Color of the holiday type concerned by the morning of this day
+	 */
+	public String morningHolidayTypeColor;
+	
+	/**
+	 * Color of the holiday type concerned by the afternoon of this day
+	 */
+	public String afternoonHolidayTypeColor;
+	
+	/**
+	 * Name of the holiday type concerned by the morning of this day
+	 */
+	public String morningHolidayTypeName;
+	
+	/**
+	 * Name of the holiday type concerned by the afternoon of this day
+	 */
+	public String afternoonHolidayTypeName;
+	
+	/**
 	 * The week number
 	 */
 	public int week;
