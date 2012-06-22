@@ -1,4 +1,4 @@
-.day-header-part, .am-part, .pm-part, .day-disabled{
+.day-header-part, .am-part, .pm-part, .day-part, .day-disabled{
 	width:125;
 	height:25px;
 	text-align:center;
@@ -8,10 +8,16 @@
 
 .day-header-part{
 	background-color:#e3e4e4;
+	cursor:default;
 }
 
 .am-part, .pm-part{
 	cursor:pointer;
+	color:#c8c8c8;
+}
+
+.day-part{
+	cursor:default;
 	color:#c8c8c8;
 }
 
@@ -122,6 +128,10 @@ buttons-container{
 	background-color:#e3e4e4;
 }
 
+.balance-cell-selected-void{
+	background-color:#F7C7C7;
+}
+
 .available-cpt{
 	 font-weight:bold;
 }
@@ -152,7 +162,7 @@ buttons-container{
 .comment-area{
 	width:100%;
 	border:1px solid #a0a2a3;
-	height:50px;
+	height:100px;
 }
 
 

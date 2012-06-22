@@ -7,6 +7,12 @@ AppHolidayManagerRequest = (function($){
 	var dates = new Array();
 	var viewAccept =null;
 	var viewDeny = null;
+	var dayNameCounter = 1;
+	var cellDayMorningCounter = 0;
+	var cellDayAfternoonCounter = 1;
+	var MORNING_PART = 1;
+	var AFTERNOON_PART = 2;
+	var allDayCells = new Array();
 	
 	HolidayManagerRequestPageView = Backbone.View.extend({
 		el:"#request-manager-main",
@@ -38,7 +44,7 @@ AppHolidayManagerRequest = (function($){
 		initialize:function(){
 			var parent = this;
 			
-			var templateFromColumn = $("#from-column-template").text();
+			var templateFromColumn = $("#requester-column-template").text();
 			var templateRequesterColumn = $("#requester-comment-column-template").text();
 			var templateBeginColumn = $("#begin-column-template").text();
 			var templateEndColumn = $("#end-column-template").text();
@@ -213,7 +219,7 @@ AppHolidayManagerRequest = (function($){
 			this.year = year;
 			var parent = this;
 			
-			var templateFromColumn = $("#from-column-template").text();
+			var templateFromColumn = $("#requester-column-template").text();
 			var templateRequesterColumn = $("#requester-comment-column-template").text();
 			var templateManagerColumn = $("#manager-comment-column-template").text();
 			var templateBeginColumn = $("#begin-column-template").text();
@@ -291,7 +297,8 @@ AppHolidayManagerRequest = (function($){
 		vid: null,
 		
 		events:{
-			"click .validateHolidayRequest" : "accepted"
+			"click .validateHolidayRequest" : "accepted",
+			"click .cancelPopup" : "cancel"
 		},
 		
 		initialize:function(){
@@ -308,6 +315,7 @@ AppHolidayManagerRequest = (function($){
 		
 		render : function(id){
 			this.vid=id;
+			$("#comment_accept").val("");
 			$(this.el).kernely_dialog("open");
 			return this;
 		},
@@ -328,14 +336,24 @@ AppHolidayManagerRequest = (function($){
 							$("#comment_accept").val("");
 							tableView1.reload();
 							for(var view in tableStatuedGroup){
-								console.log(view);
 								tableStatuedGroup[view].reload();
 							}
+						},
+						error: function(){
+							$.writeMessage("error",$("#acceptance-error-template").html(), "#notification_dialog_accept_to_user");
 						}
 					});
+				},
+				error: function(){
+					$.writeMessage("error",$("#acceptance-error-template").html(), "#notification_dialog_accept_to_user");
 				}
 			});
+		},
+		
+		cancel : function(){
+			$(this.el).kernely_dialog("close");
 		}
+		
 	})
 
 	HolidayRequestDenyView = Backbone.View.extend({
@@ -344,7 +362,8 @@ AppHolidayManagerRequest = (function($){
 		vid: null,
 		
 		events:{
-			"click .denyHolidayRequest" : "denied"
+			"click .denyHolidayRequest" : "denied",
+			"click .cancelPopup" : "cancel"
 		},
 		
 		initialize:function(){
@@ -361,6 +380,7 @@ AppHolidayManagerRequest = (function($){
 		
 		render : function(id){
 			this.vid=id;
+			$("#comment_deny").val("");
 			$(this.el).kernely_dialog("open");
 			return this;
 		},
@@ -386,13 +406,22 @@ AppHolidayManagerRequest = (function($){
 							$("#comment_deny").val("");
 							tableView1.reload();
 							for(var view in tableStatuedGroup){
-								console.log(view);
 								tableStatuedGroup[view].reload();
 							}
+						},
+						error: function(){
+							$.writeMessage("error",$("#refusal-error-template").html(), "#notification_dialog_deny_to_user");
 						}
 					});
+				},
+				error: function(){
+					$.writeMessage("error",$("#refusal-error-template").html(), "#notification_dialog_deny_to_user");
 				}
 			});
+		},
+		
+		cancel : function(){
+			$(this.el).kernely_dialog("close");
 		}
 	})
 	
@@ -406,7 +435,8 @@ AppHolidayManagerRequest = (function($){
 		
 		events:{
 			"click #button_accepted" : "acceptModal",
-			"click #button_denied" : "denyModal"			
+			"click #button_denied" : "denyModal",
+			"click #button_close" : "close"
 		},
 		
 		initialize: function(){
@@ -422,70 +452,122 @@ AppHolidayManagerRequest = (function($){
 		},
 		
 		render: function(id){
+			$(this.el).find("#calendarContent").empty();
 			this.vid=id;
 			var parent =this;
 			$.ajax({
-				url : "/holiday/managers/request/details/"+ this.vid,
+				url : "/holiday/managers/request/visualize",
+				data:{idrequest: parent.vid},
 				dataType:"json",
-				success : function(list){
-					parent.listDay = list;	
-					$.ajax({
-						url : "/holiday/managers/request/get/"+ parent.vid,
-						dataType:"json",
-						success : function(data1){
-							dates[0]=data1.holidayDetailDTO[0].day.substr(0,10);
-							dates[1]=data1.holidayDetailDTO[1].day.substr(0,10);
-							parent.data=data1;
-							$.ajax({
-								type: "GET",
-								url:"/holiday/managers/request/construct",
-								data:{dateBegin:dates[0], dateEnd:dates[1]},
-								dataType:"json",
-								success: function(data2){
-									// Clean the div content
-									$('#calendarContent').html("");
-									// Create the views
-									$("#calendarRequest").show();
-									new HolidayRequestCalendarView(data2, parent.data, parent.listDay).render();
-								}
-							});
-						}
-					});
+				success : function(data){
+					new HolidayRequestTableView(data).render();
+				},
+				error : function(data){
 				}
 			});
 			$(this.el).kernely_dialog("open");
 			return this;
 		},
 		
-		acceptModal:function(){
+		close: function(){
 			$(this.el).kernely_dialog("close");
-			viewAccept.render(this.vid);
+		},
+		
+		acceptModal:function(){
+			var parent = this;
+			$.ajax({
+				url : "/holiday/managers/request/accept/" + this.vid,
+				success : function(){
+					$.ajax({
+						url : "/holiday/managers/request/comment/" + parent.vid,
+						data : {comment: $("#comment_visu").val()},
+						dataType: "json",
+						success : function(){
+							$(parent.el).kernely_dialog("close");
+							var successHtml = $("#holiday-accept-template").html();				
+							$.writeMessage("success",successHtml);
+							$("#comment_visu").val("");
+							tableView1.reload();
+							for(var view in tableStatuedGroup){
+								tableStatuedGroup[view].reload();
+							}
+						},
+						error: function(){
+							$.writeMessage("error",$("#acceptance-error-template").html(), "#notification_dialog_visu_to_user");
+						}
+					});
+				},
+				error: function(){
+					$.writeMessage("error",$("#acceptance-error-template").html(), "#notification_dialog_visu_to_user");
+				}
+			});
 		},
 		
 		denyModal:function(){
-			$(this.el).kernely_dialog("close");
-			viewDeny.render(this.vid);
+			var parent = this ; 
+			$.ajax({
+				url : "/holiday/managers/request/deny/" + this.vid,
+				success : function(){
+					$.ajax({
+						url : "/holiday/managers/request/comment/" + parent.vid,
+						data : {comment: $("#comment_visu").val()},
+						dataType: "json",
+						success : function(){
+							$(parent.el).kernely_dialog("close");
+							var successHtml = $("#holiday-deny-template").html();				
+							$.writeMessage("success",successHtml);
+							$("#comment_visu").val("");
+							tableView1.reload();
+							for(var view in tableStatuedGroup){
+								tableStatuedGroup[view].reload();
+							}
+						},
+						error: function(){
+							$.writeMessage("error",$("#refusal-error-template").html(), "#notification_dialog_visu_to_user");
+						}
+					});
+				},
+				error: function(){
+					$.writeMessage("error",$("#refusal-error-template").html(), "#notification_dialog_visu_to_user");
+				}
+			});
 		}		
 	})
-
+	
+	HolidayRequestTableView = Backbone.View.extend({
+		el:"#calendar-table",
+		
+		data: null,
+		
+		initialize: function(data){
+			this.data = data;
+		},
+		
+		render:function(){
+			var tr = document.createElement("tr");
+			var td;
+			for(var i = 1; i <= 5; i++){
+				td = document.createElement("td");
+				$(td).addClass("day-header-part");
+				$(td).text($.datepicker.regional[lang + '-' + country].dayNames[i]);
+				$(tr).append($(td));
+			}
+			$(this.el).find("thead").html($(tr));
+			
+			new HolidayRequestCalendarView(this.data).render();
+		}
+	})
+	
 	HolidayRequestCalendarView = Backbone.View.extend({
 		el:"#calendarContent",
 		data : null,
-		details : null,
-		listDays:null,
 		
-		events:{
-
-		},
-		
-		initialize: function(data, details, listDays){
+		initialize: function(data){
 			this.data = data;
-			this.details = details;
-			this.listDays = listDays; 
 		},
-		
 		
 		render: function(){
+			$(this.el).empty();
 			var parent = this;
 			var view = null;
 			
@@ -496,8 +578,13 @@ AppHolidayManagerRequest = (function($){
 			var morningList = new Array();
 			// List of the available afternoons
 			var afternoonList = new Array();
+			// Lists of the color of the cell
+			var morningColorList = new Array();
+			var afternoonColorList = new Array();
+			// List of the name of type coloring cells
+			var morningNameTypeList = new Array();
+			var afternoonNameTypeList = new Array();
 			
-			var isColor = false;
 			// Counter for the list building
 			var cptBuildingList = 0;
 			// Counter for the header list
@@ -506,8 +593,6 @@ AppHolidayManagerRequest = (function($){
 			var cptMorningList = 0;
 			// Counter for the afternoon list
 			var cptAfternoonList = 0;
-			
-			var cptDetailsList = 0;
 			// Contains a tr element to add a row for header
 			var lineHeader;
 			// Contains a tr element to add a row for morning
@@ -518,36 +603,30 @@ AppHolidayManagerRequest = (function($){
 			var nPath = 0;
 			
 
-			// organise date
-			var dateTake = new Array();
-			var iDate = 0;
-			
-			if (this.listDays.holidayDetailDTO.length>1){
-				$.each(this.listDays.holidayDetailDTO, function(){
-					dateTake[iDate] = moment(this.day).format("L");
-					iDate++;
-				});
-			}
-			else {
-				dateTake[iDate] = moment(this.listDays.holidayDetailDTO.day).format("L");
-				iDate++;
-			}
-			
 			// Building the header list
 			// Building the morning list
 			// Building the afternoon list
 			if(this.data.days.length > 1){
 				$.each(this.data.days, function(){
 					headerList[cptBuildingList] = this.day;
-					morningList[cptBuildingList] = "true";
-					afternoonList[cptBuildingList] = "true";
+					morningList[cptBuildingList] = this.morningAvailable;
+					afternoonList[cptBuildingList] = this.afternoonAvailable;
+					
+					morningColorList[cptBuildingList] = this.morningHolidayTypeColor;
+					afternoonColorList[cptBuildingList] = this.afternoonHolidayTypeColor;
+					
+					morningNameTypeList[cptBuildingList] = this.morningHolidayTypeName;
+					afternoonNameTypeList[cptBuildingList] = this.afternoonHolidayTypeName;
+					
 					cptBuildingList ++;
 				});
 			}
 			else{
 				headerList[0] = this.data.days.day;
-				morningList[0] = "true";
-				afternoonList[0] = "true";
+				morningList[0] = this.data.days.morningAvailable;
+				afternoonList[0] = this.data.days.afternoonAvailable;
+				morningColorList[0] = this.data.days.morningHolidayTypeColor;
+				afternoonColorList[0] = this.data.days.afternoonHolidayTypeColor;
 			}
 			
 			
@@ -558,7 +637,8 @@ AppHolidayManagerRequest = (function($){
 				});
 				// Adds all the headers for the week
 				while(cptHeaderList < 5){
-					lineHeader.append($(new HolidayRequestDayView(headerList[cptHeaderList + (nPath * 5)], true, true, false, -1).render().el));
+					lineHeader.append($(new HolidayRequestDayView(headerList[cptHeaderList + (nPath * 5)], null, true).render().el));
+					dayNameCounter ++;
 					cptHeaderList ++;
 				}
 				$(parent.el).append(lineHeader);
@@ -568,14 +648,13 @@ AppHolidayManagerRequest = (function($){
 				lineMorning = $("<tr>", {
 					class:'morning-part'
 				});
-				
 				// Adds all the mornings for the week
 				while(cptMorningList < 5){
-					lineMorning.append($(new HolidayRequestDayView(headerList[cptHeaderList + (nPath * 5)], morningList[cptMorningList + (nPath * 5)], false, true, false, dateTake, parent.listDays).render().el));
+					lineMorning.append($(new HolidayRequestDayView(headerList[cptHeaderList + (nPath * 5)], null, false, MORNING_PART, morningColorList[cptHeaderList + (nPath * 5)], morningNameTypeList[cptHeaderList + (nPath * 5)]).render().el));
+					cellDayMorningCounter += 2;
 					cptMorningList ++;
 					cptHeaderList++;
 				}
-				
 				$(parent.el).append(lineMorning);
 				cptHeaderList = 0;
 				
@@ -583,10 +662,10 @@ AppHolidayManagerRequest = (function($){
 				lineAfternoon = $("<tr>", {
 					class:'afternoon-part'
 				});
-				
 				// Adds all the afternoons for the week
 				while(cptAfternoonList < 5){
-					lineAfternoon.append($(new HolidayRequestDayView(headerList[cptHeaderList + (nPath * 5)], afternoonList[cptAfternoonList + (nPath * 5)], false, false, true, dateTake, parent.listDays).render().el));
+					lineAfternoon.append($(new HolidayRequestDayView(headerList[cptHeaderList + (nPath * 5)], null, false, AFTERNOON_PART,afternoonColorList[cptHeaderList + (nPath * 5)], afternoonNameTypeList[cptHeaderList + (nPath * 5)]).render().el));
+					cellDayAfternoonCounter += 2;
 					cptAfternoonList ++;
 					cptHeaderList ++;
 				}
@@ -601,6 +680,7 @@ AppHolidayManagerRequest = (function($){
 				cptHeaderList = 0;
 				cptMorningList = 0;
 				cptAfternoonList = 0;
+				dayNameCounter = 1;
 				// Increases week created
 				nPath ++;
 			}
@@ -608,75 +688,44 @@ AppHolidayManagerRequest = (function($){
 			return this;
 		}
 	})
-	
-	 HolidayRequestDayView = Backbone.View.extend({
+
+	HolidayRequestDayView = Backbone.View.extend({
 		tagName: "td",
 
 		day : null,
-		details:null,
-		available : null,
-		color : null,
+		week : null,
 		isHeader: false,
-		// We just specify if morning, if this is false, and header too ,this is afternoon
-		isMorning: false,
-		isAfternoon: false,
-		isColored : false,
+		partOfDay: null,
+		color: null,
+		name : null,
 		
-
-		events:{
-		},
-
-		initialize: function(day, available, header, morning, afternoon, take, details){
+		initialize: function(day, week, header, part, color, name){
 			this.day = day;
-			this.details = details;
-			this.available = available;
-			this.isHeader = header;
-			this.isMorning = morning;
-			this.isAfternoon = afternoon;
-			for (xDate in take){
-				if (this.details.holidayDetailDTO.length > 1){
-					if (take[xDate]==this.day && this.isMorning.toString() == this.details.holidayDetailDTO[xDate].am
-						|| take[xDate]==this.day && this.isAfternoon.toString() == this.details.holidayDetailDTO[xDate].pm){
-						this.color=details.holidayDetailDTO[xDate].color;
-						this.isColored = true ;
-					}
-				}
-				else{
-					if (take[xDate]==this.day && this.isMorning.toString() == this.details.holidayDetailDTO.am
-						|| take[xDate]==this.day && this.isAfternoon.toString() == this.details.holidayDetailDTO.pm){
-						this.color=details.holidayDetailDTO.color;
-						this.isColored = true ;
-					}
-				}
-			}
+			this.week = week;
+			this.isHeader = header;	
+			this.partOfDay = part;
+			this.color = color;
+			this.name = name;
 		},
 		
-			
 		render: function(){
 			if(this.isHeader){
 				$(this.el).text(this.day);
 				$(this.el).addClass("day-header-part");
 			}
 			else{
-				if(this.available == "true"){
-					if(this.isMorning){
-						$(this.el).addClass("am-part");
-						if (this.isColored == true && this.isHeader == false && this.isMorning == true){
-							$(this.el).css('background-color', this.color);
-						}
-					}
-					if(this.isAfternoon){
-						$(this.el).addClass("pm-part");
-						if (this.isColored == true && this.isHeader == false && this.isAfternoon == true){
-							$(this.el).css('background-color', this.color);
-						}
-					}
+				if(this.color != null){
+					$(this.el).css("background-color", this.color);
 				}
 				else{
-					$(this.el).attr('disabled', '');
-					$(this.el).addClass('day-disabled');
+					$(this.el).css("background-color", "inherit");
 				}
-			}	
+				if(this.name != null){
+					$(this.el).text(this.name);
+				}
+				$(this.el).addClass("day-part");
+			}
+	
 			return this;
 		}
 

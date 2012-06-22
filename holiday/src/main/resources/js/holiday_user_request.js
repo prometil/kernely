@@ -214,15 +214,15 @@ AppHolidayUserRequest = (function($){
 			this.table = $(parent.el).kernely_table({
 				columns:[
 				       {"name":templateManagerColumn, style:""},
-				       {"name":templateManagerCommentColumn, style:"comment-column"},
 				       {"name":templateCommentColumn, style:"comment-column"},
 				       {"name":templateBeginColumn, style:"text-center"},
 				       {"name":templateEndColumn, style:"text-center"},
 				       {"name":"", style:["text-center", "icon-column"]},
+				       {"name":templateManagerCommentColumn, style:"comment-column"},
 				       {"name":"", style:"invisible"}
 				],
 				idField:"id",
-				elements:["manager","managerComment", "requesterComment", "beginDate", "endDate", "status", "cancelable"],
+				elements:["manager", "requesterComment", "beginDate", "endDate", "status", "managerComment", "cancelable"],
 				eventNames:["click"],
 				events:{
 					"click": parent.selectLine
@@ -327,7 +327,7 @@ AppHolidayUserRequest = (function($){
 		
 		render:function(){
 			var parent = this;
-			this.formRequest = $.kernelyDialog("#new-request-form",150,300);
+			this.formRequest = $.kernelyDialog($("#new-request-title-template").text(), "#new-request-form", null, 270);
 			$("#cancel-request-form").bind("click",function(){$(parent.formRequest).kernely_dialog( "close" );});
 			var dates = $( "#from, #to" ).datepicker({
 				showOn: "both",
@@ -345,7 +345,19 @@ AppHolidayUserRequest = (function($){
 				}
 			});
 			$.datepicker.setDefaults($.datepicker.regional[lang+"-"+country]);
-			
+			$(this.formRequest).find("form").submit(function(){
+				if($("#from").val() == ""){
+					$.writeMessage("error",$("#from-date-error-template").html(), "#notification_dialog_to_user");
+					return false;
+				}
+				else if($("#to").val() == ""){
+					$.writeMessage("error",$("#to-date-error-template").html(), "#notification_dialog_to_user");
+					return false;
+				}
+				else{
+					return true;
+				}
+			});
 			return this;
 		},
 		
@@ -414,7 +426,6 @@ AppHolidayUserRequest = (function($){
 					var successHtml = $("#holiday-canceled-template").html();	
 					$.writeMessage("success",successHtml);
 					for(var view in tableStatuedGroup){
-						console.log(view);
 						tableStatuedGroup[view].reload();
 					}
 					balanceSummary.render();

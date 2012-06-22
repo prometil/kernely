@@ -9,8 +9,12 @@
 {% endblock %}
 
 {% block template %}
-	<script type="text/html" id="status-denied-template">
-		{% i18n "denied" %}
+	<script type="text/html" id="acceptance-error-template">
+		{% i18n "acceptance-error" %}
+	</script>
+
+	<script type="text/html" id="refusal-error-template">
+		{% i18n "refusal-error" %}
 	</script>
 	
 	<script type="text/html" id="status-accepted-template">
@@ -38,47 +42,56 @@
 	
 	<script type="text/html" id="locale-country">{% i18n "locale_country" %}</script>
 	
-	<script type="text/html" id="accept-template">{% i18n "accept" %}</script>
-	<script type="text/html" id="deny-template">{% i18n "deny" %}</script>
+	<script type="text/html" id="accept-template">{% i18n "accept_title" %}</script>
+	<script type="text/html" id="deny-template">{% i18n "deny_title" %}</script>
 	<script type="text/html" id="visualize-template">{% i18n "visualize" %}</script>
 	
 	<script type="text/html" id="popup-accept-template">
+		<div id="notification_dialog_accept_to_user"></div>
 		<fieldset>	
 		<legend>{% i18n "accepted_ask" %}</legend>
 		{% i18n "accepted_commentary" %} <textarea class="comment-area" id="comment_accept"></textarea><br/>
 		</fieldset>
 		<br/>
 		<div class="dialog-buttons-container">
-			<input type="button" value="{% i18n "ok" %}" class="validateHolidayRequest button_ok"/>
+			<input type="button" value="{% i18n "yes" %}" class="validateHolidayRequest button_ok"/>
+			<input type="button" value="{% i18n "no" %}" class="cancelPopup button_standard"/>
 		</div>
 	</script>
 	
-	<script type="text/html" id="popup-visualize-template">		
+	<script type="text/html" id="popup-visualize-template">	
+		<div id="notification_dialog_visu_to_user"></div>
 		<div id="request-main">  
 		<div id="calendarRequest">
 			<table id="calendar-table" border="0">
+				<thead id="calendar-day-names">						
+				</thead>
 				<tbody id="calendarContent">
 				<tbody>
 			</table>
 		</div>
+		<textarea class="comment-area" id="comment_visu"></textarea><br/>
 		<div class="dialog-buttons-container">
 			<input type="button" class="button_emphasis" id="button_denied" value="{% i18n "deny" %}" />
 			<input type="button" class="button_emphasis" id="button_accepted" value="{% i18n "accept" %}"/>
+			<input type="button" class="button_emphasis" id="button_close" value="{% i18n "close" %}"/>
 		</div>
 	</script>
 	
 	<script type="text/html" id="popup-deny-template">
+		<div id="notification_dialog_deny_to_user"></div>
 		<fieldset>	
 		<legend>{% i18n "denied_ask" %}</legend>
 		{% i18n "denied_commentary" %}  <textarea class="comment-area" id="comment_deny"></textarea><br/>
 		</fieldset>
 		<div class="dialog-buttons-container">
-			<input type="button" value="{% i18n "ok" %}" class="denyHolidayRequest button_ok"/>
+			<input type="button" value="{% i18n "yes" %}" class="denyHolidayRequest button_ok"/>
+			<input type="button" value="{% i18n "no" %}" class="cancelPopup button_standard"/>
 		</div>
 	</script>
 	
-	<script type="text/html" id="from-column-template">
-		{% i18n "from" %}
+	<script type="text/html" id="requester-column-template">
+		{% i18n "requester" %}
 	</script>
 	
 	<script type="text/html" id="requester-comment-column-template">

@@ -12,6 +12,7 @@ AppHolidayRequest = (function($){
 	var shifted = false;
 	var MORNING_PART = 1;
 	var AFTERNOON_PART = 2;
+	var dayNameCounter = 1;
 	
 	var pageView = null;
 	var app_router = null;
@@ -42,7 +43,6 @@ AppHolidayRequest = (function($){
 			"click #validate-holidays" : "sendRequestHolidays"
 		},
 		initialize: function(){
-			
 		},
 		render: function(){
 			return this;
@@ -54,7 +54,7 @@ AppHolidayRequest = (function($){
 				data: {date1: from, date2: to},
 				dataType:"json",
 				success: function(data){
-					new HolidayRequestCalendarView(data).render();
+					new HolidayRequestTableView(data).render();
 					new HolidayRequestColorPicker(data).render();
 				}
 			});
@@ -93,7 +93,31 @@ AppHolidayRequest = (function($){
 			
 		}
 	})
+	
+	HolidayRequestTableView = Backbone.View.extend({
+		el:"#calendar-table",
 		
+		data: null,
+		
+		initialize: function(data){
+			this.data = data;
+		},
+		
+		render:function(){
+			var tr = document.createElement("tr");
+			var td;
+			for(var i = 1; i <= 5; i++){
+				td = document.createElement("td");
+				$(td).addClass("day-header-part");
+				$(td).text($.datepicker.regional[lang + '-' + country].dayNames[i]);
+				$(tr).append($(td));
+			}
+			$(this.el).find("thead").html($(tr));
+			
+			new HolidayRequestCalendarView(this.data).render();
+		}
+	})
+	
 	HolidayRequestCalendarView = Backbone.View.extend({
 		el:"#calendarContent",
 		data : null,
@@ -158,6 +182,7 @@ AppHolidayRequest = (function($){
 				// Adds all the headers for the week
 				while(cptHeaderList < 5){
 					lineHeader.append($(new HolidayRequestDayView(headerList[cptHeaderList + (nPath * 5)], true, null, true, false, -1).render().el));
+					dayNameCounter ++;
 					cptHeaderList ++;
 				}
 				$(parent.el).append(lineHeader);
@@ -199,6 +224,7 @@ AppHolidayRequest = (function($){
 				cptHeaderList = 0;
 				cptMorningList = 0;
 				cptAfternoonList = 0;
+				dayNameCounter = 1;
 				// Increases week created
 				nPath ++;
 			}
@@ -257,6 +283,9 @@ AppHolidayRequest = (function($){
 						// Store the id of the type choosen for this cell
 						this.selectedBy = currentCellPickerSelected.idType;
 						nbSelected ++;
+					}
+					else{
+						$.writeMessage("error",$("#balance-empty-error-template").html());
 					}
 				}
 				else{
@@ -427,7 +456,13 @@ AppHolidayRequest = (function($){
 		
 		selectColor : function(){
 			$(".balance-cell-selected").removeClass("balance-cell-selected");
-			$(this.el).addClass("balance-cell-selected");
+			$(".balance-cell-selected-void").removeClass("balance-cell-selected-void");
+			if(this.nbAvailable > this.limitOfAnticipation){
+				$(this.el).addClass("balance-cell-selected");
+			}
+			else{
+				$(this.el).addClass("balance-cell-selected-void");
+			}
 			oldCellPickerSelected = currentCellPickerSelected;
 			currentCellPickerSelected = this;
 		},
