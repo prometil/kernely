@@ -27,6 +27,7 @@ import org.kernely.timesheet.dto.TimeSheetCalendarDTO;
 import org.kernely.timesheet.dto.TimeSheetColumnDTO;
 import org.kernely.timesheet.dto.TimeSheetCreationRequestDTO;
 import org.kernely.timesheet.dto.TimeSheetDTO;
+import org.kernely.timesheet.dto.TimeSheetDayAmountDTO;
 import org.kernely.timesheet.dto.TimeSheetDayDTO;
 import org.kernely.timesheet.dto.TimeSheetDetailDTO;
 import org.kernely.timesheet.dto.TimeSheetMonthDTO;
@@ -402,8 +403,6 @@ public class TimeSheetService extends AbstractService {
 	
 	@Transactional
 	private TimeSheetDay getTimeSheetDayForUser(Date day, long userId) {
-
-		
 		DateTime datetime = new DateTime(day).toDateMidnight().toDateTime();
 		
 		TimeSheetDTO timeSheetDTO = this.getTimeSheet(datetime.getWeekOfWeekyear(), datetime.getYear(), userId, true);
@@ -424,6 +423,29 @@ public class TimeSheetService extends AbstractService {
 			em.get().persist(detail);
 			return detail;
 		}
+	}
+	
+	@Transactional
+	public List<TimeSheetDayAmountDTO> getTimeSheetDayAmountForUserBetweenDates(Date begin, Date end, long userId){
+		DateTime dateTimeBegin = new DateTime(begin).toDateMidnight().toDateTime();
+		DateTime dateTimeEnd = new DateTime(end).toDateMidnight().toDateTime();
+		
+		List<TimeSheetDayAmountDTO> dayAmountDTOs = new ArrayList<TimeSheetDayAmountDTO>();
+		
+		TimeSheetDay timeSheetDay;
+		Set<TimeSheetDetailProject> timeSheetDetails;
+		float amount;
+		for(DateTime dt = dateTimeBegin; dt.isBefore(dateTimeEnd); dt = dt.plusDays(1)){
+			amount = 0;
+			timeSheetDay = this.getTimeSheetDayForUser(dt.toDate(), userId);
+			timeSheetDetails = timeSheetDay.getDetailsProjects();
+			for(TimeSheetDetailProject tsdp : timeSheetDetails){
+				amount += tsdp.getAmount();
+			}
+			dayAmountDTOs.add(new TimeSheetDayAmountDTO(dt.toDate(), amount));
+		}
+		
+		return dayAmountDTOs;
 	}
 
 	private TimeSheet getTimeSheetForDateForCurrentUser(Date date) {
