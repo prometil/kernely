@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigInteger;
 import java.security.SecureRandom;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -191,6 +192,16 @@ public class UserController extends AbstractController {
 		String[] extension = fileDetail.getFileName().split("\\.");
 		if (extension.length < 2) {
 			throw new IllegalArgumentException("The file need an extension");
+		}
+		
+		List<String> extensionsAutorized = new ArrayList<String>();
+		extensionsAutorized.add("gif");
+		extensionsAutorized.add("png");
+		extensionsAutorized.add("jpg");
+		extensionsAutorized.add("jpeg");
+		
+		if(!extensionsAutorized.contains(extension[extension.length -1])){
+			throw new IllegalArgumentException("The file has an invalid extension");
 		}
 
 		SecureRandom random = new SecureRandom();

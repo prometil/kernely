@@ -766,6 +766,9 @@ div.info-notification{
 }
 
 
-
+/* profile */
+#profile_table{
+	border-top:1px solid #a0a2a3;
+}
 
 

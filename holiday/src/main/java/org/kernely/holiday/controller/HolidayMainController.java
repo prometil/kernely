@@ -6,7 +6,6 @@ import java.util.List;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
@@ -14,6 +13,7 @@ import javax.ws.rs.core.Response;
 
 import org.kernely.controller.AbstractController;
 import org.kernely.holiday.dto.CalendarBalanceDetailDTO;
+import org.kernely.holiday.dto.CalendarRequestDTO;
 import org.kernely.holiday.dto.HolidayRequestDTO;
 import org.kernely.holiday.dto.IntervalDTO;
 import org.kernely.holiday.model.HolidayRequest;
@@ -109,12 +109,25 @@ public class HolidayMainController extends AbstractController {
 	 * @return ok
 	 */
 	@GET
-	@Path("/cancel/{id}")
+	@Path("/cancel")
 	@Produces({MediaType.TEXT_HTML})
-	public Response denyHoliday(@PathParam("id")int idRequest){
+	public Response cancelHoliday(@QueryParam("id")int idRequest){
 		holidayRequestService.cancelRequest(idRequest);
 		return Response.ok().build(); 			
 	}
+	
+	/**
+	 * cancel a request
+	 * @param idRequest
+	 * @return ok
+	 */
+	@GET
+	@Path("/visualize")
+	@Produces({MediaType.APPLICATION_JSON})
+	public CalendarRequestDTO visualizeHoliday(@QueryParam("idrequest")int idRequest){
+		return holidayRequestService.getCalendarRequest(idRequest);		
+	}
+	
 	
 	@GET
 	@Path("/balances")

@@ -12,7 +12,6 @@ AppHolidayManagerRequest = (function($){
 	var cellDayAfternoonCounter = 1;
 	var MORNING_PART = 1;
 	var AFTERNOON_PART = 2;
-	var allDayCells = new Array();
 	
 	HolidayManagerRequestPageView = Backbone.View.extend({
 		el:"#request-manager-main",
@@ -428,10 +427,7 @@ AppHolidayManagerRequest = (function($){
 	HolidayManagerVisualizeView = Backbone.View.extend({
 		el:"#modal_visualize_window_holiday_request",
 		
-		managerRequestView : null,
 		vid : null,
-		data : null,
-		listDay : null,
 		
 		events:{
 			"click #button_accepted" : "acceptModal",

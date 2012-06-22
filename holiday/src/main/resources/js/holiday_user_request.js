@@ -5,6 +5,13 @@ AppHolidayUserRequest = (function($){
 	var tableStatuedGroup = new Array();
 	var buttonView = null;
 	var balanceSummary = null;
+	var viewVisualize = null;
+
+	var dayNameCounter = 1;
+	var cellDayMorningCounter = 0;
+	var cellDayAfternoonCounter = 1;
+	var MORNING_PART = 1;
+	var AFTERNOON_PART = 2;
 	
 	HolidayUserRequestPageView = Backbone.View.extend({
 		el:"#request-manager-main",
@@ -13,6 +20,7 @@ AppHolidayUserRequest = (function($){
 		},
 	
 		initialize: function(){
+			viewVisualize = new HolidayVisualizeView();
 		},
 		
 		render:function(){
@@ -21,6 +29,8 @@ AppHolidayUserRequest = (function($){
 			buttonView = new HolidayUserButtonsView().render();
 			new HolidayCancelPendingButtonView();
 			new HolidayCancelStatuedButtonView();
+			new HolidayVisualizePendingButtonView();
+			new HolidayVisualizeStatuedButtonView();
 			balanceSummary = new HolidayBalanceSummaryView().render();
 		}
 	})
@@ -85,6 +95,7 @@ AppHolidayUserRequest = (function($){
 		selectLine : function(e){
 			
 			$("#button_cancel_pending").removeAttr('disabled');
+			$("#button_visualize_pending").removeAttr('disabled');
 			lineSelectedPending = e.data.line;
 		},
 		reload: function(){
@@ -236,12 +247,12 @@ AppHolidayUserRequest = (function($){
 		selectLine : function(e){
 			if(e.data.data.cancelable == "true"){
 				$("#button_cancel_statued").removeAttr('disabled');
-				lineSelectedStatued = e.data.line;
 			}
 			else{
 				$("#button_cancel_statued").attr('disabled', 'disabled');
 			}
-			
+			lineSelectedStatued = e.data.line;
+			$("#button_visualize_statued").removeAttr('disabled');
 		},
 		
 		reload: function(){
@@ -386,7 +397,8 @@ AppHolidayUserRequest = (function($){
 		confirmCancel: function(){
 			parent = this;
 			$.ajax({
-				url:"/holiday/cancel/" + lineSelectedPending,
+				url:"/holiday/cancel",
+				data:{id:lineSelectedPending},
 				success: function(){
 					var successHtml = $("#holiday-canceled-template").html();	
 					$.writeMessage("success",successHtml);
@@ -421,7 +433,8 @@ AppHolidayUserRequest = (function($){
 		confirmCancel: function(){
 			parent = this;
 			$.ajax({
-				url:"/holiday/cancel/" + lineSelectedStatued,
+				url:"/holiday/cancel",
+				data:{id:lineSelectedStatued},
 				success: function(){
 					var successHtml = $("#holiday-canceled-template").html();	
 					$.writeMessage("success",successHtml);
@@ -438,6 +451,271 @@ AppHolidayUserRequest = (function($){
 		}
 	
 		
+	})
+	
+	HolidayVisualizePendingButtonView = Backbone.View.extend({
+		el:"#button_visualize_pending",
+		
+		events: {
+			"click" : "visualize"
+		},
+		
+		visualize:function(){
+			viewVisualize.render(lineSelectedPending);
+		}
+	})
+	
+	HolidayVisualizeStatuedButtonView = Backbone.View.extend({
+		el:"#button_visualize_statued",
+		
+		events: {
+			"click" : "visualize"
+		},
+		
+		visualize:function(){
+			viewVisualize.render(lineSelectedStatued);
+		}
+	})
+	
+	HolidayVisualizeView = Backbone.View.extend({
+		el:"#modal_visualize_window_holiday_request",
+		
+		vid : null,
+		
+		events:{
+			"click #button_close" : "close"
+		},
+		
+		initialize: function(){
+			var parent = this;
+			var template = $("#popup-visualize-template").html();
+			var titleTemplate = $("#visualize-template").html();
+			$(this.el).kernely_dialog({
+				title: titleTemplate,
+				content: template,
+				eventNames:'click',
+				width:"768px"
+			});
+		},
+		
+		render: function(id){
+			$(this.el).find("#calendarContent").empty();
+			this.vid=id;
+			var parent =this;
+			$.ajax({
+				url : "/holiday/visualize",
+				data:{idrequest: parent.vid},
+				dataType:"json",
+				success : function(data){
+					new HolidayRequestTableView(data).render();
+				},
+				error : function(data){
+				}
+			});
+			$(this.el).kernely_dialog("open");
+			return this;
+		},
+		
+		close: function(){
+			$(this.el).kernely_dialog("close");
+		}	
+	})
+	
+	HolidayRequestTableView = Backbone.View.extend({
+		el:"#calendar-table",
+		
+		data: null,
+		
+		initialize: function(data){
+			this.data = data;
+		},
+		
+		render:function(){
+			var tr = document.createElement("tr");
+			var td;
+			for(var i = 1; i <= 5; i++){
+				td = document.createElement("td");
+				$(td).addClass("day-header-part");
+				$(td).text($.datepicker.regional[lang + '-' + country].dayNames[i]);
+				$(tr).append($(td));
+			}
+			$(this.el).find("thead").html($(tr));
+			
+			new HolidayRequestCalendarView(this.data).render();
+		}
+	})
+	
+	HolidayRequestCalendarView = Backbone.View.extend({
+		el:"#calendarContent",
+		data : null,
+		
+		initialize: function(data){
+			this.data = data;
+		},
+		
+		render: function(){
+			$(this.el).empty();
+			var parent = this;
+			var view = null;
+			
+			// Variables declarations :
+			// List of the headers : contains days
+			var headerList = new Array();
+			// List of the available mornings
+			var morningList = new Array();
+			// List of the available afternoons
+			var afternoonList = new Array();
+			// Lists of the color of the cell
+			var morningColorList = new Array();
+			var afternoonColorList = new Array();
+			// List of the name of type coloring cells
+			var morningNameTypeList = new Array();
+			var afternoonNameTypeList = new Array();
+			
+			// Counter for the list building
+			var cptBuildingList = 0;
+			// Counter for the header list
+			var cptHeaderList = 0;
+			// Counter for the morning list
+			var cptMorningList = 0;
+			// Counter for the afternoon list
+			var cptAfternoonList = 0;
+			// Contains a tr element to add a row for header
+			var lineHeader;
+			// Contains a tr element to add a row for morning
+			var lineMorning;
+			// Contains a tr element to add a row for afternoon
+			var lineAfternoon;
+			// Count the number of weeks created
+			var nPath = 0;
+			
+
+			// Building the header list
+			// Building the morning list
+			// Building the afternoon list
+			if(this.data.days.length > 1){
+				$.each(this.data.days, function(){
+					headerList[cptBuildingList] = this.day;
+					morningList[cptBuildingList] = this.morningAvailable;
+					afternoonList[cptBuildingList] = this.afternoonAvailable;
+					
+					morningColorList[cptBuildingList] = this.morningHolidayTypeColor;
+					afternoonColorList[cptBuildingList] = this.afternoonHolidayTypeColor;
+					
+					morningNameTypeList[cptBuildingList] = this.morningHolidayTypeName;
+					afternoonNameTypeList[cptBuildingList] = this.afternoonHolidayTypeName;
+					
+					cptBuildingList ++;
+				});
+			}
+			else{
+				headerList[0] = this.data.days.day;
+				morningList[0] = this.data.days.morningAvailable;
+				afternoonList[0] = this.data.days.afternoonAvailable;
+				morningColorList[0] = this.data.days.morningHolidayTypeColor;
+				afternoonColorList[0] = this.data.days.afternoonHolidayTypeColor;
+			}
+			
+			
+			while (nPath < this.data.nbWeeks){
+				// Create tr element
+				lineHeader = $("<tr>", {
+					class:'day-header'
+				});
+				// Adds all the headers for the week
+				while(cptHeaderList < 5){
+					lineHeader.append($(new HolidayRequestDayView(headerList[cptHeaderList + (nPath * 5)], null, true).render().el));
+					dayNameCounter ++;
+					cptHeaderList ++;
+				}
+				$(parent.el).append(lineHeader);
+				cptHeaderList = 0;
+				
+				// Create the tr element
+				lineMorning = $("<tr>", {
+					class:'morning-part'
+				});
+				// Adds all the mornings for the week
+				while(cptMorningList < 5){
+					lineMorning.append($(new HolidayRequestDayView(headerList[cptHeaderList + (nPath * 5)], null, false, MORNING_PART, morningColorList[cptHeaderList + (nPath * 5)], morningNameTypeList[cptHeaderList + (nPath * 5)]).render().el));
+					cellDayMorningCounter += 2;
+					cptMorningList ++;
+					cptHeaderList++;
+				}
+				$(parent.el).append(lineMorning);
+				cptHeaderList = 0;
+				
+				// Create the tr element
+				lineAfternoon = $("<tr>", {
+					class:'afternoon-part'
+				});
+				// Adds all the afternoons for the week
+				while(cptAfternoonList < 5){
+					lineAfternoon.append($(new HolidayRequestDayView(headerList[cptHeaderList + (nPath * 5)], null, false, AFTERNOON_PART,afternoonColorList[cptHeaderList + (nPath * 5)], afternoonNameTypeList[cptHeaderList + (nPath * 5)]).render().el));
+					cellDayAfternoonCounter += 2;
+					cptAfternoonList ++;
+					cptHeaderList ++;
+				}
+				$(parent.el).append(lineAfternoon);
+				
+				// Add an empty line for the separation of the week
+				$(parent.el).append($("<tr>", {
+					class:'separation-part'
+				}));
+				
+				// Reinitialize all counters
+				cptHeaderList = 0;
+				cptMorningList = 0;
+				cptAfternoonList = 0;
+				dayNameCounter = 1;
+				// Increases week created
+				nPath ++;
+			}
+			
+			return this;
+		}
+	})
+
+	HolidayRequestDayView = Backbone.View.extend({
+		tagName: "td",
+
+		day : null,
+		week : null,
+		isHeader: false,
+		partOfDay: null,
+		color: null,
+		name : null,
+		
+		initialize: function(day, week, header, part, color, name){
+			this.day = day;
+			this.week = week;
+			this.isHeader = header;	
+			this.partOfDay = part;
+			this.color = color;
+			this.name = name;
+		},
+		
+		render: function(){
+			if(this.isHeader){
+				$(this.el).text(this.day);
+				$(this.el).addClass("day-header-part");
+			}
+			else{
+				if(this.color != null){
+					$(this.el).css("background-color", this.color);
+				}
+				else{
+					$(this.el).css("background-color", "inherit");
+				}
+				if(this.name != null){
+					$(this.el).text(this.name);
+				}
+				$(this.el).addClass("day-part");
+			}
+	
+			return this;
+		}
+
 	})
 	
 	HolidayRequestColorPickerCell = Backbone.View.extend({

@@ -133,6 +133,7 @@ AppProfile= (function($){
 			$.datepicker.regional[lang+"-"+country];
 			
 			if (this.vinput == "birth"){
+				$( "#edit_birth_field" ).attr("readonly", "readonly");
 				// Set the datepicker for date of birth
 				$( "#edit_birth_field" ).datepicker({
 					changeMonth:true,
@@ -172,6 +173,15 @@ AppProfile= (function($){
 		},
 		
 		initialize:function(){
+			$("#form-image-profile").submit(function(){
+				var ext = $('#image-profile-field').val().split('.').pop().toLowerCase();
+				if($.inArray(ext, ['gif','png','jpg','jpeg']) == -1) {
+				    $.writeMessage("error", $("#invalid-extension-error-template").text());
+				    return false;
+				}
+				return true;
+			});
+			
 		},
 		
 		render:function(){

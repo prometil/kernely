@@ -3,6 +3,7 @@
 {% block javascript %}
 <script type="text/javascript" src="/js/profile.js"></script>
 {% endblock %}
+
 {% block template %}
 	<script type="text/html" id="profile-email-template">{% i18n "email" %}</script>
 	<script type="text/html" id="profile-lastname-template">{% i18n "name" %}</script>
@@ -17,28 +18,31 @@
 	<script type="text/html" id="profile-ssn-template">{% i18n "security_social_number" %}</script>
 	<script type="text/html" id="profile-birth-template">{% i18n "birthday" %}</script>
 
+	<script type="text/html" id="invalid-extension-error-template">{% i18n "invalid-extension-error" %}</script>
 {% endblock %}
 
 {% block content %}
 	<div id="profile_information">
 		<table id="profile_table" class="kernely_table">
-			<tr>
-				<td>{% i18n "image" %}</td>
-				<td>
-					<form action="/user/upload" method="post" enctype="multipart/form-data">
-						<input type="file" name="file" class="file"/>
-						<input type="submit" value="{% i18n "upload" %}" class="button_emphasis"/>
-					</form>
-				</td>
-			</tr>
-			<tr>
-				<td>{% i18n "civility" %}</td>
-				<td><span id="profile_civility" style="display: none;">{{details.civility}}</span>
-					<input type="radio" class="edit_button_civility" name="civility" value="1"> {% i18n "civility.mister" %} </input> 
-					<input type="radio" class="edit_button_civility" name="civility" value="2"> {% i18n "civility.madam" %} </input>
-					<input type="radio" class="edit_button_civility" name="civility" value="3"> {% i18n "civility.miss" %} </input>
-				</td>
-			</tr>
+			<tbody>
+				<tr>
+					<td>{% i18n "image" %}</td>
+					<td>
+						<form action="/user/upload" method="post" enctype="multipart/form-data" id="form-image-profile">
+							<input id="image-profile-field" type="file" name="file" class="file"/>
+							<input type="submit" value="{% i18n "upload" %}" class="button_emphasis"/>
+						</form>
+					</td>
+				</tr>
+				<tr>
+					<td>{% i18n "civility" %}</td>
+					<td><span id="profile_civility" style="display: none;">{{details.civility}}</span>
+						<input type="radio" class="edit_button_civility" name="civility" value="1"> {% i18n "civility.mister" %} </input> 
+						<input type="radio" class="edit_button_civility" name="civility" value="2"> {% i18n "civility.madam" %} </input>
+						<input type="radio" class="edit_button_civility" name="civility" value="3"> {% i18n "civility.miss" %} </input>
+					</td>
+				</tr>
+			</tbody>
 		</table>
 	</div>
 	<div style="clear:both;"></div>

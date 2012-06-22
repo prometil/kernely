@@ -9,6 +9,8 @@
 {% endblock %}
 
 {% block template %}	
+	<script type="text/html" id="visualize-template">{% i18n "visualize" %}</script>
+	
 	<script type="text/html" id="new-request-title-template">
 		{% i18n "new-request" %}
 	</script>
@@ -112,6 +114,21 @@
 			{% i18n "no-balance" %}
 		</div>
 	</script>
+	
+	<script type="text/html" id="popup-visualize-template">	
+		<div id="request-main">  
+		<div id="calendar-request-visualize">
+			<table id="calendar-table" border="0">
+				<thead id="calendar-day-names">						
+				</thead>
+				<tbody id="calendarContent">
+				<tbody>
+			</table>
+		</div>
+		<div class="dialog-buttons-container">
+			<input type="button" class="button_emphasis" id="button_close" value="{% i18n "close" %}"/>
+		</div>
+	</script>
 {% endblock %}
 
 {% block title %}
@@ -119,6 +136,9 @@
 {% endblock %}
 
 {% block content %}	
+	<div id="modal_visualize_window_holiday_request">
+	</div>
+
 	<div id="request-manager-main">
 		<div id="holiday_button_container">
 			<input type="button" class="button_emphasis" id="new_request" value="{% i18n "new-request" %}" />
@@ -126,6 +146,7 @@
 		<div>
 			<div class="subtitle">{% i18n "title_table_1" %}</div>
 			<div class="classic-buttons-bar">
+				<input type="button" class="button_emphasis" id="button_visualize_pending" value="{% i18n "visualize" %}" disabled="disabled"/>
 				<input type="button" class="button_emphasis" id="button_cancel_pending" value="{% i18n "cancel" %}" disabled="disabled"/>
 			</div>
 		</div>
@@ -135,6 +156,7 @@
 		<div>
 			<div class="subtitle">{% i18n "title_table_2" %}</div>
 			<div class="classic-buttons-bar">
+				<input type="button" class="button_emphasis" id="button_visualize_statued" value="{% i18n "visualize" %}" disabled="disabled"/>
 				<input type="button" class="button_emphasis" id="button_cancel_statued" value="{% i18n "cancel" %}" disabled="disabled"/>
 			</div>
 		</div>

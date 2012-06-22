@@ -42,6 +42,14 @@ buttons-container{
 	float:left;
 }
 
+#calendar-request-visualize{
+	margin-top:15px;
+	width:100%;
+	height:400px;
+	overflow:auto;
+	float:left;
+}
+
 #balance-selector-tabs{
 	height:25px;	
 	cursor:pointer;
