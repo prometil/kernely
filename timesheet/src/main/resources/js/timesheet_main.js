@@ -30,19 +30,45 @@ AppTimeSheet = (function($){
 		dates: null,
 		events:{
 			"click #add-project-button" : "addProject",
+			"click #add-last-projects-button" : "addLastWeekProjects"
 		},
 		initialize: function(){
 			mainView = this;
 			new TimePicker().render();
 			weekSelector = new TimeWeekSelectorView().render();
 		},
+		
 		addProject: function(){
-			var amounts = new Array();
-			// Fill a week with 0 amount of time
-			for (var i = 0 ; i < 7 ; i++){
-				amounts.push(0.0);
+			var projectName = $("#project-select option:selected").text();
+			var projectId = $("#project-select option:selected").val();
+			this.addProjectProcess(projectName,projectId);
+		},
+		
+		addLastWeekProjects: function(){
+			var parent = this;
+			if ($.isArray(lastWeekProjectsIdList)){
+				$.each(lastWeekProjectsIdList, function(){
+					// Fill a week with 0 amount of time
+					var projectName = $("#project-select :first option[value='"+parseInt(this)+"']").text();
+					var projectId = this;
+					parent.addProjectProcess(projectName,projectId);
+				});
+			} else if (lastWeekProjectsIdList != 0){
+				// Fill a week with 0 amount of time
+				var projectName = $("#project-select :first option[value='"+lastWeekProjectsIdList+"']").text();
+				var projectId = lastWeekProjectsIdList;
+				this.addProjectProcess(projectName,projectId);
 			}
-			calendar.addRow($("#project-select option:selected").text(),$("#project-select option:selected").val(),amounts,true);
+		},
+
+		addProjectProcess: function(projectName,projectId){
+			if (projectName != null && projectName != ""){
+				var amounts = new Array();
+				for (var i = 0 ; i < 7 ; i++){
+					amounts.push(0.0);
+				}
+				calendar.addRow(projectName,projectId,amounts,true);
+			}
 		},
 		
 		searchProject: function(id){
@@ -80,7 +106,7 @@ AppTimeSheet = (function($){
 						if ($.isArray(data.projectDTO)){
 							$("#project-select").removeAttr("disabled");
 							$("#add-project-button").removeAttr("disabled");
-						
+							
 							$.each(data.projectDTO, function(){
 								toAdd += '<option value='+this.id+'>'+this.name+'</option>'
 							});
@@ -119,6 +145,13 @@ AppTimeSheet = (function($){
 							$("#project-select").prepend(toAdd);
 							
 							$('#project-select-last-week option:first-child').attr("selected","selected");
+							
+							if ($("optgroup#project-select-last-week option").length == 0){
+								$("#add-last-projects-button").attr("disabled","disabled")
+							} else {
+								$("#add-last-projects-button").removeAttr("disabled")
+							}
+
 							
 							// Reset display
 							$("#timesheet-content").html('<tr id="date-line"></tr>');
@@ -195,9 +228,14 @@ AppTimeSheet = (function($){
 				$("#timesheet-content").append(new ProjectRow(projectName, projectId,amounts,this.data.dates,empty).render().el);
 				// Remove from the combobox
 				$("#project-select option[value='" + projectId + "']").remove();
+				// Disable buttons if needed
 				if ($("#project-select option").length == 0){
 					$("#project-select").attr("disabled","disabled");
 					$("#add-project-button").attr("disabled","disabled");
+				}
+				
+				if ($("optgroup#project-select-last-week option").length == 0){
+					$("#add-last-projects-button").attr("disabled","disabled");
 				}
 			}
 		},
@@ -398,6 +436,7 @@ AppTimeSheet = (function($){
 					url:"/timesheet/update",
 					data:json,
 					dataType:"json",
+					async:false,
 					contentType: "application/json; charset=utf-8",
 					processData: false,
 					success: function(data){

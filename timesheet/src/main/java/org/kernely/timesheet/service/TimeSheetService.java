@@ -225,7 +225,7 @@ public class TimeSheetService extends AbstractService {
 	 */
 	@SuppressWarnings("unchecked")
 	public TimeSheetCalendarDTO getTimeSheetCalendar(int week, int year, long userId) {
-		
+
 		TimeSheetDTO timeSheet = this.getTimeSheet(week, year, userId, false);
 
 		List<Date> dates = new ArrayList<Date>();
@@ -316,7 +316,7 @@ public class TimeSheetService extends AbstractService {
 	 */
 	@Transactional
 	public TimeSheetDetailDTO createOrUpdateDayAmountForProject(TimeSheetDetailDTO timeSheetDetailDTO) {
-		
+
 		if (getTimeSheetForDateForCurrentUser(timeSheetDetailDTO.day) == null) {
 			log.debug("TimeSheet doesn't exist for this day! Create the time sheet for the day : {}", timeSheetDetailDTO.day);
 			Date firstDay = new DateTime(timeSheetDetailDTO.day).withDayOfWeek(1).toDateMidnight().toDate();
@@ -381,6 +381,7 @@ public class TimeSheetService extends AbstractService {
 
 	@Transactional
 	private TimeSheetDay getTimeSheetDay(Date day, long timeSheetId) {
+
 		DateTime datetime = new DateTime(day).toDateMidnight().toDateTime();
 		Query query = em.get().createQuery("SELECT d FROM TimeSheetDay d WHERE day = :day AND timeSheet = :timeSheet");
 		query.setParameter("day", datetime.toDate());
@@ -401,6 +402,8 @@ public class TimeSheetService extends AbstractService {
 	
 	@Transactional
 	private TimeSheetDay getTimeSheetDayForUser(Date day, long userId) {
+
+		
 		DateTime datetime = new DateTime(day).toDateMidnight().toDateTime();
 		
 		TimeSheetDTO timeSheetDTO = this.getTimeSheet(datetime.getWeekOfWeekyear(), datetime.getYear(), userId, true);
@@ -424,6 +427,7 @@ public class TimeSheetService extends AbstractService {
 	}
 
 	private TimeSheet getTimeSheetForDateForCurrentUser(Date date) {
+		
 		Query query = em.get().createQuery("SELECT t FROM TimeSheet t WHERE beginDate <= :date AND endDate >= :date AND user = :user");
 		query.setParameter("date", date);
 		query.setParameter("user", this.getAuthenticatedUserModel());
@@ -446,6 +450,7 @@ public class TimeSheetService extends AbstractService {
 	 */
 	@Transactional
 	public TimeSheetDayDTO getTimeSheetDayDTO(Date day) {
+		
 		TimeSheet timesheet = getTimeSheetForDateForCurrentUser(day);
 		if(timesheet == null){
 			log.debug("TimeSheet doesn't exist for this day ! Create the time sheet for the day : {}", day);
@@ -475,6 +480,7 @@ public class TimeSheetService extends AbstractService {
 	 */
 	@Transactional
 	public void removeLine(long timeSheetId, long projectId) {
+		
 		TimeSheet timeSheet = em.get().find(TimeSheet.class, timeSheetId);
 
 		boolean rowExists = false;
@@ -503,6 +509,7 @@ public class TimeSheetService extends AbstractService {
 	 * @return
 	 */
 	public TimeSheetMonthDTO getTimeSheetCalendars(int month, int year, long userId) {
+		
 		List<TimeSheetCalendarDTO> calendars = new ArrayList<TimeSheetCalendarDTO>();
 		DateTime firstDayOfMonth = new DateTime().withDayOfMonth(1).withMonthOfYear(month).withYear(year).toDateMidnight().toDateTime();
 		DateTime lastDayOfMonth = new DateTime().withDayOfMonth(1).withMonthOfYear(month).plusMonths(1).minusDays(1).withYear(year).toDateMidnight().toDateTime();
@@ -530,6 +537,7 @@ public class TimeSheetService extends AbstractService {
 	 */
 	@Transactional
 	public void validateMonth(int month, int year, long userId){
+
 		log.debug("Validating timesheet of month {} for user {}.",month,userId);
 
 		DateTime firstDayOfMonth = new DateTime().withDayOfMonth(1).withMonthOfYear(month).withYear(year).toDateMidnight().toDateTime();
@@ -566,6 +574,7 @@ public class TimeSheetService extends AbstractService {
 	 * @return true if the month has been validated, false otherwise.
 	 */
 	public boolean checkMonthTimeSheetValidation(int month, int year, long userId){
+		
 		DateTime firstDayOfMonth = new DateTime().withDayOfMonth(1).withMonthOfYear(month).withYear(year).toDateMidnight().toDateTime();
 		DateTime lastDayOfMonth = new DateTime().withDayOfMonth(1).withMonthOfYear(month).plusMonths(1).minusDays(1).withYear(year).toDateMidnight().toDateTime();
 		
