@@ -109,8 +109,6 @@ AppHolidayPlanning = (function($){
 				})
 			);
 			
-//			var column1 = null;
-//			var column2 = null;
 			var column;
 			for(i = 1; i<= nbDays; i ++){
 				
@@ -123,10 +121,23 @@ AppHolidayPlanning = (function($){
 						$.each(this.user.details, function(){
 							if(this.dayOfMonth == i){
 								if(this.am == "true" && this.pm == "false"){
-									column.css("background-image", "url(/images/am_taken.png)");
+
+									column.addClass("am-day");
+									if(column.hasClass("pm-day")){
+										column.css("background-image", "url(/images/day_taken.png)");
+									}else{
+										column.css("background-image", "url(/images/am_taken.png)");
+										
+									}
 								}
 								else if(this.pm == "true" && this.am == "false"){
-									column.css("background-image", "url(/images/pm_taken.png)");
+									column.addClass("pm-day");
+									if(column.hasClass("am-day")){
+										column.css("background-image", "url(/images/day_taken.png)");
+									}
+									else{
+										column.css("background-image", "url(/images/pm_taken.png)");
+									}
 								}
 								else if(this.am == "true" && this.pm == "true"){
 									column.css("background-image", "url(/images/day_taken.png)");
