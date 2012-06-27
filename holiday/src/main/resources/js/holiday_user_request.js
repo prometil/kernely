@@ -224,16 +224,16 @@ AppHolidayUserRequest = (function($){
 			
 			this.table = $(parent.el).kernely_table({
 				columns:[
-				       {"name":templateManagerColumn, style:""},
 				       {"name":templateCommentColumn, style:"comment-column"},
 				       {"name":templateBeginColumn, style:"text-center"},
 				       {"name":templateEndColumn, style:"text-center"},
 				       {"name":"", style:["text-center", "icon-column"]},
+				       {"name":templateManagerColumn, style:""},
 				       {"name":templateManagerCommentColumn, style:"comment-column"},
 				       {"name":"", style:"invisible"}
 				],
 				idField:"id",
-				elements:["manager", "requesterComment", "beginDate", "endDate", "status", "managerComment", "cancelable"],
+				elements:["requesterComment", "beginDate", "endDate", "status", "manager", "managerComment", "cancelable"],
 				eventNames:["click"],
 				events:{
 					"click": parent.selectLine
@@ -614,6 +614,9 @@ AppHolidayUserRequest = (function($){
 				afternoonList[0] = this.data.days.afternoonAvailable;
 				morningColorList[0] = this.data.days.morningHolidayTypeColor;
 				afternoonColorList[0] = this.data.days.afternoonHolidayTypeColor;
+				morningNameTypeList[0] = this.data.days.morningHolidayTypeName;
+				afternoonNameTypeList[0] = this.data.days.afternoonHolidayTypeName;
+				
 			}
 			
 			

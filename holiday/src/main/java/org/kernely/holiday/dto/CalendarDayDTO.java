@@ -61,6 +61,16 @@ public class CalendarDayDTO {
 	public String afternoonHolidayTypeName;
 	
 	/**
+	 * Defines if this morning is charged or not in the timesheet
+	 */
+	public boolean morningCharged = false;
+	
+	/**
+	 * Defines if this morning is charged or not in the timesheet
+	 */
+	public boolean afternoonCharged = false;
+		
+	/**
 	 * The week number
 	 */
 	public int week;

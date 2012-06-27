@@ -155,7 +155,19 @@ AppHolidayRequest = (function($){
 			// Count the number of weeks created
 			var nPath = 0;
 			
-
+			// List of the name of type taking cells
+			var morningTextList = new Array();
+			var afternoonTextList = new Array();
+			
+			// List of the name of type taking cells
+			var morningChargedList = new Array();
+			var afternoonChargedList = new Array();
+			
+			// Lists of the color of the cell
+			var morningColorList = new Array();
+			var afternoonColorList = new Array();
+			
+			
 			// Building the header list
 			// Building the morning list
 			// Building the afternoon list
@@ -164,6 +176,17 @@ AppHolidayRequest = (function($){
 					headerList[cptBuildingList] = this.day;
 					morningList[cptBuildingList] = this.morningAvailable;
 					afternoonList[cptBuildingList] = this.afternoonAvailable;
+					
+					morningTextList[cptBuildingList] = this.morningHolidayTypeName;
+					afternoonTextList[cptBuildingList] = this.afternoonHolidayTypeName;
+					
+					morningChargedList[cptBuildingList] = this.morningCharged;
+					afternoonChargedList[cptBuildingList] = this.afternoonCharged;
+					
+					morningColorList[cptBuildingList] = this.morningHolidayTypeColor;
+					afternoonColorList[cptBuildingList] = this.afternoonHolidayTypeColor;
+					
+					
 					cptBuildingList ++;
 				});
 			}
@@ -171,6 +194,13 @@ AppHolidayRequest = (function($){
 				headerList[0] = this.data.days.day;
 				morningList[0] = this.data.days.morningAvailable;
 				afternoonList[0] = this.data.days.afternoonAvailable;
+				morningTextList[0] = this.data.days.morningHolidayTypeName;
+				afternoonTextList[0] = this.data.days.afternoonHolidayTypeName;
+				morningChargedList[0] = this.data.days.morningCharged;
+				afternoonChargedList[0] = this.data.days.afternoonCharged;
+				morningColorList[0] = this.data.days.morningHolidayTypeColor;
+				afternoonColorList[0] = this.data.days.afternoonHolidayTypeColor;
+				
 			}
 			
 			
@@ -194,7 +224,7 @@ AppHolidayRequest = (function($){
 				});
 				// Adds all the mornings for the week
 				while(cptMorningList < 5){
-					lineMorning.append($(new HolidayRequestDayView(headerList[cptHeaderList + (nPath * 5)], morningList[cptMorningList + (nPath * 5)], null, false, true, cellDayMorningCounter, MORNING_PART).render().el));
+					lineMorning.append($(new HolidayRequestDayView(headerList[cptHeaderList + (nPath * 5)], morningList[cptMorningList + (nPath * 5)], null, false, true, cellDayMorningCounter, MORNING_PART, morningTextList[cptMorningList + (nPath * 5)], morningChargedList[cptMorningList + (nPath * 5)], morningColorList[cptMorningList + (nPath * 5)]).render().el));
 					cellDayMorningCounter += 2;
 					cptMorningList ++;
 					cptHeaderList++;
@@ -208,7 +238,7 @@ AppHolidayRequest = (function($){
 				});
 				// Adds all the afternoons for the week
 				while(cptAfternoonList < 5){
-					lineAfternoon.append($(new HolidayRequestDayView(headerList[cptHeaderList + (nPath * 5)], afternoonList[cptAfternoonList + (nPath * 5)], null, false, false, cellDayAfternoonCounter, AFTERNOON_PART).render().el));
+					lineAfternoon.append($(new HolidayRequestDayView(headerList[cptHeaderList + (nPath * 5)], afternoonList[cptAfternoonList + (nPath * 5)], null, false, false, cellDayAfternoonCounter, AFTERNOON_PART, afternoonTextList[cptAfternoonList + (nPath * 5)], afternoonChargedList[cptAfternoonList + (nPath * 5)], afternoonColorList[cptAfternoonList + (nPath * 5)]).render().el));
 					cellDayAfternoonCounter += 2;
 					cptAfternoonList ++;
 					cptHeaderList ++;
@@ -247,13 +277,16 @@ AppHolidayRequest = (function($){
 		selectedBy: -1,
 		// An id only reserved to the view to allow the shift + clic event.
 		viewRank: -1,
+		typeName: null,
+		isCharged : false,
+		color: null,
 		
 
 		events:{
 			"click" : "colorTheWorld"
 		},
 
-		initialize: function(day, available, week, header, morning, rank, part){
+		initialize: function(day, available, week, header, morning, rank, part, typeName, isCharged, color){
 			this.day = day;
 			this.available = available;
 			this.week = week;
@@ -265,6 +298,9 @@ AppHolidayRequest = (function($){
 				allDayCells[this.viewRank] = this;
 			}			
 			this.partOfDay = part;
+			this.typeName = typeName;
+			this.isCharged = isCharged;
+			this.color = color;
 		},
 		
 		colorTheWorld : function(event){
@@ -347,6 +383,15 @@ AppHolidayRequest = (function($){
 					}
 				}
 				else{
+					if(this.typeName != null){
+						$(this.el).text(this.typeName);
+						$(this.el).css("color", this.color);
+					}
+					else{
+						if(this.isCharged == "true"){
+							$(this.el).text($("#charged-text-template").text());
+						}
+					}
 					$(this.el).attr('disabled', '');
 					$(this.el).addClass('day-disabled');
 				}

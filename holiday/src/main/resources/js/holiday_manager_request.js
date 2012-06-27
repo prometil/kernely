@@ -623,6 +623,9 @@ AppHolidayManagerRequest = (function($){
 				afternoonList[0] = this.data.days.afternoonAvailable;
 				morningColorList[0] = this.data.days.morningHolidayTypeColor;
 				afternoonColorList[0] = this.data.days.afternoonHolidayTypeColor;
+				morningNameTypeList[0] = this.data.days.morningHolidayTypeName;
+				afternoonNameTypeList[0] = this.data.days.afternoonHolidayTypeName;
+				
 			}
 			
 			

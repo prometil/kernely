@@ -37,6 +37,7 @@ import org.apache.commons.configuration.AbstractConfiguration;
 import org.apache.shiro.authz.UnauthorizedException;
 import org.joda.time.DateTime;
 import org.joda.time.Days;
+import org.joda.time.Weeks;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.kernely.core.dto.UserDTO;
@@ -830,36 +831,49 @@ public class HolidayRequestService extends AbstractService {
 		// consider the last day.
 		Days days = Days.daysBetween(date1.toDateMidnight(), date2.plusDays(1).toDateMidnight());
 		
-		boolean am;
-		boolean pm;
+		CalendarDayDTO dayDTO;
 		for (int i = 0; i < days.getDays(); i++) {
-			am = true;
-			pm = true;
 			dtmaj = date1.plusDays(i);
+			
+			dayDTO = new CalendarDayDTO();
+			dayDTO.morningAvailable = true;
+			dayDTO.afternoonAvailable = true;
+			dayDTO.morningHolidayTypeColor= "none";
+			dayDTO.afternoonHolidayTypeColor= "none";
+			dayDTO.day = dtmaj.toString(fmt);
+			dayDTO.week = dtmaj.getWeekOfWeekyear();
+			
 			// The end of the week is not displayed
 			if (dtmaj.getDayOfWeek() < DAYS_IN_WEEK) {
 				for (HolidayDetailDTO detail : allDayReserved) {
 					if (new DateTime(detail.day).toDateMidnight().isEqual(dtmaj.toDateMidnight())) {
-						if (detail.am) {
-							am = !detail.am;
+						if (detail.am) {							
+							dayDTO.morningAvailable = !detail.am;
+							dayDTO.morningHolidayTypeName = detail.type;
+							dayDTO.morningHolidayTypeColor = detail.color;
 						}
-						if (detail.pm) {
-							pm = !detail.pm;
+						if (detail.pm) {							
+							dayDTO.afternoonAvailable = !detail.pm;
+							dayDTO.afternoonHolidayTypeName = detail.type;
+							dayDTO.afternoonHolidayTypeColor = detail.color;
 						}
 					}
 				}
 				Float amountF = unavailable.get(dtmaj.toDate());
 				if(amountF != null){
 					if(amountF.floatValue() > 4){
-						am = false;
-						pm = false;
+						dayDTO.morningAvailable = false;
+						dayDTO.morningCharged = true;
+						dayDTO.afternoonAvailable = false;
+						dayDTO.afternoonCharged = true;
 					}
 					else{
-						am = false;
-						pm = true;
+						dayDTO.morningAvailable = false;
+						dayDTO.morningCharged = true;
+						dayDTO.afternoonAvailable = true;
 					}
 				}
-				daysDTO.add(new CalendarDayDTO(dtmaj.toString(fmt), am, pm, dtmaj.getWeekOfWeekyear()));
+				daysDTO.add(dayDTO);
 			}
 		}
 
@@ -873,12 +887,11 @@ public class HolidayRequestService extends AbstractService {
 			}
 		}
 
-		int weekPlace1 = date1.getWeekOfWeekyear();
-		int weekPlace2 = date2.getWeekOfWeekyear();
-		int yearPlace1 = date1.getYear();
-		int yearPlace2 = date2.getYear();
-		
-		calendar.nbWeeks = ((weekPlace2 - weekPlace1) + 1) + (52 * (yearPlace2 - yearPlace1));
+		DateTime finalStart = date1.dayOfWeek().withMinimumValue();
+		// We add one day to consider the entire week and not till the last day
+	    DateTime finalEnd   = date2.dayOfWeek().withMaximumValue().plusDays(1);
+
+	    calendar.nbWeeks = Weeks.weeksBetween(finalStart, finalEnd).getWeeks();
 
 		calendar.startWeek = date1.getWeekOfWeekyear();
 		calendar.days = daysDTO;
@@ -987,19 +1000,12 @@ public class HolidayRequestService extends AbstractService {
 			}
 		}
 
-		int weekPlace1 = firstday.getWeekOfWeekyear();
-		int weekPlace2 = lastday.getWeekOfWeekyear();
-		// We add +1 to consider 2 weeks
-		// IE : Week 52 - Week 51 = 2 week and not 1
-		if (weekPlace1 <= weekPlace2) {
-			calendar.nbWeeks = ((weekPlace2 - weekPlace1) + 1);
-		}
-		// We consider the fact that an interval can be on 2 different years
-		// IE : Week 52 of 2011 and Week 1 of 2012.
-		else {
-			calendar.nbWeeks = ((weekPlace2 + (52 - weekPlace1) + 1));
-		}
+		DateTime finalStart = firstday.dayOfWeek().withMinimumValue();
+		// We add one day to consider the entire week and not till the last day
+	    DateTime finalEnd   = lastday.dayOfWeek().withMaximumValue().plusDays(1);
 
+	    calendar.nbWeeks = Weeks.weeksBetween(finalStart, finalEnd).getWeeks();
+		
 		calendar.startWeek = firstday.getWeekOfWeekyear();
 		calendar.days = daysDTO;
 		calendar.details = this.buildColorPickerForRequest();

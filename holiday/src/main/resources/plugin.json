@@ -7,6 +7,7 @@
     "configuration": {
         "holidayRequests": {
             "recallTime": "7"
-        }
+        },
+        "notWorkingDays": "6,7"
     }
 }

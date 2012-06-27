@@ -109,40 +109,33 @@ AppHolidayPlanning = (function($){
 				})
 			);
 			
-			var column1 = null;
-			var column2 = null;
+//			var column1 = null;
+//			var column2 = null;
+			var column;
 			for(i = 1; i<= nbDays; i ++){
-				column1 = $("<td>", {
-					class:'column-part-day-user border-element-r-b'
+				
+				column = $("<td>", {
+					class:'day-planning'
 				});
 				
-				column2 = $("<td>", {
-					class:'column-part-day-user border-element-r-b'
-				});
-				
-				column1.css("background-color", "inherit");
-				column2.css("background-color", "inherit");
 				if(typeof(this.user.details) != "undefined"){
 					if(this.user.details.length > 1){
 						$.each(this.user.details, function(){
 							if(this.dayOfMonth == i){
-								if(this.am == "true"){
-									
-									column1.css("background-color", this.color);
+								if(this.am == "true" && this.pm == "false"){
+									column.css("background-image", "url(/images/am_taken.png)");
 								}
-								if(this.pm == "true"){
-									
-									column2.css("background-color", this.color);
+								else if(this.pm == "true" && this.am == "false"){
+									column.css("background-image", "url(/images/pm_taken.png)");
+								}
+								else if(this.am == "true" && this.pm == "true"){
+									column.css("background-image", "url(/images/day_taken.png)");
 								}
 							}
 						});
 					}
-					else{
-						
-					}
 				}
-				$(parent.el).append(column1);
-				$(parent.el).append(column2);
+				$(parent.el).append(column);
 			}	
 			return this;
 		}
@@ -173,7 +166,6 @@ AppHolidayPlanning = (function($){
 			for(var i = 1; i <= this.data.nbDays; i++){
 				lineHeader.append($("<th>", {
 					class: 'day-header-cell border-element-r-b',
-					colspan: 2,
 					text: i
 				}));
 			}
