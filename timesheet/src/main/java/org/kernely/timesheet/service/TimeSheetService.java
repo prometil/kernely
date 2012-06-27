@@ -403,7 +403,6 @@ public class TimeSheetService extends AbstractService {
 	@Transactional
 	private TimeSheetDay getTimeSheetDayForUser(Date day, long userId) {
 
-		
 		DateTime datetime = new DateTime(day).toDateMidnight().toDateTime();
 		
 		TimeSheetDTO timeSheetDTO = this.getTimeSheet(datetime.getWeekOfWeekyear(), datetime.getYear(), userId, true);

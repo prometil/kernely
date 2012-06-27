@@ -18,6 +18,9 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 AppProfile= (function($){
+	
+	var userd = new Object();
+	
 	function userdetails(){
 		this.email= null,
 		this.lastname=  null,
@@ -67,17 +70,18 @@ AppProfile= (function($){
 		
 		tagName: 'tr', 
 		
-		userd:null,
 		flag:null,
 		vinput:null,
 		vlength:null,
 		vuser:null,
+		validation:null,
 		
-		initialize:function(input, length, user){
-			userd = new userdetails();
+		initialize:function(input, length, user, validation){
+			//userd = new userdetails();
 			this.vinput=input;
 			this.vlength=length;
 			this.vuser=user;
+			this.validation = validation;
 		},
 
 		overLine : function(){
@@ -92,38 +96,53 @@ AppProfile= (function($){
 		render:function(){
 			var i18nName = $("#profile-"+this.vinput+"-template").html();
 			var html = '<td>'+i18nName+'</td><td id="profile_'+this.vinput+'" class="span_profile"><div id="profile_'+this.vinput+'_div">'+this.vuser+'</div>'+
-						'<input id="edit_'+this.vinput+'_field" name="'+this.vinput+'" class="invisible profile_'+this.vinput+'" type="text" MAXLENGTH='+this.vlength+' value="' + this.vuser + '"/></td>';
+						'<form id="'+this.vinput+'_form"><input id="edit_'+this.vinput+'_field" name="'+this.vinput+'" class="invisible profile_'+this.vinput+' '+this.validation+'" type="text" MAXLENGTH='+this.vlength+' value="' + this.vuser + '"/></form>'+
+						'<span class="text-bold-red" id="'+this.vinput+'_error"></span></td>';
 			$(this.el).html(html);
 			return this;
 		},
 		
 		save:function(){
-			retrieveUserDetails();
-			userd[this.vinput] = $("#edit_"+this.vinput+"_field").val();
-			var parent=this;
-			var json = JSON.stringify(userd);
-			$.ajax({
-				url:"/user/current",
-				success:function(data){
-					$.ajax({				
-						url:"/user/" + data.username +"/profile/update",
-                        data: json,
-                        type: "POST",
-                        dataType:"json",
-                        processData: false,
-                        contentType: "application/json; charset=utf-8",
-						success:function(data){
-							vresult = data[parent.vinput];
-							$("#profile_"+parent.vinput+"_div").html( vresult);
-							$("#profile_"+parent.vinput+"_div").removeClass("invisible");
-							$("#edit_"+parent.vinput+"_field").addClass("invisible");
-						}
-					});
-				}
-			});
+			var parent = this;
 			
-			$("#profile_"+this.vinput).css("background-color", "transparent");
-			$("#profile_"+this.vinput).css("cursor", "auto");
+			$("#"+this.vinput+"_form").validate({
+				// To hide jquery validation plugin messages
+			    showErrors: function() {}
+			 })
+
+			if ($("#"+this.vinput+"_form").valid()){
+				retrieveUserDetails();
+				userd[this.vinput] = $("#edit_"+this.vinput+"_field").val();
+				var parent=this;
+				var json = JSON.stringify(userd);
+				$.ajax({
+					url:"/user/current",
+					success:function(data){
+						$.ajax({				
+							url:"/user/" + data.username +"/profile/update",
+	                        data: json,
+	                        type: "POST",
+	                        dataType:"json",
+	                        processData: false,
+	                        contentType: "application/json; charset=utf-8",
+							success:function(data){
+								vresult = data[parent.vinput];
+								$("#profile_"+parent.vinput+"_div").html( vresult);
+								$("#profile_"+parent.vinput+"_div").removeClass("invisible");
+								$("#edit_"+parent.vinput+"_field").addClass("invisible");
+								$("#"+parent.vinput+"_error").addClass("invisible");
+							}
+						});
+					}
+				});
+			} else {
+				var message = $("#profile-"+this.validation+"-message-template").html();
+				$("#"+this.vinput+"_error").html(message);
+				$("#"+this.vinput+"_error").removeClass("invisible");
+				$("#edit_"+this.vinput+"_field").val($("#profile_"+this.vinput+"_div").html());
+				$("#profile_"+this.vinput+"_div").removeClass("invisible");
+				$("#edit_"+this.vinput+"_field").addClass("invisible");
+			}
 		},
 		
 		edit:function(){
@@ -156,6 +175,7 @@ AppProfile= (function($){
 		filterOnEnter:function(e){
 			 if (e.keyCode == 13){
 				 this.save();
+				 return false;
 			 }
 	},
 		
@@ -201,9 +221,9 @@ AppProfile= (function($){
 						url:"/user/"+data.username,
 						dataType:"json",
 						success: function(details){
-							parent.addInput("lastname","50",details.lastname);
-							parent.addInput("firstname","50",details.firstname);	
-							parent.addInput("email","50",details.email);
+							parent.addInput("lastname","50",details.lastname,"required");
+							parent.addInput("firstname","50",details.firstname,"required");	
+							parent.addInput("email","50",details.email,"email");
 							parent.addInput("adress","100",details.adress); 
 							parent.addInput("zip", "20",details.zip);
 							parent.addInput("city","60",details.city);
@@ -219,8 +239,8 @@ AppProfile= (function($){
 			});
 		},
 	
-		addInput:function(title, length, userdata){
-			var inputView = new InputView(title, length, userdata);
+		addInput:function(title, length, userdata, validation){
+			var inputView = new InputView(title, length, userdata, validation);
 			$("#profile_table > tbody:last").append(inputView.render().el);
 		},
 	
@@ -254,6 +274,7 @@ AppProfile= (function($){
 	var self = {};
 	self.start = function(){
 		new ProfileView().render();
+		retrieveUserDetails();
 	}
 	return self;
 })

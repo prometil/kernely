@@ -623,6 +623,11 @@ table.kernely_table .icon-column{
 	font-weight:bold;
 }
 
+.text-bold-red{
+	color:red;
+	font-weight:bold;
+}
+
 .hidden{
 	visibility:hidden;
 }
