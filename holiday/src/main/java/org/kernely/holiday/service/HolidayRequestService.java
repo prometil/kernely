@@ -42,6 +42,7 @@ import org.joda.time.format.DateTimeFormatter;
 import org.kernely.core.dto.UserDTO;
 import org.kernely.core.model.User;
 import org.kernely.core.service.UserService;
+import org.kernely.extension.Extender;
 import org.kernely.holiday.dto.CalendarBalanceDetailDTO;
 import org.kernely.holiday.dto.CalendarDayDTO;
 import org.kernely.holiday.dto.CalendarRequestDTO;
@@ -772,6 +773,7 @@ public class HolidayRequestService extends AbstractService {
 	 *            end date for the request
 	 * @return A DTO containing all days concerned by the request
 	 */
+	@SuppressWarnings("unchecked")
 	@Transactional
 	public CalendarRequestDTO getCalendarRequest(DateTime date1, DateTime date2) {
 		if (date1.isAfter(date2)) {
@@ -805,11 +807,29 @@ public class HolidayRequestService extends AbstractService {
 				daysDTO.add(new CalendarDayDTO(dtmaj.toString(fmt), false, false, dtmaj.getWeekOfWeekyear()));
 			}
 		}
-
+		
+		HashMap<Date, Float> result = new HashMap<Date,Float>();
+		HashMap<String, Object> args = new HashMap<String,Object>();
+		args.put("start", date1.toDate());
+		args.put("end", date2.toDate());
+		Map<Date, Float> unavailable = new HashMap<Date, Float>();
+				
+		List<Extender> timesheetExtenders = org.kernely.plugin.PluginManager.getExtenders("timesheet");
+		for (Extender timesheetExtender : timesheetExtenders){
+			log.debug("Timesheet extender found");
+			result = (HashMap<Date, Float>) timesheetExtender.call(args).get("dates");
+			for (Date d : result.keySet()){
+				// If the day is marked as "true", the day is not available
+				if (result.get(d) > 0){
+					unavailable.put(d,result.get(d));
+				}
+			}
+		}
+		
 		// We add one day to date2 to consider the date2's day. Else, it doesn't
 		// consider the last day.
 		Days days = Days.daysBetween(date1.toDateMidnight(), date2.plusDays(1).toDateMidnight());
-
+		
 		boolean am;
 		boolean pm;
 		for (int i = 0; i < days.getDays(); i++) {
@@ -828,6 +848,17 @@ public class HolidayRequestService extends AbstractService {
 						}
 					}
 				}
+				Float amountF = unavailable.get(dtmaj.toDate());
+				if(amountF != null){
+					if(amountF.floatValue() > 4){
+						am = false;
+						pm = false;
+					}
+					else{
+						am = false;
+						pm = true;
+					}
+				}
 				daysDTO.add(new CalendarDayDTO(dtmaj.toString(fmt), am, pm, dtmaj.getWeekOfWeekyear()));
 			}
 		}
@@ -844,16 +875,10 @@ public class HolidayRequestService extends AbstractService {
 
 		int weekPlace1 = date1.getWeekOfWeekyear();
 		int weekPlace2 = date2.getWeekOfWeekyear();
-		// We add +1 to consider 2 weeks
-		// IE : Week 52 - Week 51 = 2 week and not 1
-		if (weekPlace1 <= weekPlace2) {
-			calendar.nbWeeks = ((weekPlace2 - weekPlace1) + 1);
-		}
-		// We consider the fact that an interval can be on 2 different years
-		// IE : Week 52 of 2011 and Week 1 of 2012.
-		else {
-			calendar.nbWeeks = ((weekPlace2 + (52 - weekPlace1) + 1));
-		}
+		int yearPlace1 = date1.getYear();
+		int yearPlace2 = date2.getYear();
+		
+		calendar.nbWeeks = ((weekPlace2 - weekPlace1) + 1) + (52 * (yearPlace2 - yearPlace1));
 
 		calendar.startWeek = date1.getWeekOfWeekyear();
 		calendar.days = daysDTO;

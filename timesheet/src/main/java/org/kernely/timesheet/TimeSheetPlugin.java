@@ -4,6 +4,7 @@ import org.kernely.plugin.AbstractPlugin;
 import org.kernely.timesheet.controller.ExpenseAdminController;
 import org.kernely.timesheet.controller.ExpenseController;
 import org.kernely.timesheet.controller.TimeSheetController;
+import org.kernely.timesheet.extender.ChargedDaysExtender;
 import org.kernely.timesheet.migrations.Migration01;
 import org.kernely.timesheet.model.Expense;
 import org.kernely.timesheet.model.ExpenseType;
@@ -48,6 +49,7 @@ public class TimeSheetPlugin extends AbstractPlugin {
 	 */
 	@Override
 	public void configurePlugin() {
+		bind(ChargedDaysExtender.class).asEagerSingleton();
 		bind(TimeSheetService.class);
 	}
 
