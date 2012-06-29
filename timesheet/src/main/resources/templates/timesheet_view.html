@@ -1,4 +1,4 @@
-{% extends "templates/layout.html" %}
+{% extends "templates/layout_block.html" %}
 
 {% block javascript %}
 <!-- Additional javascript -->
@@ -44,33 +44,23 @@
 	<script type="text/html" id="time-amount-6">6 {%  i18n "timesheet_hours" %}</script>
 	<script type="text/html" id="time-amount-8">8 {%  i18n "timesheet_hours" %}</script>
 	
+	<script type="text/html" id="day-1-template">{% i18n "day_1_short" %}</script>
+	<script type="text/html" id="day-2-template">{% i18n "day_2_short" %}</script>
+	<script type="text/html" id="day-3-template">{% i18n "day_3_short" %}</script>
+	<script type="text/html" id="day-4-template">{% i18n "day_4_short" %}</script>
+	<script type="text/html" id="day-5-template">{% i18n "day_5_short" %}</script>
+	<script type="text/html" id="day-6-template">{% i18n "day_6_short" %}</script>
+	<script type="text/html" id="day-7-template">{% i18n "day_7_short" %}</script>
+	
+	<script type="text/html" id="expense-line-title-template">{% i18n "expense_line_title" %}</script>
+	<script type="text/html" id="#validation-error-template">{% i18n "timesheet_validation_error" %}</script>
+	
 	<script type="text/html" id="time-cell-template">
 		<span id="time-cell-name">{{"{{"}}amount{{"}}"}}</span>
 	</script>
 	
-	<script type="text/html" id="timesheet-table-template">
-		<table id="timesheet-table-{{"{{"}}tableId{{"}}"}}" class="timesheet-table">
-			<tbody id="timesheet-content-{{"{{"}}tableId{{"}}"}}" class="timesheet-content">
-				<tr id="date-line-{{"{{"}}tableId{{"}}"}}"  class="date-line"></tr>
-			</tbody>
-			<tbody>
-				<tr id="columnTotalsRow-{{"{{"}}tableId{{"}}"}}" class="columnTotalsRow">
-					<td>{%  i18n "timesheet_total" %}</td>
-					<td></td>
-					<td></td>
-					<td></td>
-					<td></td>
-					<td></td>
-					<td></td>
-					<td></td>
-					<td></td>
-				</tr>
-			</tbody>
-			<tbody id="timesheet-expense-{{"{{"}}tableId{{"}}"}}" class="timesheet-expense">
-				<tr id="expense-line-{{"{{"}}tableId{{"}}"}}" class="expense-line"><td></td></tr>
-			<tbody>
-		</table>
-	</script>
+	<script type="text/html" id="no-timesheet"><td class="no-timesheet" colspan="{{"{{"}}days{{"}}"}}">{% i18n "timesheet_no_data" %}</td></script>
+	
 {% endblock%}
 
 {% block content %}
@@ -83,8 +73,14 @@
 		<div id="timesheet-layout">
 			<div id="dates-title" class="text-bold-black"></div>
 			<div id="timesheet-div"></div>
-				<div id="dates-title"></div>
-				<input class="hidden button_ok" type="button" id="validate-month" value="{%  i18n "validate_timesheet" %}"/>
+				<div id="dates-title" class="text-bold-black"></div>
+				<div id="main-table-content">
+					<table id="timesheet-table" class="kernely_table">
+						
+					</table>
+				</div>
+				<div class="clear"></div>
+				<input class="hidden button_emphasis" type="button" id="validate-month" value="{%  i18n "validate_timesheet" %}"/>
 				<span class="hidden" id="month-validated-message">{%  i18n "timesheet_month_validated_message" %}</span>
 		</div>
 	</div>

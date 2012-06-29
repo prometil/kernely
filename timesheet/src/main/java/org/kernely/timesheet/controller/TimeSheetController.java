@@ -114,7 +114,7 @@ public class TimeSheetController extends AbstractController {
 			year = DateTime.now().getYear();
 		}
 		
-		return timeSheetService.getTimeSheetCalendars(month, year, userService.getAuthenticatedUserDTO().id);
+		return timeSheetService.getMonthTimeSheet(month, year, userService.getAuthenticatedUserDTO().id);
 	}
 	
 	/**
@@ -179,8 +179,11 @@ public class TimeSheetController extends AbstractController {
 	 */
 	@GET
 	@Path("/validate")
-	public String validateDays(@QueryParam("month") int month, @QueryParam("year") int year) {
-		timeSheetService.validateMonth(month, year, userService.getAuthenticatedUserDTO().id);
-		return "{\"result\":\"Ok\"}";
+	public Response validateDays(@QueryParam("month") int month, @QueryParam("year") int year) {
+		if (timeSheetService.validateMonth(month, year, userService.getAuthenticatedUserDTO().id)){
+			return Response.ok().build();
+		} else {
+			return Response.status(Status.ERROR).build();
+		}
 	}
 }

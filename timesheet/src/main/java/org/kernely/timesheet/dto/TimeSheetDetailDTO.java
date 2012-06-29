@@ -46,6 +46,11 @@ public class TimeSheetDetailDTO {
 	 * The name of the project concerned
 	 */
 	public String projectName;
+	
+	/**
+	 * Status of the days (unavailable, taken by holidays, not working day...
+	 */
+	public String status;
 
 	
 	/**
@@ -64,6 +69,26 @@ public class TimeSheetDetailDTO {
 		this.timeSheetId = detail.getTimeSheetDay().getTimeSheet().getId();
 		this.projectId = detail.getProject().getId();
 		this.projectName = detail.getProject().getName();
+	}
+	
+	/**
+	 * Constructor using fields and setting the status of the detail.
+	 * @param dayId The id of the day
+	 * @param amount The amount of time.
+	 * @param day The day.
+	 * @param timeSheetId The id of the time sheet
+	 * @param projectId The id of the project.
+	 * @param status The status of the detail.
+	 */
+	public TimeSheetDetailDTO(TimeSheetDetailProject detail, String status) {
+		super();
+		this.amount = detail.getAmount();
+		this.dayId = detail.getTimeSheetDay().getId();
+		this.day = detail.getTimeSheetDay().getDay();
+		this.timeSheetId = detail.getTimeSheetDay().getTimeSheet().getId();
+		this.projectId = detail.getProject().getId();
+		this.projectName = detail.getProject().getName();
+		this.status = status;
 	}
 
 
