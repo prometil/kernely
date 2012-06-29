@@ -30,7 +30,6 @@ AppTimeSheetMonth = (function($){
 			})
 		},
 		validateTimeSheet: function(){
-			console.log("VALIDATE");
 			$.ajax({
 				type: "GET",
 				url:"/timesheet/validate",
@@ -39,8 +38,7 @@ AppTimeSheetMonth = (function($){
 					$("#validate-month").addClass("hidden");
 					$("#month-validated-message").removeClass("hidden");
 				},
-				error: function(data){
-					console.log(data)
+				error: function(){
 					$.writeMessage("error",$("#validation-error-template").html());
 				}
 			})
@@ -83,8 +81,9 @@ AppTimeSheetMonth = (function($){
 			);
 			
 			var column;
+			var totalAmount = 0.0;
 			for(i = 0; i< nbDays; i ++){
-				
+				totalAmount = parseFloat(totalAmount) + parseFloat(parent.project.details[i].amount);
 				// Filter to display only non null values
 				var filteredAmount = "";
 				if (parent.project.details[i].amount != 0){
@@ -103,7 +102,14 @@ AppTimeSheetMonth = (function($){
 				}
 				
 				$(parent.el).append(column);
-			}	
+			}
+			// Total time for the project
+			column = $("<td>", {
+				class:"total text-bold-black",
+				text:totalAmount
+			});
+			$(parent.el).append(column);
+			
 			return this;
 		}
 	})
@@ -127,13 +133,15 @@ AppTimeSheetMonth = (function($){
 			var html = $("#expense-line-title-template").html();
 			$(this.el).append(
 				$("<td>", {
-					class:'row-header-project border-element-r-b',
+					class:'totalMonth',
 					text: html
 				})
 			);
 			
 			var column;
+			var expenses = 0.0;
 			for(i = 0; i< nbDays; i ++){
+				expenses = parseFloat(expenses) + parseFloat(this.expenses[i]);
 				
 				// Filter to display only non null values
 				var filteredExpense = "";
@@ -142,11 +150,18 @@ AppTimeSheetMonth = (function($){
 				}
 				
 				column = $("<td>", {
-					class:'day-timesheet-planning',
+					class:'totalMonth',
 					text:filteredExpense
 				});
 				$(parent.el).append(column);
 			}
+			
+			// Total expenses for the mounth
+			column = $("<td>", {
+				class:"totalMonth text-bold-black",
+				text:expenses
+			});
+			$(parent.el).append(column);
 			
 			return this;
 		}
@@ -186,6 +201,13 @@ AppTimeSheetMonth = (function($){
 					html: day + " <br/> " + (i+1)
 				}));
 			}
+			// Total column
+			var totalTemplate = $("#total-template").html();
+			lineHeader.append($("<th>", {
+				class: 'total',
+				html: totalTemplate
+			}));
+			
 			var thead = document.createElement("thead");
 			$(thead).append(lineHeader);
 			$(this.el).append($(thead));

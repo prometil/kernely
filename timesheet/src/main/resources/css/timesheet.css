@@ -73,7 +73,11 @@ table.timesheet-table tr.columnTotalsRow td, table.timesheet-table td.total{
 	background-color:#97ad17;
 	font-weight:bold;
 	color:#FFFFFF;
-	
+}
+
+.totalMonth{
+	background-color:#97ad17;
+	color:#FFFFFF ! important;
 }
 
 table.timesheet-table tr.expense-line td{

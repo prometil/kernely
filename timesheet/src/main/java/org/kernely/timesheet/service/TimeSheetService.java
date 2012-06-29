@@ -310,8 +310,8 @@ public class TimeSheetService extends AbstractService {
 				available.add(1F);
 			}
 		}
-
-		return new TimeSheetCalendarDTO(week, year, timeSheet, dates, stringDates, available, projectsId, lastWeekProjectsId);
+		
+		return new TimeSheetCalendarDTO(week, year, timeSheet, dates, stringDates, available, projectsId, lastWeekProjectsId, configuration.getFloat("maxDayValue"));
 	}
 
 	/**
