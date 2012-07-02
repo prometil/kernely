@@ -124,6 +124,7 @@ public class TimeSheetController extends AbstractController {
 	 */
 	@GET
 	@Produces( { MediaType.TEXT_HTML })
+	@Menu("timesheet_month_title")
 	@Path("bymonth")
 	public Response getTimeSheetVisualization() {
 		// Get current date

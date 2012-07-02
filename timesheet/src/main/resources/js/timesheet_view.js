@@ -105,7 +105,7 @@ AppTimeSheetMonth = (function($){
 			}
 			// Total time for the project
 			column = $("<td>", {
-				class:"total text-bold-black",
+				class:"text-bold-black",
 				text:totalAmount
 			});
 			$(parent.el).append(column);
@@ -190,7 +190,10 @@ AppTimeSheetMonth = (function($){
 				class:'table-header border-element-r-b'
 			});
 			
+			var html = $("#project-column-title").html();
+			
 			lineHeader.append($("<th>", {
+				text:html,
 				class: "border-element-r-b"
 			}));
 
@@ -227,7 +230,7 @@ AppTimeSheetMonth = (function($){
 				
 			} else {
 				var template = $("#no-timesheet").html();
-				var view = {days: nbDays + 1}; // Days plus the row header
+				var view = {days: nbDays + 2}; // Days plus the row header plus the total header
 				var html = Mustache.to_html(template, view);
 				$(parent.el).append(html);
 			}

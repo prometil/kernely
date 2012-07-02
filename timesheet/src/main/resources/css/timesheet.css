@@ -1,4 +1,4 @@
-day.time-cell{
+.time-cell{
 	width:210px;
 	height:25px;
 	border-bottom:1px solid #a0a2a3;
@@ -78,6 +78,10 @@ table.timesheet-table tr.columnTotalsRow td, table.timesheet-table td.total{
 .totalMonth{
 	background-color:#97ad17;
 	color:#FFFFFF ! important;
+}
+
+th.total{
+	width:40px;
 }
 
 table.timesheet-table tr.expense-line td{

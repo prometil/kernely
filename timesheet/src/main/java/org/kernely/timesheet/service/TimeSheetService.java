@@ -310,8 +310,9 @@ public class TimeSheetService extends AbstractService {
 				available.add(1F);
 			}
 		}
-		
-		return new TimeSheetCalendarDTO(week, year, timeSheet, dates, stringDates, available, projectsId, lastWeekProjectsId, configuration.getFloat("maxDayValue"));
+
+		return new TimeSheetCalendarDTO(week, year, timeSheet, dates, stringDates, available, projectsId, lastWeekProjectsId, configuration
+				.getFloat("maxDayValue"));
 	}
 
 	/**
@@ -727,6 +728,8 @@ public class TimeSheetService extends AbstractService {
 	}
 
 	private boolean timeSheetCanBeValidated(int month, int year, long userId) {
+		float maxDayValue = configuration.getFloat("maxDayValue");
+
 		DateTime firstDayOfMonth = new DateTime().withDayOfMonth(1).withMonthOfYear(month).withYear(year).toDateMidnight().toDateTime();
 		DateTime lastDayOfMonth = new DateTime(firstDayOfMonth).plusMonths(1).minusDays(1).toDateMidnight().toDateTime();
 
@@ -751,20 +754,34 @@ public class TimeSheetService extends AbstractService {
 			}
 		}
 
+		Set<Date> pending = new HashSet<Date>();
+
+		datesExtenders = org.kernely.plugin.PluginManager.getExtenders("pending_holidays_dates");
+		for (Extender dateExtender : datesExtenders) {
+			pending.addAll((HashSet<Date>) (dateExtender.call(args).get("dates")));
+		}
+
 		TimeSheetDay dayModel;
 		// Check every day
 		for (DateTime day = firstDayOfMonth; !day.isAfter(lastDayOfMonth); day = day.plusDays(1)) {
+			if (pending.contains(day.toDate())) {
+				// If the day is in a pending request, the timesheet can not be validated
+				return false;
+			}
 			float amount = 0;
 			dayModel = this.getTimeSheetDayForUser(day.toDate(), userId);
 			for (TimeSheetDetailProject detail : dayModel.getDetailsProjects()) {
 				amount += detail.getAmount();
 			}
-			// If the day is empty, check if is an unavailable day
-			if (amount == 0) {
-				if (!(unavailable.containsKey(day.toDate()))) {
-					// If the day is not unavailable, and the amount is at 0, then the timesheet can't be validated
-					return false;
-				}
+
+			// Check if the amount is correct
+			if (unavailable.containsKey(day.toDate())) {
+				amount += unavailable.get(day.toDate()) * maxDayValue;
+			}
+
+			if ((maxDayValue - amount ) > 0.001) {
+				// The timesheet can not be validated if the difference between amount and max value is too different
+				return false;
 			}
 		}
 		return true;
