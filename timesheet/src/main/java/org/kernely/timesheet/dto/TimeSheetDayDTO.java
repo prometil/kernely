@@ -52,6 +52,6 @@ public class TimeSheetDayDTO {
 		this.day = day.getDay();
 		this.dayString = new DateTime(this.day).toString("MM/dd/yyyy");
 		this.timeSheetId = day.getTimeSheet().getId();
-		this.validated = day.getStatus() == TimeSheetDay.DAY_VALIDATED;
+		this.validated = (day.getStatus() == TimeSheetDay.DAY_VALIDATED);
 	}
 }

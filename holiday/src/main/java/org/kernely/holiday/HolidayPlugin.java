@@ -1,5 +1,5 @@
 /**
-  * Copyright 2011 Prometil SARL
+ * Copyright 2011 Prometil SARL
  *
  * This file is part of Kernely.
  *
@@ -64,10 +64,10 @@ public class HolidayPlugin extends AbstractPlugin {
 
 	@Inject
 	private EventBus eventBus;
-	
+
 	@Inject
 	private HolidayUserEventHandler userEventHandler;
-	
+
 	/**
 	 * Default constructor
 	 */
@@ -91,7 +91,7 @@ public class HolidayPlugin extends AbstractPlugin {
 		registerModel(HolidayTypeInstance.class);
 		registerAdminPage("Holiday profile admin", "/admin/holiday");
 		registerMigration(new Migration01());
-		
+
 		// Register job
 		// Create the holidays computing schedule with a cron expression :
 		// 0  : at the second 0
@@ -102,38 +102,40 @@ public class HolidayPlugin extends AbstractPlugin {
 		// ?  : the day of the week is not important
 		// *  : every year
 		ScheduleBuilder holidaysSchedule = CronScheduleBuilder.cronSchedule("0 0 00 1 * ? *");
-		
-        // Create the holidays trigger
-        Trigger holidaysTrigger = TriggerBuilder.
-                newTrigger().
-                withSchedule(holidaysSchedule).
-                startAt(DateBuilder.futureDate(15, IntervalUnit.SECOND)).build();
-        
-        registerJob(HolidaysMonthlyJob.class, holidaysTrigger);
 
-        // create the holiday daily schedule, run every 24 hours
-        ScheduleBuilder dailySchedule = SimpleScheduleBuilder.
-                simpleSchedule().
-                withIntervalInHours(24).
-                repeatForever();
- 
-        // Create the holidays daily trigger
-        Trigger mailTrigger = TriggerBuilder.
-                newTrigger().
-                withSchedule(dailySchedule).
-              startAt(DateTime.now().toDateMidnight().toDate()).build();
-        
-        registerJob(HolidaysDailyJob.class, mailTrigger);
+		// Create the holidays trigger
+		Trigger holidaysTrigger = TriggerBuilder.
+		newTrigger().
+		withSchedule(holidaysSchedule).
+		startAt(DateBuilder.futureDate(15, IntervalUnit.SECOND)).build();
 
-        
+		registerJob(HolidaysMonthlyJob.class, holidaysTrigger);
+
+		//create the holiday daily schedule, run every 24 hours
+		ScheduleBuilder dailySchedule = SimpleScheduleBuilder.
+		simpleSchedule().
+		withIntervalInHours(24).
+		repeatForever();
+
+
+
+		//Create the holidays daily trigger
+		Trigger mailTrigger = TriggerBuilder.
+		newTrigger().
+		withSchedule(dailySchedule).
+		startAt(DateTime.now().toDateMidnight().toDate()).build();
+
+		registerJob(HolidaysDailyJob.class, mailTrigger);
+
+
 	}
-	
+
 	@Override
 	public void start() {
 		eventBus.register(userEventHandler);
 	}
-	
-	
+
+
 	/**
 	 * Configure the plugin
 	 */

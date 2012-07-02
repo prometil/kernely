@@ -271,10 +271,10 @@ AppHolidayUserRequest = (function($){
 						var dataRequest = data.holidayRequestDTO;
 						if($.isArray(dataRequest)){
 							$.each(dataRequest, function(){
-								if(this.status == 1){
+								if(this.status == 1 || this.status == 3){
 									this.status = "<img src='/images/icons/accept_icon.png' />";
 								}
-								else{
+								else if(this.status == 0){
 									this.status = "<img src='/images/icons/deny_icon.png' />";
 								}
 								this.beginDate = moment(this.beginDate).format("L");
@@ -282,10 +282,10 @@ AppHolidayUserRequest = (function($){
 							});
 						}
 						else{
-							if(dataRequest.status == 1){
+							if(dataRequest.status == 1 || dataRequest.status == 3){
 								dataRequest.status = "<img src='/images/icons/accept_icon.png' />";
 							}
-							else{
+							else if(dataRequest.status == 0){
 								dataRequest.status = "<img src='/images/icons/deny_icon.png' />";
 							}
 							dataRequest.beginDate = moment(dataRequest.beginDate).format("L");

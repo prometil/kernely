@@ -258,7 +258,7 @@ AppHolidayManagerRequest = (function($){
 						var dataRequest = data.holidayRequestDTO;
 						if($.isArray(dataRequest)){
 							$.each(dataRequest, function(){
-								if(this.status == 1){
+								if(this.status == 1 || this.status == 3){
 									this.status = "<img src='/images/icons/accept_icon.png' />";
 								}
 								else{
@@ -269,7 +269,7 @@ AppHolidayManagerRequest = (function($){
 							});
 						}
 						else{
-							if(dataRequest.status == 1){
+							if(dataRequest.status == 1 || dataRequest.status == 3){
 								dataRequest.status = "<img src='/images/icons/accept_icon.png' />";
 							}
 							else{
