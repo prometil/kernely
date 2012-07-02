@@ -481,8 +481,8 @@ DateNavigatorView = Backbone.View.extend({
 	},
 	
 	toDefaultMonth: function(){
-		this.monthSelected = this.defaultMonth;
-		this.yearSelected = this.defaultYear;
+		this.monthSelected = moment().format("M");
+		this.yearSelected = moment().format("YYYY");
 		this.actualizeMonth();
 	},
 	

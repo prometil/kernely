@@ -13,6 +13,7 @@ import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
 import org.apache.commons.configuration.AbstractConfiguration;
+import org.hibernate.annotations.Synchronize;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.joda.time.format.DateTimeFormat;
@@ -141,6 +142,7 @@ public class TimeSheetService extends AbstractService {
 	 */
 	@Transactional
 	public TimeSheetDTO getTimeSheet(int week, int year, long userId, boolean withCreation) {
+		log.debug("Searching timesheet for week {}, year {} and user {}",new Object[]{week,year,userId});
 		Date firstDay = new DateTime().withWeekOfWeekyear(week).withYear(year).withDayOfWeek(1).toDateMidnight().toDate();
 		Date lastDay = new DateTime().withWeekOfWeekyear(week).withYear(year).withDayOfWeek(7).toDateMidnight().toDate();
 		Query query = em.get().createQuery("SELECT t FROM TimeSheet t WHERE user = :user AND beginDate = :beginWeek AND endDate = :endWeek");
@@ -407,11 +409,25 @@ public class TimeSheetService extends AbstractService {
 	}
 
 	@Transactional
-	private TimeSheetDay getTimeSheetDayForUser(Date day, long userId) {
+	private synchronized TimeSheetDay getTimeSheetDayForUserWithCreation(Date day, long userId) {
+		return getTimeSheetDayForUser(day,userId, true);
+	}
+	
+	@Transactional
+	private synchronized TimeSheetDay getTimeSheetDayForUserWithoutCreation(Date day, long userId) {
+		return getTimeSheetDayForUser(day,userId,false);
+	}
+	
+	@Transactional
+	private synchronized TimeSheetDay getTimeSheetDayForUser(Date day, long userId, boolean withCreation){
 
 		DateTime datetime = new DateTime(day).toDateMidnight().toDateTime();
 
-		TimeSheetDTO timeSheetDTO = this.getTimeSheet(datetime.getWeekOfWeekyear(), datetime.getYear(), userId, true);
+		TimeSheetDTO timeSheetDTO = this.getTimeSheet(datetime.getWeekOfWeekyear(), datetime.getYear(), userId, withCreation);
+		
+		if (timeSheetDTO == null){
+			return null;
+		}
 
 		TimeSheet timeSheet = em.get().find(TimeSheet.class, timeSheetDTO.id);
 
@@ -422,13 +438,18 @@ public class TimeSheetService extends AbstractService {
 			// If the detail for this day exists, returns it.
 			return (TimeSheetDay) query.getSingleResult();
 		} catch (NoResultException nre) {
-			// The detail doesn't exist, we have to create it.
-			TimeSheetDay detail = new TimeSheetDay();
-			detail.setDay(datetime.toDate());
-			detail.setTimeSheet(timeSheet);
-			em.get().persist(detail);
-			return detail;
+			// The detail doesn't exist, we have to create it if needeed.
+			if (withCreation){
+				TimeSheetDay detail = new TimeSheetDay();
+				detail.setDay(datetime.toDate());
+				detail.setTimeSheet(timeSheet);
+				em.get().persist(detail);
+				return detail;
+			} else {
+				return null;
+			}
 		}
+
 	}
 
 	@Transactional
@@ -443,7 +464,7 @@ public class TimeSheetService extends AbstractService {
 		float amount;
 		for (DateTime dt = dateTimeBegin; dt.isBefore(dateTimeEnd); dt = dt.plusDays(1)) {
 			amount = 0;
-			timeSheetDay = this.getTimeSheetDayForUser(dt.toDate(), userId);
+			timeSheetDay = this.getTimeSheetDayForUserWithCreation(dt.toDate(), userId);
 			timeSheetDetails = timeSheetDay.getDetailsProjects();
 			for (TimeSheetDetailProject tsdp : timeSheetDetails) {
 				amount += tsdp.getAmount();
@@ -579,8 +600,8 @@ public class TimeSheetService extends AbstractService {
 		// For each day
 		for (DateTime dt = dateTimeBegin; dt.isBefore(dateTimeEnd); dt = dt.plusDays(1)) {
 			daysOfWeek.add(dt.getDayOfWeek());
-			timeSheetDay = this.getTimeSheetDayForUser(dt.toDate(), userId);
-			timeSheetDetails = timeSheetDay.getDetailsProjects();
+			timeSheetDay = this.getTimeSheetDayForUserWithoutCreation(dt.toDate(), userId);
+			
 
 			// Get expenses
 			float sum = 0;
@@ -590,31 +611,35 @@ public class TimeSheetService extends AbstractService {
 				}
 			}
 			expenses.add(sum);
+			
+			if (timeSheetDay != null){
+				timeSheetDetails = timeSheetDay.getDetailsProjects();
+				// For each detail in the day
+				for (TimeSheetDetailProject tsdp : timeSheetDetails) {
+					projectId = tsdp.getProject().getId();
+					projectFound.put(projectId, true);
 
-			// For each detail in the day
-			for (TimeSheetDetailProject tsdp : timeSheetDetails) {
-				projectId = tsdp.getProject().getId();
-				projectFound.put(projectId, true);
+					// If the project don't exists, we have to add it, and amounts from first day to day before actual day have to be empty details
+					if (!projectDetails.containsKey(projectId)) {
+						List<TimeSheetDetailDTO> emptyFilledList = new ArrayList<TimeSheetDetailDTO>();
+						for (DateTime i = dateTimeBegin; i.isBefore(dt); i = i.plusDays(1)) {
 
-				// If the project don't exists, we have to add it, and amounts from first day to day before actual day have to be empty details
-				if (!projectDetails.containsKey(projectId)) {
-					List<TimeSheetDetailDTO> emptyFilledList = new ArrayList<TimeSheetDetailDTO>();
-					for (DateTime i = dateTimeBegin; i.isBefore(dt); i = i.plusDays(1)) {
+							timeSheetDetail = new TimeSheetDetailDTO();
+							timeSheetDetail.status = calculateDayStatus(unavailable, i.toDate());
 
-						timeSheetDetail = new TimeSheetDetailDTO();
-						timeSheetDetail.status = calculateDayStatus(unavailable, i.toDate());
+							emptyFilledList.add(timeSheetDetail);
+						}
+						projectDetails.put(projectId, emptyFilledList);
 
-						emptyFilledList.add(timeSheetDetail);
+						// Save the name
+						projectNames.put(projectId, tsdp.getProject().getName());
 					}
-					projectDetails.put(projectId, emptyFilledList);
 
-					// Save the name
-					projectNames.put(projectId, tsdp.getProject().getName());
+					// Add the detail for the day
+					projectDetails.get(projectId).add(new TimeSheetDetailDTO(tsdp, calculateDayStatus(unavailable, dt.toDate())));
 				}
-
-				// Add the detail for the day
-				projectDetails.get(projectId).add(new TimeSheetDetailDTO(tsdp, calculateDayStatus(unavailable, dt.toDate())));
 			}
+
 			// Each project not found must be filled with an empty detail
 			for (long pId : projectFound.keySet()) {
 				if (!projectFound.get(pId)) {
@@ -676,7 +701,7 @@ public class TimeSheetService extends AbstractService {
 			DateTime lastDayOfMonth = new DateTime(firstDayOfMonth).plusMonths(1).minusDays(1).toDateMidnight().toDateTime();
 
 			for (DateTime day = firstDayOfMonth; !day.isAfter(lastDayOfMonth); day = day.plusDays(1)) {
-				TimeSheetDay dayModel = this.getTimeSheetDayForUser(day.toDate(), userId);
+				TimeSheetDay dayModel = this.getTimeSheetDayForUserWithCreation(day.toDate(), userId);
 				dayModel.setStatus(TimeSheetDay.DAY_VALIDATED);
 			}
 
@@ -719,8 +744,8 @@ public class TimeSheetService extends AbstractService {
 				.toDateTime();
 
 		for (DateTime day = firstDayOfMonth; !day.isAfter(lastDayOfMonth); day = day.plusDays(1)) {
-			TimeSheetDay dayModel = this.getTimeSheetDayForUser(day.toDate(), userId);
-			if (dayModel.getStatus() == TimeSheetDay.DAY_TO_VALIDATE) {
+			TimeSheetDay dayModel = this.getTimeSheetDayForUserWithoutCreation(day.toDate(), userId);
+			if (dayModel != null && dayModel.getStatus() == TimeSheetDay.DAY_TO_VALIDATE) {
 				return false;
 			}
 		}
@@ -769,9 +794,11 @@ public class TimeSheetService extends AbstractService {
 				return false;
 			}
 			float amount = 0;
-			dayModel = this.getTimeSheetDayForUser(day.toDate(), userId);
-			for (TimeSheetDetailProject detail : dayModel.getDetailsProjects()) {
-				amount += detail.getAmount();
+			dayModel = this.getTimeSheetDayForUserWithoutCreation(day.toDate(), userId);
+			if (dayModel != null){
+				for (TimeSheetDetailProject detail : dayModel.getDetailsProjects()) {
+					amount += detail.getAmount();
+				}
 			}
 
 			// Check if the amount is correct
