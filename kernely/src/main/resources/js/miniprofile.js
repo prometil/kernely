@@ -31,13 +31,11 @@ AppMiniProfile = (function($){
                 },
                 showMiniProfile: function(){
                         if ($("#profile_popup").is(':hidden')){
-                                $("#profile_popup").show()
-                                
-                                $("#profile_popup").focus();
+                                $("#profile_popup").show();
                                 
                         }
                         else{
-                                $("#profile_popup").hide()
+                                $("#profile_popup").hide();
                         }
                 },
                 test: function(){console.log("tests")},
@@ -50,7 +48,15 @@ AppMiniProfile = (function($){
         ProfilePopUpView = Backbone.View.extend({
                 el: "#profile_popup",
                 
-                initialize:function(){},
+                initialize:function(){
+        			var parent = this;
+		        	$(this.el).hover(function() {
+		        		// nothing to do
+		    			}, function(){
+		    				$(parent.el).stop(true,true);
+		    				$(parent.el).slideUp(1500);
+		    			});
+        		},
                 
                 hide: function(){
                 	$(this.el).hide();

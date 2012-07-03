@@ -853,7 +853,7 @@ public class HolidayRequestService extends AbstractService {
 		DateTime dtmaj;
 
 		List<HolidayRequestDTO> currentRequests = this.getRequestBetweenDatesWithStatus(date1.toDate(), date2.toDate(), this
-				.getAuthenticatedUserModel(), HolidayRequest.PENDING_STATUS, HolidayRequest.ACCEPTED_STATUS);
+				.getAuthenticatedUserModel(), HolidayRequest.PENDING_STATUS, HolidayRequest.ACCEPTED_STATUS, HolidayRequest.PAST_STATUS);
 
 		List<HolidayDetailDTO> allDayReserved = new ArrayList<HolidayDetailDTO>();
 
