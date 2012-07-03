@@ -49,7 +49,7 @@ public class ExpenseServiceTest extends AbstractServiceTest{
 		request.name = NAME_TYPE;
 		request.direct = true;
 		ExpenseTypeDTO type = expenseService.createOrUpdateExpenseType(request);
-		assertEquals(NAME_TYPE, type.name);
+		assertEquals(NAME_TYPE + " (1.0)", type.name);
 		assertTrue(type.direct);
 		assertEquals(1.0F, type.ratio, 0);
 	}
@@ -61,7 +61,7 @@ public class ExpenseServiceTest extends AbstractServiceTest{
 		request.direct = true;
 		request.ratio = RATIO_TYPE;
 		ExpenseTypeDTO type = expenseService.createOrUpdateExpenseType(request);
-		assertEquals(NAME_TYPE, type.name);
+		assertEquals(NAME_TYPE + " (1.0)", type.name);
 		assertTrue(type.direct);
 		// Ratio isn't considered due to direct type.
 		assertEquals(1.0F, type.ratio, 0);
@@ -74,7 +74,7 @@ public class ExpenseServiceTest extends AbstractServiceTest{
 		request.direct = false;
 		request.ratio = RATIO_TYPE;
 		ExpenseTypeDTO type = expenseService.createOrUpdateExpenseType(request);
-		assertEquals(NAME_TYPE, type.name);
+		assertEquals(NAME_TYPE + " ("+RATIO_TYPE+")", type.name);
 		assertFalse(type.direct);
 		assertEquals(RATIO_TYPE, type.ratio, 0);
 	}
@@ -86,7 +86,7 @@ public class ExpenseServiceTest extends AbstractServiceTest{
 		request.direct = false;
 		request.ratio = RATIO_TYPE;
 		ExpenseTypeDTO type = expenseService.createOrUpdateExpenseType(request);
-		assertEquals(NAME_TYPE, type.name);
+		assertEquals(NAME_TYPE  + " ("+RATIO_TYPE+")", type.name);
 		assertFalse(type.direct);
 		assertEquals(RATIO_TYPE, type.ratio, 0);
 		
@@ -94,7 +94,7 @@ public class ExpenseServiceTest extends AbstractServiceTest{
 		request.ratio = RATIO_TYPE_MODIFIED;
 		request.name = NAME_TYPE_MODIFIED;
 		type = expenseService.createOrUpdateExpenseType(request);
-		assertEquals(NAME_TYPE_MODIFIED, type.name);
+		assertEquals(NAME_TYPE_MODIFIED + " (" + RATIO_TYPE_MODIFIED + ")", type.name);
 		assertFalse(type.direct);
 		assertEquals(RATIO_TYPE_MODIFIED, type.ratio, 0);
 	}
@@ -106,7 +106,7 @@ public class ExpenseServiceTest extends AbstractServiceTest{
 		request.direct = true;
 		request.ratio = RATIO_TYPE;
 		ExpenseTypeDTO type = expenseService.createOrUpdateExpenseType(request);
-		assertEquals(NAME_TYPE, type.name);
+		assertEquals(NAME_TYPE  + " (1.0)", type.name);
 		assertTrue(type.direct);
 		assertEquals(1.0F, type.ratio, 0);
 		
@@ -114,7 +114,7 @@ public class ExpenseServiceTest extends AbstractServiceTest{
 		request.ratio = RATIO_TYPE_MODIFIED;
 		request.name = NAME_TYPE_MODIFIED;
 		type = expenseService.createOrUpdateExpenseType(request);
-		assertEquals(NAME_TYPE_MODIFIED, type.name);
+		assertEquals(NAME_TYPE_MODIFIED + " (1.0)", type.name);
 		assertTrue(type.direct);
 		assertEquals(1.0F, type.ratio, 0);
 	}
@@ -151,7 +151,7 @@ public class ExpenseServiceTest extends AbstractServiceTest{
 		
 		ExpenseTypeDTO type = expenseService.createOrUpdateExpenseType(request);
 		ExpenseTypeDTO typeByMethod = expenseService.getExpenseTypeById(type.id);
-		assertEquals(NAME_TYPE, typeByMethod.name);
+		assertEquals(NAME_TYPE + " (1.0)", typeByMethod.name);
 		assertTrue(typeByMethod.direct);
 		assertEquals(1.0F, typeByMethod.ratio, 0);
 	}

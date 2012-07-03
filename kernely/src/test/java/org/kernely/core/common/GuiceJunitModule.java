@@ -95,7 +95,7 @@ public class GuiceJunitModule extends AbstractModule {
 	@Provides
 	protected AbstractConfiguration getAbstractConfiguration(){
 		BaseConfiguration baseConfig = new BaseConfiguration();
-		baseConfig.addProperty("core.locale.dateformat", "MM/dd/yyyy");
+		baseConfig.addProperty("locale.dateformat", "MM/dd/yyyy");
 		return baseConfig;
 	}
 
