@@ -1,5 +1,6 @@
 package org.kernely.holiday.dto;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlRootElement;
@@ -28,6 +29,11 @@ public class HolidayUsersManagerDTO {
 	 * Current year
 	 */
 	public int year;
+	
+	/**
+	 * A list of all not working days in the month
+	 */
+	public List<Integer> weekends = new ArrayList<Integer>();
 	
 	/**
 	 * Default constructor

@@ -10,20 +10,23 @@ import javax.persistence.Query;
 import org.apache.shiro.SecurityUtils;
 import org.kernely.core.model.User;
 import org.kernely.extension.Extender;
-import org.kernely.timesheet.dto.TimeSheetDayAmountDTO;
+import org.kernely.timesheet.dto.TimeSheetDayDTO;
 import org.kernely.timesheet.service.TimeSheetService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 
-public class ChargedDaysExtender extends Extender{
-	
+public class LockedDaysExtender extends Extender{
 	@Inject
 	protected Provider<EntityManager> em;
 	
 	@Inject
 	protected TimeSheetService timeSheetService; 
+	
+	protected final Logger log = LoggerFactory.getLogger(this.getClass());
+
 
 	@Override
 	public HashMap<String, Object> call(HashMap<String, Object> params) {
@@ -33,21 +36,24 @@ public class ChargedDaysExtender extends Extender{
 		Date date1 = (Date)params.get("start");
 		Date date2 = (Date)params.get("end");
 		
-		List<TimeSheetDayAmountDTO> dayAmounts = timeSheetService.getTimeSheetDayAmountForUserBetweenDates(date1, date2, user.getId());
+		log.debug("[LockedDaysExtender] called with params [Start : {}] and [End : {}]", date1, date2);
+		List<TimeSheetDayDTO> days = timeSheetService.getTimeSheetDayForUserBetweenDates(date1, date2, user.getId());
 		HashMap<String, Object> result = new HashMap<String, Object>();
-		// Retrieve all days non available in order to disable them in the UI
-		HashMap<Date, Float> newHashMap = Maps.newHashMap();
-		for(TimeSheetDayAmountDTO tsda : dayAmounts){
-			newHashMap.put(tsda.day, tsda.amount);
+		boolean locked = false;
+
+		for(TimeSheetDayDTO tsd : days){
+			if(tsd.validated){
+				locked = true;
+				break;
+			}
 		}
-		result.put("dates", newHashMap);
+		result.put("locked", locked);
 		
 		return result;
 	}
 
 	@Override
 	public String getExtensionPointName() {
-		return "timesheet_chargedDayAmount";
+		return "timesheet_lockedDays";
 	}
-
 }

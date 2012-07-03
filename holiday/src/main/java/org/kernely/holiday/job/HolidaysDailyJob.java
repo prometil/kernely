@@ -26,18 +26,11 @@ public class HolidaysDailyJob implements Job {
 
 	@Override
 	public void execute(JobExecutionContext arg0) throws JobExecutionException {
-		log.debug("/========================================/");
-		log.debug("HolidayDailyJob: Decrementing balances...");
-		log.debug("/========================================/");
+		log.debug("HolidayDailyJob: Remove days in balances...");
 		balanceService.removePastHolidays();
-		log.debug("/========================================/");
-		log.debug("HolidayDailyJob: Decrementing balance done.");
-		log.debug("/========================================/");
+		log.debug("HolidayDailyJob: Remove days in balances done.");
 		log.debug("HolidayDailyJob: Recall managers...");
-		log.debug("/========================================/");
 		requestService.sendRecallToManagers();
-		log.debug("/========================================/");
 		log.debug("HolidayDailyJob: Recall managers done.");
-		log.debug("/========================================/");
 	}
 }

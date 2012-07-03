@@ -146,14 +146,14 @@ public class UserService extends AbstractService {
 		if (u == null) {
 			throw new IllegalArgumentException("Request cannot be null ");
 		}
+		DateTimeFormatter formatter = DateTimeFormat.forPattern(configuration.getString("locale.dateformat"));
 
 		// parse the string date in class Date
 		String date = u.birth;
 		if (u.birth == null || u.birth.equals("")) {
-			date = "01/01/2000";
+			date = new DateTime().withYear(1990).withMonthOfYear(1).withDayOfMonth(1).toString(formatter);
 		}
-		DateTimeFormatter formatter = DateTimeFormat.forPattern(configuration.getString("locale.dateformat"));
-
+		
 		Date birth = DateTime.parse(date, formatter).toDateMidnight().toDate();
 		UserDetails uDetails = em.get().find(UserDetails.class, u.id);
 		uDetails.setMail(u.email);

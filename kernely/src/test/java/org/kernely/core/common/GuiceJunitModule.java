@@ -52,7 +52,6 @@ public class GuiceJunitModule extends AbstractModule {
 	@Override
 	protected void configure() {
 		install(new GuiceBerryModule());
-		
 		//creates the hibernate util
 		Properties properties = new Properties();
 		properties.put("hibernate.connection.driver_class", "org.hsqldb.jdbcDriver");
@@ -91,12 +90,13 @@ public class GuiceJunitModule extends AbstractModule {
 		bind(SimpleTemplateEngine.class);
 		bind(EventBus.class);
 		
-		
 	}
 	
 	@Provides
 	protected AbstractConfiguration getAbstractConfiguration(){
-		return new BaseConfiguration();
+		BaseConfiguration baseConfig = new BaseConfiguration();
+		baseConfig.addProperty("locale.dateformat", "MM/dd/yyyy");
+		return baseConfig;
 	}
 
 }

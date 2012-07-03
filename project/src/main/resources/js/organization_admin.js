@@ -62,10 +62,10 @@ AppOrganizationAdmin = (function($){
 						var dataOrganization = data.organizationDTO;
 						parent.table.reload(dataOrganization);
 					}
-				}
-				else{
-					parent.table.clear();
-					parent.table.noData();
+					else{
+						parent.table.clear();
+						parent.table.noData();
+					}
 				}
 			});
 			return this;

@@ -81,6 +81,7 @@ public class HolidayManagerRequestController extends AbstractController {
 		log.debug("Call to GET on all holiday request accepted or denied");
 		List<HolidayRequestDTO> lhr = new ArrayList<HolidayRequestDTO>();
 		lhr.addAll(holidayRequestService.getSpecificRequestsForManagers(HolidayRequest.ACCEPTED_STATUS, -1));
+		lhr.addAll(holidayRequestService.getSpecificRequestsForManagers(HolidayRequest.PAST_STATUS, -1));
 		lhr.addAll(holidayRequestService.getSpecificRequestsForManagers(HolidayRequest.DENIED_STATUS, -1));
 		Collections.sort(lhr);
 		return lhr; 
@@ -98,6 +99,7 @@ public class HolidayManagerRequestController extends AbstractController {
 	{
 		List<HolidayRequestDTO> lhr = new ArrayList<HolidayRequestDTO>();
 		lhr.addAll(holidayRequestService.getSpecificRequestsForManagers(HolidayRequest.ACCEPTED_STATUS, year));
+		lhr.addAll(holidayRequestService.getSpecificRequestsForManagers(HolidayRequest.PAST_STATUS, year));
 		lhr.addAll(holidayRequestService.getSpecificRequestsForManagers(HolidayRequest.DENIED_STATUS, year));
 		Collections.sort(lhr);
 		return lhr;

@@ -186,7 +186,7 @@ public class UserDetailsDTO {
 		if (details.getHire() != null) {
 			String newDateString;
 			Date date = details.getHire();
-			String newPattern = "dd/MM/yyyy";
+			String newPattern = dateFormat;
 			newDateString = (new SimpleDateFormat(newPattern)).format(date);
 			this.hireString = newDateString;
 		} else {

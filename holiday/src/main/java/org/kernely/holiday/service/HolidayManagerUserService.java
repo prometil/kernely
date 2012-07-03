@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
+import org.apache.commons.configuration.AbstractConfiguration;
 import org.apache.shiro.authz.UnauthorizedException;
 import org.joda.time.DateTime;
 import org.kernely.core.dto.UserDTO;
@@ -33,6 +34,9 @@ public class HolidayManagerUserService extends AbstractService{
 
 	@Inject
 	private UserService userService;
+	
+	@Inject
+	private AbstractConfiguration configuration;
 
 
 	/**
@@ -84,7 +88,8 @@ public class HolidayManagerUserService extends AbstractService{
 			// Clear all the list for the new user
 			detailsDTO = new ArrayList<HolidayDetailDTO>();
 			detailManagedDTO = new TreeSet<HolidayManagedDetailsDTO>();
-			List<HolidayRequestDTO> requests = holidayRequestService.getRequestBetweenDatesWithStatus(first.toDate(), last.toDate(), u, HolidayRequest.PENDING_STATUS, HolidayRequest.ACCEPTED_STATUS);
+			List<HolidayRequestDTO> requests = holidayRequestService.getRequestBetweenDatesWithStatus(first.toDate(), last.toDate(), u, HolidayRequest.PENDING_STATUS, HolidayRequest.ACCEPTED_STATUS, HolidayRequest.PAST_STATUS);
+			
 			for(HolidayRequestDTO req : requests){
 				detailsDTO.addAll(req.details);
 			}
@@ -102,6 +107,17 @@ public class HolidayManagerUserService extends AbstractService{
 		mainDTO.nbDays = last.getDayOfMonth();
 		mainDTO.month = monthNeeded;
 		mainDTO.year = yearNeeded;
+		
+		configuration.setListDelimiter(',');
+		String[] daysString = configuration.getStringArray("notWorkingDays");
+		for(DateTime dt = first; !dt.isAfter(last); dt = dt.plusDays(1)){
+			for(int i = 0; i < daysString.length; i++){
+				if(dt.getDayOfWeek() == Integer.parseInt(daysString[i])){
+					mainDTO.weekends.add(dt.getDayOfMonth());
+				}
+			}
+		}
+		
 		return mainDTO;
 	}
 }

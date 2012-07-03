@@ -130,6 +130,8 @@ public class HolidayRequestService extends AbstractService {
 			HolidayRequestDetail detail = new HolidayRequestDetail();
 			detail.setAm(hdcr.am);
 			detail.setPm(hdcr.pm);
+			
+			
 			DateTimeFormatter fmt = DateTimeFormat.forPattern(configuration.getString("locale.dateformat"));
 			DateTime day = fmt.parseDateTime(hdcr.day);
 			detail.setDay(day.toDate());
@@ -353,9 +355,41 @@ public class HolidayRequestService extends AbstractService {
 		}
 		try {
 			List<HolidayRequest> requests = (List<HolidayRequest>) query.getResultList();
+
+			HashMap<String, Object> args = new HashMap<String,Object>();
+			boolean locked = false;
+			boolean timeSheetPluginFound = false;
+			List<Extender> timesheetExtenders = org.kernely.plugin.PluginManager.getExtenders("timesheet_lockedDays");
+			log.debug("Extender for the name [timesheet_lockedDays] list size : {}", timesheetExtenders.size());
+			
 			List<HolidayRequestDTO> requestsDTO = new ArrayList<HolidayRequestDTO>();
+			
+			HolidayRequestDTO requestDTO;
 			for (HolidayRequest r : requests) {
-				requestsDTO.add(new HolidayRequestDTO(r));
+
+				args.put("start", r.getBeginDate());
+				args.put("end", r.getEndDate());
+				for (Extender timesheetExtender : timesheetExtenders){
+					log.debug("Timesheet extender [LockedDays] found");
+					locked = (Boolean) timesheetExtender.call(args).get("locked");
+					timeSheetPluginFound = true;
+				}
+				
+				requestDTO = new HolidayRequestDTO(r);
+				if(locked){
+					log.debug("[LockedExtender found] This request with id {} can't be canceled due to locked days in timesheet !", r.getId());
+					requestDTO.cancelable = false;
+				}					
+				else if(!timeSheetPluginFound && (new DateTime(r.getEndDate()).isBefore(DateTime.now()) && r.getStatus() != 2)){
+					log.debug("[LockedExtender not found] This request with id {} can't be canceled due to reached end date !", r.getId());
+					requestDTO.cancelable = false;
+				}
+				else{
+					log.debug("[LockedExtender not found] This request with id {} can be canceled !", r.getId());
+					requestDTO.cancelable = true;
+				}
+				
+				requestsDTO.add(requestDTO);
 			}
 
 			return requestsDTO;
@@ -474,8 +508,8 @@ public class HolidayRequestService extends AbstractService {
 	@Transactional
 	public List<HolidayRequestDTO> getRequestBetweenDatesWithStatus(Date date1, Date date2, User user, int... status) {
 	
-		DateTime begin = new DateTime(date1).toDateMidnight().minus(1).toDateTime();
-		DateTime end = new DateTime(date2).toDateMidnight().toDateTime().plusDays(1);
+		DateTime beginUpd = new DateTime(date1).toDateMidnight().minus(1).toDateTime();
+		DateTime endUpd = new DateTime(date2).toDateMidnight().toDateTime().plusDays(1);
 		
 		DateTime requestBeginDate;
 		DateTime requestEndDate;
@@ -489,17 +523,20 @@ public class HolidayRequestService extends AbstractService {
 		query.setParameter("status", statusList);
 		try {
 			List<HolidayRequest> requests = (List<HolidayRequest>) query.getResultList();
-
 			List<HolidayRequestDTO> requestsDTO = new ArrayList<HolidayRequestDTO>();
+			
+			HolidayRequestDTO requestDTO;
 			for (HolidayRequest r : requests) {
 				
 				requestBeginDate = new DateTime(r.getBeginDate());
 				requestEndDate = new DateTime(r.getEndDate());
 
-				boolean requestBeginsBetweenDates = requestBeginDate.toDateMidnight().isBefore(end);
-				boolean requestEndsBetweenDates = requestEndDate.toDateMidnight().isAfter(begin);
+
+				boolean requestBeginsBetweenDates = requestBeginDate.toDateMidnight().isBefore(endUpd);
+				boolean requestEndsBetweenDates = requestEndDate.toDateMidnight().isAfter(beginUpd);
 				if (requestBeginsBetweenDates && requestEndsBetweenDates){
-					requestsDTO.add(new HolidayRequestDTO(r));
+					requestDTO = new HolidayRequestDTO(r);
+					requestsDTO.add(requestDTO);
 				}
 			}
 
@@ -655,10 +692,29 @@ public class HolidayRequestService extends AbstractService {
 			log.debug("The user {} has tried to delete the request with id {} but he's not the owner of the request", this.getAuthenticatedUserModel().getId(), request.getId());
 			throw new UnauthorizedException("This request isn't yours. You can't delete it.");
 		}
-		if(new DateTime(request.getEndDate()).isBefore(DateTime.now()) && request.getStatus() != 2){
-			log.debug("The user {} has tried to delete the request with id {} but end date is already reached", this.getAuthenticatedUserModel().getId(), request.getId());
-			throw new IllegalArgumentException("You can't cancel this request, end date is already reached.");
+		
+		HashMap<String, Object> args = new HashMap<String,Object>();
+		args.put("start", request.getBeginDate());
+		args.put("end", request.getEndDate());
+		boolean locked = false;
+		boolean timeSheetPluginFound = false;
+		List<Extender> timesheetExtenders = org.kernely.plugin.PluginManager.getExtenders("timesheet_lockedDays");
+		for (Extender timesheetExtender : timesheetExtenders){
+			log.debug("Timesheet extender [LockedDays] found");
+			locked = (Boolean) timesheetExtender.call(args).get("locked");
+			timeSheetPluginFound = true;
 		}
+		
+		if(locked){
+			log.debug("The user {} has tried to delete the request with id {} but timesheet associated is already validated.", this.getAuthenticatedUserModel().getId(), request.getId());
+			throw new IllegalArgumentException("You can't cancel this request, the timesheet associated is already validated.");
+		}
+		
+		if(!timeSheetPluginFound && (new DateTime(request.getEndDate()).isBefore(DateTime.now()) && request.getStatus() != 2)){
+			log.debug("The user {} has tried to delete the request with id {} but end date is already reached.", this.getAuthenticatedUserModel().getId(), request.getId());
+			throw new IllegalArgumentException("You can't cancel this request, the end date is already reached.");
+		}
+		
 		Set<HolidayRequestDetail> holidayRequestDetails = request.getDetails();
 
 		// Update the temporary balance
@@ -683,8 +739,15 @@ public class HolidayRequestService extends AbstractService {
 
 		// Update temporary balance
 		Set<Entry<HolidayTypeInstance, Float>> entries = typeToUpdate.entrySet();
-		for (Entry<HolidayTypeInstance, Float> e : entries) {
-			this.balanceService.addDaysInAvailableUpdatedFromRequest(e.getKey().getId(), request.getUser().getId(), e.getValue());
+		if(request.getStatus() == HolidayRequest.ACCEPTED_STATUS || request.getStatus() == HolidayRequest.PENDING_STATUS){
+			for (Entry<HolidayTypeInstance, Float> e : entries) {
+				this.balanceService.addDaysInAvailableUpdatedFromRequest(e.getKey().getId(), request.getUser().getId(), e.getValue());
+			}
+		}
+		else if(request.getStatus() == HolidayRequest.PAST_STATUS){
+			for (Entry<HolidayTypeInstance, Float> e : entries) {
+				this.balanceService.addDaysInAvailableFromRequest(e.getKey().getId(), request.getUser().getId(), e.getValue());
+			}
 		}
 
 		for (HolidayRequestDetail hrd : holidayRequestDetails) {
@@ -790,7 +853,7 @@ public class HolidayRequestService extends AbstractService {
 		DateTime dtmaj;
 
 		List<HolidayRequestDTO> currentRequests = this.getRequestBetweenDatesWithStatus(date1.toDate(), date2.toDate(), this
-				.getAuthenticatedUserModel(), HolidayRequest.PENDING_STATUS, HolidayRequest.ACCEPTED_STATUS);
+				.getAuthenticatedUserModel(), HolidayRequest.PENDING_STATUS, HolidayRequest.ACCEPTED_STATUS, HolidayRequest.PAST_STATUS);
 
 		List<HolidayDetailDTO> allDayReserved = new ArrayList<HolidayDetailDTO>();
 
@@ -815,7 +878,7 @@ public class HolidayRequestService extends AbstractService {
 		args.put("end", date2.toDate());
 		Map<Date, Float> unavailable = new HashMap<Date, Float>();
 				
-		List<Extender> timesheetExtenders = org.kernely.plugin.PluginManager.getExtenders("timesheet");
+		List<Extender> timesheetExtenders = org.kernely.plugin.PluginManager.getExtenders("timesheet_chargedDayAmount");
 		for (Extender timesheetExtender : timesheetExtenders){
 			log.debug("Timesheet extender found");
 			result = (HashMap<Date, Float>) timesheetExtender.call(args).get("dates");
@@ -845,6 +908,7 @@ public class HolidayRequestService extends AbstractService {
 			
 			// The end of the week is not displayed
 			if (dtmaj.getDayOfWeek() < DAYS_IN_WEEK) {
+				Float amountF = unavailable.get(dtmaj.toDate());
 				for (HolidayDetailDTO detail : allDayReserved) {
 					if (new DateTime(detail.day).toDateMidnight().isEqual(dtmaj.toDateMidnight())) {
 						if (detail.am) {							
@@ -859,18 +923,22 @@ public class HolidayRequestService extends AbstractService {
 						}
 					}
 				}
-				Float amountF = unavailable.get(dtmaj.toDate());
 				if(amountF != null){
 					if(amountF.floatValue() > 4){
-						dayDTO.morningAvailable = false;
-						dayDTO.morningCharged = true;
-						dayDTO.afternoonAvailable = false;
-						dayDTO.afternoonCharged = true;
+							dayDTO.morningAvailable = false;
+							dayDTO.morningCharged = true;
+							dayDTO.afternoonAvailable = false;
+							dayDTO.afternoonCharged = true;
 					}
 					else{
-						dayDTO.morningAvailable = false;
-						dayDTO.morningCharged = true;
-						dayDTO.afternoonAvailable = true;
+						if(dayDTO.morningAvailable){
+							dayDTO.morningAvailable = false;
+							dayDTO.morningCharged = true;
+						}
+						else{
+							dayDTO.afternoonCharged = true;
+							dayDTO.afternoonAvailable = false;
+						}
 					}
 				}
 				daysDTO.add(dayDTO);

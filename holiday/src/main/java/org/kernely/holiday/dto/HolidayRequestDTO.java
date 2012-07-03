@@ -111,7 +111,6 @@ public class HolidayRequestDTO implements Comparable<HolidayRequestDTO> {
 		for(HolidayRequestDetail hd : request.getDetails()){
 			this.details.add(new HolidayDetailDTO(hd));
 		}
-		this.cancelable = (new DateTime(this.endDate).isAfter(DateTime.now()) && (status == 2 || status == 1));
 	}
 	
 	/** 

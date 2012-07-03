@@ -127,7 +127,7 @@ public class UserServiceTest extends AbstractServiceTest{
 		UserDTO userdto = creationOfTestUser(STRING_TEST);
 		
 		UserDetailsUpdateRequestDTO request = new UserDetailsUpdateRequestDTO();
-		request.birth="18/12/1990";
+		request.birth="12/18/1990";
 		request.adress=STRING_TEST;
 		request.businessphone=NUMBER;
 		request.city=STRING_TEST;
@@ -147,7 +147,7 @@ public class UserServiceTest extends AbstractServiceTest{
 		UserDetailsDTO uddto = new UserDetailsDTO();
 		uddto = service.getUserDetails(userdto.username);
 		
-		assertEquals("18/12/1990", uddto.birth);
+		assertEquals("12/18/1990", uddto.birth);
 		assertEquals(STRING_TEST,uddto.adress);
 		assertEquals(NUMBER,uddto.businessphone);
 		assertEquals(STRING_TEST , uddto.city);

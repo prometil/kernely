@@ -71,6 +71,7 @@ public class HolidayMainController extends AbstractController {
 		List<HolidayRequestDTO> lhr = new ArrayList<HolidayRequestDTO>();
 		lhr.addAll(holidayRequestService.getAllRequestsWithStatusForCurrentUser(HolidayRequest.ACCEPTED_STATUS, -1));
 		lhr.addAll(holidayRequestService.getAllRequestsWithStatusForCurrentUser(HolidayRequest.DENIED_STATUS, -1));
+		lhr.addAll(holidayRequestService.getAllRequestsWithStatusForCurrentUser(HolidayRequest.PAST_STATUS, -1));
 		Collections.sort(lhr);
 		return lhr;
 	}
@@ -87,6 +88,7 @@ public class HolidayMainController extends AbstractController {
 		List<HolidayRequestDTO> lhr = new ArrayList<HolidayRequestDTO>();
 		lhr.addAll(holidayRequestService.getAllRequestsWithStatusForCurrentUser(HolidayRequest.ACCEPTED_STATUS, year));
 		lhr.addAll(holidayRequestService.getAllRequestsWithStatusForCurrentUser(HolidayRequest.DENIED_STATUS, year));
+		lhr.addAll(holidayRequestService.getAllRequestsWithStatusForCurrentUser(HolidayRequest.PAST_STATUS, year));
 		Collections.sort(lhr);
 		return lhr;
 	}

@@ -1,1 +1,1 @@
-java -cp "lib/*" org.kernely.Kernely -Dlogback.configurationFile=conf/logback-prod.xml
+java -cp "lib/*" -Dlogback.configurationFile=conf/logback-prod.xml org.kernely.Kernely

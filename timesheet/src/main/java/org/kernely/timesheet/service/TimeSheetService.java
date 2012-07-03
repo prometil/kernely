@@ -141,12 +141,30 @@ public class TimeSheetService extends AbstractService {
 	 */
 	@Transactional
 	public TimeSheetDTO getTimeSheet(int week, int year, long userId, boolean withCreation) {
+
+
 		log.debug("Searching timesheet for week {}, year {} and user {}",new Object[]{week,year,userId});
-		Date firstDay = new DateTime().withWeekOfWeekyear(week).withYear(year).withDayOfWeek(1).toDateMidnight().toDate();
-		Date lastDay = new DateTime().withWeekOfWeekyear(week).withYear(year).withDayOfWeek(7).toDateMidnight().toDate();
+		
+		DateTime firstDayDT;
+		DateTime lastDayDT;
+		
+		Date firstDay;
+		Date lastDay;
+		
+		if(week <= 52){
+			firstDay = new DateTime().withYear(year).withWeekOfWeekyear(week).withDayOfWeek(1).toDateMidnight().toDate();
+			lastDay = new DateTime().withYear(year).withWeekOfWeekyear(week).withDayOfWeek(7).toDateMidnight().toDate();
+		}
+		else {
+			firstDayDT = new DateTime().withYear(year);
+			firstDay = firstDayDT.withWeekOfWeekyear(firstDayDT.weekOfWeekyear().getMaximumValue()).withDayOfWeek(1).toDateMidnight().toDate();
+			lastDayDT = new DateTime().withYear(year);
+			lastDay = lastDayDT.withWeekOfWeekyear(lastDayDT.weekOfWeekyear().getMaximumValue()).withDayOfWeek(7).toDateMidnight().toDate();
+		}
+		
 		Query query = em.get().createQuery("SELECT t FROM TimeSheet t WHERE user = :user AND beginDate = :beginWeek AND endDate = :endWeek");
 		User user = em.get().find(User.class, userId);
-
+		
 		query.setParameter("user", user);
 		query.setParameter("beginWeek", firstDay);
 		query.setParameter("endWeek", lastDay);
@@ -433,7 +451,8 @@ public class TimeSheetService extends AbstractService {
 		query.setParameter("timeSheet", timeSheet);
 		try {
 			// If the detail for this day exists, returns it.
-			return (TimeSheetDay) query.getSingleResult();
+			TimeSheetDay tsday = (TimeSheetDay) query.getSingleResult();
+			return tsday;
 		} catch (NoResultException nre) {
 			// The detail doesn't exist, we have to create it if needeed.
 			if (withCreation){
@@ -448,7 +467,14 @@ public class TimeSheetService extends AbstractService {
 		}
 
 	}
-
+	
+	/**
+	 * Gets all the amount with the day associated for the given date interval and the given user
+	 * @param begin the beginning of the interval
+	 * @param end the end of the interval
+	 * @param userId the id of the user needed
+	 * @return A list of TimeSheetDayAmountDTO containing all days and their amounts for the given interval and user.
+	 */
 	@Transactional
 	public List<TimeSheetDayAmountDTO> getTimeSheetDayAmountForUserBetweenDates(Date begin, Date end, long userId) {
 		DateTime dateTimeBegin = new DateTime(begin).toDateMidnight().toDateTime();
@@ -461,15 +487,45 @@ public class TimeSheetService extends AbstractService {
 		float amount;
 		for (DateTime dt = dateTimeBegin; dt.isBefore(dateTimeEnd); dt = dt.plusDays(1)) {
 			amount = 0;
-			timeSheetDay = this.getTimeSheetDayForUserWithCreation(dt.toDate(), userId);
-			timeSheetDetails = timeSheetDay.getDetailsProjects();
-			for (TimeSheetDetailProject tsdp : timeSheetDetails) {
-				amount += tsdp.getAmount();
+			timeSheetDay = this.getTimeSheetDayForUserWithoutCreation(dt.toDate(), userId);
+			if(timeSheetDay != null){
+				timeSheetDetails = timeSheetDay.getDetailsProjects();
+				for (TimeSheetDetailProject tsdp : timeSheetDetails) {
+					amount += tsdp.getAmount();
+				}
 			}
 			dayAmountDTOs.add(new TimeSheetDayAmountDTO(dt.toDate(), amount));
 		}
 
 		return dayAmountDTOs;
+	}
+	
+	/**
+	 * Gets all the timesheet days between the given interval and for the given user.
+	 * @param begin the beginning of the interval
+	 * @param end the end of the interval
+	 * @param userId the id of the user needed
+	 * @return A list of TimeSheetDayDTO containing all the days present in the given interval for the given user.
+	 */
+	@Transactional
+	public List<TimeSheetDayDTO> getTimeSheetDayForUserBetweenDates(Date begin, Date end, long userId){
+		DateTime dateTimeBegin = new DateTime(begin).toDateMidnight().toDateTime();
+		DateTime dateTimeEnd = new DateTime(end).plusDays(1).toDateMidnight().toDateTime();
+		
+		List<TimeSheetDayDTO> dayDTOs = new ArrayList<TimeSheetDayDTO>();
+		
+		TimeSheetDay timeSheetDay;
+		TimeSheetDayDTO dto;
+		
+		for(DateTime dt = dateTimeBegin; dt.isBefore(dateTimeEnd); dt = dt.plusDays(1)){
+			timeSheetDay = this.getTimeSheetDayForUserWithoutCreation(dt.toDate(), userId);
+			if(timeSheetDay != null){
+				dto = new TimeSheetDayDTO(timeSheetDay);
+				dayDTOs.add(dto);
+			}
+		}
+		
+		return dayDTOs;
 	}
 
 	private TimeSheet getTimeSheetForDateForCurrentUser(Date date) {

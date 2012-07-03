@@ -682,7 +682,6 @@ public class HolidayBalanceService extends AbstractService {
 		if (!(Math.abs(((float) entire) * HALF_DAY - days) < RANGE)) {
 			throw new IllegalArgumentException("Can only retrieve days or half days. " + days + " is not a multiple of half day");
 		}
-
 		HolidayTypeInstance typeInstance = em.get().find(HolidayTypeInstance.class, typeInstanceId);
 		if (!typeInstance.isUnlimited()) {
 			Set<HolidayBalanceDTO> balances = getHolidayBalancesAvailable(typeInstanceId, userId);
@@ -720,8 +719,82 @@ public class HolidayBalanceService extends AbstractService {
 						em.get().merge(currentBalanceModel);
 					}
 				}
+				else if(maxOfThisBalance == 0){
+					int newBalanceAvail = availInThisBalance + remainToAdd;
+					currentBalanceModel.setAvailableBalanceUpdated(newBalanceAvail);
+					em.get().merge(currentBalanceModel);
+					break;
+				}
 			}
 		}
+	}
+	
+	/**
+	 * Updates the availableBalance field when a request made by a
+	 * user is archived. Adds automatically days from the newest balance available. The
+	 * available quantity can not be greater than the quantity field * the
+	 * period unit defined in the associated type.
+	 * 
+	 * @param typeInstanceId
+	 *            Id of the instance of the type of holiday needed
+	 * @param userId
+	 *            User concerned by the balance needed
+	 * @param days
+	 *            Number of days requested
+	 */
+	@Transactional
+	public void addDaysInAvailableFromRequest(long typeInstanceId, long userId, float days) {
+
+		// Can only add days or half days.
+		int entire = (int) (days / HALF_DAY);
+		if (!(Math.abs(((float) entire) * HALF_DAY - days) < RANGE)) {
+			throw new IllegalArgumentException("Can only add days or half days. " + days + " is not a multiple of half day");
+		}
+
+		
+		HolidayTypeInstance typeInstance = em.get().find(HolidayTypeInstance.class, typeInstanceId);
+		if (!typeInstance.isUnlimited()) {
+			Set<HolidayBalanceDTO> balances = getHolidayBalancesAvailable(typeInstanceId, userId);
+			// The method 'getHolidayBalancesAvailable' gives balances in
+			// descending order. We have to reverse the collection to have the ascending order.
+			List<HolidayBalanceDTO> balancesReversed = new ArrayList<HolidayBalanceDTO>(balances);
+			Collections.reverse(balancesReversed);
+			int remainToAdd = (int) (days * TWELTHS_DAYS);
+			HolidayBalance currentBalanceModel;
+			int maxOfThisBalance;
+			int availInThisBalance;
+			for (HolidayBalanceDTO b : balancesReversed) {
+				currentBalanceModel = em.get().find(HolidayBalance.class, b.id);
+				// Retrieve the maximum quantity of this balance
+				maxOfThisBalance = (int) (typeInstance.getQuantity() * typeInstance.getPeriodUnit() * 12);
+				// Current available quantity
+				availInThisBalance = currentBalanceModel.getAvailableBalance();
+				// If the balance is full, switch to the next balance, else we fill
+				// it as possible.
+				if (availInThisBalance < maxOfThisBalance && maxOfThisBalance > 0) {
+					// If there is enough space in this balance to add all days
+					if (maxOfThisBalance >= (remainToAdd + availInThisBalance)) {
+						int newBalanceAvail = availInThisBalance + remainToAdd;
+						currentBalanceModel.setAvailableBalance(newBalanceAvail);
+						em.get().merge(currentBalanceModel);
+						break;
+					} else { // Increase the balance until its maximum and decrease
+						// the remain quantity to add.
+						currentBalanceModel.setAvailableBalance(maxOfThisBalance);
+						remainToAdd -= (maxOfThisBalance - availInThisBalance);
+						em.get().merge(currentBalanceModel);
+					}
+				}
+				else if(maxOfThisBalance == 0){
+					int newBalanceAvail = availInThisBalance + remainToAdd;
+					currentBalanceModel.setAvailableBalance(newBalanceAvail);
+					em.get().merge(currentBalanceModel);
+					break;
+				}
+			}
+		}
+		// We have to update the AvailableUpdated field too, in order to the user can see the update
+		this.addDaysInAvailableUpdatedFromRequest(typeInstanceId, userId, days);
 	}
 
 	/**
@@ -736,7 +809,7 @@ public class HolidayBalanceService extends AbstractService {
 
 		List<HolidayRequestDTO> acceptedRequests = holidayRequestService.getAllRequestsWithStatus(HolidayRequest.ACCEPTED_STATUS);
 
-		log.debug("{} requests with accepted status.", acceptedRequests.size());
+		log.debug("[RemovePastHolidays] {} requests with accepted status.", acceptedRequests.size());
 
 		long userId;
 
@@ -750,11 +823,12 @@ public class HolidayBalanceService extends AbstractService {
 
 			DateTime today = new DateTime();
 
-			log.debug("Begin: {}", beginTime);
-			log.debug("Today: {}", today.toDateMidnight());
+			log.debug("[RemovePastHolidays] Begin: {}", beginTime);
+			log.debug("[RemovePastHolidays] Today: {}", today.toDateMidnight());
 			// Update balances by removing days of accepted holidays that have
 			// been accepted and that are passed
 			if (today.toDateMidnight().isAfter(beginTime.toDateMidnight()) || today.toDateMidnight().isEqual(beginTime.toDateMidnight())) {
+				log.debug("[RemovePastHolidays] Archiving request with ID : {}", request.id);
 				// Calculate the amount of days of this request
 				for (HolidayDetailDTO detail : request.details) {
 
