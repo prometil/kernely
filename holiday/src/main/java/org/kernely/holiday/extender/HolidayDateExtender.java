@@ -58,6 +58,7 @@ public class HolidayDateExtender extends Extender {
 				// If the day is already in the map, it can be at 0.5 or 1. If it is inferior to 1, adds 0.5.
 				if (newHashMap.containsKey(detail.day) && newHashMap.get(detail.day) < 1){
 					newHashMap.put(detail.day, new Float(newHashMap.get(detail.day) + 0.5));
+
 				} else {
 					// Add 0.5 for am and pm.
 					Float amount = 0F;

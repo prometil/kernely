@@ -13,7 +13,6 @@ import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
 import org.apache.commons.configuration.AbstractConfiguration;
-import org.hibernate.annotations.Synchronize;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.joda.time.format.DateTimeFormat;
@@ -204,7 +203,6 @@ public class TimeSheetService extends AbstractService {
 		} catch (NoResultException nre) {
 			log.debug("No timesheet found for week {} and user {}", week, userId);
 			if (withCreation) {
-				log.debug("Creating timesheet for week {} and user {}", week, userId);
 				// Create the time sheet if not founded.
 				TimeSheetCreationRequestDTO creationRequest = new TimeSheetCreationRequestDTO();
 				creationRequest.begin = firstDay;
@@ -294,7 +292,6 @@ public class TimeSheetService extends AbstractService {
 			log.debug("Date extender found");
 			result = (HashMap<Date, Float>) dateExtender.call(args).get("dates");
 			for (Date d : result.keySet()) {
-				// If the day is marked as "true", the day is not available
 				if (result.get(d) > 0) {
 					unavailable.put(d, result.get(d));
 				}
@@ -424,7 +421,7 @@ public class TimeSheetService extends AbstractService {
 		DateTime datetime = new DateTime(day).toDateMidnight().toDateTime();
 
 		TimeSheetDTO timeSheetDTO = this.getTimeSheet(datetime.getWeekOfWeekyear(), datetime.getYear(), userId, withCreation);
-		
+
 		if (timeSheetDTO == null){
 			return null;
 		}
@@ -738,14 +735,13 @@ public class TimeSheetService extends AbstractService {
 	 * @return true if the month has been validated, false otherwise.
 	 */
 	public boolean checkMonthTimeSheetValidation(int month, int year, long userId) {
-
 		DateTime firstDayOfMonth = new DateTime().withDayOfMonth(1).withMonthOfYear(month).withYear(year).toDateMidnight().toDateTime();
 		DateTime lastDayOfMonth = new DateTime().withDayOfMonth(1).withMonthOfYear(month).plusMonths(1).minusDays(1).withYear(year).toDateMidnight()
 				.toDateTime();
 
 		for (DateTime day = firstDayOfMonth; !day.isAfter(lastDayOfMonth); day = day.plusDays(1)) {
 			TimeSheetDay dayModel = this.getTimeSheetDayForUserWithoutCreation(day.toDate(), userId);
-			if (dayModel != null && dayModel.getStatus() == TimeSheetDay.DAY_TO_VALIDATE) {
+			if (dayModel != null && dayModel.getStatus() != TimeSheetDay.DAY_VALIDATED) {
 				return false;
 			}
 		}
@@ -808,6 +804,7 @@ public class TimeSheetService extends AbstractService {
 
 			if ((maxDayValue - amount ) > 0.001) {
 				// The timesheet can not be validated if the difference between amount and max value is too different
+
 				return false;
 			}
 		}
