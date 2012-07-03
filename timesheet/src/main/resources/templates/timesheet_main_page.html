@@ -14,6 +14,7 @@
 {% endblock %}
 
 {% block template %}
+	<script type="text/html" id="no-description-template">{% i18n "no-description" %}</script>
 	<script type="text/html" id="actual-template">{% i18n "actual" %}</script>
 	<script type="text/html" id="available-type-template">{% i18n "available-type" %}</script>
 	<script type="text/html" id="delete-template">{% i18n "delete" %}</script>
@@ -63,22 +64,25 @@
 		<div id="errors_message"></div>
 		<fieldset>
 		<legend>{% i18n "expense-header-table" %}</legend>
-		<table id="expense-table" class="kernely_table">
-			<thead>
-				<tr>
-					<th>{% i18n "expense_amount" %}</th>
-					<th>{% i18n "expense_type" %}</th>
-					<th><!-- Column for the edit button --></th>
-					<th><!-- Column for the delete button --></th>
-				</tr>
-			</thead>
-			<tbody id="expenses-lines">
-			</tbody>
-		</table>
+		<div id="table-expense-containter">
+			<table id="expense-table" class="kernely_table">
+				<thead>
+					<tr>
+						<th>{% i18n "expense_amount" %}</th>
+						<th>{% i18n "expense_type" %}</th>
+						<th><!-- Column for the edit button --></th>
+						<th><!-- Column for the delete button --></th>
+					</tr>
+				</thead>
+				<tbody id="expenses-lines">
+				</tbody>
+			</table>
+		</div>
 		<div id="expense-form">
 			{% i18n "expense_amount" %}: <input class="kernely_input" type="text" name="amount" id="expense-amount"/>
 			<select id="expense-type-select"></select>
 			<input type="button" class="button_emphasis" id="submit-expense" value="{% i18n "create" %}"/><br/>
+			<div class="user-help" id="type-description"></div>
 		</div>
 		</fieldset>
 		<div class="dialog-buttons-container">

@@ -906,6 +906,8 @@ AppTimeSheet = (function($){
 			$("#modal_window_expense").kernely_dialog({
 				title: titleTemplate,
 				content: template,
+				width: 500,
+				height:450,
 				eventNames:'click .create_expense',
 				events:{
 					'click .create_expense': parent.closemodal
@@ -1086,13 +1088,25 @@ AppTimeSheet = (function($){
 		el:"#expense-form",
 		
 		idDay : null,
+		descriptions:{},
 		
 		events:{
-			"click #submit-expense" : "registerExpense"
+			"click #submit-expense" : "registerExpense",
+			"change #expense-type-select" : "showDescription"
 		},
 		
 		initialize: function(day){
 			this.idDay = day;
+		},
+		
+		showDescription: function(){
+			var text = this.descriptions[$("#expense-type-select").val()];
+			if(text != null){
+				$("#type-description").html(text);
+			}
+			else{
+				$("#type-description").html($("#no-description-template").text());
+			}
 		},
 		
 		registerExpense: function(){
@@ -1122,6 +1136,7 @@ AppTimeSheet = (function($){
 		},
 		
 		render: function(){
+			var parent = this;
 			$.ajax({
 				url:"/expense/type/all",
 				dataType:"json",
@@ -1131,11 +1146,26 @@ AppTimeSheet = (function($){
 							$.each(data.expenseTypeDTO, function(){
 								$("#expense-type-select").append($('<option>', { value : this.id })
 								          .text(this.name));
+								parent.descriptions[this.id] = this.description;
 							});
+							var text = parent.descriptions[$("#expense-type-select option:selected").val()];
+							if(text != null){
+								$("#type-description").html(text);
+							}
+							else{
+								$("#type-description").html($("#no-description-template").text());
+							}
 						}
 						else{
 							$("#expense-type-select").append($('<option>', { value : data.expenseTypeDTO.id })
 							          .text(data.expenseTypeDTO.name));
+							parent.descriptions[data.expenseTypeDTO.id] = data.expenseTypeDTO.description;
+							if(data.expenseTypeDTO.description != ""){
+								$("#type-description").html(data.expenseTypeDTO.description);
+							}
+							else{
+								$("#type-description").html($("#no-description-template").text());
+							}
 						}
 					}
 				}

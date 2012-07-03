@@ -31,6 +31,11 @@ public class ExpenseTypeDTO {
 	public float ratio;
 	
 	/**
+	 * Description of this type
+	 */
+	public String description;
+	
+	/**
 	 * Default constructor
 	 */
 	public ExpenseTypeDTO(){}
@@ -44,5 +49,6 @@ public class ExpenseTypeDTO {
 		this.name = type.getName() + " (" + type.getRatio() + ")";
 		this.direct = type.isDirect();
 		this.ratio = type.getRatio();
+		this.description = type.getDescription();
 	}
 }

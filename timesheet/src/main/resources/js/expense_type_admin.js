@@ -141,7 +141,7 @@ AppExpenseType = (function($){
 		},
 		
 		createType: function(){
-			var json = '{"id":"0", "name":"'+$('input[name*="name"]').val()+'","direct":"'+$('input[name*="direct"]').is(":checked")+'", "ratio":"'+$('input[name*="ratio"]').val()+'"}';
+			var json = '{"id":"0", "name":"'+$('input[name*="name"]').val()+'","direct":"'+$('input[name*="direct"]').is(":checked")+'", "ratio":"'+$('input[name*="ratio"]').val()+'", "description":"'+$("#description-field").val().replace('\n', "\\n")+'"}';
 			$.ajax({
 				url:"/admin/expense/type/create",
 				data: json,
@@ -176,7 +176,7 @@ AppExpenseType = (function($){
 				contentType: "application/json; charset=utf-8",
 				success: function(data){
 					var template = $("#popup-expense-type-admin-update-template").html();
-					var view = {name : data.name, ratio: data.ratio};
+					var view = {name : data.name, ratio: data.ratio, description:data.description};
 					var html = Mustache.to_html(template, view);
 					var title = $("#edit-template").html();
 					

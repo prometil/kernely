@@ -176,3 +176,21 @@ input.editAmount{
 #expense-amount-update{
 	width:50px;
 }
+
+#type-description{
+	margin-top:8px;
+	padding:2px;
+	width:459px;
+	height:50px;
+	overflow:auto;
+	border:1px solid #a0a2a3;
+}
+
+#table-expense-containter{
+	height:220px;
+	overflow:auto;
+}
+
+#expense-table{
+	height:220px;
+}

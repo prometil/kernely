@@ -12,6 +12,7 @@ public class ExpenseType extends AbstractModel {
 	private String name;
 	private boolean direct;
 	private float ratio;
+	private String description;
 
 	/**
 	 * @return the name
@@ -94,6 +95,18 @@ public class ExpenseType extends AbstractModel {
 			return false;
 		}
 		return true;
+	}
+	/**
+	 * @return the description
+	 */
+	public String getDescription() {
+		return description;
+	}
+	/**
+	 * @param description the description to set
+	 */
+	public void setDescription(String description) {
+		this.description = description;
 	}
 	
 	
