@@ -328,15 +328,14 @@ public class TimeSheetService extends AbstractService {
 			}
 		}
 
-		return new TimeSheetCalendarDTO(week, year, timeSheet, dates, stringDates, available, projectsId, lastWeekProjectsId, configuration
-				.getFloat("maxDayValue"));
+		return new TimeSheetCalendarDTO(week, year, timeSheet, dates, stringDates, available, projectsId, lastWeekProjectsId, configuration.getFloat("maxDayValue"));
 	}
 
 	/**
 	 * Create or update amount of time for a specific project, a specific day and a specific timesheet
 	 */
 	@Transactional
-	public TimeSheetDetailDTO createOrUpdateDayAmountForProject(TimeSheetDetailDTO timeSheetDetailDTO) {
+	public synchronized TimeSheetDetailDTO createOrUpdateDayAmountForProject(TimeSheetDetailDTO timeSheetDetailDTO) {
 
 		if (getTimeSheetForDateForCurrentUser(timeSheetDetailDTO.day) == null) {
 			log.debug("TimeSheet doesn't exist for this day! Create the time sheet for the day : {}", timeSheetDetailDTO.day);
@@ -797,9 +796,13 @@ public class TimeSheetService extends AbstractService {
 
 		for (DateTime day = firstDayOfMonth; !day.isAfter(lastDayOfMonth); day = day.plusDays(1)) {
 			TimeSheetDay dayModel = this.getTimeSheetDayForUserWithoutCreation(day.toDate(), userId);
-			if (dayModel != null && dayModel.getStatus() != TimeSheetDay.DAY_VALIDATED) {
+			if (dayModel == null){
+				return false;
+			} else if (dayModel.getStatus() != TimeSheetDay.DAY_VALIDATED) {
 				return false;
 			}
+			System.out.println("Day "+dayModel.getDay() +" status : "+dayModel.getStatus());
+
 		}
 		return true;
 	}
