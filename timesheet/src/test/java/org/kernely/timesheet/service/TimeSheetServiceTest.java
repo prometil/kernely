@@ -331,28 +331,4 @@ public class TimeSheetServiceTest extends AbstractServiceTest {
 		assertEquals(day.id, day_3rd.id);
 	}
 	
-	@Test
-	public void getMonthCalendar(){
-		UserDTO user = createUserForTest();
-		authenticateAs(user.username);
-
-		TimeSheetMonthDTO monthReport = timeSheetService.getTimeSheetCalendars(MONTH, YEAR, user.id);
-		
-		assertEquals(5,monthReport.calendars.size()); // March of year 2012 should contains 5 calendars.
-		assertEquals(new DateTime().withDayOfMonth(27).withMonthOfYear(2).withYear(2012).toDateMidnight().toDate(),monthReport.calendars.get(0).dates.get(0));
-		assertEquals(new DateTime().withDayOfMonth(1).withMonthOfYear(4).withYear(2012).toDateMidnight().toDate(),monthReport.calendars.get(4).dates.get(6));
-	}
-	
-	@Test
-	@Ignore
-	public void getMonthCalendarOnTwoYears(){
-		UserDTO user = createUserForTest();
-		authenticateAs(user.username);
-
-		TimeSheetMonthDTO monthReport = timeSheetService.getTimeSheetCalendars(1, 2012, user.id);
-		
-		assertEquals(6,monthReport.calendars.size()); // January of year 2012 should contains 6 calendars : from Monday 26th of December of 2011 to Sunday the 6th of February.
-		assertEquals(new DateTime().withDayOfMonth(26).withMonthOfYear(12).withYear(2011).toDateMidnight().toDate(),monthReport.calendars.get(0).dates.get(0));
-		assertEquals(new DateTime().withDayOfMonth(5).withMonthOfYear(2).withYear(2012).toDateMidnight().toDate(),monthReport.calendars.get(5).dates.get(6));
-	}
 }

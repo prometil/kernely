@@ -18,6 +18,11 @@ public class TimeSheetCalendarDTO {
 	public TimeSheetDTO timeSheet;
 	
 	/**
+	 * Max amount by day
+	 */
+	public float maxDayValue;
+	
+	/**
 	 * List of projects id, ordered alphabetically
 	 */
 	public List<Long> projectsId;
@@ -53,7 +58,7 @@ public class TimeSheetCalendarDTO {
 	 */
 	public List<Float> availableDates;
 	
-	public TimeSheetCalendarDTO(int week, int year, TimeSheetDTO timeSheet, List<Date> dates, List<String> stringDates, List<Float> availableDates, List<Long> projectsId, List<Long> lastWeekProjectsId) {
+	public TimeSheetCalendarDTO(int week, int year, TimeSheetDTO timeSheet, List<Date> dates, List<String> stringDates, List<Float> availableDates, List<Long> projectsId, List<Long> lastWeekProjectsId, float maxDayValue) {
 		this.week = week;
 		this.year = year;
 		this.timeSheet = timeSheet;
@@ -62,6 +67,7 @@ public class TimeSheetCalendarDTO {
 		this.projectsId = projectsId;
 		this.lastWeekProjectsId = lastWeekProjectsId;
 		this.availableDates = availableDates;
+		this.maxDayValue = maxDayValue;
 	}
 
 	/**

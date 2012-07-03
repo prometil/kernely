@@ -60,7 +60,8 @@ AppHolidayUserRequest = (function($){
 						$(parent.el).html($("#no-balance-template").html());
 					}
 				},
-				error: function(){
+				error: function(data){
+					console.log(data);
 					$.writeMessage("error",$("#balance-loading-error-template").html());
 				}
 			});

@@ -8,14 +8,30 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class TimeSheetMonthDTO {
 
 	/**
-	 * The ordered list of time sheet calendars for the month.
+	 * The list of projects for the month.
 	 */
-	public List<TimeSheetCalendarDTO> calendars;
+	public List<TimeSheetMonthProjectDTO> projects;
+	
+	/**
+	 * Expenses for this month.
+	 */
+	public List<Float> expenses;
+	
+	/**
+	 * The position in week : 1 = monday, 7 = sunday
+	 */
+	public List<Integer> daysOfWeek;
+	
 	
 	/**
 	 * Have the month been validated?
 	 */
 	public boolean validated;
+	
+	/**
+	 * Can the month been validated?
+	 */
+	public boolean toValidate;
 	
 	/**
 	 * The value for the month (1 = January, 12 = December).
@@ -30,18 +46,24 @@ public class TimeSheetMonthDTO {
 	public TimeSheetMonthDTO() {}
 	
 	/**
-	 * 
-	 * @param calendars All calendars covering this month
-	 * @param month The month.
-	 * @param year The year.
-	 * @param validated Have this month been validated?
+	 * DTO of all days of the monthe.
+	 * @param daysOfWeek Place of days in the week (1=Monday, 7=Sunday)
+	 * @param projects Lines of the timesheet, containing amouns of times for projects
+	 * @param expenses Expenses for the month
+	 * @param month The month : 1 = January, 12 = December.
+	 * @param year The year of the timesheets.
+	 * @param validated Is this month validated?
+	 * @param toValidate Can this month be validated?
 	 */
-	public TimeSheetMonthDTO(List<TimeSheetCalendarDTO> calendars, int month, int year, boolean validated) {
+	public TimeSheetMonthDTO(List<Integer> daysOfWeek, List<TimeSheetMonthProjectDTO> projects, List<Float> expenses, int month, int year, boolean validated, boolean toValidate) {
 		super();
-		this.calendars = calendars;
+		this.daysOfWeek = daysOfWeek;
+		this.projects = projects;
+		this.expenses = expenses;
 		this.month = month;
 		this.year = year;
 		this.validated = validated;
+		this.toValidate = toValidate;
 	}
 	
 }

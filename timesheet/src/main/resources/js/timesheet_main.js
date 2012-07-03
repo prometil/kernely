@@ -1,7 +1,6 @@
 AppTimeSheet = (function($){
 
-	
-	var MAX_VALUE = 8;
+	var MAX_VALUE = 7;
 	var mainView = null;
 	var calendar = null;
 	var weekSelector = null;
@@ -125,6 +124,7 @@ AppTimeSheet = (function($){
 						url:"/timesheet/calendar",
 						data:{week:weekSelected, year:yearSelected},
 						success: function(data){
+							MAX_VALUE = data.maxDayValue;
 							availableDates = data.availableDates;
 							// Set last week projects in combobox
 							var label = $("#last-week-projects-template").html();
