@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
+import org.apache.commons.configuration.AbstractConfiguration;
 import org.joda.time.DateTime;
 import org.kernely.core.dto.UserDTO;
 import org.kernely.core.model.User;
@@ -32,6 +33,9 @@ public class HolidayHumanResourceService extends AbstractService {
 
 	@Inject
 	private UserService userService;
+	
+	@Inject
+	private AbstractConfiguration configuration;
 
 	/**
 	 * Retrieves all holidays for all users by the current human resource for
@@ -99,6 +103,17 @@ public class HolidayHumanResourceService extends AbstractService {
 		mainDTO.nbDays = last.getDayOfMonth();
 		mainDTO.month = monthNeeded;
 		mainDTO.year = yearNeeded;
+		
+		configuration.setListDelimiter(',');
+		String[] daysString = configuration.getStringArray("notWorkingDays");
+		for(DateTime dt = first; !dt.isAfter(last); dt = dt.plusDays(1)){
+			for(int i = 0; i < daysString.length; i++){
+				if(dt.getDayOfWeek() == Integer.parseInt(daysString[i])){
+					mainDTO.weekends.add(dt.getDayOfMonth());
+				}
+			}
+		}
+		
 		return mainDTO;
 	}
 }

@@ -90,13 +90,15 @@ AppHolidayPlanning = (function($){
 		tagName: "tr",
 		
 		user : null,
+		weekEnds : null,
 		
 		events:{
 		
 		},
 	
-		initialize: function(user){
+		initialize: function(user, weekends){
 			this.user = user;
+			this.weekEnds = weekends;
 		},
 		
 		render: function(){
@@ -115,7 +117,18 @@ AppHolidayPlanning = (function($){
 				column = $("<td>", {
 					class:'day-planning'
 				});
-				
+				if($.isArray(this.weekEnds)){
+					$.each(this.weekEnds, function(){
+						if(i == this){
+							column.addClass("weekend");
+						}
+					});
+				}
+				else{
+					if(i == this.weekEnds){
+						column.addClass("weekend");
+					}
+				}
 				if(typeof(this.user.details) != "undefined"){
 					if(this.user.details.length > 1){
 						$.each(this.user.details, function(){
@@ -187,14 +200,15 @@ AppHolidayPlanning = (function($){
 			
 			
 			nbDays = this.data.nbDays;
+			var weekEnds = this.data.weekends;
 			
 			if(this.data.usersManaged.length > 1){
 				$.each(this.data.usersManaged, function(){
-                  $(parent.el).append(new HolidayPlanningTableLineView(this).render().el);
+                  $(parent.el).append(new HolidayPlanningTableLineView(this, weekEnds).render().el);
 				});
 			}
 			else{
-				$(parent.el).append(new HolidayPlanningTableLineView(this.data.usersManaged).render().el);
+				$(parent.el).append(new HolidayPlanningTableLineView(this.data.usersManaged, weekEnds).render().el);
 			}
 			return this;
 		}
