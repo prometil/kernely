@@ -4,6 +4,8 @@ AppTimeSheetMonth = (function($){
 	var tableView = null;
 	var monthSelected = 0;
 	var yearSelected = 0;
+	var daysAreFilled = null;
+	var monthIsValidated = null;
 	
 	// How many days in the month
 	var nbDays = 0;
@@ -25,6 +27,8 @@ AppTimeSheetMonth = (function($){
 				url:"/timesheet/month",
 				data:{month:monthSelected, year:yearSelected},
 				success: function(data){
+					daysAreFilled = data.daysAreFilled;
+					monthIsValidated = data.validated;
 					tableView.render(data);
 				}
 			})
@@ -99,6 +103,10 @@ AppTimeSheetMonth = (function($){
 				} else if (parent.project.details[i].status == "unavailable"){
 					column.addClass("day-unavailable");
 					column.text("");
+				}
+				
+				if (monthIsValidated == "false" && daysAreFilled[i] == "false"){
+					column.addClass("not-full-day");
 				}
 				
 				$(parent.el).append(column);
@@ -199,10 +207,20 @@ AppTimeSheetMonth = (function($){
 
 			for(var i = 0; i < nbDays; i++){
 				var day = $("#day-"+this.data.daysOfWeek[i]+"-template").html();
-				lineHeader.append($("<th>", {
-					class: 'day-header-cell border-element-r-b',
+				var dayClass;
+
+				if (daysAreFilled[i] == "true" || monthIsValidated == "true"){
+					dayClass = 'classical-header';
+				} else {
+					dayClass = 'not-full-day'
+				}
+				
+				var th = $("<th>", {
+					class:dayClass,
 					html: day + " <br/> " + (i+1)
-				}));
+				})
+				
+				lineHeader.append(th);
 			}
 			// Total column
 			var totalTemplate = $("#total-template").html();
