@@ -68,6 +68,8 @@ public class ExpenseService extends AbstractService {
 			type.setRatio(request.ratio);
 		}
 		
+		type.setDescription(request.description);
+		
 		if(request.id == 0){
 			em.get().persist(type);
 		}

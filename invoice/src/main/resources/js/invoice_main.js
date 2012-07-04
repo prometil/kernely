@@ -218,7 +218,8 @@ AppInvoiceMain = (function($){
 				eventNames:["click"],
 				events:{
 					"click": parent.selectLine
-				}
+				},
+				editable:true
 			});
 		},
 		selectLine : function(e){

@@ -70,6 +70,7 @@ public class Migration01 extends Migration {
 		expenseType.column("name", DataBaseConstants.VARCHAR_50);
 		expenseType.column("direct", DataBaseConstants.BOOLEAN_DEFAULT_TRUE);
 		expenseType.column("ratio", DataBaseConstants.FLOAT4);
+		expenseType.column("description", DataBaseConstants.TEXT);
 		
 		commands.add(expenseType);
 		

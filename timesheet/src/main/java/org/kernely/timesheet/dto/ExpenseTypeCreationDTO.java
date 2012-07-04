@@ -29,6 +29,11 @@ public class ExpenseTypeCreationDTO {
 	public float ratio;
 	
 	/**
+	 * Description of this type
+	 */
+	public String description;
+	
+	/**
 	 * Default constructor
 	 */
 	public ExpenseTypeCreationDTO(){}
@@ -37,10 +42,11 @@ public class ExpenseTypeCreationDTO {
 	 * Constructs an expense type dto from an expense type model
 	 * @param type The model to represent in this DTO
 	 */
-	public ExpenseTypeCreationDTO(long id, String name, boolean direct, float ratio){
+	public ExpenseTypeCreationDTO(long id, String name, boolean direct, float ratio, String description){
 		this.id = id;
 		this.name = name;
 		this.direct = direct;
 		this.ratio = ratio;
+		this.description = description;
 	}
 }
