@@ -687,13 +687,16 @@ AppTimeSheet = (function($){
 						var actualIndex = this.index;
 						if (lastIndex <= this.index){
 							while (lastIndex < actualIndex){
+								console.log("L<A")
 								allDayCells[this.projectId][lastIndex].increment();
 								lastIndex ++;
 							}
 						} else {
 							while (actualIndex < lastIndex){
-								allDayCells[this.projectId][actualIndex].increment();
+								console.log("A<L")
 								actualIndex ++;
+								console.log(actualIndex+" < "+lastIndex);
+								allDayCells[this.projectId][actualIndex].increment();
 							}
 						}
 					}
@@ -753,6 +756,15 @@ AppTimeSheet = (function($){
 		},
 		
 		save:function(){
+			console.log("Sending data :");
+			console.log("   Index :"+this.index);
+			console.log("   Amount :"+this.amount);
+			console.log("   Day :"+this.day);
+			console.log("   ProjectId :"+this.projectId);
+			console.log("   DayId :"+this.dayId);
+			console.log("   TSId :"+this.timeSheetId);
+			console.log("Sending data :");
+			console.log("Sending data :");
 			var parent = this;
 			// Calculate total
 			calendar.calculateTotal(this.projectId,this.index);
@@ -767,6 +779,7 @@ AppTimeSheet = (function($){
 				type: "POST",
 				url:"/timesheet/update",
 				data:json,
+				asynchronous:false,
 				dataType:"json",
 				contentType: "application/json; charset=utf-8",
 				processData: false,
