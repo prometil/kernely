@@ -998,12 +998,12 @@ AppTimeSheet = (function($){
 						if(data.expenseTypeDTO.length > 1){
 							$.each(data.expenseTypeDTO, function(){
 								select.append($('<option>', { value : this.id })
-								          .text(this.name));
+								          .text(this.displayedName));
 							});
 						}
 						else{
 							select.append($('<option>', { value : data.expenseTypeDTO.id })
-							          .text(data.expenseTypeDTO.name));
+							          .text(data.expenseTypeDTO.displayedName));
 						}
 					}
 					select.append($("</optgroup>"));
@@ -1101,7 +1101,7 @@ AppTimeSheet = (function($){
 		
 		showDescription: function(){
 			var text = this.descriptions[$("#expense-type-select").val()];
-			if(text != null){
+			if(text != null && text != ""){
 				$("#type-description").html(text);
 			}
 			else{
@@ -1145,11 +1145,11 @@ AppTimeSheet = (function($){
 						if(data.expenseTypeDTO.length > 1){
 							$.each(data.expenseTypeDTO, function(){
 								$("#expense-type-select").append($('<option>', { value : this.id })
-								          .text(this.name));
+								          .text(this.displayedName));
 								parent.descriptions[this.id] = this.description;
 							});
 							var text = parent.descriptions[$("#expense-type-select option:selected").val()];
-							if(text != null){
+							if(text != null && text != ""){
 								$("#type-description").html(text);
 							}
 							else{
@@ -1158,7 +1158,7 @@ AppTimeSheet = (function($){
 						}
 						else{
 							$("#expense-type-select").append($('<option>', { value : data.expenseTypeDTO.id })
-							          .text(data.expenseTypeDTO.name));
+							          .text(data.expenseTypeDTO.displayedName));
 							parent.descriptions[data.expenseTypeDTO.id] = data.expenseTypeDTO.description;
 							if(data.expenseTypeDTO.description != ""){
 								$("#type-description").html(data.expenseTypeDTO.description);

@@ -1,8 +1,17 @@
-
-#expense_type_admin_table{
-	width:100%;
-}
-
 #ratio_field{
 	width:50px;
+}
+
+
+
+textarea#description-field-create, textarea#description-field-update{
+	width:208px;
+	height:50px;
+}
+
+label{
+	display:block;
+    	float: left;
+	width:100px;
+	padding-top:3px;
 }

@@ -62,11 +62,11 @@
 		<div id="errors_message"></div>
 		<fieldset>
 		<legend>{% i18n "expense_type_informations" %}</legend>
-		{% i18n "expense_type_name" %}: <input type="text" name="name"/><br/>
-		{% i18n "expense_type_direct" %}: <input type="checkbox" class="expense-type-cb" name="direct"/> 
-		{% i18n "expense_type_ratio" %}: <input type="text" name="ratio" id="ratio_field"/><br/>
+			<label for="name">{% i18n "expense_type_name" %}</label><input type="text" name="name"/><br/>
+			<label for="direct">{% i18n "expense_type_direct" %}</label><input type="checkbox" class="expense-type-cb" name="direct"/><br/>
+			<label for="ratio">{% i18n "expense_type_ratio" %}</label><input type="text" name="ratio" id="ratio_field"/><br/>
 		{% i18n "expense_type_description" %}<br/>
-		<textarea id="description-field"></textarea>
+		<textarea id="description-field-create"></textarea>
 		</fieldset>
 		<div class="dialog-buttons-container">
 			<input type="button" value="{% i18n "create" %}" class="create_expense_type button_ok"/>
@@ -81,7 +81,7 @@
 		{% i18n "expense_type_direct" %}: <input type="checkbox" class="expense-type-cb" name="direct"/> 
 		{% i18n "expense_type_ratio" %}: <input type="text" name="ratio" value="{{"{{"}}ratio{{"}}"}}" id="ratio_field"/><br/>
 		{% i18n "expense_type_description" %}<br/>
-		<textarea id="description-field">{{"{{"}}description{{"}}"}}</textarea>
+		<textarea id="description-field-update">{{"{{"}}description{{"}}"}}</textarea>
 		</fieldset>
 		<div class="dialog-buttons-container">
 			<input type="button" value="{% i18n "update" %}" class="updateExpenseType button_ok"/>

@@ -23,7 +23,7 @@ AppExpenseType = (function($){
 				      {"name":templateRatioColumn,"style":""}
 				],
 				idField:"id",
-				elements:["name", "direct", "ratio"],
+				elements:["displayedName", "direct", "ratio"],
 				eventNames:["click"],
 				events:{
 					"click": parent.selectLine
@@ -141,7 +141,7 @@ AppExpenseType = (function($){
 		},
 		
 		createType: function(){
-			var json = '{"id":"0", "name":"'+$('input[name*="name"]').val()+'","direct":"'+$('input[name*="direct"]').is(":checked")+'", "ratio":"'+$('input[name*="ratio"]').val()+'", "description":"'+$("#description-field").val().replace('\n', "\\n")+'"}';
+			var json = '{"id":"0", "name":"'+$('input[name*="name"]').val()+'","direct":"'+$('input[name*="direct"]').is(":checked")+'", "ratio":"'+$('input[name*="ratio"]').val()+'", "description":"'+$("#description-field-create").val().replace('\n', "\\n")+'"}';
 			$.ajax({
 				url:"/admin/expense/type/create",
 				data: json,
@@ -212,7 +212,7 @@ AppExpenseType = (function($){
 		},
 		
 		updateType: function(){
-			var json = '{"id":"'+lineSelected+'", "name":"'+$('input[name*="name"]').val()+'","direct":"'+$('input[name*="direct"]').is(":checked")+'", "ratio":'+$('input[name*="ratio"]').val()+'}';
+			var json = '{"id":"'+lineSelected+'", "name":"'+$('input[name*="name"]').val()+'","direct":"'+$('input[name*="direct"]').is(":checked")+'", "ratio":"'+$('input[name*="ratio"]').val()+'", "description":"'+$("#description-field-update").val().replace('\n', "\\n")+'"}';
 			$.ajax({
 				url:"/admin/expense/type/create",
 				data: json,

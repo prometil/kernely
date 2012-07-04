@@ -21,6 +21,11 @@ public class ExpenseTypeDTO {
 	public String name;
 	
 	/**
+	 * Displayed name, for the UI, of this type
+	 */
+	public String displayedName;	
+	
+	/**
 	 * Define if this type has to do a conversion
 	 */
 	public boolean direct;
@@ -46,7 +51,8 @@ public class ExpenseTypeDTO {
 	 */
 	public ExpenseTypeDTO(ExpenseType type){
 		this.id = type.getId();
-		this.name = type.getName() + " (" + type.getRatio() + ")";
+		this.name = type.getName();
+		this.displayedName = type.getName() + " (" + type.getRatio() + ")";
 		this.direct = type.isDirect();
 		this.ratio = type.getRatio();
 		this.description = type.getDescription();
