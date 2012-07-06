@@ -144,6 +144,25 @@ public class Migration01 extends Migration {
 		commands.add(holidayRequestDetailRequestForeignKey);
 		commands.add(holidayRequestDetailBalanceForeignKey);
 		
+		CreateTable holidayDonation = CreateTable.name("kernely_holiday_donation");
+		holidayDonation.column(DataBaseConstants.ID_COLUMN, DataBaseConstants.LONG_PK);
+		holidayDonation.column("amount", DataBaseConstants.FLOAT4);
+		holidayDonation.column("comment", DataBaseConstants.TEXT);
+		holidayDonation.column("date", DataBaseConstants.DATE);
+		holidayDonation.column("manager_id", DataBaseConstants.LONG_NOT_NULL);
+		holidayDonation.column("receiver_id", DataBaseConstants.LONG_NOT_NULL);
+		holidayDonation.column("holiday_type_instance_id", DataBaseConstants.LONG_NOT_NULL);
+
+		RawSql holidayDonationManagerForeignKey = new RawSql("ALTER TABLE kernely_holiday_donation ADD CONSTRAINT fk_holiday_donation_manager FOREIGN KEY (manager_id) REFERENCES kernely_user(id)");
+		RawSql holidayDonationReceiverForeignKey = new RawSql("ALTER TABLE kernely_holiday_donation ADD CONSTRAINT fk_holiday_donation_receiver FOREIGN KEY (receiver_id) REFERENCES kernely_user(id)");
+		RawSql holidayDonationTypeForeignKey = new RawSql("ALTER TABLE kernely_holiday_donation ADD CONSTRAINT fk_holiday_donation_type FOREIGN KEY (holiday_type_instance_id) REFERENCES kernely_holiday_type_instance(id)");
+
+		
+		commands.add(holidayDonation);
+		commands.add(holidayDonationManagerForeignKey);
+		commands.add(holidayDonationReceiverForeignKey);
+		commands.add(holidayDonationTypeForeignKey);
+		
 		return commands;
 	}
 }

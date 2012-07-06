@@ -1,0 +1,23 @@
+select#holiday-type-selector{
+	width:204px;
+	margin-right:10px;
+}
+select#user-selector{	
+	width:100%;
+}
+
+select#user-selector, select#holiday-type-selector{
+	height:20px;
+	border:1px solid #b1b3b3;
+	margin-top:2px;
+	margin-bottom:10px;
+}
+
+input#donation-amount{
+	width:50px;
+}
+
+textarea#donation-comment{
+	width:100%;
+	height:50px;
+}

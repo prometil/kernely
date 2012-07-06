@@ -716,9 +716,12 @@ public class UserService extends AbstractService {
 			throw new UnauthorizedException("Only managers can access to this functionality!");
 		}
 		Set<UserDTO> managedCleaned = new HashSet<UserDTO>();
+		UserDTO dto;
 		for (User u : this.getAuthenticatedUserModel().getUsers()) {
 			if (!u.isLocked()) {
-				managedCleaned.add(new UserDTO(u));
+				dto = new UserDTO(u);
+				dto.userDetails = new UserDetailsDTO(u.getUserDetails());
+				managedCleaned.add(dto);
 			}
 		}
 		return managedCleaned;

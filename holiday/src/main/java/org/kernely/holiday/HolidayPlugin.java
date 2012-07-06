@@ -22,6 +22,7 @@ package org.kernely.holiday;
 
 import org.joda.time.DateTime;
 import org.kernely.holiday.controller.HolidayAdminController;
+import org.kernely.holiday.controller.HolidayDonationController;
 import org.kernely.holiday.controller.HolidayMainController;
 import org.kernely.holiday.controller.HolidayManagerRequestController;
 import org.kernely.holiday.controller.HolidayManagerUserController;
@@ -36,6 +37,7 @@ import org.kernely.holiday.job.HolidaysDailyJob;
 import org.kernely.holiday.job.HolidaysMonthlyJob;
 import org.kernely.holiday.migrations.Migration01;
 import org.kernely.holiday.model.HolidayBalance;
+import org.kernely.holiday.model.HolidayDonation;
 import org.kernely.holiday.model.HolidayProfile;
 import org.kernely.holiday.model.HolidayRequest;
 import org.kernely.holiday.model.HolidayRequestDetail;
@@ -72,7 +74,7 @@ public class HolidayPlugin extends AbstractPlugin {
 	/**
 	 * Default constructor
 	 */
-	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@SuppressWarnings({ "unchecked"})
 	public HolidayPlugin(){
 		super();
 		registerPath("/holiday");
@@ -84,12 +86,14 @@ public class HolidayPlugin extends AbstractPlugin {
 		registerController(HolidayManagerRequestController.class);
 		registerController(HolidaySummaryController.class);
 		registerController(HolidayPlanningController.class);
+		registerController(HolidayDonationController.class);
 		registerModel(HolidayProfile.class);
 		registerModel(HolidayType.class);
 		registerModel(HolidayBalance.class);
 		registerModel(HolidayRequest.class);
 		registerModel(HolidayRequestDetail.class);
 		registerModel(HolidayTypeInstance.class);
+		registerModel(HolidayDonation.class);
 		registerAdminPage("Holiday profile admin", "/admin/holiday");
 		registerMigration(new Migration01());
 
