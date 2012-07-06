@@ -13,9 +13,13 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.kernely.controller.AbstractController;
+import org.kernely.core.model.Role;
 import org.kernely.core.service.UserService;
+import org.kernely.menu.Menu;
 import org.kernely.project.dto.ProjectDTO;
+import org.kernely.project.model.Project;
 import org.kernely.project.service.ProjectService;
 import org.kernely.template.SobaTemplateRenderer;
 
@@ -25,7 +29,7 @@ import com.google.inject.Inject;
  * Controller for project
  */
 @Path("/project")
-public class ProjectListController extends AbstractController {
+public class ProjectController extends AbstractController {
 	@Inject
 	private SobaTemplateRenderer templateRenderer;
 
@@ -53,6 +57,20 @@ public class ProjectListController extends AbstractController {
 		}
 	}
 
+	
+	/**
+	 * Display the page to manage the project.
+	 */
+	@GET
+	@Path("manage")
+	@Menu("projects")
+	@RequiresRoles(value = { Role.ROLE_PROJECTMANAGER})
+	@Produces({ MediaType.TEXT_HTML})
+	public Response getManagedProjectsPage() {
+		Map<String,Object> bindings = new HashMap<String,Object>();
+		return Response.ok(templateRenderer.render("templates/project_management.html", bindings)).build();
+	}
+	
 	/**
 	 * Set the template for a specific project
 	 */
@@ -66,8 +84,17 @@ public class ProjectListController extends AbstractController {
 		return Response.ok(templateRenderer.render("templates/project_view.html",bindings)).build();	
 	}
 	
+	/**
+	 * Get the list of projects for the current user
+	 */
+	@GET
+	@Path("/list/managed")
+	@RequiresRoles(value = { Role.ROLE_PROJECTMANAGER})
+	@Produces({ MediaType.APPLICATION_JSON})
+	public List<ProjectDTO> getManagedProjects() {
+		return projectService.getManagedProjects();
+	}
 	
-
 	/**
 	 * Get the list of projects for the current user
 	 */
@@ -82,10 +109,31 @@ public class ProjectListController extends AbstractController {
 	 * Get the list of projects for the current user
 	 */
 	@GET
+	@Path("/opened/list")
+	@Produces({ MediaType.APPLICATION_JSON})
+	public List<ProjectDTO> getCurrentUserOpenedProjects() {
+		return projectService.getAllProjectsForUserWithStatus(userService.getAuthenticatedUserDTO().id, Project.STATUS_OPEN);
+	}
+	
+	/**
+	 * Get the list of projects linked to a specific organization
+	 */
+	@GET
 	@Path("/orga")
 	@Produces({ MediaType.APPLICATION_JSON})
 	public List<ProjectDTO> getProjectsLinkedToOrganization(@QueryParam("organizationId") long organizationId) {
 		return projectService.getProjectsLinkedToOrganization(organizationId);	
 	}
 	
+	/**
+	 * Changes the status of a project.
+	 */
+	@GET
+	@Path("/status")
+	@Produces({ MediaType.APPLICATION_JSON})
+	public Response changeProjectStatus(@QueryParam("projectId") long projectId, @QueryParam("status") int status){
+		projectService.updateProjectStatus(projectId, status);
+		return Response.ok().build();
+	}
+
 }

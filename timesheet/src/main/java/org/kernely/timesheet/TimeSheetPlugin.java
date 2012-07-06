@@ -15,7 +15,7 @@ import org.kernely.timesheet.model.TimeSheetDetailProject;
 import org.kernely.timesheet.service.TimeSheetService;
 
 /**
- * Plugin for project
+ * Plugin for timesheet
  */
 public class TimeSheetPlugin extends AbstractPlugin {
 	public static final String NAME = "timesheet";

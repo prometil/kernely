@@ -1,0 +1,41 @@
+{% extends "templates/layout_block.html" %}
+
+{% block javascript %}
+	<script type="text/javascript" src="/js/project_management.js"></script>
+{% endblock %}
+
+{% block css %}
+	<link rel="stylesheet" type="text/css" href="/css/project_admin.css"/>
+{% endblock %}
+
+{% block title %}
+	{% i18n "project_management_title" %}
+{% endblock %}
+
+{% block content %}
+	<div id="modal_window_project"></div>
+	<div id="project_container">
+		<div id="project_buttons">
+			<input id="changeStatusButton" type="button" class="button_standard" value="{% i18n "project_open" %}"  disabled="disabled"/>
+		</div>
+		<table id="project_table" class="kernely_table">
+		</table>
+	</div>
+	
+{% endblock %}
+
+{% block template %}
+<script type="text/html" id="table-project-name-column" class="table_header">
+{% i18n "project_name" %}
+</script>
+<script type="text/html" id="table-project-status-column" class="table_header">
+{% i18n "project_status" %}
+</script>
+<script type="text/html" id="project-status-changed-template">{% i18n "project_status_changed" %}</script>
+<script type="text/html" id="button-0-template">{% i18n "project_open" %}</script>
+<script type="text/html" id="button-1-template">{% i18n "project_close" %}</script>
+<script type="text/html" id="button-2-template">{% i18n "project_open" %}</script>
+<script type="text/html" id="status-0">{% i18n "project_pending" %}</script>
+<script type="text/html" id="status-1">{% i18n "project_opened" %}</script>
+<script type="text/html" id="status-2">{% i18n "project_closed" %}</script>
+{% endblock %}

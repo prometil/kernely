@@ -49,7 +49,7 @@ public class HolidayDateExtender extends Extender {
 		Date date1 = (Date)params.get("start");
 		Date date2 = (Date)params.get("end");
 		List<HolidayRequestDTO> currentRequests = holidayRequestService.getRequestBetweenDatesWithStatus(date1, date2, user, HolidayRequest.PENDING_STATUS,
-				HolidayRequest.ACCEPTED_STATUS);
+				HolidayRequest.ACCEPTED_STATUS, HolidayRequest.PAST_STATUS);
 		HashMap<String, Object> result = new HashMap<String, Object>();
 		// Retrieve all days non available in order to disable them in the UI
 		HashMap<Date, Float> newHashMap = Maps.newHashMap();

@@ -261,7 +261,7 @@ public class TimeSheetService extends AbstractService {
 		if (timeSheet != null && timeSheet.columns != null) {
 			for (TimeSheetColumnDTO column : timeSheet.columns) {
 				for (TimeSheetDetailDTO detail : column.timeSheetDetails) {
-					foundProject = new ProjectDTO(detail.projectName, detail.projectId, null, null, null);
+					foundProject = new ProjectDTO(detail.projectName, detail.projectId, null, null, null,0);
 					projects.add(foundProject);
 				}
 			}
@@ -284,7 +284,7 @@ public class TimeSheetService extends AbstractService {
 		if (lastWeekTimeSheet != null && lastWeekTimeSheet.columns != null) {
 			for (TimeSheetColumnDTO column : lastWeekTimeSheet.columns) {
 				for (TimeSheetDetailDTO detail : column.timeSheetDetails) {
-					lastWeekFoundProject = new ProjectDTO(detail.projectName, detail.projectId, null, null, null);
+					lastWeekFoundProject = new ProjectDTO(detail.projectName, detail.projectId, null, null, null, 0);
 					lastWeekProjects.add(lastWeekFoundProject);
 				}
 			}

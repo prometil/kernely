@@ -45,7 +45,7 @@ public class Migration01 extends Migration {
 		CreateTable project = CreateTable.name("kernely_project");
 		project.column(DataBaseConstants.ID_COLUMN, DataBaseConstants.LONG_PK);
 		project.column("name", DataBaseConstants.VARCHAR_100);
-		project.column("status", DataBaseConstants.VARCHAR_20);
+		project.column("status", DataBaseConstants.INT);
 		project.column("description", DataBaseConstants.TEXT);
 		project.column("icon", DataBaseConstants.VARCHAR_100);
 		project.column("organization_id", DataBaseConstants.LONG_NOT_NULL);

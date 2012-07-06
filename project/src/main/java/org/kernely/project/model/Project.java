@@ -23,11 +23,15 @@ import org.kernely.persistence.AbstractModel;
 @Table(name = "kernely_project")
 public class Project extends AbstractModel {
 
+	public final static int STATUS_PENDING = 0;
+	public final static int STATUS_OPEN = 1;
+	public final static int STATUS_CLOSED = 2;
+	
 	private String name;
 	
 	private String description;
 	
-	private String status;
+	private int status;
 
 	private String icon;
 
@@ -74,7 +78,7 @@ public class Project extends AbstractModel {
 		this.name = "";
 		this.icon = "";
 		this.description = "";
-		this.status ="";
+		this.status = STATUS_OPEN;
 		this.users = new HashSet<User>();
 	}
 
@@ -155,14 +159,14 @@ public class Project extends AbstractModel {
 	/**
 	 * @return the status
 	 */
-	public String getStatus() {
+	public int getStatus() {
 		return status;
 	}
 
 	/**
 	 * @param status the status to set
 	 */
-	public void setStatus(String status) {
+	public void setStatus(int status) {
 		this.status = status;
 	}
 

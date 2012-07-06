@@ -4,7 +4,7 @@ import org.kernely.plugin.AbstractPlugin;
 import org.kernely.project.controller.OrganizationAdminController;
 import org.kernely.project.controller.OrganizationController;
 import org.kernely.project.controller.ProjectAdminController;
-import org.kernely.project.controller.ProjectListController;
+import org.kernely.project.controller.ProjectController;
 import org.kernely.project.migrations.Migration01;
 import org.kernely.project.model.Organization;
 import org.kernely.project.model.Project;
@@ -26,10 +26,11 @@ public class ProjectPlugin extends AbstractPlugin {
 		registerName("organization");
 		registerPath("/project");
 		registerPath("/organization");
+		
 		registerController(ProjectAdminController.class);
 		registerController(OrganizationAdminController.class);
 		registerController(OrganizationController.class);
-		registerController(ProjectListController.class);
+		registerController(ProjectController.class);
 		registerModel(Project.class);
 		registerModel(Organization.class);
 		registerAdminPage("Project admin", "/admin/projects");

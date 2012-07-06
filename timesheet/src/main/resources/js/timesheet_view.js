@@ -29,6 +29,7 @@ AppTimeSheetMonth = (function($){
 				success: function(data){
 					daysAreFilled = data.daysAreFilled;
 					monthIsValidated = data.validated;
+					console.log(data)
 					tableView.render(data);
 				}
 			})

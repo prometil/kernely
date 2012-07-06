@@ -5,7 +5,6 @@ AppTimeSheet = (function($){
 	var calendar = null;
 	var weekSelector = null;
 	var currentCellPickerSelected = null;
-	var allCellPicker = new Object();
 	//The last day cell clicked (used for the shift + clic function)
 	var lastClicked = null;
 	var allDayCells = new Object();
@@ -15,7 +14,8 @@ AppTimeSheet = (function($){
 	var weekSelected = 0;
 	var yearSelected = 0;
 	var timeSheetId = 0;
-	var allProjectsList = 0;
+	var allProjectsList = null;
+	var openedProjects = null;
 	var lastWeekProjectsIdList = 0;
 	var dayStatus = null;
 	var availableDates = null;
@@ -100,20 +100,34 @@ AppTimeSheet = (function($){
 					// Create the views
 					if (data != null){
 						allProjectsList = data.projectDTO;
-						var label = $("#all-projects-template").html();
-						var toAdd = '<optgroup id="project-select-all" label="'+label+'">';
+						openedProjects = new Array();
 						if ($.isArray(data.projectDTO)){
-							$("#project-select").removeAttr("disabled");
-							$("#add-project-button").removeAttr("disabled");
-							
 							$.each(data.projectDTO, function(){
-								toAdd += '<option value='+this.id+'>'+this.name+'</option>'
+								if (this.status == 1){
+									openedProjects.push(this);
+								}
 							});
 
 						} else if (data.projectDTO != null){
+							if (data.projectDTO.status == 1){
+								openedProjects.push(data.projectDTO);
+							}
+						}
+						
+						var label = $("#all-projects-template").html();
+						var toAdd = '<optgroup id="project-select-all" label="'+label+'">';
+						if ($.isArray(openedProjects)){
 							$("#project-select").removeAttr("disabled");
 							$("#add-project-button").removeAttr("disabled");
-							toAdd += '<option value='+data.projectDTO.id+'>'+data.projectDTO.name+'</option>'
+							
+							$.each(openedProjects, function(){
+								toAdd += '<option value='+this.id+'>'+this.name+'</option>'
+							});
+
+						} else if (openedProjects.length != 0){
+							$("#project-select").removeAttr("disabled");
+							$("#add-project-button").removeAttr("disabled");
+							toAdd += '<option value='+openedProjects.id+'>'+openedProjects.name+'</option>'
 						}
 						toAdd += '</optgroup>';
 						$("#project-select").append(toAdd);
@@ -687,15 +701,12 @@ AppTimeSheet = (function($){
 						var actualIndex = this.index;
 						if (lastIndex <= this.index){
 							while (lastIndex < actualIndex){
-								console.log("L<A")
 								allDayCells[this.projectId][lastIndex].increment();
 								lastIndex ++;
 							}
 						} else {
 							while (actualIndex < lastIndex){
-								console.log("A<L")
 								actualIndex ++;
-								console.log(actualIndex+" < "+lastIndex);
 								allDayCells[this.projectId][actualIndex].increment();
 							}
 						}
@@ -756,15 +767,6 @@ AppTimeSheet = (function($){
 		},
 		
 		save:function(){
-			console.log("Sending data :");
-			console.log("   Index :"+this.index);
-			console.log("   Amount :"+this.amount);
-			console.log("   Day :"+this.day);
-			console.log("   ProjectId :"+this.projectId);
-			console.log("   DayId :"+this.dayId);
-			console.log("   TSId :"+this.timeSheetId);
-			console.log("Sending data :");
-			console.log("Sending data :");
 			var parent = this;
 			// Calculate total
 			calendar.calculateTotal(this.projectId,this.index);

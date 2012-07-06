@@ -33,9 +33,8 @@ public class ProjectService extends AbstractService {
 
 	@Inject
 	private OrganizationService organizationService;
-	
-	@Inject
 
+	@Inject
 	private static final String ICON = "default.png";
 	protected final Logger log = LoggerFactory.getLogger(this.getClass());
 
@@ -55,7 +54,8 @@ public class ProjectService extends AbstractService {
 			for (User u : project.getUsers()) {
 				users.add(new UserDTO(u.getUsername(), u.isLocked(), u.getId()));
 			}
-			dtos.add(new ProjectDTO(project.getName(), project.getId(), project.getIcon(), users, new OrganizationDTO(project.getOrganization())));
+			dtos.add(new ProjectDTO(project.getName(), project.getId(), project.getIcon(), users, new OrganizationDTO(project.getOrganization()),
+					project.getStatus()));
 		}
 		Collections.sort(dtos);
 		return dtos;
@@ -69,18 +69,31 @@ public class ProjectService extends AbstractService {
 	 */
 	@Transactional
 	public List<ProjectDTO> getAllProjectsForUser(long userId) {
-		List<ProjectDTO> allProjects = this.getAllProjects();
 		List<ProjectDTO> usersProjects = new ArrayList<ProjectDTO>();
 		// For each project, check if the user is contributor on the project.
-		for (ProjectDTO project : allProjects) {
-			if (permissionService.userHasPermission(userId, false, Project.RIGHT_CONTRIBUTOR, Project.PROJECT_RESOURCE, project.id)) {
+		for (ProjectDTO project : this.getAllProjects()) {
+			if (permissionService.userHasPermission(userId, false, Project.RIGHT_CONTRIBUTOR, Project.PROJECT_RESOURCE, project.id)
+					|| permissionService.userHasPermission(userId, false, Project.RIGHT_PROJECTMANAGER, Project.PROJECT_RESOURCE, project.id)) {
 				usersProjects.add(project);
 			}
 		}
-		// For each project, check if the user is manager on the project, onlly if the
-		for (ProjectDTO project : allProjects) {
-			if (permissionService.userHasPermission(userId, false, Project.RIGHT_PROJECTMANAGER, Project.PROJECT_RESOURCE, project.id)
-					&& !usersProjects.contains(project)) {
+		return usersProjects;
+	}
+
+	/**
+	 * Gets the lists of all projects associated to the user, with a specific status. The user is associated when he has right of contribution and/or
+	 * management on the project.
+	 * 
+	 * @return the list of all projects associated to the user with a specific status. If no project is found, return an empty list.
+	 */
+	@Transactional
+	public List<ProjectDTO> getAllProjectsForUserWithStatus(long userId, int status) {
+		List<ProjectDTO> usersProjects = new ArrayList<ProjectDTO>();
+		// For each project, check if the user is contributor on the project.
+		for (ProjectDTO project : this.getAllProjects()) {
+			if (project.status == status &&
+					(permissionService.userHasPermission(userId, false, Project.RIGHT_CONTRIBUTOR, Project.PROJECT_RESOURCE, project.id)
+							|| permissionService.userHasPermission(userId, false, Project.RIGHT_PROJECTMANAGER, Project.PROJECT_RESOURCE, project.id))) {
 				usersProjects.add(project);
 			}
 		}
@@ -100,10 +113,10 @@ public class ProjectService extends AbstractService {
 		query.setParameter("name", name);
 		Project proj = (Project) query.getSingleResult();
 		ProjectDTO dto = new ProjectDTO(proj.getName(), proj.getId(), proj.getIcon(), new ArrayList(proj.getUsers()), new OrganizationDTO(proj
-				.getOrganization()));
+				.getOrganization()), proj.getStatus());
 		return dto;
 	}
-	
+
 	/**
 	 * Get the project with the specific id
 	 * 
@@ -273,30 +286,57 @@ public class ProjectService extends AbstractService {
 		}
 		return projectsDTO;
 	}
-	
+
 	/**
-	 * Gets all the project where the current user is associated as a Project Manager.
-	 * If this function is called with 0 as parameter, returns all the projects where the user is PM
+	 * Get the project managed by the current user.
+	 * 
+	 * @return The list of managed projects.
+	 */
+	@SuppressWarnings("unchecked")
+	@Transactional
+	public List<ProjectDTO> getManagedProjects() {
+		List<ProjectDTO> projectsDTO = new ArrayList<ProjectDTO>();
+		Query request = em.get().createQuery("SELECT p FROM Project p");
+		List<Project> projects = (List<Project>) request.getResultList();
+		for (Project project : projects) {
+			if (currentUserHasRightsOnProject(Project.RIGHT_PROJECTMANAGER, project.getId())) {
+				projectsDTO.add(new ProjectDTO(project));
+			}
+		}
+		return projectsDTO;
+	}
+
+	/**
+	 * Gets all the project where the current user is associated as a Project Manager. If this function is called with 0 as parameter, returns all the
+	 * projects where the user is PM
+	 * 
 	 * @return A list of ProjectDTO representing all the linked projects
 	 */
 	@SuppressWarnings("unchecked")
 	@Transactional
-	public List<ProjectDTO> getProjectsForProjectManagerLinkedToOrganization(long organizationId){
+	public List<ProjectDTO> getProjectsForProjectManagerLinkedToOrganization(long organizationId) {
 		Query request;
-		if(organizationId != 0){
+		if (organizationId != 0) {
 			request = em.get().createQuery("SELECT p FROM Project p WHERE organization = :organization");
 			request.setParameter("organization", em.get().find(Organization.class, organizationId));
-		}
-		else{
+		} else {
 			request = em.get().createQuery("SELECT p FROM Project p");
 		}
-		List<Project> projects = (List<Project>)request.getResultList();
+		List<Project> projects = (List<Project>) request.getResultList();
 		List<ProjectDTO> usersProjects = new ArrayList<ProjectDTO>();
 		for (Project project : projects) {
-			if (permissionService.userHasPermission(this.getAuthenticatedUserModel().getId(), false, Project.RIGHT_PROJECTMANAGER, Project.PROJECT_RESOURCE, project.getId())){
+			if (permissionService.userHasPermission(this.getAuthenticatedUserModel().getId(), false, Project.RIGHT_PROJECTMANAGER,
+					Project.PROJECT_RESOURCE, project.getId())) {
 				usersProjects.add(new ProjectDTO(project));
 			}
 		}
 		return usersProjects;
+	}
+
+	@Transactional
+	public void updateProjectStatus(long projectId, int status) {
+		Project project = em.get().find(Project.class, projectId);
+		project.setStatus(status);
+		em.get().merge(project);
 	}
 }

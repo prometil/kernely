@@ -24,6 +24,11 @@ public class ProjectDTO implements Comparable<ProjectDTO>{
 	 * The name of the project
 	 */
 	public String name;
+	
+	/**
+	 * The status of the project (open, closed...)
+	 */
+	public int status;
 
 	/**
 	 * The icon of the project
@@ -50,12 +55,13 @@ public class ProjectDTO implements Comparable<ProjectDTO>{
 	/**
 	 * Constructor
 	 */
-	public ProjectDTO(String newName, long id, String newIcon, List<UserDTO> newUsers, OrganizationDTO newOrganization) {
+	public ProjectDTO(String newName, long id, String newIcon, List<UserDTO> newUsers, OrganizationDTO newOrganization, int status) {
 		this.id = id;
 		this.name = newName;
 		this.users = newUsers;
 		this.icon = newIcon;
 		this.organization = newOrganization;
+		this.status = status;
 	}
 	
 	/**
@@ -70,6 +76,7 @@ public class ProjectDTO implements Comparable<ProjectDTO>{
 		}
 		this.icon = project.getIcon();
 		this.organization = new OrganizationDTO(project.getOrganization());
+		this.status = project.getStatus();
 	}
 
 	/**

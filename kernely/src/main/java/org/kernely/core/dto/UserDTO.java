@@ -97,8 +97,10 @@ public class UserDTO implements Comparable<UserDTO>{
 		this.username = u.getUsername();
 		this.locked = u.isLocked();
 		this.id = u.getId();
-		this.firstname = u.getUserDetails().getFirstname();
-		this.name = u.getUserDetails().getName();
+		if (u.getUserDetails() != null){
+			this.firstname = u.getUserDetails().getFirstname();
+			this.name = u.getUserDetails().getName();
+		}
 	}
 
 	/**

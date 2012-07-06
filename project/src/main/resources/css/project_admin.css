@@ -3,3 +3,7 @@ img.project-icon{
 	max-width:100px;
 	max-height:100px;
 }
+#project_buttons{
+	float:right;
+	margin-bottom: 10px;
+}
