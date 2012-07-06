@@ -43,6 +43,7 @@ import org.kernely.holiday.dto.HolidayProfileCreationRequestDTO;
 import org.kernely.holiday.dto.HolidayProfileDTO;
 import org.kernely.holiday.dto.HolidayProfilesSummaryDTO;
 import org.kernely.holiday.dto.HolidayRequestDTO;
+import org.kernely.holiday.dto.HolidayTypeDTO;
 import org.kernely.holiday.dto.HolidayUserSummaryDTO;
 import org.kernely.holiday.dto.HolidayUserTypeSummaryDTO;
 import org.kernely.holiday.model.HolidayProfile;
@@ -110,16 +111,18 @@ public class HolidayService extends AbstractService {
 
 	/**
 	 * Gets the holiday profile DTO which matches the id.
-	 * @param id The id of the holiday profile.
+	 * 
+	 * @param id
+	 *            The id of the holiday profile.
 	 * @return The holiday profile, containing his types.
 	 */
-	public HolidayProfileDTO getHolidayProfile(long id){
+	public HolidayProfileDTO getHolidayProfile(long id) {
 		Query query = em.get().createQuery("SELECT h from HolidayProfile h WHERE h.id=:id");
 		query.setParameter("id", id);
 		HolidayProfile profile = (HolidayProfile) query.getSingleResult();
 		return new HolidayProfileDTO(profile);
 	}
-	
+
 	/**
 	 * Gets the holiday DTO for the holiday type with the id passed in
 	 * parameter.
@@ -239,8 +242,8 @@ public class HolidayService extends AbstractService {
 				// Get the details by the request above
 				// If some details exists, will proceed, else, will raise a
 				// NoResultException
-				List<HolidayRequestDetail> list = (List<HolidayRequestDetail>)verifExist.getResultList();
-				if(list.size() == 0){
+				List<HolidayRequestDetail> list = (List<HolidayRequestDetail>) verifExist.getResultList();
+				if (list.size() == 0) {
 					throw new NoResultException("Details are link to this instance of type !");
 				}
 
@@ -293,14 +296,16 @@ public class HolidayService extends AbstractService {
 
 		return new HolidayDTO(holidayType);
 	}
-	
+
 	/**
 	 * Returns an HolidayDTO representing the instance with the given id
-	 * @param id The id of the instance to retrieve
+	 * 
+	 * @param id
+	 *            The id of the instance to retrieve
 	 * @return A DTO representing the instance with the given id.
 	 */
 	@Transactional
-	public HolidayDTO getHolidayTypeInstanceFromId(long id){
+	public HolidayDTO getHolidayTypeInstanceFromId(long id) {
 		HolidayTypeInstance instance = em.get().find(HolidayTypeInstance.class, id);
 		return new HolidayDTO(instance);
 	}
@@ -464,7 +469,7 @@ public class HolidayService extends AbstractService {
 				associatedUsers.add(userService.getUserByUsername(username));
 			}
 		}
-		
+
 		profile.setUsers(associatedUsers);
 		HolidayTypeInstance currentInstance;
 		HolidayTypeInstance nextInstance;
@@ -472,11 +477,10 @@ public class HolidayService extends AbstractService {
 			currentInstance = type.getCurrentInstance();
 			currentInstance.setUsers(associatedUsers);
 			nextInstance = type.getNextInstance();
-			if(!currentInstance.equals(nextInstance)){
+			if (!currentInstance.equals(nextInstance)) {
 				nextInstance.setUsers(associatedUsers);
 				em.get().merge(nextInstance);
-				log
-				.debug("Next Type instance with id {} has been associated to the users of the profile with id {}", nextInstance.getId(), profile
+				log.debug("Next Type instance with id {} has been associated to the users of the profile with id {}", nextInstance.getId(), profile
 						.getId());
 			}
 			log
@@ -600,10 +604,9 @@ public class HolidayService extends AbstractService {
 						if ((new DateTime(detail.day).getMonthOfYear() == month) && (new DateTime(detail.day).getYear() == year)) {
 							log.debug("Summary build: Detail  has type {}", detail.type);
 							if (request.status == HolidayRequest.ACCEPTED_STATUS || request.status == HolidayRequest.PAST_STATUS) {
-								if(taken.containsKey(detail.type)){
+								if (taken.containsKey(detail.type)) {
 									taken.put(detail.type, taken.get(detail.type) + 0.5F);
-								}
-								else{
+								} else {
 									taken.put(detail.type, 0.5F);
 								}
 							} else if (request.status == HolidayRequest.PENDING_STATUS) {
@@ -629,6 +632,41 @@ public class HolidayService extends AbstractService {
 			summary.add(profileSummary);
 		}
 		return summary;
+	}
+
+	/**
+	 * Retrieve all the type instances for a given user
+	 * 
+	 * @param userId
+	 *            The Id of the concerned user
+	 * @param acceptUnlimited
+	 *            Defines if unlimited types are considered too
+	 * @param acceptAutomanaged
+	 *            Defines if types which are managed automatically are
+	 *            considered too. Automatically managed types are these which
+	 *            have more than 0 in quantity / month or year
+	 * @return A list of Type DTO representing all the typeInstance of the given
+	 *         user
+	 */
+	@SuppressWarnings("unchecked")
+	public List<HolidayTypeDTO> getAllTypeInstanceForUser(long userId, boolean acceptUnlimited, boolean acceptAutomanaged) {
+		User u = em.get().find(User.class, userId);
+		if (u == null) {
+			throw new IllegalArgumentException("The user with the id " + userId + " doesn't exist !");
+		}
+
+		Query typeInstanceQuery = em.get().createQuery("SELECT hti FROM HolidayTypeInstance hti WHERE :user member of hti.users");
+		typeInstanceQuery.setParameter("user", u);
+
+		List<HolidayTypeInstance> typeInstances = (List<HolidayTypeInstance>) typeInstanceQuery.getResultList();
+		List<HolidayTypeDTO> typesDTO = new ArrayList<HolidayTypeDTO>();
+		for (HolidayTypeInstance i : typeInstances) {
+			if ((!i.isUnlimited() || acceptUnlimited) && (i.getQuantity() == 0 || acceptAutomanaged)) {
+				typesDTO.add(new HolidayTypeDTO(i));
+			}
+
+		}
+		return typesDTO;
 	}
 
 }

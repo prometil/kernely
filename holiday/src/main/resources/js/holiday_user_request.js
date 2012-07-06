@@ -490,7 +490,7 @@ AppHolidayUserRequest = (function($){
 		initialize: function(){
 			var parent = this;
 			var template = $("#popup-visualize-template").html();
-			var titleTemplate = $("#visualize-template").html();
+			var titleTemplate = $("#new-donation-window-title").html();
 			$(this.el).kernely_dialog({
 				title: titleTemplate,
 				content: template,

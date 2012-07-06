@@ -1109,7 +1109,7 @@ public class HolidayRequestService extends AbstractService {
 					}
 
 					float limitOfAnticipation;
-					if(type.isAnticipated()){
+					if(type.isAnticipated() && type.getQuantity() != 0){
 						availableDays -= balancesList.get(balancesList.size() - 1).availableBalance;
 						limitOfAnticipation = type.getQuantity() * type.getPeriodUnit();
 					}
@@ -1168,7 +1168,7 @@ public class HolidayRequestService extends AbstractService {
 					}
 
 					float limitOfAnticipation;
-					if(type.isAnticipated()){
+					if(type.isAnticipated() && type.getQuantity() != 0){
 						availableDays -= balancesList.get(balancesList.size() - 1).availableBalance;
 						limitOfAnticipation = type.getQuantity() * type.getPeriodUnit();
 					}

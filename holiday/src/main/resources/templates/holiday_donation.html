@@ -1,0 +1,75 @@
+{% extends "templates/layout.html" %}
+{% block javascript %}
+	<script type="text/javascript" src="/js/holiday_donation.js"></script>
+{% endblock %}
+
+{% block css %}
+	<link rel="stylesheet" type="text/css" href="/css/holiday_donation.css"/>
+{% endblock %}
+
+{% block template %}	
+	<script type="text/html" id="table-receiver-column">{% i18n "receiver" %}</script>
+	<script type="text/html" id="table-date-column">{% i18n "date" %}</script>
+	<script type="text/html" id="table-amount-column">{% i18n "amount" %}</script>
+	<script type="text/html" id="table-comment-column">{% i18n "comment" %}</script>
+	<script type="text/html" id="table-type-column">{% i18n "type" %}</script>
+	
+	<script type="text/html" id="too-high-amount-template">{% i18n "too-high-amount" %}</script>
+	<script type="text/html" id="error-donation-creation-template">{% i18n "error-donation-creation" %}</script>
+	<script type="text/html" id="error-loading-types-template">{% i18n "error-loading-types" %}</script>
+	<script type="text/html" id="error-loading-users-template">{% i18n "error-loading-users" %}</script>
+	
+	<script type="text/html" id="create-ask-template">{% i18n "create_ask" %}</script>
+	<script type="text/html" id="create-confirm-title-template">{% i18n "create_confirm_title" %}</script>
+	
+	<script type="text/html" id="donation-loading-error-template">{% i18n "donation-loading-error" %}</script>
+	
+	<script type="text/html" id="new-donation-title">{% i18n "new-donation-title" %}</script>
+	
+	<script type="text/html" id="new-donation-window-template">
+		<div id="donation-window-main">
+			<div id="notification_dialog_to_user"></div>
+			<label for="user-selector">{% i18n "receiver" %}</label>
+			<select id="user-selector"></select><br/>
+			<label for="holiday-type-selector">{% i18n "typeAndAmount" %}</label>
+			<select id="holiday-type-selector" disabled="disabled"></select>
+			<input type="text" name="amount" id="donation-amount" class="kernely_input"/><br/>
+			<label for="holiday-type-selector">{% i18n "comment" %}</label>
+			<textarea id="donation-comment"></textarea>
+		</div>
+		<div class="dialog-buttons-container">
+			<input type="button" class="button_standard" id="button_cancel" value="{% i18n "cancel" %}"/>
+			<input type="button" class="button_ok" id="validate-donation" value="{% i18n "ok" %}"/>
+		</div>
+	</script>
+{% endblock %}
+
+{% block title %}
+	{% i18n "title_holiday_donation" %}
+{% endblock %}
+
+{% block content %}
+	<div id="modal_donation_window"></div>
+	<div id="donation-main">
+		<div class="classic-buttons-bar">
+			<input type="button" id="new_donation_button" value="{% i18n "make_donation" %}" class="button_emphasis">
+		</div>
+		<table id="donation_history_table" class="kernely_table">
+		</table>
+	</div>
+{% endblock %}
+
+{% block left %}
+	<div id="profile_mask"></div>
+	<div id="left_profile_arrow"></div>
+	<div id='left_profile_container'>
+		<img src="/images/{{currentUser.image}}" id="image_left_profile"/>
+		<div id="left_profile_name">{{currentUser.firstname}} {{currentUser.lastname}}</div>
+	</div>
+{% endblock %}
+
+{% block right %}
+	
+{% endblock %}
+
+
