@@ -141,30 +141,27 @@ public class TimeSheetService extends AbstractService {
 	 */
 	@Transactional
 	public TimeSheetDTO getTimeSheet(int week, int year, long userId, boolean withCreation) {
+		log.trace("Searching timesheet for week {}, year {} and user {}", new Object[] { week, year, userId });
 
-
-		log.debug("Searching timesheet for week {}, year {} and user {}",new Object[]{week,year,userId});
-		
 		DateTime firstDayDT;
 		DateTime lastDayDT;
-		
+
 		Date firstDay;
 		Date lastDay;
-		
-		if(week <= 52){
+
+		if (week <= 52) {
 			firstDay = new DateTime().withYear(year).withWeekOfWeekyear(week).withDayOfWeek(1).toDateMidnight().toDate();
 			lastDay = new DateTime().withYear(year).withWeekOfWeekyear(week).withDayOfWeek(7).toDateMidnight().toDate();
-		}
-		else {
+		} else {
 			firstDayDT = new DateTime().withYear(year);
 			firstDay = firstDayDT.withWeekOfWeekyear(firstDayDT.weekOfWeekyear().getMaximumValue()).withDayOfWeek(1).toDateMidnight().toDate();
 			lastDayDT = new DateTime().withYear(year);
 			lastDay = lastDayDT.withWeekOfWeekyear(lastDayDT.weekOfWeekyear().getMaximumValue()).withDayOfWeek(7).toDateMidnight().toDate();
 		}
-		
+
 		Query query = em.get().createQuery("SELECT t FROM TimeSheet t WHERE user = :user AND beginDate = :beginWeek AND endDate = :endWeek");
 		User user = em.get().find(User.class, userId);
-		
+
 		query.setParameter("user", user);
 		query.setParameter("beginWeek", firstDay);
 		query.setParameter("endWeek", lastDay);
@@ -297,24 +294,7 @@ public class TimeSheetService extends AbstractService {
 		}
 
 		// Build the list of dates which can not receive amount of time (holiday...)
-		log.debug("Searching for unavailable dates in timesheet...");
-		HashMap<String, Object> args = new HashMap<String, Object>();
-		HashMap<Date, Float> result = new HashMap<Date, Float>();
-
-		Map<Date, Float> unavailable = new HashMap<Date, Float>();
-		args.put("start", firstDayOfWeek);
-		args.put("end", new DateTime(firstDayOfWeek).plusDays(7).toDate());
-
-		List<Extender> datesExtenders = org.kernely.plugin.PluginManager.getExtenders("date");
-		for (Extender dateExtender : datesExtenders) {
-			log.debug("Date extender found");
-			result = (HashMap<Date, Float>) dateExtender.call(args).get("dates");
-			for (Date d : result.keySet()) {
-				if (result.get(d) > 0) {
-					unavailable.put(d, result.get(d));
-				}
-			}
-		}
+		Map<Date, Float> unavailable = getUnavailableDatesFromExtender(firstDayOfWeek, new DateTime(firstDayOfWeek).plusDays(7).toDate());
 
 		List<Float> available = new ArrayList<Float>();
 
@@ -328,7 +308,37 @@ public class TimeSheetService extends AbstractService {
 			}
 		}
 
-		return new TimeSheetCalendarDTO(week, year, timeSheet, dates, stringDates, available, projectsId, lastWeekProjectsId, configuration.getFloat("maxDayValue"));
+		return new TimeSheetCalendarDTO(week, year, timeSheet, dates, stringDates, available, projectsId, lastWeekProjectsId, configuration
+				.getFloat("maxDayValue"));
+	}
+
+	/**
+	 * Get the unavailable dates registered by other plugins between the first days included and the last day excluded.
+	 * 
+	 * @return A map containing how much the day is unavailable. A day with 0 is fully available, a day with 1 is unavailable, a day with 0.5 is
+	 *         half-available.
+	 */
+	private Map<Date, Float> getUnavailableDatesFromExtender(Date firstDay, Date lastDay) {
+		log.trace("Searching for unavailable dates in timesheet...");
+		HashMap<String, Object> args = new HashMap<String, Object>();
+		HashMap<Date, Float> result;
+		HashMap<Date, Float> unavailable = new HashMap<Date, Float>();
+
+		args.put("start", firstDay);
+		args.put("end", lastDay);
+
+		List<Extender> datesExtenders = org.kernely.plugin.PluginManager.getExtenders("date");
+		for (Extender dateExtender : datesExtenders) {
+			log.trace("Date extender found");
+			result = (HashMap<Date, Float>) dateExtender.call(args).get("dates");
+			for (Date d : result.keySet()) {
+				if (result.get(d) > 0) {
+					unavailable.put(d, result.get(d));
+				}
+			}
+		}
+		return unavailable;
+
 	}
 
 	/**
@@ -424,22 +434,22 @@ public class TimeSheetService extends AbstractService {
 
 	@Transactional
 	private synchronized TimeSheetDay getTimeSheetDayForUserWithCreation(Date day, long userId) {
-		return getTimeSheetDayForUser(day,userId, true);
+		return getTimeSheetDayForUser(day, userId, true);
 	}
-	
+
 	@Transactional
 	private synchronized TimeSheetDay getTimeSheetDayForUserWithoutCreation(Date day, long userId) {
-		return getTimeSheetDayForUser(day,userId,false);
+		return getTimeSheetDayForUser(day, userId, false);
 	}
-	
+
 	@Transactional
-	private synchronized TimeSheetDay getTimeSheetDayForUser(Date day, long userId, boolean withCreation){
+	private synchronized TimeSheetDay getTimeSheetDayForUser(Date day, long userId, boolean withCreation) {
 
 		DateTime datetime = new DateTime(day).toDateMidnight().toDateTime();
 
 		TimeSheetDTO timeSheetDTO = this.getTimeSheet(datetime.getWeekOfWeekyear(), datetime.getYear(), userId, withCreation);
 
-		if (timeSheetDTO == null){
+		if (timeSheetDTO == null) {
 			return null;
 		}
 
@@ -454,7 +464,7 @@ public class TimeSheetService extends AbstractService {
 			return tsday;
 		} catch (NoResultException nre) {
 			// The detail doesn't exist, we have to create it if needeed.
-			if (withCreation){
+			if (withCreation) {
 				TimeSheetDay detail = new TimeSheetDay();
 				detail.setDay(datetime.toDate());
 				detail.setTimeSheet(timeSheet);
@@ -466,12 +476,16 @@ public class TimeSheetService extends AbstractService {
 		}
 
 	}
-	
+
 	/**
 	 * Gets all the amount with the day associated for the given date interval and the given user
-	 * @param begin the beginning of the interval
-	 * @param end the end of the interval
-	 * @param userId the id of the user needed
+	 * 
+	 * @param begin
+	 *            the beginning of the interval
+	 * @param end
+	 *            the end of the interval
+	 * @param userId
+	 *            the id of the user needed
 	 * @return A list of TimeSheetDayAmountDTO containing all days and their amounts for the given interval and user.
 	 */
 	@Transactional
@@ -487,7 +501,7 @@ public class TimeSheetService extends AbstractService {
 		for (DateTime dt = dateTimeBegin; dt.isBefore(dateTimeEnd); dt = dt.plusDays(1)) {
 			amount = 0;
 			timeSheetDay = this.getTimeSheetDayForUserWithoutCreation(dt.toDate(), userId);
-			if(timeSheetDay != null){
+			if (timeSheetDay != null) {
 				timeSheetDetails = timeSheetDay.getDetailsProjects();
 				for (TimeSheetDetailProject tsdp : timeSheetDetails) {
 					amount += tsdp.getAmount();
@@ -498,32 +512,36 @@ public class TimeSheetService extends AbstractService {
 
 		return dayAmountDTOs;
 	}
-	
+
 	/**
 	 * Gets all the timesheet days between the given interval and for the given user.
-	 * @param begin the beginning of the interval
-	 * @param end the end of the interval
-	 * @param userId the id of the user needed
+	 * 
+	 * @param begin
+	 *            the beginning of the interval
+	 * @param end
+	 *            the end of the interval
+	 * @param userId
+	 *            the id of the user needed
 	 * @return A list of TimeSheetDayDTO containing all the days present in the given interval for the given user.
 	 */
 	@Transactional
-	public List<TimeSheetDayDTO> getTimeSheetDayForUserBetweenDates(Date begin, Date end, long userId){
+	public List<TimeSheetDayDTO> getTimeSheetDayForUserBetweenDates(Date begin, Date end, long userId) {
 		DateTime dateTimeBegin = new DateTime(begin).toDateMidnight().toDateTime();
 		DateTime dateTimeEnd = new DateTime(end).plusDays(1).toDateMidnight().toDateTime();
-		
+
 		List<TimeSheetDayDTO> dayDTOs = new ArrayList<TimeSheetDayDTO>();
-		
+
 		TimeSheetDay timeSheetDay;
 		TimeSheetDayDTO dto;
-		
-		for(DateTime dt = dateTimeBegin; dt.isBefore(dateTimeEnd); dt = dt.plusDays(1)){
+
+		for (DateTime dt = dateTimeBegin; dt.isBefore(dateTimeEnd); dt = dt.plusDays(1)) {
 			timeSheetDay = this.getTimeSheetDayForUserWithoutCreation(dt.toDate(), userId);
-			if(timeSheetDay != null){
+			if (timeSheetDay != null) {
 				dto = new TimeSheetDayDTO(timeSheetDay);
 				dayDTOs.add(dto);
 			}
 		}
-		
+
 		return dayDTOs;
 	}
 
@@ -627,25 +645,7 @@ public class TimeSheetService extends AbstractService {
 
 		// Get unavailable dates
 		// Build the list of dates which can not receive amount of time (holiday...)
-		log.debug("Searching for unavailable dates in timesheet from {} to {}...", dateTimeBegin, dateTimeEnd);
-		HashMap<String, Object> args = new HashMap<String, Object>();
-		HashMap<Date, Float> busyDates = new HashMap<Date, Float>();
-
-		Map<Date, Float> unavailable = new HashMap<Date, Float>();
-		args.put("start", dateTimeBegin.toDate());
-		args.put("end", dateTimeEnd.toDate());
-
-		List<Extender> datesExtenders = org.kernely.plugin.PluginManager.getExtenders("date");
-		for (Extender dateExtender : datesExtenders) {
-			log.debug("Date extender found");
-			busyDates = (HashMap<Date, Float>) dateExtender.call(args).get("dates");
-			for (Date d : busyDates.keySet()) {
-				// If the day is marked as "true", the day is not available
-				if (busyDates.get(d) > 0) {
-					unavailable.put(d, busyDates.get(d));
-				}
-			}
-		}
+		Map<Date, Float> unavailable = getUnavailableDatesFromExtender(dateTimeBegin.toDate(), dateTimeEnd.toDate());
 
 		List<Integer> daysOfWeek = new ArrayList<Integer>();
 		List<Float> expenses = new ArrayList<Float>();
@@ -653,7 +653,6 @@ public class TimeSheetService extends AbstractService {
 		for (DateTime dt = dateTimeBegin; dt.isBefore(dateTimeEnd); dt = dt.plusDays(1)) {
 			daysOfWeek.add(dt.getDayOfWeek());
 			timeSheetDay = this.getTimeSheetDayForUserWithoutCreation(dt.toDate(), userId);
-			
 
 			// Get expenses
 			float sum = 0;
@@ -663,8 +662,8 @@ public class TimeSheetService extends AbstractService {
 				}
 			}
 			expenses.add(sum);
-			
-			if (timeSheetDay != null){
+
+			if (timeSheetDay != null) {
 				timeSheetDetails = timeSheetDay.getDetailsProjects();
 				// For each detail in the day
 				for (TimeSheetDetailProject tsdp : timeSheetDetails) {
@@ -715,7 +714,7 @@ public class TimeSheetService extends AbstractService {
 		}
 
 		TimeSheetMonthDTO monthTimeSheet = new TimeSheetMonthDTO(daysOfWeek, projectsDTO, expenses, month, year, checkMonthTimeSheetValidation(month,
-				year, userId), timeSheetCanBeValidated(month, year, userId));
+				year, userId), getValidDays(month, year, userId));
 		return monthTimeSheet;
 	}
 
@@ -744,7 +743,8 @@ public class TimeSheetService extends AbstractService {
 	 */
 	@Transactional
 	public boolean validateMonth(int month, int year, long userId) {
-		if (!timeSheetCanBeValidated(month, year, userId)) {
+		List<Boolean> validDays = getValidDays(month, year, userId);
+		if (validDays.contains(false)) {
 			return false;
 		} else {
 			log.debug("Validating timesheet of month {} for user {}.", month, userId);
@@ -796,18 +796,17 @@ public class TimeSheetService extends AbstractService {
 
 		for (DateTime day = firstDayOfMonth; !day.isAfter(lastDayOfMonth); day = day.plusDays(1)) {
 			TimeSheetDay dayModel = this.getTimeSheetDayForUserWithoutCreation(day.toDate(), userId);
-			if (dayModel == null){
+			if (dayModel == null) {
 				return false;
 			} else if (dayModel.getStatus() != TimeSheetDay.DAY_VALIDATED) {
 				return false;
 			}
-			System.out.println("Day "+dayModel.getDay() +" status : "+dayModel.getStatus());
-
 		}
 		return true;
 	}
 
-	private boolean timeSheetCanBeValidated(int month, int year, long userId) {
+	private List<Boolean> getValidDays(int month, int year, long userId) {
+		List<Boolean> daysAreFilled = new ArrayList<Boolean>();
 		float maxDayValue = configuration.getFloat("maxDayValue");
 
 		DateTime firstDayOfMonth = new DateTime().withDayOfMonth(1).withMonthOfYear(month).withYear(year).toDateMidnight().toDateTime();
@@ -816,28 +815,18 @@ public class TimeSheetService extends AbstractService {
 		// Get unavailable dates
 		HashMap<Date, Float> result = new HashMap<Date, Float>();
 
-		log.debug("Searching for unavailable dates in timesheet...");
+		// Build the list of dates which can not receive amount of time (holiday...)
+		Map<Date, Float> unavailable = getUnavailableDatesFromExtender(firstDayOfMonth.toDate(), new DateTime(lastDayOfMonth.plusDays(1).toDate()).toDate());
+
+		// Get dates with pending holiday requests
 		HashMap<String, Object> args = new HashMap<String, Object>();
-		Map<Date, Float> unavailable = new HashMap<Date, Float>();
 		args.put("start", firstDayOfMonth.toDate());
 		args.put("end", new DateTime(lastDayOfMonth.plusDays(1).toDate()).toDate());
 
-		List<Extender> datesExtenders = org.kernely.plugin.PluginManager.getExtenders("date");
-		for (Extender dateExtender : datesExtenders) {
-			log.debug("Date extender found");
-			result = (HashMap<Date, Float>) dateExtender.call(args).get("dates");
-			for (Date d : result.keySet()) {
-				// If the day is greater than 0, the day is not available
-				if (result.get(d) > 0) {
-					unavailable.put(d, result.get(d));
-				}
-			}
-		}
-
 		Set<Date> pending = new HashSet<Date>();
 
-		datesExtenders = org.kernely.plugin.PluginManager.getExtenders("pending_holidays_dates");
-		for (Extender dateExtender : datesExtenders) {
+		List<Extender> pendingExtenders = org.kernely.plugin.PluginManager.getExtenders("pending_holidays_dates");
+		for (Extender dateExtender : pendingExtenders) {
 			pending.addAll((HashSet<Date>) (dateExtender.call(args).get("dates")));
 		}
 
@@ -846,27 +835,29 @@ public class TimeSheetService extends AbstractService {
 		for (DateTime day = firstDayOfMonth; !day.isAfter(lastDayOfMonth); day = day.plusDays(1)) {
 			if (pending.contains(day.toDate())) {
 				// If the day is in a pending request, the timesheet can not be validated
-				return false;
-			}
-			float amount = 0;
-			dayModel = this.getTimeSheetDayForUserWithoutCreation(day.toDate(), userId);
-			if (dayModel != null){
-				for (TimeSheetDetailProject detail : dayModel.getDetailsProjects()) {
-					amount += detail.getAmount();
+				daysAreFilled.add(false);
+			} else {
+				float amount = 0;
+				dayModel = this.getTimeSheetDayForUserWithoutCreation(day.toDate(), userId);
+				if (dayModel != null) {
+					for (TimeSheetDetailProject detail : dayModel.getDetailsProjects()) {
+						amount += detail.getAmount();
+					}
+				}
+
+				// Check if the amount is correct
+				if (unavailable.containsKey(day.toDate())) {
+					amount += unavailable.get(day.toDate()) * maxDayValue;
+				}
+
+				if ((maxDayValue - amount) > 0.001) {
+					// The timesheet can not be validated if the difference between amount and max value is too different
+					daysAreFilled.add(false);
+				} else {
+					daysAreFilled.add(true);
 				}
 			}
-
-			// Check if the amount is correct
-			if (unavailable.containsKey(day.toDate())) {
-				amount += unavailable.get(day.toDate()) * maxDayValue;
-			}
-
-			if ((maxDayValue - amount ) > 0.001) {
-				// The timesheet can not be validated if the difference between amount and max value is too different
-
-				return false;
-			}
 		}
-		return true;
+		return daysAreFilled;
 	}
 }
