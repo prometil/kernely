@@ -1,9 +1,10 @@
 package org.kernely.holiday.service;
 
+import static org.junit.Assert.assertTrue;
+
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.shiro.authz.UnauthorizedException;
 import org.junit.Test;
 import org.kernely.core.common.AbstractServiceTest;
 import org.kernely.core.dto.RoleDTO;
@@ -109,6 +110,11 @@ public class HolidayHumanResourceServiceTest extends AbstractServiceTest {
 		request.username = USERNAME_MANAGER;
 		request.password = USERNAME_MANAGER;
 		return userService.createUser(request);
+	}
+	
+	@Test
+	public void test(){
+		assertTrue(true); // At least one test
 	}
 
 //	@Test 
