@@ -10,7 +10,7 @@ title: Home
   <p>An open plateform for social applications developped by <a href="http://www.prometil.com">Prometil SARL </a>
     which provides a simple framework to developp web applications upon a social network.</p>
   <p>
-    <a class="btn btn-primary btn-large" href="/documentation/">
+    <a class="btn btn-primary btn-large" href="{{ site.baseurl }}/documentation/">
       Learn more
     </a>
     <a class="btn btn-large" href="https://github.com/prometil/kernely">
