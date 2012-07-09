@@ -1,5 +1,4 @@
 safe: true
 source: src
-destination: build
 lsi: false
 pygments: true
