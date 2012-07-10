@@ -27,3 +27,5 @@ Installation
 Run
 ---
 As each project is a module, the kernely project is able to run as a standalone server. Just run the class ___org.kernely.Kernely___ and that's all about it!
+
+If you want to test you plugin just link your project to the kernely project, so that it will be in the kernely project classpath. Kernely will grab it and load it at runtime.

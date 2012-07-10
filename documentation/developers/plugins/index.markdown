@@ -86,4 +86,67 @@ The main part of a plugin is the ___plugin.json___ file which contains the descr
 Plugin class
 ------------
 
-The plugin class is a java class that extends ...
+The following section will guide you through the plugin class creation.
+
+### Implement the plugin class
+
+The plugin class is a java class that extends ___org.kernely.plugin.AbstractPlugin___. 
+
+This class contains all the element to register your plugins part and extends ___com.google.inject.AbstractModule___.
+
+You need to create a plugin class and register it in the manifest files.
+
+
+{% highlight java %}
+package com.mycompany.myplugin;
+
+import org.kernely.plugin.AbstractPlugin;
+
+/**
+ * Plugin for timesheet
+ */
+public class MyPlugin extends AbstractPlugin {
+
+  public static final String NAME = "myplugin";
+
+  /**
+   * Default constructor
+   */
+  public TimeSheetPlugin() {
+    super();
+    registerName(NAME);
+    
+  }
+
+  @Override
+  public void start() {
+
+  }
+
+  /**
+   * Configure the plugin
+   */
+  @Override
+  public void configurePlugin() {
+  
+  }
+
+}
+
+{% endhighlight %}
+
+### Perform action at plugin bootstrap
+
+The ___start___ method provides you with a simple way to handle the start of the plugin. When kernely is calling start() on you plugin, the dependency injection has been perform even on the plugin. 
+
+### Use dependency injection
+
+In order to use dependency injection in the project, you can bind classes using directly the guice api inside the method ___configurePlugin___
+
+For example, you can bind an instance of MyService as a singleton like this
+
+{% highlight java %}
+public void configurePlugin(){
+  bind(MyService.class).in(Singleton.class);
+}
+{% endhighlight %}
