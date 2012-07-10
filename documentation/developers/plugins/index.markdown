@@ -26,7 +26,7 @@ The main part of a plugin is the ___plugin.json___ file which contains the descr
   }
 {% endhighlight %}
 
-
+This configuration is automatically loaded in an abstract configuration instance, that is injectable using git.
 
 <table class="table table-condensed">
       <thead>
@@ -150,3 +150,4 @@ public void configurePlugin(){
   bind(MyService.class).in(Singleton.class);
 }
 {% endhighlight %}
+
