@@ -3,6 +3,11 @@
 	padding:7px 7px 7px 0;
 }
 
+#table-legend{
+	float:left;
+	margin:5px;
+}
+
 .header{
 	width:100%;
 	margin-bottom:5px;
@@ -16,4 +21,8 @@
 
 .weekend{
 	background-color:#E1E1E1;
+}
+
+.legend-icon{
+	height:15px;
 }

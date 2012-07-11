@@ -123,6 +123,11 @@ img.editButton{
 }
 
 
+#validate-month{
+	margin:5px;
+}
+
+
 div.editAmount, span.editAmount{
 	position:relative;
 	float:left;

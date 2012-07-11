@@ -13,15 +13,6 @@
 	<link rel="stylesheet" type="text/css" href="/css/timesheet.css"/>
 {% endblock %}
 
-{% block left %}
-<div id="profile_mask"></div>
-<div id="left_profile_arrow"></div>
-<div id='left_profile_container'>
-	<img src="/images/{{currentUser.image}}" id="image_left_profile"/>
-	<div id="left_profile_name">{{currentUser.firstname}} {{currentUser.lastname}}</div>
-</div>
-{% endblock %}
-
 {% block template %}
 	<script type="text/html" id="locale-lang">{%  i18n "locale_lang" %}</script>
 	
@@ -84,9 +75,12 @@
 						
 					</table>
 				</div>
+				<div class="classic-buttons-bar">
+					<span class="hidden" id="month-validated-message">{%  i18n "timesheet_month_validated_message" %}</span>
+					<input class="hidden button_emphasis" type="button" id="validate-month" value="{%  i18n "validate_timesheet" %}"/>
+				</div>
+
 				<div class="clear"></div>
-				<input class="hidden button_emphasis" type="button" id="validate-month" value="{%  i18n "validate_timesheet" %}"/>
-				<span class="hidden" id="month-validated-message">{%  i18n "timesheet_month_validated_message" %}</span>
 		</div>
 	</div>
 {% endblock%}
