@@ -15,11 +15,11 @@ The main part of a plugin is the ___plugin.json___ file which contains the descr
 
 {% highlight json %}
   {
-      "name": "timesheet",
-      "plugin": "org.kernely.timesheet.TimeSheetPlugin",
+      "name": "myplugin",
+      "plugin": "org.mycompany.MyPlugin",
       "version": "0.1",
-      "author": "kernely.org",
-      "description": "Timesheet plugin",
+      "author": "myself",
+      "description": "Myplugin",
        "configuration": {
           "maxDayValue": "8.0"
       }
@@ -112,7 +112,7 @@ public class MyPlugin extends AbstractPlugin {
   /**
    * Default constructor
    */
-  public TimeSheetPlugin() {
+  public MyPlugin() {
     super();
     registerName(NAME);
     

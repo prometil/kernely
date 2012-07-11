@@ -22,7 +22,7 @@ Installation
 
 - Clone the repository from [github](https://github.com/prometil/kernely)
 - Do a mvn clean install in the kernely/kernely directory, and let maven grab the web.
-- Import the project in your favorite project (NB : if you use eclipse, you can do a ___mvn eclipse:eclipse___, and than import the project)
+- Import the project in your favorite IDE (NB : if you use eclipse, you can do a ___mvn eclipse:eclipse___, and then import the project)
 
 Run
 ---
