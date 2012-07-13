@@ -25,16 +25,72 @@
 	border:1px solid #A0A2A3;
 }
 
+
+
 table.timesheet-table{	
-	border-spacing:7px 7px;
+	border-spacing:0px;
+	margin-top:10px;
+	table-layout:fixed;
+	width:100%;
 }
 
-table.timesheet-table td{
+table.timesheet-table td, table.timesheet-table th{
 	border:1px solid #9c9e9f;
-	width:62px;
+	border-left:0;
+	border-bottom:0 !important;
 	height:27px;
 	text-align:center;
 	vertical-align:middle;
+}
+
+table.timesheet-table tbody#timesheet-content tr td:last-child{
+	border-right:0;
+}
+
+table.timesheet-table thead tr th:last-child{
+	border:0;
+	background-color:transparent !important;
+	width:20px !important;
+}
+
+table.timesheet-table thead tr#date-line th:first-child{
+	width:187px;
+}
+
+table.timesheet-table thead tr#date-line th{
+	width:55px;
+}
+
+table.timesheet-table thead tr#date-line th{
+	background-color:#e3e4e4;
+	font-weight:bold;	
+}
+
+table.timesheet-table tr.columnTotalsRow td:last-child{
+	background-color:transparent !important;
+	border-right:0;
+	border-bottom:0;
+}
+
+table.timesheet-table tr.columnTotalsRow td, table.timesheet-table td.total,  table.timesheet-table th.total{
+	background-color:#97ad17 !important;
+	border-bottom:1px solid #9c9e9f;
+	font-weight:bold;
+	color:#FFFFFF;
+}
+
+table.timesheet-table tr.expense-line td{
+	font-weight:bold;
+	color:#000;
+	height:55px;
+}
+
+table.timesheet-table tr.expense-line td{
+	border-top:0;
+}
+
+table.timesheet-table tr.expense-line td:last-child{
+	border-right:1px solid #9c9e9f;
 }
 
 .day-validated{
@@ -44,8 +100,7 @@ table.timesheet-table td{
 
 .day-unavailable{
 	cursor:default;
-	background:url("/images/cross.png") no-repeat;
-	background-position:center;
+	background-color: #E1E1E1;
 }
 
 .day-half-available{
@@ -64,16 +119,6 @@ table.timesheet-table td{
 	cursor:default;
 }
 
-table.timesheet-table tr.date-line td{
-	background-color:#e3e4e4;
-	font-weight:bold;	
-}
-
-table.timesheet-table tr.columnTotalsRow td, table.timesheet-table td.total{
-	background-color:#97ad17;
-	font-weight:bold;
-	color:#FFFFFF;
-}
 
 .totalMonth{
 	background-color:#97ad17;
@@ -88,11 +133,6 @@ th.total{
 	background-color:#eddfdf !important;
 }
 
-table.timesheet-table tr.expense-line td{
-	font-weight:bold;
-	color:#000;
-	height:55px;
-}
 
 .day-timesheet-planning{
 	width:20px;
@@ -131,7 +171,7 @@ img.editButton{
 div.editAmount, span.editAmount{
 	position:relative;
 	float:left;
-	width:58px;
+	width:55px;
 	min-height:13px;
 	display:block;
 	cursor:pointer;
@@ -139,7 +179,7 @@ div.editAmount, span.editAmount{
 
 input.editAmount{
 	float:left;
-	width:54px;
+	width:50px;
 	height:20px;
 	display:block;
 	text-align:center;

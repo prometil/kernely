@@ -29,7 +29,6 @@ AppTimeSheetMonth = (function($){
 				success: function(data){
 					daysAreFilled = data.daysAreFilled;
 					monthIsValidated = data.validated;
-					console.log(data)
 					tableView.render(data);
 				}
 			})
@@ -114,8 +113,8 @@ AppTimeSheetMonth = (function($){
 			}
 			// Total time for the project
 			column = $("<td>", {
-				class:"text-bold-black",
-				text:totalAmount
+				class:"text-bold-black text-center",
+				text:$.round(totalAmount, 1)
 			});
 			$(parent.el).append(column);
 			

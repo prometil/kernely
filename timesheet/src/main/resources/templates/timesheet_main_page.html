@@ -24,10 +24,8 @@
 	<script type="text/html" id="locale-lang">{% i18n "locale_lang" %}</script>
 	<script type="text/html" id="locale-country">{% i18n "locale_country" %}</script>
 	
-	<script type="text/html" id="project-title-template">{% i18n "timesheet_project_title" %}</script>
 	<script type="text/html" id="confirm-remove-line-template">{% i18n "timesheet_remove_line_confirm" %}</script>
 	<script type="text/html" id="confirm-remove-expense-line-template">{% i18n "timesheet_remove_expense_line_confirm" %}</script>
-	<script type="text/html" id="total-template">{% i18n "timesheet_total" %}</script>
 	<script type="text/html" id="expense-line-title-template">{% i18n "expense_line_title" %}</script>
 	<script type="text/html" id="delete-button-template"><img class="deleteButton" src="/images/icons/delete_icon.png"/></script>
 	<script type="text/html" id="detail-template"><div class="editAmount"><span class="editAmount">{{"{{"}}amount{{"}}"}}</span><img class="editButton" src="/images/edit-timesheet-icon.png"/></div></script>
@@ -40,14 +38,6 @@
 	<script type="text/html" id="time-amount-4">4 {% i18n "timesheet_hours" %}</script>
 	<script type="text/html" id="time-amount-6">6 {% i18n "timesheet_hours" %}</script>
 	<script type="text/html" id="time-amount-8">8 {% i18n "timesheet_hours" %}</script>
-
-	<script type="text/html" id="day-0-cell-template"><td class="text-bold-black">{% i18n "day_1_short" %}</td></script>
-	<script type="text/html" id="day-1-cell-template"><td class="text-bold-black">{% i18n "day_2_short" %}</td></script>
-	<script type="text/html" id="day-2-cell-template"><td class="text-bold-black">{% i18n "day_3_short" %}</td></script>
-	<script type="text/html" id="day-3-cell-template"><td class="text-bold-black">{% i18n "day_4_short" %}</td></script>
-	<script type="text/html" id="day-4-cell-template"><td class="text-bold-black">{% i18n "day_5_short" %}</td></script>
-	<script type="text/html" id="day-5-cell-template"><td class="text-bold-black">{% i18n "day_6_short" %}</td></script>
-	<script type="text/html" id="day-6-cell-template"><td class="text-bold-black">{% i18n "day_7_short" %}</td></script>
 	
 	<script type="text/html" id="too-high-expense">{% i18n "too-high-expense" %}</script>
 
@@ -111,12 +101,27 @@
 			</div>
 			<div id="timesheet-div">
 				<table id="timesheet-table" class="timesheet-table">
+					<thead>
+						<tr id="date-line" class="date-line">
+							<th>{% i18n "timesheet_project_title" %}</th>
+							<th>{% i18n "day_1_short" %}</th>
+							<th>{% i18n "day_2_short" %}</th>
+							<th>{% i18n "day_3_short" %}</th>
+							<th>{% i18n "day_4_short" %}</th>
+							<th>{% i18n "day_5_short" %}</th>
+							<th>{% i18n "day_6_short" %}</th>
+							<th>{% i18n "day_7_short" %}</th>
+							<th class="total">{% i18n "timesheet_total" %}</th>
+							<th><!-- Icon column, no style --></th>
+						</tr>
+					</thead>
 					<tbody id="timesheet-content" class="timesheet-content">
-						<tr id="date-line" class="date-line"></tr>
+						
 					</tbody>
 					<tbody>
 						<tr id="columnTotalsRow" class="columnTotalsRow">
 							<td>{% i18n "timesheet_total" %}</td>
+							<td></td>
 							<td></td>
 							<td></td>
 							<td></td>

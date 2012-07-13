@@ -168,7 +168,7 @@ AppTimeSheet = (function($){
 
 							
 							// Reset display
-							$("#timesheet-content").html('<tr id="date-line"></tr>');
+							$("#timesheet-content").empty();
 							// Create the views
 							weekSelected = data.week;
 							yearSelected = data.year;
@@ -323,7 +323,6 @@ AppTimeSheet = (function($){
 		
 		render: function(){
 			var parent = this;
-			$("#date-line").html("");
 			var view = null;
 			
 			// Variables declarations :
@@ -338,14 +337,6 @@ AppTimeSheet = (function($){
 			
 			$("#dates-title").html(html);
 			
-			// Build the header of the table
-			var template = $("#project-title-template").html();
-			$("#date-line").append("<td>"+template+"</td>");
-			for (var i = 0 ; i < this.data.dates.length ; i++){
-				$("#date-line").append($("#day-"+i+"-cell-template").html());
-			}
-			template = $("#total-template").text();
-			$("#date-line").append("<td class='total'>"+ template +"</td>");
 			// Build projects rows only if the timesheet exists
 			if (this.data.timeSheet != null){
 				// Build rows with data
@@ -433,7 +424,7 @@ AppTimeSheet = (function($){
 			allDayCells[this.projectId] = new Object();
 			
 			// Set the title
-			$(this.el).append("<td class='text-bold-black'>" + projectName + "</td>");
+			$(this.el).append("<td class='text-bold-black project-column'>" + projectName + "</td>");
 			
 			if (empty){
 				// Create an empty day in timesheet to memorize the project
@@ -509,7 +500,7 @@ AppTimeSheet = (function($){
 				}
 
 				// Create the total cell
-				$(this.el).append('<td class="total">' + this.total + '</td>');
+				$(this.el).append('<td class="total amount-column">' + this.total + '</td>');
 				
 				// Create the delete button only if the row can be deleted :
 				// if the row is filled with undeletable data (because timesheet
@@ -523,7 +514,7 @@ AppTimeSheet = (function($){
 				
 				if (deletionAllowed){
 					var buttonTemplate = $("#delete-button-template").html();
-					$(this.el).append("<td>" + buttonTemplate + "</td>");
+					$(this.el).append("<td class='icon-column'>" + buttonTemplate + "</td>");
 				}
 			}
 		},
@@ -605,7 +596,7 @@ AppTimeSheet = (function($){
 	
 	TimeSheetDayView = Backbone.View.extend({
 		tagName: "td",
-		className: "timeSheetDetail",
+		className: "timeSheetDetail amount-column",
 
 		day : null,
 		index:null,
