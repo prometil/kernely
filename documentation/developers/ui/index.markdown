@@ -26,7 +26,7 @@ public class TimeSheetController extends AbstractController {
 The ___registerController___ method allows you to make kernely aware of you controller:
 
 {% highlight java %}
-public MyPlugin(){
+public myPlugin(){
   super();
   registerController(MyController.class);
 }
@@ -43,7 +43,7 @@ To add a Path to the menu you need to add the ___@Menu()___ annotation with a gi
 @Menu("timesheet")
 @Produces( { MediaType.TEXT_HTML })
 
-public Response MyPage() {
+public Response myPage() {
 }
 
 {% endhighlight %}
