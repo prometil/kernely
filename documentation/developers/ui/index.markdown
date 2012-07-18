@@ -13,10 +13,12 @@ The whole core of kernely is based on Jersey. It allows a direct generation of J
 To define a controller, you need to extends the ___AbstractController___ class and add a ___@path___ annotation
 
 {% highlight java %}
+
 @Path("/timesheet")
 public class TimeSheetController extends AbstractController {
 
 }
+
 {% endhighlight %}
 
 ## Register a controller
@@ -36,12 +38,12 @@ public MyPlugin(){
 To add a Path to the menu you need to add the ___@Menu()___ annotation with a given key. The key is used to internationalize to menu link.
 
 {% highlight java %}
-  @GET
-  @Menu("timesheet")
-  @Produces( { MediaType.TEXT_HTML })
-  public Response MyPage() {
-    
-  }
+@GET
+@Menu("timesheet")
+@Produces( { MediaType.TEXT_HTML })
+public Response MyPage() {
+  
+}
 {% endhighlight %}
 
 
