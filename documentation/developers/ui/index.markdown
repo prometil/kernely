@@ -17,6 +17,9 @@ To define a controller, you need to extends the ___AbstractController___ class a
 @Path("/timesheet")
 public class TimeSheetController extends AbstractController {
 
+  public TimeSheetController(){
+  }
+
 }
 
 {% endhighlight %}
@@ -42,8 +45,8 @@ To add a Path to the menu you need to add the ___@Menu()___ annotation with a gi
 @GET
 @Menu("timesheet")
 @Produces( { MediaType.TEXT_HTML })
-
 public Response myPage() {
+  return ok();
 }
 
 {% endhighlight %}
