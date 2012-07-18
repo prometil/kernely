@@ -35,7 +35,7 @@ public MyPlugin(){
 
 ## Add a menu
 
-To add a Path to the menu you need to add the ___@Menu()___ annotation with a given key. The key is used to internationalize to menu link.
+To add a Path to the menu you need to add the ___@Menu()___ annotation with a given key. The key is used to internationalize to menu link using the internationalization system.
 
 {% highlight java %}
 @GET
