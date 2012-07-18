@@ -8,7 +8,7 @@ title: Home
 <div class="hero-unit">
   <h1>Kernely</h1>
   <p>An open plateform for social applications developped by <a href="http://www.prometil.com">Prometil SARL </a>
-    which provides a simple framework to developp web applications upon a social network.</p>
+    which provides a simple framework to develop web applications upon a social network.</p>
   <p>
     <a class="btn btn-primary btn-large" href="{{ site.baseurl }}/documentation/">
       Learn more
