@@ -38,12 +38,14 @@ public MyPlugin(){
 To add a Path to the menu you need to add the ___@Menu()___ annotation with a given key. The key is used to internationalize to menu link using the internationalization system.
 
 {% highlight java %}
+
 @GET
 @Menu("timesheet")
 @Produces( { MediaType.TEXT_HTML })
+
 public Response MyPage() {
-  
 }
+
 {% endhighlight %}
 
 
@@ -59,10 +61,12 @@ private SobaTemplateRenderer templateRenderer;
 and then call it in your method :
 
 {% highlight java %}
+
 @GET
 @Path("/view")
 @Produces( { MediaType.TEXT_HTML })
 public Response viewTimeSheetPanel() {
   return Response.ok(templateRenderer.render("templates/timesheet_main_page.html")).build();
 }
+
 {% endhighlight %}
