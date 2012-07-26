@@ -38,8 +38,7 @@ import org.apache.commons.configuration.AbstractConfiguration;
 import org.kernely.core.model.Mail;
 import org.kernely.service.AbstractService;
 import org.kernely.service.mail.builder.MailBuilder;
-import org.kernely.template.TemplateRenderer;
-import org.kernely.template.TemplateRenderer.KernelyTemplate;
+import org.kernely.template.SobaTemplateRenderer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -58,7 +57,7 @@ public class MailService extends AbstractService implements Mailer {
 	private AbstractConfiguration configuration;
 
 	@Inject
-	private TemplateRenderer renderer;
+	private SobaTemplateRenderer renderer;
 
 	/**
 	 * Create mail from the given gsp template
@@ -68,7 +67,7 @@ public class MailService extends AbstractService implements Mailer {
 	 * @return a mail builder
 	 */
 	public MailBuilder create(String templatePath) {
-		return new JavaMailBuilder(renderer.create(templatePath));
+		return new JavaMailBuilder(templatePath);
 	}
 
 	/**
@@ -76,14 +75,15 @@ public class MailService extends AbstractService implements Mailer {
 	 */
 	public class JavaMailBuilder implements MailBuilder {
 
-		// the recipients list
 		private List<String> recipients;
 
 		private List<String> ccs;
 
 		private String subject;
 
-		private KernelyTemplate builder;
+		private Map<String, Object> binding;
+		
+		private String templatePath;
 
 		/**
 		 * Create a mail builder from a template
@@ -91,10 +91,11 @@ public class MailService extends AbstractService implements Mailer {
 		 * @param templatePath
 		 *            the template
 		 */
-		public JavaMailBuilder(KernelyTemplate pBuilder) {
+		public JavaMailBuilder(String pTemplatePath) {
 			recipients = new ArrayList<String>();
 			ccs = new ArrayList<String>();
-			builder = pBuilder;
+			templatePath = pTemplatePath;
+			
 		}
 
 		/**
@@ -153,7 +154,7 @@ public class MailService extends AbstractService implements Mailer {
 		 * @return The mail builder
 		 */
 		public MailBuilder with(Map<String, Object> content) {
-			builder.with(content);
+			binding.putAll(content);
 			return this;
 		}
 
@@ -163,7 +164,7 @@ public class MailService extends AbstractService implements Mailer {
 		 * @return The mail builder
 		 */
 		public MailBuilder with(String key, String value) {
-			builder.with(key, value);
+			binding.put(key, value);
 			return this;
 		}
 		
@@ -173,7 +174,8 @@ public class MailService extends AbstractService implements Mailer {
 		 */
 		@Transactional
 		public boolean registerMail(){
-			String body = builder.forMail().render();
+			
+			String body = renderer.render(templatePath,binding);
 			StringBuilder recipString = new StringBuilder("");
 			String recipInString="";
 

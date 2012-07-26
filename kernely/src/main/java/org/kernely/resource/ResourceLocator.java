@@ -42,7 +42,7 @@ public class ResourceLocator {
 	 * @param prefix
 	 *            the folder like "../media"
 	 * @param resource
-	 *            the resource like /gsp/login.gsp
+	 *            the resource 
 	 * @return the URL if the file is found
 	 * @throws MalformedURLException
 	 */

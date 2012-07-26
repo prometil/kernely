@@ -1232,7 +1232,7 @@ public class HolidayRequestService extends AbstractService {
 				content.append(userService.getUserDetails(request.user).firstname + " " + userService.getUserDetails(request.user).lastname + " from " + request.beginDate + " to " + request.endDate + "\n");
 			}
 
-			mailService.create("/templates/gsp/recallMail.gsp").with("content", content.toString()).subject("[Kernely] Holiday requests pending").to(
+			mailService.create("/templates/holiday_recall_mail.html").with("content", content.toString()).subject("[Kernely] Holiday requests pending").to(
 					userService.getUserDetails(manager.username).email).registerMail();
 
 			log.info("Recall mail to manager {}: {}", manager.username, content);

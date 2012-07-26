@@ -19,7 +19,6 @@
  */
 package org.kernely.core.common;
 
-import groovy.text.SimpleTemplateEngine;
 
 import java.util.Properties;
 
@@ -30,7 +29,6 @@ import org.apache.shiro.authc.credential.PasswordService;
 import org.kernely.plugin.PluginManager;
 import org.kernely.service.mail.Mailer;
 import org.kernely.service.mail.builder.MailBuilder;
-import org.kernely.template.TemplateRenderer;
 import org.mockito.Mockito;
 
 import com.google.common.eventbus.EventBus;
@@ -64,11 +62,8 @@ public class GuiceJunitModule extends AbstractModule {
 		properties.put("hibernate.hbm2ddl.auto",  "update");
 		
 		install(new JpaPersistModule("kernelyUnit").properties(properties));
-
 		bind(Initializer.class);
-		
 		bind(PluginManager.class).toInstance(PluginManager.getInstance());
-		bind(TemplateRenderer.class);
 		bind(PasswordService.class).to(DefaultPasswordService.class);
 		
 		//creates a mail moker
@@ -81,13 +76,10 @@ public class GuiceJunitModule extends AbstractModule {
 		Mockito.when(mailBuilderMock.subject(Mockito.anyString())).thenReturn(mailBuilderMock);
 		Mockito.when(mailBuilderMock.with(Mockito.anyString(), Mockito.anyString())).thenReturn(mailBuilderMock);
 		Mockito.when(mailBuilderMock.registerMail()).thenReturn(true);
-		
 		Mockito.when(mailerMock.create(Mockito.anyString())).thenReturn(mailBuilderMock);
 
 		bind(Mailer.class).toInstance(mailerMock);
 		
-		//create the template engine
-		bind(SimpleTemplateEngine.class);
 		bind(EventBus.class);
 		
 	}

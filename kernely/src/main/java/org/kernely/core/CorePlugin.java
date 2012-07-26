@@ -19,8 +19,6 @@
  */
 package org.kernely.core;
 
-import groovy.text.SimpleTemplateEngine;
-
 import org.apache.shiro.authc.credential.DefaultPasswordService;
 import org.apache.shiro.authc.credential.PasswordService;
 import org.kernely.core.controller.AdminController;
@@ -43,9 +41,9 @@ import org.kernely.plugin.Descriptor;
 import org.kernely.service.mail.MailJob;
 import org.kernely.service.mail.MailService;
 import org.kernely.service.mail.Mailer;
-import org.kernely.template.TemplateRenderer;
 import org.kernely.template.helpers.SobaI18n;
 import org.quartz.DateBuilder;
+import org.quartz.DateBuilder.IntervalUnit;
 import org.quartz.ScheduleBuilder;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
@@ -53,7 +51,6 @@ import org.quartz.SchedulerFactory;
 import org.quartz.SimpleScheduleBuilder;
 import org.quartz.Trigger;
 import org.quartz.TriggerBuilder;
-import org.quartz.DateBuilder.IntervalUnit;
 import org.quartz.impl.StdSchedulerFactory;
 
 import soba.SobaEngine;
@@ -137,9 +134,7 @@ public class CorePlugin extends AbstractPlugin {
 	 */
 	@Override
 	public void configurePlugin() {
-		bind(TemplateRenderer.class);
 		bind(Mailer.class).to(MailService.class);
-		bind(SimpleTemplateEngine.class);
 		bind(EventBus.class).in(Singleton.class);
 		bind(SobaEngine.class).in(Singleton.class);
 		bind(SobaI18n.class).in(Singleton.class);
