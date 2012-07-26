@@ -1,0 +1,59 @@
+<html>
+
+	<head>
+		
+		<title>{{code}} - {{message}}</title>
+		
+		<style type="text/css">
+			body{
+				margin:0;
+			}
+		   h1 {
+		   		border-bottom: 1px 1eee:
+		   }
+		   
+		   header{
+		   	background: #F75D59;
+		   	border-bottom:1px solid #333;
+		   	padding:20px ;
+		   }
+		   
+		   section{
+		   	padding:20px;
+		   }
+		   section p{
+		   }
+		   th{
+		   	font-weight:bold;
+		   	color:#FFF;
+		   }
+		 </style>
+	</head>
+	<body>
+	
+		<header>
+			<h1>{{message}}</h1>
+			<table>
+				<tr>
+					<th>Status</th><td>{{code}}</td>
+				</tr>
+				<tr>
+					<th>Type</th><td>{{exception_type}}</td>
+				</tr>
+				<tr>
+					<th>Message</th><td>{{message}}</td>
+				</tr>
+			</table>
+		</header>
+		<section class="stack">
+		
+			<h1>Stack trace</h1>
+			{% for e in stack %}
+				<p>
+				 {{e}}
+				</p>
+			{% endfor %}
+		</section>
+	</body>
+
+</html>

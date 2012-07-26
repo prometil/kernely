@@ -95,7 +95,10 @@ public class Kernely {
 			WebAppContext webApp = new WebAppContext(warUrlString, "/");
 			webApp.setServletHandler(handler);
 			webApp.addEventListener(new GuiceServletConfig());
-			webApp.setErrorHandler(new KernelyErrorHandler());
+			
+			
+			Boolean debugMode = combinedConfiguration.getBoolean("server.debug");
+			webApp.setErrorHandler(new KernelyErrorHandler(debugMode));
 			server.setHandler(webApp);
 
 			try {

@@ -34,6 +34,7 @@
         </mail>
         <server>
                 <port>8080</port>
+                <debug>true</debug>
         </server>
         <home>/timesheet</home>
         <locale>
