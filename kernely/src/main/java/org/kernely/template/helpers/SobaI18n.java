@@ -55,7 +55,7 @@ public class SobaI18n extends Extension {
 		String lang = configuration.getString("locale.lang");
 		String country = configuration.getString("locale.country");
 
-		List<AbstractPlugin> plugins = pluginManager.getPlugins();
+		List<AbstractPlugin> plugins = PluginManager.getPlugins();
 		List<String> names = new ArrayList<String>();
 		for (AbstractPlugin plugin : plugins) {
 			names.add(plugin.getName());

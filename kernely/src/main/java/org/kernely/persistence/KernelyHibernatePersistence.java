@@ -56,9 +56,7 @@ public class KernelyHibernatePersistence extends HibernatePersistence {
 		}
 
 		// get the plugin list
-
-		PluginManager pm = PluginManager.getInstance();
-		for (AbstractPlugin plugin : pm.getPlugins()) {
+		for (AbstractPlugin plugin : PluginManager.getPlugins()) {
 
 			for (Class<? extends AbstractModel> entityClass : plugin.getModels()) {
 				log.debug("Add annotated class : {}", entityClass);

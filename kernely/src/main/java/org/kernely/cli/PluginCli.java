@@ -81,6 +81,7 @@ public class PluginCli {
 					List<List<String>> partition = Lists.partition(list, 3);
 					StringBuilder sb = new StringBuilder();
 					Formatter formatter = new Formatter(sb, Locale.US);
+					formatter.close();
 					String format = "%1$-20.20s";
 					for (List<String> part : partition) {
 						for (String plugin : part) {
@@ -105,6 +106,7 @@ public class PluginCli {
 							formatter.format(format, "Download url", m.url);
 							formatter.format(format, "Author", m.author);
 							formatter.format(format, "Description", m.description);
+							formatter.close();
 							System.out.println(sb);
 						} else {
 							System.out.println("Cannot load plugin manifest for " + args[1]);

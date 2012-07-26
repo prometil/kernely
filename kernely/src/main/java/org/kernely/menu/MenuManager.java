@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import org.kernely.i18n.Messages;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,7 +26,6 @@ public class MenuManager {
 	// the menu items
 	private HashMap<String, Set<MenuItem>> items;
 	
-	private Messages message;
 
 	public MenuManager() {
 		items = new HashMap<String, Set<MenuItem>>();

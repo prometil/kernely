@@ -51,9 +51,6 @@ public class AdminController extends AbstractController {
 	@Inject
 	private UserService userService;
 
-	@Inject
-	private PluginManager pluginsLoader;
-
 	/**
 	 * Display the administration panel.
 	 * 
@@ -85,7 +82,7 @@ public class AdminController extends AbstractController {
 	@Produces( { MediaType.APPLICATION_JSON })
 	public List<PluginDTO> getAdminList() {
 		List<PluginDTO> plugins = new ArrayList<PluginDTO>();
-		for (AbstractPlugin plugin : pluginsLoader.getPlugins()) {
+		for (AbstractPlugin plugin : PluginManager.getPlugins()) {
 			PluginDTO dto = new PluginDTO(plugin.getMenus(), plugin.getPath(), "", plugin.getAdminPages());
 			plugins.add(dto);
 		}

@@ -34,6 +34,7 @@ public class ConsoleProgressMonitor implements ProgressMonitor {
 		StringBuffer sb = new StringBuffer();
 		Formatter formatter = new Formatter(sb, Locale.US);
 		formatter.format(format, taskName);
+		formatter.close();
 		System.out.print(sb);
 	}
 
