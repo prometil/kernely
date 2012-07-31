@@ -20,9 +20,12 @@
 body, html{
   background-color:#2D2D2D;
   background-image:none;
+  text-align:center;
+}
+.buttonbar{
+	text-align:right;
 }
 #logo{
-  float:center;
   display:block;
   width:150px;
   margin:auto;
@@ -34,13 +37,18 @@ input{
 div#login{
   background: #f5f5f5;
   border:#A0A2A3 1px solid;
-  float: center;
-  margin-top:200px;
-  margin-left:auto;
-  margin-right:auto;
+  margin:20px auto;
   padding:20px;
-  height: 180px;
   width: 200px;
   line-height: 5px;
-  clear:both;
+  text-align:left;
+}
+
+div#error{
+	text-align:center;
+	background:#FFEBE8 none repeat scroll 0;
+	border:1px solid #DD3C10;
+	padding:20px;
+	line-height: 20px;
+	margin-top:10px;
 }

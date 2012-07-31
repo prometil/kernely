@@ -73,13 +73,13 @@ public class UserController extends AbstractController {
 	 * @return The html content to display the list.
 	 */
 	@GET
-	@Produces( { MediaType.TEXT_HTML })
+	@Produces({ MediaType.TEXT_HTML })
 	public Response getText() {
 		log.debug("Call to GET on all users");
 		List<UserDTO> users = userService.getAllUsers();
-		Map<String,Object> map = new HashMap<String,Object>();
+		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("users", users);
-		return Response.ok(templateRenderer.render("templates/users.html",map)).build();
+		return Response.ok(templateRenderer.render("templates/users.html", map)).build();
 	}
 
 	/**
@@ -89,11 +89,10 @@ public class UserController extends AbstractController {
 	 */
 	@GET
 	@Path("/login")
-	@Produces( { MediaType.TEXT_HTML })
-	
+	@Produces({ MediaType.TEXT_HTML })
 	public Response login() {
-		Map<String,Object> map = new HashMap<String,Object>();
-		return Response.ok(templateRenderer.render("templates/login.html",map)).build();
+		Map<String, Object> map = new HashMap<String, Object>();
+		return Response.ok(templateRenderer.render("templates/login.html", map)).build();
 	}
 
 	/**
@@ -106,7 +105,10 @@ public class UserController extends AbstractController {
 	@Produces( { MediaType.TEXT_HTML })
 	public Response postLogin() {
 		log.info("Login attempt : is authenticated {}", SecurityUtils.getSubject().isAuthenticated());
-		return Response.ok(templateRenderer.render("templates/login.html")).build();
+		Map<String, Object> maps = new HashMap<String, Object>(); 
+		maps.put("error", "Incorrect username or password.");
+		maps.put("errors", true);
+		return Response.ok(templateRenderer.render("templates/login.html",maps )).build();
 	}
 
 	/**
@@ -116,7 +118,7 @@ public class UserController extends AbstractController {
 	 */
 	@GET
 	@Path("/logout")
-	@Produces( { MediaType.TEXT_HTML })
+	@Produces({ MediaType.TEXT_HTML })
 	public Response logout() {
 		log.info("Login attempt");
 		SecurityUtils.getSubject().logout();
@@ -132,7 +134,7 @@ public class UserController extends AbstractController {
 	 */
 	@GET
 	@Path("/{login}/profile")
-	@Produces( { MediaType.TEXT_HTML })
+	@Produces({ MediaType.TEXT_HTML })
 	public Response profil(@PathParam("login") String userLogin) {
 		String template = "templates/profile.html";
 		UserDTO usercurrent = this.getCurrent();
@@ -140,10 +142,10 @@ public class UserController extends AbstractController {
 			template = "templates/profile_editable.html";
 		}
 		UserDetailsDTO uddto = userService.getUserDetails(userLogin);
-		if(uddto.image==null){
-			uddto.image="default_user.png";
+		if (uddto.image == null) {
+			uddto.image = "default_user.png";
 		}
-		Map<String,Object> map = new HashMap<String,Object>();
+		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("details", uddto);
 		return Response.ok(templateRenderer.render(template, map)).build();
 	}
@@ -159,13 +161,12 @@ public class UserController extends AbstractController {
 	 */
 	@POST
 	@Path("/{login}/profile/update")
-
 	public UserDetailsDTO editProfil(UserDetailsUpdateRequestDTO user) {
 
 		UserDetailsDTO ud = userService.getUserDetails(userService.getAuthenticatedUserDTO().username);
 		// Match the user id (foreign key) with the userdetailid
 		user.id = ud.id;
-		
+
 		// Call UserService to update informations
 		return userService.updateUserProfile(user);
 	}
@@ -181,26 +182,26 @@ public class UserController extends AbstractController {
 	@POST
 	@Path("/upload")
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
-	@Produces({MediaType.TEXT_HTML})
+	@Produces({ MediaType.TEXT_HTML })
 	public Response uploadFile(@FormDataParam("file") InputStream uploadedInputStream, @FormDataParam("file") FormDataContentDisposition fileDetail) {
 		if (fileDetail.getFileName().equals("")) {
-			Map<String,Object> map = new HashMap<String,Object>();
-			map.put("details",userService.getUserDetails(userService.getAuthenticatedUserDTO().username));
-			return Response.ok(templateRenderer.render("templates/profile_editable.html",map)).build();
+			Map<String, Object> map = new HashMap<String, Object>();
+			map.put("details", userService.getUserDetails(userService.getAuthenticatedUserDTO().username));
+			return Response.ok(templateRenderer.render("templates/profile_editable.html", map)).build();
 		}
 		// get extension
 		String[] extension = fileDetail.getFileName().split("\\.");
 		if (extension.length < 2) {
 			throw new IllegalArgumentException("The file need an extension");
 		}
-		
+
 		List<String> extensionsAutorized = new ArrayList<String>();
 		extensionsAutorized.add("gif");
 		extensionsAutorized.add("png");
 		extensionsAutorized.add("jpg");
 		extensionsAutorized.add("jpeg");
-		
-		if(!extensionsAutorized.contains(extension[extension.length -1])){
+
+		if (!extensionsAutorized.contains(extension[extension.length - 1])) {
 			throw new IllegalArgumentException("The file has an invalid extension");
 		}
 
@@ -219,14 +220,14 @@ public class UserController extends AbstractController {
 
 		UserDetailsUpdateRequestDTO ud = new UserDetailsUpdateRequestDTO(user.firstname, user.lastname, fileName, user.email, user.adress, user.zip, user.city, user.homephone, user.mobilephone, user.businessphone, user.birth, user.nationality, user.ssn, user.id, user.civility);
 		userService.updateUserProfile(ud);
-		
-		//get the dto modified
-		String template="templates/profile_editable.html";
-		Map<String,Object> map = new HashMap<String,Object>();
-		map.put("details",userService.getUserDetails(userService.getAuthenticatedUserDTO().username));
-		return Response.ok(templateRenderer.render(template,map)).build();
+
+		// get the dto modified
+		String template = "templates/profile_editable.html";
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("details", userService.getUserDetails(userService.getAuthenticatedUserDTO().username));
+		return Response.ok(templateRenderer.render(template, map)).build();
 	}
-	
+
 	/**
 	 * Get the DTO associated to the current user
 	 * 
@@ -234,7 +235,7 @@ public class UserController extends AbstractController {
 	 */
 	@GET
 	@Path("/current")
-	@Produces( { MediaType.APPLICATION_JSON })
+	@Produces({ MediaType.APPLICATION_JSON })
 	public UserDTO getCurrent() {
 		return userService.getAuthenticatedUserDTO();
 	}
@@ -248,7 +249,7 @@ public class UserController extends AbstractController {
 	 */
 	@GET
 	@Path("/{login}")
-	@Produces( {MediaType.APPLICATION_JSON})
+	@Produces({ MediaType.APPLICATION_JSON })
 	public UserDetailsDTO getDetails(@PathParam("login") String userLogin) {
 		return userService.getUserDetails(userLogin);
 	}

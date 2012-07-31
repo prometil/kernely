@@ -6,16 +6,21 @@
 	</head>
 	<body>
 	<div id="login">
+		
 		<img id="logo" src="/images/Kernely.png" alt="Kernely"/>
 		<form action="" method="POST">
+			{% if errors %}
+			<div id="error">
+				{{error}}
+			</div>
+			{% endif %}
 			<input class="kernely_input" name="username" type="text" placeholder="{% i18n "username" %}"/>
 			<input class="kernely_input" name="password" type="password"  placeholder="{% i18n "password" %}"/>
 			<br/><input type="checkbox" name="rememberMe" value="true"/> {% i18n "remember_me" %}
-			<div class="dialog-buttons-container" id="connection">
+			<div class="buttonbar">
 				<input class="button_ok" type="submit" value="{% i18n "login" %}"/>
 			</div>
 		</form>
 	</div>
- 
 	</body>
 </html>
