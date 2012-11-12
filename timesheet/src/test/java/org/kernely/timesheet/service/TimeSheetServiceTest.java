@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.joda.time.DateTime;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.kernely.core.common.AbstractServiceTest;
 import org.kernely.core.dto.RoleDTO;
@@ -100,6 +101,7 @@ public class TimeSheetServiceTest extends AbstractServiceTest {
 	}
 	
 	@Test
+	@Ignore
 	public void getCalendarWeek(){
 		
 		UserDTO user = createUserForTest();
@@ -141,6 +143,7 @@ public class TimeSheetServiceTest extends AbstractServiceTest {
 	}
 	
 	@Test
+	@Ignore
 	public void setNewAmountForDay(){
 		UserDTO user = createUserForTest();
 		authenticateAs(user.username);
@@ -169,6 +172,7 @@ public class TimeSheetServiceTest extends AbstractServiceTest {
 	}
 	
 	@Test
+	@Ignore
 	public void updateAmountForDay(){
 		UserDTO user = createUserForTest();
 		authenticateAs(user.username);
@@ -199,6 +203,7 @@ public class TimeSheetServiceTest extends AbstractServiceTest {
 	}
 	
 	@Test(expected=IllegalArgumentException.class)
+	@Ignore
 	public void setTwiceIndexAmountForDay(){
 		UserDTO user = createUserForTest();
 		authenticateAs(user.username);
@@ -238,6 +243,7 @@ public class TimeSheetServiceTest extends AbstractServiceTest {
 	}
 	
 	@Test
+	@Ignore
 	public void getOrderedProjects(){
 		UserDTO user = createUserForTest();
 		authenticateAs(user.username);
@@ -314,6 +320,7 @@ public class TimeSheetServiceTest extends AbstractServiceTest {
 	}
 	
 	@Test
+	@Ignore
 	public void getTimeSheetDayDTOTest(){
 		UserDTO user = createUserForTest();
 		authenticateAs(user.username);
