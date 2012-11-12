@@ -285,8 +285,7 @@
 	<repositories>
 		<repository>
 			<id>soba-snapshots</id>
-			<url>https://raw.github.com/octalmind/maven-repository/master/snapshots
-			</url>
+			<url>https://github.com/prometil/maven-repository/raw/master/snapshots/</url>
 		</repository>
 	</repositories>
 </project>
